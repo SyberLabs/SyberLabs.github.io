@@ -1,0 +1,956 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SyberLabs | Empirical &amp; Experiential Systems</title>
+<meta name="description" content="SyberLabs is Mateo Robles' studio for machine-learning evaluation, simulation platforms, research tooling, and generative art.">
+<meta name="author" content="Mateo Robles">
+<meta name="theme-color" content="#06060c">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://syberlabs.space/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="SyberLabs">
+<meta property="og:title" content="SyberLabs | Empirical &amp; Experiential Systems">
+<meta property="og:description" content="Machine-learning evaluation, simulation platforms, research tooling, and generative art by Mateo Robles.">
+<meta property="og:url" content="https://syberlabs.space/">
+<meta property="og:image" content="https://syberlabs.space/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="SyberLabs - empirical and experiential systems">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@syberlabs">
+<meta name="twitter:creator" content="@syberlabs">
+<meta name="twitter:title" content="SyberLabs | Empirical &amp; Experiential Systems">
+<meta name="twitter:description" content="Machine-learning evaluation, simulation platforms, research tooling, and generative art by Mateo Robles.">
+<meta name="twitter:image" content="https://syberlabs.space/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "SyberLabs",
+  "url": "https://syberlabs.space/",
+  "description": "SyberLabs is Mateo Robles' studio for machine-learning evaluation, simulation platforms, research tooling, and generative art.",
+  "creator": {
+    "@type": "Person",
+    "name": "Mateo Robles"
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:244,243,238; --dim:178,184,198; --gold:210,164,116; --bg:6,6,12;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:#06060c;color:rgb(var(--ink));font-family:"Space Mono",monospace;overflow-x:hidden;}
+  #hero-canvas{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;}
+  .vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(130% 120% at 50% 36%,transparent 42%,rgba(3,3,8,0.55) 80%,rgba(1,1,4,0.96) 100%);
+    mix-blend-mode:multiply;}
+  main{position:relative;z-index:2;}
+
+  /* hero */
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:8vh 22px;}
+  .mark{font-family:"Cormorant Garamond",serif;font-weight:300;font-style:italic;
+    font-size:clamp(3.2rem,12vw,8rem);letter-spacing:0.06em;line-height:0.95;color:rgba(var(--ink),0.95);
+    text-shadow:0 0 50px rgba(210,164,116,0.28),0 0 8px rgba(255,255,255,0.3);}
+  .ruleline{width:clamp(80px,16vw,180px);height:1px;margin:1.6em 0 1.3em;
+    background:linear-gradient(90deg,transparent,rgba(var(--gold),0.6),transparent);}
+  .tag{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;
+    font-size:clamp(1.05rem,2.6vw,1.5rem);color:rgba(var(--ink),0.78);letter-spacing:0.04em;max-width:30ch;}
+  .eyebrow{margin-top:1.7em;font-size:clamp(0.52rem,1.3vw,0.66rem);letter-spacing:0.52em;text-indent:0.52em;
+    text-transform:uppercase;color:rgba(var(--gold),0.6);}
+  .cue{position:absolute;bottom:4vh;left:50%;transform:translateX(-50%);font-size:0.56rem;letter-spacing:0.4em;
+    text-indent:0.4em;text-transform:uppercase;color:rgba(var(--dim),0.4);animation:bob 3.2s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);opacity:.4}50%{transform:translateX(-50%) translateY(6px);opacity:.7}}
+
+  /* operators */
+  .operators{padding:clamp(60px,12vh,140px) clamp(20px,5vw,80px) 80px;max-width:1300px;margin:0 auto;}
+  .ops-head{text-align:center;margin-bottom:clamp(38px,7vh,72px);}
+  .ops-head .lbl{font-size:0.58rem;letter-spacing:0.5em;text-indent:0.5em;text-transform:uppercase;color:rgba(var(--gold),0.6);}
+  .ops-head .ttl{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;
+    font-size:clamp(1.6rem,4.4vw,2.8rem);margin-top:0.6em;color:rgba(var(--ink),0.9);}
+  .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(14px,1.6vw,22px);}
+  @media(max-width:1080px){.grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr;}}
+  .op{position:relative;border:1px solid rgba(var(--dim),0.1);border-radius:6px;overflow:hidden;
+    background:rgba(255,255,255,0.012);transition:border-color .5s,transform .5s,background .5s;}
+  .op:hover{border-color:rgba(var(--gold),0.34);transform:translateY(-4px);background:rgba(255,255,255,0.03);}
+  .op canvas{display:block;width:100%;height:150px;}
+  .op .body{padding:16px 18px 20px;}
+  .op .idx{font-size:0.5rem;letter-spacing:0.3em;color:rgba(var(--gold),0.55);}
+  .op h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:1.5rem;letter-spacing:0.03em;
+    margin:0.25em 0 0.5em;color:rgba(var(--ink),0.94);}
+  .op .arrow{font-size:0.62rem;line-height:1.55;color:rgba(var(--dim),0.72);}
+  .op .kw{margin-top:0.9em;font-size:0.52rem;letter-spacing:0.16em;text-transform:uppercase;color:rgba(var(--dim),0.42);}
+
+  footer{position:relative;z-index:2;text-align:center;padding:50px 20px 60px;border-top:1px solid rgba(var(--dim),0.08);}
+  footer .pillars{font-size:0.56rem;letter-spacing:0.42em;text-indent:0.42em;text-transform:uppercase;color:rgba(var(--dim),0.5);}
+  footer .fm{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:1.1rem;margin-top:1.1em;color:rgba(var(--ink),0.6);letter-spacing:0.1em;}
+
+  /* ---- card link affordance ---- */
+  .op{text-decoration:none;color:inherit;cursor:pointer;}
+  .op .go{margin-top:0.8em;font-family:"Space Mono",monospace;font-size:0.54rem;letter-spacing:0.12em;
+    color:rgba(var(--gold),0.5);transition:color .4s;}
+  .op:hover .go{color:rgba(var(--gold),0.9);}
+
+  /* ---- shared section heads ---- */
+  .sec-lbl{font-size:0.58rem;letter-spacing:0.5em;text-indent:0.5em;text-transform:uppercase;color:rgba(var(--gold),0.6);text-align:center;}
+  .sec-ttl{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:clamp(1.55rem,4.2vw,2.5rem);
+    margin:0.55em 0 1.35em;color:rgba(var(--ink),0.9);text-align:center;}
+
+  /* ---- about ---- */
+  .about{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:clamp(54px,10vh,120px) clamp(20px,5vw,40px) 6px;}
+  .about .bio{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(1.2rem,3vw,1.65rem);line-height:1.46;
+    color:rgba(var(--ink),0.86);text-align:center;max-width:44ch;margin:0.85em auto 0;}
+  .about .bio span{display:block;}
+  .about .bio span+span{margin-top:0.72em;}
+  .about .bio span:not(:last-child)::after{content:"\2756";display:block;color:rgba(var(--gold),0.6);
+    font-size:0.86em;line-height:1;margin:0.76em auto 0;text-shadow:0 0 10px rgba(var(--gold),0.16);}
+  .about .bio strong{font-style:italic;font-weight:400;color:rgba(var(--ink),0.97);}
+  .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:clamp(32px,5vh,54px);
+    background:rgba(var(--dim),0.1);border:1px solid rgba(var(--dim),0.1);border-radius:6px;overflow:hidden;}
+  @media(max-width:680px){.strip{grid-template-columns:repeat(2,1fr);}}
+  .strip div{background:#070710;padding:16px 16px 18px;}
+  .strip dt{font-family:"Space Mono",monospace;font-size:0.55rem;letter-spacing:0.26em;text-transform:uppercase;color:rgba(var(--gold),0.6);}
+  .strip dd{font-family:"Space Mono",monospace;font-size:0.67rem;line-height:1.58;color:rgba(var(--dim),0.78);margin-top:0.55em;}
+
+  /* ---- flagship work ---- */
+  .flagship{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:clamp(48px,8vh,98px) clamp(20px,5vw,40px) 4px;}
+  .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,1.8vw,22px);}
+  @media(max-width:720px){.pgrid{grid-template-columns:1fr;}}
+  .proj{border:1px solid rgba(var(--dim),0.12);border-radius:8px;background:rgba(255,255,255,0.012);padding:22px 22px 24px;
+    text-decoration:none;color:inherit;display:block;transition:border-color .4s,transform .4s,background .4s;}
+  .proj:hover{border-color:rgba(var(--gold),0.34);transform:translateY(-3px);background:rgba(255,255,255,0.03);}
+  .proj.feature{grid-column:1 / -1;}
+  .proj .ptop{display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
+  .proj h4{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:1.48rem;letter-spacing:0.02em;color:rgba(var(--ink),0.95);}
+  .proj .status{font-family:"Space Mono",monospace;font-size:0.47rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(var(--gold),0.8);white-space:nowrap;}
+  .proj .desc{font-family:"Space Mono",monospace;font-size:0.62rem;line-height:1.62;color:rgba(var(--dim),0.78);margin-top:0.7em;}
+  .proj .ev{list-style:none;margin:0.9em 0 0;padding:0;}
+  .proj .ev li{font-family:"Space Mono",monospace;font-size:0.575rem;line-height:1.5;color:rgba(var(--dim),0.64);padding-left:15px;position:relative;margin-bottom:0.4em;}
+  .proj .ev li::before{content:"\2192";position:absolute;left:0;color:rgba(var(--gold),0.5);}
+  .proj .tags{margin-top:1em;display:flex;flex-wrap:wrap;gap:7px;}
+  .proj .tags span{font-family:"Space Mono",monospace;font-size:0.49rem;letter-spacing:0.08em;color:rgba(var(--dim),0.6);
+    border:1px solid rgba(var(--dim),0.16);border-radius:3px;padding:3px 8px;}
+  .proj.short{display:flex;flex-direction:column;justify-content:center;}
+  .proj.short .desc{margin-top:0.55em;}
+
+  /* ---- three ways ---- */
+  .ways{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:clamp(48px,8vh,98px) clamp(20px,5vw,40px) 4px;}
+  .wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.8vw,22px);}
+  @media(max-width:720px){.wgrid{grid-template-columns:1fr;}}
+  .way{border:1px solid rgba(var(--dim),0.12);border-radius:8px;padding:22px;background:rgba(255,255,255,0.012);}
+  .way h4{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:1.32rem;color:rgba(var(--ink),0.94);}
+  .way .core{display:block;margin:0.55em 0;font-family:"Space Mono",monospace;font-size:0.52rem;letter-spacing:0.12em;
+    text-transform:uppercase;color:rgba(var(--gold),0.7);line-height:1.5;}
+  .way p{font-family:"Space Mono",monospace;font-size:0.6rem;line-height:1.6;color:rgba(var(--dim),0.75);}
+
+  /* ---- CTA ---- */
+  .cta{
+    position:relative;
+    z-index:2;
+    max-width:460px;
+    margin:0 auto;
+    padding:clamp(48px,8vh,92px) clamp(20px,5vw,40px) clamp(44px,8vh,88px);
+    text-align:center;
+  }
+
+  .cta-card{
+    border:1px solid rgba(var(--dim),0.12);
+    border-radius:8px;
+    background:rgba(255,255,255,0.014);
+    padding:clamp(24px,4vw,34px);
+  }
+
+  .cta-card p{
+    font-family:"Cormorant Garamond",serif;
+    font-weight:300;
+    font-size:clamp(1.12rem,2.7vw,1.45rem);
+    line-height:1.45;
+    color:rgba(var(--ink),0.84);
+    max-width:38ch;
+    margin:0 auto;
+  }
+
+  .cta-links{
+    margin-top:1.6em;
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    flex-wrap:wrap;
+  }
+
+  .cta-links a{
+    font-family:"Space Mono",monospace;
+    font-size:0.58rem;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:rgba(var(--gold),0.82);
+    text-decoration:none;
+    border-bottom:1px solid rgba(var(--gold),0.3);
+    padding-bottom:3px;
+    transition:color .3s,border-color .3s;
+  }
+
+  .cta-links a:hover{
+    color:rgba(var(--ink),0.95);
+    border-color:rgba(var(--gold),0.75);
+  }
+
+  /* ---- ideas ---- */
+  .ideas{position:relative;z-index:2;max-width:680px;margin:0 auto;padding:clamp(40px,8vh,84px) 22px;text-align:center;}
+  .ideas p{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:clamp(1.2rem,2.9vw,1.55rem);
+    line-height:1.5;color:rgba(var(--ink),0.84);margin:1em auto 1.2em;max-width:34ch;}
+  .ideas a{font-family:"Space Mono",monospace;font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;
+    color:rgba(var(--gold),0.82);text-decoration:none;border-bottom:1px solid rgba(var(--gold),0.3);padding-bottom:2px;transition:color .3s,border-color .3s;}
+  .ideas a:hover{color:rgba(var(--ink),0.95);border-color:rgba(var(--gold),0.7);}
+
+  /* ---- footer additions ---- */
+  footer .links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:1.5em;}
+  footer .links a{font-family:"Space Mono",monospace;font-size:0.6rem;letter-spacing:0.14em;color:rgba(var(--ink),0.6);text-decoration:none;transition:color .3s;}
+  footer .links a:hover{color:rgba(var(--gold),0.85);}
+  footer .who{font-family:"Space Mono",monospace;font-size:0.56rem;letter-spacing:0.06em;color:rgba(var(--dim),0.55);margin-top:1.7em;}
+</style>
+</head>
+<body>
+<canvas id="hero-canvas"></canvas>
+<div class="vignette"></div>
+
+<main>
+  <section class="hero">
+    <div class="mark">SyberLabs</div>
+    <div class="ruleline"></div>
+    <div class="tag">empirical &amp; experiential systems</div>
+    <div class="eyebrow">by mateo robles</div>
+    
+  </section>
+
+  <section class="operators" id="operators">
+    <div class="ops-head">
+      <div class="lbl">the operators</div>
+      <div class="ttl">principles of design</div>
+    </div>
+    <div class="grid">
+      <a class="op" data-op="stochastic" href="https://github.com/SyberLabs/vital-language" target="_blank" rel="noopener"><canvas></canvas><div class="body">
+        <div class="idx">01</div><h3>Stochastic</h3>
+        <div class="arrow">&rarr; Unpredictability</div>
+        <div class="kw">noise &middot; probability &middot; surprise</div>
+        <div class="go">Vital Language &#8599;</div></div></a>
+      <a class="op" data-op="dynamical" href="https://github.com/SyberLabs/dynamic-kernel" target="_blank" rel="noopener"><canvas></canvas><div class="body">
+        <div class="idx">02</div><h3>Dynamical</h3>
+        <div class="arrow">&rarr; Points in Time</div>
+        <div class="kw">attractors &middot; feedback &middot; regime shifts</div>
+        <div class="go">Dynamic Kernel &#8599;</div></div></a>
+      <a class="op" data-op="generative" href="https://github.com/SyberLabs/dreamer-v2" target="_blank" rel="noopener"><canvas></canvas><div class="body">
+        <div class="idx">03</div><h3>Generative</h3>
+        <div class="arrow">&rarr; Articulation</div>
+        <div class="kw">semantic fields &middot; steering &middot; decoder boundary</div>
+        <div class="go">Dreamer v2 &#8599;</div></div></a>
+      <a class="op" data-op="geometric" href="https://github.com/SyberLabs/eidolon" target="_blank" rel="noopener"><canvas></canvas><div class="body">
+        <div class="idx">04</div><h3>Geometric</h3>
+        <div class="arrow">&rarr; Points in Space</div>
+        <div class="kw">symmetry &middot; topology &middot; proportion</div>
+        <div class="go">Eidolon &#8599;</div></div></a>
+      <a class="op" data-op="experiential" href="https://github.com/SyberLabs/RISE" target="_blank" rel="noopener"><canvas></canvas><div class="body">
+        <div class="idx">05</div><h3>Experiential</h3>
+        <div class="arrow">&rarr; Subjectivity</div>
+        <div class="kw">audio &middot; perception &middot; presence</div>
+        <div class="go">RISE &#8599;</div></div></a>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="sec-lbl">the practice</div>
+    <p class="bio">
+      <span>My principal interest lies in the question: how may software change what people can perceive, understand, and create?</span>
+      <span>SyberLabs is my place for building experiments across <strong>machine-learning evaluation, simulation platforms, and generative art.</strong></span>
+      <span>I graduated from Santa Clara University in computer science, with an emphasis on data science.</span>
+    </p>
+    <dl class="strip">
+      <div><dt>Strength</dt><dd>Turning ambitious ideas into testable software artifacts.</dd></div>
+      <div><dt>Range</dt><dd>ML, simulation, generative art, research tooling.</dd></div>
+      <div><dt>Signal</dt><dd>Evidence-aware framing: results, prototypes, and art stay clearly labeled.</dd></div>
+    </dl>
+  </section>
+
+  <section class="flagship" id="work">
+    <div class="sec-lbl">selected work</div>
+    <div class="sec-ttl">built and tested</div>
+    <div class="pgrid">
+
+      <a class="proj feature" href="https://github.com/SyberLabs/skypredict-v2" target="_blank" rel="noopener">
+        <div class="ptop"><h4>SkyPredict</h4><span class="status">Applied ML</span></div>
+        <p class="desc">Flight-delay prediction built around strict pre-departure observability, staged feature pipelines, and an audited reporting dashboard.</p>
+        <ul class="ev">
+          <li>6.96M BTS flight rows under gate-close causal constraints.</li>
+          <li>Stage&nbsp;C validation: ROC-AUC 0.713, PR-AUC 0.349 at validation prevalence.</li>
+          <li>Work centered on pipeline architecture, leakage audits, dashboarding, and reporting.</li>
+        </ul>
+        <div class="tags"><span>Python</span><span>ML pipeline</span><span>Evaluation</span><span>Dashboard</span></div>
+      </a>
+
+      <a class="proj feature" href="https://github.com/SyberLabs/dynamic-kernel" target="_blank" rel="noopener">
+        <div class="ptop"><h4>Dynamic Kernel</h4><span class="status">Simulation</span></div>
+        <p class="desc">A platform for routing over weighted graphs whose costs change mid-traversal, with experiment manifests and guardrails around claim scope.</p>
+        <ul class="ev">
+          <li>Vectorized NumPy kernel, FastAPI/WebSocket service, React visualizer.</li>
+          <li>41 passing tests, plus falsification reports that try to break the routing logic.</li>
+          <li>Connects complexity-science ideas to inspectable software.</li>
+        </ul>
+        <div class="tags"><span>Python</span><span>FastAPI</span><span>Complex systems</span><span>Research tooling</span></div>
+      </a>
+
+      <a class="proj feature" href="https://github.com/SyberLabs/RISE" target="_blank" rel="noopener">
+        <div class="ptop"><h4>RISE</h4><span class="status">Experience</span></div>
+        <p class="desc">A self-contained audiovisual web application with its own audio engine and generative visuals &mdash; software built to be encountered, not just operated.</p>
+        <ul class="ev">
+          <li>Built solo with custom rendering and audio systems.</li>
+          <li>Real-time audio and procedural visuals kept in sync in the browser.</li>
+          <li>The studio's most-built front-end artifact.</li>
+        </ul>
+        <div class="tags"><span>Creative coding</span><span>Audio</span><span>Canvas</span><span>Web</span></div>
+      </a>
+
+      <a class="proj" href="https://github.com/SyberLabs/grokking-scaling-theory" target="_blank" rel="noopener">
+        <div class="ptop"><h4>Grokking Scaling Theory</h4><span class="status">Research</span></div>
+        <p class="desc">An empirical study of delayed generalization, built around fit competition across candidate scaling laws rather than the curve that flatters the story.</p>
+        <ul class="ev"><li>Scaling sweeps, bootstrap intervals, a LaTeX paper.</li><li>Negative and boundary results treated as part of the output.</li></ul>
+        <div class="tags"><span>ML science</span><span>Scaling</span><span>Reports</span></div>
+      </a>
+
+      <a class="proj" href="https://github.com/SyberLabs/dreamer-v2" target="_blank" rel="noopener">
+        <div class="ptop"><h4>Dreamer v2</h4><span class="status">Generative systems</span></div>
+        <p class="desc">A semantic-dynamics engine that inserts a testable intermediate representation between a prompt and generated language, with the decoder kept as an explicit boundary.</p>
+        <ul class="ev"><li>Pure engine path runs without API keys; optional prompted and activation-steering decoders.</li><li>Steering diagnostics found shared-direction collapse, then added decorrelation and query-dependent seeding.</li></ul>
+        <div class="tags"><span>Generation</span><span>Steering</span><span>Diagnostics</span></div>
+      </a>
+
+      <a class="proj" href="https://github.com/SyberLabs/vital-language" target="_blank" rel="noopener">
+        <div class="ptop"><h4>Vital Language</h4><span class="status">Research</span></div>
+        <p class="desc">A controlled generation study testing whether chaotic logit modulation could make LLM prose feel more alive. The result sharpened the hypothesis: coherence scaffolding mattered more than token turbulence.</p>
+        <ul class="ev"><li>Matched chaos against OU-noise, white-noise, sampling, and prompt-agency controls.</li><li>Negative result preserved: the wrong lever was part of the finding.</li></ul>
+        <div class="tags"><span>LLM</span><span>Controls</span><span>Complexity metrics</span></div>
+      </a>
+
+      <a class="proj" href="https://github.com/SyberLabs/eidolon" target="_blank" rel="noopener">
+        <div class="ptop"><h4>Eidolon</h4><span class="status">Digital art</span></div>
+        <p class="desc">Strange attractors, Bessel-mode resonances ("frozen music"), and tensegrity normal modes rendered as light: every visual derived from a verified invariant.</p>
+        <ul class="ev"><li>Browser-native works built from real mathematical systems.</li><li>Math verified before it is drawn.</li></ul>
+        <div class="tags"><span>Canvas</span><span>Generative</span><span>Math</span></div>
+      </a>
+
+      <a class="proj" href="https://github.com/SyberLabs/green-hypercube" target="_blank" rel="noopener">
+        <div class="ptop"><h4>Green Hypercube</h4><span class="status">Data science</span></div>
+        <p class="desc">A coverage-aware computational ethnobotany benchmark for testing structured search over plant data without mistaking database attention for biological signal.</p>
+        <ul class="ev"><li>Decoupled reward provenance, negative controls, and matched-density sweeps.</li><li>Findings separate raw cue-reward coupling from study-effort artifacts.</li></ul>
+        <div class="tags"><span>Ethnobotany</span><span>Sampling bias</span><span>Reproducibility</span></div>
+      </a>
+
+      <a class="proj" href="https://github.com/SyberLabs/tok" target="_blank" rel="noopener">
+        <div class="ptop"><h4>Clarity Engine</h4><span class="status">Research tooling</span></div>
+        <p class="desc">A research engine that maps ambiguous problems into causal structures, tracks provenance, and keeps hypotheses, simulations, and evidence behind explicit review gates.</p>
+        <ul class="ev"><li>Tree of Knowledge graph for structural signatures, provenance, and causal-coordinate retrieval.</li><li>Research workflows keep candidates, simulations, and evidence transitions deliberately separated.</li></ul>
+        <div class="tags"><span>Knowledge graph</span><span>Causality</span><span>Evidence gates</span></div>
+      </a>
+
+    </div>
+  </section>
+
+  <section class="ways" id="directions">
+    <div class="sec-lbl">professional directions</div>
+    <div class="sec-ttl">three ways I can contribute</div>
+    <div class="wgrid">
+      <article class="way"><h4>Research engineer</h4><span class="core">Grokking Scaling &middot; Dynamic Kernel</span><p>I build empirical machinery for hard-to-test ideas, and report uncertainty as part of the work.</p></article>
+      <article class="way"><h4>ML / data engineer</h4><span class="core">SkyPredict &middot; Green Hypercube</span><p>I build end-to-end data systems with observability, evaluation, audits, and interfaces.</p></article>
+      <article class="way"><h4>Creative technologist</h4><span class="core">Eidolon &middot; RISE &middot; Clarity Engine</span><p>I turn mathematical systems into usable, interactive artifacts with premium visual design.</p></article>
+    </div>
+  </section>
+
+  <section class="cta" id="contact">
+    <div class="cta-card">
+      <p>
+      Looking for teams building useful software with care.
+      </p>
+
+      <div class="cta-links">
+        <a href="mailto:syberlabs.software@gmail.com">contact</a>
+        <a href="https://github.com/SyberLabs" target="_blank" rel="noopener">github</a>
+        <a href="./resume.pdf" target="_blank" rel="noopener">resume</a>
+      </div>
+    </div>
+  </section>
+
+
+  <footer>
+    <div class="pillars">systems for thought</div>
+
+    <div class="links">
+      <a href="https://github.com/SyberLabs" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://x.com/syberlabs" target="_blank" rel="noopener">X</a>
+      
+      <a href="mailto:syberlabs.software@gmail.com">Email</a>
+    </div>
+    <div class="who">© 2026 SyberLabs</div>
+  </footer>
+</main>
+
+<script>
+(() => {
+  "use strict";
+  const rnd=(a=1)=>Math.random()*a, R2=()=>Math.random()*2-1;
+
+  /* ---------- shared: pointer ---------- */
+  const ptr={x:innerWidth/2,y:innerHeight/2,active:false};
+  addEventListener("pointermove",e=>{ptr.x=e.clientX;ptr.y=e.clientY;ptr.active=true;ptr.lt=performance.now();},{passive:true});
+
+  /* ---------- DPR canvas sizing ---------- */
+  function fit(cv){ const dpr=Math.min(devicePixelRatio||1,2); const r=cv.getBoundingClientRect();
+    cv.width=Math.max(1,Math.round(r.width*dpr)); cv.height=Math.max(1,Math.round(r.height*dpr));
+    const c=cv.getContext("2d"); c.setTransform(dpr,0,0,dpr,0,0); cv._w=r.width; cv._h=r.height; return c; }
+
+  /* ---------- opt-in renderer benchmark: add ?bench=1 ---------- */
+  const bench=(()=>{
+    const params=new URLSearchParams(location.search);
+    if(!params.has("bench"))return null;
+    const max=360,samples={},state={lastNow:0,lastPaint:0,lastLog:0,fps:0,mode:"idle",visible:[]};
+    const panel=document.createElement("pre");
+    panel.style.cssText=[
+      "position:fixed","left:10px","bottom:10px","z-index:20","margin:0",
+      "padding:10px 12px","border:1px solid rgba(210,164,116,.38)",
+      "border-radius:6px","background:rgba(5,5,10,.82)","color:rgba(244,243,238,.9)",
+      "font:11px/1.45 Space Mono,monospace","pointer-events:none","white-space:pre-wrap",
+      "max-width:min(390px,calc(100vw - 20px))","box-shadow:0 10px 30px rgba(0,0,0,.35)"
+    ].join(";");
+    panel.textContent="bench warming...";
+    document.body.appendChild(panel);
+    function add(name,ms){
+      const a=samples[name]||(samples[name]=[]);
+      a.push(ms);
+      if(a.length>max)a.shift();
+    }
+    function stats(name){
+      const a=samples[name]||[];
+      if(!a.length)return null;
+      let sum=0;
+      for(const v of a)sum+=v;
+      const sorted=a.slice().sort((x,y)=>x-y);
+      return {n:a.length,avg:sum/a.length,p95:sorted[Math.min(sorted.length-1,Math.floor(sorted.length*0.95))]};
+    }
+    function report(){
+      const out={};
+      for(const name of Object.keys(samples).sort())out[name]=stats(name);
+      return {mode:state.mode,fps:state.fps,visible:state.visible.slice(),metrics:out};
+    }
+    function fmt(name){
+      const s=stats(name);
+      return s?`${name.padEnd(14)} ${s.avg.toFixed(2).padStart(5)} avg  ${s.p95.toFixed(2).padStart(5)} p95  n=${s.n}`:"";
+    }
+    function endFrame(now,ms,info){
+      add("frame",ms);
+      if(state.lastNow)state.fps=state.fps*0.88+(1000/(now-state.lastNow))*0.12;
+      state.lastNow=now;
+      state.visible=info.visible;
+      state.mode=info.hero?"hero":(info.visible.length?"operators":"idle");
+      const names=["frame"].concat(info.hero?["hero"]:[],info.visible.length?["operators"]:[],info.visible);
+      if(now-state.lastPaint>600){
+        state.lastPaint=now;
+        panel.textContent=[
+          `BENCH ${state.mode}   fps ${state.fps.toFixed(1)}   visible ${info.visible.length}`,
+          ...names.map(fmt).filter(Boolean),
+          "console: __syberBench.report() / .reset()"
+        ].join("\n");
+      }
+      if(now-state.lastLog>5000){
+        state.lastLog=now;
+        const rows=report().metrics;
+        console.table(Object.fromEntries(names.filter(name=>rows[name]).map(name=>{
+          const v=rows[name];
+          return [name,{avg:+v.avg.toFixed(3),p95:+v.p95.toFixed(3),n:v.n}];
+        })));
+      }
+    }
+    function reset(){for(const k of Object.keys(samples))delete samples[k];state.lastNow=state.lastPaint=state.lastLog=0;}
+    const api={add,endFrame,report,reset};
+    window.__syberBench=api;
+    return api;
+  })();
+
+  /* ===================== HERO: folded attractor + stochastic field ===================== */
+  const hero=document.getElementById("hero-canvas"); let hctx=hero.getContext("2d");
+  // Aizawa attractor (the dynamical heart), bilaterally folded (geometric)
+  const A=0.95,B=0.7,C=0.6,D=3.5,E=0.25,Ff=0.1, NH=3600, dt=0.01;
+  const hx=new Float32Array(NH),hy=new Float32Array(NH),hz=new Float32Array(NH);
+  (function(){let x=0.1,y=0,z=0; for(let i=0;i<1200;i++){const dx=(z-B)*x-D*y,dy=D*x+(z-B)*y,dz=C+A*z-z*z*z/3-(x*x+y*y)*(1+E*z)+Ff*z*x*x*x;x+=dx*dt;y+=dy*dt;z+=dz*dt;}
+    for(let i=0;i<NH;i++){const dx=(z-B)*x-D*y,dy=D*x+(z-B)*y,dz=C+A*z-z*z*z/3-(x*x+y*y)*(1+E*z)+Ff*z*x*x*x;x+=dx*dt;y+=dy*dt;z+=dz*dt;hx[i]=x;hy[i]=y;hz[i]=z;}})();
+  let hcx=0,hcy=0,hcz=0,hR=1;
+  for(let i=0;i<NH;i++){hcx+=hx[i];hcy+=hy[i];hcz+=hz[i];} hcx/=NH;hcy/=NH;hcz/=NH;
+  for(let i=0;i<NH;i++){const a=hx[i]-hcx,b=hy[i]-hcy,c=hz[i]-hcz,r=a*a+b*b+c*c;if(r>hR)hR=r;} hR=Math.sqrt(hR);
+  // ambient stochastic sparks
+  let sparks=[];
+  function seedSparks(){ sparks=[]; const n=Math.round(innerWidth*innerHeight/26000);
+    for(let i=0;i<n;i++) sparks.push({x:rnd(innerWidth),y:rnd(innerHeight),vx:R2()*0.12,vy:R2()*0.12,p:rnd(6.28),s:0.4+rnd(1.2)}); }
+  // grain
+  let grain=document.createElement("canvas"),gctx=grain.getContext("2d");
+  function buildGrain(){const S=150;grain.width=S;grain.height=S;const im=gctx.createImageData(S,S),d=im.data;
+    for(let i=0;i<d.length;i+=4){const v=rnd(255)|0;d[i]=d[i+1]=d[i+2]=v;d[i+3]=255;}gctx.putImageData(im,0,0);}
+  let HW=0,HH=0;
+  function heroResize(){const dpr=Math.min(devicePixelRatio||1,2);HW=innerWidth;HH=innerHeight;
+    hero.width=Math.round(HW*dpr);hero.height=Math.round(HH*dpr);hctx.setTransform(dpr,0,0,dpr,0,0);seedSparks();buildGrain();}
+
+  let smx=0,smy=0,heroFrame=0;
+  function drawHero(t,boost){
+    hctx.setTransform((Math.min(devicePixelRatio||1,2)),0,0,(Math.min(devicePixelRatio||1,2)),0,0);
+    hctx.globalCompositeOperation="source-over";
+    const bg=hctx.createRadialGradient(HW/2,HH*0.42,0,HW/2,HH*0.42,Math.max(HW,HH)*0.8);
+    bg.addColorStop(0,"#0b0a16");bg.addColorStop(1,"#06060c");hctx.fillStyle=bg;hctx.fillRect(0,0,HW,HH);
+
+    hctx.globalCompositeOperation="lighter";
+    // STOCHASTIC ambient field - drifting, twinkling, unpredictable
+    const updateSparks=(heroFrame++&1)===0;
+    for(const s of sparks){ if(updateSparks){s.vx+=R2()*0.02;s.vy+=R2()*0.02; s.vx*=0.96;s.vy*=0.96;
+      s.x+=s.vx;s.y+=s.vy; if(s.x<0)s.x+=HW;if(s.x>HW)s.x-=HW;if(s.y<0)s.y+=HH;if(s.y>HH)s.y-=HH;}
+      const a=(0.12+0.12*Math.sin(t*1.5+s.p))*(0.5+0.5*Math.sin(t*7+s.p*3));
+      hctx.fillStyle=`rgba(220,225,240,${Math.max(0,a)})`; hctx.fillRect(s.x,s.y,s.s,s.s); }
+
+    // DYNAMICAL + GEOMETRIC heart: folded Aizawa, flowing, breathing
+    const idle=(performance.now()-(ptr.lt||0))/1000;
+    const infl=ptr.active?Math.max(0,Math.min(1,1-(idle-1.6)/2)):0;
+    const tx=(ptr.x/HW-0.5)*infl, ty=(ptr.y/HH-0.5)*infl;
+    smx+=(tx-smx)*0.05; smy+=(ty-smy)*0.05;
+    const yaw=t*0.12 + smx*0.62, pitch=-0.3+0.18*Math.sin(t*0.2)+smy*0.5;
+    const cy=Math.cos(yaw),sy=Math.sin(yaw),cx=Math.cos(pitch),sx=Math.sin(pitch);
+    const scale=Math.min(HW,HH)*0.27/hR, CX=HW/2, CY=HH*0.42;
+    const head=(t*0.06)%1;
+    // scroll-driven intensity: mild(top) -> strong(mid) -> weak(cards)
+    const b=boost||0; // 0 at top & bottom, 1 at mid-scroll
+    // ambient glow scales with boost
+    if(b>0.01){const glowR=Math.min(HW,HH)*0.28;
+      const glowA=(0.12+0.04*Math.sin(t*0.8))*b;
+      const ag=hctx.createRadialGradient(CX,CY,0,CX,CY,glowR);
+      ag.addColorStop(0,`rgba(210,180,140,${glowA})`);ag.addColorStop(0.5,`rgba(180,150,200,${glowA*0.4})`);ag.addColorStop(1,"rgba(120,100,160,0)");
+      hctx.fillStyle=ag;hctx.beginPath();hctx.arc(CX,CY,glowR,0,6.29);hctx.fill();}
+    hctx.lineWidth=0.7+b*0.4;
+    for(let s=1;s>=-1;s-=2){
+      hctx.beginPath();
+      for(let i=0;i<NH-1;i++){
+        const a=hx[i]-hcx,b=hy[i]-hcy,c=hz[i]-hcz;
+        const x1=a*cy+c*sy,z1=-a*sy+c*cy,y1=b; const y2=y1*cx-z1*sx,z2=y1*sx+z1*cx;
+        const persp=2.6/(2.6+z2/hR); const X=CX+s*x1*scale*persp, Y=CY+y2*scale*persp;
+        const a2=hx[i+1]-hcx,b2=hy[i+1]-hcy,c2=hz[i+1]-hcz;
+        const X1b=a2*cy+c2*sy,Z1b=-a2*sy+c2*cy,Y1b=b2; const Y2b=Y1b*cx-Z1b*sx,Z2b=Y1b*sx+Z1b*cx;
+        const p2=2.6/(2.6+Z2b/hR); const X2=CX+s*X1b*scale*p2, Y2c=CY+Y2b*scale*p2;
+        let p=i/NH, fwd=p-head; fwd-=Math.round(fwd); const flow=Math.exp(-(fwd*fwd)/(2*0.02*0.02));
+        const alBase=0.05+boost*0.17, alFlow=0.5+boost*0.15, alMul=0.5+boost*0.5;
+        const al=(alBase+alFlow*flow)*(0.85+0.15*Math.sin(t*9+i)); // STOCHASTIC flicker on the line
+        hctx.strokeStyle=`rgba(255,240,220,${al*alMul})`;
+        hctx.beginPath();hctx.moveTo(X,Y);hctx.lineTo(X2,Y2c);hctx.stroke();
+      }
+    }
+    // grain (texture = stochastic)
+    hctx.globalCompositeOperation="overlay";hctx.globalAlpha=0.05;
+    const ox=rnd(150)|0,oy=rnd(150)|0;
+    for(let gx=-ox;gx<HW;gx+=150)for(let gy=-oy;gy<HH;gy+=150)hctx.drawImage(grain,gx,gy);
+    hctx.globalAlpha=1;hctx.globalCompositeOperation="source-over";
+  }
+
+  /* ===================== OPERATOR MINIS ===================== */
+  function icos(){ const t=(1+Math.sqrt(5))/2;
+    let V=[[-1,t,0],[1,t,0],[-1,-t,0],[1,-t,0],[0,-1,t],[0,1,t],[0,-1,-t],[0,1,-t],[t,0,-1],[t,0,1],[-t,0,-1],[-t,0,1]];
+    const L=Math.hypot(1,t,0); V=V.map(p=>[p[0]/L,p[1]/L,p[2]/L]);
+    let F=[[0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],[1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],[3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],[4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]];
+    const es=new Set(),E=[]; for(const f of F){const pr=[[f[0],f[1]],[f[1],f[2]],[f[2],f[0]]];for(const[a,b]of pr){const k=a<b?a+'_'+b:b+'_'+a;if(!es.has(k)){es.add(k);E.push([a,b]);}}}
+    return{V,E};}
+  const ICO=icos();
+
+  // per-canvas state holders
+  const reg={},entries=[];
+  let raf=0;
+  const operatorGrid=document.querySelector(".operators .grid");
+  function operatorsFocused(){
+    if(!operatorGrid)return true;
+    const r=operatorGrid.getBoundingClientRect();
+    return r.top<innerHeight*0.68&&r.bottom>innerHeight*0.32;
+  }
+  document.querySelectorAll(".op").forEach(op=>{
+    const cv=op.querySelector("canvas");
+    const entry={cv,ctx:fit(cv),op,st:{},visible:false};
+    reg[op.dataset.op]=entry;
+    entries.push([op.dataset.op,entry]);
+  });
+  if("IntersectionObserver" in window){
+    const opObserver=new IntersectionObserver(items=>{
+      for(const item of items){
+        const entry=reg[item.target.dataset.op];
+        if(entry){
+          entry.visible=item.isIntersecting;
+          if(!entry.visible)entry.posterDrawn=false;
+        }
+      }
+      schedule();
+    },{rootMargin:"180px 0px",threshold:0});
+    for(const [,entry] of entries)opObserver.observe(entry.op);
+  }else{
+    for(const [,entry] of entries)entry.visible=true;
+  }
+
+  const draw={
+    /* STOCHASTIC - Brownian particles, smoky trails, random surprising sparks */
+    stochastic(o,t){ const c=o.ctx,w=o.cv._w,h=o.cv._h,st=o.st;
+      if(!st.p){st.p=[];for(let i=0;i<90;i++)st.p.push({x:rnd(w),y:rnd(h),vx:R2()*0.3,vy:R2()*0.3});}
+      c.fillStyle="rgba(8,8,16,0.16)";c.fillRect(0,0,w,h);
+      c.globalCompositeOperation="lighter";
+      for(const q of st.p){ q.vx+=R2()*0.25;q.vy+=R2()*0.25;q.vx*=0.9;q.vy*=0.9;q.x+=q.vx;q.y+=q.vy;
+        if(q.x<0)q.x+=w;if(q.x>w)q.x-=w;if(q.y<0)q.y+=h;if(q.y>h)q.y-=h;
+        c.fillStyle="rgba(200,215,240,0.5)";c.fillRect(q.x,q.y,1,1); }
+      if(Math.random()<0.12){const sx=rnd(w),sy=rnd(h),g=c.createRadialGradient(sx,sy,0,sx,sy,8);
+        g.addColorStop(0,"rgba(255,250,235,0.9)");g.addColorStop(1,"rgba(220,170,120,0)");c.fillStyle=g;c.beginPath();c.arc(sx,sy,8,0,6.29);c.fill();}
+      c.globalCompositeOperation="source-over";
+    },
+    /* DYNAMICAL - a small attractor flowing, evolving in time */
+    dynamical(o,t){ const c=o.ctx,w=o.cv._w,h=o.cv._h,st=o.st;
+      if(!st.s){st.s=[0.1,0,0];st.tr=[];} const a=0.2,b=0.2,cc=5.7,d2=0.06; // Rossler
+      if(st.w!==w||st.h!==h||!st.px){st.w=w;st.h=h;st.px=new Float32Array(900);st.py=new Float32Array(900);}
+      c.fillStyle="#07070e";c.fillRect(0,0,w,h); c.globalCompositeOperation="lighter";
+      for(let k=0;k<6;k++){let[x,y,z]=st.s;const dx=-y-z,dy=x+a*y,dz=b+z*(x-cc);x+=dx*d2;y+=dy*d2;z+=dz*d2;st.s=[x,y,z];st.tr.push([x,y,z]);}
+      if(st.tr.length>900)st.tr.splice(0,st.tr.length-900);
+      const sc=Math.min(w,h)*0.041, cx=w*0.5,cy=h*0.56, yaw=t*0.4,cyA=Math.cos(yaw),syA=Math.sin(yaw),pitch=-0.1,cp=Math.cos(pitch),sp=Math.sin(pitch);
+      for(let i=0;i<st.tr.length;i++){const P=st.tr[i],x=P[0]*cyA+P[2]*syA,z=-P[0]*syA+P[2]*cyA,y=P[1]*cp-z*sp;st.px[i]=cx+x*sc;st.py[i]=cy+y*sc;}
+      if(st.tr.length>2){
+        c.strokeStyle="rgba(95,165,230,0.105)";c.lineWidth=2.7;c.lineCap="round";c.lineJoin="round";
+        c.beginPath();c.moveTo(st.px[0],st.py[0]);for(let i=1;i<st.tr.length;i++)c.lineTo(st.px[i],st.py[i]);c.stroke();
+      }
+      c.lineCap="butt";c.lineJoin="miter";
+      for(let i=1;i<st.tr.length;i++){
+        const al=i/st.tr.length; c.strokeStyle=`rgba(150,200,235,${0.05+0.38*al})`;c.lineWidth=0.75;
+        c.beginPath();c.moveTo(st.px[i-1],st.py[i-1]);c.lineTo(st.px[i],st.py[i]);c.stroke();}
+      const n=st.tr.length, tail=Math.min(58,n-1);
+      c.lineCap="round";c.lineJoin="round";
+      if(n>3){
+        const flow=(t*0.16)%2, head=1+((flow<1?flow:2-flow)*(n-2));
+        for(let i=Math.max(1,Math.floor(head-tail));i<Math.min(n,Math.ceil(head+tail));i++){
+          const d=Math.abs(i-head)/tail, p=Math.max(0,1-d), pulse=0.75+0.25*Math.sin(t*7+i*0.21);
+          if(p<=0)continue;
+          c.strokeStyle=`rgba(205,230,255,${(0.04+0.3*p*p)*pulse})`;
+          c.lineWidth=1+2.4*p;
+          c.beginPath();c.moveTo(st.px[i-1],st.py[i-1]);c.lineTo(st.px[i],st.py[i]);c.stroke();
+        }
+        for(let i=Math.max(1,Math.floor(head-18));i<Math.min(n,Math.ceil(head+18));i++){
+          const d=Math.abs(i-head)/18, p=Math.max(0,1-d);
+          if(p<=0)continue;
+          c.strokeStyle=`rgba(255,250,238,${0.07+0.2*p})`;
+          c.lineWidth=0.65+1.05*p;
+          c.beginPath();c.moveTo(st.px[i-1],st.py[i-1]);c.lineTo(st.px[i],st.py[i]);c.stroke();
+        }
+      }
+      c.globalCompositeOperation="source-over";
+    },
+    /* GENERATIVE - fitted L-system grown from settled parent tips */
+    generative(o,t){
+      const c=o.ctx,w=o.cv._w,h=o.cv._h,st=o.st;
+      const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+      const ease=x=>x*x*x*(x*(x*6-15)+10);
+      const lerp=(a,b,p)=>a+(b-a)*p;
+      const cycle=15.5,growDur=6.8,fadeDur=1.35;
+
+      if(st.seed===undefined||st.w!==w||st.h!==h||t-st.t0>cycle){
+        st.seed=rnd(10000);
+        st.t0=t;
+        st.w=w;
+        st.h=h;
+        st.built=false;
+      }
+
+      let rs=st.seed;
+      const rr=()=>{rs=(rs*9301+49297)%233280;return rs/233280;};
+
+      if(!st.built){
+        const sys={
+          axiom:"X",
+          rules:{X:"F[+X][-X]F[-FX]+X",F:"FF"},
+          angle:(21.5+rr()*4.5)*Math.PI/180,
+          iters:5
+        };
+        let str=sys.axiom;
+        for(let i=0;i<sys.iters;i++){
+          let next="";
+          for(let j=0;j<str.length&&next.length<18000;j++)next+=sys.rules[str[j]]||str[j];
+          str=next;
+        }
+
+        const segs=[],stack=[];
+        let x=0,y=0,ang=-Math.PI/2,depth=0,path=0,maxPath=0,maxDepth=0;
+        const addBounds=p=>{
+          if(st.minX===undefined){st.minX=st.maxX=p.x;st.minY=st.maxY=p.y;}
+          else{
+            if(p.x<st.minX)st.minX=p.x;if(p.x>st.maxX)st.maxX=p.x;
+            if(p.y<st.minY)st.minY=p.y;if(p.y>st.maxY)st.maxY=p.y;
+          }
+        };
+        st.minX=st.maxX=st.minY=st.maxY=undefined;
+        addBounds({x,y});
+
+        for(let i=0;i<str.length;i++){
+          const ch=str[i];
+          if(ch==="F"){
+            const len=Math.pow(0.84,depth)*(0.9+rr()*0.18);
+            const a=ang+(rr()-0.5)*0.045;
+            const nx=x+Math.cos(a)*len,ny=y+Math.sin(a)*len;
+            const dx=nx-x,dy=ny-y,dl=Math.hypot(dx,dy)||1;
+            const bow=((rr()-0.5)*0.22+Math.sin(path*0.38+depth)*0.04)*len;
+            const ctrlX=(x+nx)/2+(-dy/dl)*bow;
+            const ctrlY=(y+ny)/2+(dx/dl)*bow;
+            segs.push({x1:x,y1:y,cx:ctrlX,cy:ctrlY,x2:nx,y2:ny,depth,idx:segs.length,start:path,len,end:path+len});
+            addBounds({x:nx,y:ny});addBounds({x:ctrlX,y:ctrlY});
+            x=nx;y=ny;path+=len;
+            if(path>maxPath)maxPath=path;
+            if(depth>maxDepth)maxDepth=depth;
+          }else if(ch==="+")ang+=sys.angle+(rr()-0.5)*0.09;
+          else if(ch==="-")ang-=sys.angle+(rr()-0.5)*0.09;
+          else if(ch==="["){stack.push({x,y,ang,depth,path});depth++;}
+          else if(ch==="]"&&stack.length){
+            const s=stack.pop();
+            x=s.x;y=s.y;ang=s.ang;depth=s.depth;path=s.path;
+          }
+        }
+
+        const rawW=Math.max(0.001,st.maxX-st.minX);
+        const rawH=Math.max(0.001,st.maxY-st.minY);
+        const padX=Math.max(16,w*0.11),padTop=Math.max(12,h*0.11),padBottom=Math.max(14,h*0.12);
+        const scale=Math.min((w-padX*2)/rawW,(h-padTop-padBottom)/rawH);
+        st.scale=Math.max(0.001,scale);
+        st.ox=(w-rawW*st.scale)/2-st.minX*st.scale;
+        st.oy=h-padBottom-st.maxY*st.scale;
+        st.maxPath=Math.max(1,maxPath);
+        st.maxDepth=Math.max(1,maxDepth);
+
+        const heightSpan=Math.max(0.001,st.maxY-st.minY);
+        const prepPoint=(px,py)=>{
+          const high=Math.max(0,Math.min(1,(st.maxY-py)/heightSpan));
+          const swayPhase=high*4.6,liftPhase=high*3.1;
+          const swayAmp=Math.pow(high,1.55);
+          const liftAmp=Math.pow(high,1.9)*0.8;
+          return {
+            x:st.ox+px*st.scale,
+            y:st.oy+py*st.scale,
+            swC:Math.cos(swayPhase)*swayAmp,
+            swS:Math.sin(swayPhase)*swayAmp,
+            lfC:Math.cos(liftPhase)*liftAmp,
+            lfS:Math.sin(liftPhase)*liftAmp
+          };
+        };
+        for(const s of segs){
+          s.p1=prepPoint(s.x1,s.y1);
+          s.pc=prepPoint(s.cx,s.cy);
+          s.p2=prepPoint(s.x2,s.y2);
+        }
+
+        const key=(px,py)=>Math.round(px*1000)+":"+Math.round(py*1000);
+        const starts=new Set(segs.map(s=>key(s.x1,s.y1)));
+        st.terminals=[];
+        for(let i=0;i<segs.length;i++){
+          const s=segs[i];
+          if(!starts.has(key(s.x2,s.y2))&&s.depth>=Math.max(2,st.maxDepth-2))st.terminals.push(i);
+        }
+        st.segs=segs;
+        st.built=true;
+      }
+
+      const elapsed=t-st.t0;
+      const growth=ease(clamp(elapsed/growDur));
+      const fade=1-ease(clamp((elapsed-(cycle-fadeDur))/fadeDur));
+      const segs=st.segs||[],maxD=st.maxDepth||1,maxPath=st.maxPath||1;
+      const front=growth*(maxPath+0.18);
+      const root={x:st.ox,y:st.oy};
+
+      c.globalCompositeOperation="source-over";
+      c.fillStyle="#07070e";
+      c.fillRect(0,0,w,h);
+      const bg=c.createRadialGradient(w*0.52,h*0.54,0,w*0.52,h*0.54,Math.max(w,h)*0.62);
+      bg.addColorStop(0,"rgba(23,24,32,0.72)");
+      bg.addColorStop(0.52,"rgba(10,10,18,0.48)");
+      bg.addColorStop(1,"rgba(7,7,14,0)");
+      c.fillStyle=bg;
+      c.fillRect(0,0,w,h);
+
+      const windAmp=Math.min(7,w*0.026);
+      const swT=Math.sin(t*0.82),swC=Math.cos(t*0.82);
+      const lfT=Math.sin(t*0.47),lfC=Math.cos(t*0.47);
+      const place=p=>{
+        return {
+          x:p.x+(swT*p.swC+swC*p.swS)*windAmp*fade,
+          y:p.y+(lfT*p.lfC+lfC*p.lfS)*fade
+        };
+      };
+      const baseGlow=c.createRadialGradient(root.x,root.y,0,root.x,root.y,Math.max(34,h*0.26));
+      baseGlow.addColorStop(0,`rgba(210,164,116,${0.038*growth*fade})`);
+      baseGlow.addColorStop(0.5,`rgba(100,190,170,${0.011*growth*fade})`);
+      baseGlow.addColorStop(1,"rgba(90,120,180,0)");
+      c.fillStyle=baseGlow;
+      c.beginPath();
+      c.arc(root.x,root.y,Math.max(1,h*0.26),0,6.29);
+      c.fill();
+
+      const baseR=Math.max(5,Math.min(w,h)*0.045);
+      c.globalCompositeOperation="lighter";
+      const seedGlow=c.createRadialGradient(root.x,root.y,0,root.x,root.y,baseR);
+      seedGlow.addColorStop(0,`rgba(234,198,150,${0.075*fade*(0.65+0.35*growth)})`);
+      seedGlow.addColorStop(0.55,`rgba(160,205,180,${0.025*fade})`);
+      seedGlow.addColorStop(1,"rgba(160,180,160,0)");
+      c.fillStyle=seedGlow;
+      c.beginPath();
+      c.arc(root.x,root.y,baseR,0,6.29);
+      c.fill();
+      c.fillStyle=`rgba(236,218,182,${0.16*fade})`;
+      c.beginPath();
+      c.arc(root.x,root.y,Math.max(0.8,Math.min(w,h)*0.006),0,6.29);
+      c.fill();
+
+      c.globalCompositeOperation="lighter";
+      for(const s of segs){
+        const local=clamp((front-s.start)/(s.len*1.04));
+        if(local<=0)continue;
+        const p=ease(local);
+        const p1=place(s.p1),pc=place(s.pc),p2=place(s.p2);
+        const q0={x:lerp(p1.x,pc.x,p),y:lerp(p1.y,pc.y,p)};
+        const q1={x:lerp(pc.x,p2.x,p),y:lerp(pc.y,p2.y,p)};
+        const end={x:lerp(q0.x,q1.x,p),y:lerp(q0.y,q1.y,p)};
+        const depthRatio=s.depth/maxD;
+        const hue=34+depthRatio*138;
+        const alpha=fade*(0.12+0.56*p)*(0.82+0.18*depthRatio);
+        const width=Math.max(0.42,(1.85-depthRatio*1.18)*(0.48+0.52*p));
+        c.strokeStyle=`hsla(${hue},${44+depthRatio*22}%,${58+depthRatio*18}%,${alpha})`;
+        c.lineWidth=width;
+        c.lineCap="round";
+        c.lineJoin="round";
+        c.beginPath();
+        c.moveTo(p1.x,p1.y);
+        c.quadraticCurveTo(q0.x,q0.y,end.x,end.y);
+        c.stroke();
+
+        if(p>0.82&&s.depth>=maxD-2){
+          const tipPulse=0.58+0.42*Math.sin(t*2.1+s.idx*0.73);
+          const r=(1.1+2.1*tipPulse)*fade*clamp((p-0.82)/0.18);
+          if(r>0.15){
+            const g=c.createRadialGradient(end.x,end.y,0,end.x,end.y,Math.max(0.2,r*2.05));
+            g.addColorStop(0,`hsla(${118+depthRatio*80},58%,82%,${0.2*fade*tipPulse})`);
+            g.addColorStop(0.55,`hsla(${156+depthRatio*54},58%,58%,${0.055*fade*tipPulse})`);
+            g.addColorStop(1,"rgba(145,210,180,0)");
+            c.fillStyle=g;
+            c.beginPath();
+            c.arc(end.x,end.y,r*2.05,0,6.29);
+            c.fill();
+          }
+        }
+      }
+
+      c.globalCompositeOperation="source-over";
+    },
+    /* GEOMETRIC - geodesic icosphere, clean symmetry rotating */
+    geometric(o,t){ const c=o.ctx,w=o.cv._w,h=o.cv._h;
+      c.fillStyle="rgba(7,7,14,1)";c.fillRect(0,0,w,h); c.globalCompositeOperation="lighter";
+      const yaw=t*0.4,pitch=0.5*Math.sin(t*0.3),cy=Math.cos(yaw),sy=Math.sin(yaw),cx=Math.cos(pitch),sx=Math.sin(pitch);
+      const R=Math.min(w,h)*0.34,CX=w/2,CY=h/2,pr=[];
+      for(const p of ICO.V){const x1=p[0]*cy+p[2]*sy,z1=-p[0]*sy+p[2]*cy,y1=p[1];const y2=y1*cx-z1*sx,z2=y1*sx+z1*cx;
+        const pe=1/(1-0.18*z2);pr.push({x:CX+x1*R*pe,y:CY+y2*R*pe,z:z2});}
+      for(const[a,b]of ICO.E){const d=((pr[a].z+pr[b].z)/2+1)/2;c.strokeStyle=`rgba(210,225,250,${0.1+0.45*d*d})`;c.lineWidth=0.7;
+        c.beginPath();c.moveTo(pr[a].x,pr[a].y);c.lineTo(pr[b].x,pr[b].y);c.stroke();}
+      for(const p of pr){if(p.z<0)continue;const d=(p.z+1)/2,vr=Math.max(0,2.4*d+1),g=c.createRadialGradient(p.x,p.y,0,p.x,p.y,Math.max(0.1,vr));
+        g.addColorStop(0,`rgba(255,250,240,${0.6*d})`);g.addColorStop(1,"rgba(210,164,116,0)");c.fillStyle=g;c.beginPath();c.arc(p.x,p.y,vr,0,6.29);c.fill();}
+      c.globalCompositeOperation="source-over";
+    },
+    /* EXPERIENTIAL - a system that perceives you; it leans toward the cursor and brightens */
+    experiential(o,t){ const c=o.ctx,w=o.cv._w||1,h=o.cv._h||1,st=o.st;
+      const r=o.cv.getBoundingClientRect();
+      const inside=ptr.x>=r.left&&ptr.x<=r.right&&ptr.y>=r.top&&ptr.y<=r.bottom;
+      const tx=inside?ptr.x-r.left:w/2, ty=inside?ptr.y-r.top:h/2;
+      if(st.x===undefined){st.x=w/2;st.y=h/2;st.b=0;}
+      st.x+=(tx-st.x)*0.08; st.y+=(ty-st.y)*0.08; st.b+=((inside?1:0.35)-st.b)*0.06;
+      c.fillStyle="rgba(7,7,14,1)";c.fillRect(0,0,w,h); c.globalCompositeOperation="lighter";
+      // breathing orb that follows perception
+      const br=(0.6+0.4*Math.sin(t*1.4))*st.b+0.2;
+      const R=Math.max(0,Math.min(w,h)*(0.3+0.12*st.b));
+      const g=c.createRadialGradient(st.x,st.y,0,st.x,st.y,Math.max(0.1,R));
+      g.addColorStop(0,`rgba(255,246,232,${0.5*br})`);g.addColorStop(0.4,`rgba(220,170,120,${0.18*br})`);g.addColorStop(1,"rgba(180,150,255,0)");
+      c.fillStyle=g;c.beginPath();c.arc(st.x,st.y,Math.max(0,R),0,6.29);c.fill();
+      // ripples of perception
+      for(let k=0;k<3;k++){const ph=((t*0.5+k/3)%1);const rr=Math.max(0,ph*R*1.4);
+        c.strokeStyle=`rgba(230,210,235,${(1-ph)*0.22*st.b})`;c.lineWidth=0.8;c.beginPath();c.arc(st.x,st.y,rr,0,6.29);c.stroke();}
+      c.globalCompositeOperation="source-over";
+    },
+  };
+
+  /* ---------- master loop ---------- */
+  function resizeAll(){ heroResize(); for(const [,entry] of entries){ entry.ctx=fit(entry.cv); entry.posterDrawn=false; } }
+  let resizeQueued=false;
+  function queueResize(){
+    if(resizeQueued)return;
+    resizeQueued=true;
+    requestAnimationFrame(()=>{resizeQueued=false;resizeAll();schedule();});
+  }
+  addEventListener("resize",queueResize);
+  const t0=performance.now();
+  let operatorT=0,lastOperatorT=0;
+  function schedule(){ if(!raf&&!document.hidden)raf=requestAnimationFrame(loop); }
+  function loop(now){ raf=0; const t=(now-t0)/1000, frameStart=bench?performance.now():0;
+    const sc=window.scrollY||document.documentElement.scrollTop||0;
+    const hop=Math.max(0,Math.min(1,1-sc/(innerHeight*0.72)));
+    hero.style.opacity=hop;
+    const boost=Math.sin((1-hop)*Math.PI); // bell curve: 0->1->0 as you scroll
+    let active=hop>0.03;
+    const heroActive=active;
+    const operatorsAnimating=!heroActive&&operatorsFocused();
+    if(operatorsAnimating){
+      if(lastOperatorT)operatorT+=Math.min(0.05,t-lastOperatorT);
+      lastOperatorT=t;
+    }else{
+      lastOperatorT=0;
+    }
+    if(active){
+      if(bench){const s=performance.now();drawHero(t,boost);bench.add("hero",performance.now()-s);}
+      else drawHero(t,boost);
+    }
+    let operatorsMs=0;
+    const visible=[];
+    let posterBudget=1,pendingPosters=false;
+    for(const [k,entry] of entries){
+      if(!entry.visible)continue;
+      const needsPoster=!entry.posterDrawn;
+      if(!operatorsAnimating&&!needsPoster)continue;
+      if(needsPoster&&posterBudget<=0){pendingPosters=true;continue;}
+      visible.push(k);
+      const s=bench?performance.now():0;
+      try{ draw[k](entry,operatorT); }
+      catch(e){
+        if(!entry.errLogged){
+          console.error("operator render failed:",k,e);
+          entry.errLogged=true;
+        }
+      }
+      if(bench){const ms=performance.now()-s;bench.add(k,ms);operatorsMs+=ms;}
+      if(needsPoster){entry.posterDrawn=true;posterBudget--;}
+      active=true;
+    }
+    if(pendingPosters)active=true;
+    if(bench){
+      if(operatorsMs)bench.add("operators",operatorsMs);
+      bench.endFrame(now,performance.now()-frameStart,{hero:heroActive,visible});
+    }
+    if(active)schedule();
+  }
+  addEventListener("scroll",schedule,{passive:true});
+  document.addEventListener("visibilitychange",schedule);
+  resizeAll(); schedule();
+})();
+</script>
+</body>
+</html>
