@@ -84,10 +84,12 @@
   .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(14px,1.6vw,22px);}
   @media(max-width:1080px){.grid{grid-template-columns:repeat(2,1fr);}}
   @media(max-width:560px){.grid{grid-template-columns:1fr;}}
-  .op{position:relative;border:1px solid rgba(var(--dim),0.1);border-radius:6px;overflow:hidden;
-    background:rgba(255,255,255,0.012);transition:border-color .5s,transform .5s,background .5s;}
+  .op{position:relative;border:1px solid rgba(var(--dim),0.1);border-radius:6px;overflow:hidden;isolation:isolate;
+    background:rgba(255,255,255,0.012);transition:border-color .5s,transform .5s,background .5s;
+    transform:translateZ(0);backface-visibility:hidden;contain:layout paint;}
   .op:hover{border-color:rgba(var(--gold),0.34);transform:translateY(-4px);background:rgba(255,255,255,0.03);}
-  .op canvas{display:block;width:100%;height:150px;}
+  .op canvas{display:block;width:100%;height:150px;background:#07070e;transform:translateZ(0);backface-visibility:hidden;}
+  @media(max-width:720px){.op:hover{transform:translateZ(0);}.op canvas{height:148px;}}
   .op .body{padding:16px 18px 20px;}
   .op .idx{font-size:0.5rem;letter-spacing:0.3em;color:rgba(var(--gold),0.55);}
   .op h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:1.5rem;letter-spacing:0.03em;
@@ -422,8 +424,10 @@
 
   /* ---------- DPR canvas sizing ---------- */
   function fit(cv){ const dpr=Math.min(devicePixelRatio||1,2); const r=cv.getBoundingClientRect();
-    cv.width=Math.max(1,Math.round(r.width*dpr)); cv.height=Math.max(1,Math.round(r.height*dpr));
-    const c=cv.getContext("2d"); c.setTransform(dpr,0,0,dpr,0,0); cv._w=r.width; cv._h=r.height; return c; }
+    const nextW=Math.max(1,Math.round(r.width*dpr)),nextH=Math.max(1,Math.round(r.height*dpr));
+    const changed=cv.width!==nextW||cv.height!==nextH;
+    if(changed){cv.width=nextW;cv.height=nextH;}
+    const c=cv.getContext("2d"); c.setTransform(dpr,0,0,dpr,0,0); cv._w=r.width; cv._h=r.height; cv._fitChanged=changed; return c; }
 
   /* ---------- opt-in renderer benchmark: add ?bench=1 ---------- */
   const bench=(()=>{
@@ -583,7 +587,12 @@
   const reg={},entries=[];
   let raf=0;
   const operatorGrid=document.querySelector(".operators .grid");
-  function operatorsFocused(){
+  const mobileOps=matchMedia("(max-width:720px)");
+  let operatorWarmUntil=0;
+  function warmOperators(ms=560){ if(mobileOps.matches)operatorWarmUntil=performance.now()+ms; }
+  function nearViewport(el,margin=520){ const r=el.getBoundingClientRect(); return r.bottom>-margin&&r.top<innerHeight+margin; }
+  function operatorsFocused(now=performance.now()){
+    if(mobileOps.matches&&now<operatorWarmUntil)return true;
     if(!operatorGrid)return true;
     const r=operatorGrid.getBoundingClientRect();
     return r.top<innerHeight*0.68&&r.bottom>innerHeight*0.32;
@@ -604,7 +613,7 @@
         }
       }
       schedule();
-    },{rootMargin:"180px 0px",threshold:0});
+    },{rootMargin:mobileOps.matches?"520px 0px":"180px 0px",threshold:0});
     for(const [,entry] of entries)opObserver.observe(entry.op);
   }else{
     for(const [,entry] of entries)entry.visible=true;
@@ -897,12 +906,12 @@
   };
 
   /* ---------- master loop ---------- */
-  function resizeAll(){ heroResize(); for(const [,entry] of entries){ entry.ctx=fit(entry.cv); entry.posterDrawn=false; } }
+  function resizeAll(){ heroResize(); for(const [,entry] of entries){ entry.ctx=fit(entry.cv); if(entry.cv._fitChanged)entry.posterDrawn=false; } }
   let resizeQueued=false;
   function queueResize(){
     if(resizeQueued)return;
     resizeQueued=true;
-    requestAnimationFrame(()=>{resizeQueued=false;resizeAll();schedule();});
+    requestAnimationFrame(()=>{resizeQueued=false;warmOperators(720);resizeAll();schedule();});
   }
   addEventListener("resize",queueResize);
   const t0=performance.now();
@@ -915,7 +924,8 @@
     const boost=Math.sin((1-hop)*Math.PI); // bell curve: 0->1->0 as you scroll
     let active=hop>0.03;
     const heroActive=active;
-    const operatorsAnimating=!heroActive&&operatorsFocused();
+    const mobileWarm=mobileOps.matches&&now<operatorWarmUntil;
+    const operatorsAnimating=!heroActive&&operatorsFocused(now);
     if(operatorsAnimating){
       if(lastOperatorT)operatorT+=Math.min(0.05,t-lastOperatorT);
       lastOperatorT=t;
@@ -928,9 +938,10 @@
     }
     let operatorsMs=0;
     const visible=[];
-    let posterBudget=1,pendingPosters=false;
+    let posterBudget=mobileWarm?entries.length:1,pendingPosters=false;
     for(const [k,entry] of entries){
-      if(!entry.visible)continue;
+      const frameVisible=entry.visible||(mobileWarm&&nearViewport(entry.op));
+      if(!frameVisible)continue;
       const needsPoster=!entry.posterDrawn;
       if(!operatorsAnimating&&!needsPoster)continue;
       if(needsPoster&&posterBudget<=0){pendingPosters=true;continue;}
@@ -954,7 +965,7 @@
     }
     if(active)schedule();
   }
-  addEventListener("scroll",schedule,{passive:true});
+  addEventListener("scroll",()=>{warmOperators();schedule();},{passive:true});
   document.addEventListener("visibilitychange",schedule);
   resizeAll(); schedule();
 })();
