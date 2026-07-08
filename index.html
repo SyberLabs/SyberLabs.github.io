@@ -254,7 +254,9 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
   [data-theme="light"] .theme-toggle{background:rgba(255,252,246,0.66);}
   [data-theme="light"] .theme-toggle::before{background:rgb(var(--gold));box-shadow:inset -5px -3px 0 rgba(255,255,255,0.72),0 0 0 5px rgba(var(--gold),0.1),0 0 18px rgba(var(--gold),0.2);}
   [data-theme="light"] .op,
-  [data-theme="light"] .proj{
+  [data-theme="light"] .proj,
+  [data-theme="light"] .way,
+  [data-theme="light"] .cta-card{
     background:linear-gradient(180deg,rgba(0,111,205,0.94),rgba(0,79,168,0.96));
     border-color:rgba(0,64,132,0.22);
     box-shadow:0 16px 40px rgba(0,72,150,0.12);
@@ -271,20 +273,45 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
     color:rgba(255,249,238,0.82);
   }
   [data-theme="light"] .op h3,
-  [data-theme="light"] .proj h4{
+  [data-theme="light"] .proj h4,
+  [data-theme="light"] .way h4,
+  [data-theme="light"] .cta-card p{
     color:rgba(255,252,246,0.98);
   }
   [data-theme="light"] .op .arrow,
   [data-theme="light"] .op .kw,
   [data-theme="light"] .proj .desc,
-  [data-theme="light"] .proj .ev li{
+  [data-theme="light"] .proj .ev li,
+  [data-theme="light"] .way p{
     color:rgba(245,239,228,0.78);
+  }
+  [data-theme="light"] .way .core,
+  [data-theme="light"] .cta-links a{
+    color:rgba(255,249,238,0.82);
+    border-color:rgba(255,249,238,0.3);
+  }
+  [data-theme="light"] .cta-links a:hover{
+    color:rgba(255,252,246,0.98);
+    border-color:rgba(255,252,246,0.72);
   }
   [data-theme="light"] .proj .tags span{
     color:rgba(255,249,238,0.74);
     border-color:rgba(255,249,238,0.24);
   }
   [data-theme="light"] .op:hover .go{color:rgba(255,252,246,0.98);}
+  [data-theme="light"] .strip{
+    background:rgba(0,64,132,0.18);
+    border-color:rgba(0,64,132,0.18);
+  }
+  [data-theme="light"] .strip div{
+    background:linear-gradient(180deg,rgba(0,111,205,0.94),rgba(0,79,168,0.96));
+  }
+  [data-theme="light"] .strip dt{
+    color:rgba(255,249,238,0.84);
+  }
+  [data-theme="light"] .strip dd{
+    color:rgba(245,239,228,0.78);
+  }
 </style>
 </head>
 <body>
@@ -351,7 +378,7 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
 
   <section class="flagship" id="work">
     <div class="sec-lbl">selected work</div>
-    <div class="sec-ttl">built and tested</div>
+    <div class="sec-ttl">Built &amp; Tested</div>
     <div class="pgrid">
 
       <a class="proj feature" href="https://github.com/SyberLabs/skypredict-v2" target="_blank" rel="noopener">
@@ -434,7 +461,7 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
 
   <section class="ways" id="directions">
     <div class="sec-lbl">professional directions</div>
-    <div class="sec-ttl">three ways I can contribute</div>
+    <div class="sec-ttl">Three ways I can contribute</div>
     <div class="wgrid">
       <article class="way"><h4>Research engineer</h4><span class="core">Grokking Scaling &middot; Dynamic Kernel</span><p>I build empirical machinery for hard-to-test ideas, and report uncertainty as part of the work.</p></article>
       <article class="way"><h4>ML / data engineer</h4><span class="core">SkyPredict &middot; Green Hypercube</span><p>I build end-to-end data systems with observability, evaluation, audits, and interfaces.</p></article>
