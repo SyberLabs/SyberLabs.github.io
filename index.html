@@ -635,7 +635,7 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
   function heroResize(){const dpr=Math.min(devicePixelRatio||1,2);HW=innerWidth;HH=innerHeight;
     hero.width=Math.round(HW*dpr);hero.height=Math.round(HH*dpr);hctx.setTransform(dpr,0,0,dpr,0,0);seedSparks();buildGrain();}
 
-  let smx=0,smy=0,heroFrame=0;
+  let heroFrame=0;
   function drawHero(t,boost){
     const light=isLight();
     hctx.setTransform((Math.min(devicePixelRatio||1,2)),0,0,(Math.min(devicePixelRatio||1,2)),0,0);
@@ -654,11 +654,7 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
       hctx.fillStyle=light?`rgba(0,103,198,${Math.max(0,a*0.46)})`:`rgba(220,225,240,${Math.max(0,a)})`; hctx.fillRect(s.x,s.y,s.s,s.s); }
 
     // DYNAMICAL + GEOMETRIC heart: folded Aizawa, flowing, breathing
-    const idle=(performance.now()-(ptr.lt||0))/1000;
-    const infl=ptr.active?Math.max(0,Math.min(1,1-(idle-1.6)/2)):0;
-    const tx=(ptr.x/HW-0.5)*infl, ty=(ptr.y/HH-0.5)*infl;
-    smx+=(tx-smx)*0.05; smy+=(ty-smy)*0.05;
-    const yaw=t*0.12 + smx*0.62, pitch=-0.3+0.18*Math.sin(t*0.2)+smy*0.5;
+    const yaw=t*0.12, pitch=-0.3+0.18*Math.sin(t*0.2);
     const cy=Math.cos(yaw),sy=Math.sin(yaw),cx=Math.cos(pitch),sx=Math.sin(pitch);
     const scale=Math.min(HW,HH)*0.27/hR, CX=HW/2, CY=HH*0.42;
     const head=(t*0.06)%1;
@@ -669,12 +665,12 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
       const glowA=(0.12+0.04*Math.sin(t*0.8))*b;
       const ag=hctx.createRadialGradient(CX,CY,0,CX,CY,glowR);
       if(light){
-        ag.addColorStop(0,`rgba(0,122,220,${glowA*0.52})`);ag.addColorStop(0.55,`rgba(68,154,224,${glowA*0.18})`);ag.addColorStop(1,"rgba(0,95,190,0)");
+        ag.addColorStop(0,`rgba(0,112,205,${glowA*0.92})`);ag.addColorStop(0.55,`rgba(44,136,215,${glowA*0.34})`);ag.addColorStop(1,"rgba(0,95,190,0)");
       }else{
         ag.addColorStop(0,`rgba(210,180,140,${glowA})`);ag.addColorStop(0.5,`rgba(180,150,200,${glowA*0.4})`);ag.addColorStop(1,"rgba(120,100,160,0)");
       }
       hctx.fillStyle=ag;hctx.beginPath();hctx.arc(CX,CY,glowR,0,6.29);hctx.fill();}
-    hctx.lineWidth=0.7+b*0.4;
+    hctx.lineWidth=light?1.05+b*0.65:0.7+b*0.4;
     for(let s=1;s>=-1;s-=2){
       hctx.beginPath();
       for(let i=0;i<NH-1;i++){
@@ -687,12 +683,12 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
         let p=i/NH, fwd=p-head; fwd-=Math.round(fwd); const flow=Math.exp(-(fwd*fwd)/(2*0.02*0.02));
         const alBase=0.05+boost*0.17, alFlow=0.5+boost*0.15, alMul=0.5+boost*0.5;
         const al=(alBase+alFlow*flow)*(0.85+0.15*Math.sin(t*9+i)); // STOCHASTIC flicker on the line
-        hctx.strokeStyle=light?`rgba(0,93,184,${al*alMul*0.82})`:`rgba(255,240,220,${al*alMul})`;
+        hctx.strokeStyle=light?`rgba(0,76,166,${Math.min(0.9,al*alMul*(1.28+b*0.42))})`:`rgba(255,240,220,${al*alMul})`;
         hctx.beginPath();hctx.moveTo(X,Y);hctx.lineTo(X2,Y2c);hctx.stroke();
       }
     }
     // grain (texture = stochastic)
-    hctx.globalCompositeOperation="overlay";hctx.globalAlpha=light?0.025:0.05;
+    hctx.globalCompositeOperation="overlay";hctx.globalAlpha=light?0.016:0.05;
     const ox=rnd(150)|0,oy=rnd(150)|0;
     for(let gx=-ox;gx<HW;gx+=150)for(let gy=-oy;gy<HH;gy+=150)hctx.drawImage(grain,gx,gy);
     hctx.globalAlpha=1;hctx.globalCompositeOperation="source-over";
