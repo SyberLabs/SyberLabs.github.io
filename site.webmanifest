@@ -1,7 +1,7 @@
 {
   "name": "SyberLabs",
   "short_name": "SyberLabs",
-  "description": "Empirical and experiential systems by Mateo Robles.",
+  "description": "A laboratory for empirical and experiential systems.",
   "start_url": "/",
   "scope": "/",
   "display": "minimal-ui",

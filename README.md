@@ -1,5 +1,5 @@
 ﻿# SyberLabs homepage
 
-Static portfolio site for [syberlabs.space](https://syberlabs.space/).
+Static site for [syberlabs.space](https://syberlabs.space/).
 
-Built as a single-file HTML/CSS/canvas experience with explicit OpenGraph metadata, icons, sitemap, robots file, and GitHub Pages custom-domain configuration.
+The domain is the public face of the SyberLabs laboratory. Built as a single-file HTML/CSS/canvas experience with OpenGraph metadata, icons, sitemap, robots, and GitHub Pages custom-domain configuration.

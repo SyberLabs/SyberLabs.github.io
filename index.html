@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SyberLabs | Empirical &amp; Experiential Systems</title>
-<meta name="description" content="SyberLabs is Mateo Robles' studio for machine-learning evaluation, simulation platforms, research tooling, and generative art.">
-<meta name="author" content="Mateo Robles">
+<meta name="description" content="SyberLabs is a laboratory for empirical and experiential systems: machine learning, human-computer interaction, computational kernels, simulation, and generative art.">
+<meta name="author" content="SyberLabs">
 <meta name="theme-color" content="#06060c">
 <meta name="color-scheme" content="dark light">
 <link rel="canonical" href="https://syberlabs.space/">
@@ -18,7 +18,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="SyberLabs">
 <meta property="og:title" content="SyberLabs | Empirical &amp; Experiential Systems">
-<meta property="og:description" content="Machine-learning evaluation, simulation platforms, research tooling, and generative art by Mateo Robles.">
+<meta property="og:description" content="A laboratory for machine learning, human-computer interaction, computational kernels, simulation, and generative art.">
 <meta property="og:url" content="https://syberlabs.space/">
 <meta property="og:image" content="https://syberlabs.space/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -28,19 +28,30 @@
 <meta name="twitter:site" content="@syberlabs">
 <meta name="twitter:creator" content="@syberlabs">
 <meta name="twitter:title" content="SyberLabs | Empirical &amp; Experiential Systems">
-<meta name="twitter:description" content="Machine-learning evaluation, simulation platforms, research tooling, and generative art by Mateo Robles.">
+<meta name="twitter:description" content="A laboratory for machine learning, human-computer interaction, computational kernels, simulation, and generative art.">
 <meta name="twitter:image" content="https://syberlabs.space/og-image.png">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebSite",
+  "@type": "Organization",
   "name": "SyberLabs",
   "url": "https://syberlabs.space/",
-  "description": "SyberLabs is Mateo Robles' studio for machine-learning evaluation, simulation platforms, research tooling, and generative art.",
-  "creator": {
-    "@type": "Person",
-    "name": "Mateo Robles"
-  }
+  "email": "syberlabs.software@gmail.com",
+  "description": "A laboratory for machine learning, human-computer interaction, computational kernels, simulation, and generative art.",
+  "member": [
+    {
+      "@type": "Person",
+      "name": "Mateo Robles",
+      "jobTitle": "Principal Architect",
+      "url": "https://github.com/sykosyber"
+    },
+    {
+      "@type": "Person",
+      "name": "Seth Carlson",
+      "jobTitle": "Principal Engineer",
+      "url": "https://github.com/sdcarlson"
+    }
+  ]
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -178,18 +189,28 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
   .proj .tags{margin-top:1em;display:flex;flex-wrap:wrap;gap:7px;}
   .proj .tags span{font-family:"Space Mono",monospace;font-size:0.49rem;letter-spacing:0.08em;color:rgba(var(--dim),0.6);
     border:1px solid rgba(var(--dim),0.16);border-radius:3px;padding:3px 8px;}
+  .proj .credit{margin-top:1em;font-family:"Space Mono",monospace;font-size:0.5rem;letter-spacing:0.14em;
+    text-transform:uppercase;color:rgba(var(--gold),0.55);line-height:1.55;}
   .proj.short{display:flex;flex-direction:column;justify-content:center;}
   .proj.short .desc{margin-top:0.55em;}
 
   /* ---- three ways ---- */
   .ways{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:clamp(48px,8vh,98px) clamp(20px,5vw,40px) 4px;}
-  .wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.8vw,22px);}
-  @media(max-width:720px){.wgrid{grid-template-columns:1fr;}}
-  .way{border:1px solid rgba(var(--dim),0.12);border-radius:8px;padding:22px;background:var(--card-bg);}
+  .wgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(14px,1.8vw,22px);}
+  @media(max-width:720px){.wgrid{grid-template-columns:1fr;}a.way:hover{transform:none;}}
+  .way{border:1px solid rgba(var(--dim),0.12);border-radius:8px;padding:22px;background:var(--card-bg);
+    text-decoration:none;color:inherit;display:block;transition:border-color .4s,transform .4s,background .4s;}
+  a.way:hover{border-color:rgba(var(--gold),0.34);transform:translateY(-3px);background:var(--card-hover);}
   .way h4{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:1.32rem;color:rgba(var(--ink),0.94);}
   .way .core{display:block;margin:0.55em 0;font-family:"Space Mono",monospace;font-size:0.52rem;letter-spacing:0.12em;
     text-transform:uppercase;color:rgba(var(--gold),0.7);line-height:1.5;}
   .way p{font-family:"Space Mono",monospace;font-size:0.6rem;line-height:1.6;color:rgba(var(--dim),0.75);}
+  .way .ev{list-style:none;margin:0.85em 0 0;padding:0;}
+  .way .ev li{font-family:"Space Mono",monospace;font-size:0.575rem;line-height:1.5;color:rgba(var(--dim),0.64);padding-left:15px;position:relative;margin-bottom:0.4em;}
+  .way .ev li::before{content:"\2192";position:absolute;left:0;color:rgba(var(--gold),0.5);}
+  .way .tags{margin-top:1em;display:flex;flex-wrap:wrap;gap:7px;}
+  .way .tags span{font-family:"Space Mono",monospace;font-size:0.49rem;letter-spacing:0.08em;color:rgba(var(--dim),0.6);
+    border:1px solid rgba(var(--dim),0.16);border-radius:3px;padding:3px 8px;}
 
   /* ---- CTA ---- */
   .cta{
@@ -274,14 +295,17 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
     contain:paint;
   }
   [data-theme="light"] .op:hover,
-  [data-theme="light"] .proj:hover{
+  [data-theme="light"] .proj:hover,
+  [data-theme="light"] a.way:hover{
     background:linear-gradient(180deg,rgba(0,123,220,0.96),rgba(0,86,178,0.98));
     border-color:rgba(0,82,170,0.34);
   }
   [data-theme="light"] .op .idx,
   [data-theme="light"] .op .go,
   [data-theme="light"] .proj .status,
-  [data-theme="light"] .proj .ev li::before{
+  [data-theme="light"] .proj .credit,
+  [data-theme="light"] .proj .ev li::before,
+  [data-theme="light"] .way .ev li::before{
     color:rgba(255,249,238,0.82);
   }
   [data-theme="light"] .op h3,
@@ -294,7 +318,8 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
   [data-theme="light"] .op .kw,
   [data-theme="light"] .proj .desc,
   [data-theme="light"] .proj .ev li,
-  [data-theme="light"] .way p{
+  [data-theme="light"] .way p,
+  [data-theme="light"] .way .ev li{
     color:rgba(245,239,228,0.78);
   }
   [data-theme="light"] .way .core,
@@ -306,7 +331,8 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
     color:rgba(255,252,246,0.98);
     border-color:rgba(255,252,246,0.72);
   }
-  [data-theme="light"] .proj .tags span{
+  [data-theme="light"] .proj .tags span,
+  [data-theme="light"] .way .tags span{
     color:rgba(255,249,238,0.74);
     border-color:rgba(255,249,238,0.24);
   }
@@ -337,7 +363,7 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
     <div class="mark">SyberLabs</div>
     <div class="ruleline"></div>
     <div class="tag">empirical &amp; experiential systems</div>
-    <div class="eyebrow">by mateo robles</div>
+    <div class="eyebrow">a laboratory</div>
     
   </section>
 
@@ -376,17 +402,46 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
   </section>
 
   <section class="about" id="about">
-    <div class="sec-lbl">the practice</div>
+    <div class="sec-lbl">the laboratory</div>
     <p class="bio">
-      <span>My principal interest lies in the question: how may software change what people can perceive, understand, and create?</span>
-      <span>SyberLabs is my place for building experiments across <strong>machine-learning evaluation, simulation platforms, and generative art.</strong></span>
-      <span>I graduated from Santa Clara University in Computer Science, with an emphasis on Data Science.</span>
+      <span>The question that organizes the work: how may software change what people can perceive, understand, and create?</span>
+      <span>SyberLabs is a laboratory for building and studying software at the intersection of <strong>machine learning, human-computer interaction, computational systems, simulation, and generative art.</strong></span>
+      <span>Work is attributed. Claims are graded. The systems are built to be entered, tested, and returned to.</span>
     </p>
     <dl class="strip">
-      <div><dt>Strength</dt><dd>Turning ambitious ideas into testable software systems.</dd></div>
-      <div><dt>Range</dt><dd>ML, simulation, generative art, research tooling.</dd></div>
-      <div><dt>Signal</dt><dd>Evidence-aware framing: results, prototypes, and art stay clearly labeled.</dd></div>
+      <div><dt>Interfaces</dt><dd>Reading and thinking surfaces: RISE, OmniOS.</dd></div>
+      <div><dt>Kernels</dt><dd>Typed hypergraph rewrite with exact stochastic semantics: OSAHR.</dd></div>
+      <div><dt>Evidence</dt><dd>Public claims stay labeled. Frozen artifacts carry checksums.</dd></div>
     </dl>
+  </section>
+
+  <section class="ways" id="people">
+    <div class="sec-lbl">the people</div>
+    <div class="sec-ttl">Who builds it</div>
+    <div class="wgrid">
+      <a class="way" href="https://github.com/sykosyber" target="_blank" rel="noopener">
+        <h4>Mateo Robles</h4>
+        <span class="core">Principal Architect</span>
+        <p>Engineer. Sets the form of the work and builds a large part of it: what a system is for, how it should feel, and the product that ships.</p>
+        <ul class="ev">
+          <li>Product design and UI/UX for RISE and OmniOS &mdash; the Chamber, the canvas, the surfaces a person actually meets.</li>
+          <li>Engineering in the same hand: client runtimes, typed ports, data and key paths, the OSAHR experiment line and public 0.2 freeze.</li>
+          <li>Vision for the laboratory: what the systems are, and what they must not pretend to be.</li>
+        </ul>
+        <div class="tags"><span>Vision</span><span>Product</span><span>UI/UX</span><span>Engineering</span></div>
+      </a>
+      <a class="way" href="https://github.com/sdcarlson" target="_blank" rel="noopener">
+        <h4>Seth Carlson</h4>
+        <span class="core">Principal Engineer</span>
+        <p>Engineer. Holds the senior technical bar: exactness, admission, and architecture that does not lie.</p>
+        <ul class="ev">
+          <li>OSAHR kernel: typed hypergraph rewrite, exact schedulers, matching, runtime structure, claim licenses.</li>
+          <li>RISE: certification and architectural honesty &mdash; a control that cannot act must not look chosen.</li>
+          <li>The systems are shared. This seat owns whether they hold.</li>
+        </ul>
+        <div class="tags"><span>Kernel</span><span>Exactness</span><span>Admission</span><span>Architecture</span></div>
+      </a>
+    </div>
   </section>
 
   <section class="flagship" id="work">
@@ -396,71 +451,52 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
 
       <a class="proj feature" href="https://github.com/SyberLabs/RISE" target="_blank" rel="noopener">
         <div class="ptop"><h4>RISE</h4><span class="status">Interface</span></div>
-        <p class="desc">A browser-based environment for reading text through time, image, sound, and procedural form &mdash; files never leave the browser.</p>
+        <p class="desc">A browser-based environment for reading text through time, image, sound, and procedural form. One source; two projections; files never leave the browser.</p>
         <ul class="ev">
-          <li>The Chamber combines text, time, image, and sound as one reading instrument.</li>
-          <li>Local files are processed in the browser; there is no RISE backend upload.</li>
-          <li>Client-only Vite app, open beta, with a live reading surface you can enter and return to.</li>
+          <li>The Chamber is one instrument: text, time, image, and sound compile into Stream (time) or Page (space).</li>
+          <li>Local files stay in the browser. Absence is preferred to false substitution; provenance travels with the work.</li>
+          <li>Client-only Vite app in open beta &mdash; a reading surface another person can enter and return to.</li>
         </ul>
         <div class="tags"><span>Reading</span><span>Audio</span><span>Canvas</span><span>Web</span></div>
+        <div class="credit">Mateo Robles &middot; Seth Carlson</div>
       </a>
 
       <a class="proj feature" href="https://github.com/SyberLabs/OmniOS" target="_blank" rel="noopener">
         <div class="ptop"><h4>OmniOS</h4><span class="status">Product / HCI</span></div>
         <p class="desc">A spatial canvas for thinking with AI over live data: blocks, wires, and personas whose context is what the wires actually carry.</p>
         <ul class="ev">
-          <li>Typed ports and inspectable AI context on a composed canvas.</li>
-          <li>Public sources run without keys; everything else falls back to built-in mock data.</li>
-          <li>Local-first and single-user &mdash; the canvas is the product.</li>
+          <li>Typed ports; a persona's context is inspectable; provenance comes from the turn, not from empty connections.</li>
+          <li>Keys stay server-side. Public sources run without keys; everything else falls back to built-in mock data.</li>
+          <li>Local-first and single-user. The canvas is the product.</li>
         </ul>
         <div class="tags"><span>TypeScript</span><span>Canvas</span><span>HCI</span><span>AI</span></div>
+        <div class="credit">Mateo Robles</div>
       </a>
 
       <a class="proj feature" href="https://github.com/SyberLabs/OSAHR_Cell" target="_blank" rel="noopener">
         <div class="ptop"><h4>OSAHR</h4><span class="status">Systems / Kernels</span></div>
-        <p class="desc">A correctness-first kernel for an open stochastic adaptive graph-rewrite system over a typed directed hypergraph, with exact stochastic semantics and claim licenses.</p>
+        <p class="desc">A correctness-first kernel for stochastic adaptive rewrite over a typed directed hypergraph. Exact schedulers. Claim licenses. No silent approximate shortcuts.</p>
         <ul class="ev">
-          <li>Exact SSA, next-reaction, and bounded thinning &mdash; no silent approximate shortcuts.</li>
-          <li>Experiments grade public claims KNOWN, MEASURED, INFERRED, or PROPOSED; artifacts frozen with checksums.</li>
-          <li>6G semantic-control twin and Liquid-OSAHR series run on the same 0.2 kernel.</li>
+          <li>Injective typed DPO matches; a dangling-invalid match is not assigned a rate and cannot steal probability.</li>
+          <li>Exact SSA, modified next-reaction, and bounded thinning; incremental matching is checked against an exhaustive oracle.</li>
+          <li>Experiments grade claims KNOWN, MEASURED, INFERRED, or PROPOSED. Artifacts freeze with checksums.</li>
         </ul>
         <div class="tags"><span>Python</span><span>Hypergraphs</span><span>Simulation</span><span>Evidence</span></div>
+        <div class="credit">Mateo Robles &middot; Seth Carlson</div>
       </a>
 
-      <a class="proj feature" href="https://github.com/SyberLabs/skypredict-v2" target="_blank" rel="noopener">
-        <div class="ptop"><h4>SkyPredict</h4><span class="status">Applied ML</span></div>
-        <p class="desc">Leakage-aware flight-delay prediction under strict pre-departure observability, over 6.96M BTS records.</p>
-        <ul class="ev">
-          <li>6.96M BTS flight rows under gate-close causal constraints.</li>
-          <li>Stage&nbsp;C validation: ROC-AUC 0.713, PR-AUC 0.349 at validation prevalence.</li>
-          <li>Work centered on pipeline architecture, leakage audits, dashboarding, and reporting.</li>
-        </ul>
-        <div class="tags"><span>Python</span><span>ML pipeline</span><span>Evaluation</span><span>Dashboard</span></div>
-      </a>
-
-    </div>
-  </section>
-
-  <section class="ways" id="directions">
-    <div class="sec-lbl">professional directions</div>
-    <div class="sec-ttl">Three ways I can contribute</div>
-    <div class="wgrid">
-      <article class="way"><h4>Research engineer</h4><span class="core">OSAHR</span><p>I build empirical machinery for hard-to-test ideas, and report uncertainty as part of the work.</p></article>
-      <article class="way"><h4>ML / data engineer</h4><span class="core">SkyPredict</span><p>I build end-to-end data systems with observability, evaluation, audits, and interfaces.</p></article>
-      <article class="way"><h4>Creative technologist</h4><span class="core">RISE &middot; OmniOS</span><p>I turn mathematical systems into usable, interactive software with premium visual design.</p></article>
     </div>
   </section>
 
   <section class="cta" id="contact">
     <div class="cta-card">
       <p>
-      Looking for teams building useful software with care.
+      The laboratory is open to correspondence.
       </p>
 
       <div class="cta-links">
         <a href="mailto:syberlabs.software@gmail.com">contact</a>
         <a href="https://github.com/SyberLabs" target="_blank" rel="noopener">github</a>
-        <a href="./mateo_robles_resume.pdf" target="_blank" rel="noopener">resume</a>
       </div>
     </div>
   </section>
