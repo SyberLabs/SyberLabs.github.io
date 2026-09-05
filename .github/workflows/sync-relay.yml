@@ -1,0 +1,71 @@
+name: Sync Relay public copy
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - '.github/workflows/sync-relay.yml'
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: sync-relay-public-copy
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: github.repository == 'SyberLabs/SyberLabs.github.io'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+          path: target
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: SyberLabs/relay
+          ref: main
+          path: canonical
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - name: Check whether canonical copy has been released
+        id: source
+        run: |
+          if test -f canonical/scripts/sync-public-copy.mjs; then
+            echo 'ready=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'Waiting for SyberLabs/relay#13 to merge. Existing review-stage copy is preserved.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Validate the generator
+        if: steps.source.outputs.ready == 'true'
+        working-directory: canonical
+        run: node --test tests/public-copy.test.mjs
+      - name: Refresh the managed RELAY section
+        if: steps.source.outputs.ready == 'true'
+        run: node canonical/scripts/sync-public-copy.mjs --target website --root target
+      - name: Commit only when the public copy changes
+        if: steps.source.outputs.ready == 'true'
+        id: update
+        working-directory: target
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add -- index.html
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Sync RELAY description from canonical product facts'
+          AUTH=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $AUTH" push origin HEAD:main
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+      - name: Publish the refreshed page
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds" --silent

@@ -133,6 +133,7 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
   .relay-points p{font-size:1rem;line-height:1.65;color:rgb(var(--dim));margin-top:0.6rem;}
   .relay-link{display:inline-block;padding:12px 18px;border-radius:4px;background:rgb(var(--ink));color:var(--page-bg);
     font-size:0.875rem;line-height:1.6;text-decoration:none;}
+  .relay-release a{color:rgb(var(--ink));text-underline-offset:3px;}
   .relay-release{font-size:0.875rem;line-height:1.7;color:rgb(var(--dim));margin-top:1rem;max-width:64ch;}
   .hero-relay:focus-visible,.relay-card a:focus-visible{outline:2px solid rgb(var(--gold));outline-offset:5px;}
   @media(max-width:720px){.relay-points{grid-template-columns:1fr;gap:20px;}}
@@ -401,7 +402,9 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
         <li><h3>Carry the context forward.</h3><p>Keep notes and interview follow-ups alongside the application without resetting its status.</p></li>
       </ul>
       <a class="relay-link" href="https://github.com/SyberLabs/relay" target="_blank" rel="noopener">Explore RELAY &amp; setup guide <span aria-hidden="true">&#8599;</span></a>
-      <p class="relay-release">Early release. Notion, Claude, and Grok Bot handoffs require setup. You review the work and send your own applications.</p>
+      <!-- relay:public:start -->
+<p class="relay-release">Early release. Current handoffs include Obsidian, Notion, Claude and Grok Bot. ChatGPT and Codex support is implemented and awaiting required review, including prepared prompts, draft file handoffs and a local Codex CLI adapter. You review the work and send your own applications. <a href="https://github.com/SyberLabs/relay/pull/13" target="_blank" rel="noopener">Review the ChatGPT and Codex integration &#8599;</a></p>
+<!-- relay:public:end -->
     </div>
   </section>
 
