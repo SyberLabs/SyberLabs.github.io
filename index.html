@@ -189,8 +189,6 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
   .proj .tags{margin-top:1em;display:flex;flex-wrap:wrap;gap:7px;}
   .proj .tags span{font-family:"Space Mono",monospace;font-size:0.49rem;letter-spacing:0.08em;color:rgba(var(--dim),0.6);
     border:1px solid rgba(var(--dim),0.16);border-radius:3px;padding:3px 8px;}
-  .proj .credit{margin-top:1em;font-family:"Space Mono",monospace;font-size:0.5rem;letter-spacing:0.14em;
-    text-transform:uppercase;color:rgba(var(--gold),0.55);line-height:1.55;}
   .proj.short{display:flex;flex-direction:column;justify-content:center;}
   .proj.short .desc{margin-top:0.55em;}
 
@@ -303,7 +301,6 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
   [data-theme="light"] .op .idx,
   [data-theme="light"] .op .go,
   [data-theme="light"] .proj .status,
-  [data-theme="light"] .proj .credit,
   [data-theme="light"] .proj .ev li::before,
   [data-theme="light"] .way .ev li::before{
     color:rgba(255,249,238,0.82);
@@ -424,7 +421,7 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
         <span class="core">Principal Architect</span>
         <p>Engineer. Sets the form of the work and builds a large part of it: what a system is for, how it should feel, and the product that ships.</p>
         <ul class="ev">
-          <li>Product design and UI/UX for RISE and OmniOS &mdash; the Chamber, the canvas, the surfaces a person actually meets.</li>
+          <li>Product design and UI/UX for RISE and OmniOS: the Chamber, the canvas, the surfaces a person actually meets.</li>
           <li>Engineering in the same hand: client runtimes, typed ports, data and key paths, the OSAHR experiment line and public 0.2 freeze.</li>
           <li>Vision for the laboratory: what the systems are, and what they must not pretend to be.</li>
         </ul>
@@ -433,13 +430,13 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
       <a class="way" href="https://github.com/sdcarlson" target="_blank" rel="noopener">
         <h4>Seth Carlson</h4>
         <span class="core">Principal Engineer</span>
-        <p>Engineer. Holds the senior technical bar: exactness, admission, and architecture that does not lie.</p>
+        <p>Engineer. Improves the design of the systems: structure, exactness, and cost.</p>
         <ul class="ev">
-          <li>OSAHR kernel: typed hypergraph rewrite, exact schedulers, matching, runtime structure, claim licenses.</li>
-          <li>RISE: certification and architectural honesty &mdash; a control that cannot act must not look chosen.</li>
-          <li>The systems are shared. This seat owns whether they hold.</li>
+          <li>OSAHR: split the runtime onto its real owners, incidence-constrained matching, admission, and claim licenses.</li>
+          <li>RISE: clearer module boundaries, Fit and Accent round-trips, heap and load discipline.</li>
+          <li>Memory-efficient architecture as one demonstration: localized rematch, tighter heaps, working sets that follow the edit.</li>
         </ul>
-        <div class="tags"><span>Kernel</span><span>Exactness</span><span>Admission</span><span>Architecture</span></div>
+        <div class="tags"><span>System design</span><span>Kernel</span><span>Exactness</span><span>Memory</span></div>
       </a>
     </div>
   </section>
@@ -455,10 +452,9 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
         <ul class="ev">
           <li>The Chamber is one instrument: text, time, image, and sound compile into Stream (time) or Page (space).</li>
           <li>Local files stay in the browser. Absence is preferred to false substitution; provenance travels with the work.</li>
-          <li>Client-only Vite app in open beta &mdash; a reading surface another person can enter and return to.</li>
+          <li>Client-only Vite app in open beta: a reading surface another person can enter and return to.</li>
         </ul>
         <div class="tags"><span>Reading</span><span>Audio</span><span>Canvas</span><span>Web</span></div>
-        <div class="credit">Mateo Robles &middot; Seth Carlson</div>
       </a>
 
       <a class="proj feature" href="https://github.com/SyberLabs/OmniOS" target="_blank" rel="noopener">
@@ -470,7 +466,6 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
           <li>Local-first and single-user. The canvas is the product.</li>
         </ul>
         <div class="tags"><span>TypeScript</span><span>Canvas</span><span>HCI</span><span>AI</span></div>
-        <div class="credit">Mateo Robles</div>
       </a>
 
       <a class="proj feature" href="https://github.com/SyberLabs/OSAHR_Cell" target="_blank" rel="noopener">
@@ -482,7 +477,6 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
           <li>Experiments grade claims KNOWN, MEASURED, INFERRED, or PROPOSED. Artifacts freeze with checksums.</li>
         </ul>
         <div class="tags"><span>Python</span><span>Hypergraphs</span><span>Simulation</span><span>Evidence</span></div>
-        <div class="credit">Mateo Robles &middot; Seth Carlson</div>
       </a>
 
     </div>
