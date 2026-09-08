@@ -179,6 +179,8 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
     text-decoration:none;color:inherit;display:block;transition:border-color .4s,transform .4s,background .4s;}
   .proj:hover{border-color:rgba(var(--gold),0.34);transform:translateY(-3px);background:var(--card-hover);}
   .proj.feature{grid-column:1 / -1;}
+  .proj.focus{border-color:rgba(var(--gold),0.72);}
+  .proj.focus:hover{border-color:rgb(var(--gold));}
   .proj .ptop{display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
   .proj h4{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:1.48rem;letter-spacing:0.02em;color:rgba(var(--ink),0.95);}
   .proj .status{font-family:"Space Mono",monospace;font-size:0.47rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(var(--gold),0.8);white-space:nowrap;}
@@ -297,6 +299,10 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
   [data-theme="light"] a.way:hover{
     background:linear-gradient(180deg,rgba(0,123,220,0.96),rgba(0,86,178,0.98));
     border-color:rgba(0,82,170,0.34);
+  }
+  [data-theme="light"] .proj.focus,
+  [data-theme="light"] .proj.focus:hover{
+    border-color:rgba(255,214,150,0.95);
   }
   [data-theme="light"] .op .idx,
   [data-theme="light"] .op .go,
@@ -447,6 +453,17 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
     <div class="sec-ttl">Built &amp; Tested</div>
     <div class="pgrid">
 
+      <a class="proj feature focus" href="https://github.com/SyberLabs/relay" target="_blank" rel="noopener">
+        <div class="ptop"><h4>Relay</h4><span class="status">Current focus</span></div>
+        <p class="desc">A job-search review workspace: one history for repeated postings, source records, and exact drafts. Assistants hand off; a person accepts.</p>
+        <ul class="ev">
+          <li>Consolidate posting URLs and keep research history. Notes and interview follow-ups edit without resetting status.</li>
+          <li>Accept an exact draft; changing it returns it to review. Generated claims still require a person.</li>
+          <li>Early release. Local handoffs, not a finished product. No background sync, no autonomous applying.</li>
+        </ul>
+        <div class="tags"><span>TypeScript</span><span>Notion</span><span>Claude</span><span>Review</span></div>
+      </a>
+
       <a class="proj feature" href="https://github.com/SyberLabs/RISE" target="_blank" rel="noopener">
         <div class="ptop"><h4>RISE</h4><span class="status">Interface</span></div>
         <p class="desc">A browser-based environment for reading text through time, image, sound, and procedural form. One source; two projections; files never leave the browser.</p>
@@ -478,17 +495,6 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
           <li>Experiments grade claims KNOWN, MEASURED, INFERRED, or PROPOSED. Artifacts freeze with checksums.</li>
         </ul>
         <div class="tags"><span>Python</span><span>Hypergraphs</span><span>Simulation</span><span>Evidence</span></div>
-      </a>
-
-      <a class="proj feature" href="https://github.com/SyberLabs/relay" target="_blank" rel="noopener">
-        <div class="ptop"><h4>Relay</h4><span class="status">Early / Review</span></div>
-        <p class="desc">A job-search review workspace: one history for repeated postings, source records, and exact drafts. Assistants hand off; a person accepts.</p>
-        <ul class="ev">
-          <li>Consolidate posting URLs and keep research history. Notes and interview follow-ups edit without resetting status.</li>
-          <li>Accept an exact draft; changing it returns it to review. Generated claims still require a person.</li>
-          <li>Early release. Local handoffs, not a finished product. No background sync, no autonomous applying.</li>
-        </ul>
-        <div class="tags"><span>TypeScript</span><span>Notion</span><span>Claude</span><span>Review</span></div>
       </a>
 
     </div>
