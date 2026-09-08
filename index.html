@@ -109,6 +109,11 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
     font-size:clamp(1.05rem,2.6vw,1.5rem);color:rgba(var(--ink),0.78);letter-spacing:0.04em;max-width:30ch;}
   .eyebrow{margin-top:1.7em;font-size:clamp(0.52rem,1.3vw,0.66rem);letter-spacing:0.52em;text-indent:0.52em;
     text-transform:uppercase;color:rgba(var(--gold),0.6);}
+  .hero-work{display:inline-flex;align-items:center;gap:8px;margin-top:1.55rem;padding:7px 13px;
+    border:1px solid rgba(var(--gold),0.45);border-radius:4px;color:rgba(var(--ink),0.9);
+    background:transparent;font-size:0.56rem;letter-spacing:0.16em;text-decoration:none;}
+  .hero-work:hover{border-color:rgb(var(--gold));}
+  .hero-work:focus-visible{outline:2px solid rgb(var(--gold));outline-offset:4px;}
   .cue{position:absolute;bottom:4vh;left:50%;transform:translateX(-50%);font-size:0.56rem;letter-spacing:0.4em;
     text-indent:0.4em;text-transform:uppercase;color:rgba(var(--dim),0.4);animation:bob 3.2s ease-in-out infinite;}
   @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);opacity:.4}50%{transform:translateX(-50%) translateY(6px);opacity:.7}}
@@ -172,7 +177,7 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
   }
 
   /* ---- flagship work ---- */
-  .flagship{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:clamp(48px,8vh,98px) clamp(20px,5vw,40px) 4px;}
+  .flagship{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:clamp(48px,8vh,98px) clamp(20px,5vw,40px) 4px;scroll-margin-top:24px;}
   .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,1.8vw,22px);}
   @media(max-width:720px){.pgrid{grid-template-columns:1fr;}}
   .proj{border:1px solid rgba(var(--dim),0.12);border-radius:8px;background:var(--card-bg);padding:22px 22px 24px;
@@ -367,7 +372,7 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
     <div class="ruleline"></div>
     <div class="tag">empirical &amp; experiential systems</div>
     <div class="eyebrow">a laboratory</div>
-    
+    <a class="hero-work" href="#work">Discover our work <span aria-hidden="true">&darr;</span></a>
   </section>
 
   <section class="operators" id="operators">
