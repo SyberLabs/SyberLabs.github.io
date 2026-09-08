@@ -113,33 +113,6 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
     text-indent:0.4em;text-transform:uppercase;color:rgba(var(--dim),0.4);animation:bob 3.2s ease-in-out infinite;}
   @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);opacity:.4}50%{transform:translateX(-50%) translateY(6px);opacity:.7}}
 
-  /* RELAY leads the work, within the laboratory's existing visual language. */
-  .hero-relay{display:inline-flex;align-items:center;gap:8px;margin-top:1.55rem;padding:7px 13px;
-    border:1px solid rgba(var(--gold),0.45);border-radius:4px;color:rgba(var(--ink),0.9);
-    background:transparent;font-size:0.56rem;letter-spacing:0.16em;text-decoration:none;}
-  .hero-relay:hover{border-color:rgb(var(--gold));}
-  .relay-spotlight{max-width:920px;margin:0 auto;padding:clamp(36px,6vh,72px) clamp(20px,5vw,40px) 8px;scroll-margin-top:24px;}
-  .relay-card{padding:clamp(20px,3vw,32px);border:1px solid rgba(var(--gold),0.34);border-radius:8px;
-    background:var(--card-bg);}
-  .relay-kicker{font-size:0.52rem;letter-spacing:0.28em;text-transform:uppercase;color:rgba(var(--gold),0.8);line-height:1.5;}
-  .relay-card h2{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(1.85rem,4.4vw,2.7rem);
-    letter-spacing:0.02em;line-height:1.08;margin:0.22em 0 0.12em;color:rgba(var(--ink),0.95);}
-  .relay-promise{font-family:"Cormorant Garamond",serif;font-weight:300;font-style:italic;
-    font-size:clamp(1.05rem,2.5vw,1.42rem);line-height:1.32;max-width:28ch;color:rgba(var(--ink),0.86);}
-  .relay-description{font-size:0.62rem;line-height:1.62;color:rgba(var(--dim),0.78);max-width:68ch;margin-top:0.85rem;}
-  .relay-credit{font-size:0.52rem;line-height:1.55;color:rgba(var(--dim),0.72);margin-top:0.75rem;}
-  .relay-credit a{color:inherit;text-underline-offset:3px;}
-  .relay-points{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;list-style:none;
-    margin:1.25rem 0 1.1rem;padding-top:1.05rem;border-top:1px solid rgba(var(--gold),0.22);}
-  .relay-points h3{font-family:"Cormorant Garamond",serif;font-size:1.12rem;font-weight:400;line-height:1.3;color:rgba(var(--ink),0.92);}
-  .relay-points p{font-size:0.575rem;line-height:1.5;color:rgba(var(--dim),0.64);margin-top:0.4rem;}
-  .relay-link{display:inline-block;padding:7px 13px;border-radius:4px;background:rgb(var(--ink));color:var(--page-bg);
-    font-size:0.56rem;letter-spacing:0.12em;line-height:1.5;text-decoration:none;}
-  .relay-release a{color:rgb(var(--ink));text-underline-offset:3px;}
-  .relay-release{font-size:0.52rem;line-height:1.55;color:rgba(var(--dim),0.64);margin-top:0.85rem;max-width:64ch;}
-  .hero-relay:focus-visible,.relay-card a:focus-visible{outline:2px solid rgb(var(--gold));outline-offset:4px;}
-  @media(max-width:720px){.relay-points{grid-template-columns:1fr;gap:14px;}}
-
   /* operators */
   .operators{padding:clamp(60px,12vh,140px) clamp(20px,5vw,80px) 80px;max-width:1300px;margin:0 auto;}
   .ops-head{text-align:center;margin-bottom:clamp(38px,7vh,72px);}
@@ -388,26 +361,7 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
     <div class="ruleline"></div>
     <div class="tag">empirical &amp; experiential systems</div>
     <div class="eyebrow">a laboratory</div>
-    <a class="hero-relay" href="#relay">Discover RELAY <span aria-hidden="true">&darr;</span></a>
-  </section>
-
-  <section class="relay-spotlight" id="relay" aria-labelledby="relay-title">
-    <div class="relay-card">
-      <p class="relay-kicker">Our flagship &middot; Our proudest accomplishment</p>
-      <h2 id="relay-title">RELAY</h2>
-      <p class="relay-promise">Your job search should remember what you've done.</p>
-      <p class="relay-description">Research in one tool. Draft in another. Keep the whole story in RELAY: a job-search review workspace that brings source history, application progress, and the exact words you accept together.</p>
-      <p class="relay-credit">Lead engineer: <a href="https://github.com/sdcarlson" target="_blank" rel="noopener">Seth Carlson</a> &middot; Built at SyberLabs</p>
-      <ul class="relay-points">
-        <li><h3>Keep the research.</h3><p>Bring repeated posting URLs into one opportunity history while preserving the source records.</p></li>
-        <li><h3>Review the exact words.</h3><p>Accept a specific draft. If the wording changes, it needs your review again.</p></li>
-        <li><h3>Carry the context forward.</h3><p>Keep notes and interview follow-ups alongside the application without resetting its status.</p></li>
-      </ul>
-      <a class="relay-link" href="https://github.com/SyberLabs/relay" target="_blank" rel="noopener">Explore RELAY &amp; setup guide <span aria-hidden="true">&#8599;</span></a>
-      <!-- relay:public:start -->
-<p class="relay-release">Relay helps job seekers manage applications across their preferred AI tools. Keep candidate facts available for reuse, carry job context between assistants, and preserve reviewed drafts and application history. The goal is less repeated work across applications. Invited pilot. Every returned draft needs human review. User confirmation and heuristic checks do not establish factual truth, qualifications or improved hiring outcomes. Acceptance records approval of exact wording. Integrations use explicit file and command handoffs or browser tools where WebMCP is supported; Relay does not POST the employer form or sync accounts in the background. Human Inspect Accept authorizes the waiting operative to submit once after begin execute:true. <a href="https://github.com/SyberLabs/relay/blob/main/integrations/OPENAI.md" target="_blank" rel="noopener">ChatGPT and Codex setup &#8599;</a></p>
-<!-- relay:public:end -->
-    </div>
+    
   </section>
 
   <section class="operators" id="operators">
@@ -452,7 +406,7 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
       <span>Work is attributed. Claims are graded. The systems are built to be entered, tested, and returned to.</span>
     </p>
     <dl class="strip">
-      <div><dt>Interfaces</dt><dd>Job-search review with RELAY. Reading and thinking surfaces: RISE, OmniOS.</dd></div>
+      <div><dt>Interfaces</dt><dd>Reading and thinking surfaces: RISE, OmniOS.</dd></div>
       <div><dt>Kernels</dt><dd>Typed hypergraph rewrite with exact stochastic semantics: OSAHR.</dd></div>
       <div><dt>Evidence</dt><dd>Public claims stay labeled. Frozen artifacts carry checksums.</dd></div>
     </dl>
@@ -475,10 +429,10 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
       </a>
       <a class="way" href="https://github.com/sdcarlson" target="_blank" rel="noopener">
         <h4>Seth Carlson</h4>
-        <span class="core">Principal Engineer &middot; RELAY Lead Engineer</span>
+        <span class="core">Principal Engineer</span>
         <p>Engineer. Measures the system, deletes what should not exist, and puts production under control.</p>
         <ul class="ev">
-          <li>Lead engineer of RELAY, SyberLabs' flagship job-search review workspace for research history, exact draft acceptance, and application follow-ups.</li>
+          <li>Relay: a job-search review workspace still in early release. Research history, exact draft acceptance, application follow-ups.</li>
           <li>RISE: stopped shipping books as JavaScript, so first load is the app, not the library.</li>
           <li>RISE: production control. A first-load budget that fails a broken deploy, CI from ten minutes to five, architecture generated from the code.</li>
           <li>Discipline against feature creep: delete first, then refuse a second engine for a job that already has a path. Same cut on OSAHR unused kernel surface.</li>
@@ -524,6 +478,17 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
           <li>Experiments grade claims KNOWN, MEASURED, INFERRED, or PROPOSED. Artifacts freeze with checksums.</li>
         </ul>
         <div class="tags"><span>Python</span><span>Hypergraphs</span><span>Simulation</span><span>Evidence</span></div>
+      </a>
+
+      <a class="proj feature" href="https://github.com/SyberLabs/relay" target="_blank" rel="noopener">
+        <div class="ptop"><h4>Relay</h4><span class="status">Early / Review</span></div>
+        <p class="desc">A job-search review workspace: one history for repeated postings, source records, and exact drafts. Assistants hand off; a person accepts.</p>
+        <ul class="ev">
+          <li>Consolidate posting URLs and keep research history. Notes and interview follow-ups edit without resetting status.</li>
+          <li>Accept an exact draft; changing it returns it to review. Generated claims still require a person.</li>
+          <li>Early release. Local handoffs, not a finished product. No background sync, no autonomous applying.</li>
+        </ul>
+        <div class="tags"><span>TypeScript</span><span>Notion</span><span>Claude</span><span>Review</span></div>
       </a>
 
     </div>
