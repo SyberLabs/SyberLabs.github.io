@@ -143,12 +143,6 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
   footer .pillars{font-size:0.56rem;letter-spacing:0.42em;text-indent:0.42em;text-transform:uppercase;color:rgba(var(--dim),0.5);}
   footer .fm{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:1.1rem;margin-top:1.1em;color:rgba(var(--ink),0.6);letter-spacing:0.1em;}
 
-  /* ---- card link affordance ---- */
-  .op{text-decoration:none;color:inherit;cursor:pointer;}
-  .op .go{margin-top:0.8em;font-family:"Space Mono",monospace;font-size:0.54rem;letter-spacing:0.12em;
-    color:rgba(var(--gold),0.5);transition:color .4s;}
-  .op:hover .go{color:rgba(var(--gold),0.9);}
-
   /* ---- shared section heads ---- */
   .sec-lbl{font-size:0.58rem;letter-spacing:0.5em;text-indent:0.5em;text-transform:uppercase;color:rgba(var(--gold),0.6);text-align:center;}
   .sec-ttl{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:300;font-size:clamp(1.55rem,4.2vw,2.5rem);
@@ -309,7 +303,6 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
     border-color:rgba(255,214,150,0.95);
   }
   [data-theme="light"] .op .idx,
-  [data-theme="light"] .op .go,
   [data-theme="light"] .proj .status,
   [data-theme="light"] .proj .ev li::before,
   [data-theme="light"] .way .ev li::before{
@@ -343,7 +336,6 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
     color:rgba(255,249,238,0.74);
     border-color:rgba(255,249,238,0.24);
   }
-  [data-theme="light"] .op:hover .go{color:rgba(255,252,246,0.98);}
   [data-theme="light"] .strip{
     background:rgba(0,64,132,0.18);
     border-color:rgba(0,64,132,0.18);
@@ -379,31 +371,31 @@ try{if(localStorage.getItem("syber-theme")==="light")document.documentElement.da
       <div class="ttl">Principles of Design</div>
     </div>
     <div class="grid">
-      <a class="op" data-op="stochastic" href="https://github.com/SyberLabs/vital-language" target="_blank" rel="noopener"><canvas></canvas><div class="body">
+      <article class="op" data-op="stochastic"><canvas></canvas><div class="body">
         <div class="idx">01</div><h3>Stochastic</h3>
         <div class="arrow">&rarr; Unpredictability</div>
         <div class="kw">noise &middot; probability &middot; surprise</div>
-        <div class="go">Vital Language &#8599;</div></div></a>
-      <a class="op" data-op="dynamical" href="https://github.com/SyberLabs/OSAHR_Cell" target="_blank" rel="noopener"><canvas></canvas><div class="body">
-        <div class="idx">02</div><h3>Dynamical</h3>
+      </div></article>
+      <article class="op" data-op="dynamical"><canvas></canvas><div class="body">
+        <div class="idx">02</div><h3>Dynamic</h3>
         <div class="arrow">&rarr; Points in Time</div>
         <div class="kw">attractors &middot; feedback &middot; regime shifts</div>
-        <div class="go">OSAHR &#8599;</div></div></a>
-      <a class="op" data-op="generative" href="https://github.com/SyberLabs/dreamer-v2" target="_blank" rel="noopener"><canvas></canvas><div class="body">
+      </div></article>
+      <article class="op" data-op="generative"><canvas></canvas><div class="body">
         <div class="idx">03</div><h3>Generative</h3>
         <div class="arrow">&rarr; Articulation</div>
         <div class="kw">semantic fields &middot; steering &middot; decoder boundary</div>
-        <div class="go">Dreamer v2 &#8599;</div></div></a>
-      <a class="op" data-op="geometric" href="https://github.com/SyberLabs/eidolon" target="_blank" rel="noopener"><canvas></canvas><div class="body">
+      </div></article>
+      <article class="op" data-op="geometric"><canvas></canvas><div class="body">
         <div class="idx">04</div><h3>Geometric</h3>
         <div class="arrow">&rarr; Points in Space</div>
         <div class="kw">symmetry &middot; topology &middot; proportion</div>
-        <div class="go">Eidolon &#8599;</div></div></a>
-      <a class="op" data-op="experiential" href="https://github.com/SyberLabs/RISE" target="_blank" rel="noopener"><canvas></canvas><div class="body">
+      </div></article>
+      <article class="op" data-op="experiential"><canvas></canvas><div class="body">
         <div class="idx">05</div><h3>Experiential</h3>
         <div class="arrow">&rarr; Subjectivity</div>
         <div class="kw">audio &middot; perception &middot; presence</div>
-        <div class="go">RISE &#8599;</div></div></a>
+      </div></article>
     </div>
   </section>
 
