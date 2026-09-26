@@ -21,13 +21,14 @@ jobs:
       - name: Prepare public site
         run: |
           mkdir dist
-          cp index.html robots.txt sitemap.xml site.webmanifest \
+          cp index.html robots.txt sitemap.xml site.webmanifest _redirects \
             syber-mark.png og-image.png mateo_robles_resume.pdf \
             favicon.ico favicon-32x32.png favicon-16x16.png \
             apple-touch-icon.png android-chrome-192x192.png \
             android-chrome-512x512.png dist/
           test -s dist/index.html
-          test ! -e dist/_redirects
+          grep -Fxq '/rise https://rise.syberlabs.io/ 301' dist/_redirects
+          grep -Fxq '/rise/* https://rise.syberlabs.io/:splat 301' dist/_redirects
       - uses: actions/upload-artifact@v4
         with:
           name: syberlabs-home-${{ github.sha }}
