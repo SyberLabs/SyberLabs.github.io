@@ -27,7 +27,10 @@ jobs:
             favicon-blue.ico favicon-blue-32x32.png favicon-blue-16x16.png \
             apple-touch-icon.png android-chrome-192x192.png \
             android-chrome-512x512.png dist/
+          cp -r rise dist/
           test -s dist/index.html
+          test -s dist/rise/index.html
+          test -s dist/rise/rise-demo.mp4
           test ! -e dist/_redirects
       - uses: actions/upload-artifact@v4
         with:
