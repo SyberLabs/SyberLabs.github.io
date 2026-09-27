@@ -19,11 +19,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: SyberLabs/OmniOS
-          ref: 955a6add47df8b9a5287afd758e6ef99d804b945
+          ref: 3f115c931fa2c6b1509dd6e6beffe786146c7428
           path: omni
           persist-credentials: false
       - name: Verify source commit
-        run: test "$(git -C omni rev-parse HEAD)" = "955a6add47df8b9a5287afd758e6ef99d804b945"
+        run: test "$(git -C omni rev-parse HEAD)" = "3f115c931fa2c6b1509dd6e6beffe786146c7428"
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
