@@ -33,10 +33,10 @@ function Header() {
   return <header className="site-header">
     <a className="wordmark" href="/" aria-label="SyberLabs home"><img src="/favicon-blue-32x32.png" alt="" /><span>SYBERLABS</span></a>
     <nav className="desktop-nav" aria-label="Main navigation">
-      <a href="#work">Work</a><a href="/jev/">Research</a><a href="/approach/">Approach</a><a href="https://www.youtube.com/@RiseChamber" target="_blank" rel="noopener noreferrer">Media</a>
+      <a href="#work">Work</a><a href="/jev/">Jev</a><a href="/approach/">Approach</a><a href="https://www.youtube.com/@RiseChamber" target="_blank" rel="noopener noreferrer">Media</a>
     </nav>
     <div className="header-actions"><a className="header-contact" href="mailto:syberlabs.software@gmail.com">Get in touch <span aria-hidden="true">↗</span></a><ThemeToggle />
-      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation"><a href="#work">Work</a><a href="/jev/">Research</a><a href="/approach/">Approach</a><a href="/rise-demo/">RISE demo</a><a href="/commons/">Commons</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
+      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation"><a href="#work">Work</a><a href="/jev/">Jev</a><a href="/approach/">Approach</a><a href="/rise-demo/">RISE demo</a><a href="/commons/">Commons</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
     </div>
   </header>;
 }
