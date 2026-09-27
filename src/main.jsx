@@ -32,10 +32,10 @@ function Header() {
   return <header className="site-header">
     <a className="wordmark" href="/" aria-label="SyberLabs home"><img src="/favicon-blue-32x32.png" alt="" /><span>SYBERLABS</span></a>
     <nav className="desktop-nav" aria-label="Main navigation">
-      <a href="#work">Work</a><a href="#system">System</a>
+      <a href="#work">Work</a><a href="#system">System</a><a href="/research/jev-execution/">Research</a>
     </nav>
     <div className="header-actions"><a className="header-contact" href="mailto:syberlabs.software@gmail.com">Get in touch <span aria-hidden="true">↗</span></a><ThemeToggle />
-      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation" onClick={event => { if (event.target.closest('a')) event.currentTarget.closest('details').open = false; }}><a href="#work">Work</a><a href="#system">System</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
+      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation" onClick={event => { if (event.target.closest('a')) event.currentTarget.closest('details').open = false; }}><a href="#work">Work</a><a href="#system">System</a><a href="/research/jev-execution/">Research</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
     </div>
   </header>;
 }
@@ -82,12 +82,19 @@ function System() {
   </div></section>;
 }
 
+function Research() {
+  return <section className="research-feature" aria-labelledby="research-title">
+    <div><p className="eyebrow">RESEARCH / GC-01 / SEPTEMBER 2026</p><h2 id="research-title">Beyond the typed decision.</h2><p>An execution contract above JEV: bounded work, durable evidence, and explicit acceptance.</p><a href="/research/jev-execution/">Read the technical report <span aria-hidden="true">&#8599;</span></a></div>
+    <div className="research-spec"><span>DURABLE OFFLINE PROTOTYPE</span><p>READ &#8594; DECIDE &#8594; CALL<br />CHECK &#8594; ADMIT</p><small>87 regression tests / 2 offline fixtures<br />Live integration remains future work.</small></div>
+  </section>;
+}
+
 function Footer() {
   return <footer className="site-footer"><a href="mailto:syberlabs.software@gmail.com">Contact SyberLabs ↗</a><span>© 2026 SyberLabs</span></footer>;
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="light"><Header /><main><Hero /><System /><Work /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="light"><Header /><main><Hero /><System /><Research /><Work /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
