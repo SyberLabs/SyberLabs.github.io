@@ -74,7 +74,7 @@ function Header() {
       <Stack direction="row" spacing={{ xs: 1, sm: 2 }} alignItems="center">
         <Button href="/commons/" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Commons</Button>
         <Button href="/jev/" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Jev</Button>
-        <Button href="#method" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Approach</Button>
+        <Button href="/approach/" color="inherit">Approach</Button>
         <Button href="mailto:syberlabs.software@gmail.com" color="primary" variant="outlined" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>Contact</Button>
         <ThemeToggle />
       </Stack>
@@ -167,6 +167,19 @@ function Experience() {
   </Container></Box>;
 }
 
+function JEVFeature() {
+  return <Box component="section" aria-labelledby="jev-title" sx={{ py: { xs: 5, md: 6 }, bgcolor: '#171323', color: '#f7f5ff', borderBottom: '1px solid #bcadff55' }}>
+    <Container maxWidth="lg" sx={{ display: 'flex', alignItems: { xs: 'flex-start', md: 'center' }, justifyContent: 'space-between', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
+      <Box>
+        <Typography variant="overline" sx={{ color: '#bcadff', fontWeight: 800, letterSpacing: '.14em' }}>PORTFOLIO TECHNICAL PRIORITY · IN DEVELOPMENT</Typography>
+        <Typography component="h2" id="jev-title" variant="h2" sx={{ mt: .5, fontSize: { xs: '2rem', md: '2.6rem' } }}>JEV integration</Typography>
+        <Typography sx={{ mt: 1, maxWidth: 690, color: '#c8c3d8', lineHeight: 1.7 }}>JEV is SyberLabs’ portfolio-wide technical priority. See the current focus and how it connects to our projects.</Typography>
+      </Box>
+      <Button href="/jev/" variant="contained" endIcon={<ArrowForwardRoundedIcon />} sx={{ flexShrink: 0 }}>Explore JEV</Button>
+    </Container>
+  </Box>;
+}
+
 function Motivation() {
   return <Box component="section" id="method" className="lab-method" aria-labelledby="method-title"><Container maxWidth="lg" className="method-inner">
     <Box><Typography className="method-kicker">WHAT DRIVES THE LAB</Typography><Typography component="h2" id="method-title" className="method-title">Question it.<br /><em>Then cut it.</em></Typography></Box>
@@ -184,12 +197,26 @@ function Footer() {
       <Box><Typography variant="h6" fontWeight={800}>SyberLabs</Typography><Typography color="text.secondary" variant="body2">Mateo Robles · Seth Carlson</Typography></Box>
       <Stack direction="row" spacing={2.5}><Link href="https://github.com/SyberLabs" target="_blank" rel="noopener noreferrer" underline="hover">GitHub</Link><Link href="mailto:syberlabs.software@gmail.com" underline="hover">Work with us ↗</Link></Stack>
     </Box>
+    <Box component="nav" aria-label="Site directory" sx={{ mt: 3 }}>
+      <Typography variant="overline" color="text.secondary" sx={{ display: 'block', mb: 1 }}>Explore the site</Typography>
+      <Stack direction="row" spacing={{ xs: 1.5, sm: 2.5 }} useFlexGap flexWrap="wrap">
+        <Link href="/jev/" underline="hover">JEV</Link>
+        <Link href="/approach/" underline="hover">Approach</Link>
+        <Link href="/rise-demo/" underline="hover">RISE demo</Link>
+        <Link href="/commons/" underline="hover">Commons prototype</Link>
+        <Link href="/projects/rise/" underline="hover">RISE</Link>
+        <Link href="/projects/commons/" underline="hover">Commons project</Link>
+        <Link href="/projects/relay/" underline="hover">Relay</Link>
+        <Link href="/projects/omnios/" underline="hover">OmniOS</Link>
+        <Link href="/projects/osahr/" underline="hover">OSAHR</Link>
+      </Stack>
+    </Box>
     <Divider sx={{ my: 3 }} /><Typography color="text.secondary" variant="caption">© 2026 SyberLabs</Typography>
   </Container></Box>;
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="system"><CssBaseline /><Header /><main><Hero /><Experience /><Motivation /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="system"><CssBaseline /><Header /><main><Hero /><JEVFeature /><Experience /><Motivation /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);

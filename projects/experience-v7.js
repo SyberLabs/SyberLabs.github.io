@@ -6,7 +6,7 @@ const projects = {
     headline: 'A text can become an experience.',
     intro: 'Read in time, move through a spatial page, and tune image and sound around the words. RISE turns reading into an instrument you control.',
     status: 'Live browser app · sign-in required',
-    actions: [['Enter RISE ↗', 'https://rise.syberlabs.io/'], ['Watch the demo ↗', '/rise-demo/']],
+    actions: [['Open RISE app ↗', 'https://rise.syberlabs.io/'], ['Watch the onsite demo ↗', '/rise-demo/']],
     caseTitle: 'Make a text move.', caseBody: 'Bring a .txt or .md file into the Chamber. Set the pace in Stream, shift into Page, and tune the visual and sonic conditions around the same reading.', caseTag: 'TEXT → TIME → SPACE',
     note: 'Text presentation and pacing run in the browser. The Chamber does not require a remote model decision or provider key.',
   },
@@ -15,7 +15,7 @@ const projects = {
     headline: 'Move a shared mission from need to outcome.',
     intro: 'Commons gives a human-directed mission a visible path: evidence, an approved plan, people and resources, execution, review, and an outcome others can learn from.',
     status: 'Local Phase 0 prototype · private repository',
-    actions: [['Open private repository ↗', 'https://github.com/SyberLabs/commons']],
+    actions: [['View the onsite Commons project ↗', '/commons/']],
     caseTitle: 'Turn a proposal into a reviewed mission.', caseBody: 'Create a draft from one of three synthetic mission definitions, submit it, switch to the seeded reviewer, request changes, and inspect the audit history.', caseTag: 'NEED → REVIEW → RECORD',
     note: 'Phase 0 is a local demonstration using synthetic missions. It has no real authentication, funding, AI calls, chain transactions, or participant data.',
   },
@@ -24,7 +24,7 @@ const projects = {
     headline: 'Your application history should survive every handoff.',
     intro: 'Relay keeps the job, research, facts, reviewed words, and next action together while you work across the assistants you already use.',
     status: 'Early release · source available',
-    actions: [['Explore source ↗', 'https://github.com/SyberLabs/relay']],
+    actions: [['See Relay in SyberLabs projects ↗', '/#work'], ['Explore source ↗', 'https://github.com/SyberLabs/relay']],
     caseTitle: 'Return to a job without starting over.', caseBody: 'A posting URL rejoins its existing record. Earlier research remains visible, a revised draft needs fresh acceptance, and interview notes do not reset the application state.', caseTag: 'RESEARCH → DRAFT → ACCEPT',
     note: 'Relay does not submit employer forms, verify every claim, or treat a staged draft as accepted. Human review remains the gate.',
   },
@@ -33,7 +33,7 @@ const projects = {
     headline: 'See what an AI mind actually knows.',
     intro: 'Put live data blocks on a canvas, connect them to a persona, and ask a question. The answer has a visible path back to the wires that carried its context.',
     status: 'Local-first, single-user research project',
-    actions: [['Explore source ↗', 'https://github.com/SyberLabs/OmniOS']],
+    actions: [['See OmniOS in SyberLabs projects ↗', '/#work'], ['Explore source ↗', 'https://github.com/SyberLabs/OmniOS']],
     caseTitle: 'Ask a question with visible inputs.', caseBody: 'Place a World Bank block beside a market signal, wire them to an Investor persona, and inspect which inputs were available when it answered.', caseTag: 'BLOCKS → WIRES → ANSWER',
     note: 'The canvas lives in the user’s browser. The project is local-first and has no application authentication for a public hosted instance.',
   },
@@ -42,7 +42,7 @@ const projects = {
     headline: 'Watch a system rewrite itself.',
     intro: 'OSAHR is a stochastic adaptive graph-rewrite kernel. It models typed relationships, chooses events in time, adapts parameters, and preserves a replayable record.',
     status: 'Open research kernel · Python 3.11+',
-    actions: [['Explore source ↗', 'https://github.com/SyberLabs/OSAHR_Cell']],
+    actions: [['See OSAHR in SyberLabs projects ↗', '/#work'], ['Explore source ↗', 'https://github.com/SyberLabs/OSAHR_Cell']],
     caseTitle: 'Trace a rule through time.', caseBody: 'Define a typed graph and competing rewrite rules, run a seeded stochastic schedule, then review a frozen decision packet and replay the outcome.', caseTag: 'GRAPH → EVENT → REPLAY',
     note: 'These experiments explore mechanism. They are not calibrated deployments or a replacement for a production simulation twin.',
   },
@@ -71,12 +71,12 @@ else {
     osahr: `<div class="system-heading"><p class="eyebrow">EXPERIMENT TRACE / STOCHASTIC REWRITE</p><h2>From mechanism to inspectable evidence.</h2><p>The kernel operates on a typed directed hypergraph. A scheduler chooses events; replay records let a result be examined under the conditions that produced it.</p></div><div class="osahr-trace"><div class="trace-top"><span>SEEDED EXPERIMENT / ILLUSTRATIVE TRACE</span><span>GRAPH → RULE → EVENT → REPLAY</span></div><div class="trace-events" data-step="0"><article><small>STATE 00</small><b>Typed graph</b><span>Entities and directed relationships</span></article><article><small>RULE 03</small><b>Match + rewrite</b><span>Eligible structure changes</span></article><article><small>EVENT 14</small><b>Scheduler selects</b><span>Stochastic time advances</span></article><article><small>REPLAY</small><b>Frozen packet</b><span>Inspect conditions and outcome</span></article></div><div class="trace-controls"><button class="trace-step" type="button">Advance illustrative trace <span aria-hidden="true">↗</span></button><span class="trace-step-label" aria-live="polite">Current focus: typed graph.</span></div><div class="trace-footer">Research mechanism · illustrative UI sequence, not a kernel run or calibrated prediction</div></div>`,
   }[slug];
   document.getElementById('app').innerHTML = `
-    <header><a class="brand" href="/">◉ SyberLabs</a><nav aria-label="Page navigation"><a href="/#work">All projects</a><a href="#mechanics">Mechanics ↓</a><a href="#field-note">Field note ↓</a><a href="mailto:syberlabs.software@gmail.com">Contact ↗</a></nav></header>
+    <header><a class="brand" href="https://syberlabs.io/" aria-label="SyberLabs home">◉ SyberLabs</a><nav aria-label="Page navigation"><a href="https://syberlabs.io/#work">SyberLabs projects</a><a href="#mechanics">Mechanics ↓</a><a href="#field-note">Field note ↓</a><a href="mailto:syberlabs.software@gmail.com">Contact ↗</a></nav></header>
     <main><section class="hero" id="overview"><canvas class="procedural-field" aria-hidden="true"></canvas><div class="hero-copy"><p class="eyebrow">SYBERLABS / ${p.number} / ${p.category}</p><h1>${p.headline}</h1><p class="intro">${p.intro}</p><div class="actions">${p.actions.map(([label, url]) => `<a href="${url}">${label}</a>`).join('')}</div><p class="status"><span></span>${p.status}</p></div><div class="product-art art-${slug}" aria-label="Illustration of ${p.name} product concept" role="img">${art}</div></section>
     <section class="product-system" id="mechanics">${system}</section>
     <section class="case-study" id="field-note"><div class="case-kicker"><span>FIELD NOTE / ${p.number}</span><strong>${p.caseTag}</strong></div><div class="case-body"><p class="eyebrow">A CONCRETE RUN</p><h2>${p.caseTitle}</h2><p>${p.caseBody}</p></div></section>
     <aside class="boundary"><span>WHAT EXISTS TODAY</span><p>${p.note}</p></aside></main>
-    <footer><a href="/#work">← Explore the lab</a><span>© 2026 SyberLabs</span></footer>`;
+    <footer><a href="https://syberlabs.io/">← SyberLabs home</a><a href="https://syberlabs.io/#work">Explore all SyberLabs projects</a><span>© 2026 SyberLabs</span></footer>`;
   const visual = document.querySelector('.product-art');
   mountProcedural(document.querySelector('.procedural-field'), slug);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
