@@ -1,8 +1,12 @@
 /* Homepage layout (design system v2 "Atlas"). Tokens and components come from the kit + syberlabs.css. */
 
 /* ---------- hero: Plate I beside the copy, degree ring, plate caption, project strip ---------- */
-.home-hero { --cx: 72%; --cy: 47%; --s: min(80vh, 46vw); position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
+/* Plate geometry before (or without) the live engine, which then sets --cx/--cy/--s from the DOM:
+   the plate sits right of the 640px copy column, 90% of the hero height at most. */
+.home-hero { --tr: calc(max((100vw - var(--sy-max)) / 2, 0px) + var(--sy-gutter) + 640px); --s: min(90vh, (100vw - var(--tr)) * 1.02); --cx: calc(var(--tr) + var(--s) / 2); --cy: 47%; position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
 .home-ring .sy-ring { z-index: -2; }
+.home-still { position: absolute; z-index: -2; left: var(--cx); top: var(--cy); width: calc(var(--s) * 1.12); max-width: none; height: auto; aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(closest-side, #000 82%, transparent); mask-image: radial-gradient(closest-side, #000 82%, transparent); }
+.is-live .home-still { display: none; }
 .home-hero__in { flex: 1; display: grid; grid-template-columns: minmax(0, 640px) 1fr; align-items: center; width: 100%; padding-top: 104px; padding-bottom: 40px; }
 .home-hero__title { margin-top: 26px; }
 .home-hero__intro { max-width: 30em; margin-top: 28px; }
@@ -23,8 +27,7 @@
 .home-rows { margin-top: 8px; }
 
 .home-research { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 64px; padding-top: 56px; }
-.home-research__title { margin-top: 14px; max-width: 13em; font-size: clamp(36px, 3.8vw, 54px); line-height: 1.02; }
-.home-research__fig { max-width: 260px; margin-top: 44px; }
+.home-research__fig { max-width: 260px; }
 .home-research__fig .sy-params { display: block; color: var(--sy-mist); letter-spacing: 0; font-variant-numeric: tabular-nums; }
 .home-research .sy-body-lg { max-width: 36em; }
 .home-research__stat { margin-top: 40px; }
@@ -72,4 +75,4 @@
   .home-footer { margin-top: 96px; }
 }
 @media (max-width: 900px) { .home-hero { --cx: 50%; --cy: calc(64px + min(88vw, 340px) / 2); --s: min(88vw, 340px); } }
-@media (max-width: 1180px) { .sy-strip .sy-strip__n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } }
+@media (max-width: 1180px) { .home-strip__cat { display: none; } }

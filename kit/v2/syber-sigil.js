@@ -11,7 +11,7 @@
                              --sy-accent) when it scrolls into view. Returns { disconnect() }. */
 
 const fmt = v => (v < 0 ? '−' : '') + Math.abs(v).toFixed(3);
-const line = P => 'a ' + fmt(P[0]) + ' · b ' + fmt(P[1]) + ' · c ' + fmt(P[2]) + ' · d ' + fmt(P[3]);
+const line = P => 'a\u00a0' + fmt(P[0]) + ' · b\u00a0' + fmt(P[1]) + ' · c\u00a0' + fmt(P[2]) + ' · d\u00a0' + fmt(P[3]); // pairs never break
 const reducedMotion = () => !!(typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
 
 function prng(a) { return () => { a = (a + 0x6d2b79f5) >>> 0; let t = Math.imul(a ^ (a >>> 15), a | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }

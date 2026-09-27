@@ -57,6 +57,7 @@
 .sy-wrap { max-width: var(--sy-max); margin: 0 auto; padding: 0 var(--sy-gutter); }
 .sy-skip { position: absolute; left: -999px; top: 8px; z-index: 99; background: var(--sy-vellum); color: var(--sy-ink); padding: 10px 14px; border-radius: var(--sy-r-sm); }
 .sy-skip:focus { left: 8px; }
+.sy-nowrap { white-space: nowrap; }
 .sy-sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* sparse 5-layer starfield of 1px dots */

@@ -16,7 +16,7 @@
 
 const KF = [[-1.4, 1.6, 1.0, 0.7], [1.7, 1.7, 0.6, 1.2], [-1.7, 1.3, -0.1, -1.21], [-1.8, -2.0, -0.5, -0.9], [1.5, -1.8, 1.6, 0.9], [-1.24, -1.25, -1.81, -1.91]];
 const fmt = v => (v < 0 ? '−' : '') + Math.abs(v).toFixed(3);
-export const paramLine = P => 'a ' + fmt(P[0]) + ' · b ' + fmt(P[1]) + ' · c ' + fmt(P[2]) + ' · d ' + fmt(P[3]);
+export const paramLine = P => 'a\u00a0' + fmt(P[0]) + ' · b\u00a0' + fmt(P[1]) + ' · c\u00a0' + fmt(P[2]) + ' · d\u00a0' + fmt(P[3]); // pairs never break
 
 export function mount(canvas, opts = {}) {
   const RM = opts.reduced != null ? !!opts.reduced : !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);

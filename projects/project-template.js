@@ -44,7 +44,7 @@ export function sigilPlate(seed, plate, title, cls = '') {
   const id = `params-${seed}`;
   return `<figure class="sy-plate-figure site-sigil ${cls}" aria-hidden="true">
     <div class="sy-plate sy-plate--sigil"><canvas data-sigil="${esc(seed)}" data-caption-for="${id}"></canvas></div>
-    <figcaption><b>Plate ${plate} · ${esc(title)}</b>de Jong map · seed “${esc(seed)}”<span class="sy-params" id="${id}">${sigilParams(seed).caption}</span></figcaption>
+    <figcaption><b>Plate ${plate} · ${esc(title)}</b>de Jong map · <span class="sy-nowrap">seed “${esc(seed)}”</span><span class="sy-params" id="${id}">${sigilParams(seed).caption}</span></figcaption>
   </figure>`;
 }
 

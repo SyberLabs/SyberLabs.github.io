@@ -80,9 +80,9 @@ pre code { font-size: 13px; overflow-wrap: normal; color: inherit; }
 .metrics > div:first-child strong { background: var(--sy-spectrum); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .metrics span { display: block; margin-top: var(--space-2); font-size: 14px; line-height: 20px; color: var(--text-3); }
 
-details { padding: var(--space-4) var(--space-5); border: 1px solid var(--line); border-radius: var(--radius); }
-summary { cursor: pointer; min-height: 28px; font-size: 16px; font-weight: 500; color: var(--text); }
-details p { font-size: 14px; line-height: 20px; }
+main details { padding: var(--space-4) var(--space-5); border: 1px solid var(--line); border-radius: var(--radius); }
+main summary { cursor: pointer; min-height: 28px; font-size: 16px; font-weight: 500; color: var(--text); }
+main details p { font-size: 14px; line-height: 20px; }
 
 .roadmap { display: grid; grid-template-columns: repeat(2, 1fr); margin: var(--space-6) 0; border-top: 1px solid var(--line); }
 .roadmap > div { padding: var(--space-5) var(--space-5) var(--space-5) 0; border-bottom: 1px solid var(--line); }

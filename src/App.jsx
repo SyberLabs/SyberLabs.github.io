@@ -1,7 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import syberMark from '../syber-logo-96.png';
 import { projects, nav, workWithUs, footerLinks, skills, EMAIL, CONTACT, RESUME, LINKEDIN, GITHUB } from '../projects/site-data.js';
-import { mount, RING_SVG } from '../kit/v2/syber-atmosphere.js';
+import { mount, RING_SVG, paramLine } from '../kit/v2/syber-atmosphere.js';
+import plateStill from './plate-i.webp';
+import plateStillSm from './plate-i-sm.webp';
 import { params as sigilParams, drawAll, draw } from '../kit/v2/syber-sigil.js';
 import '../kit/v2/syber-atlas.css';
 import './syberlabs.css';
@@ -40,17 +42,21 @@ function Header() {
   </header>;
 }
 
-// Plate I: the one live attractor on the site. The canvas is progressive enhancement over the CSS nebula;
-// it starts after first paint and is skipped without WebGL2.
+// Plate I: the one live attractor on the site. Without JS, without WebGL2 or on software GL, a still exposure of
+// the same plate (src/plate-i.webp, parameters STILL) sits in the ring instead; the live canvas replaces it.
+const STILL = [-1.378, 1.637, 0.958, 0.685];
 function Hero() {
   const canvas = useRef(null), copy = useRef(null), caption = useRef(null);
+  const [live, setLive] = useState(false);
   useEffect(() => {
-    // window.SY_ALLOW_SOFTWARE_GL is set only by screenshot tooling; real visitors on software WebGL get the CSS nebula.
+    // window.SY_ALLOW_SOFTWARE_GL is set only by screenshot tooling; real visitors on software WebGL get the still.
     const plate = mount(canvas.current, { mode: 'hero', avoid: copy.current, caption: caption.current, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
+    setLive(plate.supported);
     return () => plate.destroy();
   }, []);
-  return <section className="home-hero sy-nebula" aria-labelledby="hero-title">
+  return <section className={`home-hero sy-nebula${live ? ' is-live' : ''}`} aria-labelledby="hero-title">
     <canvas ref={canvas} className="sy-atmosphere" aria-hidden="true" />
+    <img className="home-still" src={plateStill} srcSet={`${plateStillSm} 560w, ${plateStill} 1000w`} sizes="(max-width: 900px) 400px, 60vw" width="1000" height="1000" alt="" aria-hidden="true" decoding="async" />
     <span className="home-ring" aria-hidden="true" dangerouslySetInnerHTML={{ __html: RING_SVG }} />
     <div className="sy-scrim home-hero__scrim" aria-hidden="true" />
     <div className="home-hero__in sy-wrap">
@@ -72,10 +78,10 @@ function Hero() {
           </ul>
         </div>
       </div>
-      <p className="sy-plate-caption home-hero__caption" aria-hidden="true"><b>Plate I · Clifford attractor</b><i>Order, drawn out of chaos.</i><span className="home-eq">x′ = sin(a·y) + c·cos(a·x)<br />y′ = sin(b·x) + d·cos(b·y)</span><span className="sy-params" ref={caption}>a −1.400 · b 1.600 · c 1.000 · d 0.700</span></p>
+      <p className="sy-plate-caption home-hero__caption" aria-hidden="true"><b>Plate I · Clifford attractor</b><i>Order, drawn out of chaos.</i><span className="home-eq">x′ = sin(a·y) + c·cos(a·x)<br />y′ = sin(b·x) + d·cos(b·y)</span><span className="sy-params" ref={caption}>{paramLine(STILL)}</span></p>
     </div>
     <nav className="sy-strip" aria-label="Projects at a glance">
-      <ol>{projects.map(p => <li key={p.slug} style={{ '--sy-accent': p.accent }}><a href={`/projects/${p.slug}/`}><span className="sy-strip__n">{p.number} · {p.category}</span><span className="sy-strip__t">{p.name}</span><Badge status={p.status} bare /></a></li>)}</ol>
+      <ol>{projects.map(p => <li key={p.slug} style={{ '--sy-accent': p.accent }}><a href={`/projects/${p.slug}/`}><span className="sy-strip__n">{p.number}<span className="home-strip__cat"> · {p.category}</span></span><span className="sy-strip__t">{p.name}</span><Badge status={p.status} bare /></a></li>)}</ol>
     </nav>
   </section>;
 }
@@ -101,14 +107,12 @@ function Work() {
 
 function Research() {
   return <section id="research" className="home-sec sy-wrap" aria-labelledby="research-title">
-    <div className="site-head"><p className="sy-eyebrow">Research / September 2026</p><h2 id="research-title" className="sy-display">Research</h2></div>
+    <div className="site-head"><p className="sy-eyebrow">Research / September 2026</p><h2 id="research-title" className="sy-display">Reliable execution for AI agents.</h2></div>
     <div className="home-research">
       <div>
-        <p className="sy-eyebrow">Technical report</p>
-        <h3 className="sy-title home-research__title">Reliable execution for AI agents.</h3>
         <figure className="sy-plate-figure home-research__fig" aria-hidden="true" style={{ '--sy-accent': 'var(--sy-ice)' }}>
           <div className="sy-plate sy-plate--sigil"><canvas data-sigil="jev-execution" data-caption-for="params-jev-execution" /></div>
-          <figcaption><b>Plate VII · Technical report</b>de Jong map · seed “jev-execution”<span className="sy-params" id="params-jev-execution">{sigilParams('jev-execution').caption}</span></figcaption>
+          <figcaption><b>Plate VII · Technical report</b>de Jong map · <span className="sy-nowrap">seed “jev-execution”</span><span className="sy-params" id="params-jev-execution">{sigilParams('jev-execution').caption}</span></figcaption>
         </figure>
       </div>
       <div>
