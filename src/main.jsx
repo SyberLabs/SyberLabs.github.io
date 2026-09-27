@@ -47,14 +47,14 @@ function Header() {
 function Hero() {
   return <section className="hero" aria-labelledby="hero-title">
     <div className="hero-grid">
-      <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">{['Read', 'Think', 'Build'].map((word, i) => <React.Fragment key={word}>{i > 0 && ' '}<span className="hero-word">{word}<span className="hero-stop">.</span></span></React.Fragment>)}</h1><p className="hero-intro"><span className="hero-rule" aria-hidden="true" />We build interactive reading experiences and inspectable agent systems.</p><a className="hero-action" href="https://rise.syberlabs.io/jev-scene-demo">Try the RISE sample <span aria-hidden="true">↗</span></a></div>
+      <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">{['Read', 'Think', 'Build'].map((word, i) => <React.Fragment key={word}>{i > 0 && ' '}<span className="hero-word">{word}<span className="hero-stop">.</span></span></React.Fragment>)}</h1><p className="hero-intro"><span className="hero-rule" aria-hidden="true" />We build interactive reading experiences and inspectable agent systems.</p><a className="hero-action" href="https://rise.syberlabs.io/sequences/">Start a short reading <span aria-hidden="true">↗</span></a></div>
       <picture><source srcSet={syberMark} type="image/webp" /><img className="hero-mark" src={syberMarkPng} alt="SyberLabs mark" width="678" height="750" /></picture>
     </div>
     <div className="flagships" id="work">
       <article className="flagship flagship-rise" aria-labelledby="rise-title">
         <div className="flagship-top"><span>01 / HUMAN ENVIRONMENT</span><span>RISE · LIVE APP</span></div>
         <div className="rise-preview"><video className="rise-preview-video" autoPlay muted loop playsInline preload="auto" poster={risePoster} aria-label="RISE concept sequence: kaleidoscopic Attractor, Fractal Flame, Curia tiger and Astronomy"><source src="/rise-demo/rise-visual-sequence-20260927-v2.mp4" type="video/mp4" /></video><span className="rise-preview-caption">NEW VISUAL SEQUENCE / 25 SEC</span></div>
-        <div className="flagship-copy"><h2 id="rise-title">One text.<br />Many ways to feel it.</h2><p className="flagship-update">Ask Jev to change the world around your reading.</p><div className="rise-actions"><a href="https://rise.syberlabs.io/jev-scene-demo">Try the interactive sample <span aria-hidden="true">↗</span></a><a href="/rise-demo/">Watch the full demo <span aria-hidden="true">↗</span></a></div></div>
+        <div className="flagship-copy"><h2 id="rise-title">One text.<br />Many ways to feel it.</h2><p className="flagship-update">Read a short sequence, or explore how Jev changes the scene.</p><div className="rise-actions"><a href="https://rise.syberlabs.io/sequences/">Start a short reading <span aria-hidden="true">↗</span></a><a href="https://rise.syberlabs.io/jev-scene-demo">Jev scene demo <span aria-hidden="true">↗</span></a><a href="/rise-demo/">Watch the full demo <span aria-hidden="true">↗</span></a></div></div>
       </article>
     </div>
   </section>;
