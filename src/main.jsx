@@ -33,10 +33,10 @@ function Header() {
   return <header className="site-header">
     <a className="wordmark" href="/" aria-label="SyberLabs home"><img src="/favicon-blue-32x32.png" alt="" /><span>SYBERLABS</span></a>
     <nav className="desktop-nav" aria-label="Main navigation">
-      <a href="#work">Work</a><a href="/jev/">Jev</a><a href="/approach/">Approach</a><a href="https://www.youtube.com/@RiseChamber" target="_blank" rel="noopener noreferrer">Media</a>
+      <a href="#work">Work</a><a href="#system">System</a><a href="/jev/">Jev</a><a href="/approach/">Approach</a>
     </nav>
     <div className="header-actions"><a className="header-contact" href="mailto:syberlabs.software@gmail.com">Get in touch <span aria-hidden="true">↗</span></a><ThemeToggle />
-      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation"><a href="#work">Work</a><a href="/jev/">Jev</a><a href="/approach/">Approach</a><a href="/rise-demo/">RISE demo</a><a href="/commons/">Commons</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
+      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation"><a href="#work">Work</a><a href="#system">System</a><a href="/jev/">Jev</a><a href="/approach/">Approach</a><a href="/rise-demo/">RISE demo</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
     </div>
   </header>;
 }
@@ -91,16 +91,12 @@ function System() {
   </div></section>;
 }
 
-function Media() {
-  return <section className="media" aria-labelledby="media-title"><div className="media-heading"><p className="eyebrow">FROM THE LAB</p><h2 id="media-title">See the experience.</h2><p>RISE UP (ONE SHOT) is a visual expression of the world behind RISE.</p></div><div className="media-frame"><iframe src="https://www.youtube-nocookie.com/embed/pWa_ibgPoGo" title="RISE UP (ONE SHOT) visualizer" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div><div className="media-links"><a href="/rise-demo/">Watch the RISE demo <span aria-hidden="true">↗</span></a><a href="https://www.youtube.com/@RiseChamber" target="_blank" rel="noopener noreferrer">Visit the channel <span aria-hidden="true">↗</span></a></div></section>;
-}
-
 function Footer() {
   return <footer className="site-footer"><div className="footer-main"><div><p className="eyebrow">SYBERLABS</p><h2>Ideas deserve<br />better interfaces.</h2><a href="mailto:syberlabs.software@gmail.com">Get in touch <span aria-hidden="true">↗</span></a></div><nav aria-label="Site directory"><div><strong>Explore</strong><a href="/projects/rise/">RISE</a><a href="/jev/">Jev</a><a href="/commons/">Commons</a><a href="/projects/relay/">Relay</a><a href="/projects/omnios/">OmniOS</a><a href="/projects/osahr/">OSAHR</a></div><div><strong>More</strong><a href="/approach/">Approach</a><a href="/rise-demo/">RISE demo</a><a href="https://www.youtube.com/@RiseChamber" target="_blank" rel="noopener noreferrer">YouTube</a><a href="https://github.com/SyberLabs" target="_blank" rel="noopener noreferrer">GitHub</a></div></nav></div><div className="footer-bottom"><span>© 2026 SyberLabs · Mateo Robles · Seth Carlson</span><a href="#hero-title">Back to top ↑</a></div></footer>;
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="system"><Header /><main><Hero /><Work /><System /><Media /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="system"><Header /><main><Hero /><Work /><System /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
