@@ -23,6 +23,7 @@ const badge = (status, cls = '') => `<span class="sy-badge sy-badge--${status.ki
 const PLATES = ['II', 'III', 'IV', 'V', 'VI', 'VII'];
 
 // Site chrome: identical markup on every static page (see scripts/site-chrome.mjs) and the project pages.
+// `current` marks the page: a nav id for the header, a link href for the footer.
 export const header = (current = '') => {
   const cur = item => item.id === current ? ' aria-current="page"' : '';
   const links = nav.map(item => `<li><a href="${item.href}"${cur(item)}>${item.label}</a></li>`).join('');
@@ -34,9 +35,9 @@ export const header = (current = '') => {
 </div></header>`;
 };
 
-export const footer = () => `<footer class="sy-footer"><div class="sy-footer__in">
+export const footer = (current = '') => `<footer class="sy-footer"><div class="sy-footer__in">
   <a class="sy-lockup" href="/"><img src="/syber-logo-96.png" alt="" width="18" height="20">© 2026 SyberLabs</a>
-  <nav aria-label="Footer">${footerLinks.map(link => `<a href="${link.href}">${link.label}${link.external ? ' ' + icon('external', 16) : ''}</a>`).join('')}</nav>
+  <nav aria-label="Footer">${footerLinks.map(link => `<a href="${link.href}"${link.href === current ? ' aria-current="page"' : ''}>${link.label}${link.external ? ' ' + icon('external', 16) : ''}</a>`).join('')}</nav>
 </div></footer>`;
 
 // A product sigil in a plate frame, with its de Jong parameters as the plate caption.
@@ -49,7 +50,7 @@ export function sigilPlate(seed, plate, title, cls = '') {
 }
 
 function actions(p) {
-  const primary = `<a class="sy-btn sy-btn--solid" href="${p.primary.href}">${esc(p.primary.label)}${icon(p.primary.external ? 'external' : 'arrow', 18, 'sy-icon--trail')}</a>`;
+  const primary = p.primary ? `<a class="sy-btn sy-btn--solid" href="${p.primary.href}">${esc(p.primary.label)}${icon(p.primary.external ? 'external' : 'arrow', 18, 'sy-icon--trail')}</a>` : '';
   const secondary = p.secondary ? `<a class="sy-btn sy-btn--line" href="${p.secondary.href}">${esc(p.secondary.label)}</a>` : '';
   const ghost = p.ghost ? `<a class="sy-btn sy-btn--ghost" href="${p.ghost.href}">${icon(p.ghost.icon || 'arrow', 18)}${esc(p.ghost.label)}</a>` : '';
   return `<div class="sy-actions pj-actions">${primary}${secondary}${ghost}</div>`;
@@ -84,6 +85,19 @@ const riseHow = () => `
     ${[['stream', 'Stream', 'Words arrive through time. Set pacing and playback.'], ['page', 'Page', 'Words occupy a spatial surface you can navigate.'], ['conditions', 'Conditions', 'Tune visual fields and sound around the reading.']]
       .map(([key, title, text]) => `<div class="pj-how__item">${icon(key)}<h3 class="sy-subheading">${title}</h3><p>${text}</p></div>`).join('')}
   </div>
+</section>`;
+
+// Commons: the record every project keeps (formerly the separate /commons/ page).
+const commonsHow = () => `
+<section class="pj-section sy-container" aria-labelledby="how-title">
+  <div class="pj-split">
+    <h2 id="how-title" class="sy-eyebrow">How it works</h2>
+    <div class="pj-split__main"><p class="sy-title">Every project keeps its history.</p><p class="sy-small pj-split__note">Phase 0 example with synthetic data.</p></div>
+  </div>
+  <ol class="pj-how pj-how--steps">
+    ${[['01 / Need', 'Name the problem', 'Describe the need and the outcome the community would recognize.'], ['02 / Evidence', 'Show the basis', 'Keep supporting material and unanswered questions close to the plan.'], ['03 / Human review', 'Request changes', 'A reviewer can send a draft back for changes. Each decision is kept in the audit history.'], ['04 / Outcome', 'Carry learning forward', 'Planned: make results and reusable patterns easy to review and apply to the next project.']]
+      .map(([label, title, text]) => `<li class="pj-how__item"><span class="sy-label">${label}</span><h3 class="sy-subheading">${title}</h3><p>${text}</p></li>`).join('')}
+  </ol>
 </section>`;
 
 function facts(p) {
@@ -137,6 +151,7 @@ export function renderProject(p) {
     ${sigilPlate(p.slug, PLATES[i] || 'II', p.name, 'pj-sigil')}
   </section>
   ${p.slug === 'rise' ? riseFrame() + riseHow() : ''}
+  ${p.slug === 'commons' ? commonsHow() : ''}
   ${facts(p)}
   ${others(p)}
 </main>

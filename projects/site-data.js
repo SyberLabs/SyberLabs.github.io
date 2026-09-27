@@ -19,11 +19,14 @@ export const nav = [
 export const workWithUs = { label: 'Work with us', href: '/services/' };
 
 export const footerLinks = [
+  { label: 'Approach', href: '/approach/' },
+  { label: 'Jev', href: '/jev/' },
+  { label: 'Services', href: '/services/' },
+  { label: 'Résumé', href: RESUME },
   { label: 'GitHub', href: GITHUB, external: true },
   { label: 'LinkedIn', href: LINKEDIN, external: true },
-  { label: 'Résumé', href: RESUME },
-  { label: 'Services', href: '/services/' },
   { label: 'Contact', href: CONTACT },
+  { label: 'Privacy', href: '/privacy/' },
 ];
 
 export const projects = [
@@ -54,7 +57,7 @@ export const projects = [
     intro: 'A prototype for community-led projects that keeps the need, plan, evidence, human review, and outcome in one auditable record.',
     summary: 'A reviewer can send a plan back for changes, and every decision stays in the audit history. The current prototype runs locally with synthetic data.',
     status: { kind: 'private', label: 'Private prototype' },
-    primary: { label: 'Explore Commons', href: '/commons/' },
+    secondary: { label: 'Ask about Commons', href: `${CONTACT}?subject=Commons` },
     facts: [
       ['Stage', 'Local Phase 0 prototype with synthetic data and continuous integration'],
       ['Not yet built', 'Hosted accounts, participant data, and live AI calls'],

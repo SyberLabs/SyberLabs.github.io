@@ -1,0 +1,14 @@
+/* Privacy page. Tokens, type, header and footer come from /syberlabs.css. */
+.privacy { padding-top: var(--space-9); padding-bottom: var(--space-10); }
+.privacy__lede { max-width: 640px; margin-top: var(--space-6); }
+.privacy__list { max-width: 880px; margin: var(--space-7) 0 0; border-top: 1px solid var(--sy-rule); }
+.privacy__list > div { display: grid; grid-template-columns: 200px minmax(0, 1fr); column-gap: var(--space-6); padding: var(--space-5) 0; border-bottom: 1px solid var(--sy-rule); }
+.privacy__list dt { font: 500 12px/26px var(--sy-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--sy-dim); }
+.privacy__list dd { margin: 0; max-width: var(--measure); color: var(--sy-body); }
+.privacy__list a, .privacy__updated a { text-decoration: underline; }
+.privacy__updated { margin-top: var(--space-6); }
+@media (max-width: 640px) {
+  .privacy { padding-top: var(--space-7); padding-bottom: var(--space-8); }
+  .privacy__list { margin-top: var(--space-6); }
+  .privacy__list > div { grid-template-columns: 1fr; row-gap: var(--space-1); padding: var(--space-4) 0; }
+}
