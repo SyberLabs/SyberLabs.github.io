@@ -87,7 +87,7 @@ export default function Stage({ map, graph, state, frame, index, animate, durati
 
   useEffect(() => {
     cancelAnimationFrame(raf.current);
-    if (!animate || !moves.length) { setClock(1); return undefined; }
+    if (!animate || (!moves.length && !map.Extras)) { setClock(1); return undefined; }
     const start = performance.now();
     setClock(0);
     const tick = now => {
@@ -141,7 +141,8 @@ export default function Stage({ map, graph, state, frame, index, animate, durati
         const status = state.edges[edge.id] || edge.status || 'idle';
         const inStep = (frame.travel || []).includes(edge.id) || (frame.blocked || []).includes(edge.id);
         const endpointHidden = [edge.from, edge.to].some(id => (state.nodes[id] || graph.nodes.find(n => n.id === id)?.status) === 'hidden');
-        if (status === 'hidden' || endpointHidden || (edge.transient && !inStep)) return null;
+        const transient = edge.transient === true || (edge.transient === 'narrow' && layout === 'narrow');
+        if (status === 'hidden' || endpointHidden || (transient && !inStep)) return null;
         const g = geometry(edge, a, b, layout);
         const traversed = done(edge.id) && (frame.travel || []).includes(edge.id);
         const blocked = done(edge.id) && (frame.blocked || []).includes(edge.id);
@@ -181,6 +182,7 @@ export default function Stage({ map, graph, state, frame, index, animate, durati
       })}
     </g>
     <g className="overlay" aria-hidden="true">{overlay}</g>
+    {map.Extras && <g className="extras" aria-hidden="true"><map.Extras index={index} frame={frame} layout={layout} places={places} clock={clock} animate={animate} duration={duration} /></g>}
     {token}
   </svg>;
 }

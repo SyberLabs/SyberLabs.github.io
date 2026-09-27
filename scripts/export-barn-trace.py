@@ -109,6 +109,7 @@ async def main() -> dict:
         "source": "sykosyber/bough-and-barn barn/src/barn/demo.py",
         "commit": commit,
         "goal": done["state"]["goal"],
+        "maxActiveAgents": done["state"]["max_active_agents"],
         "agents": [{"role": a["role"], "status": a["status"], "capabilities": sorted(a["capabilities"])} for a in done["state"]["agents"].values()],
         "work": [{"title": w["title"], "status": w["status"], "requires": sorted(w["required_capabilities"])} for w in done["state"]["work_items"].values()],
         "events": events,

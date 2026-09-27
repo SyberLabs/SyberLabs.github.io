@@ -137,7 +137,9 @@ The run shows two kinds of "no":
 - `specialist.rejected` (`capability_not_required`) is a committed decision event.
 - `artifact_required` and `independent_verifier_required` raise `TransitionError` and append nothing.
 
-**Inspectable:** each event's actor, work item and decision reason. The audit compares materialized state with state replayed from the ledger (`4f58dbd71b80` in both). The "why" chain runs goal → sync → conflict → capability `crdt` → request → CRDT Specialist.
+**Also drawn:** capability chips (held, met, unmet gaps, pending verification), the engine's decision per step, the active-agent budget (4, from the run), and the ledger itself. A refusal leaves a mark where an event would have gone.
+
+**Inspectable:** each event's actor, work item and decision reason. The audit compares materialized state with state replayed from the ledger (`c8be63a20d9c` in both for the published run; Barn assigns fresh ids, so each recording has its own hash). The "why" chain runs goal → sync → conflict → capability `crdt` → request → CRDT Specialist.
 
 **Bough:** Bough compiles exact jump chains over OSAHR. Barn's integration plan (§7) makes Bough's output advice, never authorization. Bough is not called in this run, and the map does not draw it as connected. **Graft** (the stricter licensing join) exists only as an unpublished working tree, so it is listed under uncertainty.
 
