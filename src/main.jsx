@@ -13,8 +13,8 @@ const theme = createTheme({
 });
 
 const work = [
-  { number: '01', name: 'Jev', type: 'Research', description: 'Typed model judgments, bounded by product rules and human authority.', href: '/jev/' },
-  { number: '02', name: 'Commons', type: 'Prototype', description: 'A place to turn a shared need into a plan with a visible decision history.', href: '/commons/' },
+  { number: '01', name: 'Jev', type: 'Evaluation', description: 'Our independent evaluation of TypeSafe AI’s model for bounded judgments.', href: '/jev/' },
+  { number: '02', name: 'Commons', type: 'Local prototype', description: 'A place to turn a shared need into a plan with a visible decision history.', href: '/commons/' },
   { number: '03', name: 'Relay', type: 'Product', description: 'An application workspace that keeps research, revisions, and exact approval together.', href: '/projects/relay/' },
   { number: '04', name: 'OmniOS', type: 'Research', description: 'A spatial AI workspace that shows which sources reached an answer.', href: '/projects/omnios/' },
   { number: '05', name: 'OSAHR', type: 'Research', description: 'Graph based simulation with inspectable rules, events, and replay.', href: '/projects/osahr/' },
@@ -45,7 +45,7 @@ function Hero() {
   return <section className="hero" aria-labelledby="hero-title">
     <div className="hero-grid">
       <div className="hero-heading"><p className="eyebrow">INDEPENDENT AI LAB</p><h1 id="hero-title">Make intelligence <em>tangible.</em></h1></div>
-      <div className="hero-aside"><p>We build interfaces for reading, decisions, and simulation. Our work makes complex systems easier to enter, question, and control.</p><a className="text-link" href="#work">Explore the work <span aria-hidden="true">↗</span></a></div>
+      <div className="hero-aside"><p>We build RISE for immersive reading and tools for decisions you can inspect, question, and control.</p><a className="text-link" href="#work">Explore the work <span aria-hidden="true">↗</span></a></div>
     </div>
     <a className="feature" href="/projects/rise/" aria-label="Explore RISE, our reading experience">
       <video className="feature-video" autoPlay muted loop playsInline preload="metadata" poster={risePoster} aria-hidden="true"><source src="/rise-demo/rise-demo-20260926.mp4" type="video/mp4" /></video>
@@ -59,12 +59,36 @@ function Hero() {
 function Work() {
   return <section className="work-section" id="work" aria-labelledby="work-title"><div className="section-heading"><p className="eyebrow">OUR WORK</p><h2 id="work-title">Systems worth<br /><em>understanding.</em></h2><p>Each project starts with a concrete problem and a clear account of what the software should do.</p></div>
     <div className="work-list">{work.map(item => <a className="work-row" href={item.href} key={item.name}><span className="work-num">{item.number}</span><span className="work-name">{item.name}</span><span className="work-description">{item.description}</span><span className="work-type">{item.type}</span><span className="work-arrow" aria-hidden="true">↗</span></a>)}</div>
-    <a className="work-rise-link" href="/projects/rise/">See the RISE project page <span aria-hidden="true">↗</span></a>
   </section>;
 }
 
-function Thinking() {
-  return <section className="thinking" aria-labelledby="thinking-title"><div className="thinking-inner"><div><p className="eyebrow">HOW WE THINK</p><h2 id="thinking-title">Question the system.<br />Then build what matters.</h2></div><div className="thinking-copy"><p>Good AI products make their boundaries visible. We expose the inputs, the transformation, and the point where a person stays in control.</p><div className="thinking-links"><a href="/approach/">Read our approach <span aria-hidden="true">↗</span></a><a href="/jev/">Study the Jev research <span aria-hidden="true">↗</span></a></div></div></div></section>;
+const systemSteps = [
+  { number: '01', name: 'A real need', detail: 'Start with the question, source, or decision that matters.' },
+  { number: '02', name: 'A visible path', detail: 'Show what the system uses and how the result takes shape.' },
+  { number: '03', name: 'Human choice', detail: 'Give the person a point to inspect, redirect, or approve.' },
+  { number: '04', name: 'A usable record', detail: 'Keep enough context to question the outcome and improve the next pass.' },
+];
+
+const systemContexts = [
+  { name: 'RISE', focus: 'Reading', href: '/projects/rise/' },
+  { name: 'Jev', focus: 'Model judgment', href: '/jev/' },
+  { name: 'Commons', focus: 'Shared plans', href: '/commons/' },
+  { name: 'Relay', focus: 'Application review', href: '/projects/relay/' },
+  { name: 'OmniOS', focus: 'Spatial answers', href: '/projects/omnios/' },
+  { name: 'OSAHR', focus: 'Simulation', href: '/projects/osahr/' },
+];
+
+function System() {
+  return <section className="system" id="system" aria-labelledby="system-title"><div className="system-inner">
+    <div className="system-heading"><div><p className="eyebrow">THE SYBERLABS SYSTEM</p><h2 id="system-title">Make the path<br /><em>visible.</em></h2></div><p>Understanding compounds when people can see where an answer came from, act on it, and carry that context forward.</p></div>
+    <div className="system-diagram" aria-label="A four-step loop from a real need through a visible path and human choice to a usable record, which informs the next need">
+      <div className="system-track" aria-hidden="true"><span className="system-track-line" /><span className="system-track-return" /></div>
+      <div className="system-steps">{systemSteps.map((step, index) => <div className="system-step" key={step.number}><div className="system-node"><span>{step.number}</span><span aria-hidden="true">{index === 3 ? '↺' : '↗'}</span></div><h3>{step.name}</h3><p>{step.detail}</p></div>)}</div>
+      <div className="system-return"><span aria-hidden="true">↶</span> THE RECORD SHAPES THE NEXT QUESTION</div>
+    </div>
+    <div className="system-contexts"><p className="eyebrow">ONE METHOD · DISTINCT PROJECTS</p><div>{systemContexts.map(context => <a href={context.href} key={context.name}><strong>{context.name}</strong><span>{context.focus}</span><span aria-hidden="true">↗</span></a>)}</div></div>
+    <div className="system-foot"><p>Each project explores this design loop in its own domain.</p><a href="/approach/">Read our approach <span aria-hidden="true">↗</span></a></div>
+  </div></section>;
 }
 
 function Media() {
@@ -72,11 +96,11 @@ function Media() {
 }
 
 function Footer() {
-  return <footer className="site-footer"><div className="footer-main"><div><p className="eyebrow">SYBERLABS</p><h2>Ideas deserve<br />better interfaces.</h2><a href="mailto:syberlabs.software@gmail.com">Work with us <span aria-hidden="true">↗</span></a></div><nav aria-label="Site directory"><div><strong>Explore</strong><a href="/projects/rise/">RISE</a><a href="/jev/">Jev</a><a href="/commons/">Commons</a><a href="/projects/relay/">Relay</a><a href="/projects/omnios/">OmniOS</a><a href="/projects/osahr/">OSAHR</a></div><div><strong>More</strong><a href="/approach/">Approach</a><a href="/rise-demo/">RISE demo</a><a href="https://www.youtube.com/@RiseChamber" target="_blank" rel="noopener noreferrer">YouTube</a><a href="https://github.com/SyberLabs" target="_blank" rel="noopener noreferrer">GitHub</a></div></nav></div><div className="footer-bottom"><span>© 2026 SyberLabs · Mateo Robles · Seth Carlson</span><a href="#hero-title">Back to top ↑</a></div></footer>;
+  return <footer className="site-footer"><div className="footer-main"><div><p className="eyebrow">SYBERLABS</p><h2>Ideas deserve<br />better interfaces.</h2><a href="mailto:syberlabs.software@gmail.com">Get in touch <span aria-hidden="true">↗</span></a></div><nav aria-label="Site directory"><div><strong>Explore</strong><a href="/projects/rise/">RISE</a><a href="/jev/">Jev</a><a href="/commons/">Commons</a><a href="/projects/relay/">Relay</a><a href="/projects/omnios/">OmniOS</a><a href="/projects/osahr/">OSAHR</a></div><div><strong>More</strong><a href="/approach/">Approach</a><a href="/rise-demo/">RISE demo</a><a href="https://www.youtube.com/@RiseChamber" target="_blank" rel="noopener noreferrer">YouTube</a><a href="https://github.com/SyberLabs" target="_blank" rel="noopener noreferrer">GitHub</a></div></nav></div><div className="footer-bottom"><span>© 2026 SyberLabs · Mateo Robles · Seth Carlson</span><a href="#hero-title">Back to top ↑</a></div></footer>;
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="system"><Header /><main><Hero /><Work /><Thinking /><Media /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="system"><Header /><main><Hero /><Work /><System /><Media /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
