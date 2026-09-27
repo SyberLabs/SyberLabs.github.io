@@ -15,5 +15,11 @@ body.syber-demo{color:#191917;background:#f2f0e9}
 .syber-demo .links a{border-color:#191917;border-radius:4px;color:#191917;font:700 .86rem Arial,Helvetica,sans-serif;letter-spacing:0;text-transform:none}
 .syber-demo .links .primary{background:#191917;color:#f2f0e9;border-color:#191917}
 .syber-demo .links a:hover{background:#9e4838;border-color:#9e4838;color:#fff}
+.syber-demo .interactive-entry{padding:clamp(24px,4vw,48px);border:1px solid #b9b5aa;background:#e9e5db}
+.syber-demo .interactive-entry h2{max-width:14ch;margin:15px 0;color:#191917;font-size:clamp(2rem,5vw,4.5rem);letter-spacing:-.065em;line-height:1.04}
+.syber-demo .interactive-entry p:not(.eyebrow){max-width:58ch;color:#57564f;font-family:Georgia,'Times New Roman',serif;font-size:1.15rem;line-height:1.5}
+.syber-demo .interactive-entry .interactive-cta{display:inline-block;margin:10px 0 14px;padding:14px 18px;border-radius:4px;background:#191917;color:#f2f0e9;font-weight:700;text-decoration:none}
+.syber-demo .interactive-entry .interactive-cta:hover{background:#9e4838}
+.syber-demo .interactive-entry small{display:block;color:#57564f;line-height:1.45}
 .syber-demo a:focus-visible{outline:2px solid #9e4838;outline-offset:4px}
 @media(prefers-reduced-motion:reduce){.syber-demo .demo-field{display:none}}
