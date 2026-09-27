@@ -29,4 +29,6 @@ body.syber-demo{overflow-x:clip}
 body.syber-commons{overflow-x:clip}
 body.syber-demo .shell>.syber-header,body.syber-commons .shell>.syber-header{width:100vw;max-width:none;margin-left:calc(50% - 50vw)}
 body.syber-commons .shell>.syber-header{margin-top:-24px}
+body.syber-project .relay-document b{color:#f2f0e9}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}body.syber-project .procedural-field,body.syber-commons #commons-field,body.syber-demo #demo-field{display:none}}
 @media(max-width:720px){body .syber-header{min-height:66px;flex-wrap:wrap;gap:8px}.syber-header .syber-nav{width:100%;justify-content:flex-start;gap:18px;overflow-x:auto;padding:7px 0 3px}.syber-header .syber-nav a{font-size:.78rem}.syber-header .syber-nav .syber-contact{padding:7px 10px}body.syber-project .hero{padding-top:65px}}
