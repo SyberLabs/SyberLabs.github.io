@@ -48,7 +48,7 @@ function Hero() {
     <div className="flagships" id="work">
       <article className="flagship flagship-rise" aria-labelledby="rise-title">
         <div className="flagship-top"><span>01 / EXPERIENTIAL SOFTWARE</span><span>RISE · LIVE APP</span></div>
-        <div className="rise-preview"><video className="rise-preview-video" controls playsInline preload="none" poster={risePoster} aria-label="RISE visual sequence: Attractor, Fractal Flame, Animals and Astronomy"><source src="/rise-demo/rise-visual-sequence-20260927.mp4" type="video/mp4" /></video><span className="rise-preview-caption">NEW VISUAL SEQUENCE / 25 SEC</span></div>
+        <div className="rise-preview"><video className="rise-preview-video" autoPlay muted loop playsInline preload="auto" poster={risePoster} aria-label="RISE visual sequence: Attractor, Fractal Flame, Animals and Astronomy"><source src="/rise-demo/rise-visual-sequence-20260927.mp4" type="video/mp4" /></video><span className="rise-preview-caption">NEW VISUAL SEQUENCE / 25 SEC</span></div>
         <div className="flagship-copy"><h2 id="rise-title">One text.<br />Many ways to feel it.</h2><p className="flagship-update">Ask Jev to change the world around your reading.</p><div className="rise-actions"><a href="https://rise.syberlabs.io/jev-scene-demo">Try the interactive sample <span aria-hidden="true">↗</span></a><a href="/rise-demo/">Watch the full demo <span aria-hidden="true">↗</span></a></div></div>
       </article>
       <article className="flagship flagship-relay" aria-labelledby="relay-title">
