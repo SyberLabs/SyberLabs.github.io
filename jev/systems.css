@@ -8,11 +8,6 @@
 .course-heading h2,.saas-heading h2,.evaluation-heading h2{font:800 clamp(2.7rem,5.7vw,6.5rem)/1.03 'Manrope',sans-serif;letter-spacing:-.075em;margin:12px 0 0}
 .course-heading h2 em,.saas-heading h2 em,.evaluation-heading h2 em{font-style:normal;color:#d7f887}
 .course-heading p:last-child,.saas-heading p:last-child,.evaluation-heading p:last-child{max-width:570px;color:#c5d7e6;line-height:1.72;font-size:1.06rem}
-.syllabus{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #a7dddf6e;background:#0c172cce;margin-bottom:65px}
-.syllabus a{padding:20px 17px;color:#dfeeff;text-decoration:none;font:700 .78rem 'Space Mono',monospace;border-right:1px solid #a7dddf4d;transition:background .2s}
-.syllabus a:last-child{border-right:0}
-.syllabus a:hover,.syllabus a:focus-visible{background:#c557e030}
-.syllabus span{display:block;color:#d7f887;margin-bottom:10px}
 .course-module{display:grid;grid-template-columns:minmax(170px,.28fr) minmax(0,1fr);gap:clamp(30px,5vw,75px);padding:55px 0;border-top:1px solid #8bcbcf70}
 .module-label{display:flex;flex-direction:column;gap:11px;font:700 .71rem 'Space Mono',monospace;letter-spacing:.08em;color:#9aefe6}
 .module-label strong{color:#e5f1fc;font:700 1rem 'Manrope',sans-serif;letter-spacing:0}
@@ -55,10 +50,7 @@
 .saas-detail p{color:#c8d9e7;line-height:1.72}
 .saas-code{min-width:0;border:1px solid #a080d7a1;background:#070d1d;align-self:start}
 .saas-code pre{margin:0;padding:22px;overflow:auto;color:#c2eef2;font:400 .73rem/1.7 'Space Mono',monospace}
-.saas-rules{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#8fb9d273;border:1px solid #8fb9d273;margin-top:28px}
-.saas-rules div{background:#101d37;padding:22px}
-.saas-rules span,.evaluation-grid span,.evaluation-exit span{color:#d7f887;font:700 .69rem 'Space Mono',monospace}
-.saas-rules p{color:#bfd0df;font-size:.83rem;line-height:1.65}
+.evaluation-grid span,.evaluation-exit span{color:#d7f887;font:700 .69rem 'Space Mono',monospace}
 .evaluation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border:1px solid #8dbcd36f;background:#8dbcd36f}
 .evaluation-grid article{min-height:245px;padding:clamp(20px,2.5vw,34px);background:linear-gradient(145deg,#17254a,#181334)}
 .evaluation-grid h3{font:800 1.45rem 'Manrope',sans-serif;letter-spacing:-.035em;margin:22px 0 12px}
@@ -66,24 +58,19 @@
 .evaluation-exit{display:grid;grid-template-columns:.33fr .67fr;gap:30px;align-items:center;padding:30px;border:1px solid #d7f8879c;margin-top:28px;background:#d7f88712}
 .evaluation-exit p{color:#e3f1ef;line-height:1.65;margin:0}
 @media(max-width:1000px){.course-heading,.saas-heading,.evaluation-heading{grid-template-columns:1fr;gap:15px}
-.syllabus{grid-template-columns:repeat(3,1fr)}
 .saas-diagram{grid-template-columns:repeat(3,1fr)}
-.saas-node:after{display:none}
-.saas-rules{grid-template-columns:repeat(2,1fr)}}
+.saas-node:after{display:none}}
 @media(max-width:700px){.course-section,.saas-section,.evaluation-section{padding:70px 0}
 .course-heading,.saas-heading,.evaluation-heading{padding:45px 0 35px}
-.syllabus{grid-template-columns:repeat(2,1fr)}
 .course-module{grid-template-columns:1fr;gap:20px;padding:38px 0}
 .course-columns,.failure-grid,.evaluation-grid{grid-template-columns:1fr}
 .policy-pipeline{display:grid;grid-template-columns:repeat(2,1fr)}
 .policy-pipeline b{display:none}
 .saas-diagram{grid-template-columns:repeat(2,1fr)}
 .saas-detail{grid-template-columns:1fr}
-.saas-rules{grid-template-columns:1fr}
 .evaluation-exit{grid-template-columns:1fr}
 .saas-switch{width:100%}
 .saas-switch button{flex:1;padding:14px 8px;font-size:.68rem}}
-@media(prefers-reduced-motion:reduce){.syllabus a{transition:none}}
 .integration-status{padding-bottom:110px}
 .status-content{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,6vw,110px);padding:75px 0 20px}
 .status-content h2{font:800 clamp(2.5rem,5vw,5.5rem)/1.04 'Manrope',sans-serif;letter-spacing:-.075em;margin:0}
@@ -91,4 +78,6 @@
 .status-content>div:last-child{padding:25px 0 0}
 .status-content p{color:#c5d7e6;font-size:clamp(1rem,1.25vw,1.14rem);line-height:1.75}
 .status-content strong{color:#d7f887}
-@media(max-width:700px){.integration-status{padding-bottom:70px}.status-content{grid-template-columns:1fr;padding:50px 0 0;gap:20px}.status-content>div:last-child{padding:0}}
+@media(max-width:700px){.integration-status{padding-bottom:70px}
+.status-content{grid-template-columns:1fr;padding:50px 0 0;gap:20px}
+.status-content>div:last-child{padding:0}}
