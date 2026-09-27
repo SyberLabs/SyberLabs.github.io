@@ -62,7 +62,7 @@ else {
   }[slug];
   document.getElementById('app').innerHTML = `
     <header class="syber-header">
-  <a class="syber-wordmark" href="/" aria-label="SyberLabs home"><img src="/favicon-blue-32x32.png" alt=""><span>SYBERLABS</span></a>
+  <a class="syber-wordmark" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png?v=prism" alt="" width="29" height="32"><span>SYBERLABS</span></a>
   <nav class="syber-nav" aria-label="Main navigation"><a href="/#work">Work</a><a href="/#system">System</a></nav>
   <div class="syber-actions"><a class="syber-contact" href="mailto:syberlabs.software@gmail.com">Get in touch <span aria-hidden="true">↗</span></a><details class="syber-mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation"><a href="/#work">Work</a><a href="/#system">System</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details></div>
 </header>

@@ -1,5 +1,5 @@
-:root{--page:#f2f0e9;--page-deep:#e9e5db;--ink:#191917;--muted:#57564f;--rule:#b9b5aa;--accent:#9e4838;--panel:#faf8f2;--code:#24231f;--code-ink:#f2f0e9;color-scheme:light}
-html[data-theme=dark]{--page:#171715;--page-deep:#22221e;--ink:#f3f0e8;--muted:#bbb7aa;--rule:#66645b;--accent:#d69075;--panel:#24241f;--code:#0f0f0e;--code-ink:#f2f0e9;color-scheme:dark}
+:root{--page:#f4f6fb;--page-deep:#e7edf9;--ink:#070b1a;--muted:#4a556e;--rule:#c5cee0;--accent:#0048f0;--panel:#fbfcff;--code:#0c1122;--code-ink:#f4f6fb;color-scheme:light}
+html[data-theme=dark]{--page:#05060a;--page-deep:#0a0d18;--ink:#f2f5fb;--muted:#a3afc8;--rule:#1c2440;--accent:#4890f0;--panel:#0c1122;--code:#030407;--code-ink:#f4f6fb;color-scheme:dark}
 html[data-theme=light]{color-scheme:light}
 html{scroll-padding-top:90px}
 body{color:var(--ink);background:var(--page);font-family:Arial,Helvetica,sans-serif}
@@ -25,15 +25,16 @@ body .site-header{gap:24px}
 .button.primary:hover{background:var(--accent);border-color:var(--accent);color:var(--page)}
 .button.ghost{color:var(--ink)}
 .button.ghost:hover{background:var(--page-deep);border-color:var(--ink)}
-.scene{height:min(520px,48vw);min-height:420px;overflow:hidden;border-radius:8px;background:radial-gradient(circle at 50% 45%,#4b342c,#24201d 56%,#10100f);perspective:1000px}
+.scene{height:min(520px,48vw);min-height:420px;overflow:hidden;border-radius:8px;background:radial-gradient(circle at 50% 45%,#0b2a86,#0a1433 56%,#030407);perspective:1000px}
 .scene-halo{background:radial-gradient(circle,#d6907535,transparent 70%);filter:blur(36px)}
 .scene-ring{border-color:#d4bca755;box-shadow:none}
 .ring-b{border-color:#f2f0e944;box-shadow:none}
-.cube-face,.cube-face.right,.cube-face.left{background:linear-gradient(145deg,#332a25de,#171613e8 65%,#624236dc);border-color:#d0bba889;box-shadow:inset 0 0 45px #f4dbc21b,0 15px 50px #0005}
-.cube-face.top{background:linear-gradient(135deg,#d9b79a70,#9e483845)}
-.cube-face.bottom{background:#191713}
-.cube-face span,.scene-label span{color:#e4ad90}
-.scene-label,.scene-caption{color:#e3d9cb}
+.cube-face,.cube-face.right,.cube-face.left{background:linear-gradient(145deg,#0048f0cc,#0a1433e6 62%,#4890f0b8);border-color:#90d8f080;box-shadow:inset 0 0 45px #f0d8d824,0 15px 50px #0006}
+.cube-face strong{color:#f2f5fb}
+.cube-face.top{background:linear-gradient(135deg,#90d8f066,#f0d8d840)}
+.cube-face.bottom{background:#070a14}
+.cube-face span,.scene-label span{color:#90d8f0}
+.scene-label,.scene-caption{color:#e2e9f6}
 .scene-caption{border-color:#e2d2c36b}
 .scroll-cue{color:var(--muted)}
 .scroll-cue span{color:var(--ink)}
@@ -62,8 +63,8 @@ body .site-header{gap:24px}
 .distribution-row .fill{background:var(--accent);box-shadow:none}
 .contract-grid{border-color:var(--rule)}
 .contract-code,.saas-code{background:var(--code)}
-.code-title{border-color:#77736a;color:#e1bda8}
-.code-title span:last-child{color:#e1bda8}
+.code-title{border-color:#2b3b66;color:#f0d8d8}
+.code-title span:last-child{color:#f0d8d8}
 .contract-code pre,.saas-code pre{color:var(--code-ink)}
 .course-module{border-color:var(--rule)}
 .module-label,.module-label strong,.module-body h3,.saas-detail h3,.evaluation-grid h3{color:var(--ink);font-family:Arial,Helvetica,sans-serif}
@@ -92,8 +93,8 @@ body .site-header{gap:24px}
 .evaluation-exit p{color:var(--ink);font-family:Georgia,'Times New Roman',serif}
 .integration-status{background:var(--page)}
 .status-content strong{color:var(--accent)}
-.footer{color:#f2f0e9;background:#20201d;border-color:#66645c;font-family:Arial,Helvetica,sans-serif}
-.footer .brand{color:#f2f0e9}
+.footer{color:#f4f6fb;background:#030407;border-color:#1c2440;font-family:Arial,Helvetica,sans-serif}
+.footer .brand{color:#f4f6fb}
 .footer .brand img{filter:grayscale(1)}
 @media(max-width:800px){.hero{display:block;padding:70px 22px 80px}.scene{height:430px;margin-top:50px}.section-shell{width:calc(100% - 44px)}}
 @media(max-width:600px){body .syber-header{padding:12px 22px}.syber-header .syber-nav{width:100%;justify-content:flex-start;flex-wrap:wrap;gap:10px 16px;overflow:visible;padding:7px 0 3px}.syber-header .syber-nav a{font-size:.78rem}.syber-header .syber-nav .syber-contact{padding:7px 10px}.syber-header .theme-toggle{width:32px;height:32px;margin-left:auto;font-size:1.1rem}.hero{padding-top:62px}.hero h1{font-size:clamp(3.2rem,12vw,5rem)}.scene{height:330px;margin-top:35px}.scene-label{font-size:.47rem}.scene-caption{font-size:.43rem}.section-top{padding-top:26px}}

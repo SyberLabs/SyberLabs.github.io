@@ -121,7 +121,7 @@ export default function Stage({ map, graph, state, frame, index, animate, durati
 
   return <svg className="map-svg" viewBox={`0 0 ${vw} ${vh}`} role="group" aria-label={label}>
     <defs>
-      <radialGradient id="map-depth" cx="50%" cy="42%" r="75%"><stop offset="0" stopColor="#17305a" /><stop offset=".62" stopColor="#0d1a33" /><stop offset="1" stopColor="#081223" /></radialGradient>
+      <radialGradient id="map-depth" cx="50%" cy="42%" r="75%"><stop offset="0" stopColor="#0d2244" /><stop offset=".62" stopColor="#071227" /><stop offset="1" stopColor="#040d1b" /></radialGradient>
       <pattern id="map-grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#6f8fd6" strokeOpacity=".07" /></pattern>
       <filter id="map-glow" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="4" /></filter>
     </defs>

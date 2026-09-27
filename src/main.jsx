@@ -5,6 +5,9 @@ import IconButton from '@mui/material/IconButton';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import risePoster from '../rise-demo/visual-sequence-poster-20260927-v2.jpg';
+import syberMark from '../syber-logo.webp';
+import syberMarkPng from '../syber-logo.png';
+import syberMarkSmall from '../syber-logo-96.png';
 import SystemMaps from './system-maps/SystemMaps.jsx';
 import './home.css';
 
@@ -31,7 +34,7 @@ function ThemeToggle() {
 
 function Header() {
   return <header className="site-header">
-    <a className="wordmark" href="/" aria-label="SyberLabs home"><img src="/favicon-blue-32x32.png" alt="" /><span>SYBERLABS</span></a>
+    <a className="wordmark" href="/" aria-label="SyberLabs home"><img src={syberMarkSmall} alt="" width="27" height="30" /><span>SYBERLABS</span></a>
     <nav className="desktop-nav" aria-label="Main navigation">
       <a href="#work">Work</a><a href="#maps">Maps</a><a href="#system">System</a>
     </nav>
@@ -45,6 +48,7 @@ function Hero() {
   return <section className="hero" aria-labelledby="hero-title">
     <div className="hero-grid">
       <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">{['Read', 'Think', 'Build'].map((word, i) => <React.Fragment key={word}>{i > 0 && ' '}<span className="hero-word">{word}<span className="hero-stop">.</span></span></React.Fragment>)}</h1><p className="hero-intro"><span className="hero-rule" aria-hidden="true" />Software for you and your agents.</p></div>
+      <picture><source srcSet={syberMark} type="image/webp" /><img className="hero-mark" src={syberMarkPng} alt="SyberLabs mark" width="678" height="750" /></picture>
     </div>
     <div className="flagships" id="work">
       <article className="flagship flagship-rise" aria-labelledby="rise-title">
@@ -99,7 +103,7 @@ function Footer() {
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="light"><Header /><main><Hero /><SystemMaps /><System /><Work /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="dark"><Header /><main><Hero /><SystemMaps /><System /><Work /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
