@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f2f0e9">
-  <meta name="description" content="A technical Jev course from SyberLabs: model primitives, decision theory, B2B and B2C SaaS architectures, failure modes, and evaluation.">
+  <meta name="description" content="SyberLabs' independent Jev evaluation and the optional Scriptorium composition route in RISE, with current validation status and proposed architectures.">
   <link rel="canonical" href="https://syberlabs.io/jev/">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Jev × SyberLabs | Decisions with boundaries">
-  <meta property="og:description" content="Our technical response and integration plan for Jev across SyberLabs.">
+  <meta property="og:description" content="Our independent Jev evaluation, optional RISE composition route, and validation plan.">
   <meta property="og:url" content="https://syberlabs.io/jev/">
   <title>Jev × SyberLabs | Decisions with boundaries</title>
   <link rel="stylesheet" href="/jev/jev.css">
@@ -58,7 +58,7 @@
 
     <section class="technical-section" id="technical" aria-labelledby="technical-title"><div class="section-shell">
       <div class="section-top"><span class="section-index">MODEL / INTERFACE</span><span class="section-rule"></span><span class="section-tag">TYPED ANSWERS</span></div>
-      <div class="technical-head"><div><p class="kicker">STATE → TYPED ANSWER</p><h2 id="technical-title">A decision is<br><em>an interface.</em></h2></div><div><p>TypeSafe describes Jev as a System One model: state and a set of named questions go in; structured, probabilistic answers come out. The output space is declared before inference, so the application can compose those answers in code.</p><p>One request can combine different question types. The examples are illustrative, not live model calls or benchmarks.</p><a class="text-link" href="https://docs.typesafe.ai/introduction/quickstart" target="_blank" rel="noopener noreferrer">TypeSafe API quick start ↗</a></div></div>
+      <div class="technical-head"><div><p class="kicker">STATE → TYPED ANSWER</p><h2 id="technical-title">A decision is<br><em>an interface.</em></h2></div><div><p>TypeSafe describes Jev as a System One model: state and a set of named questions go in; structured, probabilistic answers come out. The output space is declared before inference, so the application can compose those answers in code.</p><p>One request can combine different question types. The examples below use synthetic answers and make no provider calls. RISE's Chamber does not use Jev for reading or pacing.</p><a class="text-link" href="https://docs.typesafe.ai/introduction/quickstart" target="_blank" rel="noopener noreferrer">TypeSafe API quick start ↗</a></div></div>
       <div class="primitive-console">
         <div class="primitive-rail" role="tablist" aria-label="Jev question types">
           <button class="primitive-tab selected" type="button" role="tab" aria-selected="true" aria-controls="primitive-panel" id="tab-choice" data-primitive="choice"><span>01 / CHOICE</span><strong>Select one option</strong><small>Discrete action space</small></button>
@@ -88,7 +88,7 @@
       </div><div class="evaluation-exit"><span>PASS CONDITION / PROPOSED</span><p>Advance only when the Jev route improves an independently verified user outcome over baseline within the product's risk, privacy, latency, and cost limits. Publish denominators and failure cases.</p></div></div></section>
     <section class="integration-status section-shell" id="integrations" aria-labelledby="status-title">
       <div class="section-top"><span class="section-index">CURRENT STATUS</span><span class="section-rule"></span><span class="section-tag">RISE / READING</span></div>
-      <div class="status-content"><div><p class="kicker">ONE CONCRETE SEAM</p><h2 id="status-title">RISE has a bounded<br><em>reading decision.</em></h2></div><div><p>The route selects continue, slower, or pause. Consent, passage admission, cancellation, and presentation limits remain in code. The adapter exists; provider activation and representative live reading outcomes are unverified.</p><p><strong>Next proof:</strong> exercise the configured provider in a connected preview, then compare reader outcomes with the existing path.</p><a class="text-link" href="https://github.com/SyberLabs/RISE" target="_blank" rel="noopener noreferrer">Inspect RISE ↗</a></div></div>
+      <div class="status-content"><div><p class="kicker">ONE CONCRETE SEAM</p><h2 id="status-title">RISE offers optional<br><em>composition routing.</em></h2></div><div><p>In the Scriptorium, a reader can supply a JEV API key and ask Jev to recommend one of RISE's composition formats from a typed intent and target word count. RISE's own examination decides whether the resulting score can be admitted. The Chamber reads and paces text locally without a provider key. The former per-passage reading gate was removed; its server handler is not called by the current reading path.</p><p><strong>Next proof:</strong> verify an authenticated Scriptorium route on the deployed host and measure whether it improves an independently observed authoring outcome. A live provider outcome is not yet verified.</p><a class="text-link" href="https://github.com/SyberLabs/RISE" target="_blank" rel="noopener noreferrer">Inspect RISE ↗</a></div></div>
     </section>
 
   </main>
