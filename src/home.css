@@ -31,6 +31,17 @@
 .featured-screen{position:relative;overflow:hidden;margin:0 14px;aspect-ratio:1.55;background:#07070c;border:1px solid #ffffff18;border-radius:8px}
 .featured-screen img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
 .featured-screen::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 55%,#08071155)}
+.rise-network-screen{background:radial-gradient(circle at 52% 48%,#292344 0,#131525 46%,#080912 80%),repeating-linear-gradient(90deg,transparent 0 35px,#ffffff0a 36px)}
+.rise-network-screen::before{content:"";position:absolute;inset:0;opacity:.32;background:repeating-linear-gradient(0deg,transparent 0 27px,#b6a4f31b 28px),repeating-linear-gradient(90deg,transparent 0 27px,#b6a4f31b 28px);mask-image:radial-gradient(circle at center,#000,transparent 75%)}
+.rise-network-sphere{position:absolute;left:50%;top:50%;width:min(62%,330px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;border:1px solid #d5c7ff75;box-shadow:0 0 0 11px #b39bfa0b,0 0 0 34px #b39bfa08,0 0 80px #9c7cfa60,0 22px 65px #000c}
+.rise-network-sphere canvas{display:block;width:100%;height:100%}
+.rise-network-label{position:absolute;z-index:2;color:#e4dafa;font:700 .59rem/1.4 monospace;letter-spacing:.1em;text-shadow:0 2px 10px #000}
+.rise-network-label::before{content:"";display:inline-block;width:6px;height:6px;margin-right:7px;border-radius:50%;background:#f6c285;box-shadow:0 0 10px #f6c285}
+.rise-network-label.input{left:5%;top:10%}
+.rise-network-label.transform{right:4%;top:10%;text-align:right}
+.rise-network-label.transform::before{background:#b594ff;box-shadow:0 0 10px #b594ff}
+.rise-network-label.output{left:5%;bottom:9%}
+.rise-network-label.output::before{background:#6ce0eb;box-shadow:0 0 10px #6ce0eb}
 .featured-bottom{display:flex;justify-content:space-between;align-items:end;gap:16px;padding:22px 25px 25px}
 .featured-bottom span:first-child{display:block;color:#b9a8fa;font:700 .64rem/1.4 'DM Sans',sans-serif;letter-spacing:.14em}
 .featured-bottom strong{display:block;margin-top:8px;font:700 clamp(2rem,3vw,3.2rem)/1 'Manrope',sans-serif;letter-spacing:-.055em}
@@ -52,5 +63,6 @@
 @media(max-width:1050px){.home-hero-inner{gap:40px;min-height:600px}.home-title{font-size:clamp(3.5rem,6vw,5rem)!important}.featured-screen{aspect-ratio:1.3}.work-links{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.lab-header .MuiToolbar-root{min-height:64px}.home-hero-inner{grid-template-columns:1fr;gap:42px;min-height:0;padding-top:70px!important;padding-bottom:52px!important}.home-hero-copy{padding-left:0}.home-title{font-size:clamp(3.35rem,11vw,5.6rem)!important}.home-lede{font-size:1.05rem!important}.featured-work{max-width:650px}.featured-screen{aspect-ratio:1.65}.selected-work{padding-bottom:32px!important}}
 @media(max-width:550px){.lab-header .MuiStack-root{gap:0!important}.lab-header .MuiButton-root{padding:5px;font-size:.71rem}.lab-header a[href="/jev/"],.lab-header a[href="/approach/"]{display:none}.home-hero-inner{padding-top:48px!important;gap:30px;padding-bottom:36px!important}.home-kicker{font-size:.61rem!important}.home-title{margin:17px 0!important;font-size:clamp(2.75rem,11vw,3.5rem)!important;line-height:1.04!important}.home-lede{font-size:.98rem!important;line-height:1.6!important}.home-actions{gap:3px;margin-top:20px}.home-actions .MuiButton-root{font-size:.75rem;padding:7px 12px;min-height:42px}.featured-topline{padding:14px;font-size:.56rem}.featured-screen{margin:0 9px}.featured-bottom{padding:18px}.featured-bottom p{font-size:.79rem}.work-heading span:last-child{display:none}.work-links{grid-template-columns:1fr}.work-link{min-height:90px;padding:15px 17px}.work-link strong{margin-top:7px}.work-link svg{grid-row:1/4}}
+@media(max-width:550px){.rise-network-sphere{width:57%}.rise-network-label{font-size:.42rem;letter-spacing:0}.rise-network-label.transform{max-width:32%}}
 @media(max-width:760px){.experience-section{padding-top:60px!important;padding-bottom:60px!important}.experience-frame{transform:none!important}.experience-section h2{font-size:2.7rem!important}}
 @media(prefers-reduced-motion:reduce){.featured-work,.work-link,.featured-arrow{transition:none}}
