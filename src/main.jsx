@@ -193,7 +193,7 @@ function ResearchNote() {
     'type State = { pace: number; interrupted: boolean };',
     'type Judgment = { choice: Choice; probability: number };',
     '',
-    'const allowed: Choice[] = ["slow", "pause"];',
+    'const allowed: Choice[] = ["continue", "slow", "pause"];',
     'const result = judge(state, allowed);',
     'if (!allowed.includes(result.choice)) return "hold";',
     'if (result.probability < calibratedThreshold) return "ask";',
@@ -201,6 +201,15 @@ function ResearchNote() {
   ].join('\n');
   return <Box component="section" className="research-note" aria-labelledby="research-title"><Container maxWidth="lg">
     <Box className="research-head"><Typography className="technical-kicker">ENGINEERING NOTE / DECISION SYSTEMS / 001</Typography><Typography component="h2" id="research-title" variant="h2">A model may recommend.<br /><em>The system must decide.</em></Typography><Typography>We are testing a narrow interface: ambiguous state becomes a choice among options the application already permits. This is an integration design, not a claim that Jev serves these calls today.</Typography></Box>
+    <figure className="decision-surface" aria-label="Illustrative decision surface: a fixed choice set receives relative scores, then validation and review determine whether a choice can proceed">
+      <div className="surface-heading"><span>FIG. 01 / BOUNDED DECISION SPACE</span><span>CONCEPTUAL · NO MEASURED SCORES</span></div>
+      <div className="surface-body">
+        <div className="surface-context"><small>INPUT STATE</small><strong>Reader interrupted</strong><span>pace signal + interruption flag</span><div className="surface-context-line" /><span>Allowed choices fixed by product code</span></div>
+        <div className="surface-choices"><div className="surface-axis"><small>ILLUSTRATIVE RELATIVE WEIGHT</small><span>lower ← → higher</span></div><div className="surface-choice"><b>continue</b><i style={{ '--weight': '29%' }} /><span>hold</span></div><div className="surface-choice"><b>slow</b><i style={{ '--weight': '76%' }} /><span>candidate</span></div><div className="surface-choice"><b>pause</b><i style={{ '--weight': '52%' }} /><span>review</span></div><p>Bar lengths show a possible ranking only. They are not Jev output or calibrated probabilities.</p></div>
+        <div className="surface-gate"><small>APPLICATION GATE</small><div><b>01</b><span>Check schema + allowed set</span></div><div><b>02</b><span>Apply evaluated threshold</span></div><div><b>03</b><span>Ask the person when needed</span></div><strong>Action requires authority ↗</strong></div>
+      </div>
+      <figcaption>Inspired by the structured decision framing in <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" target="_blank" rel="noopener noreferrer">TypeSafe AI’s Jev article ↗</a>. Original schematic for a proposed SyberLabs interface.</figcaption>
+    </figure>
     <Box className="research-layout"><Box className="research-code"><div className="research-code-head"><span>ILLUSTRATIVE CONTRACT · TYPESCRIPT-LIKE PSEUDOCODE</span><span>01 / 03</span></div><pre><code>{example}</code></pre><div className="research-code-foot">EXAMPLE ONLY / NO PROVIDER CALL OR LIVE THRESHOLD IMPLIED</div></Box><Box className="research-explainer"><article><small>01 / CHOICE SPACE</small><h3>Constrain before inference.</h3><p>The product decides which actions exist. A model score cannot create permission or authorize an action.</p></article><article><small>02 / UNCERTAINTY</small><h3>A probability is not approval.</h3><p>Thresholds need calibration on representative tasks. Low confidence leads to a deterministic hold or a human question.</p></article><article><small>03 / EVALUATION</small><h3>Measure the whole workflow.</h3><p>Compare with the existing rule or human path. Inspect disagreement, latency, failure recovery, and user outcome.</p></article></Box></Box>
     <Box className="research-evidence"><div><span>CURRENT EVIDENCE</span><p>TypeSafe AI describes Jev as a structured decision model. Our portfolio integration remains under evaluation.</p></div><div><span>RELEASE BAR</span><p>A connected path, representative evaluations, observed failure behavior, and a named human acceptance gate.</p></div><a href="/jev/">Full integration plan ↗</a><a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" target="_blank" rel="noopener noreferrer">TypeSafe’s original article ↗</a></Box>
   </Container></Box>;
