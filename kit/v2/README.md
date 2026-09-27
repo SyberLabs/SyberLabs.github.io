@@ -15,8 +15,10 @@ Apps copy the files into their repo (e.g. `src/vendor/syber/`) unmodified, and n
 ## JS (ES modules, no dependencies)
 ```js
 import { mount, RING_SVG, paramLine } from './syber-atmosphere.js';
-const plate = mount(canvas, { mode: 'hero' | 'ambient', avoid: copyEl, caption: paramsEl, reduced });
-// -> { supported: boolean, destroy() }. supported:false = no WebGL2; the canvas is hidden, so the CSS nebula shows.
+const plate = mount(canvas, { mode: 'hero' | 'ambient', avoid: copyEl, caption: paramsEl, reduced, allowSoftware });
+// -> { supported: boolean, destroy() }. supported:false = no WebGL2, a failIfMajorPerformanceCaveat probe fails, or the
+// renderer is software (SwiftShader/llvmpipe/softpipe/Basic Render); the canvas is hidden, so the CSS nebula shows.
+// allowSoftware: true skips the software guard. Screenshot tooling only, never for real visitors.
 import { params, draw, drawAll } from './syber-sigil.js';
 params('relay');                       // { P:[a,b,c,d], box, caption }  (pure, same everywhere)
 draw(canvas, 'relay', { color: '#62e3d8', animate: true });  // -> { P, caption, cancel() }

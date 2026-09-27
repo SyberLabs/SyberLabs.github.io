@@ -3,13 +3,15 @@
    float buffer that decays each frame (long exposure), then tone-map + 2-level mip bloom.
    Dependency-free ES module, raw WebGL2, 1 texel per CSS px, pauses off-screen and when hidden.
 
-   mount(canvas, { mode, avoid, caption, reduced }) -> { supported, destroy() }
+   mount(canvas, { mode, avoid, caption, reduced, allowSoftware }) -> { supported, destroy() }
      mode     'hero' (default): 160k particles; plate beside `avoid` on wide screens, above copy on phones.
               'ambient': 40k particles, slower, 35% intensity, full-bleed (put a heavy scrim over it).
      avoid    Element whose right edge the plate stays clear of (the copy column). Hero only.
      caption  Element that receives the live "a … · b … · c … · d …" parameter line.
      reduced  true = one still exposure. Defaults to prefers-reduced-motion.
-   No WebGL2 -> { supported:false } and the canvas is hidden, so the CSS nebula behind it shows.
+     allowSoftware  true = also run on software WebGL. For screenshot tooling only.
+   No WebGL2, a major-performance-caveat context, or a software renderer (SwiftShader, llvmpipe ...)
+   -> { supported:false } and the canvas is hidden, so the CSS nebula behind it shows.
    Hero also sets --cx, --cy, --s (px) on the canvas parent so the degree ring (RING_SVG) follows the plate. */
 
 const KF = [[-1.4, 1.6, 1.0, 0.7], [1.7, 1.7, 0.6, 1.2], [-1.7, 1.3, -0.1, -1.21], [-1.8, -2.0, -0.5, -0.9], [1.5, -1.8, 1.6, 0.9], [-1.24, -1.25, -1.81, -1.91]];
@@ -18,10 +20,22 @@ export const paramLine = P => 'a ' + fmt(P[0]) + ' · b ' + fmt(P[1]) + ' · c '
 
 export function mount(canvas, opts = {}) {
   const RM = opts.reduced != null ? !!opts.reduced : !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const gl = canvas && canvas.getContext && canvas.getContext('webgl2', { antialias: false, alpha: false, powerPreference: 'low-power' });
   const off = () => { if (canvas) canvas.style.display = 'none'; return { supported: false, destroy() {} }; };
+  if (!canvas || !canvas.getContext || (!opts.allowSoftware && !fastGL())) return off();
+  const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, powerPreference: 'low-power' });
   if (!gl) return off();
   try { return run(canvas, gl, opts.mode === 'ambient', RM, opts); } catch (e) { lose(gl); return off(); }
+}
+
+// Perf guard: software WebGL (SwiftShader, llvmpipe ...) stalls the main thread, so it counts as unsupported.
+const SOFT = /swiftshader|llvmpipe|softpipe|software|basic render/i;
+function fastGL() {
+  let g;
+  try { g = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true }); } catch (e) { return false; }
+  if (!g) return false;
+  const x = g.getExtension('WEBGL_debug_renderer_info'), r = x ? String(g.getParameter(x.UNMASKED_RENDERER_WEBGL)) : '';
+  lose(g);
+  return !SOFT.test(r);
 }
 
 function lose(gl) { const x = gl.getExtension('WEBGL_lose_context'); if (x) x.loseContext(); }

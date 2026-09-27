@@ -27,6 +27,6 @@
       <div class="sy-actions"><a class="sy-btn sy-btn--solid" href="/">Go to the homepage</a></div>
     </main>
   </div>
-  <script type="module">import { mount } from '/kit/v2/syber-atmosphere.js'; mount(document.getElementById('plate'), { mode: 'ambient' });</script>
+  <script type="module">import { mount } from '/kit/v2/syber-atmosphere.js'; mount(document.getElementById('plate'), { mode: 'ambient', allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });</script>
 </body>
 </html>

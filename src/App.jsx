@@ -45,7 +45,8 @@ function Header() {
 function Hero() {
   const canvas = useRef(null), copy = useRef(null), caption = useRef(null);
   useEffect(() => {
-    const plate = mount(canvas.current, { mode: 'hero', avoid: copy.current, caption: caption.current });
+    // window.SY_ALLOW_SOFTWARE_GL is set only by screenshot tooling; real visitors on software WebGL get the CSS nebula.
+    const plate = mount(canvas.current, { mode: 'hero', avoid: copy.current, caption: caption.current, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
     return () => plate.destroy();
   }, []);
   return <section className="home-hero sy-nebula" aria-labelledby="hero-title">
