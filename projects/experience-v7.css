@@ -52,6 +52,12 @@
 .pj-how__item h3 { margin-top: var(--space-4); }
 .pj-how__item p { margin: var(--space-2) 0 0; font-size: 16px; line-height: 24px; color: var(--sy-mist); }
 
+/* Commons: the four-step record, numbered in mono like a plate caption */
+.pj-how--steps { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 0; padding: 0; list-style: none; }
+.pj-how--steps .sy-label { color: var(--sy-accent); }
+.pj-how--steps h3 { margin-top: var(--space-3); }
+.pj-split__note { margin: var(--space-3) 0 0; }
+
 .pj-split--facts { align-items: start; }
 .pj-facts__label { padding-top: 16px; }
 .pj-facts { margin: 0; border-top: 1px solid var(--sy-rule); }
@@ -74,6 +80,11 @@ main#main { padding-bottom: var(--space-10); }
   .pj-split { grid-template-columns: 1fr; row-gap: var(--space-4); }
   .pj-split__main { grid-column: 1; padding-left: 0; }
   .pj-facts__label { padding-top: 0; }
+  .pj-how--steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pj-how--steps .pj-how__item { padding: var(--space-5) var(--space-5) var(--space-5) 0; }
+  .pj-how--steps .pj-how__item:nth-child(even) { padding: var(--space-5) 0 var(--space-5) var(--space-5); }
+  .pj-how--steps .pj-how__item:nth-child(3) { border-left: 0; }
+  .pj-how--steps .pj-how__item:nth-child(n+3) { border-top: 1px solid var(--sy-rule); }
 }
 
 @media (max-width: 720px) {
@@ -99,6 +110,8 @@ main#main { padding-bottom: var(--space-10); }
   .pj-how { grid-template-columns: 1fr; margin-top: var(--space-6); }
   .pj-how__item, .pj-how__item:first-child, .pj-how__item:last-child { padding: var(--space-5) 0; }
   .pj-how__item + .pj-how__item { border-left: 0; border-top: 1px solid var(--sy-rule); }
+  .pj-how--steps { grid-template-columns: 1fr; }
+  .pj-how--steps .pj-how__item, .pj-how--steps .pj-how__item:nth-child(even) { padding: var(--space-5) 0; }
   .pj-facts > div { grid-template-columns: 1fr; row-gap: var(--space-1); }
   .pj-others__head { margin-bottom: var(--space-4); }
   main#main { padding-bottom: var(--space-8); }

@@ -31,11 +31,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://syberlabs.io/commons/</loc>
-    <lastmod>2026-09-27</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://syberlabs.io/kev/</loc>
     <lastmod>2026-09-27</lastmod>
     <priority>0.7</priority>
@@ -64,5 +59,10 @@
     <loc>https://syberlabs.io/services/</loc>
     <lastmod>2026-09-27</lastmod>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://syberlabs.io/privacy/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <priority>0.3</priority>
   </url>
 </urlset>

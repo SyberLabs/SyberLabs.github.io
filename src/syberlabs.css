@@ -91,11 +91,13 @@ a:hover { text-decoration-line: underline; }
 .sy-link--sm { gap: var(--space-1); font-size: 14px; line-height: 20px; }
 .sy-lockup:hover, .sy-nav a:hover, .sy-footer a:hover, .sy-strip a:hover, .sy-project-row:hover, .sy-menu__panel a:hover { text-decoration: none; }
 .sy-menu__panel a[aria-current="page"] { color: var(--sy-ice); }
+.sy-footer nav a[aria-current="page"] { color: var(--sy-vellum); }
 .sy-display-xl, .sy-display, .sy-title { color: var(--sy-vellum); }
 .sy-body-lg { margin: 0; }
 @media (max-width: 640px) {
   .sy-actions { flex-direction: column; align-items: stretch; gap: var(--space-2); }
   .sy-actions .sy-btn { width: 100%; }
+  .sy-footer nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
 }
 
 /* Section head: eyebrow + serif title over a double rule */

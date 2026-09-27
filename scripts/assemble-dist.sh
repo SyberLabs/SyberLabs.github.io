@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # Copy the static site files and directories next to the Vite build in dist/.
-# Run after `pnpm build` (CI: .github/workflows/cloudflare-pages.yml; locally: `pnpm build:site`).
+# Run after `pnpm build` (`pnpm build:site` does both; CI: .github/workflows/cloudflare-pages.yml).
 set -eu
 cd "$(dirname "$0")/.."
 test -d dist
@@ -13,7 +13,7 @@ cp 404.html robots.txt sitemap.xml site.webmanifest _redirects \
 # kit/v2 is the canonical public home of the design kit: https://syberlabs.io/kit/v2/
 mkdir -p dist/kit
 cp -r kit/v2 dist/kit/
-for dir in rise-demo projects commons approach jev kev research services; do
+for dir in rise-demo projects approach jev kev research services privacy; do
   cp -r "$dir" dist/
 done
 node scripts/prerender.mjs
