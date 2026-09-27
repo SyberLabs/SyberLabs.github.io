@@ -10,7 +10,7 @@
 
 .home-work { padding-top: var(--space-10); }
 .home-section-title { margin-top: var(--space-4); }
-.home-rows { margin: var(--space-7) calc(var(--space-5) * -1) 0; }
+.home-rows { margin-top: var(--space-7); }
 
 .home-research {
   padding-top: var(--space-10); padding-bottom: var(--space-10);
@@ -24,8 +24,6 @@
 @media (max-width: 1023px) {
   .home-hero { padding-top: var(--space-9); }
   .home-work { padding-top: var(--space-9); }
-  .home-rows { margin-left: calc(var(--gutter) * -1); margin-right: calc(var(--gutter) * -1); }
-  .home-rows .sy-row { padding-left: var(--gutter); padding-right: var(--gutter); }
   .home-research { grid-template-columns: 1fr; padding-top: var(--space-9); padding-bottom: var(--space-9); }
   .home-research__body { padding-top: var(--space-5); }
 }
@@ -39,7 +37,6 @@
   .home-work { padding-top: var(--space-8); }
   .home-section-title { margin-top: var(--space-3); }
   .home-rows { margin-top: var(--space-6); }
-  .home-rows .sy-row { padding-left: var(--space-4); padding-right: var(--space-4); }
   .home-research { padding-top: var(--space-8); padding-bottom: var(--space-8); }
   .home-research__title { margin-top: var(--space-3); }
   .home-research__body .sy-body-lg { font-size: 16px; line-height: 24px; }

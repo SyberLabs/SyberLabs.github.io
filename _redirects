@@ -1,3 +1,6 @@
 /rise https://rise.syberlabs.io/ 301
 /rise/* https://rise.syberlabs.io/:splat 301
 /jev /jev/ 301
+/commons /projects/commons/ 301
+/commons/ /projects/commons/ 301
+/commons/* /projects/commons/ 301

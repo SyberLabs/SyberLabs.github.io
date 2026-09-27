@@ -1,6 +1,6 @@
 import React from 'react';
 import syberMark from '../syber-logo-96.png';
-import { projects, nav, workWithUs, footerLinks, skills, EMAIL, CONTACT, RESUME, LINKEDIN, GITHUB } from '../projects/site-data.js';
+import { projects, nav, headerAction, footerLinks, skills, EMAIL, CONTACT, RESUME, LINKEDIN, GITHUB } from '../projects/site-data.js';
 import './syberlabs.css';
 import './home.css';
 
@@ -22,14 +22,14 @@ function Header() {
       <a className="sy-lockup" href="/" aria-label="SyberLabs home"><img className="sy-lockup__mark" src={syberMark} alt="" width="18" height="20" /><span>SYBERLABS</span></a>
       <nav className="sy-header__nav" aria-label="Primary">
         <ul>{nav.map(item => <li key={item.label}><a className="sy-header__link" href={item.href}>{item.label}</a></li>)}</ul>
-        <a className="sy-btn sy-btn--secondary sy-header__action" href={workWithUs.href}>{workWithUs.label}</a>
+        <a className="sy-btn sy-btn--secondary sy-header__action" href={headerAction.href}>{headerAction.label}</a>
       </nav>
       <details className="sy-menu">
         <summary className="sy-btn sy-btn--icon" aria-label="Menu"><Icon name="menu" className="sy-icon--open" /><Icon name="close" className="sy-icon--close" /></summary>
         <div className="sy-menu__panel">
           <nav aria-label="Mobile" onClick={closeMenu}>
             <ul>{nav.map(item => <li key={item.label}><a href={item.href}>{item.label}</a></li>)}</ul>
-            <a className="sy-btn sy-btn--secondary" href={workWithUs.href}>{workWithUs.label}</a>
+            <a className="sy-btn sy-btn--secondary" href={headerAction.href}>{headerAction.label}</a>
           </nav>
         </div>
       </details>

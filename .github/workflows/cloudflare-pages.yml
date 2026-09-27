@@ -26,16 +26,17 @@ jobs:
           node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Check shared header and footer
+        run: node scripts/shell.mjs --check
       - name: Prepare public site
         run: |
-          pnpm build
-          sh scripts/assemble-dist.sh
+          pnpm build:site
           test -s dist/index.html
           test -s dist/syberlabs.css
           test -s dist/404.html
           test -s dist/rise-demo/index.html
           test -s dist/rise-demo/rise-demo-20260926.mp4
-          test -s dist/commons/index.html
+          test ! -e dist/commons
           test -s dist/approach/index.html
           test -s dist/jev/index.html
           test -s dist/research/jev-execution/index.html
@@ -46,6 +47,8 @@ jobs:
           for project in rise commons relay omnios osahr; do test -s "dist/projects/$project/index.html"; done
           grep -Fxq '/rise https://rise.syberlabs.io/ 301' dist/_redirects
           grep -Fxq '/rise/* https://rise.syberlabs.io/:splat 301' dist/_redirects
+          grep -Fxq '/commons/ /projects/commons/ 301' dist/_redirects
+          grep -Fq 'class="sy-header"' dist/404.html
       - uses: actions/upload-artifact@v4
         with:
           name: syberlabs-home-${{ github.sha }}

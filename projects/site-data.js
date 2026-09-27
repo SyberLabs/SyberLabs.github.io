@@ -9,14 +9,16 @@ export const RESUME = '/mateo_robles_resume.pdf';
 export const LINKEDIN = 'https://www.linkedin.com/in/mateo-robles-71260b189';
 export const GITHUB = 'https://github.com/SyberLabs';
 
+// Header: at most four links and one secondary button (DS v1). "Work with us" would duplicate
+// Services, so Services is the nav link and the button is Contact.
 export const nav = [
   { id: 'work', label: 'Work', href: '/#work' },
   { id: 'research', label: 'Research', href: '/#research' },
+  { id: 'services', label: 'Services', href: '/services/' },
   { id: 'about', label: 'About', href: '/#about' },
-  { id: 'contact', label: 'Contact', href: CONTACT },
 ];
 
-export const workWithUs = { label: 'Work with us', href: '/services/' };
+export const headerAction = { label: 'Contact', href: CONTACT };
 
 export const footerLinks = [
   { label: 'Approach', href: '/approach/' },
@@ -56,7 +58,7 @@ export const projects = [
     intro: 'A prototype for community-led projects that keeps the need, plan, evidence, human review, and outcome in one auditable record.',
     summary: 'A reviewer can send a plan back for changes, and every decision stays in the audit history. The current prototype runs locally with synthetic data.',
     status: { kind: 'private', label: 'Private prototype' },
-    primary: { label: 'Explore Commons', href: '/commons/' },
+    secondary: { label: 'Ask about Commons', href: `${CONTACT}?subject=Commons` },
     facts: [
       ['Stage', 'Local Phase 0 prototype with synthetic data and continuous integration'],
       ['Not yet built', 'Hosted accounts, participant data, and live AI calls'],

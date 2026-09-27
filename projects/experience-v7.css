@@ -67,6 +67,10 @@
 .pj-how__item h3 { margin-top: var(--space-4); }
 .pj-how__item p { margin: var(--space-2) 0 0; font-size: 16px; line-height: 24px; color: var(--text-2); }
 
+.pj-how--steps { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 0; padding: 0; list-style: none; }
+.pj-how--steps h3 { margin-top: var(--space-3); }
+.pj-split__note { margin-top: var(--space-3); }
+
 .pj-split--facts { align-items: start; }
 .pj-facts__label { padding-top: 20px; }
 .pj-facts { margin-top: 0; margin-bottom: 0; border-top: 1px solid var(--line); }
@@ -78,7 +82,6 @@
 
 .pj-others__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-6); }
 .pj-others__all { min-height: var(--control-height); }
-.pj-others { margin: 0 calc(var(--space-4) * -1); }
 
 main#main { padding-bottom: var(--space-10); }
 
@@ -87,8 +90,11 @@ main#main { padding-bottom: var(--space-10); }
   .pj-split { grid-template-columns: 1fr; row-gap: var(--space-4); }
   .pj-split__main { grid-column: 1; margin-left: 0; }
   .pj-facts__label { padding-top: 0; }
-  .pj-others { margin: 0 calc(var(--gutter) * -1); }
-  .pj-others .sy-row { padding-left: var(--gutter); padding-right: var(--gutter); }
+  .pj-how--steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pj-how--steps .pj-how__item { padding: var(--space-5) var(--space-5) var(--space-5) 0; }
+  .pj-how--steps .pj-how__item:nth-child(even) { padding: var(--space-5) 0 var(--space-5) var(--space-5); }
+  .pj-how--steps .pj-how__item:nth-child(3) { border-left: 0; }
+  .pj-how--steps .pj-how__item:nth-child(n+3) { border-top: 1px solid var(--line); }
 }
 
 @media (max-width: 640px) {
@@ -110,7 +116,8 @@ main#main { padding-bottom: var(--space-10); }
   .pj-facts > div { grid-template-columns: 1fr; row-gap: var(--space-1); }
   .pj-facts dd { padding-left: 0; }
   .pj-others__head { margin-bottom: var(--space-4); }
-  .pj-others .sy-row { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .pj-how--steps { grid-template-columns: 1fr; }
+  .pj-how--steps .pj-how__item, .pj-how--steps .pj-how__item:nth-child(even) { padding: var(--space-5) 0; }
   main#main { padding-bottom: var(--space-8); }
 }
 

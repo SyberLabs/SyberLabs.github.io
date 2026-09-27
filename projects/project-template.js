@@ -1,7 +1,7 @@
 // Project page template (SyberLabs DS v1): one neutral template for every project.
 // Pure module: used in the browser (experience-v7.js) and at build time (scripts/prerender.mjs).
 // The project accent appears only as its identity marker: the dot, the index number and the active indicator.
-import { projects, nav, workWithUs, footerLinks } from './site-data.js';
+import { projects, nav, headerAction, footerLinks } from './site-data.js';
 export { projects };
 
 const ICONS = {
@@ -21,25 +21,28 @@ const icon = (name, size = 20, cls = '') =>
 const esc = value => String(value).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const badge = status => `<span class="sy-badge sy-badge--${status.kind}"><span class="sy-badge__dot" aria-hidden="true"></span>${esc(status.label)}</span>`;
 
-const header = () => `
-<a class="sy-skip" href="#main">Skip to content</a>
+// Shared page shell. `current` marks the nav item (header) or footer link (by href) for this page.
+// Static pages get the same markup from scripts/shell.mjs, so there is one source for both.
+export const header = (current = '') => {
+  const cur = item => item.id === current ? ' aria-current="page"' : '';
+  return `<a class="sy-skip" href="#main">Skip to content</a>
 <header class="sy-header"><div class="sy-header__inner">
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img class="sy-lockup__mark" src="/syber-logo-96.png" alt="" width="18" height="20"><span>SYBERLABS</span></a>
-  <nav class="sy-header__nav" aria-label="Primary"><ul>${nav.map(item => `<li><a class="sy-header__link" href="${item.href}"${item.id === 'work' ? ' aria-current="page"' : ''}>${item.label}</a></li>`).join('')}</ul><a class="sy-btn sy-btn--secondary sy-header__action" href="${workWithUs.href}">${workWithUs.label}</a></nav>
-  <details class="sy-menu"><summary class="sy-btn sy-btn--icon" aria-label="Menu">${icon('menu', 20, 'sy-icon--open')}${icon('close', 20, 'sy-icon--close')}</summary><div class="sy-menu__panel"><nav aria-label="Mobile"><ul>${nav.map(item => `<li><a href="${item.href}"${item.id === 'work' ? ' aria-current="page"' : ''}>${item.label}</a></li>`).join('')}</ul><a class="sy-btn sy-btn--secondary" href="${workWithUs.href}">${workWithUs.label}</a></nav></div></details>
+  <nav class="sy-header__nav" aria-label="Primary"><ul>${nav.map(item => `<li><a class="sy-header__link" href="${item.href}"${cur(item)}>${item.label}</a></li>`).join('')}</ul><a class="sy-btn sy-btn--secondary sy-header__action" href="${headerAction.href}">${headerAction.label}</a></nav>
+  <details class="sy-menu"><summary class="sy-btn sy-btn--icon" aria-label="Menu">${icon('menu', 20, 'sy-icon--open')}${icon('close', 20, 'sy-icon--close')}</summary><div class="sy-menu__panel"><nav aria-label="Mobile"><ul>${nav.map(item => `<li><a href="${item.href}"${cur(item)}>${item.label}</a></li>`).join('')}</ul><a class="sy-btn sy-btn--secondary" href="${headerAction.href}">${headerAction.label}</a></nav></div></details>
 </div></header>`;
+};
 
-const footer = () => `
-<footer class="sy-footer"><div class="sy-footer__inner">
+export const footer = (current = '') => `<footer class="sy-footer"><div class="sy-footer__inner">
   <div class="sy-footer__brand"><a class="sy-lockup" href="/" aria-label="SyberLabs home"><img class="sy-lockup__mark" src="/syber-logo-96.png" alt="" width="18" height="20"><span>SYBERLABS</span></a><span class="sy-footer__copy">© 2026 SyberLabs</span></div>
-  <nav class="sy-footer__nav" aria-label="Footer">${footerLinks.map(link => `<a class="sy-footer__link" href="${link.href}">${link.label}${link.external ? icon('external', 16) : ''}</a>`).join('')}</nav>
+  <nav class="sy-footer__nav" aria-label="Footer">${footerLinks.map(link => `<a class="sy-footer__link" href="${link.href}"${link.href === current ? ' aria-current="page"' : ''}>${link.label}${link.external ? icon('external', 16) : ''}</a>`).join('')}</nav>
 </div></footer>`;
 
 function actions(p) {
-  const primary = `<a class="sy-btn sy-btn--primary" href="${p.primary.href}">${esc(p.primary.label)}${icon(p.primary.external ? 'external' : 'arrow', 20, 'sy-icon--trail')}</a>`;
+  const primary = p.primary && `<a class="sy-btn sy-btn--primary" href="${p.primary.href}">${esc(p.primary.label)}${icon(p.primary.external ? 'external' : 'arrow', 20, 'sy-icon--trail')}</a>`;
   const secondary = p.secondary ? `<a class="sy-btn sy-btn--secondary" href="${p.secondary.href}">${esc(p.secondary.label)}</a>` : '';
   const ghost = p.ghost ? `<a class="sy-btn sy-btn--ghost" href="${p.ghost.href}">${icon(p.ghost.icon || 'arrow')}${esc(p.ghost.label)}</a>` : '';
-  return `<div class="sy-actions pj-actions">${primary}${secondary}${ghost}</div>`;
+  return `<div class="sy-actions pj-actions">${primary || ''}${secondary}${ghost}</div>`;
 }
 
 const riseFrame = () => `
@@ -71,6 +74,19 @@ const riseHow = () => `
     ${[['stream', 'Stream', 'Words arrive through time. Set pacing and playback.'], ['page', 'Page', 'Words occupy a spatial surface you can navigate.'], ['conditions', 'Conditions', 'Tune visual fields and sound around the reading.']]
       .map(([key, title, text]) => `<div class="pj-how__item">${icon(key)}<h3 class="sy-subheading">${title}</h3><p>${text}</p></div>`).join('')}
   </div>
+</section>`;
+
+// Commons: the record every project keeps (formerly the separate /commons/ page).
+const commonsHow = () => `
+<section class="pj-section sy-container" aria-labelledby="how-title">
+  <div class="pj-split">
+    <h2 id="how-title" class="sy-label">How it works</h2>
+    <div class="pj-split__main"><p class="sy-title">Every project keeps its history.</p><p class="sy-small pj-split__note">Phase 0 example with synthetic data.</p></div>
+  </div>
+  <ol class="pj-how pj-how--steps">
+    ${[['01 / Need', 'Name the problem', 'Describe the need and the outcome the community would recognize.'], ['02 / Evidence', 'Show the basis', 'Keep supporting material and unanswered questions close to the plan.'], ['03 / Human review', 'Request changes', 'A reviewer can send a draft back for changes. Each decision is kept in the audit history.'], ['04 / Outcome', 'Carry learning forward', 'Planned: make results and reusable patterns easy to review and apply to the next project.']]
+      .map(([label, title, text]) => `<li class="pj-how__item"><span class="sy-label">${label}</span><h3 class="sy-subheading">${title}</h3><p>${text}</p></li>`).join('')}
+  </ol>
 </section>`;
 
 function facts(p) {
@@ -105,7 +121,7 @@ export function renderProject(p) {
   return {
     title: `${p.pageTitle || p.name} | SyberLabs`,
     description: `${p.intro} ${p.summary || ''}`.trim(),
-    body: `${header()}
+    body: `${header('work')}
 <main id="main">
   <section class="pj-hero sy-container" aria-labelledby="project-title">
     <p class="pj-eyebrow sy-label"><span class="pj-dot" aria-hidden="true"></span><span><span class="pj-number">${p.number}</span> / ${esc(p.category)}</span></p>
@@ -116,9 +132,10 @@ export function renderProject(p) {
     ${actions(p)}
   </section>
   ${p.slug === 'rise' ? riseFrame() + riseHow() : ''}
+  ${p.slug === 'commons' ? commonsHow() : ''}
   ${facts(p)}
   ${others(p)}
 </main>
-${footer()}`,
+${footer(`/projects/${p.slug}/`)}`,
   };
 }

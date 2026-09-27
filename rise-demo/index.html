@@ -16,16 +16,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="/syberlabs.css?v=1">
-  <link rel="stylesheet" href="/rise-demo/rise-demo.css?v=1">
+  <link rel="stylesheet" href="/syberlabs.css?v=2">
+  <link rel="stylesheet" href="/rise-demo/rise-demo.css?v=2">
 </head>
 <body class="syber-demo">
+  <!-- shell:header current=work -->
   <a class="sy-skip" href="#main">Skip to content</a>
   <header class="sy-header"><div class="sy-header__inner">
     <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img class="sy-lockup__mark" src="/syber-logo-96.png" alt="" width="18" height="20"><span>SYBERLABS</span></a>
-    <nav class="sy-header__nav" aria-label="Primary"><ul><li><a class="sy-header__link" href="/#work" aria-current="page">Work</a></li><li><a class="sy-header__link" href="/#research">Research</a></li><li><a class="sy-header__link" href="/#about">About</a></li><li><a class="sy-header__link" href="mailto:syberlabs.software@gmail.com">Contact</a></li></ul><a class="sy-btn sy-btn--secondary sy-header__action" href="/services/">Work with us</a></nav>
-    <details class="sy-menu"><summary class="sy-btn sy-btn--icon" aria-label="Menu"><svg class="sy-icon sy-icon--open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h16"/><path d="M4 15h16"/></svg><svg class="sy-icon sy-icon--close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg></summary><div class="sy-menu__panel"><nav aria-label="Mobile"><ul><li><a href="/#work" aria-current="page">Work</a></li><li><a href="/#research">Research</a></li><li><a href="/#about">About</a></li><li><a href="mailto:syberlabs.software@gmail.com">Contact</a></li></ul><a class="sy-btn sy-btn--secondary" href="/services/">Work with us</a></nav></div></details>
+    <nav class="sy-header__nav" aria-label="Primary"><ul><li><a class="sy-header__link" href="/#work" aria-current="page">Work</a></li><li><a class="sy-header__link" href="/#research">Research</a></li><li><a class="sy-header__link" href="/services/">Services</a></li><li><a class="sy-header__link" href="/#about">About</a></li></ul><a class="sy-btn sy-btn--secondary sy-header__action" href="mailto:syberlabs.software@gmail.com">Contact</a></nav>
+    <details class="sy-menu"><summary class="sy-btn sy-btn--icon" aria-label="Menu"><svg class="sy-icon sy-icon--open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h16"/><path d="M4 15h16"/></svg><svg class="sy-icon sy-icon--close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg></summary><div class="sy-menu__panel"><nav aria-label="Mobile"><ul><li><a href="/#work" aria-current="page">Work</a></li><li><a href="/#research">Research</a></li><li><a href="/services/">Services</a></li><li><a href="/#about">About</a></li></ul><a class="sy-btn sy-btn--secondary" href="mailto:syberlabs.software@gmail.com">Contact</a></nav></div></details>
   </div></header>
+  <!-- /shell:header -->
   <div class="shell">
     <main id="main">
       <div class="hero-head">
@@ -52,11 +54,20 @@
       <p class="caption">A screen recording of RISE’s Stream and Page modes, followed by a concept sequence with simulated Jev routing: a kaleidoscopic attractor, a fractal flame, a tiger print by Ohara Koson, and astronomy imagery. Tiger image: Rijksmuseum, RP-P-1999-385 (public domain).</p>
       <p class="caption">New in the live app: ask for a reading that feels sad, angry, happy, excited, thrilling, or scary, and Jev chooses an existing passage and a matching sound. The recorded Stream and Page segment predates this feature, and the visual-routing sequence is simulated.</p>
       <p class="caption">Visual sources: John James Audubon, <a href="https://digital.cincinnatilibrary.org/digital/collection/p16998coll33/id/2">Wild Turkey</a> (public domain); <a href="https://esahubble.org/images/heic2017a/">Jupiter and Europa</a> © NASA, ESA, A. Simon, M. H. Wong and the OPAL team, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
-      <section class="second-film" aria-labelledby="sequence-title">
-        <div class="media-meta"><span>02 / The idea behind RISE</span><span>RISE Experience on YouTube</span></div>
-        <h2 id="sequence-title">META-SEQUENCE 001: What is RISE?</h2>
-        <p class="film-intro">A short film on the ideas behind RISE.</p>
-        <div class="video-frame"><iframe src="https://www.youtube-nocookie.com/embed/XxUCPK93DTs" title="META-SEQUENCE 001: What is RISE?" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+      <section class="second-film" aria-labelledby="film-title">
+        <div class="media-meta"><span>02 / The idea behind RISE</span><span>Short film on YouTube</span></div>
+        <h2 id="film-title">What is RISE?</h2>
+        <p class="film-intro">A short film on the ideas behind RISE. The YouTube player loads only when you press play.</p>
+        <!-- Click-to-load: nothing is requested from YouTube until the reader presses play. Without
+             JavaScript, or if the player is blocked, the poster and the link below open YouTube instead. -->
+        <div class="video-frame film" data-youtube-id="XxUCPK93DTs" data-youtube-title="What is RISE? A short film about RISE">
+          <a class="film__poster" href="https://www.youtube.com/watch?v=XxUCPK93DTs">
+            <span class="film__label">RISE / Short film</span>
+            <span class="film__title">What is RISE?</span>
+            <span class="film__play"><span class="film__play-icon"><svg class="sy-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></span>Play film</span>
+          </a>
+        </div>
+        <p class="caption"><a class="sy-link sy-link--sm" href="https://www.youtube.com/watch?v=XxUCPK93DTs">Watch on YouTube<svg class="sy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></p>
       </section>
       <div class="below">
         <div>
@@ -74,9 +85,26 @@
       </div>
     </main>
     </div>
+  <!-- shell:footer current=/rise-demo/ -->
   <footer class="sy-footer"><div class="sy-footer__inner">
     <div class="sy-footer__brand"><a class="sy-lockup" href="/" aria-label="SyberLabs home"><img class="sy-lockup__mark" src="/syber-logo-96.png" alt="" width="18" height="20"><span>SYBERLABS</span></a><span class="sy-footer__copy">© 2026 SyberLabs</span></div>
     <nav class="sy-footer__nav" aria-label="Footer"><a class="sy-footer__link" href="/approach/">Approach</a><a class="sy-footer__link" href="/jev/">Jev</a><a class="sy-footer__link" href="/services/">Services</a><a class="sy-footer__link" href="/mateo_robles_resume.pdf">Résumé</a><a class="sy-footer__link" href="https://github.com/SyberLabs">GitHub<svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a class="sy-footer__link" href="https://www.linkedin.com/in/mateo-robles-71260b189">LinkedIn<svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a class="sy-footer__link" href="mailto:syberlabs.software@gmail.com">Contact</a><a class="sy-footer__link" href="/privacy/">Privacy</a></nav>
   </div></footer>
+  <!-- /shell:footer -->
+  <script>
+    // Swap the poster for the youtube-nocookie player on click; the poster link stays the no-JS fallback.
+    for (const frame of document.querySelectorAll('[data-youtube-id]')) {
+      frame.querySelector('.film__poster').addEventListener('click', event => {
+        event.preventDefault();
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${frame.dataset.youtubeId}?autoplay=1`;
+        iframe.title = frame.dataset.youtubeTitle;
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.allowFullscreen = true;
+        frame.replaceChildren(iframe);
+        iframe.focus();
+      });
+    }
+  </script>
 </body>
 </html>
