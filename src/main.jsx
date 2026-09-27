@@ -44,7 +44,7 @@ function Header() {
 function Hero() {
   return <section className="hero" aria-labelledby="hero-title">
     <div className="hero-grid">
-      <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">Software you can <em>feel.</em><br />Decisions you can <em>inspect.</em></h1><p className="hero-intro">We build the systems agents run on and the environments people use to direct them.</p></div>
+      <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">{['Read', 'Think', 'Build'].map((word, i) => <React.Fragment key={word}>{i > 0 && ' '}<span className="hero-word">{word}<span className="hero-stop">.</span></span></React.Fragment>)}</h1><p className="hero-intro"><span className="hero-rule" aria-hidden="true" />Software for you and your agents.</p></div>
     </div>
     <div className="flagships" id="work">
       <article className="flagship flagship-rise" aria-labelledby="rise-title">
