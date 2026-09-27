@@ -9,7 +9,7 @@ const code = document.getElementById('primitive-code');
 const primitives = {
   choice: {
     title: 'Which composition route fits this request?',
-    description: 'RISE offers an optional route choice in the Scriptorium. Its own code still examines any resulting score before admission.',
+    description: 'RISE offers an optional route choice in its Scriptorium composition feature. RISE’s own code still checks the resulting composition before it is used.',
     bars: [['experience program', 68], ['agent operation set', 32]],
     request: {
       state: 'Typed composition intent; target word count.',

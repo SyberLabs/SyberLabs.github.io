@@ -51,3 +51,21 @@
   .home-research__body .sy-body-lg { font-size: 16px; line-height: 24px; }
   .home-research__link { margin-top: var(--space-4); }
 }
+
+/* Technology line in project rows and the About section. */
+.home-row__stack { display: block; margin-top: var(--space-2); color: var(--text-3); font-size: 14px; line-height: 20px; }
+.home-about { padding-top: var(--space-10); padding-bottom: var(--space-10); border-top: 1px solid var(--line); scroll-margin-top: 64px; }
+.home-about__grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr); column-gap: var(--space-9); margin-top: var(--space-7); }
+.home-about__copy p { max-width: 68ch; margin: 0 0 var(--space-5); }
+.home-about__copy > p:not(.sy-body-lg) { color: var(--text-2); font-size: 16px; line-height: 24px; }
+.home-about__label { margin: var(--space-7) 0 var(--space-4); font-weight: 500; }
+.home-about__skills { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.home-about__skills li { padding: var(--space-1) var(--space-3); border: 1px solid var(--line); border-radius: 4px; color: var(--text-2); font-size: 14px; line-height: 20px; }
+.home-about__founder { padding-top: var(--space-5); border-top: 1px solid var(--line-strong); }
+.home-about__founder h3 { margin: var(--space-3) 0 var(--space-1); }
+.home-about__role { margin: 0 0 var(--space-4); color: var(--text-2); font-weight: 500; }
+.home-about__founder > p:not(.sy-label):not(.home-about__role) { margin: 0; color: var(--text-2); line-height: 24px; }
+.home-about__links { margin: var(--space-6) 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.home-about__links li { border-bottom: 1px solid var(--line); }
+.home-about__links .sy-link { display: flex; justify-content: space-between; align-items: center; min-height: 44px; overflow-wrap: anywhere; }
+@media (max-width: 1023px) { .home-about__grid { grid-template-columns: 1fr; row-gap: var(--space-8); } }

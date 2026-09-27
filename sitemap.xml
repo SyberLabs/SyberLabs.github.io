@@ -2,25 +2,62 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://syberlabs.io/</loc>
-    <lastmod>2026-09-26</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-09-27</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://syberlabs.io/rise-demo/</loc>
-    <lastmod>2026-09-26</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://syberlabs.io/projects/rise/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://syberlabs.io/projects/relay/</loc>
+    <lastmod>2026-09-27</lastmod>
     <priority>0.8</priority>
   </url>
-  <url><loc>https://syberlabs.io/approach/</loc></url>
-  <url><loc>https://syberlabs.io/jev/</loc></url>
-  <url><loc>https://syberlabs.io/projects/rise/</loc></url>
-  <url><loc>https://syberlabs.io/projects/commons/</loc></url>
-  <url><loc>https://syberlabs.io/commons/</loc></url>
-  <url><loc>https://syberlabs.io/projects/relay/</loc></url>
-  <url><loc>https://syberlabs.io/projects/omnios/</loc></url>
-  <url><loc>https://syberlabs.io/projects/osahr/</loc></url>
-  <url><loc>https://syberlabs.io/research/jev-execution/</loc></url>
-  <url><loc>https://syberlabs.io/services/</loc></url>
+  <url>
+    <loc>https://syberlabs.io/projects/omnios/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://syberlabs.io/projects/osahr/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://syberlabs.io/projects/commons/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://syberlabs.io/commons/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://syberlabs.io/jev/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://syberlabs.io/research/jev-execution/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://syberlabs.io/rise-demo/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://syberlabs.io/approach/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://syberlabs.io/services/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <priority>0.6</priority>
+  </url>
 </urlset>
-

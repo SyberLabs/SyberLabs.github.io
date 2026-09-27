@@ -13,3 +13,4 @@ cp 404.html robots.txt sitemap.xml site.webmanifest _redirects \
 for dir in rise-demo projects commons approach jev research services; do
   cp -r "$dir" dist/
 done
+node scripts/prerender.mjs
