@@ -90,64 +90,153 @@ const ENGINES = {
     },
   },
 
-  // JOB / CONTEXT: four revisions as parallel planes inside the glass; one thread of context pierces every layer.
+  // JOB / CONTEXT: a provenance tree grown outward from the job at the centre.
+  // Shells are stages: research, then drafts, then approved revisions at the glass.
+  // Each revision sends context out along its lineage; past lineages stay faintly lit.
   relay: {
     build() {
-      const A = norm([.42, .3, 1]), [U, V] = tangent(A), layers = [];
-      for (const d of [-.6, -.2, .2, .6]) {
-        const R = Math.sqrt(1 - d * d) * .96, grid = [], ring = [];
-        for (let u = -1; u <= 1.001; u += .105) for (let v = -1; v <= 1.001; v += .105) {
-          if (u * u + v * v > R * R) continue;
-          grid.push([u, v, [A[0] * d + U[0] * u + V[0] * v, A[1] * d + U[1] * u + V[1] * v, A[2] * d + U[2] * u + V[2] * v]]);
+      const r = rng(23), nodes = [];
+      [[0, 1], [.34, 8], [.61, 18], [.88, 36]].forEach(([rad, n], lvl) => {
+        for (let i = 0; i < n; i++) {
+          if (!rad) { nodes.push({ p: [0, 0, 0], lvl }); continue; }
+          const y = 1 - 2 * (i + .5) / n, q = Math.sqrt(1 - y * y), a = i * 2.39996 + lvl * 1.7;
+          const rr = rad * (1 + (r() - .5) * .14);
+          nodes.push({ p: [q * Math.cos(a) * rr, y * rr, q * Math.sin(a) * rr], lvl });
         }
-        for (let k = 0; k <= 64; k++) { const a = k / 64 * TAU; ring.push([A[0] * d + (U[0] * Math.cos(a) + V[0] * Math.sin(a)) * R, A[1] * d + (U[1] * Math.cos(a) + V[1] * Math.sin(a)) * R, A[2] * d + (U[2] * Math.cos(a) + V[2] * Math.sin(a)) * R]); }
-        layers.push({ d, grid, ring });
-      }
-      return { A, U, V, layers };
+      });
+      const d2 = (a, b) => (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2;
+      const edges = [];
+      nodes.forEach((n, i) => {
+        n.par = -1; if (!n.lvl) return;
+        const prev = nodes.map((m, j) => [j, m]).filter(([, m]) => m.lvl === n.lvl - 1).sort((a, b) => d2(n.p, a[1].p) - d2(n.p, b[1].p));
+        n.par = prev[0][0];
+        edges.push([i, n.par, 1]);
+        if (n.lvl > 1 && prev[1] && r() < .4) edges.push([i, prev[1][0], .45]); // a draft that drew on two sources
+      });
+      const leaves = nodes.map((n, i) => (n.lvl === 3 ? i : -1)).filter(i => i >= 0);
+      const lineage = leaf => { const out = [leaf]; while (nodes[out[out.length - 1]].par >= 0) out.push(nodes[out[out.length - 1]].par); return out.reverse(); };
+      const order = Array.from({ length: 48 }, () => lineage(leaves[Math.floor(r() * leaves.length)]));
+      const curve = (a, b) => { const out = []; for (let k = 0; k <= 10; k++) { const q = k / 10, bow = 1 + .1 * Math.sin(Math.PI * q); out.push([(a[0] + (b[0] - a[0]) * q) * bow, (a[1] + (b[1] - a[1]) * q) * bow, (a[2] + (b[2] - a[2]) * q) * bow]); } return out; };
+      // faint dust on each shell, so the stages read as nested volumes
+      const dust = [];
+      [[.34, 90], [.61, 150], [.88, 230]].forEach(([rad, n], si) => {
+        for (let i = 0; i < n; i++) { const y = 1 - 2 * (i + .5) / n, q = Math.sqrt(1 - y * y), a = i * 2.39996 + si; dust.push([q * Math.cos(a) * rad, y * rad, q * Math.sin(a) * rad]); }
+      });
+      return { nodes, dust, edges: edges.map(([a, b, w]) => ({ a, b, w, pts: curve(nodes[b].p, nodes[a].p) })), order, key: (a, b) => a * 1000 + b };
     },
     draw(s, t, g, w) {
-      const tu = .38 * Math.sin(t * .23), tv = .3 * Math.sin(t * .31 + 1.1);
-      const at = d => [s.A[0] * d + s.U[0] * tu + s.V[0] * tv, s.A[1] * d + s.U[1] * tu + s.V[1] * tv, s.A[2] * d + s.U[2] * tu + s.V[2] * tv];
-      s.layers.forEach((L, li) => {
-        g.poly(L.ring, (.18 + li * .05) * w, 1);
-        for (const [u, v, p] of L.grid) {
-          const dd = (u - tu) ** 2 + (v - tv) ** 2, glow = Math.exp(-dd / .03);
-          g.dot(p, .9 + glow * 1.6, (.1 + li * .035 + .75 * glow) * w);
+      const step = 1.9, ev = Math.floor(t / step), age = (t / step) % 1;
+      const edgeHeat = new Map(), nodeHeat = new Float32Array(s.nodes.length);
+      for (let back = 5; back >= 0; back--) {
+        const path = s.order[((ev - back) % 48 + 48) % 48], hops = path.length - 1;
+        const reach = back ? hops : age * 1.35 * hops; // the current revision travels outward
+        const fade = back ? .34 * Math.pow(.66, back - 1) : 1;
+        for (let h = 0; h < hops; h++) {
+          const lit = Math.max(0, Math.min(1, reach - h)) * fade;
+          const k = s.key(path[h + 1], path[h]);
+          edgeHeat.set(k, Math.max(edgeHeat.get(k) || 0, lit));
+          nodeHeat[path[h + 1]] = Math.max(nodeHeat[path[h + 1]], lit);
         }
-        g.dot(at(L.d), 3.2, .95 * w, true);
+        nodeHeat[path[0]] = Math.max(nodeHeat[path[0]], fade);
+      }
+      for (const p of s.dust) g.dot(p, .7, .11 * w);
+      for (const e of s.edges) {
+        const h = edgeHeat.get(s.key(e.a, e.b)) || 0;
+        g.poly(e.pts, (.2 * e.w + .75 * h) * w, 1 + h * 1.3);
+      }
+      const size = [5.6, 3.2, 2.4, 1.9];
+      s.nodes.forEach((n, i) => {
+        const h = nodeHeat[i];
+        g.dot(n.p, size[n.lvl] * (1 + h * .6), (.5 + .5 * h) * w, n.lvl < 2 || h > .5);
       });
-      const span = [];
-      for (let k = 0; k <= 24; k++) span.push(at(-.84 + 1.68 * k / 24));
-      g.poly(span, .7 * w, 1.3);
+      // the travelling packet of context, and the approval opening at the glass
+      const path = s.order[(ev % 48 + 48) % 48], hops = path.length - 1, pos = age * 1.35 * hops;
+      if (pos < hops) {
+        const h = Math.floor(pos), q = pos - h, a = s.nodes[path[h]].p, b = s.nodes[path[h + 1]].p;
+        g.dot([a[0] + (b[0] - a[0]) * q, a[1] + (b[1] - a[1]) * q, a[2] + (b[2] - a[2]) * q], 2.6, w, true);
+      } else {
+        const open = Math.min(1, (pos - hops) / (.35 * hops));
+        g.ring(s.nodes[path[hops]].p, 4 + open * 12, (1 - open) * .8 * w);
+      }
+      g.ring(s.nodes[0].p, 9 + 2 * Math.sin(t * 1.4), .35 * w);
     },
   },
 
-  // DATA / BLOCKS: sources wired to a persona; packets travel the wires; the answer leaves on one.
+  // DATA / BLOCKS: four personas at the vertices of a tetrahedron, each with its own cluster of data blocks,
+  // all feeding one answer at the centre. Each query lights only the context that actually reached the answer.
   omnios: {
     build() {
-      const persona = onSphere(.1, -.6);
-      const sources = [onSphere(.72, -1.55), onSphere(-.5, -1.4), onSphere(.48, .4)];
-      const out = onSphere(-.6, .1);
-      const wires = sources.map(sp => arc(sp, persona, 44, .06)).concat([arc(persona, out, 40, .06)]);
-      const nodes = sources.concat([persona, out]);
-      return { persona, sources, out, wires, nodes, bases: nodes.map(tangent) };
-    },
-    draw(s, t, g, w) {
-      s.wires.forEach((pts, i) => {
-        g.poly(pts, .3 * w, 1);
-        for (let k = 0; k < 4; k++) {
-          const q = (t * .13 + k / 4 + i * .17) % 1, idx = q * (pts.length - 1);
-          for (let tr = 0; tr < 4; tr++) {
-            const j = Math.max(0, Math.floor(idx) - tr * 2);
-            g.dot(pts[j], 2.1 - tr * .4, (.9 - tr * .22) * w);
-          }
+      const r = rng(41), s3 = 1 / Math.sqrt(3);
+      const personas = [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1]].map(v => v.map(c => c * s3 * .57));
+      const blocks = [];
+      personas.forEach((P, k) => {
+        for (let i = 0; i < 12; i++) {
+          let p;
+          do {
+            const z = r() * 2 - 1, a = r() * TAU, q = Math.sqrt(1 - z * z), rad = .15 + r() * .22;
+            p = [P[0] + q * Math.cos(a) * rad, P[1] + z * rad, P[2] + q * Math.sin(a) * rad];
+          } while (Math.hypot(p[0], p[1], p[2]) > .93);
+          blocks.push({ p, k });
         }
       });
-      s.nodes.forEach((n, i) => {
-        const big = n === s.persona;
-        for (let j = 0; j < 10; j++) g.dot(offset(n, s.bases[i], j * TAU / 10 + t * (i % 2 ? -.35 : .35), big ? .13 : .075), 1, .38 * w);
-        g.dot(n, big ? 6 + Math.sin(t * 1.6) * .7 : 3.4, w, true);
+      const bez = (a, b, pull) => {
+        const c = [(a[0] + b[0]) / 2 * pull, (a[1] + b[1]) / 2 * pull, (a[2] + b[2]) / 2 * pull], out = [];
+        for (let i = 0; i <= 12; i++) { const q = i / 12, u = 1 - q; out.push([u * u * a[0] + 2 * u * q * c[0] + q * q * b[0], u * u * a[1] + 2 * u * q * c[1] + q * q * b[1], u * u * a[2] + 2 * u * q * c[2] + q * q * b[2]]); }
+        return out;
+      };
+      const wires = blocks.map((b, i) => ({ from: i, to: b.k, pts: bez(b.p, personas[b.k], .82), shared: false }));
+      for (let i = 0; i < 7; i++) { // data shared across personas
+        const bi = Math.floor(r() * blocks.length), to = (blocks[bi].k + 1 + Math.floor(r() * 3)) % 4;
+        wires.push({ from: bi, to, pts: bez(blocks[bi].p, personas[to], .45), shared: true });
+      }
+      const spokes = personas.map(P => bez(P, [0, 0, 0], 1.25));
+      const queries = Array.from({ length: 24 }, () => wires.map(() => r() < .34));
+      return { personas, blocks, wires, spokes, queries };
+    },
+    draw(s, t, g, w) {
+      // One continuous breath: context flows in to the answer, the answer fires it back out
+      // along the wires the next query will use, and that query begins where the sparks land.
+      const step = 3.4, ev = Math.floor(t / step), age = (t / step) % 1;
+      const cur = s.queries[ev % 24], nxt = s.queries[(ev + 1) % 24];
+      const IN = .38, HUB = .56, FIRE = .64, OUT = .82;
+      const curOn = age < FIRE ? 1 : Math.max(0, 1 - (age - FIRE) / .12);
+      const nxtOn = age < FIRE ? 0 : Math.min(1, (age - FIRE) / .1);
+      const feedCur = new Float32Array(4), feedNxt = new Float32Array(4), blockLit = new Float32Array(s.blocks.length);
+      s.wires.forEach((wr, i) => {
+        if (cur[i]) { feedCur[wr.to] = 1; blockLit[wr.from] = Math.max(blockLit[wr.from], curOn); }
+        if (nxt[i]) { feedNxt[wr.to] = 1; if (age > OUT) blockLit[wr.from] = Math.max(blockLit[wr.from], Math.min(1, (age - OUT) / .1)); }
       });
+      const spark = (pts, q, reverse) => {
+        const n = pts.length - 1;
+        for (let tr = 0; tr < 4; tr++) {
+          const u = Math.max(0, Math.min(1, q - tr * .045)), j = Math.round((reverse ? 1 - u : u) * n);
+          g.dot(pts[j], 2 - tr * .38, (.95 - tr * .22) * w, tr === 0);
+        }
+      };
+      s.wires.forEach((wr, i) => {
+        const on = Math.max(cur[i] ? curOn : 0, nxt[i] ? nxtOn : 0);
+        g.poly(wr.pts, ((wr.shared ? .09 : .14) + .62 * on) * w, 1 + on * .5);
+        if (cur[i] && age < IN) spark(wr.pts, age / IN, false);                      // in, from the blocks
+        if (nxt[i] && age > OUT) spark(wr.pts, (age - OUT) / (1 - OUT), true);        // back out, to the next blocks
+      });
+      s.spokes.forEach((sp, k) => {
+        const on = Math.max(feedCur[k] * curOn, feedNxt[k] * nxtOn);
+        g.poly(sp, (.2 + .6 * on) * w, 1.1 + on * .6);
+        if (feedCur[k] && age > IN && age < HUB) spark(sp, (age - IN) / (HUB - IN), false); // down to the answer
+        if (feedNxt[k] && age > FIRE && age < OUT) spark(sp, (age - FIRE) / (OUT - FIRE), true); // shot back out
+      });
+      s.blocks.forEach((b, i) => g.square(b.p, 1.7 + blockLit[i] * .9, (.34 + .66 * blockLit[i]) * w));
+      s.personas.forEach((P, k) => {
+        const lit = Math.max(feedCur[k] * curOn, feedNxt[k] * nxtOn);
+        g.dot(P, 3.6 + lit * 1.2, (.6 + .4 * lit) * w, true);
+        g.ring(P, 8 + Math.sin(t * .9 + k) * 1.2, (.2 + .3 * lit) * w);
+      });
+      // the answer gathers, holds, and fires
+      const gather = age > HUB && age < FIRE ? (age - HUB) / (FIRE - HUB) : 0;
+      const shock = age >= FIRE && age < OUT ? (age - FIRE) / (OUT - FIRE) : -1;
+      g.dot([0, 0, 0], 5.6 + gather * 3.5 + (shock >= 0 ? (1 - shock) * 2 : 0), w, true);
+      g.ring([0, 0, 0], 10 - gather * 3, (.3 + .45 * gather) * w);
+      if (shock >= 0) g.ring([0, 0, 0], 8 + shock * 34, (1 - shock) * .75 * w);
     },
   },
 
@@ -244,6 +333,19 @@ export function mountSphereField(canvas, initialKind, pointer, options = {}) {
       ctx.lineWidth = width * k * .85;
       if (bOpen) { ctx.strokeStyle = `rgba(${rgb},${Math.min(1, alpha * .3)})`; ctx.stroke(back); }
       if (fOpen) { ctx.strokeStyle = `rgba(${rgb},${Math.min(1, alpha * 1.15)})`; ctx.stroke(front); }
+    },
+    ring(p, radius, alpha) {
+      const v = view(p), a = alpha * depthAlpha(v[2]);
+      if (a < .01) return;
+      ctx.strokeStyle = `rgba(${rgb},${a})`; ctx.lineWidth = k * .8;
+      ctx.beginPath(); ctx.arc(cx + v[0] * R, cy - v[1] * R, radius * k * (.85 + .2 * v[2]), 0, TAU); ctx.stroke();
+    },
+    square(p, size, alpha) {
+      const v = view(p), a = alpha * depthAlpha(v[2]);
+      if (a < .01) return;
+      const s = size * (.85 + .25 * v[2]) * k, x = cx + v[0] * R, y = cy - v[1] * R;
+      ctx.strokeStyle = `rgba(${rgb},${a})`; ctx.lineWidth = k * .75; ctx.strokeRect(x - s, y - s, s * 2, s * 2);
+      ctx.fillStyle = `rgba(${rgb},${a * .35})`; ctx.fillRect(x - s, y - s, s * 2, s * 2);
     },
     polyView(pts, alpha, width = 1) {
       const path = new Path2D();
