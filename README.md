@@ -4,6 +4,6 @@
 
 # SyberLabs homepage
 
-Static site for [syberlabs.space](https://syberlabs.space/).
+Company and portfolio site for [syberlabs.io](https://syberlabs.io/).
 
-The domain is the public face of the SyberLabs laboratory. Built as a single-file HTML/CSS/canvas experience with OpenGraph metadata, icons, sitemap, robots, and GitHub Pages custom-domain configuration.
+Built with React, Material UI, and Vite. Run `pnpm install` and `pnpm build` to generate the Cloudflare Pages output in `dist/`. The public RISE demo is copied into `dist/rise/` by the deployment workflow.

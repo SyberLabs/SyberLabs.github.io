@@ -1,0 +1,146 @@
+:root {
+  --lab-violet: rgba(108, 77, 224, .16);
+  --lab-rose: rgba(233, 102, 189, .13);
+  --lab-cyan: rgba(60, 209, 202, .13);
+  --lab-grid: rgba(91, 69, 173, .08);
+}
+
+:root[data-dark] {
+  --lab-violet: rgba(111, 77, 240, .25);
+  --lab-rose: rgba(234, 92, 193, .19);
+  --lab-cyan: rgba(44, 219, 209, .14);
+  --lab-grid: rgba(188, 173, 255, .055);
+}
+
+html { scroll-behavior: smooth; }
+
+.lab-header {
+  backdrop-filter: blur(18px);
+  background-color: color-mix(in srgb, var(--mui-palette-background-paper) 88%, transparent) !important;
+}
+
+.lab-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 58% 72% at 88% 40%, var(--lab-violet), transparent 76%),
+    radial-gradient(ellipse 45% 58% at 68% 95%, var(--lab-rose), transparent 78%),
+    radial-gradient(ellipse 42% 50% at 12% 8%, var(--lab-cyan), transparent 84%);
+}
+
+.lab-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(var(--lab-grid) 1px, transparent 1px), linear-gradient(90deg, var(--lab-grid) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(90deg, transparent, #000 70%);
+  opacity: .42;
+}
+
+.hero-radiance {
+  position: absolute;
+  width: 580px;
+  height: 580px;
+  right: -140px;
+  top: -140px;
+  border-radius: 50%;
+  background: conic-gradient(from 90deg, transparent, rgba(157, 105, 242, .17), transparent, rgba(57, 215, 202, .13), transparent);
+  filter: blur(36px);
+  animation: orbit-drift 32s linear infinite;
+  pointer-events: none;
+}
+
+.spectral-text {
+  background: linear-gradient(105deg, #5945ad 5%, #bd58ad 52%, #3c9da9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+:root[data-dark] .spectral-text {
+  background-image: linear-gradient(105deg, #bcadff 5%, #ef9ad5 55%, #75e8dd 100%);
+}
+
+.signal-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #8e70f8;
+  box-shadow: 0 0 0 4px rgba(142, 112, 248, .15), 0 0 17px rgba(142, 112, 248, .65);
+}
+
+.hero-art { position: relative; }
+.hero-art .MuiCard-root { transition: transform .3s ease, box-shadow .3s ease; }
+.hero-art:hover .MuiCard-root { transform: translateY(-4px); box-shadow: 0 22px 60px rgba(63, 35, 130, .18); }
+
+.signal-orbit {
+  position: absolute;
+  inset: -13px;
+  border-radius: 38px;
+  background: conic-gradient(from 30deg, #895cff, #dc72c2, #56e1d0, #895cff);
+  filter: blur(23px);
+  opacity: .48;
+  animation: orbit-drift 24s linear infinite;
+  pointer-events: none;
+}
+
+.rise-preview { filter: saturate(1.32) contrast(1.08); transition: transform .6s ease; }
+.hero-art:hover .rise-preview { transform: scale(1.04); }
+
+.work-section {
+  background: radial-gradient(ellipse 65% 45% at 8% 2%, var(--lab-cyan), transparent 78%);
+}
+
+.project-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.project-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 95% 0%, color-mix(in srgb, var(--card-accent) 17%, transparent), transparent 48%);
+  pointer-events: none;
+}
+
+.project-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--card-accent), transparent 72%);
+  pointer-events: none;
+}
+
+.project-card:hover { transform: translateY(-3px); border-color: var(--card-accent); box-shadow: 0 16px 40px rgba(34, 22, 71, .08); }
+.project-card .MuiCardContent-root { position: relative; }
+
+.experience-section {
+  position: relative;
+  overflow: hidden;
+  color: #f7f5ff;
+  background: radial-gradient(circle at 95% 3%, rgba(151, 70, 205, .27), transparent 44%),
+    radial-gradient(circle at 0% 96%, rgba(47, 185, 180, .20), transparent 45%), #101023;
+}
+
+.experience-frame { border: 1px solid rgba(188, 173, 255, .36); box-shadow: 0 20px 70px rgba(0, 0, 0, .24), 0 0 45px rgba(151, 70, 205, .10); }
+
+.contact-section {
+  background: radial-gradient(circle at 90% 15%, rgba(65, 223, 211, .33), transparent 32%),
+    linear-gradient(115deg, #4d369e 5%, #7c3b9d 60%, #405aa3 100%);
+}
+
+@keyframes orbit-drift { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hero-radiance, .signal-orbit { animation: none; }
+  .hero-art .MuiCard-root, .rise-preview, .project-card { transition: none; }
+}

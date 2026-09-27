@@ -18,15 +18,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       - name: Prepare public site
         run: |
-          mkdir dist
-          cp index.html robots.txt sitemap.xml site.webmanifest _redirects \
+          pnpm build
+          cp robots.txt sitemap.xml site.webmanifest _redirects \
             syber-mark.png og-image.png mateo_robles_resume.pdf \
             favicon.ico favicon-32x32.png favicon-16x16.png \
+            favicon-blue.ico favicon-blue-32x32.png favicon-blue-16x16.png \
             apple-touch-icon.png android-chrome-192x192.png \
             android-chrome-512x512.png dist/
+          cp -r rise dist/
           test -s dist/index.html
+          test -s dist/rise/index.html
+          test -s dist/rise/rise-demo-20260926.mp4
           grep -Fxq '/rise https://rise.syberlabs.io/ 301' dist/_redirects
           grep -Fxq '/rise/* https://rise.syberlabs.io/:splat 301' dist/_redirects
       - uses: actions/upload-artifact@v4
