@@ -48,8 +48,16 @@ const projects = {
   },
 };
 
+const interfaces = {
+  rise: { input: 'Text file + reader settings', transform: 'Stream timing or Page layout', output: 'Visual and sonic reading session', invariant: 'The source text remains the same across modes.', test: 'Change presentation without rewriting the passage.' },
+  commons: { input: 'Mission proposal + cited evidence', transform: 'Draft → reviewer decision → audit record', output: 'Reviewable mission state', invariant: 'A seeded human reviewer approves or requests changes.', test: 'Trace a decision to the proposal and its review.' },
+  relay: { input: 'Job posting + applicant research', transform: 'Versioned draft preparation', output: 'Packet awaiting exact acceptance', invariant: 'A changed draft has no inherited approval.', test: 'Revise accepted wording and verify it needs review again.' },
+  omnios: { input: 'Connected blocks + user question', transform: 'Visible context routing', output: 'Answer with inspectable inputs', invariant: 'Disconnected blocks cannot provide context.', test: 'Disconnect a source and inspect the remaining inputs.' },
+  osahr: { input: 'Typed graph + rewrite rules + seed', transform: 'Stochastic event scheduling', output: 'Replayable event record', invariant: 'A result is interpreted with its generating conditions.', test: 'Replay a seeded run and inspect the event sequence.' },
+};
+
 const slug = location.pathname.split('/').filter(Boolean).at(-1);
-const p = projects[slug];
+  const p = projects[slug];
 if (!p) location.replace('/');
 else {
   document.title = `${p.name} — SyberLabs`;
@@ -74,6 +82,7 @@ else {
     <header><a class="brand" href="https://syberlabs.io/" aria-label="SyberLabs home">◉ SyberLabs</a><nav aria-label="Page navigation"><a href="https://syberlabs.io/#work">SyberLabs projects</a><a href="#mechanics">Mechanics ↓</a><a href="#field-note">Field note ↓</a><a href="mailto:syberlabs.software@gmail.com">Contact ↗</a></nav></header>
     <main><section class="hero" id="overview"><canvas class="procedural-field" aria-hidden="true"></canvas><div class="hero-copy"><p class="eyebrow">SYBERLABS / ${p.number} / ${p.category}</p><h1>${p.headline}</h1><p class="intro">${p.intro}</p><div class="actions">${p.actions.map(([label, url]) => `<a href="${url}">${label}</a>`).join('')}</div><p class="status"><span></span>${p.status}</p></div><div class="product-art art-${slug}" aria-label="Illustration of ${p.name} product concept" role="img">${art}</div></section>
     <section class="product-system" id="mechanics">${system}</section>
+    <section class="interface-section" aria-labelledby="interface-title"><div class="interface-heading"><span>TECHNICAL FIELD NOTE / ${p.number}</span><h2 id="interface-title">The system boundary.</h2><p>A concrete model of this product's current or proposed flow. The verification question is a test to perform, not a measured result.</p></div><div class="interface-grid"><div><small>01 / INPUT</small><strong>${interfaces[slug].input}</strong></div><div><small>02 / TRANSFORM</small><strong>${interfaces[slug].transform}</strong></div><div><small>03 / OUTPUT</small><strong>${interfaces[slug].output}</strong></div><div class="interface-invariant"><small>INVARIANT / HUMAN OR CODE</small><strong>${interfaces[slug].invariant}</strong></div></div><div class="interface-test"><span>WHAT WOULD PROVE IT?</span><p>${interfaces[slug].test}</p></div></section>
     <section class="case-study" id="field-note"><div class="case-kicker"><span>FIELD NOTE / ${p.number}</span><strong>${p.caseTag}</strong></div><div class="case-body"><p class="eyebrow">A CONCRETE RUN</p><h2>${p.caseTitle}</h2><p>${p.caseBody}</p></div></section>
     <aside class="boundary"><span>WHAT EXISTS TODAY</span><p>${p.note}</p></aside></main>
     <footer><a href="https://syberlabs.io/">← SyberLabs home</a><a href="https://syberlabs.io/#work">Explore all SyberLabs projects</a><span>© 2026 SyberLabs</span></footer>`;

@@ -168,16 +168,23 @@ function Experience() {
 }
 
 function JEVFeature() {
-  return <Box component="section" aria-labelledby="jev-title" sx={{ py: { xs: 5, md: 6 }, bgcolor: '#171323', color: '#f7f5ff', borderBottom: '1px solid #bcadff55' }}>
-    <Container maxWidth="lg" sx={{ display: 'flex', alignItems: { xs: 'flex-start', md: 'center' }, justifyContent: 'space-between', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
-      <Box>
-        <Typography variant="overline" sx={{ color: '#bcadff', fontWeight: 800, letterSpacing: '.14em' }}>PORTFOLIO TECHNICAL PRIORITY · IN DEVELOPMENT</Typography>
-        <Typography component="h2" id="jev-title" variant="h2" sx={{ mt: .5, fontSize: { xs: '2rem', md: '2.6rem' } }}>JEV integration</Typography>
-        <Typography sx={{ mt: 1, maxWidth: 690, color: '#c8c3d8', lineHeight: 1.7 }}>JEV is SyberLabs’ portfolio-wide technical priority. See the current focus and how it connects to our projects.</Typography>
-      </Box>
-      <Button href="/jev/" variant="contained" endIcon={<ArrowForwardRoundedIcon />} sx={{ flexShrink: 0 }}>Explore JEV</Button>
-    </Container>
-  </Box>;
+  return <Box component="section" aria-labelledby="jev-title" className="jev-technical"><Container maxWidth="lg" className="jev-technical-inner">
+    <Box><Typography variant="overline" className="technical-kicker">RESEARCH THREAD / 01 · IN DEVELOPMENT</Typography><Typography component="h2" id="jev-title" variant="h2">Decisions are an <em>interface.</em></Typography><Typography className="technical-lede">We are evaluating where TypeSafe AI’s Jev can make a bounded, typed judgment inside our products. The application still owns permissions, validation, and the final action.</Typography><Button href="/jev/" variant="contained" endIcon={<ArrowForwardRoundedIcon />}>Read the JEV integration plan</Button></Box>
+    <Box className="decision-diagram" aria-label="Proposed decision flow: product state enters a typed Jev question, then validation and human authority determine the action" role="img"><div className="diagram-header"><span>PROPOSED DECISION SEAM</span><span>ARCHITECTURE / NOT A LIVE INTEGRATION</span></div><div className="diagram-flow"><div><small>01 / INPUT</small><strong>Product state</strong><span>Only relevant context</span></div><b>→</b><div className="diagram-model"><small>02 / JUDGMENT</small><strong>Typed choice</strong><span>Jev · bounded options</span></div><b>→</b><div><small>03 / GATE</small><strong>Code + person</strong><span>Validate · authorize · act</span></div></div><div className="diagram-footer"><span>SCHEMA IS A CONTRACT</span><span>UNCERTAINTY IS A SIGNAL</span><span>AUTHORITY STAYS OUTSIDE THE MODEL</span></div></Box>
+  </Container></Box>;
+}
+
+function LabSystem() {
+  return <Box component="section" className="lab-system" aria-labelledby="system-title"><Container maxWidth="lg">
+    <Box className="system-intro"><Typography className="technical-kicker">SYSTEMS / THE WORK, NOT THE HYPE</Typography><Typography component="h2" id="system-title" variant="h2">Five instruments.<br /><em>Five different constraints.</em></Typography><Typography>Each project asks a precise question. Its interface should expose the state, the transformation, and the limit of what software can decide.</Typography></Box>
+    <Box className="system-matrix" role="table" aria-label="SyberLabs product system map"><Box className="matrix-row matrix-head" role="row"><span role="columnheader">SYSTEM</span><span role="columnheader">INPUT</span><span role="columnheader">TRANSFORMATION</span><span role="columnheader">HUMAN BOUNDARY</span></Box>{[
+      ['RISE','Text + reader controls','Time / space / sound','Reader sets pace'],
+      ['Commons','Mission + evidence','Proposal → review record','People approve commitments'],
+      ['Relay','Posting + research','Draft + version history','Applicant accepts exact words'],
+      ['OmniOS','Wired data blocks','Visible context → answer','User selects sources'],
+      ['OSAHR','Typed graph + rules','Event → replay trace','Researcher interprets result'],
+    ].map(([name,input,transform,boundary],i)=><Box className="matrix-row" role="row" key={name}><a role="cell" href={`/projects/${name.toLowerCase()}/`}><span>0{i+1}</span> {name} ↗</a><span role="cell">{input}</span><span role="cell">{transform}</span><span role="cell">{boundary}</span></Box>)}</Box>
+  </Container></Box>;
 }
 
 function Motivation() {
@@ -216,7 +223,7 @@ function Footer() {
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="system"><CssBaseline /><Header /><main><Hero /><JEVFeature /><Experience /><Motivation /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="system"><CssBaseline /><Header /><main><Hero /><JEVFeature /><LabSystem /><Experience /><Motivation /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
