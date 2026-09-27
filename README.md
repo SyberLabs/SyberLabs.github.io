@@ -1,4 +1,4 @@
-> **Current RISE and Jev status:** RISE's Chamber reads locally. Its Scriptorium offers optional JEV routing for composition requests with a reader-provided key. A live provider outcome for that route remains unverified.
+> **Current RISE and Jev status:** RISE offers a Jev reading request on its home screen. Jev selects a released work, passage, and Chamber settings from bounded choices, including six mood sounds. The Chamber renders audio locally. The separate Scriptorium composition route still needs an independently verified authoring outcome.
 
 # SyberLabs homepage
 
