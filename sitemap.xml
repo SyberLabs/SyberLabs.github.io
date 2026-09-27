@@ -7,9 +7,10 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://syberlabs.io/rise/</loc>
+    <loc>https://syberlabs.io/rise-demo/</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 </urlset>
+

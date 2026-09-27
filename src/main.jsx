@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './visual.css';
 import { ThemeProvider, createTheme, useColorScheme } from '@mui/material/styles';
@@ -51,6 +51,66 @@ const projects = [
   { name: 'OSAHR', kind: 'Simulation research', description: 'A research kernel for stochastic simulation on typed hypergraphs.', accent: '#e9b66f' },
 ];
 
+function LabField({ active = 0 }) {
+  const canvasRef = useRef(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let frame, visible = true, tick = 0;
+    const pointer = { x: .5, y: .5 };
+    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) draw(); });
+    observer.observe(canvas);
+    const onPointer = event => { const rect = canvas.getBoundingClientRect(); pointer.x = (event.clientX - rect.left) / rect.width; pointer.y = (event.clientY - rect.top) / rect.height; };
+    canvas.addEventListener('pointermove', onPointer);
+    const colors = [['#8b74ff', '#f186c8', '#5eefd8'], ['#4fded9', '#8b74ff', '#f186c8'], ['#f186c8', '#f2b66e', '#8b74ff'], ['#f2b66e', '#8b74ff', '#4fded9']][active];
+    function draw() {
+      if (!visible || document.hidden) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = Math.max(1, Math.round(rect.width * dpr));
+      const height = Math.max(1, Math.round(rect.height * dpr));
+      if (canvas.width !== width || canvas.height !== height) { canvas.width = width; canvas.height = height; }
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const w = rect.width, h = rect.height;
+      context.fillStyle = '#090b1c'; context.fillRect(0, 0, w, h);
+      const drift = reduced.matches ? 0 : tick * .003;
+      const focusX = w * (.5 + (pointer.x - .5) * .16);
+      const focusY = h * (.5 + (pointer.y - .5) * .16);
+      for (let band = 0; band < 3; band++) {
+        context.beginPath();
+        for (let point = 0; point <= 190; point++) {
+          const t = point / 190 * Math.PI * 2;
+          const radius = Math.min(w * .36, h * .42) * (.65 + band * .2);
+          const wave = Math.sin(t * (3 + active) + drift * (band + 1)) * (14 + band * 5);
+          const x = focusX + Math.cos(t + drift * .12) * (radius + wave) * 1.28;
+          const y = focusY + Math.sin(t + drift * .08) * (radius + wave) * .67;
+          if (!point) context.moveTo(x, y); else context.lineTo(x, y);
+        }
+        context.closePath();
+        context.strokeStyle = colors[band]; context.globalAlpha = .13 + band * .11;
+        context.lineWidth = 1.5 + band * .8; context.shadowBlur = 24; context.shadowColor = colors[band]; context.stroke();
+      }
+      context.shadowBlur = 0; context.globalAlpha = 1;
+      for (let i = 0; i < 72; i++) {
+        const angle = i * 2.39996 + drift * (.15 + i % 4 * .05);
+        const radius = Math.sqrt(i / 72) * Math.min(w * .42, h * .44);
+        const x = focusX + Math.cos(angle) * radius * 1.55;
+        const y = focusY + Math.sin(angle) * radius * .8;
+        context.fillStyle = colors[i % 3]; context.globalAlpha = .18 + (i % 5) * .1;
+        context.beginPath(); context.arc(x, y, i % 9 === 0 ? 2.1 : 1, 0, Math.PI * 2); context.fill();
+      }
+      context.globalAlpha = 1;
+      if (!reduced.matches) { tick++; frame = requestAnimationFrame(draw); }
+    }
+    draw();
+    const onVisibility = () => { if (!document.hidden) draw(); };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => { cancelAnimationFrame(frame); observer.disconnect(); canvas.removeEventListener('pointermove', onPointer); document.removeEventListener('visibilitychange', onVisibility); };
+  }, [active]);
+  return <canvas ref={canvasRef} className="lab-field" aria-hidden="true" />;
+}
+
 function ThemeToggle() {
   const { mode, setMode } = useColorScheme();
   if (!mode) return <Box sx={{ width: 40, height: 40 }} />;
@@ -79,26 +139,26 @@ function Header() {
 
 function Hero() {
   return <Box component="section" className="lab-hero" sx={{ py: { xs: 8, md: 13 }, borderBottom: '1px solid', borderColor: 'divider' }}>
-    <Box className="hero-radiance" aria-hidden="true" />
+    <LabField />
     <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1.05fr .95fr' }, alignItems: 'center', gap: { xs: 5, md: 8 } }}>
         <Box>
           <Stack direction="row" spacing={1.2} alignItems="center" sx={{ mb: 3 }}><Box className="signal-pulse" aria-hidden="true" /><Typography variant="overline" color="primary" sx={{ fontWeight: 800, letterSpacing: '.17em' }}>INDEPENDENT AI LAB</Typography></Stack>
-          <Typography component="h1" variant="h1" sx={{ fontSize: { xs: '2.7rem', sm: '3.6rem', md: '4.1rem' }, lineHeight: 1.1, maxWidth: 650 }}>
-            Software for reading, <Box component="span" className="spectral-text">thinking</Box>, and simulation.
+          <Typography component="h1" variant="h1" sx={{ fontSize: { xs: '2.7rem', sm: '3.6rem', md: '4.4rem' }, lineHeight: 1.07, maxWidth: 650 }}>
+            New ways to <Box component="span" className="spectral-text">experience</Box> information.
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 3, fontSize: { xs: '1.06rem', md: '1.2rem' }, lineHeight: 1.75, maxWidth: 560 }}>
-            We design and test interfaces for reading, AI-assisted work, and simulation. Research becomes something you can actually use.
+            An independent AI lab making interfaces for reading, thinking, and simulation. Built to be explored.
           </Typography>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 4, alignItems: { xs: 'stretch', sm: 'center' } }}>
-            <Button href="/rise/" variant="contained" size="large" endIcon={<PlayArrowRoundedIcon />}>Watch the RISE demo</Button>
+            <Button href="/rise-demo/" variant="contained" size="large" endIcon={<PlayArrowRoundedIcon />}>Watch the RISE demo</Button>
             <Button href="#work" variant="outlined" size="large" endIcon={<ArrowForwardRoundedIcon />}>Explore our work</Button>
           </Stack>
         </Box>
         <Box className="hero-art"><Box className="signal-orbit" aria-hidden="true" /><Card variant="outlined" sx={{ overflow: 'hidden', position: 'relative', borderColor: 'divider', bgcolor: 'background.paper', borderRadius: 3 }}>
           <CardActionArea component="a" href="https://rise.syberlabs.io/" aria-label="Open the live RISE app">
             <Box sx={{ position: 'relative', aspectRatio: '16 / 10', bgcolor: '#0a1020' }}>
-              <Box component="img" src="/rise/poster-20260926.jpg" alt="RISE reading interface demo preview" className="rise-preview" sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <Box component="img" src="/rise-demo/poster-20260926.jpg" alt="RISE reading interface demo preview" className="rise-preview" sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 38%, rgba(4,10,20,.86) 100%)' }} />
               <Box sx={{ position: 'absolute', bottom: 22, left: 24, right: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#fff' }}>
                 <Box><Typography variant="overline" sx={{ opacity: .75, letterSpacing: '.14em' }}>LIVE APP</Typography><Typography variant="h5">RISE</Typography></Box>
@@ -113,25 +173,28 @@ function Hero() {
 }
 
 function Work() {
+  const [active, setActive] = useState(0);
+  const project = projects[active];
   return <Box component="section" id="work" className="work-section" sx={{ py: { xs: 8, md: 11 } }}><Container maxWidth="lg">
-    <Typography variant="overline" color="primary" sx={{ fontWeight: 800, letterSpacing: '.13em' }}>PORTFOLIO</Typography>
-    <Typography component="h2" variant="h2" sx={{ mt: 1, fontSize: { xs: '2rem', md: '2.75rem' } }}>Inside the lab</Typography>
-    <Typography color="text.secondary" sx={{ mt: 1.5, mb: 4.5, maxWidth: 610 }}>Products and experiments across reading, decision making, spatial computing, and simulation.</Typography>
-    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 2.5 }}>
-      {projects.map(project => <Card key={project.name} className="project-card" style={{ '--card-accent': project.accent }} variant="outlined" sx={{ borderColor: 'divider', bgcolor: 'background.paper', borderRadius: 2.5, height: '100%' }}>
-        {project.href ? <CardActionArea component="a" href={project.href} sx={{ height: '100%', p: { xs: 2.5, md: 3 } }}>
-          <CardContent sx={{ p: '0 !important', display: 'flex', flexDirection: 'column', minHeight: 195 }}>
-            <Typography variant="overline" color="primary" sx={{ fontWeight: 800, letterSpacing: '.1em' }}>{project.kind}</Typography>
-            <Typography variant="h5" sx={{ mt: 1, mb: 1.3 }}>{project.name}</Typography>
-            <Typography color="text.secondary" sx={{ lineHeight: 1.7, flexGrow: 1 }}>{project.description}</Typography>
-            <Stack direction="row" alignItems="center" spacing={.7} color="primary.main" sx={{ mt: 3 }}><Typography variant="button">{project.action}</Typography><ArrowOutwardRoundedIcon fontSize="small" /></Stack>
-          </CardContent>
-        </CardActionArea> : <CardContent sx={{ p: { xs: 2.5, md: 3 }, minHeight: 195 }}>
-          <Typography variant="overline" color="primary" sx={{ fontWeight: 800, letterSpacing: '.1em' }}>{project.kind}</Typography>
-          <Typography variant="h5" sx={{ mt: 1, mb: 1.3 }}>{project.name}</Typography>
-          <Typography color="text.secondary" sx={{ lineHeight: 1.7 }}>{project.description}</Typography>
-        </CardContent>}
-      </Card>)}
+    <Typography variant="overline" color="primary" sx={{ fontWeight: 800, letterSpacing: '.13em' }}>THE LAB / 01—04</Typography>
+    <Typography component="h2" variant="h2" sx={{ mt: 1, fontSize: { xs: '2rem', md: '2.75rem' } }}>Choose a line of inquiry.</Typography>
+    <Typography color="text.secondary" sx={{ mt: 1.5, mb: 4.5, maxWidth: 610 }}>Explore our products and research. Move between them to change the field.</Typography>
+    <Box className="lab-navigator">
+      <Box role="tablist" aria-label="SyberLabs projects" className="project-selector">
+        {projects.map((item, index) => <button key={item.name} type="button" role="tab" id={`project-tab-${index}`} aria-selected={active === index} aria-controls="project-panel" onClick={() => setActive(index)} className={`project-option ${active === index ? 'selected' : ''}`} style={{ '--option-accent': item.accent }}>
+          <span className="project-index">0{index + 1}</span><span className="project-option-name">{item.name}</span><span className="project-option-kind">{item.kind}</span><ArrowForwardRoundedIcon fontSize="small" />
+        </button>)}
+      </Box>
+      <Box id="project-panel" role="tabpanel" aria-labelledby={`project-tab-${active}`} className="project-stage" sx={{ borderRadius: 3 }}>
+        <LabField active={active} />
+        <Box className="stage-label">SYBERLABS / {String(active + 1).padStart(2, '0')}</Box>
+        <Box className="stage-copy" key={project.name}>
+          <Typography variant="overline" sx={{ color: project.accent, fontWeight: 800, letterSpacing: '.18em' }}>{project.kind}</Typography>
+          <Typography component="h3" variant="h2" sx={{ fontSize: { xs: '3rem', md: '4.6rem' }, color: '#fff', mt: .5 }}>{project.name}</Typography>
+          <Typography sx={{ color: '#d6d3e4', maxWidth: 440, lineHeight: 1.7, mt: 1 }}>{project.description}</Typography>
+          {project.href && <Button href={project.href} variant="contained" endIcon={<ArrowOutwardRoundedIcon />} sx={{ mt: 3 }}>Open live RISE app</Button>}
+        </Box>
+      </Box>
     </Box>
   </Container></Box>;
 }
