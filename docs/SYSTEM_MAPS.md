@@ -182,6 +182,18 @@ Each event carries its hazard, total activity, pre-state hash and post-state has
 
 ---
 
+## The "What it does" face
+
+Every card flips to an outcome face (`src/system-maps/outcomes.js`): who the system is for, a four-step journey that names who acts at each step (you, the system, an outside tool, or a rule in code), three outcomes, and what stays in the user's control. Each sentence restates a behavior documented above or in the repository's README, including its limits. For example:
+
+- Relay does not send applications on its own.
+- Jev's 48 of 49 counts explicit preferences, not whole requests.
+- OmniOS lineage across personas needs the optional ledger.
+- Barn verification applies when the task requires it.
+- OSAHR models mechanisms, not calibrated forecasts.
+
+Status labels (Live app, Early release, Local-first preview, Research prototype, Research kernel) follow each repository's own description.
+
 ## Relationships and uncertainty
 
 | Relationship | Status | Evidence |

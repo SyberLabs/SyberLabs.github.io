@@ -6,6 +6,7 @@ import rise from './systems/rise.jsx';
 import barn from './systems/barn.jsx';
 import osahr from './systems/osahr.jsx';
 import runtime from './systems/runtime.jsx';
+import { outcomes } from './outcomes.js';
 import './system-maps.css';
 
 const systems = [relay, omnios, rise, barn, osahr, runtime];
@@ -59,6 +60,40 @@ function Selection({ map, graph, selected, onClear }) {
   </section>;
 }
 
+const ACTOR_ICON = {
+  you: <><circle cx="12" cy="8.5" r="3.6" /><path d="M5 19.5c1.2-3.6 3.8-5.4 7-5.4s5.8 1.8 7 5.4" /></>,
+  system: <><rect x="5" y="5" width="14" height="14" rx="2.5" /><path d="M9 12h6M12 9v6" /></>,
+  tool: <><circle cx="12" cy="12" r="7.5" strokeDasharray="3 2.6" /><circle cx="12" cy="12" r="2.2" /></>,
+  check: <><path d="M12 3.8 20.2 12 12 20.2 3.8 12Z" /><path d="m8.8 12 2.2 2.2 4.2-4.4" /></>,
+};
+const ACTOR_KIND = { you: 'You act', system: 'The system acts', tool: 'An outside tool acts', check: 'A rule in code decides' };
+
+function OutcomeFace({ map }) {
+  const o = outcomes[map.id];
+  return <div className="outcome-face">
+    <div className="outcome-top">
+      <div>
+        <p className="outcome-eyebrow">WHAT {map.name.toUpperCase()} DOES FOR YOU</p>
+        <h3>{o.headline}</h3>
+        <p className="outcome-audience">{o.audience}</p>
+      </div>
+      <div className="outcome-cta"><span className="outcome-status">{o.status}</span><a href={o.link.href}>{o.link.label} <span aria-hidden="true">↗</span></a></div>
+    </div>
+    <ol className="outcome-flow" aria-label={`How ${map.name} works for you, in ${o.steps.length} steps`}>
+      {o.steps.map((st, i) => <li key={st.title} className={`flow-step flow-${st.who}`}>
+        <div className="flow-mark"><svg viewBox="0 0 24 24" aria-hidden="true">{ACTOR_ICON[st.who]}</svg><span className="flow-num" aria-hidden="true">{i + 1}</span></div>
+        <p className="flow-actor"><span className="visually-hidden">{ACTOR_KIND[st.who]}: </span>{st.actor}</p>
+        <h4>{st.title}</h4>
+        <p>{st.text}</p>
+      </li>)}
+    </ol>
+    <div className="outcome-results">
+      {o.results.map(r => <div key={r.title}><h4>{r.title}</h4><p>{r.text}</p></div>)}
+    </div>
+    <p className="outcome-control"><span>YOU STAY IN CHARGE</span>{o.control}</p>
+  </div>;
+}
+
 export default function SystemMaps() {
   const [active, setActive] = useState(0);
   const [index, setIndex] = useState(0);
@@ -66,6 +101,9 @@ export default function SystemMaps() {
   const [animate, setAnimate] = useState(false);
   const [selected, setSelected] = useState(null);
   const [announce, setAnnounce] = useState('');
+  const [face, setFace] = useState('how');
+  const [turn, setTurn] = useState(null);
+  const faceRef = useRef('how');
   const reduced = useMedia('(prefers-reduced-motion: reduce)');
   const narrow = useMedia('(max-width: 700px)');
   const sectionRef = useRef(null);
@@ -102,13 +140,26 @@ export default function SystemMaps() {
   useEffect(() => {
     if (reduced || !sectionRef.current || !('IntersectionObserver' in window)) return undefined;
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !touched.current) { setPlaying(true); observer.disconnect(); }
+      if (entry.isIntersecting && !touched.current && faceRef.current === 'how') { setPlaying(true); observer.disconnect(); }
     }, { threshold: .45 });
     observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, [reduced]);
 
   useEffect(() => { if (reduced) setPlaying(false); }, [reduced]);
+
+  // Turn the card: rotate out, swap faces at the edge, rotate in. Instant when motion is reduced.
+  const flip = next => {
+    if (next === face || turn) return;
+    touched.current = true;
+    setPlaying(false); setSelected(null);
+    faceRef.current = next;
+    const label = next === 'what' ? 'What it does' : 'How it works';
+    if (reduced) { setFace(next); setAnnounce(`${label}: ${map.name}.`); return; }
+    setTurn('out');
+    window.setTimeout(() => { setFace(next); setTurn('in'); setAnnounce(`${label}: ${map.name}.`); }, 240);
+    window.setTimeout(() => setTurn(null), 500);
+  };
 
   const choose = next => {
     touched.current = true;
@@ -134,7 +185,7 @@ export default function SystemMaps() {
   };
 
   const onExhibitKey = event => {
-    if (event.target.closest('[role="tablist"], input')) return;
+    if (face !== 'how' || event.target.closest('[role="tablist"], input')) return;
     if (event.key === 'ArrowRight') { event.preventDefault(); setPlaying(false); go(index + 1, { manual: true }); }
     if (event.key === 'ArrowLeft') { event.preventDefault(); setPlaying(false); go(index - 1, { manual: true }); }
     if (event.key === 'Escape') setSelected(null);
@@ -153,7 +204,7 @@ export default function SystemMaps() {
       <div className="network-heading">
         <p className="network-eyebrow">SYSTEM MAPS / DRAWN FROM THE REPOSITORIES</p>
         <h2 id="maps-title">Separate systems.<br /><em>Each one inspectable.</em></h2>
-        <p>Each map uses the structure of its own system: a provenance graph, a context graph, a decision pipeline, an event ledger, a hypergraph, or a hash-chained log. Step through what happened, open any node, and see who or what was allowed to act.</p>
+        <p>Each map uses the structure of its own system: a provenance graph, a context graph, a decision pipeline, an event ledger, a hypergraph, or a hash-chained log. Step through what happened, open any node, and see who or what was allowed to act. Flip any card to see what the system does for you.</p>
       </div>
 
       <div className="maps-exhibit" onKeyDown={onExhibitKey}>
@@ -165,7 +216,18 @@ export default function SystemMaps() {
         </div>
 
         <div className="maps-panel" id="map-panel" role="tabpanel" aria-labelledby={`map-tab-${map.id}`}>
-          <div className="maps-intro"><p>{map.summary}</p><Grade grade={map.grade} /></div>
+          <div className="maps-intro">
+            <p>{face === 'how' ? map.summary : `The same system, without the machinery: who it is for, what you do, and what you get.`}</p>
+            <div className="maps-intro-side">
+              {face === 'how' && <Grade grade={map.grade} />}
+              <div className="face-switch" role="group" aria-label="Card face">
+                <button type="button" aria-pressed={face === 'what'} onClick={() => flip('what')}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7.5a6.5 6.5 0 0 1 11.4-2.9M16 12.5a6.5 6.5 0 0 1-11.4 2.9" /><path d="M15.8 1.8v3.4h-3.4M4.2 18.2v-3.4h3.4" /></svg>What it does</button>
+                <button type="button" aria-pressed={face === 'how'} onClick={() => flip('how')}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7.5a6.5 6.5 0 0 1 11.4-2.9M16 12.5a6.5 6.5 0 0 1-11.4 2.9" /><path d="M15.8 1.8v3.4h-3.4M4.2 18.2v-3.4h3.4" /></svg>How it works</button>
+              </div>
+            </div>
+          </div>
+          <div className={`maps-card face-${face}${turn ? ` is-turning-${turn}` : ''}`}>
+          {face === 'what' ? <OutcomeFace map={map} /> : <>
           <div className="maps-body">
             <div className="maps-stage">
               <Stage map={map} graph={graph} state={state} frame={frame} index={index} animate={animate && !reduced} duration={Math.min(1500, pace * .55)}
@@ -201,6 +263,8 @@ export default function SystemMaps() {
           </div>
           <div className="maps-readout" aria-label={`${map.name} state`}><map.Readout index={index} frames={map.frames} /></div>
           <p className="maps-evidence"><span>EVIDENCE</span>{map.evidence.join(' · ')}</p>
+          </>}
+          </div>
         </div>
         <p className="visually-hidden" aria-live="polite">{announce}</p>
       </div>
