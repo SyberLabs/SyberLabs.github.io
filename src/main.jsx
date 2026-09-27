@@ -92,9 +92,9 @@ function AdaptiveNetwork() {
   useEffect(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (motion.matches) return;
-    const timer = window.setInterval(() => setActive(index => (index + 1) % networkModes.length), 6500);
-    return () => window.clearInterval(timer);
-  }, []);
+    const timer = window.setTimeout(() => setActive(index => (index + 1) % networkModes.length), 6500);
+    return () => window.clearTimeout(timer);
+  }, [active]);
   const mode = networkModes[active];
   return <section className="network-section" id="network" aria-labelledby="network-title">
     <div className="network-inner">
