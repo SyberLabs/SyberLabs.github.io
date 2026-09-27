@@ -59,9 +59,10 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 .network-panel{display:flex;flex-direction:column;padding:clamp(25px,3vw,42px);border-left:1px solid #4f6691;color:#f3f7ff;background:#102341}
 .network-panel-index,.network-description>span{color:#a9c1ff;font-size:.64rem;font-weight:700;letter-spacing:.13em}
 .network-modes{display:grid;margin:34px 0 0;border-top:1px solid #5873a0}
-.network-modes button{display:grid;grid-template-columns:32px 1fr auto;align-items:baseline;gap:9px;width:100%;padding:18px 0;border:0;border-bottom:1px solid #5873a0;background:transparent;color:#9db1d5;cursor:pointer;text-align:left}
-.network-modes button:hover,.network-modes button.is-active{color:#fff}
-.network-modes button.is-active strong{color:#a9c1ff}
+.network-modes button{display:grid;grid-template-columns:32px 1fr auto;align-items:baseline;gap:9px;width:100%;padding:18px 0 18px 12px;border:0;border-left:3px solid transparent;border-bottom:1px solid #5873a0;background:transparent;color:#9db1d5;cursor:pointer;text-align:left}
+.network-modes button:hover strong{text-decoration:underline;text-underline-offset:4px}
+.network-modes button.is-active{border-left-color:#82a5ff;background:#193a68;color:#fff}
+.network-modes button.is-active strong{color:#fff}
 .network-modes button span{font-size:.62rem;font-weight:700}.network-modes button strong{font-size:1.45rem;letter-spacing:-.05em}.network-modes button small{font-size:.72rem}
 .network-description{margin-top:auto;padding-top:35px}.network-description p{min-height:5.8em;margin:14px 0 0;font-size:1.08rem;line-height:1.43}
 .network-footnote{margin:0;padding-top:17px;border-top:1px solid #5873a0;color:#9db1d5;font-size:.72rem;line-height:1.45}
