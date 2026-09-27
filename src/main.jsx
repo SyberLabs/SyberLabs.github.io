@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider, createTheme, useColorScheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import risePoster from '../rise-demo/visual-sequence-poster-20260927-v2.jpg';
+import { mountSphereField } from './network-sphere.js';
 import './home.css';
 
 const theme = createTheme({
@@ -70,25 +71,61 @@ function Work() {
   </section>;
 }
 
+const networkModes = [
+  { key: 'relay', name: 'Relay', role: 'Provenance', detail: 'A source branches through research, drafts, and revisions. A signal travels outward along each lineage, making the record inspectable.' },
+  { key: 'omnios', name: 'OmniOS', role: 'Context', detail: 'Distinct clusters of data blocks feed a shared answer. Each query lights the context that reached it.' },
+  { key: 'rise', name: 'RISE', role: 'Experience', detail: 'Text branches into timing, space, and sound. The network changes its expression around a reading.' },
+];
+
+function AdaptiveNetwork() {
+  const canvasRef = useRef(null);
+  const sphereRef = useRef(null);
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    const sphere = mountSphereField(canvasRef.current, networkModes[0].key);
+    sphereRef.current = sphere;
+    return () => { sphere.destroy(); sphereRef.current = null; };
+  }, []);
+  useEffect(() => {
+    sphereRef.current?.setKind(networkModes[active].key);
+  }, [active]);
+  useEffect(() => {
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motion.matches) return;
+    const timer = window.setInterval(() => setActive(index => (index + 1) % networkModes.length), 6500);
+    return () => window.clearInterval(timer);
+  }, []);
+  const mode = networkModes[active];
+  return <section className="network-section" id="network" aria-labelledby="network-title">
+    <div className="network-inner">
+      <div className="network-heading"><p className="network-eyebrow">THE ADAPTIVE NETWORK / CONCEPTUAL MODEL</p><h2 id="network-title">One network.<br /><em>Different expressions.</em></h2><p>Across SyberLabs, a network carries context through a transformation. Its shape changes with the system: a record in Relay, a workspace in OmniOS, an experience in RISE.</p></div>
+      <div className="network-exhibit">
+        <div className="network-stage" role="img" aria-label={`Animated three-dimensional sphere showing the ${mode.name} network: ${mode.detail}`}><canvas ref={canvasRef} aria-hidden="true" /><span className="network-stage-index">SYBERLABS / NETWORK 01</span><span className="network-stage-note">ONE FIELD · THREE STATES</span></div>
+        <div className="network-panel"><span className="network-panel-index">SELECT A SYSTEM / AUTO CYCLING</span><div className="network-modes" aria-label="Network states">{networkModes.map((item, index) => <button type="button" key={item.key} className={index === active ? 'is-active' : ''} aria-pressed={index === active} onClick={() => setActive(index)}><span>0{index + 1}</span><strong>{item.name}</strong><small>{item.role}</small></button>)}</div><div className="network-description"><span>0{active + 1} / {mode.role.toUpperCase()}</span><p>{mode.detail}</p></div><p className="network-footnote">An illustration of the systems’ relationships, drawn from the original SyberLabs sphere studies.</p></div>
+      </div>
+    </div>
+  </section>;
+}
+
 function System() {
   return <section className="system" id="system" aria-labelledby="system-title">
   <div className="system-inner">
-    <div className="system-heading"><p className="system-eyebrow">THE SYBERLABS FIELD</p><h2 id="system-title">Across the human–agent boundary.</h2><p>Agents can generate and coordinate. People can set intent, delegate choices, inspect consequences, and change course.</p></div>
+    <div className="system-heading"><p className="system-eyebrow">THE SYBERLABS FIELD</p><h2 id="system-title">Across the human–agent boundary.</h2><p>Agents can generate and coordinate. People can explore ideas, delegate choices, inspect consequences, and change course.</p></div>
     <div className="system-planes">
       <article className="system-plane system-plane-agent" aria-labelledby="agent-plane-title">
-        <span className="plane-index">01 / AGENT SYSTEMS</span><h3 id="agent-plane-title">Infrastructure for agency.</h3>
+        <span className="plane-index">01 / AGENT SYSTEMS</span><h3 id="agent-plane-title">Infrastructure for agents.</h3>
         <div className="plane-row"><span className="plane-label">INTRA / WITHIN GENERATION</span><p>Generate, test, stabilize.</p><strong>SyberRuntime · Turtles</strong></div>
         <div className="plane-row"><span className="plane-label">EXO / ACROSS SYSTEMS</span><p>Model, deliberate, authorize, coordinate.</p><strong>Barn · Bough · OSAHR · Relay</strong></div>
         <p className="plane-future"><span>THE DIRECTION</span> SyberLabs SDK, growing from SyberWork.</p>
       </article>
       <article className="system-plane system-plane-human" aria-labelledby="human-plane-title">
-        <span className="plane-index">02 / HUMAN ENVIRONMENTS</span><h3 id="human-plane-title">Interfaces for intent.</h3>
+        <span className="plane-index">02 / HUMAN ENVIRONMENTS</span><h3 id="human-plane-title">Interfaces for thought.</h3>
         <div className="plane-row"><span className="plane-label">WORKSPACE / OMNIOS</span><p>Spatial work with inspectable context.</p></div>
         <div className="plane-row"><span className="plane-label">MEDIA / RISE</span><p>Reading shaped by text, space, sound, and Jev’s delegated choices.</p></div>
         <p className="plane-future"><span>THE CONNECTION</span> Agent action becomes a human experience.</p>
       </article>
     </div>
-    <div className="system-boundary"><span>THE BOUNDARY</span><strong>Human intent <i aria-hidden="true">→</i> Delegated action <i aria-hidden="true">→</i> Inspectable consequence</strong><p>RISE can make delegation fluid. Relay makes review explicit before an artifact is submitted.</p></div>
+    <div className="system-boundary"><span>THE BOUNDARY</span><strong>Human thought <i aria-hidden="true">→</i> Delegated action <i aria-hidden="true">→</i> Inspectable consequence</strong><p>RISE can make delegation fluid. Relay makes review explicit before an artifact is submitted.</p></div>
   </div></section>;
 }
 
@@ -97,7 +134,7 @@ function Footer() {
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="light"><Header /><main><Hero /><System /><Work /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="light"><Header /><main><Hero /><AdaptiveNetwork /><System /><Work /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
