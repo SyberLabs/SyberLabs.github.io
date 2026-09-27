@@ -66,3 +66,5 @@
 .lineage i{color:#d5fa63;font:700 2rem 'Space Mono',monospace;font-style:normal}
 @media(max-width:850px){.origins-grid{grid-template-columns:1fr}}
 @media(max-width:600px){.origins{padding:75px 22px}.origins-grid{gap:38px;margin-top:36px}.lineage{gap:8px;padding:20px 10px}.lineage span{min-width:0;flex:1 1 90px;font-size:.75rem;padding:11px 8px}.lineage small{font-size:.45rem}.lineage i{font-size:1.1rem}}
+.culture-grid{grid-template-columns:minmax(0,1fr)}
+.culture .section-copy{max-width:880px}
