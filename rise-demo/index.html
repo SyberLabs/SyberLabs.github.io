@@ -13,6 +13,7 @@
   <meta property="og:url" content="https://syberlabs.io/rise-demo/">
   <meta property="og:image" content="https://syberlabs.io/rise-demo/poster-20260926.jpg">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500&display=swap');
     :root{color-scheme:dark;font-family:Arial,Helvetica,sans-serif;background:#090b12;color:#f3f1eb}
     *{box-sizing:border-box}
     body{margin:0;isolation:isolate;background:radial-gradient(circle at 52% 24%,#191123,#090b12 65%)}
@@ -37,6 +38,67 @@
     .links .primary{background:#d2a474;color:#101014;border-color:#d2a474;font-weight:700}
     footer{border-top:1px solid #282831;color:#92909a;font-size:.75rem;padding:25px 0 40px}
     @media(max-width:700px){main{padding-top:24px}.below{display:block}.links{margin-top:26px}}
+
+    /* RISE: editorial quiet around a vivid, living reading instrument. */
+    :root { font-family:'DM Sans',Arial,sans-serif; color:#f0edf5; background:#07070a; }
+    body {
+      min-height:100vh;
+      background:
+        radial-gradient(ellipse at 50% 21%,#171126 0,transparent 48rem),
+        radial-gradient(ellipse at 88% 72%,#17102955 0,transparent 42rem),#07070a;
+    }
+    .demo-field { opacity:.56; }
+    .shell { width:min(1240px,calc(100% - 64px)); }
+    header { padding:26px 0 20px; border-bottom:1px solid #d8cce31a; }
+    .brand { font:italic 500 1.2rem 'Playfair Display',Georgia,serif; letter-spacing:.04em; }
+    .back { color:#aaa3b2; font:500 .65rem 'DM Mono',monospace; letter-spacing:.12em; text-transform:uppercase; }
+    main { padding:72px 0 105px; }
+    .hero-head { display:grid; grid-template-columns:1fr auto; align-items:end; gap:32px; margin-bottom:30px; }
+    .eyebrow { margin-bottom:17px; color:#c7a7f4; font:500 .65rem 'DM Mono',monospace; letter-spacing:.21em; }
+    h1 { margin:0; font:400 clamp(4.6rem,12vw,9.5rem)/.82 'Playfair Display',Georgia,serif; letter-spacing:-.065em; }
+    .intro { max-width:29ch; margin:0 0 8px; color:#c2b9cd; font:400 clamp(1rem,2vw,1.25rem)/1.5 'Playfair Display',Georgia,serif; }
+    .media-meta { display:flex; justify-content:space-between; align-items:center; gap:16px; margin:36px 0 11px; color:#a6a0ae; font:500 .62rem 'DM Mono',monospace; letter-spacing:.12em; text-transform:uppercase; }
+    .media-meta span:last-child { color:#d2bded; }
+    .video-frame { position:relative; padding:1px; background:linear-gradient(130deg,#c9a6f055,#d0ba9028 46%,#c9a6f014); box-shadow:0 35px 100px #000b,0 0 80px #8a5cc021; }
+    .video-frame::before { content:''; position:absolute; z-index:-1; inset:-10px 8%; border:1px solid #d7c8e21b; border-radius:50%; transform:perspective(500px) rotateX(68deg); }
+    video { position:relative; border:0; border-radius:0; aspect-ratio:16/9; object-fit:cover; }
+    .caption { margin:12px 0 0; color:#928b9b; font:400 .68rem 'DM Mono',monospace; letter-spacing:.035em; }
+    .below { align-items:start; gap:50px; margin-top:88px; padding-top:33px; border-top:1px solid #d8cce322; }
+    .below h2 { margin-bottom:14px; font:400 clamp(2.25rem,4.4vw,4rem)/1 'Playfair Display',Georgia,serif; letter-spacing:-.04em; }
+    .below p { max-width:47ch; color:#b9b2c1; font-size:.96rem; line-height:1.8; }
+    .feature-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0; max-width:780px; margin-top:35px; border-top:1px solid #d8cce322; }
+    .feature-list article { padding:18px 20px 0 0; }
+    .feature-list article+article { padding-left:20px; border-left:1px solid #d8cce322; }
+    .feature-list small { color:#c4a5ef; font:500 .6rem 'DM Mono',monospace; letter-spacing:.16em; }
+    .feature-list h3 { margin:11px 0 7px; font:400 1.1rem 'Playfair Display',Georgia,serif; }
+    .feature-list p { margin:0; color:#9e97a8; font-size:.78rem; line-height:1.65; }
+    .links { gap:0; }
+    .links a { padding:15px 20px; border:1px solid #d5bc8d7a; border-radius:0; color:#e8dcbe; font:500 .66rem 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; transition:background .18s,color .18s; }
+    .links .primary { background:#ddc89d; color:#17120d; border-color:#ddc89d; }
+    .links a:hover { background:#e8d8b8; color:#17120d; text-decoration:none; }
+    footer { border-color:#d8cce31a; color:#827c89; font:400 .65rem 'DM Mono',monospace; letter-spacing:.06em; }
+    @media(max-width:760px) {
+      .shell { width:min(100% - 36px,620px); }
+      main { padding:50px 0 72px; }
+      .hero-head { grid-template-columns:1fr; gap:19px; }
+      h1 { font-size:clamp(5rem,22vw,8rem); }
+      .intro { max-width:34ch; }
+      .media-meta { margin-top:30px; }
+      .below { margin-top:59px; }
+      .feature-list { grid-template-columns:1fr; }
+      .feature-list article, .feature-list article+article { padding:17px 0; border:0; border-bottom:1px solid #d8cce322; }
+    }
+    @media(max-width:430px) {
+      .shell { width:calc(100% - 28px); }
+      header { padding-top:19px; }
+      main { padding-top:40px; }
+      .media-meta { align-items:flex-start; flex-direction:column; gap:7px; }
+      .links { width:100%; }
+      .links a { width:100%; text-align:center; }
+    }
+    @media(prefers-reduced-motion:reduce) {
+      .links a { transition:none; }
+    }
   </style>
 </head>
 <body>
@@ -47,18 +109,30 @@
       <a class="back" href="/">← All work</a>
     </header>
     <main>
-      <p class="eyebrow">RISE demo</p>
-      <h1>RISE</h1>
-      <p class="intro">Watch the Stream-to-Page live demo.</p>
-      <video controls playsinline preload="metadata" poster="/rise-demo/poster-20260926.jpg" aria-label="RISE Stream-to-Page live demo">
-        <source src="/rise-demo/rise-demo-20260926.mp4" type="video/mp4">
-        Your browser cannot play this video. <a href="/rise-demo/rise-demo-20260926.mp4">Download the demo</a>.
-      </video>
-      <p class="caption">75 seconds · Captured RISE interface · JEV shown as in development</p>
+      <div class="hero-head">
+        <div>
+          <p class="eyebrow">An instrument for reading</p>
+          <h1>RISE</h1>
+        </div>
+        <p class="intro">One text. Two ways through it.<br>Time becomes space.</p>
+      </div>
+      <div class="media-meta"><span>01 / Stream to Page</span><span>Captured product demo · 75 seconds</span></div>
+      <div class="video-frame">
+        <video controls playsinline preload="metadata" poster="/rise-demo/poster-20260926.jpg" aria-label="RISE Stream-to-Page live demo">
+          <source src="/rise-demo/rise-demo-20260926.mp4" type="video/mp4">
+          Your browser cannot play this video. <a href="/rise-demo/rise-demo-20260926.mp4">Download the demo</a>.
+        </video>
+      </div>
+      <p class="caption">Captured RISE interface · JEV shown as in development</p>
       <div class="below">
         <div>
-          <h2>Read in time or space.</h2>
-          <p>Stream plays text over time. Page arranges it in space. Your local files stay in your browser.</p>
+          <h2>A text can unfold.</h2>
+          <p>Stream carries the words through time. Page gives them a place to gather. Move between the two readings while your local files stay in your browser.</p>
+          <div class="feature-list" aria-label="RISE reading modes">
+            <article><small>01 / TIME</small><h3>Stream</h3><p>Read as the text advances, one moment at a time.</p></article>
+            <article><small>02 / SPACE</small><h3>Page</h3><p>See the text arranged as a landscape you can explore.</p></article>
+            <article><small>03 / LOCAL</small><h3>Your files</h3><p>Reading material remains in your browser.</p></article>
+          </div>
         </div>
         <div class="links">
           <a class="primary" href="https://rise.syberlabs.io/">Open RISE app ↗</a>

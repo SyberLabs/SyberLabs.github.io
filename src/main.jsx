@@ -86,6 +86,14 @@ function Hero() {
   const fieldRef = useRef(null);
   const project = projects[active];
   useEffect(() => mountProcedural(fieldRef.current, project.slug), [project.slug]);
+  const onTabKeyDown = event => {
+    const moves = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1, Home: -active, End: projects.length - 1 - active };
+    if (!(event.key in moves)) return;
+    event.preventDefault();
+    const next = (active + moves[event.key] + projects.length) % projects.length;
+    setActive(next);
+    document.getElementById(`project-tab-${next}`)?.focus();
+  };
   const onMove = event => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !sceneRef.current) return;
     const rect = event.currentTarget.getBoundingClientRect();
@@ -96,16 +104,17 @@ function Hero() {
     <canvas className="lab-procedural" ref={fieldRef} aria-hidden="true" />
     <Container maxWidth="xl" className="lab-stage">
       <Box className="stage-intro">
-        <Typography variant="overline" className="stage-eyebrow">SYBERLABS / INDEPENDENT AI LAB</Typography>
-        <Typography component="h1" variant="h1" className="hero-title">Enter the space<br />between <em>thought</em> and form.</Typography>
-        <Typography className="hero-lede">Reading, collective action, intelligence, and simulation become spaces you can see and shape.</Typography>
+        <Typography variant="overline" className="stage-eyebrow">SYBERLABS <span>·</span> INDEPENDENT AI LAB</Typography>
+        <Typography component="h1" variant="h1" className="hero-title">Make the<br /><em>invisible</em><br />enterable.</Typography>
+        <Typography className="hero-lede">We build instruments for ideas: to feel a text unfold, coordinate a mission, inspect an answer, or replay a system.</Typography>
+        <div className="intro-index"><span>NOW EXPLORING</span><b>0{active + 1} / 05</b></div>
       </Box>
-      <Box role="tablist" aria-label="Explore SyberLabs projects" className="stage-nav">
-        {projects.map((item, index) => <button key={item.name} type="button" role="tab" id={`project-tab-${index}`} aria-selected={active === index} aria-controls="project-panel" onClick={() => setActive(index)} className={`stage-tab ${active === index ? 'selected' : ''}`} style={{ '--tab-color': item.accent }}>
+      <Box role="tablist" aria-label="Explore SyberLabs projects" className="stage-nav" onKeyDown={onTabKeyDown}>
+        {projects.map((item, index) => <button key={item.name} type="button" role="tab" tabIndex={active === index ? 0 : -1} id={`project-tab-${index}`} aria-selected={active === index} aria-controls="project-panel" onClick={() => setActive(index)} className={`stage-tab ${active === index ? 'selected' : ''}`} style={{ '--tab-color': item.accent }}>
           <span>0{index + 1}</span><strong>{item.name}</strong><ArrowForwardRoundedIcon fontSize="small" />
         </button>)}
       </Box>
-      <Box className="scene-wrap" ref={sceneRef} aria-label={`${project.name} visual portal`} role="img">
+      <Box className="scene-wrap" ref={sceneRef} aria-label={`${project.name} abstract visual field`} role="img">
         <Box className="portal-aura" aria-hidden="true" />
         <Box className="portal-orbit orbit-one" aria-hidden="true" />
         <Box className="portal-orbit orbit-two" aria-hidden="true" />
@@ -113,19 +122,19 @@ function Hero() {
         <Box className="portal-echo echo-one" aria-hidden="true" />
         <Box className="portal-echo echo-two" aria-hidden="true" />
         <Box className="portal-axis" aria-hidden="true" />
-        <Box className="portal-caption" aria-hidden="true">FIELD / 0{active + 1} <span>{project.signals[0]}</span></Box>
+        <Box className="portal-caption" aria-hidden="true"><span>FIELD / 0{active + 1}</span><b>{project.signals[0]}</b></Box>
       </Box>
       <Box className="stage-detail" id="project-panel" role="tabpanel" aria-labelledby={`project-tab-${active}`} key={project.name}>
         <Typography className="detail-kicker">FIELD 0{active + 1} / {project.kind}</Typography>
         <Typography component="h2" className="detail-title">{project.name}</Typography>
         <Typography className="detail-copy">{project.description}</Typography>
         <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 2.5 }}>
-          {project.href && <Button href={project.href} variant="contained" endIcon={<ArrowOutwardRoundedIcon />}>Launch RISE</Button>}
-          <Button href={project.slug === 'commons' ? '/commons/' : `/projects/${project.slug}/`} variant="outlined" endIcon={<ArrowForwardRoundedIcon />}>Enter project</Button>
+          {project.slug === 'rise' && <Button href={project.href} variant="contained" endIcon={<ArrowOutwardRoundedIcon />}>Enter RISE</Button>}
+          <Button href={project.slug === 'commons' ? '/commons/' : `/projects/${project.slug}/`} variant="outlined" endIcon={<ArrowForwardRoundedIcon />}>{project.slug === 'commons' ? 'View prototype' : 'Explore project'}</Button>
           {active === 0 && <Button href="/rise-demo/" variant="outlined" endIcon={<PlayArrowRoundedIcon />}>Watch demo</Button>}
         </Stack>
       </Box>
-      <Box className="stage-bottom"><span>SCROLL TO THE EXPERIENCE ↓</span><span>MOVE THROUGH THE FIELDS / 01—05</span></Box>
+      <Box className="stage-bottom"><a href="#experience"><span className="scroll-mark">↓</span> RISE / A TEXT IN MOTION</a><span>USE ← → TO MOVE THROUGH THE FIELDS</span></Box>
     </Container>
   </Box>;
 }
