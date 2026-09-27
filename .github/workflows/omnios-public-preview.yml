@@ -63,4 +63,4 @@ jobs:
         run: node "$RUNNER_TEMP/omni-wrangler/node_modules/wrangler/bin/wrangler.js" deploy --config dist/server/wrangler.json
         env:
           CLOUDFLARE_ACCOUNT_ID: 1080d513988ebb38f832ce7cbea7ab1d
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.OMNI_WORKER_API_TOKEN }}
