@@ -135,15 +135,22 @@ function JEVFeature() {
 }
 
 function LabSystem() {
-  return <Box component="section" className="lab-system" aria-labelledby="system-title"><Container maxWidth="lg">
-    <Box className="system-intro"><Typography className="technical-kicker">SYSTEMS / THE WORK, NOT THE HYPE</Typography><Typography component="h2" id="system-title" variant="h2">Five instruments.<br /><em>Five different constraints.</em></Typography><Typography>Each project asks a precise question. Its interface should expose the state, the transformation, and the limit of what software can decide.</Typography></Box>
-    <Box className="system-matrix" role="table" aria-label="SyberLabs product system map"><Box className="matrix-row matrix-head" role="row"><span role="columnheader">SYSTEM</span><span role="columnheader">INPUT</span><span role="columnheader">TRANSFORMATION</span><span role="columnheader">HUMAN BOUNDARY</span></Box>{[
-      ['RISE','Text + reader controls','Time / space / sound','Reader sets pace'],
-      ['Commons','Mission + evidence','Proposal → review record','People approve commitments'],
-      ['Relay','Posting + research','Draft + version history','Applicant accepts exact words'],
-      ['OmniOS','Wired data blocks','Visible context → answer','User selects sources'],
-      ['OSAHR','Typed graph + rules','Event → replay trace','Researcher interprets result'],
-    ].map(([name,input,transform,boundary],i)=><Box className="matrix-row" role="row" key={name}><a role="cell" href={`/projects/${name.toLowerCase()}/`}><span>0{i+1}</span> {name} ↗</a><span role="cell">{input}</span><span role="cell">{transform}</span><span role="cell">{boundary}</span></Box>)}</Box>
+  const nodes = [
+    { name: 'RISE', detail: 'Reading in motion', href: 'https://rise.syberlabs.io/', position: 'rise' },
+    { name: 'Commons', detail: 'Missions with evidence', href: '/commons/', position: 'commons' },
+    { name: 'Relay', detail: 'Applications with context', href: '/projects/relay/', position: 'relay' },
+    { name: 'OmniOS', detail: 'AI context on a canvas', href: '/projects/omnios/', position: 'omnios' },
+    { name: 'OSAHR', detail: 'Simulation with replay', href: '/projects/osahr/', position: 'osahr' },
+  ];
+  return <Box component="section" className="lab-network" aria-labelledby="system-title"><Container maxWidth="xl">
+    <Box className="network-intro"><Box><Typography className="network-kicker">THE SYBERLABS SYSTEM</Typography><Typography component="h2" id="system-title">One method.<br /><em>Five experiments.</em></Typography></Box><Typography>Across different domains, we return to one question: can a person see the relevant state, understand the transformation, and retain the choice?</Typography></Box>
+    <Box className="network-map" aria-label="Five SyberLabs projects connected by a shared method">
+      <svg className="network-wires" viewBox="0 0 1000 540" preserveAspectRatio="none" aria-hidden="true"><path d="M500 270 C360 205 300 150 170 128"/><path d="M500 270 C500 196 500 130 500 92"/><path d="M500 270 C640 205 700 150 830 128"/><path d="M500 270 C360 330 310 400 190 430"/><path d="M500 270 C640 330 690 400 810 430"/><circle cx="500" cy="270" r="5"/><circle cx="170" cy="128" r="4"/><circle cx="500" cy="92" r="4"/><circle cx="830" cy="128" r="4"/><circle cx="190" cy="430" r="4"/><circle cx="810" cy="430" r="4"/></svg>
+      <Box className="network-hub"><span>SHARED DESIGN RULE</span><strong>Make the system legible.</strong><p>Visible state. Human agency.</p></Box>
+      {nodes.map((node, index) => <Box component="a" href={node.href} className={`network-node node-${node.position}`} key={node.name}><span className="node-index">0{index + 1} / EXPERIMENT</span><strong>{node.name}<ArrowOutwardRoundedIcon /></strong><span className="node-detail">{node.detail}</span></Box>)}
+    </Box>
+    <Box className="network-pattern"><span>THE REPEATING PATTERN</span><Box className="pattern-steps"><div><b>01</b><strong>Frame the input</strong><p>Start with the information that matters.</p></div><div><b>02</b><strong>Expose the change</strong><p>Let people inspect what the system did.</p></div><div><b>03</b><strong>Keep human choice</strong><p>Make authority explicit at the final step.</p></div></Box></Box>
+    <Typography className="network-note">A map of shared principles. Each project is its own product or research effort.</Typography>
   </Container></Box>;
 }
 
@@ -211,7 +218,7 @@ function Footer() {
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="system"><CssBaseline /><Header /><main><Hero /><JEVFeature /><ResearchNote /><LabSystem /><Experience /><Motivation /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="system"><CssBaseline /><Header /><main><Hero /><LabSystem /><JEVFeature /><ResearchNote /><Experience /><Motivation /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
