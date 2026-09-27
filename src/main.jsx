@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import './visual.css';
 import './home.css';
+import { mountSphereField } from '../projects/sphere-field.js';
 import risePoster from '../rise-demo/poster-20260926.jpg';
 import { ThemeProvider, createTheme, useColorScheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -80,6 +81,11 @@ function Header() {
 }
 
 function Hero() {
+  const sphereRef = useRef(null);
+  useEffect(() => {
+    const sphere = mountSphereField(sphereRef.current, 'rise', null, { riseImage: risePoster });
+    return () => sphere.destroy();
+  }, []);
   return <Box component="section" id="work" className="home-hero">
     <Container maxWidth="xl" className="home-hero-inner">
       <Box className="home-hero-copy">
@@ -93,8 +99,13 @@ function Hero() {
       </Box>
       <Box component="a" href="https://rise.syberlabs.io/" className="featured-work" aria-label="Open RISE, our live reading experience">
         <Box className="featured-topline"><span>FEATURED WORK / 01</span><span>LIVE EXPERIENCE <i /></span></Box>
-        <Box className="featured-screen"><Box component="img" src={risePoster} alt="RISE reading interface showing three visual readings" /></Box>
-        <Box className="featured-bottom"><Box><span>READING, REIMAGINED</span><strong>RISE</strong><p>Turn a passage into a visual and sonic experience.</p></Box><span className="featured-arrow"><ArrowOutwardRoundedIcon /></span></Box>
+        <Box className="featured-screen rise-network-screen" role="img" aria-label="Animated RISE network: text flows through timing, space, and sound toward reader control">
+          <Box className="rise-network-sphere"><canvas ref={sphereRef} aria-hidden="true" /></Box>
+          <span className="rise-network-label input">INPUT / TEXT</span>
+          <span className="rise-network-label transform">TRANSFORM / TIME · SPACE · SOUND</span>
+          <span className="rise-network-label output">OUTPUT / READER CONTROL</span>
+        </Box>
+        <Box className="featured-bottom"><Box><span>READING, REIMAGINED</span><strong>RISE</strong><p>Watch text branch into timing, spatial presentation, and sound.</p></Box><span className="featured-arrow"><ArrowOutwardRoundedIcon /></span></Box>
       </Box>
     </Container>
     <Container maxWidth="xl" component="nav" id="selected-work" className="selected-work" aria-label="More SyberLabs projects">
