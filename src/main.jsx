@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider, createTheme, useColorScheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import risePoster from '../rise-demo/visual-sequence-poster-20260927-v2.jpg';
-import { mountSphereField } from './network-sphere.js';
+import SystemMaps from './system-maps/SystemMaps.jsx';
 import './home.css';
 
 const theme = createTheme({
@@ -33,10 +33,10 @@ function Header() {
   return <header className="site-header">
     <a className="wordmark" href="/" aria-label="SyberLabs home"><img src="/favicon-blue-32x32.png" alt="" /><span>SYBERLABS</span></a>
     <nav className="desktop-nav" aria-label="Main navigation">
-      <a href="#work">Work</a><a href="#system">System</a>
+      <a href="#work">Work</a><a href="#maps">Maps</a><a href="#system">System</a>
     </nav>
     <div className="header-actions"><a className="header-contact" href="mailto:syberlabs.software@gmail.com">Get in touch <span aria-hidden="true">↗</span></a><ThemeToggle />
-      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation" onClick={event => { if (event.target.closest('a')) event.currentTarget.closest('details').open = false; }}><a href="#work">Work</a><a href="#system">System</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
+      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation" onClick={event => { if (event.target.closest('a')) event.currentTarget.closest('details').open = false; }}><a href="#work">Work</a><a href="#maps">Maps</a><a href="#system">System</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
     </div>
   </header>;
 }
@@ -71,42 +71,6 @@ function Work() {
   </section>;
 }
 
-const networkModes = [
-  { key: 'relay', name: 'Relay', role: 'Provenance', detail: 'A source branches through research, drafts, and revisions. A signal travels outward along each lineage, making the record inspectable.' },
-  { key: 'omnios', name: 'OmniOS', role: 'Context', detail: 'Distinct clusters of data blocks feed a shared answer. Each query lights the context that reached it.' },
-  { key: 'rise', name: 'RISE', role: 'Experience', detail: 'Text branches into timing, space, and sound. The network changes its expression around a reading.' },
-];
-
-function AdaptiveNetwork() {
-  const canvasRef = useRef(null);
-  const sphereRef = useRef(null);
-  const [active, setActive] = useState(0);
-  useEffect(() => {
-    const sphere = mountSphereField(canvasRef.current, networkModes[0].key);
-    sphereRef.current = sphere;
-    return () => { sphere.destroy(); sphereRef.current = null; };
-  }, []);
-  useEffect(() => {
-    sphereRef.current?.setKind(networkModes[active].key);
-  }, [active]);
-  useEffect(() => {
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (motion.matches) return;
-    const timer = window.setTimeout(() => setActive(index => (index + 1) % networkModes.length), 6500);
-    return () => window.clearTimeout(timer);
-  }, [active]);
-  const mode = networkModes[active];
-  return <section className="network-section" id="network" aria-labelledby="network-title">
-    <div className="network-inner">
-      <div className="network-heading"><p className="network-eyebrow">THE ADAPTIVE NETWORK / CONCEPTUAL MODEL</p><h2 id="network-title">One network.<br /><em>Different expressions.</em></h2><p>Across SyberLabs, a network carries context through a transformation. Its shape changes with the system: a record in Relay, a workspace in OmniOS, an experience in RISE.</p></div>
-      <div className="network-exhibit">
-        <div className="network-stage" role="img" aria-label={`Animated three-dimensional sphere showing the ${mode.name} network: ${mode.detail}`}><canvas ref={canvasRef} aria-hidden="true" /><span className="network-stage-index">SYBERLABS / NETWORK 01</span><span className="network-stage-note">ONE FIELD · THREE STATES</span></div>
-        <div className="network-panel"><span className="network-panel-index">SELECT A SYSTEM / AUTO CYCLING</span><div className="network-modes" aria-label="Network states">{networkModes.map((item, index) => <button type="button" key={item.key} className={index === active ? 'is-active' : ''} aria-pressed={index === active} onClick={() => setActive(index)}><span>0{index + 1}</span><strong>{item.name}</strong><small>{item.role}</small></button>)}</div><div className="network-description"><span>0{active + 1} / {mode.role.toUpperCase()}</span><p>{mode.detail}</p></div><p className="network-footnote">An illustration of the systems’ relationships, drawn from the original SyberLabs sphere studies.</p></div>
-      </div>
-    </div>
-  </section>;
-}
-
 function System() {
   return <section className="system" id="system" aria-labelledby="system-title">
   <div className="system-inner">
@@ -114,7 +78,8 @@ function System() {
     <div className="system-planes">
       <article className="system-plane system-plane-agent" aria-labelledby="agent-plane-title">
         <span className="plane-index">01 / AGENT SYSTEMS</span><h3 id="agent-plane-title">Infrastructure for agents.</h3>
-        <div className="plane-row"><span className="plane-label">INTRA / WITHIN GENERATION</span><p>Generate, test, stabilize.</p><strong>SyberRuntime · Turtles</strong></div>
+        <div className="plane-row"><span className="plane-label">INTRA / WITHIN GENERATION</span><p>Generate, test, stabilize.</p><strong>SyberRuntime</strong></div>
+        <div className="plane-row"><span className="plane-label">AUTHORITY / BEFORE EXECUTION</span><p>Declare and check what an agent may do.</p><strong>Turtle · policy evaluator (P0)</strong></div>
         <div className="plane-row"><span className="plane-label">EXO / ACROSS SYSTEMS</span><p>Model, deliberate, authorize, coordinate.</p><strong>Barn · Bough · OSAHR · Relay</strong></div>
         <p className="plane-future"><span>THE DIRECTION</span> SyberLabs SDK, growing from SyberWork.</p>
       </article>
@@ -134,7 +99,7 @@ function Footer() {
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="light"><Header /><main><Hero /><AdaptiveNetwork /><System /><Work /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="light"><Header /><main><Hero /><SystemMaps /><System /><Work /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
