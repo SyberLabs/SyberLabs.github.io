@@ -59,7 +59,7 @@ function Hero() {
           <div className="record-chain"><div><small>SOURCE</small><strong>Job posting</strong></div><div><small>CONTEXT</small><strong>Research + facts</strong></div><div><small>DRAFT</small><strong>Version 03</strong></div></div>
           <div className="record-status"><span className="status-dot" aria-hidden="true" /><span>EXACT WORDING NEEDS HUMAN REVIEW</span></div>
         </div>
-        <div className="flagship-copy"><h2 id="relay-title">Every draft has a source and a state.</h2><a href="/projects/relay/">Explore Relay <span aria-hidden="true">↗</span></a></div>
+        <div className="flagship-copy"><h2 id="relay-title">Every draft has a source and a state.</h2><div className="flagship-actions"><a href="https://relay.syberlabs.io/">Open Relay <span aria-hidden="true">↗</span></a><a href="/projects/relay/">Explore Relay <span aria-hidden="true">↗</span></a></div></div>
       </article>
     </div>
   </section>;
