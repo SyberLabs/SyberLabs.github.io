@@ -36,10 +36,10 @@ function Header() {
   return <header className="site-header">
     <a className="wordmark" href="/" aria-label="SyberLabs home"><img src={syberMarkSmall} alt="" width="27" height="30" /><span>SYBERLABS</span></a>
     <nav className="desktop-nav" aria-label="Main navigation">
-      <a href="#work">Work</a><a href="#system">Approach</a><a href="#maps">System maps</a><a href="/research/jev-execution/">Research</a>
+      <a href="#work">Work</a><a href="/services/">Services</a><a href="#system">Approach</a><a href="#maps">System maps</a><a href="/research/jev-execution/">Research</a>
     </nav>
-    <div className="header-actions"><a className="header-contact" href="mailto:syberlabs.software@gmail.com">Get in touch <span aria-hidden="true">↗</span></a><ThemeToggle />
-      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation" onClick={event => { if (event.target.closest('a')) event.currentTarget.closest('details').open = false; }}><a href="#work">Work</a><a href="#system">Approach</a><a href="#maps">System maps</a><a href="/research/jev-execution/">Research</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
+    <div className="header-actions"><a className="header-contact" href="/services/">Work with us <span aria-hidden="true">↗</span></a><ThemeToggle />
+      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation" onClick={event => { if (event.target.closest('a')) event.currentTarget.closest('details').open = false; }}><a href="#work">Work</a><a href="/services/">Services</a><a href="#system">Approach</a><a href="#maps">System maps</a><a href="/research/jev-execution/">Research</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
     </div>
   </header>;
 }
@@ -47,7 +47,7 @@ function Header() {
 function Hero() {
   return <section className="hero" aria-labelledby="hero-title">
     <div className="hero-grid">
-      <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">{['Read', 'Think', 'Build'].map((word, i) => <React.Fragment key={word}>{i > 0 && ' '}<span className="hero-word">{word}<span className="hero-stop">.</span></span></React.Fragment>)}</h1><p className="hero-intro"><span className="hero-rule" aria-hidden="true" />We build interactive reading experiences and inspectable agent systems.</p><a className="hero-action" href="https://rise.syberlabs.io/sequences/">Start a short reading <span aria-hidden="true">↗</span></a></div>
+      <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">{['Read', 'Think', 'Build'].map((word, i) => <React.Fragment key={word}>{i > 0 && ' '}<span className="hero-word">{word}<span className="hero-stop">.</span></span></React.Fragment>)}</h1><p className="hero-intro"><span className="hero-rule" aria-hidden="true" />We build interactive reading experiences and inspectable agent systems.</p><div className="hero-actions"><a className="hero-action" href="https://rise.syberlabs.io/sequences/">Start a short reading <span aria-hidden="true">↗</span></a><a className="hero-service-action" href="/services/">Explore a reading pilot <span aria-hidden="true">↗</span></a></div></div>
       <picture><source srcSet={syberMark} type="image/webp" /><img className="hero-mark" src={syberMarkPng} alt="SyberLabs mark" width="678" height="750" /></picture>
     </div>
     <div className="flagships" id="work">
@@ -97,7 +97,7 @@ function Research() {
 }
 
 function Footer() {
-  return <footer className="site-footer"><a href="mailto:syberlabs.software@gmail.com">Contact SyberLabs ↗</a><span>© 2026 SyberLabs</span></footer>;
+  return <footer className="site-footer"><a href="/services/">Work with SyberLabs ↗</a><span>© 2026 SyberLabs</span></footer>;
 }
 
 function App() {
