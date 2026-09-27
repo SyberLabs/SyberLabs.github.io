@@ -1,30 +1,94 @@
-.course-section,.lab-section,.saas-section,.evaluation-section{position:relative;overflow:hidden;padding:110px 0;background:#0b1022;border-top:1px solid #87dfe04a}
+.course-section,.saas-section,.evaluation-section{position:relative;overflow:hidden;padding:110px 0;background:#0b1022;border-top:1px solid #87dfe04a}
 .course-section{background:radial-gradient(circle at 85% 10%,#3b1354 0,transparent 35%),radial-gradient(circle at 10% 75%,#0e5262 0,transparent 34%),#0b1022}
-.lab-section{background:radial-gradient(circle at 70% 30%,#22577386,transparent 35%),radial-gradient(circle at 10% 75%,#6b185a77,transparent 34%),#080d1a}
 .saas-section{background:radial-gradient(circle at 8% 20%,#4c1c68a8,transparent 32%),radial-gradient(circle at 85% 80%,#105e638c,transparent 38%),#0b1021}
 .evaluation-section{background:radial-gradient(circle at 70% 5%,#3c1d667a,transparent 30%),#0a1020}
-.course-section:before,.lab-section:before,.saas-section:before,.evaluation-section:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;background-image:linear-gradient(#8ecfd31c 1px,transparent 1px),linear-gradient(90deg,#8ecfd31c 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(transparent,#000 15%,#000 80%,transparent)}
-.course-section>.section-shell,.lab-section>.section-shell,.saas-section>.section-shell,.evaluation-section>.section-shell{position:relative}
-.course-heading,.lab-heading,.saas-heading,.evaluation-heading{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(28px,7vw,110px);align-items:end;padding:75px 0 56px}
-.course-heading h2,.lab-heading h2,.saas-heading h2,.evaluation-heading h2{font:800 clamp(2.7rem,5.7vw,6.5rem)/1.03 'Manrope',sans-serif;letter-spacing:-.075em;margin:12px 0 0}
-.course-heading h2 em,.lab-heading h2 em,.saas-heading h2 em,.evaluation-heading h2 em{font-style:normal;color:#d7f887}
-.course-heading p:last-child,.lab-heading p:last-child,.saas-heading p:last-child,.evaluation-heading p:last-child{max-width:570px;color:#c5d7e6;line-height:1.72;font-size:1.06rem}
+.course-section:before,.saas-section:before,.evaluation-section:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;background-image:linear-gradient(#8ecfd31c 1px,transparent 1px),linear-gradient(90deg,#8ecfd31c 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(transparent,#000 15%,#000 80%,transparent)}
+.course-section>.section-shell,.saas-section>.section-shell,.evaluation-section>.section-shell{position:relative}
+.course-heading,.saas-heading,.evaluation-heading{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(28px,7vw,110px);align-items:end;padding:75px 0 56px}
+.course-heading h2,.saas-heading h2,.evaluation-heading h2{font:800 clamp(2.7rem,5.7vw,6.5rem)/1.03 'Manrope',sans-serif;letter-spacing:-.075em;margin:12px 0 0}
+.course-heading h2 em,.saas-heading h2 em,.evaluation-heading h2 em{font-style:normal;color:#d7f887}
+.course-heading p:last-child,.saas-heading p:last-child,.evaluation-heading p:last-child{max-width:570px;color:#c5d7e6;line-height:1.72;font-size:1.06rem}
 .syllabus{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #a7dddf6e;background:#0c172cce;margin-bottom:65px}
 .syllabus a{padding:20px 17px;color:#dfeeff;text-decoration:none;font:700 .78rem 'Space Mono',monospace;border-right:1px solid #a7dddf4d;transition:background .2s}
-.syllabus a:last-child{border-right:0}.syllabus a:hover,.syllabus a:focus-visible{background:#c557e030}.syllabus span{display:block;color:#d7f887;margin-bottom:10px}
+.syllabus a:last-child{border-right:0}
+.syllabus a:hover,.syllabus a:focus-visible{background:#c557e030}
+.syllabus span{display:block;color:#d7f887;margin-bottom:10px}
 .course-module{display:grid;grid-template-columns:minmax(170px,.28fr) minmax(0,1fr);gap:clamp(30px,5vw,75px);padding:55px 0;border-top:1px solid #8bcbcf70}
-.module-label{display:flex;flex-direction:column;gap:11px;font:700 .71rem 'Space Mono',monospace;letter-spacing:.08em;color:#9aefe6}.module-label strong{color:#e5f1fc;font:700 1rem 'Manrope',sans-serif;letter-spacing:0}
+.module-label{display:flex;flex-direction:column;gap:11px;font:700 .71rem 'Space Mono',monospace;letter-spacing:.08em;color:#9aefe6}
+.module-label strong{color:#e5f1fc;font:700 1rem 'Manrope',sans-serif;letter-spacing:0}
 .module-body h3{font:800 clamp(1.9rem,3vw,3.4rem)/1.14 'Manrope',sans-serif;letter-spacing:-.055em;margin:0 0 21px}
-.module-body p{color:#c4d2e1;line-height:1.75;font-size:1rem;max-width:950px}.module-body code{font-family:'Space Mono',monospace;color:#d7f887}
+.module-body p{color:#c4d2e1;line-height:1.75;font-size:1rem;max-width:950px}
+.module-body code{font-family:'Space Mono',monospace;color:#d7f887}
 .equation{display:flex;flex-direction:column;gap:12px;border:1px solid #ba8af180;background:linear-gradient(125deg,#221a48,#0a2c3a 75%);box-shadow:0 15px 55px #a857cb20;padding:25px 30px;margin:28px 0}
-.equation span,.equation small,.course-citation,.failure-grid span{font:700 .68rem/1.5 'Space Mono',monospace;letter-spacing:.07em;color:#9bf6ed}.equation code{font-size:clamp(.9rem,1.5vw,1.38rem);white-space:normal;overflow-wrap:anywhere}.equation small{color:#c0cfe1;letter-spacing:0}
-.course-columns,.failure-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#81b5cf6c;border:1px solid #81b5cf6c;margin:28px 0}.course-columns>div,.failure-grid>div{padding:23px;background:linear-gradient(155deg,#16254b,#161332)}.course-columns h4,.failure-grid strong{display:block;color:#edfcfe;font:800 1.12rem 'Manrope',sans-serif;margin:0 0 10px}.course-columns p,.failure-grid p{font-size:.86rem;line-height:1.62;margin:0}.failure-grid span{display:block;color:#d9f984;margin-bottom:14px}.course-citation{color:#aebfd2!important;font-size:.75rem!important}.course-citation a{color:#9ff2e7}
-.policy-pipeline{display:flex;align-items:stretch;gap:8px;margin:30px 0}.policy-pipeline div{flex:1;padding:18px 12px;border:1px solid #b875e780;background:#1e1b42;color:#f1f7ff;font:800 .9rem 'Manrope',sans-serif}.policy-pipeline span{display:block;font:700 .69rem 'Space Mono',monospace;color:#d9f984;margin-bottom:9px}.policy-pipeline small{display:block;font-size:.72rem;color:#afc3d6;font-weight:500;margin-top:7px}.policy-pipeline b{align-self:center;color:#d9f984}
-.lab-grid{display:grid;grid-template-columns:minmax(260px,.36fr) minmax(0,.64fr);border:1px solid #91c7dc84;background:#0b1427;box-shadow:0 35px 100px #0008}.lab-controls{padding:clamp(25px,3vw,48px);border-right:1px solid #91c7dc62}.lab-controls label{display:flex;justify-content:space-between;gap:12px;color:#d8ebf7;font:700 .84rem 'Space Mono',monospace;margin:18px 0 12px}.lab-controls label:first-child{margin-top:0}.lab-controls output{color:#d7f887}.lab-controls input{width:100%;accent-color:#d7f887;margin:0 0 22px}.lab-guardrail{margin-top:22px;padding:20px;border:1px solid #d7f88770;background:#d7f88710}.lab-guardrail span,.lab-readout span,.lab-note,.plot-label,.plot-axis{font:700 .68rem 'Space Mono',monospace;letter-spacing:.05em;color:#9ef3e9}.lab-guardrail strong{display:block;margin:12px 0;color:#f2f7fe}.lab-guardrail p{color:#b9cad8;line-height:1.55;font-size:.85rem;margin:0}.lab-output{min-width:0}.lab-plot{position:relative;height:330px;overflow:hidden;background:radial-gradient(circle at 60% 30%,#50307070,transparent 45%),#101732}.lab-plot svg{position:absolute;inset:0;width:100%;height:100%}.plot-label,.plot-axis{position:absolute;pointer-events:none}.label-act{left:16px;top:14px;color:#d8fa89}.label-review{right:17px;top:14px;color:#f096db}.plot-axis{right:18px;bottom:14px}.lab-readout{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #91c7dc62}.lab-readout>div{padding:22px;border-right:1px solid #91c7dc43}.lab-readout>div:last-child{border-right:0}.lab-readout strong{display:block;font:800 clamp(1.3rem,2.6vw,2.3rem) 'Manrope',sans-serif;color:#f5fbff;margin:7px 0}.lab-readout small{font-size:.72rem;color:#adc1d2;line-height:1.5}.lab-verdict{background:#d7f88713}.lab-verdict strong{color:#d7f887}.lab-note{margin:22px 0 0;color:#afc3d2;line-height:1.6}
-.saas-switch{display:flex;border:1px solid #8dcbda82;width:fit-content;margin-bottom:-1px;position:relative;z-index:1}.saas-switch button{border:0;border-right:1px solid #8dcbda82;background:#131a36;color:#cddfeb;padding:16px 26px;cursor:pointer;font:700 .79rem 'Space Mono',monospace}.saas-switch button:last-child{border-right:0}.saas-switch button[aria-selected=true]{background:#d7f887;color:#10202d}.saas-switch button:focus-visible{outline:2px solid #fff;outline-offset:2px}
-#saas-panel{border:1px solid #8dcbda82;background:#0d1428}.saas-diagram{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:clamp(20px,3vw,36px);background:linear-gradient(130deg,#211744,#0e2940)}.saas-node{position:relative;min-height:165px;padding:18px;border:1px solid #aa83e79e;background:linear-gradient(145deg,#22275a,#10323e);box-shadow:inset 0 0 32px #b159d223,0 12px 30px #0004}.saas-node:after{content:"→";position:absolute;right:-14px;top:45%;z-index:2;color:#d8fa89;font:800 1.1rem 'Space Mono',monospace}.saas-node:last-child:after{display:none}.saas-node span{display:block;color:#d7f887;font:700 .67rem 'Space Mono',monospace;margin-bottom:15px}.saas-node strong{display:block;color:#f1f8ff;font:800 1.04rem 'Manrope',sans-serif}.saas-node small{display:block;color:#b8cfe0;line-height:1.5;margin-top:10px;font-size:.77rem}
-.saas-detail{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(25px,5vw,70px);padding:clamp(28px,4vw,58px);border-top:1px solid #8dcbda6e}.saas-detail h3{font:800 clamp(1.7rem,3vw,3rem) 'Manrope',sans-serif;letter-spacing:-.05em;margin:13px 0}.saas-detail p{color:#c8d9e7;line-height:1.72}.saas-code{min-width:0;border:1px solid #a080d7a1;background:#070d1d;align-self:start}.saas-code pre{margin:0;padding:22px;overflow:auto;color:#c2eef2;font:400 .73rem/1.7 'Space Mono',monospace}.saas-rules{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#8fb9d273;border:1px solid #8fb9d273;margin-top:28px}.saas-rules div{background:#101d37;padding:22px}.saas-rules span,.evaluation-grid span,.evaluation-exit span{color:#d7f887;font:700 .69rem 'Space Mono',monospace}.saas-rules p{color:#bfd0df;font-size:.83rem;line-height:1.65}
-.evaluation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border:1px solid #8dbcd36f;background:#8dbcd36f}.evaluation-grid article{min-height:245px;padding:clamp(20px,2.5vw,34px);background:linear-gradient(145deg,#17254a,#181334)}.evaluation-grid h3{font:800 1.45rem 'Manrope',sans-serif;letter-spacing:-.035em;margin:22px 0 12px}.evaluation-grid p{color:#c4d4e2;line-height:1.63;font-size:.88rem;margin:0}.evaluation-exit{display:grid;grid-template-columns:.33fr .67fr;gap:30px;align-items:center;padding:30px;border:1px solid #d7f8879c;margin-top:28px;background:#d7f88712}.evaluation-exit p{color:#e3f1ef;line-height:1.65;margin:0}
-@media(max-width:1000px){.course-heading,.lab-heading,.saas-heading,.evaluation-heading{grid-template-columns:1fr;gap:15px}.syllabus{grid-template-columns:repeat(3,1fr)}.saas-diagram{grid-template-columns:repeat(3,1fr)}.saas-node:after{display:none}.saas-rules{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){.course-section,.lab-section,.saas-section,.evaluation-section{padding:70px 0}.course-heading,.lab-heading,.saas-heading,.evaluation-heading{padding:45px 0 35px}.syllabus{grid-template-columns:repeat(2,1fr)}.course-module{grid-template-columns:1fr;gap:20px;padding:38px 0}.course-columns,.failure-grid,.evaluation-grid{grid-template-columns:1fr}.policy-pipeline{display:grid;grid-template-columns:repeat(2,1fr)}.policy-pipeline b{display:none}.lab-grid{grid-template-columns:1fr}.lab-controls{border-right:0;border-bottom:1px solid #91c7dc62}.lab-plot{height:250px}.lab-readout{grid-template-columns:1fr}.lab-readout>div{border-right:0;border-bottom:1px solid #91c7dc43}.saas-diagram{grid-template-columns:repeat(2,1fr)}.saas-detail{grid-template-columns:1fr}.saas-rules{grid-template-columns:1fr}.evaluation-exit{grid-template-columns:1fr}.saas-switch{width:100%}.saas-switch button{flex:1;padding:14px 8px;font-size:.68rem}}
+.equation span,.equation small,.course-citation,.failure-grid span{font:700 .68rem/1.5 'Space Mono',monospace;letter-spacing:.07em;color:#9bf6ed}
+.equation code{font-size:clamp(.9rem,1.5vw,1.38rem);white-space:normal;overflow-wrap:anywhere}
+.equation small{color:#c0cfe1;letter-spacing:0}
+.course-columns,.failure-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#81b5cf6c;border:1px solid #81b5cf6c;margin:28px 0}
+.course-columns>div,.failure-grid>div{padding:23px;background:linear-gradient(155deg,#16254b,#161332)}
+.course-columns h4,.failure-grid strong{display:block;color:#edfcfe;font:800 1.12rem 'Manrope',sans-serif;margin:0 0 10px}
+.course-columns p,.failure-grid p{font-size:.86rem;line-height:1.62;margin:0}
+.failure-grid span{display:block;color:#d9f984;margin-bottom:14px}
+.course-citation{color:#aebfd2!important;font-size:.75rem!important}
+.course-citation a{color:#9ff2e7}
+.policy-pipeline{display:flex;align-items:stretch;gap:8px;margin:30px 0}
+.policy-pipeline div{flex:1;padding:18px 12px;border:1px solid #b875e780;background:#1e1b42;color:#f1f7ff;font:800 .9rem 'Manrope',sans-serif}
+.policy-pipeline span{display:block;font:700 .69rem 'Space Mono',monospace;color:#d9f984;margin-bottom:9px}
+.policy-pipeline small{display:block;font-size:.72rem;color:#afc3d6;font-weight:500;margin-top:7px}
+.policy-pipeline b{align-self:center;color:#d9f984}
+.label-act{left:16px;top:14px;color:#d8fa89}
+.label-review{right:17px;top:14px;color:#f096db}
+.saas-switch{display:flex;border:1px solid #8dcbda82;width:fit-content;margin-bottom:-1px;position:relative;z-index:1}
+.saas-switch button{border:0;border-right:1px solid #8dcbda82;background:#131a36;color:#cddfeb;padding:16px 26px;cursor:pointer;font:700 .79rem 'Space Mono',monospace}
+.saas-switch button:last-child{border-right:0}
+.saas-switch button[aria-selected=true]{background:#d7f887;color:#10202d}
+.saas-switch button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#saas-panel{border:1px solid #8dcbda82;background:#0d1428}
+.saas-diagram{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:clamp(20px,3vw,36px);background:linear-gradient(130deg,#211744,#0e2940)}
+.saas-node{position:relative;min-height:165px;padding:18px;border:1px solid #aa83e79e;background:linear-gradient(145deg,#22275a,#10323e);box-shadow:inset 0 0 32px #b159d223,0 12px 30px #0004}
+.saas-node:after{content:"→";position:absolute;right:-14px;top:45%;z-index:2;color:#d8fa89;font:800 1.1rem 'Space Mono',monospace}
+.saas-node:last-child:after{display:none}
+.saas-node span{display:block;color:#d7f887;font:700 .67rem 'Space Mono',monospace;margin-bottom:15px}
+.saas-node strong{display:block;color:#f1f8ff;font:800 1.04rem 'Manrope',sans-serif}
+.saas-node small{display:block;color:#b8cfe0;line-height:1.5;margin-top:10px;font-size:.77rem}
+.saas-detail{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(25px,5vw,70px);padding:clamp(28px,4vw,58px);border-top:1px solid #8dcbda6e}
+.saas-detail h3{font:800 clamp(1.7rem,3vw,3rem) 'Manrope',sans-serif;letter-spacing:-.05em;margin:13px 0}
+.saas-detail p{color:#c8d9e7;line-height:1.72}
+.saas-code{min-width:0;border:1px solid #a080d7a1;background:#070d1d;align-self:start}
+.saas-code pre{margin:0;padding:22px;overflow:auto;color:#c2eef2;font:400 .73rem/1.7 'Space Mono',monospace}
+.saas-rules{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#8fb9d273;border:1px solid #8fb9d273;margin-top:28px}
+.saas-rules div{background:#101d37;padding:22px}
+.saas-rules span,.evaluation-grid span,.evaluation-exit span{color:#d7f887;font:700 .69rem 'Space Mono',monospace}
+.saas-rules p{color:#bfd0df;font-size:.83rem;line-height:1.65}
+.evaluation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border:1px solid #8dbcd36f;background:#8dbcd36f}
+.evaluation-grid article{min-height:245px;padding:clamp(20px,2.5vw,34px);background:linear-gradient(145deg,#17254a,#181334)}
+.evaluation-grid h3{font:800 1.45rem 'Manrope',sans-serif;letter-spacing:-.035em;margin:22px 0 12px}
+.evaluation-grid p{color:#c4d4e2;line-height:1.63;font-size:.88rem;margin:0}
+.evaluation-exit{display:grid;grid-template-columns:.33fr .67fr;gap:30px;align-items:center;padding:30px;border:1px solid #d7f8879c;margin-top:28px;background:#d7f88712}
+.evaluation-exit p{color:#e3f1ef;line-height:1.65;margin:0}
+@media(max-width:1000px){.course-heading,.saas-heading,.evaluation-heading{grid-template-columns:1fr;gap:15px}
+.syllabus{grid-template-columns:repeat(3,1fr)}
+.saas-diagram{grid-template-columns:repeat(3,1fr)}
+.saas-node:after{display:none}
+.saas-rules{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.course-section,.saas-section,.evaluation-section{padding:70px 0}
+.course-heading,.saas-heading,.evaluation-heading{padding:45px 0 35px}
+.syllabus{grid-template-columns:repeat(2,1fr)}
+.course-module{grid-template-columns:1fr;gap:20px;padding:38px 0}
+.course-columns,.failure-grid,.evaluation-grid{grid-template-columns:1fr}
+.policy-pipeline{display:grid;grid-template-columns:repeat(2,1fr)}
+.policy-pipeline b{display:none}
+.saas-diagram{grid-template-columns:repeat(2,1fr)}
+.saas-detail{grid-template-columns:1fr}
+.saas-rules{grid-template-columns:1fr}
+.evaluation-exit{grid-template-columns:1fr}
+.saas-switch{width:100%}
+.saas-switch button{flex:1;padding:14px 8px;font-size:.68rem}}
 @media(prefers-reduced-motion:reduce){.syllabus a{transition:none}}
+.integration-status{padding-bottom:110px}
+.status-content{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,6vw,110px);padding:75px 0 20px}
+.status-content h2{font:800 clamp(2.5rem,5vw,5.5rem)/1.04 'Manrope',sans-serif;letter-spacing:-.075em;margin:0}
+.status-content h2 em{font-style:normal;color:#d7f887}
+.status-content>div:last-child{padding:25px 0 0}
+.status-content p{color:#c5d7e6;font-size:clamp(1rem,1.25vw,1.14rem);line-height:1.75}
+.status-content strong{color:#d7f887}
+@media(max-width:700px){.integration-status{padding-bottom:70px}.status-content{grid-template-columns:1fr;padding:50px 0 0;gap:20px}.status-content>div:last-child{padding:0}}
