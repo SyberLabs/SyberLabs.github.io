@@ -22,9 +22,8 @@ body.syber-project .hero .status{color:var(--sy-muted)}
 body.syber-project .actions a{border-radius:4px;border-color:var(--sy-ink);background:transparent;color:var(--sy-ink)}
 body.syber-project .actions a:first-child{background:var(--sy-ink);border-color:var(--sy-ink);color:var(--sy-paper)}
 body.syber-project .product-art{border-radius:8px;background:#171717;overflow:hidden}
-body.syber-project .product-system,body.syber-project .interface-section,body.syber-project .case-study,body.syber-project .boundary{color:#f2f0e9}
+body.syber-project .product-system{color:#f2f0e9}
 body.syber-project .product-system{background-color:#171715}
-body.syber-project .boundary{color:var(--sy-muted);background:var(--sy-paper);border-color:var(--sy-rule)}
 body.syber-demo{overflow-x:clip}
 body.syber-commons{overflow-x:clip}
 body.syber-demo .shell>.syber-header,body.syber-commons .shell>.syber-header{width:100vw;max-width:none;margin-left:calc(50% - 50vw)}
