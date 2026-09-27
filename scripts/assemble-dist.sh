@@ -10,6 +10,9 @@ cp 404.html robots.txt sitemap.xml site.webmanifest _redirects \
   favicon.ico favicon-32x32.png favicon-16x16.png \
   apple-touch-icon.png android-chrome-192x192.png \
   android-chrome-512x512.png dist/
+# kit/v2 is the canonical public home of the design kit: https://syberlabs.io/kit/v2/
+mkdir -p dist/kit
+cp -r kit/v2 dist/kit/
 for dir in rise-demo projects commons approach jev kev research services; do
   cp -r "$dir" dist/
 done

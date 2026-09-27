@@ -6,13 +6,13 @@ main { padding: var(--space-9) 0 var(--space-10); }
 
 .eyebrow, .media-meta, .feature-list small {
   margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500;
-  letter-spacing: .08em; text-transform: uppercase; color: var(--text-3);
+  letter-spacing: .14em; text-transform: uppercase; color: var(--text-2);
 }
 .hero-head .eyebrow { display: flex; align-items: center; gap: var(--space-3); }
 .hero-head .eyebrow::before { content: ''; width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--accent); }
 
 .hero-head { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: var(--space-6); padding-bottom: var(--space-7); }
-.hero-head h1 { margin: var(--space-5) 0 0; font-family: var(--font-display); font-weight: 400; font-size: 96px; line-height: 92px; letter-spacing: -0.02em; }
+.hero-head h1 { margin: var(--space-5) 0 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(64px, 8.6vw, 124px); line-height: .9; letter-spacing: -0.02em; }
 .intro { max-width: 32ch; margin: 0; font-size: 18px; line-height: 28px; color: var(--text-2); }
 
 .interactive-entry { padding: var(--space-6) 0 var(--space-7); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
