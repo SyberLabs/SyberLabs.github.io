@@ -9,7 +9,7 @@ import runtime from './systems/runtime.jsx';
 import { outcomes } from './outcomes.js';
 import './system-maps.css';
 
-const systems = [relay, omnios, rise, barn, osahr, runtime];
+const systems = [rise, omnios, barn, osahr, runtime, relay];
 
 const GRADES = {
   recorded: ['Recorded', 'Produced by running the repository’s code. The export script in scripts/ reproduces it.'],
