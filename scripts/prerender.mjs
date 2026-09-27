@@ -23,7 +23,7 @@ for (const p of projects) {
   await inject(resolve(`dist/projects/${p.slug}/index.html`), /<div id="app"><\/div>/, html => html
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(page.title)}</title>`)
     .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(page.description)}">`)
-    .replace('<html lang="en">', `<html lang="en" style="--accent:${p.accent}">`)
+    .replace('<html lang="en">', `<html lang="en" style="--accent:${p.accent};--sy-accent:${p.accent}">`)
     .replace('<div id="app"></div>', `<div id="app">${page.body}</div>`));
 }
 console.log(`prerender: homepage and ${projects.length} project pages`);
