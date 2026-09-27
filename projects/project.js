@@ -7,10 +7,10 @@ const projects = {
     actions: [['Open RISE app ↗', 'https://rise.syberlabs.io/'], ['Watch the demo ↗', '/rise-demo/']],
   },
   commons: {
-    name: 'Commons', category: 'Human + AI collaboration', number: '02', color: '#adf19b',
-    headline: 'A space to build together.',
-    description: 'Commons is the newest project in the SyberLabs universe. This page is its home while the project takes shape.',
-    status: 'Project in development', actions: [],
+    name: 'Commons', category: 'Mission coordination', number: '02', color: '#adf19b',
+    headline: 'Move a mission forward.',
+    description: 'Commons organizes a shared problem from need and evidence through an approved plan, execution, milestone review, and outcome. The current prototype runs locally with synthetic data.',
+    status: 'Local prototype · private repository', actions: [['View private repository ↗', 'https://github.com/SyberLabs/commons']],
   },
   relay: {
     name: 'Relay', category: 'Application workspace', number: '03', color: '#64e0da',

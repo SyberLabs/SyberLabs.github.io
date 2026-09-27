@@ -46,7 +46,7 @@ const theme = createTheme({
 
 const projects = [
   { name: 'RISE', slug: 'rise', kind: 'Reading interface', description: 'Read through time and space in the live RISE app. Sign-in is required.', href: 'https://rise.syberlabs.io/', accent: '#8e70f8' },
-  { name: 'Commons', slug: 'commons', kind: 'Human + AI collaboration', description: 'A new space in the SyberLabs universe. Explore the project as it takes shape.', accent: '#adf19b' },
+  { name: 'Commons', slug: 'commons', kind: 'Mission coordination', description: 'A human-directed workspace for shared missions, evidence, review, and outcomes. Local prototype; private repository.', accent: '#adf19b' },
   { name: 'Relay', slug: 'relay', kind: 'Application workspace', description: 'Review job research and exact application drafts in one focused workspace.', accent: '#48c9c9' },
   { name: 'OmniOS', slug: 'omnios', kind: 'Spatial AI workspace', description: 'A canvas for working with AI and connected data.', accent: '#ea79c4' },
   { name: 'OSAHR', slug: 'osahr', kind: 'Simulation research', description: 'A research kernel for stochastic simulation on typed hypergraphs.', accent: '#e9b66f' },
