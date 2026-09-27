@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#05060a">
-  <meta name="description" content="How SyberLabs integrated Jev, a typed decision API from TypeSafe AI, into the RISE reading app: the AI chooses from a defined menu, code validates the choice, and the reader can override it.">
+  <meta name="description" content="Historical case study of SyberLabs' Jev integration in RISE. RISE is migrating its bounded reading decisions to Kev; live Kev behavior is not yet verified.">
   <link rel="canonical" href="https://syberlabs.io/jev/">
   <link rel="icon" href="/favicon.ico?v=prism" sizes="any">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Jev Integration in RISE: AI Decisions with Clear Limits | SyberLabs">
-  <meta property="og:description" content="Structured AI answers, rules in code, and reader control in the RISE reading app.">
+  <meta property="og:description" content="Historical Jev integration in RISE. The reading-decision path is migrating to Kev.">
   <meta property="og:url" content="https://syberlabs.io/jev/">
   <title>Jev Integration in RISE: AI Decisions with Clear Limits | SyberLabs</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +38,7 @@
         <h1 id="hero-title">AI decisions<br>with <em>clear</em><br>limits.</h1>
         <p class="hero-lede">Structured AI answers. Rules in code. The reader stays in control.</p>
         <div class="hero-actions"><a class="button primary" href="#technical">See how it works <svg class="sy-icon sy-icon--trail" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></a></div>
-        <p class="hero-note">An independent SyberLabs integration of Jev, a decision API from TypeSafe AI, in the RISE reading app. SyberLabs has no partnership with TypeSafe AI.</p>
+        <p class="hero-note">Historical Jev integration and evaluation. RISE is <a href="/kev/">migrating its bounded reading decisions to Kev</a>; this page does not describe a verified live Kev deployment. SyberLabs has no partnership with TypeSafe AI.</p>
       </div>
       <div class="scene" role="img" aria-label="Three-dimensional visualization of a bounded decision: context enters a Jev judgment, passes through code and human authority, and becomes a permitted action.">
         <div class="scene-halo"></div><div class="scene-ring ring-a"></div><div class="scene-ring ring-b"></div>
@@ -75,7 +75,7 @@
 
     <section class="integration-status section-shell" id="integrations" aria-labelledby="status-title">
       <div class="section-top"><span class="section-index">CURRENT STATUS</span><span class="section-rule"></span><span class="section-tag">RISE / READING</span></div>
-      <div class="status-content"><div><p class="kicker">IN THE LIVE APP</p><h2 id="status-title">One request.<br><em>Many ways to read.</em></h2></div><div><p>On the RISE home screen, readers describe the reading they want. Jev chooses a released text and passage, then configures the reader. RISE offers 23 sound options synthesized in the browser: gentle piano and jazz, six other keyboard styles from lullaby to ragtime, six cinematic themes, six mood beds, rain, and two ambient pieces. RISE validates every choice before playback.</p><p>Sound options are stored in PostgreSQL and briefly cached in Redis. Jev receives a short list matched to each request, so a growing catalog does not enlarge the set of options it must choose from. Seven typefaces and five text sizes add visual range, and repeated open-ended requests rotate reading and presentation suggestions. A separate AI composition feature, the Scriptorium, has not yet been independently verified.</p><a class="text-link" href="https://rise.syberlabs.io/">Try a Jev reading in RISE ↗</a></div></div>
+      <div class="status-content"><div><p class="kicker">RECORDED JEV INTEGRATION</p><h2 id="status-title">One request.<br><em>Many ways to read.</em></h2></div><div><p>In the recorded Jev integration, readers described the reading they wanted. Jev chose a released text and passage, then configured the reader. RISE offered 23 sound options synthesized in the browser: gentle piano and jazz, six other keyboard styles from lullaby to ragtime, six cinematic themes, six mood beds, rain, and two ambient pieces. RISE validated every choice before playback.</p><p>Sound options were stored in PostgreSQL and briefly cached in Redis. Jev received a short list matched to each request, so a growing catalog did not enlarge the set of options it chose from. Seven typefaces and five text sizes added visual range, and repeated open-ended requests rotated reading and presentation suggestions. A separate AI composition feature, the Scriptorium, has not yet been independently verified.</p><a class="text-link" href="/kev/">See the Kev migration status ↗</a></div></div>
     </section>
 
   </main>

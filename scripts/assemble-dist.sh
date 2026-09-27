@@ -10,7 +10,7 @@ cp 404.html robots.txt sitemap.xml site.webmanifest _redirects \
   favicon.ico favicon-32x32.png favicon-16x16.png \
   apple-touch-icon.png android-chrome-192x192.png \
   android-chrome-512x512.png dist/
-for dir in rise-demo projects commons approach jev research services; do
+for dir in rise-demo projects commons approach jev kev research services; do
   cp -r "$dir" dist/
 done
 node scripts/prerender.mjs

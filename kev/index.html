@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05060a">
+  <meta name="description" content="RISE is migrating its bounded reading decisions from Jev to Kev. See what is implemented, what remains unverified, and the earlier Jev evidence.">
+  <link rel="canonical" href="https://syberlabs.io/kev/">
+  <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="RISE and Kev: Migration Status | SyberLabs">
+  <meta property="og:description" content="A bounded AI reading-decision path is moving from Jev to Kev. Live Kev behavior is not yet verified.">
+  <meta property="og:url" content="https://syberlabs.io/kev/">
+  <title>RISE and Kev: Migration Status | SyberLabs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/syberlabs.css?v=1">
+  <link rel="stylesheet" href="/approach/approach.css?v=1">
+</head>
+<body class="syber-approach">
+  <a class="sy-skip" href="#main">Skip to content</a>
+  <header class="sy-header"><div class="sy-header__inner">
+    <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img class="sy-lockup__mark" src="/syber-logo-96.png" alt="" width="18" height="20"><span>SYBERLABS</span></a>
+    <nav class="sy-header__nav" aria-label="Primary"><ul><li><a class="sy-header__link" href="/#work">Work</a></li><li><a class="sy-header__link" href="/#research">Research</a></li><li><a class="sy-header__link" href="/#about">About</a></li><li><a class="sy-header__link" href="mailto:syberlabs.software@gmail.com">Contact</a></li></ul><a class="sy-btn sy-btn--secondary sy-header__action" href="/services/">Work with us</a></nav>
+    <details class="sy-menu"><summary class="sy-btn sy-btn--icon" aria-label="Menu"><svg class="sy-icon sy-icon--open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h16"/><path d="M4 15h16"/></svg><svg class="sy-icon sy-icon--close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg></summary><div class="sy-menu__panel"><nav aria-label="Mobile"><ul><li><a href="/#work">Work</a></li><li><a href="/#research">Research</a></li><li><a href="/#about">About</a></li><li><a href="mailto:syberlabs.software@gmail.com">Contact</a></li></ul><a class="sy-btn sy-btn--secondary" href="/services/">Work with us</a></nav></div></details>
+  </div></header>
+  <main class="approach-main" id="main">
+    <section class="approach-hero" aria-labelledby="kev-title">
+      <p class="eyebrow">RISE / AI integration / September 2026</p>
+      <h1 id="kev-title">Moving to <em>Kev.</em></h1>
+      <p class="mission">RISE is migrating its bounded reading decisions from Jev to Kev. The migration is in progress; we have not confirmed a live Kev reading or measured Kev on RISE requests.</p>
+      <a class="sy-btn sy-btn--primary hero-link" href="https://github.com/jaredpalmer/kev">Explore Kev upstream ↗</a>
+    </section>
+    <section class="approach-method" aria-labelledby="status-title">
+      <div class="section-heading"><p class="eyebrow">CURRENT STATUS</p><h2 id="status-title">What the evidence says.</h2></div>
+      <ol class="method-list">
+        <li><span>01 / ESTABLISHED</span><div><h3>Bounded decisions in RISE</h3><p>RISE offers a defined menu of reading choices, validates the answer in application code, and lets the reader override the result. The recorded integration and preference evaluation used Jev.</p></div></li>
+        <li><span>02 / IN PROGRESS</span><div><h3>Kev integration</h3><p>The RISE migration is adding a server-side, pinned Kev provider configuration for that decision path. Kev is Jared Palmer’s open project for small decision models with a compatible typed API.</p></div></li>
+        <li><span>03 / UNVERIFIED</span><div><h3>Live behavior</h3><p>We have not confirmed a production Kev deployment, a successful live Kev reading, or an independent RISE-specific Kev evaluation. Jev’s earlier 48 of 49 preference result is not a Kev result.</p></div></li>
+      </ol>
+    </section>
+    <section class="approach-projects" aria-labelledby="links-title">
+      <div class="section-heading"><p class="eyebrow">SOURCES</p><h2 id="links-title">Follow the boundary.</h2></div>
+      <div class="project-grid">
+        <a class="project-card" href="https://github.com/SyberLabs/RISE"><span>APPLICATION</span><strong>RISE source</strong><p>Reading flow, validation, and provider integration.</p><b aria-hidden="true">↗</b></a>
+        <a class="project-card" href="https://github.com/jaredpalmer/kev"><span>UPSTREAM MODEL</span><strong>Kev source</strong><p>Model family and serving API by Jared Palmer.</p><b aria-hidden="true">↗</b></a>
+        <a class="project-card" href="/jev/"><span>EARLIER EVIDENCE</span><strong>Jev case study</strong><p>Historical integration and evaluation, preserved under its original name.</p><b aria-hidden="true">→</b></a>
+      </div>
+    </section>
+  </main>
+  <footer class="sy-footer"><div class="sy-footer__inner"><div class="sy-footer__brand"><a class="sy-lockup" href="/" aria-label="SyberLabs home"><img class="sy-lockup__mark" src="/syber-logo-96.png" alt="" width="18" height="20"><span>SYBERLABS</span></a><span class="sy-footer__copy">© 2026 SyberLabs</span></div><nav class="sy-footer__nav" aria-label="Footer"><a class="sy-footer__link" href="https://github.com/SyberLabs">GitHub</a><a class="sy-footer__link" href="/services/">Services</a><a class="sy-footer__link" href="mailto:syberlabs.software@gmail.com">Contact</a></nav></div></footer>
+</body>
+</html>
