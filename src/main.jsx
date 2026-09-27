@@ -187,6 +187,25 @@ function LabSystem() {
   </Container></Box>;
 }
 
+function ResearchNote() {
+  const example = [
+    'type Choice = "continue" | "slow" | "pause";',
+    'type State = { pace: number; interrupted: boolean };',
+    'type Judgment = { choice: Choice; probability: number };',
+    '',
+    'const allowed: Choice[] = ["slow", "pause"];',
+    'const result = judge(state, allowed);',
+    'if (!allowed.includes(result.choice)) return "hold";',
+    'if (result.probability < calibratedThreshold) return "ask";',
+    'return result.choice;',
+  ].join('\n');
+  return <Box component="section" className="research-note" aria-labelledby="research-title"><Container maxWidth="lg">
+    <Box className="research-head"><Typography className="technical-kicker">ENGINEERING NOTE / DECISION SYSTEMS / 001</Typography><Typography component="h2" id="research-title" variant="h2">A model may recommend.<br /><em>The system must decide.</em></Typography><Typography>We are testing a narrow interface: ambiguous state becomes a choice among options the application already permits. This is an integration design, not a claim that Jev serves these calls today.</Typography></Box>
+    <Box className="research-layout"><Box className="research-code"><div className="research-code-head"><span>ILLUSTRATIVE CONTRACT · TYPESCRIPT-LIKE PSEUDOCODE</span><span>01 / 03</span></div><pre><code>{example}</code></pre><div className="research-code-foot">EXAMPLE ONLY / NO PROVIDER CALL OR LIVE THRESHOLD IMPLIED</div></Box><Box className="research-explainer"><article><small>01 / CHOICE SPACE</small><h3>Constrain before inference.</h3><p>The product decides which actions exist. A model score cannot create permission or authorize an action.</p></article><article><small>02 / UNCERTAINTY</small><h3>A probability is not approval.</h3><p>Thresholds need calibration on representative tasks. Low confidence leads to a deterministic hold or a human question.</p></article><article><small>03 / EVALUATION</small><h3>Measure the whole workflow.</h3><p>Compare with the existing rule or human path. Inspect disagreement, latency, failure recovery, and user outcome.</p></article></Box></Box>
+    <Box className="research-evidence"><div><span>CURRENT EVIDENCE</span><p>TypeSafe AI describes Jev as a structured decision model. Our portfolio integration remains under evaluation.</p></div><div><span>RELEASE BAR</span><p>A connected path, representative evaluations, observed failure behavior, and a named human acceptance gate.</p></div><a href="/jev/">Full integration plan ↗</a><a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" target="_blank" rel="noopener noreferrer">TypeSafe’s original article ↗</a></Box>
+  </Container></Box>;
+}
+
 function Motivation() {
   return <Box component="section" id="method" className="lab-method" aria-labelledby="method-title"><Container maxWidth="lg" className="method-inner">
     <Box><Typography className="method-kicker">WHAT DRIVES THE LAB</Typography><Typography component="h2" id="method-title" className="method-title">Question it.<br /><em>Then cut it.</em></Typography></Box>
@@ -223,7 +242,7 @@ function Footer() {
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="system"><CssBaseline /><Header /><main><Hero /><JEVFeature /><LabSystem /><Experience /><Motivation /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="system"><CssBaseline /><Header /><main><Hero /><JEVFeature /><ResearchNote /><LabSystem /><Experience /><Motivation /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
