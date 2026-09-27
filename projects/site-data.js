@@ -28,7 +28,7 @@ export const footerLinks = [
 
 export const projects = [
   {
-    slug: 'rise', number: '01', name: 'RISE', category: 'AI-assisted reading app', accent: '#e4d2ae',
+    slug: 'rise', number: '01', name: 'RISE', category: 'AI-assisted reading app', accent: '#f2d9a6',
     pageTitle: 'RISE: AI-Assisted Reading App',
     headline: 'Read beyond the page.',
     intro: 'A browser-based reading app that controls the pacing, layout, imagery, and sound around a text, with AI-suggested settings.',
@@ -47,7 +47,7 @@ export const projects = [
     ],
   },
   {
-    slug: 'commons', number: '02', name: 'Commons', category: 'Project coordination', accent: '#a8e39a',
+    slug: 'commons', number: '02', name: 'Commons', category: 'Project coordination', accent: '#a6f08f',
     pageTitle: 'Commons: Community Project Coordination Prototype',
     headline: 'Turn a need into a mission.',
     intro: 'A prototype for community-led projects that keeps the need, plan, evidence, human review, and outcome in one auditable record.',
@@ -61,7 +61,7 @@ export const projects = [
     ],
   },
   {
-    slug: 'relay', number: '03', name: 'Relay', category: 'Job application workspace', accent: '#6bd6cf',
+    slug: 'relay', number: '03', name: 'Relay', category: 'Job application workspace', accent: '#62e3d8',
     pageTitle: 'Relay: Job Application Workspace for AI-Assisted Drafting',
     headline: 'Every application has a history.',
     intro: 'A workspace for job seekers who draft with AI assistants, with one record per job and human approval of the final wording.',
@@ -77,7 +77,7 @@ export const projects = [
     ],
   },
   {
-    slug: 'omnios', number: '04', name: 'OmniOS', category: 'AI analysis canvas', accent: '#e99ad3',
+    slug: 'omnios', number: '04', name: 'OmniOS', category: 'AI analysis canvas', accent: '#f59be0',
     pageTitle: 'OmniOS: AI Analysis Canvas with Traceable Sources',
     headline: 'See the sources behind an answer.',
     intro: 'A canvas for asking AI questions about live data, where every answer shows which sources it used.',
@@ -93,7 +93,7 @@ export const projects = [
     ],
   },
   {
-    slug: 'osahr', number: '05', name: 'OSAHR', category: 'Stochastic simulation library', accent: '#f0a868',
+    slug: 'osahr', number: '05', name: 'OSAHR', category: 'Stochastic simulation library', accent: '#ffae63',
     pageTitle: 'OSAHR: Open-Source Stochastic Simulation Library in Python',
     headline: 'Replay a changing system.',
     intro: 'An open-source Python library for exact stochastic simulation of networks that change their own structure, with step-by-step replay.',

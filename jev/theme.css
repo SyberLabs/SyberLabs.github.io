@@ -1,5 +1,5 @@
-/* Jev page: SyberLabs DS v1 skin over the page structure in jev.css and primitives.css.
-   Tokens, header, buttons and footer come from /syberlabs.css. Dark only; lines, not glows. */
+/* Jev page: SyberLabs DS v2 skin over the page structure in jev.css and primitives.css.
+   Tokens, header, buttons and footer come from /syberlabs.css. Ink, vellum and hairlines. */
 :root { --ink: var(--bg); --paper: var(--text); --muted: var(--text-2); --cyan: var(--brand); --violet: var(--brand); --lime: var(--brand); font-family: var(--font-sans); color: var(--text); background: var(--bg); }
 body { overflow-x: clip; background: var(--bg); color: var(--text); font-family: var(--font-sans); }
 a:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
@@ -17,21 +17,22 @@ a:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 .eyebrow, .kicker, .section-index, .section-tag { font-size: 12px; line-height: 16px; color: var(--text-3); }
 .hero { min-height: 0; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: var(--space-8); padding: var(--space-10) max(var(--gutter), calc((100vw - var(--content-max)) / 2)) var(--space-9); }
 .hero-copy { padding-left: 0; }
-.hero h1 { margin: var(--space-6) 0 0; font-family: var(--font-display); font-weight: 400; font-size: 96px; line-height: 92px; letter-spacing: -0.02em; color: var(--text); }
-.hero h1 em, .technical-head h2 em, .status-content h2 em { font-style: italic; color: var(--text-2); }
+.hero h1 { margin: var(--space-6) 0 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(64px, 8.6vw, 124px); line-height: .9; letter-spacing: -0.02em; color: var(--text); }
+.technical-head h2 em, .status-content h2 em { font-style: italic; color: var(--text-2); }
+.hero h1 em { font-style: italic; background: var(--sy-spectrum); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .08em; }
 .hero-lede { margin: var(--space-6) 0 0; font-size: 18px; line-height: 28px; color: var(--text-2); }
 .hero-actions { margin-top: var(--space-6); gap: var(--space-3); }
 .hero-note { margin-top: var(--space-5); font-size: 14px; line-height: 20px; color: var(--text-3); }
-.button { min-height: var(--control-height); padding: 0 20px; gap: var(--space-2); border-radius: var(--radius); font: 500 16px/24px var(--font-sans); transition: background-color var(--duration-fast) var(--ease); }
-.button:hover { transform: none; text-decoration: none; }
-.button.primary { background: var(--text); border-color: var(--text); color: var(--on-primary); }
-.button.primary:hover { background: #fff; }
+.button { min-height: var(--control-height); padding: 0 20px; gap: var(--space-2); border-radius: 999px; border-color: var(--sy-rule-2); background: rgba(6, 5, 26, .4); color: var(--sy-vellum); font: 500 15px/1 var(--font-sans); transition: transform var(--duration-base) var(--ease), box-shadow var(--duration-base) var(--ease), border-color var(--duration-fast); }
+.button:hover { transform: none; text-decoration: none; border-color: var(--sy-ice); box-shadow: 0 0 24px -6px var(--sy-blue); }
+.button.primary { background: linear-gradient(100deg, #c9f0ff, #eef0ff 45%, #e3d4ff); border-color: transparent; color: #07061c; box-shadow: 0 0 0 1px #fff3 inset, 0 10px 40px -12px #4890f0cc; }
+.button.primary:hover { background: linear-gradient(100deg, #c9f0ff, #eef0ff 45%, #e3d4ff); transform: translateY(-1px); box-shadow: 0 0 0 1px #fff6 inset, 0 14px 48px -10px #9a6bffdd; }
 
 /* Decision cube: hairline faces on surface. */
 .scene { perspective: 1100px; }
 .scene-ring { border-color: var(--line-strong); box-shadow: none; }
 .ring-b { border-color: var(--line); }
-.cube-face, .cube-face.right, .cube-face.left { background: rgba(11, 13, 20, .92); border: 1px solid var(--line-strong); box-shadow: none; backdrop-filter: none; }
+.cube-face, .cube-face.right, .cube-face.left { background: rgba(12, 10, 42, .92); border: 1px solid var(--line-strong); box-shadow: none; backdrop-filter: none; }
 .cube-face.top, .cube-face.bottom { background: var(--surface-2); }
 .cube-face span { font-size: 12px; color: var(--text-3); }
 .cube-face strong { font: 400 32px/36px var(--font-display); letter-spacing: -0.01em; color: var(--text); }
