@@ -195,33 +195,51 @@
         font-size: 1.03rem;
         line-height: 1.7;
       }
-      .steps {
+      .mission-surface {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 16px;
+        grid-template-columns: 0.35fr 1fr;
         margin: 30px 0 70px;
+        color: #ecfff4;
+        background: #0c2724;
+        border: 1px solid #216f5c;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 25px 65px #16443235;
       }
-      .step {
-        min-height: 175px;
-        padding: 23px 22px;
-        border: 1px solid #d1dad5;
-        border-radius: 14px;
-        background: rgba(255, 255, 255, 0.58);
+      .mission-index {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 55px;
+        padding: 32px;
+        background: linear-gradient(145deg, #174d3e, #0d302b);
       }
-      .step-number {
-        color: #006f67;
-        font-size: 0.77rem;
-        font-weight: 800;
+      .mission-index span,
+      .mission-grid small {
+        color: #a7f1bd;
+        font: 700 0.7rem monospace;
         letter-spacing: 0.12em;
       }
-      .step h3 {
-        margin: 24px 0 8px;
-        font-size: 1.08rem;
+      .mission-index strong {
+        font-size: clamp(2rem, 4vw, 3.8rem);
+        line-height: 1;
+        letter-spacing: -0.065em;
       }
-      .step p {
-        margin: 0;
-        color: #48605b;
-        line-height: 1.55;
+      .mission-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .mission-grid article {
+        min-height: 190px;
+        padding: 29px;
+        border-left: 1px solid #92caa538;
+        border-bottom: 1px solid #92caa538;
+      }
+      .mission-grid h3 { margin: 18px 0 10px; font-size: 1.3rem; }
+      .mission-grid p { margin: 0; color: #bdd9ca; line-height: 1.55; }
+      .mission-grid .review-step {
+        background: #b8efab18;
+        box-shadow: inset 4px 0 #a7f1bd;
       }
       .principle {
         display: grid;
@@ -360,15 +378,15 @@
           width: 84px;
           height: 84px;
         }
-        .steps,
         .principle,
         .roadmap-grid,
         .integration-grid {
           grid-template-columns: 1fr;
         }
-        .steps {
-          margin-bottom: 42px;
-        }
+        .mission-surface { grid-template-columns: 1fr; margin-bottom: 42px; }
+        .mission-index { gap: 18px; padding: 25px; }
+        .mission-grid { grid-template-columns: 1fr; }
+        .mission-grid article { min-height: 0; padding: 25px; }
         .principle {
           gap: 8px;
           padding: 24px 20px;
@@ -443,28 +461,14 @@
             doing the work retaining authority over goals and decisions.
           </p>
         </section>
-        <section class="steps" aria-label="How COMMONS is intended to work">
-          <article class="step">
-            <span class="step-number">01</span>
-            <h3>Name the need</h3>
-            <p>Start with a concrete need and a result people can recognize.</p>
-          </article>
-          <article class="step">
-            <span class="step-number">02</span>
-            <h3>Make the work legible</h3>
-            <p>
-              Organize the plan, evidence, responsibilities, and open questions
-              in one place.
-            </p>
-          </article>
-          <article class="step">
-            <span class="step-number">03</span>
-            <h3>Review together</h3>
-            <p>
-              Keep important decisions with people, with a clear record of what
-              was reviewed.
-            </p>
-          </article>
+        <section class="mission-surface" aria-label="Illustrative Commons mission record">
+          <div class="mission-index"><span>PHASE 0 / SYNTHETIC EXAMPLE</span><strong>A mission has a memory.</strong><span>HUMAN-DIRECTED WORK</span></div>
+          <div class="mission-grid">
+            <article><small>01 / NEED</small><h3>Name the problem</h3><p>Describe the need and the outcome the community would recognize.</p></article>
+            <article><small>02 / EVIDENCE</small><h3>Show the basis</h3><p>Keep supporting material and unanswered questions close to the plan.</p></article>
+            <article class="review-step"><small>03 / HUMAN REVIEW</small><h3>Request changes</h3><p>The seeded reviewer can send a draft back. The decision stays in audit history.</p></article>
+            <article><small>04 / OUTCOME</small><h3>Carry learning forward</h3><p>The roadmap aims to make results and reusable patterns inspectable.</p></article>
+          </div>
         </section>
         <section class="status-panel" id="status">
           <p class="eyebrow">Current work</p>
