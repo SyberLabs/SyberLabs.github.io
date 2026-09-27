@@ -5,8 +5,8 @@ const projects = {
     number: '01', name: 'RISE', category: 'Audiovisual reader', accent: '#a68bff',
     headline: 'Read beyond the page.',
     intro: 'Shape the timing, space, image, and sound around a text.',
-    status: 'Live browser app · sign-in required',
-    actions: [['Open RISE ↗', 'https://rise.syberlabs.io/'], ['Watch demo ↗', '/rise-demo/']],
+    status: 'Live browser app · interactive sample',
+    actions: [['Try interactive sample ↗', 'https://rise.syberlabs.io/jev-scene-demo'], ['Open RISE ↗', 'https://rise.syberlabs.io/'], ['Watch captured demo ↗', '/rise-demo/']],
   },
   commons: {
     number: '02', name: 'Commons', category: 'Mission coordination', accent: '#adf19b',
