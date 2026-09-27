@@ -38,7 +38,7 @@ jobs:
           cp -r rise dist/
           test -s dist/index.html
           test -s dist/rise/index.html
-          test -s dist/rise/rise-demo.mp4
+          test -s dist/rise/rise-demo-20260926.mp4
           test ! -e dist/_redirects
       - uses: actions/upload-artifact@v4
         with:

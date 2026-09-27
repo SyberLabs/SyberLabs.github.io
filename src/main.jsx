@@ -96,7 +96,7 @@ function Hero() {
         <Card variant="outlined" sx={{ overflow: 'hidden', borderColor: 'divider', bgcolor: 'background.paper', borderRadius: 3 }}>
           <CardActionArea component="a" href="/rise/" aria-label="Watch the RISE demo">
             <Box sx={{ position: 'relative', aspectRatio: '16 / 10', bgcolor: '#0a1020' }}>
-              <Box component="img" src="/rise/poster.jpg" alt="RISE reading interface demo preview" sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <Box component="img" src="/rise/poster-20260926.jpg" alt="RISE reading interface demo preview" sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 38%, rgba(4,10,20,.86) 100%)' }} />
               <Box sx={{ position: 'absolute', bottom: 22, left: 24, right: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#fff' }}>
                 <Box><Typography variant="overline" sx={{ opacity: .75, letterSpacing: '.14em' }}>FEATURED DEMO</Typography><Typography variant="h5">RISE</Typography></Box>
