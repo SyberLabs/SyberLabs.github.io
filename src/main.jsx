@@ -43,16 +43,16 @@ function Header() {
 function Hero() {
   return <section className="hero" aria-labelledby="hero-title">
     <div className="hero-grid">
-      <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">Software you can <em>feel.</em><br />Decisions you can <em>inspect.</em></h1></div>
+      <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">Software you can <em>feel.</em><br />Decisions you can <em>inspect.</em></h1><p className="hero-intro">We build the systems agents run on and the environments people use to direct them.</p></div>
     </div>
     <div className="flagships" id="work">
       <article className="flagship flagship-rise" aria-labelledby="rise-title">
-        <div className="flagship-top"><span>01 / EXPERIENTIAL SOFTWARE</span><span>RISE · LIVE APP</span></div>
+        <div className="flagship-top"><span>01 / HUMAN ENVIRONMENT</span><span>RISE · LIVE APP</span></div>
         <div className="rise-preview"><video className="rise-preview-video" autoPlay muted loop playsInline preload="auto" poster={risePoster} aria-label="RISE concept sequence: kaleidoscopic Attractor, Fractal Flame, Curia tiger and Astronomy"><source src="/rise-demo/rise-visual-sequence-20260927-v2.mp4" type="video/mp4" /></video><span className="rise-preview-caption">NEW VISUAL SEQUENCE / 25 SEC</span></div>
         <div className="flagship-copy"><h2 id="rise-title">One text.<br />Many ways to feel it.</h2><p className="flagship-update">Ask Jev to change the world around your reading.</p><div className="rise-actions"><a href="https://rise.syberlabs.io/jev-scene-demo">Try the interactive sample <span aria-hidden="true">↗</span></a><a href="/rise-demo/">Watch the full demo <span aria-hidden="true">↗</span></a></div></div>
       </article>
       <article className="flagship flagship-relay" aria-labelledby="relay-title">
-        <div className="flagship-top"><span>02 / EMPIRICAL SOFTWARE</span><span>RELAY · EARLY RELEASE</span></div>
+        <div className="flagship-top"><span>02 / AGENT WORKFLOW</span><span>RELAY · EARLY RELEASE</span></div>
         <div className="relay-record" role="img" aria-label="Illustrative Relay record: a job posting and applicant research lead to draft version 03, which requires human review after a revision">
           <div className="record-header"><span>ILLUSTRATIVE RELAY RECORD</span><span>VERSION 03</span></div>
           <div className="record-chain"><div><small>SOURCE</small><strong>Job posting</strong></div><div><small>CONTEXT</small><strong>Research + facts</strong></div><div><small>DRAFT</small><strong>Version 03</strong></div></div>
@@ -71,13 +71,24 @@ function Work() {
 }
 
 function System() {
-  return <section className="system" id="system" aria-label="Two software paths">
+  return <section className="system" id="system" aria-labelledby="system-title">
   <div className="system-inner">
-    <div className="system-paths" aria-label="Experiential software moves from source text through presentation to reader control. Empirical software moves from a source record through revision to human review.">
-      <div className="system-path"><span className="path-label">EXPERIENTIAL / RISE</span><div className="path-steps"><span>Source text</span><i aria-hidden="true">→</i><span>Timing · space · sound</span><i aria-hidden="true">→</i><strong>Reader control</strong></div></div>
-      <div className="system-path"><span className="path-label">EMPIRICAL / RELAY</span><div className="path-steps"><span>Source record</span><i aria-hidden="true">→</i><span>Versioned draft</span><i aria-hidden="true">→</i><strong>Human review</strong></div></div>
-      <div className="system-convergence"><strong>PERSON IN CONTROL</strong></div>
+    <div className="system-heading"><p className="system-eyebrow">THE SYBERLABS FIELD</p><h2 id="system-title">Across the human–agent boundary.</h2><p>Agents can generate and coordinate. People can set intent, delegate choices, inspect consequences, and change course.</p></div>
+    <div className="system-planes">
+      <article className="system-plane system-plane-agent" aria-labelledby="agent-plane-title">
+        <span className="plane-index">01 / AGENT SYSTEMS</span><h3 id="agent-plane-title">Infrastructure for agency.</h3>
+        <div className="plane-row"><span className="plane-label">INTRA / WITHIN GENERATION</span><p>Generate, test, stabilize.</p><strong>SyberRuntime · Turtles</strong></div>
+        <div className="plane-row"><span className="plane-label">EXO / ACROSS SYSTEMS</span><p>Model, deliberate, authorize, coordinate.</p><strong>Barn · Bough · OSAHR · Relay</strong></div>
+        <p className="plane-future"><span>THE DIRECTION</span> SyberLabs SDK, growing from SyberWork.</p>
+      </article>
+      <article className="system-plane system-plane-human" aria-labelledby="human-plane-title">
+        <span className="plane-index">02 / HUMAN ENVIRONMENTS</span><h3 id="human-plane-title">Interfaces for intent.</h3>
+        <div className="plane-row"><span className="plane-label">WORKSPACE / OMNIOS</span><p>Spatial work with inspectable context.</p></div>
+        <div className="plane-row"><span className="plane-label">MEDIA / RISE</span><p>Reading shaped by text, space, sound, and Jev’s delegated choices.</p></div>
+        <p className="plane-future"><span>THE CONNECTION</span> Agent action becomes a human experience.</p>
+      </article>
     </div>
+    <div className="system-boundary"><span>THE BOUNDARY</span><strong>Human intent <i aria-hidden="true">→</i> Delegated action <i aria-hidden="true">→</i> Inspectable consequence</strong><p>RISE can make delegation fluid. Relay makes review explicit before an artifact is submitted.</p></div>
   </div></section>;
 }
 
