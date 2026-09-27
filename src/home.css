@@ -45,7 +45,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 .flagship-rise .flagship-copy h2{font-family:Georgia,'Times New Roman',serif;font-weight:400;letter-spacing:-.06em}
 .flagship-rise .flagship-update{color:#c3cfe6}
 .rise-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px 25px}
-.rise-actions a:last-child{color:#90d8f0;font-size:.83rem}
+.rise-actions a:not(:first-child){color:#90d8f0;font-size:.83rem}
 .network-section{background:var(--paper-deep);color:var(--ink);scroll-margin-top:78px}
 .network-inner{max-width:1600px;margin:auto;padding:clamp(60px,7vw,105px) clamp(22px,4vw,72px)}
 .network-heading{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(250px,.75fr);gap:12px 50px;align-items:end;margin-bottom:38px}
