@@ -12,3 +12,5 @@ The public COMMONS roadmap is maintained in `commons/index.html` and included in
 
 The independent Jev evaluation and integration plan lives in `jev/` and is published at `/jev/`. Its product status labels distinguish implemented routes from proposed integrations and must be checked against the source repositories before updating.
 
+
+The GrokCell Execution report lives at `research/jev-execution/`. It summarizes the durable offline prototype and its evidence limits; preserve the distinction between observed results and planned live integration.
