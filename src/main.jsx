@@ -22,6 +22,7 @@ const work = [
 
 function ThemeToggle() {
   const { mode, setMode } = useColorScheme();
+  React.useEffect(() => { if (mode === 'system') setMode('light'); }, [mode, setMode]);
   if (!mode) return null;
   const dark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   return <IconButton className="theme-toggle" aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'} onClick={() => setMode(dark ? 'light' : 'dark')}>
@@ -96,7 +97,7 @@ function Footer() {
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="system"><Header /><main><Hero /><Work /><System /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="light"><Header /><main><Hero /><Work /><System /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
