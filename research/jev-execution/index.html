@@ -3,20 +3,28 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101b28">
+  <meta name="theme-color" content="#05060a">
   <title>Beyond the typed decision — GrokCell Execution | SyberLabs Research</title>
   <meta name="description" content="A technical report on the execution contract above JEV: bounded operations, durable evidence, atomic acceptance and process-recovery experiments.">
   <link rel="canonical" href="https://syberlabs.io/research/jev-execution/">
-  <link rel="icon" href="/favicon-blue-32x32.png">
-  <link rel="stylesheet" href="report.css">
+  <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/syberlabs.css?v=1">
+  <link rel="stylesheet" href="report.css?v=2">
   <meta property="og:title" content="Beyond the typed decision | SyberLabs Research">
   <meta property="og:description" content="GrokCell Execution: a bounded execution contract above JEV. Design, invariants, recovery tests and open questions.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://syberlabs.io/research/jev-execution/">
 </head>
 <body>
-<a class="skip" href="#report">Skip to report</a>
-<header class="header"><a class="brand" href="/">SYBERLABS <span>/ RESEARCH</span></a><nav aria-label="Site navigation"><a href="/jev/">JEV</a><a href="#references">References</a><a href="mailto:syberlabs.software@gmail.com">Contact ↗</a></nav></header>
+<a class="sy-skip" href="#report">Skip to content</a>
+  <header class="sy-header"><div class="sy-header__inner">
+    <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img class="sy-lockup__mark" src="/syber-logo-96.png" alt="" width="18" height="20"><span>SYBERLABS</span></a>
+    <nav class="sy-header__nav" aria-label="Primary"><ul><li><a class="sy-header__link" href="/#work">Work</a></li><li><a class="sy-header__link" href="/#research" aria-current="page">Research</a></li><li><a class="sy-header__link" href="/services/">Services</a></li><li><a class="sy-header__link" href="mailto:syberlabs.software@gmail.com">Contact</a></li></ul><a class="sy-btn sy-btn--secondary sy-header__action" href="/services/">Work with us</a></nav>
+    <details class="sy-menu"><summary class="sy-btn sy-btn--icon" aria-label="Menu"><svg class="sy-icon sy-icon--open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h16"/><path d="M4 15h16"/></svg><svg class="sy-icon sy-icon--close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg></summary><div class="sy-menu__panel"><nav aria-label="Mobile"><ul><li><a href="/#work">Work</a></li><li><a href="/#research" aria-current="page">Research</a></li><li><a href="/services/">Services</a></li><li><a href="mailto:syberlabs.software@gmail.com">Contact</a></li></ul><a class="sy-btn sy-btn--secondary" href="/services/">Work with us</a></nav></div></details>
+  </div></header>
 <main id="report">
   <section class="hero">
     <div class="meta"><span>TECHNICAL REPORT · GC–01</span><span>26 SEPTEMBER 2026 · REVISION 1</span></div>
@@ -57,6 +65,9 @@ grokcell inspect --state-dir .grokcell/repair</code></pre><p>Use a separate dire
     </article>
   </div>
 </main>
-<footer><a href="/">SYBERLABS</a><span>GC–01 / REVISION 1 / 2026</span><a href="mailto:syberlabs.software@gmail.com">syberlabs.software@gmail.com ↗</a></footer>
+<footer class="sy-footer"><div class="sy-footer__inner">
+    <div class="sy-footer__brand"><a class="sy-lockup" href="/" aria-label="SyberLabs home"><img class="sy-lockup__mark" src="/syber-logo-96.png" alt="" width="18" height="20"><span>SYBERLABS</span></a><span class="sy-footer__copy">© 2026 SyberLabs</span></div>
+    <nav class="sy-footer__nav" aria-label="Footer"><a class="sy-footer__link" href="https://github.com/SyberLabs">GitHub<svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a class="sy-footer__link" href="mailto:syberlabs.software@gmail.com">Contact</a></nav>
+  </div></footer>
 </body>
 </html>

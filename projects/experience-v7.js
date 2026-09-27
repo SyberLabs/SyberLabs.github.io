@@ -1,136 +1,126 @@
-import { mountProcedural } from './procedural.js';
+// Project page template (SyberLabs DS v1): one neutral template for every project.
+// The project accent appears only as its identity marker: the dot, the index number and the active indicator.
+import { projects, nav, workWithUs, footerLinks } from './site-data.js';
 
-const projects = {
-  rise: {
-    number: '01', name: 'RISE', category: 'Audiovisual reader', accent: '#a68bff',
-    headline: 'Read beyond the page.',
-    intro: 'Shape the timing, space, image, and sound around a text.',
-    status: 'Live browser app · interactive sample',
-    actions: [['Try interactive sample ↗', 'https://rise.syberlabs.io/jev-scene-demo'], ['Open RISE ↗', 'https://rise.syberlabs.io/'], ['Watch captured demo ↗', '/rise-demo/']],
-  },
-  commons: {
-    number: '02', name: 'Commons', category: 'Mission coordination', accent: '#adf19b',
-    headline: 'Turn a need into a mission.',
-    intro: 'Keep the plan, evidence, review, and outcome together.',
-    status: 'Local Phase 0 prototype · private repository',
-    actions: [['Explore Commons ↗', '/commons/']],
-  },
-  relay: {
-    number: '03', name: 'Relay', category: 'Application workspace', accent: '#64e0da',
-    headline: 'Every application has a history.',
-    intro: 'Keep the job, research, draft, and exact approval connected.',
-    status: 'Early release · source available',
-    actions: [['See the work ↗', '/#work'], ['View source ↗', 'https://github.com/SyberLabs/relay']],
-  },
-  omnios: {
-    number: '04', name: 'OmniOS', category: 'Spatial AI workspace', accent: '#ef91d4',
-    headline: 'See the sources behind an answer.',
-    intro: 'Connect sources to a question and trace the result.',
-    status: 'Local-first, single-user research project',
-    actions: [['See the work ↗', '/#work'], ['View source ↗', 'https://github.com/SyberLabs/OmniOS']],
-  },
-  osahr: {
-    number: '05', name: 'OSAHR', category: 'Simulation research', accent: '#f0c487',
-    headline: 'Replay a changing system.',
-    intro: 'Run graph rules and inspect the events they produce.',
-    status: 'Open research kernel · Python 3.11+',
-    actions: [['See the work ↗', '/#work'], ['View source ↗', 'https://github.com/SyberLabs/OSAHR_Cell']],
-  },
+const ICONS = {
+  arrow: '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>',
+  external: '<path d="M7 17L17 7"/><path d="M8 7h9v9"/>',
+  play: '<circle cx="12" cy="12" r="9"/><path d="M10 9l5 3-5 3z"/>',
+  menu: '<path d="M4 9h16"/><path d="M4 15h16"/>',
+  close: '<path d="M6 6l12 12"/><path d="M18 6L6 18"/>',
+  pause: '<path d="M9 6v12M15 6v12"/>',
+  sound: '<path d="M4 10v4h3l5 4V6l-5 4H4z"/><path d="M16 9a4 4 0 0 1 0 6"/>',
+  stream: '<path d="M4 7h9M4 12h13M4 17h6"/><path d="M17 14l3 3-3 3"/>',
+  page: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  conditions: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
 };
+const icon = (name, size = 20, cls = '') =>
+  `<svg class="sy-icon ${cls}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
+const esc = value => String(value).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const badge = status => `<span class="sy-badge sy-badge--${status.kind}"><span class="sy-badge__dot" aria-hidden="true"></span>${esc(status.label)}</span>`;
+
+const header = () => `
+<a class="sy-skip" href="#main">Skip to content</a>
+<header class="sy-header"><div class="sy-header__inner">
+  <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img class="sy-lockup__mark" src="/syber-logo-96.png" alt="" width="18" height="20"><span>SYBERLABS</span></a>
+  <nav class="sy-header__nav" aria-label="Primary"><ul>${nav.map(item => `<li><a class="sy-header__link" href="${item.href}"${item.id === 'work' ? ' aria-current="page"' : ''}>${item.label}</a></li>`).join('')}</ul><a class="sy-btn sy-btn--secondary sy-header__action" href="${workWithUs.href}">${workWithUs.label}</a></nav>
+  <details class="sy-menu"><summary class="sy-btn sy-btn--icon" aria-label="Menu">${icon('menu', 20, 'sy-icon--open')}${icon('close', 20, 'sy-icon--close')}</summary><div class="sy-menu__panel"><nav aria-label="Mobile"><ul>${nav.map(item => `<li><a href="${item.href}"${item.id === 'work' ? ' aria-current="page"' : ''}>${item.label}</a></li>`).join('')}</ul><a class="sy-btn sy-btn--secondary" href="${workWithUs.href}">${workWithUs.label}</a></nav></div></details>
+</div></header>`;
+
+const footer = () => `
+<footer class="sy-footer"><div class="sy-footer__inner">
+  <div class="sy-footer__brand"><a class="sy-lockup" href="/" aria-label="SyberLabs home"><img class="sy-lockup__mark" src="/syber-logo-96.png" alt="" width="18" height="20"><span>SYBERLABS</span></a><span class="sy-footer__copy">© 2026 SyberLabs</span></div>
+  <nav class="sy-footer__nav" aria-label="Footer">${footerLinks.map(link => `<a class="sy-footer__link" href="${link.href}">${link.label}${link.external ? icon('external', 16) : ''}</a>`).join('')}</nav>
+</div></footer>`;
+
+function actions(p) {
+  const primary = `<a class="sy-btn sy-btn--primary" href="${p.primary.href}">${esc(p.primary.label)}${icon(p.primary.external ? 'external' : 'arrow', 20, 'sy-icon--trail')}</a>`;
+  const secondary = p.secondary ? `<a class="sy-btn sy-btn--secondary" href="${p.secondary.href}">${esc(p.secondary.label)}</a>` : '';
+  const ghost = p.ghost ? `<a class="sy-btn sy-btn--ghost" href="${p.ghost.href}">${icon(p.ghost.icon || 'arrow')}${esc(p.ghost.label)}</a>` : '';
+  return `<div class="sy-actions pj-actions">${primary}${secondary}${ghost}</div>`;
+}
+
+const riseFrame = () => `
+<section class="pj-frame sy-container" aria-label="RISE preview">
+  <div class="pj-frame__box" role="img" aria-label="The RISE reader in Stream mode: one line of Meditations by Marcus Aurelius on a dark stage, with a progress line and playback controls.">
+    <div class="pj-frame__bar sy-label">
+      <div class="pj-frame__work"><span class="pj-frame__work-title">Meditations</span><span aria-hidden="true">·</span><span>Marcus Aurelius</span></div>
+      <div class="pj-frame__tabs"><span class="is-active">Stream</span><span>Page</span><span>Conditions</span></div>
+    </div>
+    <div class="pj-frame__stage">
+      <p class="pj-frame__line">Very little is needed to make <span>a happy life.</span></p>
+      <span class="pj-frame__source sy-label">Meditations · Marcus Aurelius</span>
+    </div>
+    <div class="pj-frame__progress"><span></span></div>
+    <div class="pj-frame__controls sy-label">
+      <div class="pj-frame__time">${icon('pause')}<span><span class="pj-frame__hi">04:12</span> / 11:08</span></div>
+      <div class="pj-frame__meta"><span class="pj-frame__pace">Pace <span class="pj-frame__hi">180 wpm</span></span><span class="pj-frame__sound">${icon('sound')}<span class="pj-frame__hi">Sound on</span></span></div>
+    </div>
+  </div>
+</section>`;
+
+const riseHow = () => `
+<section class="pj-section sy-container" aria-labelledby="how-title">
+  <div class="pj-split">
+    <h2 id="how-title" class="sy-label">How it works</h2>
+    <p class="sy-title pj-split__main">One text. Many ways to feel it.</p>
+  </div>
+  <div class="pj-how">
+    ${[['stream', 'Stream', 'Words arrive through time. Set pacing and playback.'], ['page', 'Page', 'Words occupy a spatial surface you can navigate.'], ['conditions', 'Conditions', 'Tune visual fields and sound around the reading.']]
+      .map(([key, title, text]) => `<div class="pj-how__item">${icon(key)}<h3 class="sy-subheading">${title}</h3><p>${text}</p></div>`).join('')}
+  </div>
+</section>`;
+
+function facts(p) {
+  const value = v => typeof v === 'string' ? esc(v) : `<a class="sy-link sy-link--inline" href="${v.href}">${esc(v.label)}${icon('external', 16)}</a>`;
+  const rows = [['Status', `<span class="sy-badge sy-badge--${p.status.kind} pj-facts__badge"><span class="sy-badge__dot" aria-hidden="true"></span>${esc(p.status.label)}</span>`], ...p.facts.map(([k, v]) => [k, value(v)])];
+  return `
+<section class="pj-section sy-container" aria-labelledby="facts-title">
+  <div class="pj-split pj-split--facts">
+    <h2 id="facts-title" class="sy-label pj-facts__label">Facts</h2>
+    <dl class="pj-facts pj-split__main">${rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join('')}</dl>
+  </div>
+</section>`;
+}
+
+function others(p) {
+  const rows = projects.filter(item => item.slug !== p.slug).map(item => `
+    <a class="sy-row" href="/projects/${item.slug}/" style="--accent:${item.accent}">
+      <span class="sy-row__number">${item.number}</span>
+      <span class="sy-row__id"><span class="sy-row__name-line"><span class="sy-row__dot" aria-hidden="true"></span><span class="sy-row__name">${esc(item.name)}</span></span><span class="sy-row__category sy-label">${esc(item.category)}</span></span>
+      <span class="sy-row__copy"><span class="sy-row__headline">${esc(item.headline)}</span></span>
+      <span class="sy-row__status">${badge(item.status)}</span>
+      <span class="sy-row__arrow">${icon('arrow')}</span>
+    </a>`).join('');
+  return `
+<section class="pj-section sy-container" aria-labelledby="others-title">
+  <div class="pj-others__head"><h2 id="others-title" class="sy-label">Other projects</h2><a class="sy-link sy-link--sm pj-others__all" href="/#work">All work${icon('arrow', 16)}</a></div>
+  <div class="sy-rows sy-rows--compact pj-others">${rows}</div>
+</section>`;
+}
 
 const slug = location.pathname.split('/').filter(Boolean).at(-1);
-  const p = projects[slug];
+const p = projects.find(item => item.slug === slug);
 if (!p) location.replace('/');
 else {
   document.title = `${p.name} — SyberLabs`;
-  document.body.classList.add(`page-${slug}`);
   document.documentElement.style.setProperty('--accent', p.accent);
-  document.querySelector('meta[name="description"]').content = p.intro;
-  const art = {
-    rise: `<div class="rise-portal-art"><div class="rise-art-orbit"></div><div class="rise-art-disc"></div><div class="rise-art-echo"></div><span>TEXT / TIME / SPACE</span></div>`,
-    commons: `<div class="mission-space"><div class="mission-line"></div><div class="mission-card m-one"><small>01 / NEED</small><strong>What matters?</strong><span>Define the shared problem</span></div><div class="mission-card m-two"><small>02 / EVIDENCE</small><strong>What do we know?</strong><span>Make the basis visible</span></div><div class="mission-card m-three"><small>03 / REVIEW</small><strong>Who approves?</strong><span>Human direction on record</span></div><div class="mission-card m-four"><small>04 / OUTCOME</small><strong>What changed?</strong><span>Carry the learning forward</span></div></div>`,
-    relay: `<div class="relay-space"><div class="relay-document doc-back"><small>JOB / 014</small><b>Research</b><span>Posting · Notes · Facts</span></div><div class="relay-document doc-middle"><small>VERSION 03</small><b>Draft</b><span>Prepared for review</span></div><div class="relay-document doc-front"><small>HUMAN REVIEW</small><b>Exact wording</b><span class="relay-accepted">✓ Accepted for this job</span></div><div class="relay-thread"></div></div>`,
-    omnios: `<div class="omni-space"><svg viewBox="0 0 600 520" aria-hidden="true"><path d="M127 129 C240 130 210 256 338 258 M138 396 C245 400 220 290 338 258 M338 258 C445 235 445 354 513 360"/></svg><div class="omni-node data-one"><small>DATA BLOCK</small><strong>World Bank</strong><span>Economic series</span></div><div class="omni-node data-two"><small>DATA BLOCK</small><strong>Markets</strong><span>Live signal</span></div><div class="omni-node persona"><small>PERSONA</small><strong>Investor</strong><span>Context from 2 wires</span></div><div class="omni-node answer"><small>OUTPUT</small><strong>Answer</strong><span>Trace the inputs ↗</span></div></div>`,
-    osahr: `<div class="osahr-space"><svg viewBox="0 0 600 520" aria-hidden="true"><path d="M108 123 L285 101 L449 189 L371 368 L167 402 Z M108 123 L371 368 M285 101 L167 402 M449 189 L167 402"/><path class="pulse-path" d="M108 123 L285 101 L449 189 L371 368"/></svg><span class="graph-node n1">A</span><span class="graph-node n2">B</span><span class="graph-node n3">R</span><span class="graph-node n4">C</span><span class="graph-node n5">D</span><div class="rewrite-chip">RULE 03 → EVENT 14</div></div>`,
-  }[slug];
-  const system = {
-    rise: `<div class="system-heading"><p class="eyebrow">INSIDE THE CHAMBER / READING AS A SCORE</p><h2>One text. Different dimensions.</h2><p>RISE separates the words from the way they are presented. Change the reading mode and conditions without changing the source text.</p></div><div class="rise-console"><div class="console-bar"><span>CHAMBER / LOCAL SESSION</span><span>TEXT · TIME · IMAGE · SOUND</span></div><div class="rise-score" data-mode="stream"><div class="score-text"><small>SOURCE / YOUR TEXT</small><strong>Language becomes an environment.</strong><span>Bring a .txt or .md file, or start from the Library.</span></div><div class="score-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="page-surface" aria-hidden="true"><span>Language becomes<br>an environment.</span></div></div><div class="console-options"><article><b>STREAM</b><span>Words arrive through time. Set pacing and playback.</span></article><article><b>PAGE</b><span>Words occupy a spatial surface you can navigate.</span></article><article><b>CONDITIONS</b><span>Tune visual fields and sound around the reading.</span></article></div><div class="product-controls"><span class="control-label">TRY A READING MODE</span><div role="group" aria-label="RISE reading mode"><button class="mode-button is-active" data-rise-mode="stream" aria-pressed="true">Stream</button><button class="mode-button" data-rise-mode="page" aria-pressed="false">Page</button></div><span class="control-readout" aria-live="polite">Stream · words arrive through time.</span></div></div>`,
-    commons: `<div class="system-heading"><p class="eyebrow">MISSION OBJECT / HUMAN DIRECTION</p><h2>Make every handoff legible.</h2><p>A mission is a sequence of decisions with named evidence and review. The current prototype demonstrates that path with synthetic examples.</p></div><div class="commons-ledger"><div class="ledger-index"><span>PHASE 0 / SYNTHETIC MISSION</span><strong>Mission record</strong><small>LOCAL PROTOTYPE</small></div><div class="ledger-steps"><article><small>01 / FRAME</small><b>Need + evidence</b><p>State the shared problem and what supports it.</p></article><article><small>02 / PROPOSE</small><b>Draft a plan</b><p>Keep the intended work and milestones in one place.</p></article><article class="review-gate"><small>03 / HUMAN GATE</small><b>Review or request changes</b><p>The seeded reviewer records a decision before the mission proceeds.</p></article><article><small>04 / LEARN</small><b>Outcome + audit</b><p>Inspect the sequence and carry useful patterns forward.</p></article></div></div>`,
-    relay: `<div class="system-heading"><p class="eyebrow">APPLICATION RECORD / VERSIONED ACCEPTANCE</p><h2>Every revision has a boundary.</h2><p>A job is the unit of continuity. Research can be reused; acceptance stays tied to exact words for that job and version.</p></div><div class="relay-ledger"><div class="relay-ledger-head"><span>ILLUSTRATIVE JOB RECORD / 014</span><strong>One posting. One history.</strong></div><div class="relay-chain"><div><small>POSTING URL</small><b>Rejoin the existing job</b><p>Matching URLs recover the record and its earlier research.</p></div><div><small>RESEARCH + FACTS</small><b>Carry context forward</b><p>Preserve notes across assistant and editing handoffs.</p></div><div class="relay-gate"><small>EXACT DRAFT / VERSION 03</small><b>Prepared for review</b><p>A changed version needs the person's review and acceptance.</p></div></div><div class="relay-inspector"><div role="group" aria-label="Inspect the Relay application record"><button class="mode-button is-active" data-relay-view="research" aria-pressed="true">Research</button><button class="mode-button" data-relay-view="draft" aria-pressed="false">Draft</button><button class="mode-button" data-relay-view="next" aria-pressed="false">Next action</button></div><p class="control-readout" aria-live="polite">Research stays attached to the job record across handoffs.</p></div><p class="ledger-foot">Relay can prepare and track application materials. It does not submit employer forms.</p></div>`,
-    omnios: `<div class="system-heading"><p class="eyebrow">CONTEXT TOPOLOGY / VISIBLE INPUTS</p><h2>The answer has a wiring diagram.</h2><p>Instead of hiding context in a prompt, OmniOS places sources and personas on a canvas. The connection itself says what information can flow.</p></div><div class="omni-board"><div class="omni-source-list"><button class="omni-source is-connected" data-source="world" aria-pressed="true"><small>DATA 01 / CONNECTED</small><b>World Bank</b><span>Economic series</span></button><button class="omni-source is-connected" data-source="market" aria-pressed="true"><small>DATA 02 / CONNECTED</small><b>Market signal</b><span>Prediction context</span></button></div><div class="omni-route" aria-hidden="true"><span></span><span></span></div><div class="omni-persona-card"><small>PERSONA / INVESTOR</small><b>Incoming wires define context</b><span class="omni-context" aria-live="polite">2 visible inputs: economic series + market signal.</span></div><div class="omni-board-note">LOCAL-FIRST CANVAS · SOME SOURCES REQUIRE KEYS OR USE MOCK DATA · SELECT A BLOCK TO TRACE CONTEXT</div></div>`,
-    osahr: `<div class="system-heading"><p class="eyebrow">EXPERIMENT TRACE / STOCHASTIC REWRITE</p><h2>From mechanism to inspectable evidence.</h2><p>The kernel operates on a typed directed hypergraph. A scheduler chooses events; replay records let a result be examined under the conditions that produced it.</p></div><div class="osahr-trace"><div class="trace-top"><span>SEEDED EXPERIMENT / ILLUSTRATIVE TRACE</span><span>GRAPH → RULE → EVENT → REPLAY</span></div><div class="trace-events" data-step="0"><article><small>STATE 00</small><b>Typed graph</b><span>Entities and directed relationships</span></article><article><small>RULE 03</small><b>Match + rewrite</b><span>Eligible structure changes</span></article><article><small>EVENT 14</small><b>Scheduler selects</b><span>Stochastic time advances</span></article><article><small>REPLAY</small><b>Frozen packet</b><span>Inspect conditions and outcome</span></article></div><div class="trace-controls"><button class="trace-step" type="button">Advance illustrative trace <span aria-hidden="true">↗</span></button><span class="trace-step-label" aria-live="polite">Current focus: typed graph.</span></div><div class="trace-footer">Research mechanism · illustrative UI sequence, not a kernel run or calibrated prediction</div></div>`,
-  }[slug];
-  document.getElementById('app').innerHTML = `
-    <header class="syber-header">
-  <a class="syber-wordmark" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png?v=prism" alt="" width="29" height="32"><span>SYBERLABS</span></a>
-  <nav class="syber-nav" aria-label="Main navigation"><a href="/#work">Work</a><a href="/#system">System</a></nav>
-  <div class="syber-actions"><a class="syber-contact" href="mailto:syberlabs.software@gmail.com">Get in touch <span aria-hidden="true">↗</span></a><details class="syber-mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation"><a href="/#work">Work</a><a href="/#system">System</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details></div>
-</header>
-    <main><section class="hero" id="overview"><canvas class="procedural-field" aria-hidden="true"></canvas><div class="hero-copy"><p class="eyebrow">SYBERLABS / ${p.number} / ${p.category}</p><h1>${p.headline}</h1><p class="intro">${p.intro}</p><div class="actions">${p.actions.map(([label, url]) => `<a href="${url}">${label}</a>`).join('')}</div><p class="status"><span></span>${p.status}</p></div><div class="product-art art-${slug}" aria-label="Illustration of ${p.name} product concept" role="img">${art}</div></section>
-    <section class="product-system" id="mechanics">${system}</section>
-  </main>
-    <footer class="syber-footer"><a href="/">SYBERLABS</a><a href="/#work">Explore all projects ↗</a><span>© 2026 SyberLabs</span></footer>`;
-  const visual = document.querySelector('.product-art');
-  mountProcedural(document.querySelector('.procedural-field'), slug);
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  visual.addEventListener('pointermove', event => {
-    if (reduceMotion.matches) return;
-    const rect = visual.getBoundingClientRect();
-    visual.style.setProperty('--ry', `${((event.clientX - rect.left) / rect.width - .5) * 14}deg`);
-    visual.style.setProperty('--rx', `${((event.clientY - rect.top) / rect.height - .5) * -11}deg`);
-  });
-  visual.addEventListener('pointerleave', () => {
-    visual.style.removeProperty('--ry'); visual.style.removeProperty('--rx');
-  });
-
-  document.querySelectorAll('[data-rise-mode]').forEach(button => button.addEventListener('click', () => {
-    const pageMode = button.dataset.riseMode === 'page';
-    document.querySelector('.rise-score').dataset.mode = pageMode ? 'page' : 'stream';
-    document.querySelectorAll('[data-rise-mode]').forEach(item => {
-      const active = item === button;
-      item.classList.toggle('is-active', active);
-      item.setAttribute('aria-pressed', String(active));
-    });
-    document.querySelector('.rise-console .control-readout').textContent = pageMode
-      ? 'Page · the same words settle onto a surface you can move through.'
-      : 'Stream · words arrive through time.';
-  }));
-
-  const relayCopy = {
-    research: 'Research remains attached to this job as you move between tools.',
-    draft: 'Version 03 is prepared for review. A change in wording calls for fresh human acceptance.',
-    next: 'Next action: the applicant reviews the exact draft. Relay does not submit it.'
-  };
-  document.querySelectorAll('[data-relay-view]').forEach(button => button.addEventListener('click', () => {
-    document.querySelectorAll('[data-relay-view]').forEach(item => {
-      const active = item === button;
-      item.classList.toggle('is-active', active);
-      item.setAttribute('aria-pressed', String(active));
-    });
-    document.querySelector('.relay-inspector .control-readout').textContent = relayCopy[button.dataset.relayView];
-  }));
-
-  const connectedSources = new Set(['world', 'market']);
-  document.querySelectorAll('[data-source]').forEach(button => button.addEventListener('click', () => {
-    const source = button.dataset.source;
-    if (connectedSources.has(source)) connectedSources.delete(source);
-    else connectedSources.add(source);
-    const connected = connectedSources.has(source);
-    button.classList.toggle('is-connected', connected);
-    button.setAttribute('aria-pressed', String(connected));
-    button.querySelector('small').textContent = `DATA ${source === 'world' ? '01' : '02'} / ${connected ? 'CONNECTED' : 'DISCONNECTED'}`;
-    const inputs = [...connectedSources].map(id => id === 'world' ? 'economic series' : 'market signal');
-    document.querySelector('.omni-context').textContent = inputs.length
-      ? `${inputs.length} visible input${inputs.length === 1 ? '' : 's'}: ${inputs.join(' + ')}.`
-      : 'No connected inputs. The persona has no source context in this illustration.';
-    document.querySelector('.omni-board').classList.toggle('has-no-inputs', inputs.length === 0);
-  }));
-
-  const traceLabels = ['typed graph', 'rule match', 'scheduled event', 'replay packet'];
-  const trace = document.querySelector('.trace-events');
-  document.querySelector('.trace-step')?.addEventListener('click', () => {
-    const step = (Number(trace.dataset.step) + 1) % traceLabels.length;
-    trace.dataset.step = String(step);
-    document.querySelector('.trace-step-label').textContent = `Current focus: ${traceLabels[step]}.`;
+  document.querySelector('meta[name="description"]').content = `${p.headline} ${p.intro}`;
+  document.getElementById('app').innerHTML = `${header()}
+<main id="main">
+  <section class="pj-hero sy-container" aria-labelledby="project-title">
+    <p class="pj-eyebrow sy-label"><span class="pj-dot" aria-hidden="true"></span><span><span class="pj-number">${p.number}</span> / ${esc(p.category)}</span></p>
+    <div class="pj-identity"><span class="sy-heading">${esc(p.name)}</span><span class="pj-divider" aria-hidden="true"></span>${badge(p.status)}</div>
+    <h1 id="project-title" class="sy-display pj-title">${esc(p.headline)}</h1>
+    <p class="sy-body-lg pj-intro">${esc(p.intro)}</p>
+    ${actions(p)}
+  </section>
+  ${slug === 'rise' ? riseFrame() + riseHow() : ''}
+  ${facts(p)}
+  ${others(p)}
+</main>
+${footer()}`;
+  document.querySelector('.sy-menu nav')?.addEventListener('click', event => {
+    if (event.target.closest('a')) event.currentTarget.closest('details').open = false;
   });
 }

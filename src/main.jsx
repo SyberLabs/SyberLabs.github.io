@@ -1,107 +1,106 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { ThemeProvider, createTheme, useColorScheme } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
-import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import risePoster from '../rise-demo/visual-sequence-poster-20260927-v2.jpg';
-import syberMark from '../syber-logo.webp';
-import syberMarkPng from '../syber-logo.png';
-import syberMarkSmall from '../syber-logo-96.png';
-import SystemMaps from './system-maps/SystemMaps.jsx';
+import syberMark from '../syber-logo-96.png';
+import { projects, nav, workWithUs, footerLinks } from '../projects/site-data.js';
+import './syberlabs.css';
 import './home.css';
 
-const theme = createTheme({
-  cssVariables: { colorSchemeSelector: 'data' },
-  colorSchemes: { light: true, dark: true },
-});
-
-const work = [
-  { name: 'Jev', href: '/jev/' },
-  { name: 'Commons', href: '/commons/' },
-  { name: 'OmniOS', href: '/projects/omnios/' },
-  { name: 'OSAHR', href: '/projects/osahr/' },
-];
-
-function ThemeToggle() {
-  const { mode, setMode } = useColorScheme();
-  if (!mode) return null;
-  const dark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  return <IconButton className="theme-toggle" aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'} onClick={() => setMode(dark ? 'light' : 'dark')}>
-    {dark ? <LightModeOutlinedIcon fontSize="small" /> : <DarkModeOutlinedIcon fontSize="small" />}
-  </IconButton>;
+function Icon({ name, size = 20, className = '' }) {
+  const paths = {
+    arrow: <><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></>,
+    down: <><path d="M12 5v14" /><path d="M6 13l6 6 6-6" /></>,
+    external: <><path d="M7 17L17 7" /><path d="M8 7h9v9" /></>,
+    menu: <><path d="M4 9h16" /><path d="M4 15h16" /></>,
+    close: <><path d="M6 6l12 12" /><path d="M18 6L6 18" /></>,
+  };
+  return <svg className={`sy-icon ${className}`} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>;
 }
 
 function Header() {
-  return <header className="site-header">
-    <a className="wordmark" href="/" aria-label="SyberLabs home"><img src={syberMarkSmall} alt="" width="27" height="30" /><span>SYBERLABS</span></a>
-    <nav className="desktop-nav" aria-label="Main navigation">
-      <a href="#work">Work</a><a href="/services/">Services</a><a href="#system">Approach</a><a href="#maps">System maps</a><a href="/research/jev-execution/">Research</a>
-    </nav>
-    <div className="header-actions"><a className="header-contact" href="/services/">Work with us <span aria-hidden="true">↗</span></a><ThemeToggle />
-      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation" onClick={event => { if (event.target.closest('a')) event.currentTarget.closest('details').open = false; }}><a href="#work">Work</a><a href="/services/">Services</a><a href="#system">Approach</a><a href="#maps">System maps</a><a href="/research/jev-execution/">Research</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
+  const closeMenu = event => { if (event.target.closest('a')) event.currentTarget.closest('details').open = false; };
+  return <header className="sy-header">
+    <div className="sy-header__inner">
+      <a className="sy-lockup" href="/" aria-label="SyberLabs home"><img className="sy-lockup__mark" src={syberMark} alt="" width="18" height="20" /><span>SYBERLABS</span></a>
+      <nav className="sy-header__nav" aria-label="Primary">
+        <ul>{nav.map(item => <li key={item.label}><a className="sy-header__link" href={item.href}>{item.label}</a></li>)}</ul>
+        <a className="sy-btn sy-btn--secondary sy-header__action" href={workWithUs.href}>{workWithUs.label}</a>
+      </nav>
+      <details className="sy-menu">
+        <summary className="sy-btn sy-btn--icon" aria-label="Menu"><Icon name="menu" className="sy-icon--open" /><Icon name="close" className="sy-icon--close" /></summary>
+        <div className="sy-menu__panel">
+          <nav aria-label="Mobile" onClick={closeMenu}>
+            <ul>{nav.map(item => <li key={item.label}><a href={item.href}>{item.label}</a></li>)}</ul>
+            <a className="sy-btn sy-btn--secondary" href={workWithUs.href}>{workWithUs.label}</a>
+          </nav>
+        </div>
+      </details>
     </div>
   </header>;
 }
 
 function Hero() {
-  return <section className="hero" aria-labelledby="hero-title">
-    <div className="hero-grid">
-      <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">{['Read', 'Think', 'Build'].map((word, i) => <React.Fragment key={word}>{i > 0 && ' '}<span className="hero-word">{word}<span className="hero-stop">.</span></span></React.Fragment>)}</h1><p className="hero-intro"><span className="hero-rule" aria-hidden="true" />We build interactive reading experiences and inspectable agent systems.</p><div className="hero-actions"><a className="hero-action" href="https://rise.syberlabs.io/sequences/">Start a short reading <span aria-hidden="true">↗</span></a><a className="hero-service-action" href="/services/">Explore a reading pilot <span aria-hidden="true">↗</span></a></div></div>
-      <picture><source srcSet={syberMark} type="image/webp" /><img className="hero-mark" src={syberMarkPng} alt="SyberLabs mark" width="678" height="750" /></picture>
+  return <section className="home-hero sy-container" aria-labelledby="hero-title">
+    <p className="sy-eyebrow">SyberLabs / Independent software lab</p>
+    <h1 id="hero-title" className="sy-display-xl home-hero__title">Read. <br className="home-break" />Think. <br className="home-break" />Build.</h1>
+    <p className="sy-body-lg home-hero__intro">We build interactive reading experiences and inspectable agent systems.</p>
+    <div className="sy-actions home-hero__actions">
+      <a className="sy-btn sy-btn--primary" href="https://rise.syberlabs.io/sequences/">Start a short reading<Icon name="arrow" className="sy-icon--trail" /></a>
+      <a className="sy-btn sy-btn--ghost" href="#work">See the work<Icon name="down" /></a>
     </div>
-    <div className="flagships" id="work">
-      <article className="flagship flagship-rise" aria-labelledby="rise-title">
-        <div className="flagship-top"><span>01 / HUMAN ENVIRONMENT</span><span>RISE · LIVE APP</span></div>
-        <div className="rise-preview"><video className="rise-preview-video" autoPlay muted loop playsInline preload="auto" poster={risePoster} aria-label="RISE concept sequence: kaleidoscopic Attractor, Fractal Flame, Curia tiger and Astronomy"><source src="/rise-demo/rise-visual-sequence-20260927-v2.mp4" type="video/mp4" /></video><span className="rise-preview-caption">NEW VISUAL SEQUENCE / 25 SEC</span></div>
-        <div className="flagship-copy"><h2 id="rise-title">One text.<br />Many ways to feel it.</h2><p className="flagship-update">Read a short sequence, or explore how Jev changes the scene.</p><div className="rise-actions"><a href="https://rise.syberlabs.io/sequences/">Start a short reading <span aria-hidden="true">↗</span></a><a href="https://rise.syberlabs.io/jev-scene-demo">Jev scene demo <span aria-hidden="true">↗</span></a><a href="/rise-demo/">Watch the full demo <span aria-hidden="true">↗</span></a></div></div>
-      </article>
-    </div>
+    <div className="home-hero__rule"><span className="sy-label">{projects.length} projects</span></div>
   </section>;
 }
 
 function Work() {
-  return <section className="work-section" id="other-work" aria-label="Other projects">
-    <div className="work-list">{work.map(item => <a className="work-row" href={item.href} key={item.name}><span className="work-name">{item.name}</span><span className="work-arrow" aria-hidden="true">↗</span></a>)}</div>
+  return <section id="work" className="home-work sy-container" aria-labelledby="work-title">
+    <p className="sy-eyebrow">Work</p>
+    <h2 id="work-title" className="sy-title home-section-title">Projects</h2>
+    <div className="sy-rows home-rows">
+      {projects.map(p => <a key={p.slug} className="sy-row" href={`/projects/${p.slug}/`} style={{ '--accent': p.accent }}>
+        <span className="sy-row__number">{p.number}</span>
+        <span className="sy-row__id">
+          <span className="sy-row__name-line"><span className="sy-row__dot" aria-hidden="true" /><span className="sy-row__name">{p.name}</span></span>
+          <span className="sy-row__category sy-label">{p.category}</span>
+        </span>
+        <span className="sy-row__copy"><span className="sy-row__headline">{p.headline}</span><span className="sy-row__summary">{p.intro}</span></span>
+        <span className="sy-row__status"><span className={`sy-badge sy-badge--${p.status.kind}`}><span className="sy-badge__dot" aria-hidden="true" />{p.status.label}</span></span>
+        <span className="sy-row__arrow"><Icon name="arrow" /></span>
+      </a>)}
+    </div>
   </section>;
 }
 
-function System() {
-  return <section className="system" id="system" aria-labelledby="system-title">
-  <div className="system-inner">
-    <div className="system-heading"><p className="system-eyebrow">THE SYBERLABS FIELD</p><h2 id="system-title">Across the human–agent boundary.</h2><p>Agents can generate and coordinate. People can explore ideas, delegate choices, inspect consequences, and change course.</p></div>
-    <div className="system-planes">
-      <article className="system-plane system-plane-agent" aria-labelledby="agent-plane-title">
-        <span className="plane-index">01 / AGENT SYSTEMS</span><h3 id="agent-plane-title">Infrastructure for agents.</h3>
-        <div className="plane-row"><span className="plane-label">INTRA / WITHIN GENERATION</span><p>Generate, test, stabilize.</p><strong>SyberRuntime</strong></div>
-        <div className="plane-row"><span className="plane-label">AUTHORITY / BEFORE EXECUTION</span><p>Declare and check what an agent may do.</p><strong>Turtle · policy evaluator (P0)</strong></div>
-        <div className="plane-row"><span className="plane-label">EXO / ACROSS SYSTEMS</span><p>Model, deliberate, authorize, coordinate.</p><strong>Barn · Bough · OSAHR · Relay</strong></div>
-        <p className="plane-future"><span>THE DIRECTION</span> SyberLabs SDK, growing from SyberWork.</p>
-      </article>
-      <article className="system-plane system-plane-human" aria-labelledby="human-plane-title">
-        <span className="plane-index">02 / HUMAN ENVIRONMENTS</span><h3 id="human-plane-title">Interfaces for thought.</h3>
-        <div className="plane-row"><span className="plane-label">WORKSPACE / OMNIOS</span><p>Spatial work with inspectable context.</p></div>
-        <div className="plane-row"><span className="plane-label">MEDIA / RISE</span><p>Reading shaped by text, space, sound, and Jev’s delegated choices.</p></div>
-        <p className="plane-future"><span>THE CONNECTION</span> Agent action becomes a human experience.</p>
-      </article>
-    </div>
-    <div className="system-boundary"><span>THE BOUNDARY</span><strong>Human thought <i aria-hidden="true">→</i> Delegated action <i aria-hidden="true">→</i> Inspectable consequence</strong><p>RISE can make delegation fluid. In agent workflows, review stays explicit before an artifact is submitted.</p></div>
-  </div></section>;
-}
-
 function Research() {
-  return <section className="research-feature" aria-labelledby="research-title">
-    <div><p className="eyebrow">OUR RESEARCH FOCUS / SEPTEMBER 2026</p><h2 id="research-title">Building the next layer above JEV.</h2><p>SyberLabs is focusing on the execution layer above typed decisions: turning a model choice into bounded work, checked evidence, and an explicit accepted result.</p><a href="/research/jev-execution/">Read the technical report <span aria-hidden="true">&#8599;</span></a></div>
-    <div className="research-spec"><span>DURABLE OFFLINE PROTOTYPE</span><p>READ &#8594; DECIDE &#8594; CALL<br />CHECK &#8594; ADMIT</p><small>87 regression tests / 2 offline fixtures<br />Live integration remains future work.</small></div>
+  return <section id="research" className="home-research sy-container" aria-labelledby="research-title">
+    <div>
+      <p className="sy-eyebrow">Research / September 2026</p>
+      <h2 id="research-title" className="sy-title home-research__title">Building the next layer above Jev.</h2>
+    </div>
+    <div className="home-research__body">
+      <p className="sy-body-lg">SyberLabs is focusing on the execution layer above typed decisions: turning a model choice into bounded work, checked evidence, and an explicit accepted result.</p>
+      <a className="sy-link home-research__link" href="/research/jev-execution/">Read the technical report<Icon name="arrow" /></a>
+    </div>
   </section>;
 }
 
 function Footer() {
-  return <footer className="site-footer"><a href="/services/">Work with SyberLabs ↗</a><span>© 2026 SyberLabs</span></footer>;
+  return <footer className="sy-footer">
+    <div className="sy-footer__inner">
+      <div className="sy-footer__brand"><img className="sy-lockup__mark" src={syberMark} alt="" width="18" height="20" /><span className="sy-footer__copy">© 2026 SyberLabs</span></div>
+      <nav className="sy-footer__nav" aria-label="Footer">
+        {footerLinks.map(link => <a key={link.label} className="sy-footer__link" href={link.href}>{link.label}{link.external && <Icon name="external" size={16} />}</a>)}
+      </nav>
+    </div>
+  </footer>;
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="dark"><Header /><main><Hero /><Research /><Work /><System /><SystemMaps /></main><Footer /></ThemeProvider>;
+  return <>
+    <a className="sy-skip" href="#main">Skip to content</a>
+    <Header />
+    <main id="main"><Hero /><Work /><Research /></main>
+    <Footer />
+  </>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
