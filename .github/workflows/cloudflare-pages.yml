@@ -37,12 +37,16 @@ jobs:
             android-chrome-512x512.png dist/
           cp -r rise-demo dist/
           cp -r projects dist/
+          cp -r commons dist/
           test -s dist/index.html
           test -s dist/rise-demo/index.html
           test -s dist/rise-demo/rise-demo-20260926.mp4
+          test -s dist/commons/index.html
           for project in rise commons relay omnios osahr; do test -s "dist/projects/$project/index.html"; done
           grep -Fxq '/rise https://rise.syberlabs.io/ 301' dist/_redirects
           grep -Fxq '/rise/* https://rise.syberlabs.io/:splat 301' dist/_redirects
+          grep -Fxq '/projects/commons /commons/ 301' dist/_redirects
+          grep -Fxq '/projects/commons/* /commons/:splat 301' dist/_redirects
       - uses: actions/upload-artifact@v4
         with:
           name: syberlabs-home-${{ github.sha }}

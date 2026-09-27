@@ -46,7 +46,7 @@ const theme = createTheme({
 
 const projects = [
   { name: 'RISE', slug: 'rise', kind: 'Reading interface', description: 'Text becomes a timed, visual and sonic experience. Bring a passage into the Chamber and change how it unfolds.', href: 'https://rise.syberlabs.io/', accent: '#8e70f8', signals: ['TEXT / SPACE', 'TIME / MOTION', 'SOUND / FEELING'] },
-  { name: 'Commons', slug: 'commons', kind: 'Mission coordination', description: 'Turn a shared need into an evidence-backed mission with human review and an outcome people can examine.', accent: '#adf19b', signals: ['NEED / EVIDENCE', 'PLAN / REVIEW', 'OUTCOME / LEARNING'] },
+  { name: 'Commons', slug: 'commons', kind: 'Mission coordination', description: 'A human-directed workspace for community missions. The local prototype and CI foundation are in place; a six-week roadmap covers access, evidence, JEV evaluation, and a pilot rehearsal.', href: '/commons/', accent: '#adf19b', signals: ['NEED / EVIDENCE', 'PLAN / REVIEW', 'OUTCOME / LEARNING'] },
   { name: 'Relay', slug: 'relay', kind: 'Application workspace', description: 'Keep the job, research, draft and exact human approval connected through every revision.', accent: '#48c9c9', signals: ['JOB / CONTEXT', 'DRAFT / REVISION', 'HUMAN / ACCEPTANCE'] },
   { name: 'OmniOS', slug: 'omnios', kind: 'Spatial AI workspace', description: 'Wire live data into a persona on a canvas. See what context reached an answer.', accent: '#ea79c4', signals: ['DATA / BLOCKS', 'CONTEXT / WIRES', 'ANSWER / TRACE'] },
   { name: 'OSAHR', slug: 'osahr', kind: 'Simulation research', description: 'Define graph rules, run stochastic events and inspect the replayable result.', accent: '#e9b66f', signals: ['GRAPH / STATE', 'RULE / EVENT', 'REPLAY / EVIDENCE'] },
@@ -130,7 +130,7 @@ function Header() {
       </Link>
       <Stack direction="row" spacing={{ xs: 1, sm: 2 }} alignItems="center">
         <Button href="#work" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Explore</Button>
-        <Button href="/projects/commons/" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Commons</Button>
+        <Button href="/commons/" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Commons</Button>
         <Button href="#experience" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Experience</Button>
         <Button href="mailto:syberlabs.software@gmail.com" color="primary" variant="outlined" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>Contact</Button>
         <ThemeToggle />
@@ -177,7 +177,7 @@ function Hero() {
         <Typography className="detail-copy">{project.description}</Typography>
         <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 2.5 }}>
           {project.href && <Button href={project.href} variant="contained" endIcon={<ArrowOutwardRoundedIcon />}>Launch RISE</Button>}
-          <Button href={`/projects/${project.slug}/`} variant="outlined" endIcon={<ArrowForwardRoundedIcon />}>Explore project</Button>
+          <Button href={project.slug === 'commons' ? '/commons/' : `/projects/${project.slug}/`} variant="outlined" endIcon={<ArrowForwardRoundedIcon />}>Explore project</Button>
           {active === 0 && <Button href="/rise-demo/" variant="outlined" endIcon={<PlayArrowRoundedIcon />}>Watch demo</Button>}
         </Stack>
       </Box>
