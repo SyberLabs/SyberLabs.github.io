@@ -1,0 +1,94 @@
+/* Jev page: SyberLabs DS v1 skin over the page structure in jev.css and primitives.css.
+   Tokens, header, buttons and footer come from /syberlabs.css. Dark only; lines, not glows. */
+:root { --ink: var(--bg); --paper: var(--text); --muted: var(--text-2); --cyan: var(--brand); --violet: var(--brand); --lime: var(--brand); font-family: var(--font-sans); color: var(--text); background: var(--bg); }
+body { overflow-x: clip; background: var(--bg); color: var(--text); font-family: var(--font-sans); }
+a:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* Neutral grounds: no gradients, halos or glows. */
+.hero, .technical-section, .integration-status { background: var(--bg); }
+.hero:before, .hero-grid, .technical-section:before, .scene-halo { display: none; }
+.technical-section { border-top: 1px solid var(--line); border-bottom: 0; }
+
+/* Type */
+.eyebrow, .kicker, .section-index, .section-tag, .scene-caption, .scene-label, .scroll-cue,
+.primitive-tab span, .micro-label, .readout-kicker, .code-title, .distribution-row, .cube-face span {
+  font-family: var(--font-mono); font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
+}
+.eyebrow, .kicker, .section-index, .section-tag { font-size: 12px; line-height: 16px; color: var(--text-3); }
+.hero { min-height: 0; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: var(--space-8); padding: var(--space-10) max(var(--gutter), calc((100vw - var(--content-max)) / 2)) var(--space-9); }
+.hero-copy { padding-left: 0; }
+.hero h1 { margin: var(--space-6) 0 0; font-family: var(--font-display); font-weight: 400; font-size: 96px; line-height: 92px; letter-spacing: -0.02em; color: var(--text); }
+.hero h1 em, .technical-head h2 em, .status-content h2 em { font-style: italic; color: var(--text-2); }
+.hero-lede { margin: var(--space-6) 0 0; font-size: 18px; line-height: 28px; color: var(--text-2); }
+.hero-actions { margin-top: var(--space-6); gap: var(--space-3); }
+.hero-note { margin-top: var(--space-5); font-size: 14px; line-height: 20px; color: var(--text-3); }
+.button { min-height: var(--control-height); padding: 0 20px; gap: var(--space-2); border-radius: var(--radius); font: 500 16px/24px var(--font-sans); transition: background-color var(--duration-fast) var(--ease); }
+.button:hover { transform: none; text-decoration: none; }
+.button.primary { background: var(--text); border-color: var(--text); color: var(--on-primary); }
+.button.primary:hover { background: #fff; }
+
+/* Decision cube: hairline faces on surface. */
+.scene { perspective: 1100px; }
+.scene-ring { border-color: var(--line-strong); box-shadow: none; }
+.ring-b { border-color: var(--line); }
+.cube-face, .cube-face.right, .cube-face.left { background: rgba(11, 13, 20, .92); border: 1px solid var(--line-strong); box-shadow: none; backdrop-filter: none; }
+.cube-face.top, .cube-face.bottom { background: var(--surface-2); }
+.cube-face span { font-size: 12px; color: var(--text-3); }
+.cube-face strong { font: 400 32px/36px var(--font-display); letter-spacing: -0.01em; color: var(--text); }
+.scene-label { font-size: 12px; color: var(--text-2); }
+.scene-label span { color: var(--text-3); }
+.scene-caption { font-size: 12px; color: var(--text-3); border-top-color: var(--line); }
+.scroll-cue { font-size: 12px; color: var(--text-3); }
+.scroll-cue span { color: var(--text-2); }
+
+/* Sections */
+.section-shell { width: min(100% - 2 * var(--gutter), var(--content-max)); }
+.section-top { padding-top: var(--space-6); color: var(--text-3); }
+.section-rule { background: var(--line); }
+.technical-head { padding: var(--space-9) 0 var(--space-7); }
+.technical-head h2, .status-content h2 { margin: 0; font: 400 64px/64px var(--font-display); letter-spacing: -0.015em; color: var(--text); }
+.technical-head p, .contract-copy p, .status-content p { font-size: 18px; line-height: 28px; color: var(--text-2); }
+.technical-head p:first-child { color: var(--text-2); }
+.text-link { margin-top: var(--space-2); color: var(--brand); font-weight: 500; }
+
+.primitive-console, .contract-code { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: none; overflow: hidden; }
+.primitive-rail, .primitive-readout { background: var(--surface); }
+.primitive-rail { border-bottom-color: var(--line); }
+.primitive-tab { border-right-color: var(--line); border-top: 2px solid transparent; color: var(--text-2); font-family: var(--font-sans); }
+.primitive-tab:hover, .primitive-tab:focus-visible { background: var(--surface-2); }
+.primitive-tab.selected { border-top-color: var(--brand); background: var(--surface-2); }
+.primitive-tab span, .primitive-tab.selected span, .micro-label, .readout-kicker, .code-title { font-size: 12px; color: var(--text-3); }
+.primitive-tab strong, .primitive-readout h3, .contract-copy h3 { font-family: var(--font-sans); font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+.primitive-tab strong { font-size: 18px; line-height: 28px; }
+.primitive-readout h3 { font-size: 24px; line-height: 32px; }
+.contract-copy h3 { font: 400 40px/44px var(--font-display); }
+.primitive-tab small, .primitive-readout p { font-size: 14px; line-height: 20px; color: var(--text-2); }
+.distribution-row { font-size: 12px; color: var(--text-2); }
+.distribution-row .track { height: 4px; border-radius: var(--radius-sm); background: var(--line); }
+.distribution-row .fill { border-radius: var(--radius-sm); background: var(--brand); box-shadow: none; }
+.distribution-row .percent { color: var(--text); }
+.contract-grid { border-bottom-color: var(--line); padding: var(--space-8) 0; }
+.code-title { border-bottom-color: var(--line); }
+.code-title span:last-child { color: var(--text-3); }
+.contract-code pre { font: 400 13px/1.7 var(--font-mono); color: var(--text-2); }
+.integration-status { padding-bottom: var(--space-10); }
+.status-content { padding-top: var(--space-7); }
+.status-content strong { color: var(--text); }
+
+@media (max-width: 1200px) { .hero h1 { font-size: 72px; line-height: 72px; } }
+@media (max-width: 800px) {
+  .hero { display: block; padding: var(--space-8) var(--gutter); }
+  .scene { margin-top: var(--space-6); }
+  .technical-head h2, .status-content h2 { font-size: 40px; line-height: 44px; }
+}
+@media (max-width: 640px) {
+  .hero h1 { font-size: 56px; line-height: 56px; }
+  .hero-actions .button { width: 100%; }
+  .scene-label, .scene-caption { display: none; }
+  .technical-head h2, .status-content h2, .contract-copy h3 { font-size: 32px; line-height: 36px; }
+}
+@media (prefers-reduced-motion: reduce) { .decision-cube, .scene-ring { animation: none !important; } }
+.status-content h2 { margin-bottom: var(--space-6); }
+.status-content > div + div p:first-child { margin-top: 0; }
+.scroll-cue { left: max(var(--gutter), calc((100vw - var(--content-max)) / 2)); }
+.technical-head p.kicker, .status-content p.kicker { font-size: 12px; line-height: 16px; color: var(--text-3); }

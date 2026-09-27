@@ -1,0 +1,59 @@
+/* RISE demo page: the single page layer. Tokens, header, buttons and footer come from /syberlabs.css.
+   The RISE accent appears only as its identity marker. */
+.syber-demo { --accent: var(--accent-rise); }
+.shell { max-width: calc(var(--content-max) + 2 * var(--gutter)); margin: 0 auto; padding: 0 var(--gutter); }
+main { padding: var(--space-9) 0 var(--space-10); }
+
+.eyebrow, .media-meta, .feature-list small {
+  margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--text-3);
+}
+.hero-head .eyebrow { display: flex; align-items: center; gap: var(--space-3); }
+.hero-head .eyebrow::before { content: ''; width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--accent); }
+
+.hero-head { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: var(--space-6); padding-bottom: var(--space-7); }
+.hero-head h1 { margin: var(--space-5) 0 0; font-family: var(--font-display); font-weight: 400; font-size: 96px; line-height: 92px; letter-spacing: -0.02em; }
+.intro { max-width: 32ch; margin: 0; font-size: 18px; line-height: 28px; color: var(--text-2); }
+
+.interactive-entry { padding: var(--space-6) 0 var(--space-7); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.interactive-entry h2 { max-width: 28ch; margin: var(--space-4) 0 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; }
+.interactive-entry p:not(.eyebrow) { max-width: 60ch; margin: var(--space-4) 0 0; font-size: 18px; line-height: 28px; color: var(--text-2); }
+.interactive-entry strong { color: var(--text); font-weight: 600; }
+.interactive-cta { margin-top: var(--space-6); }
+.interactive-entry small { display: block; max-width: var(--measure); margin-top: var(--space-4); font-size: 14px; line-height: 20px; color: var(--text-3); }
+
+.media-meta { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); margin: var(--space-9) 0 var(--space-3); }
+.video-frame { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+video, .video-frame iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; background: #000; object-fit: cover; }
+.caption { max-width: var(--measure); margin: var(--space-3) 0 0; font-size: 14px; line-height: 20px; color: var(--text-3); }
+
+.second-film h2 { margin: var(--space-4) 0 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; }
+.second-film .media-meta { margin-bottom: 0; }
+.second-film .film-intro { max-width: var(--measure); margin: var(--space-3) 0 var(--space-5); color: var(--text-2); }
+
+.below { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: var(--space-7); margin-top: var(--space-9); padding-top: var(--space-6); border-top: 1px solid var(--line); }
+.below h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; }
+.below p { max-width: 60ch; margin: var(--space-4) 0 0; color: var(--text-2); }
+.feature-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 780px; margin-top: var(--space-6); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.feature-list article { padding: var(--space-5) var(--space-5) var(--space-5) 0; }
+.feature-list article + article { padding-left: var(--space-5); border-left: 1px solid var(--line); }
+.feature-list h3 { margin: var(--space-3) 0 var(--space-1); font-size: 18px; line-height: 28px; font-weight: 600; }
+.feature-list p { margin: 0; font-size: 14px; line-height: 20px; color: var(--text-2); }
+.links { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+
+@media (max-width: 860px) {
+  .hero-head { grid-template-columns: 1fr; gap: var(--space-4); }
+  .below { grid-template-columns: 1fr; gap: var(--space-6); }
+}
+@media (max-width: 640px) {
+  main { padding: var(--space-8) 0; }
+  .hero-head { padding-bottom: var(--space-6); }
+  .hero-head h1 { font-size: 56px; line-height: 56px; }
+  .interactive-entry h2, .second-film h2, .below h2 { font-size: 32px; line-height: 36px; }
+  .interactive-entry p:not(.eyebrow) { font-size: 16px; line-height: 24px; }
+  .interactive-cta, .links, .links .sy-btn { width: 100%; }
+  .media-meta { flex-direction: column; align-items: flex-start; gap: var(--space-2); margin-top: var(--space-8); }
+  .feature-list { grid-template-columns: 1fr; }
+  .feature-list article, .feature-list article + article { padding: var(--space-4) 0; border-left: 0; }
+  .feature-list article + article { border-top: 1px solid var(--line); }
+}
