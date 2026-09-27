@@ -3,7 +3,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { header, footer } from '../projects/project-template.js';
 
-const pages = ['approach/index.html', 'commons/index.html', 'jev/index.html', 'rise-demo/index.html', 'services/index.html', 'research/jev-execution/index.html'];
+const pages = ['approach/index.html', 'commons/index.html', 'jev/index.html', 'kev/index.html', 'rise-demo/index.html', 'services/index.html', 'research/jev-execution/index.html'];
 
 for (const file of pages) {
   let html = await readFile(file, 'utf8');

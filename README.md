@@ -1,4 +1,4 @@
-> **Current RISE and Jev status:** RISE offers a Jev reading request on its home screen. Jev selects a released work, passage, and Chamber settings from bounded choices, including six mood sounds. The Chamber renders audio locally. The separate Scriptorium composition route still needs an independently verified authoring outcome.
+> **RISE model migration:** RISE has used Jev for bounded reading decisions and is moving that path to Kev. The migration work adds pinned server-side provider configuration; a live Kev deployment and outcome have not yet been verified. The separate Scriptorium composition route still needs an independently verified authoring outcome.
 
 # SyberLabs homepage
 
@@ -10,7 +10,7 @@ The **System maps** components (`src/system-maps/`, not rendered on the homepage
 
 The public COMMONS roadmap is maintained in `commons/index.html` and included in the same Cloudflare Pages deployment at `/commons/`. The homepage links directly to that route; the previous `/projects/commons/` address redirects there.
 
-The independent Jev evaluation and integration plan lives in `jev/` and is published at `/jev/`. Its product status labels distinguish implemented routes from proposed integrations and must be checked against the source repositories before updating.
+The current migration status lives in `kev/` and is published at `/kev/`. The prior Jev evaluation and integration case study remains at `/jev/` as historical evidence; its results must not be attributed to Kev.
 
 
 The GrokCell Execution report lives at `research/jev-execution/`. It summarizes the durable offline prototype and its evidence limits; preserve the distinction between observed results and planned live integration.
