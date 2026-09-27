@@ -1,0 +1,66 @@
+name: OmniOS public preview
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: omnios-public-preview
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pinned OmniOS source
+        uses: actions/checkout@v4
+        with:
+          repository: SyberLabs/OmniOS
+          ref: 955a6add47df8b9a5287afd758e6ef99d804b945
+          path: omni
+          persist-credentials: false
+      - name: Verify source commit
+        run: test "$(git -C omni rev-parse HEAD)" = "955a6add47df8b9a5287afd758e6ef99d804b945"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: omni/package-lock.json
+      - name: Build public preview
+        working-directory: omni
+        run: |
+          npm ci
+          npm run build:vinext
+          test -s dist/server/wrangler.json
+          test -d dist/client
+          node node_modules/wrangler/bin/wrangler.js deploy --config dist/server/wrangler.json --dry-run --outdir "$RUNNER_TEMP/omni-dry-run"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: omnios-public-preview
+          path: omni/dist/
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v4
+        with:
+          name: omnios-public-preview
+          path: dist/
+      - name: Install pinned Wrangler without deployment credentials
+        run: npm install --prefix "$RUNNER_TEMP/omni-wrangler" --no-save wrangler@4.141.0
+      - name: Publish OmniOS public preview Worker
+        run: node "$RUNNER_TEMP/omni-wrangler/node_modules/wrangler/bin/wrangler.js" deploy --config dist/server/wrangler.json
+        env:
+          CLOUDFLARE_ACCOUNT_ID: 1080d513988ebb38f832ce7cbea7ab1d
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
