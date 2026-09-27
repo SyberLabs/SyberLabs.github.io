@@ -44,10 +44,10 @@ const theme = createTheme({
 });
 
 const projects = [
-  { name: 'RISE', kind: 'Reading interface', description: 'A new way to read through time and space. Explore the interface in a short live demo.', href: '/rise/', action: 'Watch demo', featured: true },
-  { name: 'Relay', kind: 'Application workspace', description: 'Review job research and exact application drafts in one focused workspace.', href: 'https://github.com/SyberLabs/relay', action: 'View project' },
-  { name: 'OmniOS', kind: 'Spatial workspace', description: 'A canvas for working with AI and connected data.', href: 'https://github.com/SyberLabs/OmniOS', action: 'View project' },
-  { name: 'OSAHR', kind: 'Research system', description: 'A research kernel for stochastic simulation on typed hypergraphs.', href: 'https://github.com/SyberLabs/OSAHR_Cell', action: 'View project' },
+  { name: 'RISE', kind: 'Reading interface', description: 'Read through time and space in the live RISE app. Sign-in is required.', href: 'https://rise.syberlabs.io/', action: 'Open live app' },
+  { name: 'Relay', kind: 'Application workspace', description: 'Review job research and exact application drafts in one focused workspace.' },
+  { name: 'OmniOS', kind: 'Spatial workspace', description: 'A canvas for working with AI and connected data.' },
+  { name: 'OSAHR', kind: 'Research system', description: 'A research kernel for stochastic simulation on typed hypergraphs.' },
 ];
 
 function ThemeToggle() {
@@ -94,13 +94,13 @@ function Hero() {
           </Stack>
         </Box>
         <Card variant="outlined" sx={{ overflow: 'hidden', borderColor: 'divider', bgcolor: 'background.paper', borderRadius: 3 }}>
-          <CardActionArea component="a" href="/rise/" aria-label="Watch the RISE demo">
+          <CardActionArea component="a" href="https://rise.syberlabs.io/" aria-label="Open the live RISE app">
             <Box sx={{ position: 'relative', aspectRatio: '16 / 10', bgcolor: '#0a1020' }}>
               <Box component="img" src="/rise/poster-20260926.jpg" alt="RISE reading interface demo preview" sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 38%, rgba(4,10,20,.86) 100%)' }} />
               <Box sx={{ position: 'absolute', bottom: 22, left: 24, right: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#fff' }}>
-                <Box><Typography variant="overline" sx={{ opacity: .75, letterSpacing: '.14em' }}>FEATURED DEMO</Typography><Typography variant="h5">RISE</Typography></Box>
-                <Box sx={{ width: 44, height: 44, borderRadius: '50%', bgcolor: '#fff', color: '#1558a6', display: 'grid', placeItems: 'center' }}><PlayArrowRoundedIcon /></Box>
+                <Box><Typography variant="overline" sx={{ opacity: .75, letterSpacing: '.14em' }}>LIVE APP</Typography><Typography variant="h5">RISE</Typography></Box>
+                <Box sx={{ width: 44, height: 44, borderRadius: '50%', bgcolor: '#fff', color: '#1558a6', display: 'grid', placeItems: 'center' }}><ArrowOutwardRoundedIcon /></Box>
               </Box>
             </Box>
           </CardActionArea>
@@ -117,14 +117,18 @@ function Work() {
     <Typography color="text.secondary" sx={{ mt: 1.5, mb: 4.5, maxWidth: 610 }}>Products and experiments across reading, decision making, spatial computing, and simulation.</Typography>
     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 2.5 }}>
       {projects.map(project => <Card key={project.name} variant="outlined" sx={{ borderColor: 'divider', bgcolor: 'background.paper', borderRadius: 2.5, height: '100%' }}>
-        <CardActionArea component="a" href={project.href} target={project.href.startsWith('http') ? '_blank' : undefined} rel={project.href.startsWith('http') ? 'noopener noreferrer' : undefined} sx={{ height: '100%', p: { xs: 2.5, md: 3 } }}>
+        {project.href ? <CardActionArea component="a" href={project.href} sx={{ height: '100%', p: { xs: 2.5, md: 3 } }}>
           <CardContent sx={{ p: '0 !important', display: 'flex', flexDirection: 'column', minHeight: 195 }}>
             <Typography variant="overline" color="primary" sx={{ fontWeight: 800, letterSpacing: '.1em' }}>{project.kind}</Typography>
             <Typography variant="h5" sx={{ mt: 1, mb: 1.3 }}>{project.name}</Typography>
             <Typography color="text.secondary" sx={{ lineHeight: 1.7, flexGrow: 1 }}>{project.description}</Typography>
             <Stack direction="row" alignItems="center" spacing={.7} color="primary.main" sx={{ mt: 3 }}><Typography variant="button">{project.action}</Typography><ArrowOutwardRoundedIcon fontSize="small" /></Stack>
           </CardContent>
-        </CardActionArea>
+        </CardActionArea> : <CardContent sx={{ p: { xs: 2.5, md: 3 }, minHeight: 195 }}>
+          <Typography variant="overline" color="primary" sx={{ fontWeight: 800, letterSpacing: '.1em' }}>{project.kind}</Typography>
+          <Typography variant="h5" sx={{ mt: 1, mb: 1.3 }}>{project.name}</Typography>
+          <Typography color="text.secondary" sx={{ lineHeight: 1.7 }}>{project.description}</Typography>
+        </CardContent>}
       </Card>)}
     </Box>
   </Container></Box>;
