@@ -1,25 +1,25 @@
 {
   "name": "SyberLabs",
   "short_name": "SyberLabs",
-  "description": "A laboratory for empirical and experiential systems.",
+  "description": "Agent systems and human environments across the human-agent boundary.",
   "start_url": "/",
   "scope": "/",
   "display": "minimal-ui",
-  "background_color": "#06060c",
-  "theme_color": "#06060c",
+  "background_color": "#05060a",
+  "theme_color": "#05060a",
   "icons": [
     {
-      "src": "/apple-touch-icon.png?v=blue-mark",
+      "src": "/apple-touch-icon.png?v=prism",
       "sizes": "180x180",
       "type": "image/png"
     },
     {
-      "src": "/android-chrome-192x192.png?v=blue-mark",
+      "src": "/android-chrome-192x192.png?v=prism",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/android-chrome-512x512.png?v=blue-mark",
+      "src": "/android-chrome-512x512.png?v=prism",
       "sizes": "512x512",
       "type": "image/png"
     }

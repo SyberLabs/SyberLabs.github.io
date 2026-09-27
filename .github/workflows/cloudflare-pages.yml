@@ -29,8 +29,9 @@ jobs:
       - name: Prepare public site
         run: |
           pnpm build
-          cp robots.txt sitemap.xml site.webmanifest _redirects \
-            syber-mark.png og-image.png mateo_robles_resume.pdf \
+          cp 404.html robots.txt sitemap.xml site.webmanifest _redirects \
+            syber-mark.png syber-logo.png syber-logo.webp syber-logo-96.png \
+            og-image.png mateo_robles_resume.pdf \
             favicon.ico favicon-32x32.png favicon-16x16.png \
             favicon-blue.ico favicon-blue-32x32.png favicon-blue-16x16.png \
             apple-touch-icon.png android-chrome-192x192.png \
@@ -42,6 +43,7 @@ jobs:
           cp -r jev dist/
           cp -r research dist/
           test -s dist/index.html
+          test -s dist/404.html
           test -s dist/rise-demo/index.html
           test -s dist/rise-demo/rise-demo-20260926.mp4
           test -s dist/commons/index.html

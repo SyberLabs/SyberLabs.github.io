@@ -4,7 +4,11 @@ import { ThemeProvider, createTheme, useColorScheme } from '@mui/material/styles
 import IconButton from '@mui/material/IconButton';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import risePoster from '../rise-demo/visual-sequence-poster-20260927.jpg';
+import risePoster from '../rise-demo/visual-sequence-poster-20260927-v2.jpg';
+import syberMark from '../syber-logo.webp';
+import syberMarkPng from '../syber-logo.png';
+import syberMarkSmall from '../syber-logo-96.png';
+import SystemMaps from './system-maps/SystemMaps.jsx';
 import './home.css';
 
 const theme = createTheme({
@@ -30,12 +34,12 @@ function ThemeToggle() {
 
 function Header() {
   return <header className="site-header">
-    <a className="wordmark" href="/" aria-label="SyberLabs home"><img src="/favicon-blue-32x32.png" alt="" /><span>SYBERLABS</span></a>
+    <a className="wordmark" href="/" aria-label="SyberLabs home"><img src={syberMarkSmall} alt="" width="27" height="30" /><span>SYBERLABS</span></a>
     <nav className="desktop-nav" aria-label="Main navigation">
-      <a href="#work">Work</a><a href="#system">System</a><a href="/research/jev-execution/">Research</a>
+      <a href="#work">Work</a><a href="#system">Approach</a><a href="#maps">System maps</a><a href="/research/jev-execution/">Research</a>
     </nav>
     <div className="header-actions"><a className="header-contact" href="mailto:syberlabs.software@gmail.com">Get in touch <span aria-hidden="true">↗</span></a><ThemeToggle />
-      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation" onClick={event => { if (event.target.closest('a')) event.currentTarget.closest('details').open = false; }}><a href="#work">Work</a><a href="#system">System</a><a href="/research/jev-execution/">Research</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
+      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation" onClick={event => { if (event.target.closest('a')) event.currentTarget.closest('details').open = false; }}><a href="#work">Work</a><a href="#system">Approach</a><a href="#maps">System maps</a><a href="/research/jev-execution/">Research</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
     </div>
   </header>;
 }
@@ -43,22 +47,14 @@ function Header() {
 function Hero() {
   return <section className="hero" aria-labelledby="hero-title">
     <div className="hero-grid">
-      <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">Software you can <em>feel.</em><br />Decisions you can <em>inspect.</em></h1></div>
+      <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">{['Read', 'Think', 'Build'].map((word, i) => <React.Fragment key={word}>{i > 0 && ' '}<span className="hero-word">{word}<span className="hero-stop">.</span></span></React.Fragment>)}</h1><p className="hero-intro"><span className="hero-rule" aria-hidden="true" />We build interactive reading experiences and inspectable agent systems.</p><a className="hero-action" href="https://rise.syberlabs.io/jev-scene-demo">Try the RISE sample <span aria-hidden="true">↗</span></a></div>
+      <picture><source srcSet={syberMark} type="image/webp" /><img className="hero-mark" src={syberMarkPng} alt="SyberLabs mark" width="678" height="750" /></picture>
     </div>
     <div className="flagships" id="work">
       <article className="flagship flagship-rise" aria-labelledby="rise-title">
-        <div className="flagship-top"><span>01 / EXPERIENTIAL SOFTWARE</span><span>RISE · LIVE APP</span></div>
-        <div className="rise-preview"><video className="rise-preview-video" controls playsInline preload="none" poster={risePoster} aria-label="RISE visual sequence: Attractor, Fractal Flame, Animals and Astronomy"><source src="/rise-demo/rise-visual-sequence-20260927.mp4" type="video/mp4" /></video><span className="rise-preview-caption">NEW VISUAL SEQUENCE / 25 SEC</span></div>
+        <div className="flagship-top"><span>01 / HUMAN ENVIRONMENT</span><span>RISE · LIVE APP</span></div>
+        <div className="rise-preview"><video className="rise-preview-video" autoPlay muted loop playsInline preload="auto" poster={risePoster} aria-label="RISE concept sequence: kaleidoscopic Attractor, Fractal Flame, Curia tiger and Astronomy"><source src="/rise-demo/rise-visual-sequence-20260927-v2.mp4" type="video/mp4" /></video><span className="rise-preview-caption">NEW VISUAL SEQUENCE / 25 SEC</span></div>
         <div className="flagship-copy"><h2 id="rise-title">One text.<br />Many ways to feel it.</h2><p className="flagship-update">Ask Jev to change the world around your reading.</p><div className="rise-actions"><a href="https://rise.syberlabs.io/jev-scene-demo">Try the interactive sample <span aria-hidden="true">↗</span></a><a href="/rise-demo/">Watch the full demo <span aria-hidden="true">↗</span></a></div></div>
-      </article>
-      <article className="flagship flagship-relay" aria-labelledby="relay-title">
-        <div className="flagship-top"><span>02 / EMPIRICAL SOFTWARE</span><span>RELAY · EARLY RELEASE</span></div>
-        <div className="relay-record" role="img" aria-label="Illustrative Relay record: a job posting and applicant research lead to draft version 03, which requires human review after a revision">
-          <div className="record-header"><span>ILLUSTRATIVE RELAY RECORD</span><span>VERSION 03</span></div>
-          <div className="record-chain"><div><small>SOURCE</small><strong>Job posting</strong></div><div><small>CONTEXT</small><strong>Research + facts</strong></div><div><small>DRAFT</small><strong>Version 03</strong></div></div>
-          <div className="record-status"><span className="status-dot" aria-hidden="true" /><span>EXACT WORDING NEEDS HUMAN REVIEW</span></div>
-        </div>
-        <div className="flagship-copy"><h2 id="relay-title">Every draft has a source and a state.</h2><div className="flagship-actions"><a href="https://relay.syberlabs.io/">Open Relay <span aria-hidden="true">↗</span></a><a href="/projects/relay/">Explore Relay <span aria-hidden="true">↗</span></a></div></div>
       </article>
     </div>
   </section>;
@@ -71,19 +67,31 @@ function Work() {
 }
 
 function System() {
-  return <section className="system" id="system" aria-label="Two software paths">
+  return <section className="system" id="system" aria-labelledby="system-title">
   <div className="system-inner">
-    <div className="system-paths" aria-label="Experiential software moves from source text through presentation to reader control. Empirical software moves from a source record through revision to human review.">
-      <div className="system-path"><span className="path-label">EXPERIENTIAL / RISE</span><div className="path-steps"><span>Source text</span><i aria-hidden="true">→</i><span>Timing · space · sound</span><i aria-hidden="true">→</i><strong>Reader control</strong></div></div>
-      <div className="system-path"><span className="path-label">EMPIRICAL / RELAY</span><div className="path-steps"><span>Source record</span><i aria-hidden="true">→</i><span>Versioned draft</span><i aria-hidden="true">→</i><strong>Human review</strong></div></div>
-      <div className="system-convergence"><strong>PERSON IN CONTROL</strong></div>
+    <div className="system-heading"><p className="system-eyebrow">THE SYBERLABS FIELD</p><h2 id="system-title">Across the human–agent boundary.</h2><p>Agents can generate and coordinate. People can explore ideas, delegate choices, inspect consequences, and change course.</p></div>
+    <div className="system-planes">
+      <article className="system-plane system-plane-agent" aria-labelledby="agent-plane-title">
+        <span className="plane-index">01 / AGENT SYSTEMS</span><h3 id="agent-plane-title">Infrastructure for agents.</h3>
+        <div className="plane-row"><span className="plane-label">INTRA / WITHIN GENERATION</span><p>Generate, test, stabilize.</p><strong>SyberRuntime</strong></div>
+        <div className="plane-row"><span className="plane-label">AUTHORITY / BEFORE EXECUTION</span><p>Declare and check what an agent may do.</p><strong>Turtle · policy evaluator (P0)</strong></div>
+        <div className="plane-row"><span className="plane-label">EXO / ACROSS SYSTEMS</span><p>Model, deliberate, authorize, coordinate.</p><strong>Barn · Bough · OSAHR · Relay</strong></div>
+        <p className="plane-future"><span>THE DIRECTION</span> SyberLabs SDK, growing from SyberWork.</p>
+      </article>
+      <article className="system-plane system-plane-human" aria-labelledby="human-plane-title">
+        <span className="plane-index">02 / HUMAN ENVIRONMENTS</span><h3 id="human-plane-title">Interfaces for thought.</h3>
+        <div className="plane-row"><span className="plane-label">WORKSPACE / OMNIOS</span><p>Spatial work with inspectable context.</p></div>
+        <div className="plane-row"><span className="plane-label">MEDIA / RISE</span><p>Reading shaped by text, space, sound, and Jev’s delegated choices.</p></div>
+        <p className="plane-future"><span>THE CONNECTION</span> Agent action becomes a human experience.</p>
+      </article>
     </div>
+    <div className="system-boundary"><span>THE BOUNDARY</span><strong>Human thought <i aria-hidden="true">→</i> Delegated action <i aria-hidden="true">→</i> Inspectable consequence</strong><p>RISE can make delegation fluid. In agent workflows, review stays explicit before an artifact is submitted.</p></div>
   </div></section>;
 }
 
 function Research() {
   return <section className="research-feature" aria-labelledby="research-title">
-    <div><p className="eyebrow">RESEARCH / GC-01 / SEPTEMBER 2026</p><h2 id="research-title">Beyond the typed decision.</h2><p>An execution contract above JEV: bounded work, durable evidence, and explicit acceptance.</p><a href="/research/jev-execution/">Read the technical report <span aria-hidden="true">&#8599;</span></a></div>
+    <div><p className="eyebrow">OUR RESEARCH FOCUS / SEPTEMBER 2026</p><h2 id="research-title">Building the next layer above JEV.</h2><p>SyberLabs is focusing on the execution layer above typed decisions: turning a model choice into bounded work, checked evidence, and an explicit accepted result.</p><a href="/research/jev-execution/">Read the technical report <span aria-hidden="true">&#8599;</span></a></div>
     <div className="research-spec"><span>DURABLE OFFLINE PROTOTYPE</span><p>READ &#8594; DECIDE &#8594; CALL<br />CHECK &#8594; ADMIT</p><small>87 regression tests / 2 offline fixtures<br />Live integration remains future work.</small></div>
   </section>;
 }
@@ -93,7 +101,7 @@ function Footer() {
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="light"><Header /><main><Hero /><System /><Research /><Work /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="dark"><Header /><main><Hero /><Research /><Work /><System /><SystemMaps /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);

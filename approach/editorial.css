@@ -1,9 +1,9 @@
 body.syber-approach {
-  --paper: #f2f0e9;
-  --ink: #191917;
-  --muted: #57564f;
-  --rule: #c7c2b6;
-  --accent: #9e4838;
+  --paper: #f4f6fb;
+  --ink: #070b1a;
+  --muted: #4a556e;
+  --rule: #c5cee0;
+  --accent: #0048f0;
   min-width: 0;
   margin: 0;
   color: var(--ink);
@@ -46,13 +46,13 @@ body .syber-header {
 .method-list p { max-width: 28ch; margin: 0; color: var(--muted); font: 1rem/1.45 Georgia, 'Times New Roman', serif; }
 .project-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); }
 .project-card { position: relative; display: flex; flex-direction: column; min-height: 190px; padding: 22px 24px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); text-decoration: none; transition: background-color .16s ease; }
-.project-card:hover { background: #e9e5db; }
+.project-card:hover { background: #e7edf9; }
 .project-card>span { color: var(--accent); font-size: .63rem; font-weight: 700; letter-spacing: .1em; }
 .project-card strong { margin-top: 19px; font-size: clamp(1.6rem, 2.5vw, 2.4rem); letter-spacing: -.06em; }
 .project-card p { max-width: 29ch; margin: 7px 28px 0 0; color: var(--muted); font: .95rem/1.4 Georgia, 'Times New Roman', serif; }
 .project-card>b { position: absolute; right: 22px; bottom: 23px; font-size: 1.05rem; }
 
-body .syber-footer { gap: 15px 32px; padding: 25px clamp(22px, 6vw, 88px); color: var(--paper); background: #20201d; font-size: .8rem; }
+body .syber-footer { gap: 15px 32px; padding: 25px clamp(22px, 6vw, 88px); color: var(--paper); background: #030407; font-size: .8rem; }
 body .syber-footer>a { color: var(--paper); }
 
 @media (max-width: 760px) {

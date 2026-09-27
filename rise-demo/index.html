@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f2f0e9">
+  <meta name="theme-color" content="#05060a">
   <title>RISE | Live Demo</title>
   <meta name="description" content="Try a preset interactive RISE scene shift, then watch the captured and simulated visual-sequence demo.">
   <link rel="canonical" href="https://syberlabs.io/rise-demo/">
-  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" href="/favicon.ico?v=prism">
   <meta property="og:type" content="website">
   <meta property="og:title" content="RISE | Live Demo">
   <meta property="og:description" content="Try an interactive RISE reading sample or watch the captured and simulated visual-sequence demo.">
@@ -15,7 +15,7 @@
   <meta property="og:image" content="https://syberlabs.io/rise-demo/poster-20260926.jpg">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500&display=swap');
-    :root{color-scheme:dark;font-family:Arial,Helvetica,sans-serif;background:#090b12;color:#f3f1eb}
+    :root{color-scheme:dark;font-family:Arial,Helvetica,sans-serif;background:#090b12;color:#f4f6fb}
     *{box-sizing:border-box}
     body{margin:0;isolation:isolate;background:radial-gradient(circle at 52% 24%,#191123,#090b12 65%)}
     .demo-field{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:.38;z-index:-1}
@@ -107,14 +107,16 @@
   </style>
   <link rel="stylesheet" href="/projects/site-toolkit.css?v=3">
   <link rel="stylesheet" href="/rise-demo/editorial.css?v=1">
+<link rel="stylesheet" href="/projects/site-header.css?v=1">
 </head>
 <body class="syber-demo">
   <canvas id="demo-field" class="demo-field" aria-hidden="true"></canvas>
   <div class="shell">
     <header class="syber-header">
-      <a class="syber-wordmark" href="/"><img src="/favicon-32x32.png" alt="">SYBERLABS</a>
-      <nav class="syber-nav" aria-label="Site navigation"><a href="/#work">Work</a><a href="/projects/rise/">RISE</a><a href="/jev/">Jev</a><a href="/approach/">Approach</a><a class="syber-contact" href="mailto:syberlabs.software@gmail.com">Get in touch ↗</a></nav>
-    </header>
+  <a class="syber-wordmark" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png?v=prism" alt="" width="29" height="32"><span>SYBERLABS</span></a>
+  <nav class="syber-nav" aria-label="Main navigation"><a href="/#work">Work</a><a href="/#system">System</a></nav>
+  <div class="syber-actions"><a class="syber-contact" href="mailto:syberlabs.software@gmail.com">Get in touch <span aria-hidden="true">↗</span></a><details class="syber-mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation"><a href="/#work">Work</a><a href="/#system">System</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details></div>
+</header>
     <main>
       <div class="hero-head">
         <div>
@@ -133,11 +135,11 @@
       <div class="media-meta"><span>01 / Stream to Page to visual sequence</span><span>Captured demo + concept sequence · 83 seconds</span></div>
       <div class="video-frame">
         <video controls playsinline preload="metadata" poster="/rise-demo/poster-20260926.jpg" aria-label="RISE captured demo followed by a simulated JEV visual sequence">
-          <source src="/rise-demo/rise-demo-20260927.mp4" type="video/mp4">
-          Your browser cannot play this video. <a href="/rise-demo/rise-demo-20260927.mp4">Download the demo</a>.
+          <source src="/rise-demo/rise-demo-20260927-v2.mp4" type="video/mp4">
+          Your browser cannot play this video. <a href="/rise-demo/rise-demo-20260927-v2.mp4">Download the demo</a>.
         </video>
       </div>
-      <p class="caption">Captured RISE interface through Stream and Page · Attractor, Fractal Flame, Animals, and Astronomy form a concept sequence with simulated JEV routing.</p>
+      <p class="caption">Captured RISE interface through Stream and Page · a kaleidoscopic Attractor treatment, Fractal Flame, a Curia tiger by Ohara Koson, and Astronomy form a concept sequence with simulated JEV routing. Tiger image: Rijksmuseum, RP-P-1999-385 (public domain).</p>
       <p class="caption">New in the live app: ask Jev for a reading that feels sad, angry, happy, excited, thrilling, or scary. Jev chooses an existing passage and a matching sound. The captured Stream-to-Page segment predates this release; the later visual-routing sequence is simulated.</p>
       <p class="caption">Visual sources: John James Audubon, <a href="https://digital.cincinnatilibrary.org/digital/collection/p16998coll33/id/2">Wild Turkey</a> (public domain); <a href="https://esahubble.org/images/heic2017a/">Jupiter and Europa</a> © NASA, ESA, A. Simon, M. H. Wong and the OPAL team, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
       <section class="second-film" aria-labelledby="sequence-title">
