@@ -5,6 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import risePoster from '../rise-demo/poster-20260926.jpg';
+import LabTrial from './LabTrial.jsx';
 import './home.css';
 
 const theme = createTheme({
@@ -44,7 +45,7 @@ function Hero() {
   return <section className="hero" aria-labelledby="hero-title">
     <div className="hero-grid">
       <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">Software you can <em>feel.</em><br />Decisions you can <em>inspect.</em></h1></div>
-      <div className="hero-aside"><p>We build experiential software that changes how ideas are encountered, and empirical software that shows how a decision was made.</p><a className="text-link" href="#work">Meet the two approaches <span aria-hidden="true">↘</span></a></div>
+      <div className="hero-aside"><p>We build experiential software that changes how ideas are encountered, and empirical software that shows how a decision was made.</p><div className="hero-cta"><a className="text-link" href="#work">Meet the two approaches <span aria-hidden="true">↘</span></a><a className="text-link" href="#trial">Run a lab trial <span aria-hidden="true">↗</span></a></div></div>
     </div>
     <div className="flagships" id="work">
       <article className="flagship flagship-rise" aria-labelledby="rise-title">
@@ -88,7 +89,7 @@ function Footer() {
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="system"><Header /><main><Hero /><System /><Work /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="light"><Header /><main><Hero /><System /><LabTrial /><Work /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
