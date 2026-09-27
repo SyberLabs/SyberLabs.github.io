@@ -1,46 +1,4 @@
 (() => {
-  const probability = document.getElementById('lab-probability');
-  const harm = document.getElementById('lab-harm');
-  const review = document.getElementById('lab-review');
-  const plot = document.querySelector('.lab-plot');
-
-  function updateLab() {
-    const p = Number(probability.value) / 100;
-    const wrongCost = Number(harm.value);
-    const reviewCost = Number(review.value);
-    const actLoss = (1 - p) * wrongCost;
-    const shouldAct = actLoss < reviewCost;
-    document.getElementById('probability-value').textContent = p.toFixed(2);
-    document.getElementById('harm-value').textContent = '$' + wrongCost;
-    document.getElementById('review-value').textContent = '$' + reviewCost;
-    document.getElementById('act-loss').textContent = '$' + actLoss.toFixed(2);
-    document.getElementById('review-loss').textContent = '$' + reviewCost.toFixed(2);
-    document.getElementById('lab-result').textContent = shouldAct ? 'ACT*' : 'REVIEW';
-    document.getElementById('lab-explanation').textContent = shouldAct
-      ? 'Lower expected loss, only if separately authorized.'
-      : 'Review has lower or equal expected loss.';
-
-    const top = Math.max(wrongCost, reviewCost) * 1.12;
-    const y = value => 235 - value / top * 195;
-    const markerX = 40 + p * 520;
-    const markerY = y(actLoss);
-    const svg = `<svg viewBox="0 0 600 280" preserveAspectRatio="none" aria-hidden="true">
-      <defs><linearGradient id="loss-line" x1="0" x2="1"><stop stop-color="#a86dff"/><stop offset=".52" stop-color="#6aece8"/><stop offset="1" stop-color="#d8fa89"/></linearGradient></defs>
-      <path d="M40 40 V235 H560" fill="none" stroke="#9fb2d177" stroke-width="1"/>
-      <path d="M40 ${y(reviewCost).toFixed(1)} H560" fill="none" stroke="#f397dd" stroke-width="2" stroke-dasharray="7 6"/>
-      <path d="M40 ${y(wrongCost).toFixed(1)} L560 ${y(0).toFixed(1)}" fill="none" stroke="url(#loss-line)" stroke-width="4"/>
-      <path d="M${markerX.toFixed(1)} 40 V235" fill="none" stroke="#ffffff70" stroke-dasharray="3 5"/>
-      <circle cx="${markerX.toFixed(1)}" cy="${markerY.toFixed(1)}" r="8" fill="#d8fa89" stroke="#10222d" stroke-width="3"/>
-      <text x="40" y="257" fill="#a8c6d5" font-size="11">0</text><text x="548" y="257" fill="#a8c6d5" font-size="11">1</text>
-    </svg>`;
-    plot.querySelector('svg')?.remove();
-    plot.insertAdjacentHTML('afterbegin', svg);
-    plot.setAttribute('aria-label', `Synthetic expected loss chart. At probability ${p.toFixed(2)}, act loss is $${actLoss.toFixed(2)} and review cost is $${reviewCost.toFixed(2)}. ${shouldAct ? 'Act if authorized' : 'Review'} has lower expected loss.`);
-  }
-
-  [probability, harm, review].forEach(input => input.addEventListener('input', updateLab));
-  updateLab();
-
   const systems = {
     b2b: {
       label: 'WORKED B2B FLOW',
