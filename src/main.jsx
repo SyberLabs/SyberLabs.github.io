@@ -46,11 +46,11 @@ const theme = createTheme({
 });
 
 const projects = [
-  { name: 'RISE', slug: 'rise', kind: 'Reading interface', description: 'Text becomes a timed, visual and sonic experience. Bring a passage into the Chamber and change how it unfolds.', href: 'https://rise.syberlabs.io/', accent: '#8e70f8', signals: ['TEXT / SPACE', 'TIME / MOTION', 'SOUND / FEELING'] },
-  { name: 'Commons', slug: 'commons', kind: 'Mission coordination', description: 'A human-directed workspace for community missions. The local prototype and CI foundation are in place; a six-week roadmap covers access, evidence, JEV evaluation, and a pilot rehearsal.', accent: '#adf19b', signals: ['NEED / EVIDENCE', 'PLAN / REVIEW', 'OUTCOME / LEARNING'] },
-  { name: 'Relay', slug: 'relay', kind: 'Application workspace', description: 'Keep the job, research, draft and exact human approval connected through every revision.', accent: '#48c9c9', signals: ['JOB / CONTEXT', 'DRAFT / REVISION', 'HUMAN / ACCEPTANCE'] },
-  { name: 'OmniOS', slug: 'omnios', kind: 'Spatial AI workspace', description: 'Wire live data into a persona on a canvas. See what context reached an answer.', accent: '#ea79c4', signals: ['DATA / BLOCKS', 'CONTEXT / WIRES', 'ANSWER / TRACE'] },
-  { name: 'OSAHR', slug: 'osahr', kind: 'Simulation research', description: 'Define graph rules, run stochastic events and inspect the replayable result.', accent: '#e9b66f', signals: ['GRAPH / STATE', 'RULE / EVENT', 'REPLAY / EVIDENCE'] },
+  { name: 'RISE', slug: 'rise', kind: 'Reading interface', description: 'Text becomes a timed, visual and sonic experience. Bring a passage into the Chamber and change how it unfolds.', href: 'https://rise.syberlabs.io/', accent: '#8e70f8', signal: 'TEXT / SPACE' },
+  { name: 'Commons', slug: 'commons', kind: 'Mission coordination', description: 'A local prototype for community missions: define a need, review a plan, and inspect the decision history.', accent: '#adf19b', signal: 'NEED / EVIDENCE' },
+  { name: 'Relay', slug: 'relay', kind: 'Application workspace', description: 'Keep the job, research, draft and exact human approval connected through every revision.', accent: '#48c9c9', signal: 'JOB / CONTEXT' },
+  { name: 'OmniOS', slug: 'omnios', kind: 'Spatial AI workspace', description: 'Wire data into a persona on a canvas. See what context reached an answer.', accent: '#ea79c4', signal: 'DATA / BLOCKS' },
+  { name: 'OSAHR', slug: 'osahr', kind: 'Simulation research', description: 'Define graph rules, run stochastic events and inspect the replayable result.', accent: '#e9b66f', signal: 'GRAPH / STATE' },
 ];
 
 function ThemeToggle() {
@@ -70,7 +70,6 @@ function Header() {
         <Typography variant="h6" sx={{ fontFamily: 'Manrope', fontWeight: 800, letterSpacing: '-0.035em' }}>SyberLabs</Typography>
       </Link>
       <Stack direction="row" spacing={{ xs: 1, sm: 2 }} alignItems="center">
-        <Button href="#work" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Explore</Button>
         <Button href="/commons/" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Commons</Button>
         <Button href="#experience" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Experience</Button>
         <Button href="mailto:syberlabs.software@gmail.com" color="primary" variant="outlined" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>Contact</Button>
@@ -107,7 +106,6 @@ function Hero() {
         <Typography variant="overline" className="stage-eyebrow">SYBERLABS <span>·</span> INDEPENDENT AI LAB</Typography>
         <Typography component="h1" variant="h1" className="hero-title">Make the<br /><em>invisible</em><br />enterable.</Typography>
         <Typography className="hero-lede">We build instruments for ideas: to feel a text unfold, coordinate a mission, inspect an answer, or replay a system.</Typography>
-        <div className="intro-index"><span>NOW EXPLORING</span><b>0{active + 1} / 05</b></div>
       </Box>
       <Box role="tablist" aria-label="Explore SyberLabs projects" className="stage-nav" onKeyDown={onTabKeyDown}>
         {projects.map((item, index) => <button key={item.name} type="button" role="tab" tabIndex={active === index ? 0 : -1} id={`project-tab-${index}`} aria-selected={active === index} aria-controls="project-panel" onClick={() => setActive(index)} className={`stage-tab ${active === index ? 'selected' : ''}`} style={{ '--tab-color': item.accent }}>
@@ -122,7 +120,7 @@ function Hero() {
         <Box className="portal-echo echo-one" aria-hidden="true" />
         <Box className="portal-echo echo-two" aria-hidden="true" />
         <Box className="portal-axis" aria-hidden="true" />
-        <Box className="portal-caption" aria-hidden="true"><span>FIELD / 0{active + 1}</span><b>{project.signals[0]}</b></Box>
+        <Box className="portal-caption" aria-hidden="true"><b>{project.signal}</b></Box>
       </Box>
       <Box className="stage-detail" id="project-panel" role="tabpanel" aria-labelledby={`project-tab-${active}`} key={project.name}>
         <Typography className="detail-kicker">FIELD 0{active + 1} / {project.kind}</Typography>
@@ -134,7 +132,6 @@ function Hero() {
           {active === 0 && <Button href="/rise-demo/" variant="outlined" endIcon={<PlayArrowRoundedIcon />}>Watch demo</Button>}
         </Stack>
       </Box>
-      <Box className="stage-bottom"><a href="#experience"><span className="scroll-mark">↓</span> RISE / A TEXT IN MOTION</a><span>USE ← → TO MOVE THROUGH THE FIELDS</span></Box>
     </Container>
   </Box>;
 }
