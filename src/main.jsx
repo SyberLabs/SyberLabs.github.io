@@ -45,11 +45,11 @@ const theme = createTheme({
 });
 
 const projects = [
-  { name: 'RISE', slug: 'rise', kind: 'Reading interface', description: 'Read through time and space in the live RISE app. Sign-in is required.', href: 'https://rise.syberlabs.io/', accent: '#8e70f8' },
-  { name: 'Commons', slug: 'commons', kind: 'Mission coordination', description: 'A human-directed workspace for shared missions, evidence, review, and outcomes. Local prototype; private repository.', accent: '#adf19b' },
-  { name: 'Relay', slug: 'relay', kind: 'Application workspace', description: 'Review job research and exact application drafts in one focused workspace.', accent: '#48c9c9' },
-  { name: 'OmniOS', slug: 'omnios', kind: 'Spatial AI workspace', description: 'A canvas for working with AI and connected data.', accent: '#ea79c4' },
-  { name: 'OSAHR', slug: 'osahr', kind: 'Simulation research', description: 'A research kernel for stochastic simulation on typed hypergraphs.', accent: '#e9b66f' },
+  { name: 'RISE', slug: 'rise', kind: 'Reading interface', description: 'Text becomes a timed, visual and sonic experience. Bring a passage into the Chamber and change how it unfolds.', href: 'https://rise.syberlabs.io/', accent: '#8e70f8', signals: ['TEXT / SPACE', 'TIME / MOTION', 'SOUND / FEELING'] },
+  { name: 'Commons', slug: 'commons', kind: 'Mission coordination', description: 'Turn a shared need into an evidence-backed mission with human review and an outcome people can examine.', accent: '#adf19b', signals: ['NEED / EVIDENCE', 'PLAN / REVIEW', 'OUTCOME / LEARNING'] },
+  { name: 'Relay', slug: 'relay', kind: 'Application workspace', description: 'Keep the job, research, draft and exact human approval connected through every revision.', accent: '#48c9c9', signals: ['JOB / CONTEXT', 'DRAFT / REVISION', 'HUMAN / ACCEPTANCE'] },
+  { name: 'OmniOS', slug: 'omnios', kind: 'Spatial AI workspace', description: 'Wire live data into a persona on a canvas. See what context reached an answer.', accent: '#ea79c4', signals: ['DATA / BLOCKS', 'CONTEXT / WIRES', 'ANSWER / TRACE'] },
+  { name: 'OSAHR', slug: 'osahr', kind: 'Simulation research', description: 'Define graph rules, run stochastic events and inspect the replayable result.', accent: '#e9b66f', signals: ['GRAPH / STATE', 'RULE / EVENT', 'REPLAY / EVIDENCE'] },
 ];
 
 function LabField({ active = 0 }) {
@@ -155,8 +155,8 @@ function Hero() {
     <Container maxWidth="xl" className="lab-stage">
       <Box className="stage-intro">
         <Typography variant="overline" className="stage-eyebrow">INDEPENDENT AI LAB · EST. 2024</Typography>
-        <Typography component="h1" variant="h1" className="hero-title">Make the<br /><em>unknown</em><br />tangible.</Typography>
-        <Typography className="hero-lede">Interfaces and experiments at the edge of reading, intelligence, and simulation.</Typography>
+        <Typography component="h1" variant="h1" className="hero-title">Make ideas<br /><em>physically</em><br />thinkable.</Typography>
+        <Typography className="hero-lede">We build interfaces that let people see time, context, decisions and simulated worlds as material they can work with.</Typography>
       </Box>
       <Box className="scene-wrap" ref={sceneRef} aria-hidden="true">
         <Box className="portal-scene">
@@ -168,6 +168,7 @@ function Hero() {
           <Box className="portal-orbit orbit-one" />
           <Box className="portal-orbit orbit-two" />
           <Box className="portal-label">SYBER / {String(active + 1).padStart(2, '0')}</Box>
+          <Box className="signal-stack" key={project.name}>{project.signals.map((signal, index) => <span className={`signal signal-${index + 1}`} key={signal}>{signal}</span>)}</Box>
         </Box>
       </Box>
       <Box className="stage-detail" id="project-panel" role="tabpanel" aria-labelledby={`project-tab-${active}`} key={project.name}>
