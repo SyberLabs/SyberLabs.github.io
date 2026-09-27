@@ -36,7 +36,7 @@ function Header() {
       <a href="#work">Work</a><a href="#system">System</a><a href="/jev/">Jev</a><a href="/approach/">Approach</a>
     </nav>
     <div className="header-actions"><a className="header-contact" href="mailto:syberlabs.software@gmail.com">Get in touch <span aria-hidden="true">↗</span></a><ThemeToggle />
-      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation"><a href="#work">Work</a><a href="#system">System</a><a href="/jev/">Jev</a><a href="/approach/">Approach</a><a href="/rise-demo/">RISE demo</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
+      <details className="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation" onClick={event => { if (event.target.closest('a')) event.currentTarget.closest('details').open = false; }}><a href="#work">Work</a><a href="#system">System</a><a href="/jev/">Jev</a><a href="/approach/">Approach</a><a href="/rise-demo/">RISE demo</a><a href="mailto:syberlabs.software@gmail.com">Contact</a></nav></details>
     </div>
   </header>;
 }
@@ -79,6 +79,7 @@ function System() {
     <div className="system-paths" aria-label="Experiential software moves from source text through presentation to reader control. Empirical software moves from a source record through revision to human review.">
       <div className="system-path"><span className="path-label">EXPERIENTIAL / RISE</span><div className="path-steps"><span>Source text</span><i aria-hidden="true">→</i><span>Timing · space · sound</span><i aria-hidden="true">→</i><strong>Reader control</strong></div></div>
       <div className="system-path"><span className="path-label">EMPIRICAL / RELAY</span><div className="path-steps"><span>Source record</span><i aria-hidden="true">→</i><span>Versioned draft</span><i aria-hidden="true">→</i><strong>Human review</strong></div></div>
+      <div className="system-convergence"><span className="convergence-mark" aria-hidden="true">◎</span><strong>PERSON IN CONTROL</strong><p>Steer the experience. Review the record.</p></div>
     </div>
     <div className="system-foot"><p>Different products. A shared commitment to letting people steer and inspect.</p><a href="/approach/">Read our approach <span aria-hidden="true">↗</span></a></div>
   </div></section>;
