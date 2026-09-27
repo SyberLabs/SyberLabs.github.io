@@ -1,76 +1,78 @@
-// A small projected-point field. Each product gives the same canvas a different geometry.
-export function mountProcedural(canvas, kind) {
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return () => {};
-  const colors = { rise: [178, 139, 255], commons: [173, 241, 155], relay: [100, 224, 218], omnios: [239, 145, 212], osahr: [240, 196, 135] };
-  const color = colors[kind] || colors.rise;
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let frame = 0, raf = 0, visible = true, stopped = false;
-  const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) draw(); });
-  observer.observe(canvas);
-  const sizeObserver = new ResizeObserver(() => draw());
-  sizeObserver.observe(canvas);
+// The field around the portal: a slow depth of dust in the active project's colour.
+// The sphere acts as a lens. Each mote is drawn where a point lens would place its primary image,
+// theta = (beta + sqrt(beta^2 + 4 thetaE^2)) / 2, brightened by its magnification and stretched
+// along the tangent, so light gathers into a faint ring just outside the glass.
+const COLORS = { rise: [178, 139, 255], commons: [173, 241, 155], relay: [100, 224, 218], omnios: [239, 145, 212], osahr: [240, 196, 135] };
 
-  function dot(x, y, z, size = 1.5, alpha = .5) {
-    const depth = 1 + z / 700;
-    const px = canvas.clientWidth / 2 + x / depth;
-    const py = canvas.clientHeight / 2 + y / depth;
-    if (px < -10 || py < -10 || px > canvas.clientWidth + 10 || py > canvas.clientHeight + 10) return;
-    ctx.fillStyle = `rgba(${color.join(',')},${alpha / depth})`;
-    ctx.beginPath(); ctx.arc(px, py, size / depth, 0, Math.PI * 2); ctx.fill();
+export function mountProcedural(canvas, kind, getLens) {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return { setKind() {}, destroy() {} };
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let target = COLORS[kind] || COLORS.rise, color = target.slice();
+  let raf = 0, stopped = false, visible = true, W = 1, H = 1, dpr = 1, lens = null, lensAge = 0;
+  const t0 = performance.now();
+
+  let seed = 20260926;
+  const r = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296);
+  const motes = Array.from({ length: 460 }, () => ({ x: r(), y: r(), z: .15 + r() * .85, tw: r() * 6.283, s: r() }));
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    dpr = Math.min(devicePixelRatio || 1, 1.75);
+    W = Math.max(1, Math.round(rect.width * dpr)); H = Math.max(1, Math.round(rect.height * dpr));
+    if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+    lens = null;
   }
-  function line(a, b, alpha = .15) {
-    ctx.strokeStyle = `rgba(${color.join(',')},${alpha})`;
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(canvas.clientWidth / 2 + a[0], canvas.clientHeight / 2 + a[1]);
-    ctx.lineTo(canvas.clientWidth / 2 + b[0], canvas.clientHeight / 2 + b[1]); ctx.stroke();
-  }
-  function geometry(t, scale) {
-    if (kind === 'rise') {
-      for (let i = 0; i < 260; i++) {
-        const a = i * 2.39996 + t * .13, b = i * .097;
-        const r = (90 + 45 * Math.sin(b * 3 + t)) * scale;
-        dot(Math.cos(a) * r, Math.sin(a) * r * .63 + Math.sin(b * 2) * 35 * scale, Math.cos(b) * 120, i % 17 ? 1.2 : 2.7, .18 + (i % 7) * .08);
+
+  function frame(now) {
+    if (stopped) return;
+    const still = reduced.matches, t = still ? 0 : (now - t0) / 1000;
+    if (!lens || ++lensAge > 45) { lens = getLens ? getLens() : null; lensAge = 0; }
+    for (let i = 0; i < 3; i++) color[i] += (target[i] - color[i]) * .05;
+    const rgb = color.map(v => v | 0).join(',');
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    const lx = lens ? lens.x * dpr : -1e9, ly = lens ? lens.y * dpr : -1e9, lr = lens ? lens.r * dpr : 0;
+    const thetaE = lr * 1.06, e2 = thetaE * thetaE;
+
+    for (const m of motes) {
+      // parallax drift: nearer motes move faster
+      const x = ((m.x + t * .004 * m.z) % 1) * W, y = ((m.y + t * .0012 * m.z) % 1) * H;
+      let px = x, py = y, mu = 1, tx = 0, ty = 0;
+      if (lens) {
+        const dx = x - lx, dy = y - ly, beta = Math.hypot(dx, dy) || 1e-3;
+        const th = (beta + Math.sqrt(beta * beta + 4 * e2)) / 2;
+        px = lx + dx / beta * th; py = ly + dy / beta * th;
+        const q = thetaE / th;
+        mu = Math.min(4, 1 / Math.max(.25, 1 - q * q * q * q));
+        tx = -dy / beta; ty = dx / beta;
       }
-    } else if (kind === 'commons') {
-      const hubs = Array.from({ length: 5 }, (_, i) => {
-        const a = i * Math.PI * 2 / 5 - .6 + t * .025;
-        return [Math.cos(a) * 145 * scale, Math.sin(a) * 105 * scale];
-      });
-      hubs.forEach((p, i) => { line(p, hubs[(i + 1) % 5], .18); line([0, 0], p, .13); dot(p[0], p[1], -20, 5, .7); });
-      for (let i = 0; i < 120; i++) { const h = hubs[i % 5], a = i * 2.39996 + t * .2, r = (i % 12) * 3 * scale; dot(h[0] + Math.cos(a) * r, h[1] + Math.sin(a) * r, 40, 1.2, .25); }
-    } else if (kind === 'relay') {
-      for (let layer = 0; layer < 4; layer++) {
-        const x = (layer - 1.5) * 38 * scale, y = (layer - 1.5) * 28 * scale;
-        for (let i = 0; i < 58; i++) {
-          const row = Math.floor(i / 10), col = i % 10;
-          dot(x + (col - 4.5) * 17 * scale, y + (row - 2.5) * 18 * scale, 110 - layer * 65, row === 0 ? 2 : 1, .12 + layer * .07);
-        }
-        line([x - 80 * scale, y - 52 * scale], [x + 80 * scale, y - 52 * scale], .17);
+      const tw = .65 + .35 * Math.sin(t * .6 + m.tw);
+      const a = Math.min(.9, (.05 + .2 * m.z) * tw * mu);
+      const size = (.5 + m.z * 1.1 + (m.s > .97 ? 1.2 : 0)) * dpr;
+      ctx.fillStyle = `rgba(${rgb},${a})`;
+      if (mu > 1.25) {
+        const len = size * (mu - 1) * 2.2;
+        ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = size * .9;
+        ctx.beginPath(); ctx.moveTo(px - tx * len, py - ty * len); ctx.lineTo(px + tx * len, py + ty * len); ctx.stroke();
+      } else {
+        ctx.fillRect(px - size / 2, py - size / 2, size, size);
       }
-    } else if (kind === 'omnios') {
-      const hubs = [[-150, -95], [-170, 100], [25, 0], [170, 60]].map(([x, y]) => [x * scale, y * scale]);
-      [[0, 2], [1, 2], [2, 3]].forEach(([a, b]) => line(hubs[a], hubs[b], .26));
-      hubs.forEach((p, i) => { dot(p[0], p[1], -35, i === 2 ? 7 : 4, .8); for (let j = 0; j < 28; j++) { const a = j * 2.4 + t * (i % 2 ? -.16 : .16), r = (j % 7) * 8 * scale; dot(p[0] + Math.cos(a) * r, p[1] + Math.sin(a) * r, 20, 1.3, .3); } });
-      for (let i = 0; i < 30; i++) { const q = i / 30, a = hubs[0], b = hubs[2]; dot(a[0] + (b[0] - a[0]) * ((q + t * .09) % 1), a[1] + (b[1] - a[1]) * ((q + t * .09) % 1), 0, 2, .5); }
-    } else if (kind === 'osahr') {
-      const nodes = Array.from({ length: 7 }, (_, i) => { const a = i * 2.39996 + t * .035; return [Math.cos(a) * (55 + i * 15) * scale, Math.sin(a) * (55 + i * 10) * scale]; });
-      [[0, 1], [0, 3], [1, 4], [2, 4], [2, 5], [3, 6], [4, 6]].forEach(([a, b], i) => line(nodes[a], nodes[b], i === Math.floor(t) % 7 ? .6 : .18));
-      nodes.forEach((p, i) => { dot(p[0], p[1], (i % 3) * 30, 3.5, .7); for (let j = 0; j < 12; j++) { const a = j * .52 + t * .18; dot(p[0] + Math.cos(a) * 16 * scale, p[1] + Math.sin(a) * 16 * scale, 0, 1, .2); } });
     }
+    if (!still && visible && !document.hidden) raf = requestAnimationFrame(frame);
   }
-  function draw() {
-    if (stopped || !visible || document.hidden) return;
-    cancelAnimationFrame(raf);
-    const rect = canvas.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 1.5);
-    const width = Math.max(1, Math.round(rect.width * dpr)), height = Math.max(1, Math.round(rect.height * dpr));
-    if (canvas.width !== width || canvas.height !== height) { canvas.width = width; canvas.height = height; }
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, rect.width, rect.height);
-    geometry(reduced.matches ? 0 : frame / 60, Math.min(rect.width / 700, rect.height / 550, 1.4));
-    if (!reduced.matches) { frame++; raf = requestAnimationFrame(draw); }
-  }
-  const onVisibility = () => { if (!document.hidden) draw(); };
-  document.addEventListener('visibilitychange', onVisibility);
-  draw();
-  return () => { stopped = true; cancelAnimationFrame(raf); observer.disconnect(); sizeObserver.disconnect(); document.removeEventListener('visibilitychange', onVisibility); };
+
+  function start() { cancelAnimationFrame(raf); resize(); raf = requestAnimationFrame(frame); }
+  const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) start(); });
+  io.observe(canvas);
+  const ro = new ResizeObserver(start); ro.observe(canvas);
+  const onVis = () => { if (!document.hidden) start(); };
+  document.addEventListener('visibilitychange', onVis);
+  start();
+
+  return {
+    setKind(next) { target = COLORS[next] || target; if (reduced.matches) { color = target.slice(); start(); } },
+    destroy() { stopped = true; cancelAnimationFrame(raf); io.disconnect(); ro.disconnect(); document.removeEventListener('visibilitychange', onVis); },
+  };
 }

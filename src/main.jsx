@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './visual.css';
 import { mountProcedural } from '../projects/procedural.js';
+import { mountSphereField } from '../projects/sphere-field.js';
+import risePoster from '../rise-demo/poster-20260926.jpg';
 import { ThemeProvider, createTheme, useColorScheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import {
@@ -71,7 +73,7 @@ function Header() {
       </Link>
       <Stack direction="row" spacing={{ xs: 1, sm: 2 }} alignItems="center">
         <Button href="/commons/" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Commons</Button>
-        <Button href="/approach/" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Mission</Button>
+        <Button href="#method" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Approach</Button>
         <Button href="mailto:syberlabs.software@gmail.com" color="primary" variant="outlined" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>Contact</Button>
         <ThemeToggle />
       </Stack>
@@ -83,8 +85,22 @@ function Hero() {
   const [active, setActive] = useState(0);
   const sceneRef = useRef(null);
   const fieldRef = useRef(null);
+  const discRef = useRef(null);
+  const sphereRef = useRef(null);
+  const pointerRef = useRef({ x: 0, y: 0 });
+  const engines = useRef(null);
   const project = projects[active];
-  useEffect(() => mountProcedural(fieldRef.current, project.slug), [project.slug]);
+  useEffect(() => {
+    const lens = () => {
+      const c = fieldRef.current?.getBoundingClientRect(), d = discRef.current?.getBoundingClientRect();
+      return c && d && d.width ? { x: d.left + d.width / 2 - c.left, y: d.top + d.height / 2 - c.top, r: d.width / 2 } : null;
+    };
+    const field = mountProcedural(fieldRef.current, projects[0].slug, lens);
+    const sphere = mountSphereField(sphereRef.current, projects[0].slug, pointerRef, { riseImage: risePoster });
+    engines.current = { field, sphere };
+    return () => { field.destroy(); sphere.destroy(); engines.current = null; };
+  }, []);
+  useEffect(() => { engines.current?.field.setKind(project.slug); engines.current?.sphere.setKind(project.slug); }, [project.slug]);
   const onTabKeyDown = event => {
     const moves = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1, Home: -active, End: projects.length - 1 - active };
     if (!(event.key in moves)) return;
@@ -96,10 +112,12 @@ function Hero() {
   const onMove = event => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !sceneRef.current) return;
     const rect = event.currentTarget.getBoundingClientRect();
-    sceneRef.current.style.setProperty('--tilt-x', `${((event.clientY - rect.top) / rect.height - .5) * -8}deg`);
-    sceneRef.current.style.setProperty('--tilt-y', `${((event.clientX - rect.left) / rect.width - .5) * 12}deg`);
+    const x = (event.clientX - rect.left) / rect.width - .5, y = (event.clientY - rect.top) / rect.height - .5;
+    pointerRef.current = { x, y };
+    sceneRef.current.style.setProperty('--px', x.toFixed(3));
+    sceneRef.current.style.setProperty('--py', y.toFixed(3));
   };
-  return <Box component="section" id="work" className={`lab-hero project-${project.slug}`} onPointerMove={onMove} onPointerLeave={() => { if (sceneRef.current) { sceneRef.current.style.removeProperty('--tilt-x'); sceneRef.current.style.removeProperty('--tilt-y'); } }} style={{ '--active-color': project.accent }}>
+  return <Box component="section" id="work" className={`lab-hero project-${project.slug}`} onPointerMove={onMove} onPointerLeave={() => { pointerRef.current = { x: 0, y: 0 }; if (sceneRef.current) { sceneRef.current.style.removeProperty('--px'); sceneRef.current.style.removeProperty('--py'); } }} style={{ '--active-color': project.accent }}>
     <canvas className="lab-procedural" ref={fieldRef} aria-hidden="true" />
     <Container maxWidth="xl" className="lab-stage">
       <Box className="stage-intro">
@@ -116,7 +134,7 @@ function Hero() {
         <Box className="portal-aura" aria-hidden="true" />
         <Box className="portal-orbit orbit-one" aria-hidden="true" />
         <Box className="portal-orbit orbit-two" aria-hidden="true" />
-        <Box className="portal-disc" aria-hidden="true"><Box className="portal-skin" /></Box>
+        <Box className="portal-disc" ref={discRef} aria-hidden="true"><canvas className="portal-field" ref={sphereRef} /></Box>
         <Box className="portal-echo echo-one" aria-hidden="true" />
         <Box className="portal-echo echo-two" aria-hidden="true" />
         <Box className="portal-axis" aria-hidden="true" />
@@ -155,7 +173,6 @@ function Motivation() {
       <Typography>Elon Musk’s engineering principles motivate our order of work: question each requirement, delete what does not earn its place, simplify, accelerate, then automate.</Typography>
       <Typography>The ponytail review is our reminder to keep cutting: unnecessary abstractions, dependencies, and process should go before we add another feature.</Typography>
       <Typography className="method-sequence">QUESTION <span>→</span> DELETE <span>→</span> SIMPLIFY <span>→</span> ACCELERATE <span>→</span> AUTOMATE</Typography>
-      <Button href="/approach/" variant="outlined" sx={{ mt: 3, color: '#e4cda9', borderColor: '#d8bd8b75' }} endIcon={<ArrowForwardRoundedIcon />}>Read our mission and culture</Button>
     </Box>
   </Container></Box>;
 }
