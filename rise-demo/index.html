@@ -15,7 +15,8 @@
   <style>
     :root{color-scheme:dark;font-family:Arial,Helvetica,sans-serif;background:#090b12;color:#f3f1eb}
     *{box-sizing:border-box}
-    body{margin:0}
+    body{margin:0;isolation:isolate;background:radial-gradient(circle at 52% 24%,#191123,#090b12 65%)}
+    .demo-field{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:.38;z-index:-1}
     a{color:inherit}
     .shell{width:min(1100px,calc(100% - 40px));margin:auto}
     header{display:flex;align-items:center;justify-content:space-between;padding:25px 0 18px;gap:20px}
@@ -39,6 +40,7 @@
   </style>
 </head>
 <body>
+  <canvas id="demo-field" class="demo-field" aria-hidden="true"></canvas>
   <div class="shell">
     <header>
       <a class="brand" href="/">SyberLabs</a>
@@ -65,6 +67,10 @@
     </main>
     <footer>© 2026 SyberLabs</footer>
   </div>
+  <script type="module">
+    import { mountProcedural } from '../projects/procedural.js';
+    mountProcedural(document.getElementById('demo-field'), 'rise');
+  </script>
 </body>
 </html>
 

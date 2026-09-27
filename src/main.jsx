@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './visual.css';
+import { mountProcedural } from '../projects/procedural.js';
 import { ThemeProvider, createTheme, useColorScheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import {
@@ -82,7 +83,9 @@ function Header() {
 function Hero() {
   const [active, setActive] = useState(0);
   const sceneRef = useRef(null);
+  const fieldRef = useRef(null);
   const project = projects[active];
+  useEffect(() => mountProcedural(fieldRef.current, project.slug), [project.slug]);
   const onMove = event => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !sceneRef.current) return;
     const rect = event.currentTarget.getBoundingClientRect();
@@ -90,6 +93,7 @@ function Hero() {
     sceneRef.current.style.setProperty('--tilt-y', `${((event.clientX - rect.left) / rect.width - .5) * 12}deg`);
   };
   return <Box component="section" id="work" className={`lab-hero project-${project.slug}`} onPointerMove={onMove} onPointerLeave={() => { if (sceneRef.current) { sceneRef.current.style.removeProperty('--tilt-x'); sceneRef.current.style.removeProperty('--tilt-y'); } }} style={{ '--active-color': project.accent }}>
+    <canvas className="lab-procedural" ref={fieldRef} aria-hidden="true" />
     <Container maxWidth="xl" className="lab-stage">
       <Box className="stage-intro">
         <Typography variant="overline" className="stage-eyebrow">SYBERLABS / INDEPENDENT AI LAB</Typography>

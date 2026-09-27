@@ -1,3 +1,5 @@
+import { mountProcedural } from './procedural.js';
+
 const projects = {
   rise: {
     number: '01', name: 'RISE', category: 'Audiovisual reader', accent: '#a68bff',
@@ -80,13 +82,14 @@ else {
   }[slug];
   document.getElementById('app').innerHTML = `
     <header><a class="brand" href="/">◉ SyberLabs</a><nav><a href="/#work">All projects</a><a href="mailto:syberlabs.software@gmail.com">Contact ↗</a></nav></header>
-    <main><section class="hero"><div class="hero-copy"><p class="eyebrow">SYBERLABS / ${p.number} / ${p.category}</p><h1>${p.headline}</h1><p class="intro">${p.intro}</p><div class="actions">${p.actions.map(([label, url]) => `<a href="${url}">${label}</a>`).join('')}</div><p class="status"><span></span>${p.status}</p></div><div class="product-art art-${slug}" aria-label="Illustration of ${p.name} product concept" role="img">${art}</div></section>
+    <main><section class="hero"><canvas class="procedural-field" aria-hidden="true"></canvas><div class="hero-copy"><p class="eyebrow">SYBERLABS / ${p.number} / ${p.category}</p><h1>${p.headline}</h1><p class="intro">${p.intro}</p><div class="actions">${p.actions.map(([label, url]) => `<a href="${url}">${label}</a>`).join('')}</div><p class="status"><span></span>${p.status}</p></div><div class="product-art art-${slug}" aria-label="Illustration of ${p.name} product concept" role="img">${art}</div></section>
     <section class="premise"><p class="eyebrow">THE IDEA</p><h2>${p.premise}</h2><p>${p.premiseText}</p></section>
     <section class="product-system">${system}</section>
     <section class="case-study"><div class="case-kicker"><span>FIELD NOTE / ${p.number}</span><strong>${p.caseTag}</strong></div><div class="case-body"><p class="eyebrow">A CONCRETE RUN</p><h2>${p.caseTitle}</h2><p>${p.caseBody}</p></div></section>
     <aside class="boundary"><span>WHAT EXISTS TODAY</span><p>${p.note}</p></aside></main>
     <footer><a href="/#work">← Explore the lab</a><span>© 2026 SyberLabs</span></footer>`;
   const visual = document.querySelector('.product-art');
+  mountProcedural(document.querySelector('.procedural-field'), slug);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   visual.addEventListener('pointermove', event => {
     if (reduceMotion.matches) return;
