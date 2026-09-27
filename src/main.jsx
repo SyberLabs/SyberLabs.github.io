@@ -46,7 +46,7 @@ const theme = createTheme({
 
 const projects = [
   { name: 'RISE', slug: 'rise', kind: 'Reading interface', description: 'Read through time and space in the live RISE app. Sign-in is required.', href: 'https://rise.syberlabs.io/', accent: '#8e70f8' },
-  { name: 'Commons', slug: 'commons', kind: 'Mission coordination', description: 'A human-directed workspace for shared missions, evidence, review, and outcomes. Local prototype; private repository.', accent: '#adf19b' },
+  { name: 'Commons', slug: 'commons', kind: 'Mission coordination', description: 'A human-directed workspace for community missions. The local prototype and CI foundation are in place; a six-week roadmap covers access, evidence, JEV evaluation, and a pilot rehearsal.', accent: '#adf19b' },
   { name: 'Relay', slug: 'relay', kind: 'Application workspace', description: 'Review job research and exact application drafts in one focused workspace.', accent: '#48c9c9' },
   { name: 'OmniOS', slug: 'omnios', kind: 'Spatial AI workspace', description: 'A canvas for working with AI and connected data.', accent: '#ea79c4' },
   { name: 'OSAHR', slug: 'osahr', kind: 'Simulation research', description: 'A research kernel for stochastic simulation on typed hypergraphs.', accent: '#e9b66f' },
@@ -176,7 +176,7 @@ function Hero() {
         <Typography className="detail-copy">{project.description}</Typography>
         <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 2.5 }}>
           {project.href && <Button href={project.href} variant="contained" endIcon={<ArrowOutwardRoundedIcon />}>Launch RISE</Button>}
-          <Button href={`/projects/${project.slug}/`} variant="outlined" endIcon={<ArrowForwardRoundedIcon />}>Explore project</Button>
+          <Button href={project.slug === 'commons' ? '/commons/' : `/projects/${project.slug}/`} variant="outlined" endIcon={<ArrowForwardRoundedIcon />}>Explore project</Button>
           {active === 0 && <Button href="/rise-demo/" variant="outlined" endIcon={<PlayArrowRoundedIcon />}>Watch demo</Button>}
         </Stack>
       </Box>
