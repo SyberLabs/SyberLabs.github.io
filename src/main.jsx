@@ -71,7 +71,7 @@ function Header() {
       </Link>
       <Stack direction="row" spacing={{ xs: 1, sm: 2 }} alignItems="center">
         <Button href="/commons/" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Commons</Button>
-        <Button href="#method" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Approach</Button>
+        <Button href="/approach/" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Mission</Button>
         <Button href="mailto:syberlabs.software@gmail.com" color="primary" variant="outlined" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>Contact</Button>
         <ThemeToggle />
       </Stack>
@@ -155,6 +155,7 @@ function Motivation() {
       <Typography>Elon Musk’s engineering principles motivate our order of work: question each requirement, delete what does not earn its place, simplify, accelerate, then automate.</Typography>
       <Typography>The ponytail review is our reminder to keep cutting: unnecessary abstractions, dependencies, and process should go before we add another feature.</Typography>
       <Typography className="method-sequence">QUESTION <span>→</span> DELETE <span>→</span> SIMPLIFY <span>→</span> ACCELERATE <span>→</span> AUTOMATE</Typography>
+      <Button href="/approach/" variant="outlined" sx={{ mt: 3, color: '#e4cda9', borderColor: '#d8bd8b75' }} endIcon={<ArrowForwardRoundedIcon />}>Read our mission and culture</Button>
     </Box>
   </Container></Box>;
 }
