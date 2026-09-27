@@ -150,6 +150,13 @@ function About() {
   </section>;
 }
 
+// A closing signature: the mark, on its own, before the footer.
+function Sign() {
+  return <div className="home-sign sy-wrap">
+    <picture><source srcSet="/syber-logo.webp" type="image/webp" /><img src="/syber-logo.png" alt="SyberLabs logo" width="678" height="750" loading="lazy" /></picture>
+  </div>;
+}
+
 function Footer() {
   return <footer className="sy-footer home-footer">
     <div className="sy-footer__in">
@@ -166,7 +173,7 @@ export default function App() {
   return <>
     <a className="sy-skip" href="#main">Skip to content</a>
     <Header />
-    <main id="main"><Hero /><Work /><Research /><About /></main>
+    <main id="main"><Hero /><Work /><Research /><About /><Sign /></main>
     <Footer />
   </>;
 }
