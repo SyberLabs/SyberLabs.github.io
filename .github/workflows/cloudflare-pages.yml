@@ -42,6 +42,7 @@ jobs:
           test -s dist/research/jev-execution/report.css
           test -s dist/services/index.html
           test -s dist/services/services.css
+          test -s dist/privacy/index.html
           for project in rise commons relay omnios osahr; do test -s "dist/projects/$project/index.html"; done
           grep -Fxq '/rise https://rise.syberlabs.io/ 301' dist/_redirects
           grep -Fxq '/rise/* https://rise.syberlabs.io/:splat 301' dist/_redirects

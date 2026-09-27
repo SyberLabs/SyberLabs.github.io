@@ -34,7 +34,7 @@ video, .video-frame iframe { display: block; width: 100%; aspect-ratio: 16 / 9; 
 .below { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: var(--space-7); margin-top: var(--space-9); padding-top: var(--space-6); border-top: 1px solid var(--line); }
 .below h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; }
 .below p { max-width: 60ch; margin: var(--space-4) 0 0; color: var(--text-2); }
-.feature-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 780px; margin-top: var(--space-6); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.feature-list { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .feature-list article { padding: var(--space-5) var(--space-5) var(--space-5) 0; }
 .feature-list article + article { padding-left: var(--space-5); border-left: 1px solid var(--line); }
 .feature-list h3 { margin: var(--space-3) 0 var(--space-1); font-size: 18px; line-height: 28px; font-weight: 600; }

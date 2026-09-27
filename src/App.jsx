@@ -46,7 +46,6 @@ function Hero() {
       <a className="sy-btn sy-btn--primary" href="https://rise.syberlabs.io/sequences/">Start a short reading<Icon name="arrow" className="sy-icon--trail" /></a>
       <a className="sy-btn sy-btn--ghost" href="#work">See the work<Icon name="down" /></a>
     </div>
-    <div className="home-hero__rule"><span className="sy-label">{projects.length} projects</span></div>
   </section>;
 }
 
@@ -112,7 +111,7 @@ function About() {
 function Footer() {
   return <footer className="sy-footer">
     <div className="sy-footer__inner">
-      <div className="sy-footer__brand"><img className="sy-lockup__mark" src={syberMark} alt="" width="18" height="20" /><span className="sy-footer__copy">© 2026 SyberLabs</span></div>
+      <div className="sy-footer__brand"><a className="sy-lockup" href="/" aria-label="SyberLabs home"><img className="sy-lockup__mark" src={syberMark} alt="" width="18" height="20" /><span>SYBERLABS</span></a><span className="sy-footer__copy">© 2026 SyberLabs</span></div>
       <nav className="sy-footer__nav" aria-label="Footer">
         {footerLinks.map(link => <a key={link.label} className="sy-footer__link" href={link.href}>{link.label}{link.external && <Icon name="external" size={16} />}</a>)}
       </nav>

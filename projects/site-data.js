@@ -19,11 +19,14 @@ export const nav = [
 export const workWithUs = { label: 'Work with us', href: '/services/' };
 
 export const footerLinks = [
+  { label: 'Approach', href: '/approach/' },
+  { label: 'Jev', href: '/jev/' },
+  { label: 'Services', href: '/services/' },
+  { label: 'Résumé', href: RESUME },
   { label: 'GitHub', href: GITHUB, external: true },
   { label: 'LinkedIn', href: LINKEDIN, external: true },
-  { label: 'Résumé', href: RESUME },
-  { label: 'Services', href: '/services/' },
   { label: 'Contact', href: CONTACT },
+  { label: 'Privacy', href: '/privacy/' },
 ];
 
 export const projects = [

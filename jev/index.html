@@ -16,11 +16,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="/syberlabs.css?v=1">
-  <link rel="stylesheet" href="/jev/jev.css?v=2">
-  <link rel="stylesheet" href="/jev/primitives.css?v=2">
-  <link rel="stylesheet" href="/jev/theme.css?v=1">
-  <script src="/jev/jev.js" defer></script>
-  <script src="/jev/primitives.js?v=2" defer></script>
+  <link rel="stylesheet" href="/jev/jev.css?v=3">
+  <script src="/jev/primitives.js?v=3" defer></script>
 </head>
 <body>
   <a class="sy-skip" href="#main">Skip to content</a>
@@ -31,57 +28,89 @@
   </div></header>
 
   <main id="main">
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-grid" aria-hidden="true"></div>
-      <div class="hero-copy">
-        <p class="eyebrow">AI INTEGRATION / CASE STUDY</p>
-        <h1 id="hero-title">AI decisions<br>with <em>clear</em><br>limits.</h1>
-        <p class="hero-lede">Structured AI answers. Rules in code. The reader stays in control.</p>
-        <div class="hero-actions"><a class="button primary" href="#technical">See how it works <svg class="sy-icon sy-icon--trail" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></a></div>
-        <p class="hero-note">An independent SyberLabs integration of Jev, a decision API from TypeSafe AI, in the RISE reading app. SyberLabs has no partnership with TypeSafe AI.</p>
-      </div>
-      <div class="scene" role="img" aria-label="Three-dimensional visualization of a bounded decision: context enters a Jev judgment, passes through code and human authority, and becomes a permitted action.">
-        <div class="scene-halo"></div><div class="scene-ring ring-a"></div><div class="scene-ring ring-b"></div>
-        <div class="scene-depth">
-          <div class="decision-cube">
-            <div class="cube-face front"><span>01 / CONTEXT</span><strong>What can happen?</strong></div>
-            <div class="cube-face back"><span>03 / CODE</span><strong>What is allowed?</strong></div>
-            <div class="cube-face right"><span>02 / JEV</span><strong>Which choice?</strong></div>
-            <div class="cube-face left"><span>04 / HUMAN</span><strong>Who approves?</strong></div>
-            <div class="cube-face top"></div><div class="cube-face bottom"></div>
-          </div>
-        </div>
-        <div class="scene-label label-one">STATE IN <span>↘</span></div><div class="scene-label label-two">TYPED CHOICE <span>→</span></div><div class="scene-label label-three">AUTHORITY STAYS HERE <span>↗</span></div>
-        <div class="scene-caption"><span>WHERE THE AI DECIDES</span><span>MOVE YOUR POINTER TO ROTATE</span></div>
-      </div>
-      <a class="scroll-cue" href="#technical">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a>
+    <section class="jev-hero sy-container" aria-labelledby="hero-title">
+      <p class="sy-eyebrow">AI integration / Case study</p>
+      <h1 id="hero-title" class="sy-display-xl jev-hero__title">AI decisions with <em>clear limits.</em></h1>
+      <p class="sy-body-lg jev-hero__lede">Structured AI answers. Rules in code. The reader stays in control.</p>
+      <div class="sy-actions jev-hero__actions"><a class="sy-btn sy-btn--primary" href="#technical">See how it works<svg class="sy-icon sy-icon--trail" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></a></div>
+      <p class="sy-small jev-hero__note">An independent SyberLabs integration of Jev, a decision API from TypeSafe AI, in the RISE reading app. SyberLabs has no partnership with TypeSafe AI.</p>
     </section>
 
-    <section class="technical-section" id="technical" aria-labelledby="technical-title"><div class="section-shell">
-      <div class="section-top"><span class="section-index">HOW JEV ANSWERS</span><span class="section-rule"></span><span class="section-tag">TYPED ANSWERS</span></div>
-      <div class="technical-head"><div><p class="kicker">STATE → TYPED ANSWER</p><h2 id="technical-title">Every AI decision<br><em>has a fixed format.</em></h2></div><div><p>Jev answers three kinds of questions: choose one option, estimate the probability of a yes-or-no condition, or rate on a scale. Select a type to see an example. The application’s own code still decides what is allowed.</p><a class="text-link" href="https://docs.typesafe.ai/introduction/quickstart" target="_blank" rel="noopener noreferrer">TypeSafe API quick start ↗</a></div></div>
+    <section class="jev-section sy-container" id="technical" aria-labelledby="technical-title">
+      <div class="jev-split">
+        <p class="sy-eyebrow">How Jev answers</p>
+        <div class="jev-split__main">
+          <h2 id="technical-title" class="sy-title">Every AI decision has a fixed format.</h2>
+          <p class="jev-copy">Jev answers three kinds of questions: choose one option, estimate the probability of a yes-or-no condition, or rate on a scale. Select a type to see an example. The application’s own code still decides what is allowed.</p>
+          <a class="sy-link jev-link" href="https://docs.typesafe.ai/introduction/quickstart" target="_blank" rel="noopener noreferrer">TypeSafe API quick start<svg class="sy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a>
+        </div>
+      </div>
       <div class="primitive-console">
         <div class="primitive-rail" role="tablist" aria-label="Jev question types">
-          <button class="primitive-tab selected" type="button" role="tab" aria-selected="true" aria-controls="primitive-panel" id="tab-choice" data-primitive="choice"><span>01 / CHOICE</span><strong>Select one option</strong><small>Discrete action space</small></button>
-          <button class="primitive-tab" type="button" role="tab" aria-selected="false" aria-controls="primitive-panel" id="tab-noul" data-primitive="noul" tabindex="-1"><span>02 / NOUL</span><strong>Answer yes or no</strong><small>Probability of a condition</small></button>
-          <button class="primitive-tab" type="button" role="tab" aria-selected="false" aria-controls="primitive-panel" id="tab-score" data-primitive="score" tabindex="-1"><span>03 / SCORE</span><strong>Rate on a scale</strong><small>Graded judgment</small></button>
+          <button class="primitive-tab selected" type="button" role="tab" aria-selected="true" aria-controls="primitive-panel" id="tab-choice" data-primitive="choice"><span>01 / Choice</span><strong>Select one option</strong><small>Discrete action space</small></button>
+          <button class="primitive-tab" type="button" role="tab" aria-selected="false" aria-controls="primitive-panel" id="tab-noul" data-primitive="noul" tabindex="-1"><span>02 / Noul</span><strong>Answer yes or no</strong><small>Probability of a condition</small></button>
+          <button class="primitive-tab" type="button" role="tab" aria-selected="false" aria-controls="primitive-panel" id="tab-score" data-primitive="score" tabindex="-1"><span>03 / Score</span><strong>Rate on a scale</strong><small>Graded judgment</small></button>
         </div>
         <div class="primitive-panel" id="primitive-panel" role="tabpanel" aria-labelledby="tab-choice">
-          <div class="primitive-readout"><div><span class="readout-kicker">CURRENT QUESTION</span><h3 id="primitive-title">Which composition route fits this request?</h3><p id="primitive-description">An example route choice. RISE still checks the resulting composition before it is used.</p></div><div class="distribution" id="primitive-distribution" aria-label="Illustrative probability distribution"></div></div>
+          <div class="primitive-readout">
+            <div><p class="sy-label">Current question</p><h3 id="primitive-title" class="sy-heading">Which composition route fits this request?</h3><p id="primitive-description">RISE offers an optional route choice in its Scriptorium composition feature. RISE’s own code still checks the resulting composition before it is used.</p></div>
+            <div class="distribution" id="primitive-distribution" aria-label="Illustrative probability distribution"><div class="distribution-row"><span>experience program</span><span class="track"><span class="fill" style="--width:68%"></span></span><span class="percent">68%</span></div><div class="distribution-row"><span>agent operation set</span><span class="track"><span class="fill" style="--width:32%"></span></span><span class="percent">32%</span></div></div>
+          </div>
+          <div class="contract-code">
+            <div class="code-title"><span>Request and answer</span><span>Example only · no live API call</span></div>
+            <pre><code id="primitive-code">REQUEST
+{
+  "state": "Typed composition intent; target word count.",
+  "model": "jev-latest",
+  "questions": {
+    "route": {
+      "type": "choice",
+      "instructions": "Which composition format best fits the requested outcome?",
+      "criteria": {
+        "experience_program": "A human-facing content program",
+        "agent_operation_set": "An agent workflow or operation set"
+      }
+    }
+  }
+}
+
+ILLUSTRATIVE ANSWER
+{
+  "answers": {
+    "route": {
+      "type": "choice",
+      "choice": "experience_program",
+      "confidence": 0.68,
+      "probabilities": {
+        "experience_program": 0.68,
+        "agent_operation_set": 0.32
+      }
+    }
+  }
+}
+
+PRODUCT POLICY
+validate → authorize → act or hold</code></pre>
+          </div>
         </div>
       </div>
-      <div class="contract-grid"><div class="contract-copy"><span class="micro-label">ILLUSTRATIVE</span><h3>Example request and answer</h3></div><div class="contract-code"><div class="code-title"><span>REQUEST → ANSWER</span><span>EXAMPLE ONLY · NO LIVE API CALL</span></div><pre><code id="primitive-code"></code></pre></div></div>
-    </div></section>
-
-    <section class="integration-status section-shell" id="integrations" aria-labelledby="status-title">
-      <div class="section-top"><span class="section-index">CURRENT STATUS</span><span class="section-rule"></span><span class="section-tag">RISE / READING</span></div>
-      <div class="status-content"><div><p class="kicker">IN THE LIVE APP</p><h2 id="status-title">One request.<br><em>Many ways to read.</em></h2></div><div><p>On the RISE home screen, readers describe the reading they want. Jev chooses a released text and passage, then configures the reader. RISE offers 23 sound options synthesized in the browser: gentle piano and jazz, six other keyboard styles from lullaby to ragtime, six cinematic themes, six mood beds, rain, and two ambient pieces. RISE validates every choice before playback.</p><p>Sound options are stored in PostgreSQL and briefly cached in Redis. Jev receives a short list matched to each request, so a growing catalog does not enlarge the set of options it must choose from. Seven typefaces and five text sizes add visual range, and repeated open-ended requests rotate reading and presentation suggestions. A separate AI composition feature, the Scriptorium, has not yet been independently verified.</p><a class="text-link" href="https://rise.syberlabs.io/">Try a Jev reading in RISE ↗</a></div></div>
     </section>
 
+    <section class="jev-section jev-status sy-container" id="integrations" aria-labelledby="status-title">
+      <div class="jev-split">
+        <p class="sy-eyebrow">In the live app</p>
+        <div class="jev-split__main">
+          <h2 id="status-title" class="sy-title">One request. Many ways to read.</h2>
+          <p class="jev-copy">On the RISE home screen, readers describe the reading they want. Jev chooses a released text and passage, then configures the reader. RISE offers 23 sound options synthesized in the browser: gentle piano and jazz, six other keyboard styles from lullaby to ragtime, six cinematic themes, six mood beds, rain, and two ambient pieces. RISE validates every choice before playback.</p>
+          <p class="jev-copy">Sound options are stored in PostgreSQL and briefly cached in Redis. Jev receives a short list matched to each request, so a growing catalog does not enlarge the set of options it must choose from. Seven typefaces and five text sizes add visual range, and repeated open-ended requests rotate reading and presentation suggestions. A separate AI composition feature, the Scriptorium, has not yet been independently verified.</p>
+          <a class="sy-link jev-link" href="https://rise.syberlabs.io/">Try a Jev reading in RISE<svg class="sy-icon sy-icon--trail" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+    </section>
   </main>
   <footer class="sy-footer"><div class="sy-footer__inner">
     <div class="sy-footer__brand"><a class="sy-lockup" href="/" aria-label="SyberLabs home"><img class="sy-lockup__mark" src="/syber-logo-96.png" alt="" width="18" height="20"><span>SYBERLABS</span></a><span class="sy-footer__copy">© 2026 SyberLabs</span></div>
-    <nav class="sy-footer__nav" aria-label="Footer"><a class="sy-footer__link" href="https://github.com/SyberLabs">GitHub<svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a class="sy-footer__link" href="https://www.linkedin.com/in/mateo-robles-71260b189">LinkedIn<svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a class="sy-footer__link" href="/mateo_robles_resume.pdf">Résumé</a><a class="sy-footer__link" href="/services/">Services</a><a class="sy-footer__link" href="mailto:syberlabs.software@gmail.com">Contact</a></nav>
+    <nav class="sy-footer__nav" aria-label="Footer"><a class="sy-footer__link" href="/approach/">Approach</a><a class="sy-footer__link" href="/jev/" aria-current="page">Jev</a><a class="sy-footer__link" href="/services/">Services</a><a class="sy-footer__link" href="/mateo_robles_resume.pdf">Résumé</a><a class="sy-footer__link" href="https://github.com/SyberLabs">GitHub<svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a class="sy-footer__link" href="https://www.linkedin.com/in/mateo-robles-71260b189">LinkedIn<svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a class="sy-footer__link" href="mailto:syberlabs.software@gmail.com">Contact</a><a class="sy-footer__link" href="/privacy/">Privacy</a></nav>
   </div></footer>
 </body>
 </html>

@@ -285,16 +285,16 @@ a.sy-row:hover .sy-row__arrow { transform: translateX(4px); color: var(--text); 
 }
 .sy-footer__brand { display: flex; align-items: center; gap: var(--space-5); flex-wrap: wrap; }
 .sy-footer__copy { font-size: 14px; line-height: 20px; color: var(--text-3); }
-.sy-footer__nav { display: flex; align-items: center; gap: var(--space-6); flex-wrap: wrap; }
+.sy-footer__nav { display: flex; align-items: center; gap: 0 var(--space-5); flex-wrap: wrap; }
 .sy-footer__link {
   display: inline-flex; align-items: center; gap: var(--space-1); min-height: var(--control-height);
   font-size: 14px; line-height: 20px; color: var(--text-2); text-decoration: none;
   transition: color var(--duration-fast) var(--ease);
 }
-.sy-footer__link:hover { color: var(--text); text-decoration: none; }
+.sy-footer__link:hover, .sy-footer__link[aria-current="page"] { color: var(--text); text-decoration: none; }
 @media (max-width: 640px) {
   .sy-footer__inner { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
-  .sy-footer__nav { gap: var(--space-5); }
+  .sy-footer__nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 0 var(--space-5); }
 }
 
 /* ---------------------------------------------------- Reduced motion */

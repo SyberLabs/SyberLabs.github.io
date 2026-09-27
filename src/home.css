@@ -7,11 +7,6 @@
 .home-hero__intro { margin-top: var(--space-6); max-width: 480px; }
 .home-hero__actions { margin-top: var(--space-7); gap: var(--space-5); }
 .home-hero__actions .sy-btn--ghost { padding: 0 var(--space-2); }
-.home-hero__rule {
-  margin-top: var(--space-9); padding-top: var(--space-4);
-  border-top: 1px solid var(--line);
-  display: flex; justify-content: flex-end;
-}
 
 .home-work { padding-top: var(--space-10); }
 .home-section-title { margin-top: var(--space-4); }
@@ -41,7 +36,6 @@
   .home-hero__title { margin-top: var(--space-5); }
   .home-hero__intro { margin-top: var(--space-5); }
   .home-hero__actions { margin-top: var(--space-6); gap: var(--space-2); }
-  .home-hero__rule { margin-top: var(--space-7); }
   .home-work { padding-top: var(--space-8); }
   .home-section-title { margin-top: var(--space-3); }
   .home-rows { margin-top: var(--space-6); }
@@ -54,7 +48,9 @@
 
 /* Technology line in project rows and the About section. */
 .home-row__stack { display: block; margin-top: var(--space-2); color: var(--text-3); font-size: 14px; line-height: 20px; }
-.home-about { padding-top: var(--space-10); padding-bottom: var(--space-10); border-top: 1px solid var(--line); scroll-margin-top: 64px; }
+/* Rules sit on the content width, not across the gutters. */
+.home-about { padding-top: var(--space-10); padding-bottom: var(--space-10); scroll-margin-top: 64px;
+  background: linear-gradient(var(--line), var(--line)) center top / calc(100% - 2 * var(--gutter)) 1px no-repeat; }
 .home-about__grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr); column-gap: var(--space-9); margin-top: var(--space-7); }
 .home-about__copy p { max-width: 68ch; margin: 0 0 var(--space-5); }
 .home-about__copy > p:not(.sy-body-lg) { color: var(--text-2); font-size: 16px; line-height: 24px; }
@@ -69,3 +65,5 @@
 .home-about__links li { border-bottom: 1px solid var(--line); }
 .home-about__links .sy-link { display: flex; justify-content: space-between; align-items: center; min-height: 44px; overflow-wrap: anywhere; }
 @media (max-width: 1023px) { .home-about__grid { grid-template-columns: 1fr; row-gap: var(--space-8); } }
+@media (max-width: 1023px) { .home-about { padding-top: var(--space-9); padding-bottom: var(--space-9); } }
+@media (max-width: 640px) { .home-about { padding-top: var(--space-8); padding-bottom: var(--space-8); } .home-about__grid { margin-top: var(--space-6); } }

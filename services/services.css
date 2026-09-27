@@ -8,7 +8,7 @@
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin-top: var(--space-6); }
 .intro-note { max-width: var(--measure); margin: var(--space-5) 0 0; font-size: 14px; line-height: 20px; color: var(--text-3); }
 
-.details { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.details { background: linear-gradient(var(--line), var(--line)) center top / min(calc(100% - 2 * var(--gutter)), var(--content-max)) 1px no-repeat, linear-gradient(var(--line), var(--line)) center bottom / min(calc(100% - 2 * var(--gutter)), var(--content-max)) 1px no-repeat; }
 .details-inner { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .details article { padding: var(--space-7) var(--space-6); }
 .details article:first-child { padding-left: 0; }
