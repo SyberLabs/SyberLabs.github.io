@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070b14">
+  <meta name="description" content="SyberLabs' response to Jev: bounded decisions, explicit authority, and a product-by-product integration plan.">
+  <link rel="canonical" href="https://syberlabs.io/jev/">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Jev × SyberLabs | Decisions with boundaries">
+  <meta property="og:description" content="Our technical response and integration plan for Jev across SyberLabs.">
+  <meta property="og:url" content="https://syberlabs.io/jev/">
+  <title>Jev × SyberLabs | Decisions with boundaries</title>
+  <link rel="stylesheet" href="/jev/jev.css">
+  <script src="/jev/jev.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="/"><img src="/favicon-blue-32x32.png" alt="" width="32" height="32"><span>SyberLabs</span></a>
+    <nav aria-label="Main navigation"><a href="/">Home</a><a href="#position">Position</a><a href="#integrations">Integrations</a><a href="#roadmap">Roadmap</a></nav>
+    <a class="header-link" href="https://github.com/SyberLabs" target="_blank" rel="noopener noreferrer">Explore the code <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="pulse"></span> SYBERLABS / TECHNICAL PRIORITY 01</p>
+        <h1 id="hero-title">Intelligence<br>at the <em>decision</em><br>boundary.</h1>
+        <p class="hero-lede">Jev makes fast, typed judgments. We are putting those judgments where a product actually has a choice to make, then keeping permission, validation, and final authority in the system around it.</p>
+        <div class="hero-actions"><a class="button primary" href="#integrations">Explore the integration plan <span aria-hidden="true">↗</span></a><a class="button ghost" href="#position">Read our position <span aria-hidden="true">↓</span></a></div>
+        <p class="hero-note">Jev is TypeSafe AI's model. SyberLabs is independently evaluating and integrating it. This page does not imply a partnership or a verified production deployment.</p>
+      </div>
+      <div class="scene" role="img" aria-label="Three-dimensional visualization of a bounded decision: context enters a Jev judgment, passes through code and human authority, and becomes a permitted action.">
+        <div class="scene-halo"></div><div class="scene-ring ring-a"></div><div class="scene-ring ring-b"></div>
+        <div class="scene-depth">
+          <div class="decision-cube">
+            <div class="cube-face front"><span>01 / CONTEXT</span><strong>What can happen?</strong></div>
+            <div class="cube-face back"><span>03 / CODE</span><strong>What is allowed?</strong></div>
+            <div class="cube-face right"><span>02 / JEV</span><strong>Which choice?</strong></div>
+            <div class="cube-face left"><span>04 / HUMAN</span><strong>Who approves?</strong></div>
+            <div class="cube-face top"></div><div class="cube-face bottom"></div>
+          </div>
+        </div>
+        <div class="scene-label label-one">STATE IN <span>↘</span></div><div class="scene-label label-two">TYPED CHOICE <span>→</span></div><div class="scene-label label-three">AUTHORITY STAYS HERE <span>↗</span></div>
+        <div class="scene-caption"><span>THE DECISION SEAM</span><span>ROTATE / OBSERVE / CONSTRAIN</span></div>
+      </div>
+      <a class="scroll-cue" href="#position">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a>
+    </section>
+
+    <section class="intro section-shell" id="position" aria-labelledby="position-title">
+      <div class="section-top"><span class="section-index">01 / THE RESPONSE</span><span class="section-rule"></span><span class="section-tag">POSITION</span></div>
+      <div class="intro-grid"><div><p class="kicker">OUR OFFICIAL POSITION</p><h2 id="position-title">A smaller model.<br><em>A sharper seam.</em></h2></div><div class="intro-copy"><p>Our response to Jev is to redesign the moment a system chooses. A generative model can draft and explain; Jev can answer a narrow question about a bounded set of options. The application still decides which options exist and whether an action is permitted.</p><p>That is why Jev is a portfolio priority, not a decorative chatbot. We will use it only where the product has multiple useful, permitted paths and an outcome we can observe. If there is no real decision, we keep the existing deterministic path.</p><a class="text-link" href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" target="_blank" rel="noopener noreferrer">Read TypeSafe AI's introduction to Jev ↗</a></div></div>
+      <div class="principles" aria-label="Integration principles"><article><span>01</span><h3>Bound the choices</h3><p>The product defines the available actions before Jev sees the question.</p></article><article><span>02</span><h3>Keep code in control</h3><p>Schema, permissions, safety checks, and cancellation are deterministic.</p></article><article><span>03</span><h3>Show the receipt</h3><p>Record the input, choice, version, outcome, and reason for escalation.</p></article><article><span>04</span><h3>Earn the rollout</h3><p>Compare against a baseline, then require human acceptance for consequential flows.</p></article></div>
+    </section>
+
+    <section class="flow-section" aria-labelledby="flow-title"><div class="section-shell"><div class="section-top"><span class="section-index">02 / THE MACHINE</span><span class="section-rule"></span><span class="section-tag">ARCHITECTURE</span></div><div class="flow-head"><h2 id="flow-title">The path from signal<br>to <em>authorized action.</em></h2><p>Jev is one replaceable judgment layer in a governed flow. It does not get to invent permissions, certify evidence, or silently continue after failure.</p></div><div class="flow" aria-label="Decision flow"><div class="flow-node"><span class="node-number">01</span><span class="node-icon">{ }</span><h3>Observe</h3><p>Collect the minimum state needed for a real product decision.</p></div><div class="flow-line" aria-hidden="true"></div><div class="flow-node highlighted"><span class="node-number">02</span><span class="node-icon">◇</span><h3>Ask Jev</h3><p>Request a typed choice, score, or yes or no judgment.</p></div><div class="flow-line" aria-hidden="true"></div><div class="flow-node"><span class="node-number">03</span><span class="node-icon">⊞</span><h3>Gate</h3><p>Validate output and enforce product rules, consent, and authority.</p></div><div class="flow-line" aria-hidden="true"></div><div class="flow-node"><span class="node-number">04</span><span class="node-icon">↗</span><h3>Act &amp; learn</h3><p>Execute only a permitted path. Record the result for evaluation.</p></div></div><div class="flow-failure"><span>FAILURE PATH</span><p>Timeout, malformed output, or insufficient confidence means hold, retry, or handoff according to the product's rules. It never means silent approval.</p></div></div></section>
+
+    <section class="integrations section-shell" id="integrations" aria-labelledby="integrations-title"><div class="section-top"><span class="section-index">03 / THE PORTFOLIO</span><span class="section-rule"></span><span class="section-tag">INTEGRATION MAP</span></div><div class="integrations-head"><div><p class="kicker">PRODUCT BY PRODUCT</p><h2 id="integrations-title">One model.<br><em>Different decisions.</em></h2></div><p>Each system gets a decision it can actually use. The status on every card distinguishes existing work from a proposed seam.</p></div><div class="product-grid">
+      <article class="product-card featured"><div class="card-top"><span>01 / READING</span><span class="status in-code">IN CODE · ACTIVATION UNVERIFIED</span></div><h3>RISE</h3><p class="card-lead">Choose how a reading experience adapts to the reader, inside declared bounds.</p><div class="card-visual rise-visual" aria-hidden="true"><div class="wave w1"></div><div class="wave w2"></div><div class="wave w3"></div><span>CONTINUE</span><span>SLOWER</span><span>PAUSE</span></div><dl><div><dt>Decision seam</dt><dd>Continue, slow down, or pause a reading moment.</dd></div><div><dt>Authority</dt><dd>Reader consent, passage admission, cancellation, and presentation limits stay in deterministic code.</dd></div><div><dt>Next proof</dt><dd>Configure the provider, verify a connected preview, and evaluate real reading sessions before calling it live.</dd></div></dl><a href="https://github.com/SyberLabs/RISE" target="_blank" rel="noopener noreferrer">RISE repository ↗</a></article>
+      <article class="product-card"><div class="card-top"><span>02 / WORK</span><span class="status planned">PROPOSED</span></div><h3>Relay</h3><p class="card-lead">Route an application packet toward the next useful review step.</p><dl><div><dt>Decision seam</dt><dd>Identify which evidence gap or draft revision should be surfaced next.</dd></div><div><dt>Authority</dt><dd>Facts remain source backed. An exact authenticated human acceptance is required before submission.</dd></div><div><dt>Next proof</dt><dd>Test routing against real reviewed packets without auto sending anything.</dd></div></dl><a href="https://github.com/SyberLabs/relay" target="_blank" rel="noopener noreferrer">Relay repository ↗</a></article>
+      <article class="product-card"><div class="card-top"><span>03 / COORDINATION</span><span class="status planned">PROPOSED</span></div><h3>Commons</h3><p class="card-lead">Help a mission move from a stated need toward a reviewable plan.</p><dl><div><dt>Decision seam</dt><dd>Prioritize the next question or evidence request from permitted options.</dd></div><div><dt>Authority</dt><dd>People own mission goals, approvals, and commitments.</dd></div><div><dt>Next proof</dt><dd>Define observable outcomes for a narrow local pilot before integration.</dd></div></dl><a href="/commons/">Explore Commons ↗</a></article>
+      <article class="product-card"><div class="card-top"><span>04 / SPATIAL WORK</span><span class="status planned">PROPOSED</span></div><h3>OmniOS</h3><p class="card-lead">Choose a useful next canvas operation from visible, authorized context.</p><dl><div><dt>Decision seam</dt><dd>Route among available blocks or tools when several fit the user's intent.</dd></div><div><dt>Authority</dt><dd>The workspace controls tool access and shows which context reached the answer.</dd></div><div><dt>Next proof</dt><dd>Measure routing accuracy against a deterministic baseline.</dd></div></dl><a href="https://github.com/SyberLabs/OmniOS" target="_blank" rel="noopener noreferrer">OmniOS repository ↗</a></article>
+      <article class="product-card"><div class="card-top"><span>05 / SIMULATION</span><span class="status planned">EXPERIMENTAL</span></div><h3>OSAHR</h3><p class="card-lead">Recommend where an experiment should look next, without rewriting its evidence.</p><dl><div><dt>Decision seam</dt><dd>Select a candidate repair or evidence check for an offline comparison.</dd></div><div><dt>Authority</dt><dd>Kernel rules, replay, and independent verification remain authoritative.</dd></div><div><dt>Next proof</dt><dd>Run paired offline experiments and compare against the existing method.</dd></div></dl><a href="https://github.com/SyberLabs/OSAHR_Cell" target="_blank" rel="noopener noreferrer">OSAHR repository ↗</a></article>
+      <article class="product-card boundary"><div class="card-top"><span>06 / AUTHORITY</span><span class="status boundary-status">BOUNDARY</span></div><h3>Turtle</h3><p class="card-lead">The permission envelope stays separate from model judgment.</p><dl><div><dt>Decision seam</dt><dd>Jev may recommend among already permitted options upstream.</dd></div><div><dt>Authority</dt><dd>Turtle's default deny policy and review rules cannot be overridden by a model score.</dd></div><div><dt>Next proof</dt><dd>Demonstrate that low confidence and denied actions fail closed.</dd></div></dl><a href="https://github.com/SyberLabs/turtle-shells" target="_blank" rel="noopener noreferrer">Turtle repository ↗</a></article>
+    </div></section>
+
+    <section class="roadmap-section" id="roadmap" aria-labelledby="roadmap-title"><div class="section-shell"><div class="section-top"><span class="section-index">04 / THE PLAN</span><span class="section-rule"></span><span class="section-tag">RELEASE GATES</span></div><div class="roadmap-head"><div><p class="kicker">WHAT HAPPENS NEXT</p><h2 id="roadmap-title">Make it useful.<br><em>Then make it real.</em></h2></div><p>These are evidence gates, not promised dates. Every move to the next stage needs an observed product outcome.</p></div><ol class="timeline"><li><span class="timeline-num">01</span><div><h3>Find the decision</h3><p>Trace the actual user journey. Name the permitted choices, baseline behavior, failure path, and one measurable result.</p></div><span class="timeline-state">DEFINE</span></li><li><span class="timeline-num">02</span><div><h3>Wire a bounded route</h3><p>Put Jev behind a server-side adapter. Limit inputs and outputs, validate the response, protect credentials, and keep a deterministic escape path.</p></div><span class="timeline-state">IMPLEMENT</span></li><li><span class="timeline-num">03</span><div><h3>Compare with evidence</h3><p>Use representative tasks and human labels. Inspect disagreements, latency, cost, and whether the recommendation improved the user flow.</p></div><span class="timeline-state">EVALUATE</span></li><li><span class="timeline-num">04</span><div><h3>Release by acceptance</h3><p>Check the exact deployed version, exercise real devices and provider calls, and retain human approval wherever the product requires it.</p></div><span class="timeline-state">VERIFY</span></li></ol></div></section>
+
+    <section class="closing section-shell"><p class="kicker">THE COMMITMENT</p><h2>Put judgment where it<br><em>changes the outcome.</em></h2><p>We will publish what is implemented, what is measured, and what remains a proposal. The exciting part is not a model everywhere. It is a better decision at the one place it matters.</p><div class="closing-links"><a class="button primary" href="https://github.com/SyberLabs" target="_blank" rel="noopener noreferrer">Follow the work ↗</a><a class="button ghost" href="mailto:syberlabs.software@gmail.com">Talk to SyberLabs ↗</a></div></section>
+  </main>
+  <footer class="footer"><a class="brand" href="/"><img src="/favicon-blue-32x32.png" alt="" width="28" height="28"><span>SyberLabs</span></a><p>Independent systems work. Evidence before claims.</p><p>© 2026 SyberLabs</p></footer>
+</body>
+</html>

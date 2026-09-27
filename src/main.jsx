@@ -73,6 +73,7 @@ function Header() {
       </Link>
       <Stack direction="row" spacing={{ xs: 1, sm: 2 }} alignItems="center">
         <Button href="/commons/" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Commons</Button>
+        <Button href="/jev/" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Jev</Button>
         <Button href="#method" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Approach</Button>
         <Button href="mailto:syberlabs.software@gmail.com" color="primary" variant="outlined" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>Contact</Button>
         <ThemeToggle />

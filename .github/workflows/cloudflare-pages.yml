@@ -39,11 +39,13 @@ jobs:
           cp -r projects dist/
           cp -r commons dist/
           cp -r approach dist/
+          cp -r jev dist/
           test -s dist/index.html
           test -s dist/rise-demo/index.html
           test -s dist/rise-demo/rise-demo-20260926.mp4
           test -s dist/commons/index.html
           test -s dist/approach/index.html
+          test -s dist/jev/index.html
           for project in rise commons relay omnios osahr; do test -s "dist/projects/$project/index.html"; done
           grep -Fxq '/rise https://rise.syberlabs.io/ 301' dist/_redirects
           grep -Fxq '/rise/* https://rise.syberlabs.io/:splat 301' dist/_redirects
