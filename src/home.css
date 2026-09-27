@@ -27,8 +27,9 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 .hero-stop{margin-left:.012em;color:var(--accent)}
 .hero-intro{display:flex;align-items:center;gap:clamp(12px,1.4vw,20px);margin:clamp(22px,2.4vw,34px) 0 0;color:var(--muted);font-size:clamp(1.12rem,1.65vw,1.5rem);line-height:1.35;letter-spacing:-.02em;animation:hero-rise 1s .36s cubic-bezier(.2,.7,.2,1) both}
 .hero-rule{width:clamp(28px,3.2vw,56px);height:1px;flex:0 0 auto;background:var(--sheen)}
+.hero-action{display:inline-flex;align-items:center;justify-content:space-between;gap:24px;min-height:48px;margin-top:26px;padding:12px 18px;border-radius:4px;background:var(--accent);color:#05060a;font-size:.95rem;font-weight:700;text-decoration:none}.hero-action:hover{background:var(--ice)}
 @keyframes hero-rise{from{opacity:0;transform:translateY(.16em)}to{opacity:1;transform:none}}
-.flagships{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;scroll-margin-top:100px}
+.flagships{scroll-margin-top:100px}
 .flagship{position:relative;display:flex;flex-direction:column;min-width:0;min-height:580px;padding:clamp(23px,2.4vw,38px);overflow:hidden;border-radius:6px}
 .flagship-top{position:relative;z-index:1;display:flex;justify-content:space-between;gap:12px;font-size:.67rem;font-weight:700;letter-spacing:.12em;line-height:1.3}
 .flagship-copy{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;margin-top:auto}
@@ -38,20 +39,13 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 .flagship-copy a:hover{gap:32px}
 .flagship-actions{display:flex;flex-wrap:wrap;gap:0 28px}
 .flagship-rise{color:#f2f5fb;background:#030407;border:1px solid #1f2d57}
-.rise-preview{width:min(100%,430px);margin:clamp(28px,4vw,52px) auto 25px;align-self:center}
+.rise-preview{width:min(100%,700px);margin:clamp(28px,4vw,52px) auto 25px;align-self:center}
 .rise-preview-video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#030407;border:1px solid #2b4a9a;border-radius:4px;box-shadow:0 0 0 5px #0a1433}
 .rise-preview-caption{display:block;margin-top:13px;color:#9cc3f5;font-size:.62rem;font-weight:700;letter-spacing:.14em;text-align:right}
 .flagship-rise .flagship-copy h2{font-family:Georgia,'Times New Roman',serif;font-weight:400;letter-spacing:-.06em}
 .flagship-rise .flagship-update{color:#c3cfe6}
 .rise-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px 25px}
 .rise-actions a:last-child{color:#90d8f0;font-size:.83rem}
-.flagship-relay{border:1px solid #b9c8e6;color:#070b1a;background:#e9eef9}.flagship-relay .flagship-copy h2{font-size:clamp(2.55rem,3.4vw,4.7rem)}
-.relay-record{margin:clamp(48px,6vw,80px) 0 auto;border:1px solid #a9bde6;background:#fbfcff;box-shadow:10px 10px 0 #0048f0}
-.record-header{display:flex;justify-content:space-between;gap:15px;padding:14px 17px;border-bottom:1px solid #cdd7ea;color:#4a556e;font-size:.62rem;font-weight:700;letter-spacing:.1em}
-.record-chain>div{display:grid;grid-template-columns:95px 1fr;gap:3px 12px;padding:12px 17px;border-bottom:1px solid #dde4f2}
-.record-chain small{padding-top:3px;color:#4a556e;font-size:.59rem;font-weight:700;letter-spacing:.1em}.record-chain strong{font-size:1rem;letter-spacing:-.03em}
-.record-status{display:flex;align-items:center;gap:10px;padding:13px 17px;color:#0038c8;font-size:.67rem;font-weight:700;letter-spacing:.08em}
-.status-dot{width:8px;height:8px;flex:0 0 auto;border-radius:50%;background:#0048f0}
 .network-section{background:var(--paper-deep);color:var(--ink);scroll-margin-top:78px}
 .network-inner{max-width:1600px;margin:auto;padding:clamp(60px,7vw,105px) clamp(22px,4vw,72px)}
 .network-heading{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(250px,.75fr);gap:12px 50px;align-items:end;margin-bottom:38px}
@@ -95,16 +89,14 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
   .mobile-menu[open] nav{position:absolute;top:38px;right:0;display:flex;flex-direction:column;width:210px;padding:8px;background:var(--paper);border:1px solid var(--rule);box-shadow:0 20px 40px #0003}
   .mobile-menu nav a{padding:12px 14px;text-decoration:none}.hero{padding-top:38px;padding-bottom:52px}.hero-grid{margin-bottom:24px}
   .hero-grid{grid-template-columns:1fr;gap:18px}.hero-mark{order:-1;width:clamp(92px,26vw,128px);margin:0}
-  .hero h1{font-size:clamp(4.2rem,25vw,7.5rem);line-height:.86}.hero-word{display:block}.flagships{grid-template-columns:1fr}.flagship{min-height:550px}.flagship-relay{min-height:580px}
-  .flagship-copy h2{font-size:clamp(2.8rem,7vw,4.2rem)}.flagship-relay .flagship-copy h2{font-size:clamp(2.7rem,6.5vw,4rem)}
+  .hero h1{font-size:clamp(4.2rem,25vw,7.5rem);line-height:.86}.hero-word{display:block}.flagship{min-height:550px}
+  .flagship-copy h2{font-size:clamp(2.8rem,7vw,4.2rem)}
   .system-heading{grid-template-columns:1fr}.system-heading>p:last-child{max-width:620px}.system-planes{grid-template-columns:1fr}.system-plane{min-height:0}.system-boundary{grid-template-columns:1fr}.system-boundary p{grid-column:1}.work-list{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:480px){
   .network-heading h2{font-size:2.7rem}
-  .flagship{min-height:520px;padding:20px}.flagship-relay{min-height:560px}
-  .flagship-top{font-size:.57rem}.flagship-copy h2,.flagship-relay .flagship-copy h2{font-size:2.55rem}
-  .relay-record{margin-top:50px}.record-header{font-size:.52rem}.record-chain>div{grid-template-columns:72px 1fr;gap:3px 8px;padding:10px 12px}
-  .record-chain small{font-size:.51rem}.record-chain strong{font-size:.91rem}.record-status{padding:11px 12px;font-size:.58rem}
+  .flagship{min-height:520px;padding:20px}
+  .flagship-top{font-size:.57rem}.flagship-copy h2{font-size:2.55rem}
   .hero-intro{margin-top:20px;font-size:1rem}.system-plane{padding:22px}.system-plane h3{margin:22px 0}.system-boundary{padding:22px}.system-boundary strong{font-size:1.25rem}.system-boundary i{padding:0 .15em}
   .work-row{min-height:68px;padding:12px}.work-name{font-size:1.2rem}.site-footer{align-items:flex-start;flex-direction:column}
 }
