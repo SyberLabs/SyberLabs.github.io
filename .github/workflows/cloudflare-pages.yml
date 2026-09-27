@@ -29,7 +29,7 @@ jobs:
       - name: Prepare public site
         run: |
           pnpm build
-          cp robots.txt sitemap.xml site.webmanifest \
+          cp robots.txt sitemap.xml site.webmanifest _redirects \
             syber-mark.png og-image.png mateo_robles_resume.pdf \
             favicon.ico favicon-32x32.png favicon-16x16.png \
             favicon-blue.ico favicon-blue-32x32.png favicon-blue-16x16.png \
@@ -39,7 +39,8 @@ jobs:
           test -s dist/index.html
           test -s dist/rise/index.html
           test -s dist/rise/rise-demo-20260926.mp4
-          test ! -e dist/_redirects
+          grep -Fxq '/rise https://rise.syberlabs.io/ 301' dist/_redirects
+          grep -Fxq '/rise/* https://rise.syberlabs.io/:splat 301' dist/_redirects
       - uses: actions/upload-artifact@v4
         with:
           name: syberlabs-home-${{ github.sha }}
