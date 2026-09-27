@@ -71,7 +71,7 @@ function Header() {
       </Link>
       <Stack direction="row" spacing={{ xs: 1, sm: 2 }} alignItems="center">
         <Button href="/commons/" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Commons</Button>
-        <Button href="#experience" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Experience</Button>
+        <Button href="#method" color="inherit" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Approach</Button>
         <Button href="mailto:syberlabs.software@gmail.com" color="primary" variant="outlined" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>Contact</Button>
         <ThemeToggle />
       </Stack>
@@ -148,6 +148,17 @@ function Experience() {
   </Container></Box>;
 }
 
+function Motivation() {
+  return <Box component="section" id="method" className="lab-method" aria-labelledby="method-title"><Container maxWidth="lg" className="method-inner">
+    <Box><Typography className="method-kicker">WHAT DRIVES THE LAB</Typography><Typography component="h2" id="method-title" className="method-title">Question it.<br /><em>Then cut it.</em></Typography></Box>
+    <Box className="method-copy">
+      <Typography>Elon Musk’s engineering principles motivate our order of work: question each requirement, delete what does not earn its place, simplify, accelerate, then automate.</Typography>
+      <Typography>The ponytail review is our reminder to keep cutting: unnecessary abstractions, dependencies, and process should go before we add another feature.</Typography>
+      <Typography className="method-sequence">QUESTION <span>→</span> DELETE <span>→</span> SIMPLIFY <span>→</span> ACCELERATE <span>→</span> AUTOMATE</Typography>
+    </Box>
+  </Container></Box>;
+}
+
 function Footer() {
   return <Box component="footer" sx={{ bgcolor: 'background.paper', borderTop: '1px solid', borderColor: 'divider', py: 5 }}><Container maxWidth="lg">
     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
@@ -159,7 +170,7 @@ function Footer() {
 }
 
 function App() {
-  return <ThemeProvider theme={theme} defaultMode="system"><CssBaseline /><Header /><main><Hero /><Experience /></main><Footer /></ThemeProvider>;
+  return <ThemeProvider theme={theme} defaultMode="system"><CssBaseline /><Header /><main><Hero /><Experience /><Motivation /></main><Footer /></ThemeProvider>;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
