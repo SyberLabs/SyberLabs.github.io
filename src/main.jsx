@@ -47,7 +47,7 @@ function Hero() {
     </div>
     <div className="flagships" id="work">
       <article className="flagship flagship-rise" aria-labelledby="rise-title">
-        <video className="flagship-video" autoPlay muted loop playsInline preload="metadata" poster={risePoster} aria-hidden="true"><source src="/rise-demo/rise-demo-20260926.mp4" type="video/mp4" /></video>
+        <video className="flagship-video" autoPlay muted loop playsInline preload="metadata" poster={risePoster} aria-hidden="true"><source src="/rise-demo/rise-demo-20260927.mp4" type="video/mp4" /></video>
         <div className="flagship-shade" aria-hidden="true" />
         <div className="flagship-top"><span>01 / EXPERIENTIAL SOFTWARE</span><span>RISE · LIVE APP</span></div>
         <div className="flagship-copy"><h2 id="rise-title">One text.<br />Many ways to feel it.</h2><p className="flagship-update">NEW · Ask Jev for a reading with a mood sound.</p><a href="https://rise.syberlabs.io/">Try it live <span aria-hidden="true">↗</span></a></div>
