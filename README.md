@@ -10,3 +10,5 @@ Built with React, Material UI, and Vite. Run `pnpm install` and `pnpm build` to 
 
 The public COMMONS roadmap is maintained in `commons/index.html` and included in the same Cloudflare Pages deployment at `/commons/`. The homepage links directly to that route; the previous `/projects/commons/` address redirects there.
 
+The Jev response and integration plan lives in `jev/` and is published at `/jev/`. Its product status labels distinguish implemented routes from proposed integrations and must be checked against the source repositories before updating.
+
