@@ -398,7 +398,9 @@ export function mountSphereField(canvas, initialKind, pointer, options = {}) {
   function frame(now) {
     if (stopped) return;
     const still = reduced.matches;
-    const t = still ? 8 : (now - t0) / 1000;
+    // A same-frame RAF timestamp can precede the mount's performance.now().
+    // Clamp it so the first Relay lineage never indexes a negative step.
+    const t = still ? 8 : Math.max(0, (now - t0) / 1000);
     const px = pointer?.current?.x || 0, py = pointer?.current?.y || 0;
     yawOffset += ((still ? 0 : px * .9) - yawOffset) * .06;
     pitchOffset += ((still ? 0 : py * .5) - pitchOffset) * .06;
