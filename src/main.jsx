@@ -46,7 +46,7 @@ function Hero() {
   return <section className="hero" aria-labelledby="hero-title">
     <div className="hero-grid">
       <div className="hero-heading"><p className="eyebrow">INDEPENDENT AI LAB</p><h1 id="hero-title">Make intelligence <em>tangible.</em></h1></div>
-      <div className="hero-aside"><p>We build RISE for immersive reading and tools for decisions you can inspect, question, and control.</p><a className="text-link" href="#work">Explore the work <span aria-hidden="true">↗</span></a></div>
+      <div className="hero-aside"><p>We build RISE for immersive reading and tools for decisions you can inspect, question, and control.</p><div className="hero-cta"><a className="text-link" href="#system">Run a lab trial <span aria-hidden="true">↗</span></a><a className="text-link" href="#work">Explore the work <span aria-hidden="true">↗</span></a></div></div>
     </div>
     <a className="feature" href="/projects/rise/" aria-label="Explore RISE, our reading experience">
       <video className="feature-video" autoPlay muted loop playsInline preload="metadata" poster={risePoster} aria-hidden="true"><source src="/rise-demo/rise-demo-20260926.mp4" type="video/mp4" /></video>

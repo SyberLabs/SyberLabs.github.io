@@ -25,6 +25,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 .hero h1 em,.section-heading h2 em{font-style:normal;text-decoration:underline;text-decoration-thickness:.055em;text-underline-offset:.075em}
 .hero-aside{padding-bottom:6px}
 .hero-aside p{margin:0 0 34px;font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.25rem,1.75vw,1.75rem);line-height:1.36;letter-spacing:-.02em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:16px 28px}
 .text-link{display:inline-flex;align-items:center;gap:20px;font-size:.9rem;font-weight:700;text-decoration:none}
 .feature{position:relative;display:block;min-height:clamp(460px,55vw,760px);overflow:hidden;border-radius:8px;color:#f9f2e8;background:radial-gradient(circle at 55% 42%,#5e312d,#1e1717 65%,#0a0a0a);text-decoration:none}
 .feature-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.78;filter:saturate(.8) contrast(1.08)}
