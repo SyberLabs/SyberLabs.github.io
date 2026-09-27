@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './visual.css';
-import { mountProcedural } from '../projects/procedural.js';
-import { mountSphereField } from '../projects/sphere-field.js';
+import './home.css';
 import risePoster from '../rise-demo/poster-20260926.jpg';
 import { ThemeProvider, createTheme, useColorScheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,7 +13,6 @@ import ArrowOutwardRoundedIcon from '@mui/icons-material/ArrowOutwardRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 
 const theme = createTheme({
   cssVariables: { colorSchemeSelector: 'data' },
@@ -48,11 +46,10 @@ const theme = createTheme({
 });
 
 const projects = [
-  { name: 'RISE', slug: 'rise', kind: 'Reading interface', description: 'Text becomes a timed, visual and sonic experience. Bring a passage into the Chamber and change how it unfolds.', href: 'https://rise.syberlabs.io/', accent: '#8e70f8', signal: 'TEXT / SPACE' },
-  { name: 'Commons', slug: 'commons', kind: 'Mission coordination', description: 'A local prototype for community missions: define a need, review a plan, and inspect the decision history.', accent: '#adf19b', signal: 'NEED / EVIDENCE' },
-  { name: 'Relay', slug: 'relay', kind: 'Application workspace', description: 'Keep the job, research, draft and exact human approval connected through every revision.', accent: '#48c9c9', signal: 'JOB / CONTEXT' },
-  { name: 'OmniOS', slug: 'omnios', kind: 'Spatial AI workspace', description: 'Wire data into a persona on a canvas. See what context reached an answer.', accent: '#ea79c4', signal: 'DATA / BLOCKS' },
-  { name: 'OSAHR', slug: 'osahr', kind: 'Simulation research', description: 'Define graph rules, run stochastic events and inspect the replayable result.', accent: '#e9b66f', signal: 'GRAPH / STATE' },
+  { name: 'Commons', kind: 'Mission coordination', href: '/commons/' },
+  { name: 'Relay', kind: 'Application workspace', href: '/projects/relay/' },
+  { name: 'OmniOS', kind: 'Spatial AI workspace', href: '/projects/omnios/' },
+  { name: 'OSAHR', kind: 'Simulation research', href: '/projects/osahr/' },
 ];
 
 function ThemeToggle() {
@@ -72,7 +69,7 @@ function Header() {
         <Typography variant="h6" sx={{ fontFamily: 'Manrope', fontWeight: 800, letterSpacing: '-0.035em' }}>SyberLabs</Typography>
       </Link>
       <Stack direction="row" spacing={{ xs: 1, sm: 2 }} alignItems="center">
-        <Button href="/commons/" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Commons</Button>
+        <Button href="/#selected-work" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Work</Button>
         <Button href="/jev/" color="inherit" sx={{ display: { xs: 'inline-flex' } }}>Jev</Button>
         <Button href="/approach/" color="inherit">Approach</Button>
         <Button href="mailto:syberlabs.software@gmail.com" color="primary" variant="outlined" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>Contact</Button>
@@ -83,74 +80,26 @@ function Header() {
 }
 
 function Hero() {
-  const [active, setActive] = useState(0);
-  const sceneRef = useRef(null);
-  const fieldRef = useRef(null);
-  const discRef = useRef(null);
-  const sphereRef = useRef(null);
-  const pointerRef = useRef({ x: 0, y: 0 });
-  const engines = useRef(null);
-  const project = projects[active];
-  useEffect(() => {
-    const lens = () => {
-      const c = fieldRef.current?.getBoundingClientRect(), d = discRef.current?.getBoundingClientRect();
-      return c && d && d.width ? { x: d.left + d.width / 2 - c.left, y: d.top + d.height / 2 - c.top, r: d.width / 2 } : null;
-    };
-    const field = mountProcedural(fieldRef.current, projects[0].slug, lens);
-    const sphere = mountSphereField(sphereRef.current, projects[0].slug, pointerRef, { riseImage: risePoster });
-    engines.current = { field, sphere };
-    return () => { field.destroy(); sphere.destroy(); engines.current = null; };
-  }, []);
-  useEffect(() => { engines.current?.field.setKind(project.slug); engines.current?.sphere.setKind(project.slug); }, [project.slug]);
-  const onTabKeyDown = event => {
-    const moves = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1, Home: -active, End: projects.length - 1 - active };
-    if (!(event.key in moves)) return;
-    event.preventDefault();
-    const next = (active + moves[event.key] + projects.length) % projects.length;
-    setActive(next);
-    document.getElementById(`project-tab-${next}`)?.focus();
-  };
-  const onMove = event => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !sceneRef.current) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - .5, y = (event.clientY - rect.top) / rect.height - .5;
-    pointerRef.current = { x, y };
-    sceneRef.current.style.setProperty('--px', x.toFixed(3));
-    sceneRef.current.style.setProperty('--py', y.toFixed(3));
-  };
-  return <Box component="section" id="work" className={`lab-hero project-${project.slug}`} onPointerMove={onMove} onPointerLeave={() => { pointerRef.current = { x: 0, y: 0 }; if (sceneRef.current) { sceneRef.current.style.removeProperty('--px'); sceneRef.current.style.removeProperty('--py'); } }} style={{ '--active-color': project.accent }}>
-    <canvas className="lab-procedural" ref={fieldRef} aria-hidden="true" />
-    <Container maxWidth="xl" className="lab-stage">
-      <Box className="stage-intro">
-        <Typography variant="overline" className="stage-eyebrow">SYBERLABS <span>·</span> INDEPENDENT AI LAB</Typography>
-        <Typography component="h1" variant="h1" className="hero-title">Make the<br /><em>invisible</em><br />enterable.</Typography>
-        <Typography className="hero-lede">We build instruments for ideas: to feel a text unfold, coordinate a mission, inspect an answer, or replay a system.</Typography>
+  return <Box component="section" id="work" className="home-hero">
+    <Container maxWidth="xl" className="home-hero-inner">
+      <Box className="home-hero-copy">
+        <Typography className="home-kicker">INDEPENDENT AI LAB</Typography>
+        <Typography component="h1" className="home-title">Complex ideas.<br /><em>Clear experiences.</em></Typography>
+        <Typography className="home-lede">We build interfaces for reading, decisions, and simulation that show what is happening and keep people in control.</Typography>
+        <Box className="home-actions">
+          <Button href="#selected-work" variant="contained" endIcon={<ArrowForwardRoundedIcon />}>Explore our work</Button>
+          <Button href="/approach/" variant="text" endIcon={<ArrowOutwardRoundedIcon />}>How we build</Button>
+        </Box>
       </Box>
-      <Box role="tablist" aria-label="Explore SyberLabs projects" className="stage-nav" onKeyDown={onTabKeyDown}>
-        {projects.map((item, index) => <button key={item.name} type="button" role="tab" tabIndex={active === index ? 0 : -1} id={`project-tab-${index}`} aria-selected={active === index} aria-controls="project-panel" onClick={() => setActive(index)} className={`stage-tab ${active === index ? 'selected' : ''}`} style={{ '--tab-color': item.accent }}>
-          <span>0{index + 1}</span><strong>{item.name}</strong><ArrowForwardRoundedIcon fontSize="small" />
-        </button>)}
+      <Box component="a" href="https://rise.syberlabs.io/" className="featured-work" aria-label="Open RISE, our live reading experience">
+        <Box className="featured-topline"><span>FEATURED WORK / 01</span><span>LIVE EXPERIENCE <i /></span></Box>
+        <Box className="featured-screen"><Box component="img" src={risePoster} alt="RISE reading interface showing three visual readings" /></Box>
+        <Box className="featured-bottom"><Box><span>READING, REIMAGINED</span><strong>RISE</strong><p>Turn a passage into a visual and sonic experience.</p></Box><span className="featured-arrow"><ArrowOutwardRoundedIcon /></span></Box>
       </Box>
-      <Box className="scene-wrap" ref={sceneRef} aria-label={`${project.name} abstract visual field`} role="img">
-        <Box className="portal-aura" aria-hidden="true" />
-        <Box className="portal-orbit orbit-one" aria-hidden="true" />
-        <Box className="portal-orbit orbit-two" aria-hidden="true" />
-        <Box className="portal-disc" ref={discRef} aria-hidden="true"><canvas className="portal-field" ref={sphereRef} /></Box>
-        <Box className="portal-echo echo-one" aria-hidden="true" />
-        <Box className="portal-echo echo-two" aria-hidden="true" />
-        <Box className="portal-axis" aria-hidden="true" />
-        <Box className="portal-caption" aria-hidden="true"><b>{project.signal}</b></Box>
-      </Box>
-      <Box className="stage-detail" id="project-panel" role="tabpanel" aria-labelledby={`project-tab-${active}`} key={project.name}>
-        <Typography className="detail-kicker">FIELD 0{active + 1} / {project.kind}</Typography>
-        <Typography component="h2" className="detail-title">{project.name}</Typography>
-        <Typography className="detail-copy">{project.description}</Typography>
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 2.5 }}>
-          {project.slug === 'rise' && <Button href={project.href} variant="contained" endIcon={<ArrowOutwardRoundedIcon />}>Enter RISE</Button>}
-          <Button href={project.slug === 'commons' ? '/commons/' : `/projects/${project.slug}/`} variant="outlined" endIcon={<ArrowForwardRoundedIcon />}>{project.slug === 'commons' ? 'View prototype' : 'Explore project'}</Button>
-          {active === 0 && <Button href="/rise-demo/" variant="outlined" endIcon={<PlayArrowRoundedIcon />}>Watch demo</Button>}
-        </Stack>
-      </Box>
+    </Container>
+    <Container maxWidth="xl" component="nav" id="selected-work" className="selected-work" aria-label="More SyberLabs projects">
+      <Box className="work-heading"><span>MORE FROM THE LAB</span><span>EXPLORE THE PORTFOLIO</span></Box>
+      <Box className="work-links">{projects.map((project, index) => <Box component="a" href={project.href} className="work-link" key={project.name}><span className="work-number">0{index + 2}</span><strong>{project.name}</strong><span className="work-kind">{project.kind}</span><ArrowOutwardRoundedIcon /></Box>)}</Box>
     </Container>
   </Box>;
 }
