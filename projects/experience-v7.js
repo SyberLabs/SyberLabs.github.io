@@ -8,7 +8,7 @@ const projects = {
     status: 'Live browser app · sign-in required',
     actions: [['Open RISE app ↗', 'https://rise.syberlabs.io/'], ['Watch the onsite demo ↗', '/rise-demo/']],
     caseTitle: 'Make a text move.', caseBody: 'Bring a .txt or .md file into the Chamber. Set the pace in Stream, shift into Page, and tune the visual and sonic conditions around the same reading.', caseTag: 'TEXT → TIME → SPACE',
-    note: 'Text presentation and pacing run in the browser. The Chamber does not require a remote model decision or provider key.',
+    note: 'Chamber reading and pacing run locally. The Scriptorium has an optional JEV route for composition requests using a reader-provided key; a live provider outcome for that route is not yet verified.',
   },
   commons: {
     number: '02', name: 'Commons', category: 'Mission coordination', accent: '#adf19b',

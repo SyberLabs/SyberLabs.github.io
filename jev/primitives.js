@@ -8,20 +8,20 @@ const code = document.getElementById('primitive-code');
 // Every value in this local illustration is synthetic. No provider call occurs here.
 const primitives = {
   choice: {
-    title: 'Which reading action fits this moment?',
-    description: 'The product supplies only permitted choices. Jev selects among them; product code still decides whether to act.',
-    bars: [['continue', 24], ['slower', 68], ['pause', 8]],
+    title: 'Which composition route fits this request?',
+    description: 'RISE offers an optional route choice in the Scriptorium. Its own code still examines any resulting score before admission.',
+    bars: [['experience program', 68], ['agent operation set', 32]],
     request: {
-      state: 'Admitted excerpt; adaptive pacing enabled; reader bounds recorded.',
+      state: 'Typed composition intent; target word count.',
       model: 'jev-latest',
-      questions: { next_action: {
+      questions: { route: {
         type: 'choice',
-        instructions: 'Which permitted action best fits this reading moment?',
-        criteria: { continue: 'Keep pace', slower: 'Reduce pace', pause: 'Offer a pause' }
+        instructions: 'Which composition format best fits the requested outcome?',
+        criteria: { experience_program: 'A human-facing content program', agent_operation_set: 'An agent workflow or operation set' }
       } }
     },
-    answer: { next_action: { type: 'choice', choice: 'slower', confidence: 0.81,
-      probabilities: { continue: 0.24, slower: 0.68, pause: 0.08 } } }
+    answer: { route: { type: 'choice', choice: 'experience_program', confidence: 0.68,
+      probabilities: { experience_program: 0.68, agent_operation_set: 0.32 } } }
   },
   noul: {
     title: 'Does this moment call for a pause?',

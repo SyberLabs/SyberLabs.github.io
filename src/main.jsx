@@ -14,7 +14,7 @@ const theme = createTheme({
 });
 
 const work = [
-  { number: '01', name: 'Jev', type: 'Evaluation', description: 'Our independent evaluation of TypeSafe AI’s model for bounded judgments.', href: '/jev/' },
+  { number: '01', name: 'Jev', type: 'Evaluation', description: 'Optional composition routing in RISE; live provider outcomes remain unverified.', href: '/jev/' },
   { number: '02', name: 'Commons', type: 'Local prototype', description: 'A place to turn a shared need into a plan with a visible decision history.', href: '/commons/' },
   { number: '03', name: 'OmniOS', type: 'Research', description: 'A spatial AI workspace that shows which sources reached an answer.', href: '/projects/omnios/' },
   { number: '04', name: 'OSAHR', type: 'Research', description: 'Graph based simulation with inspectable rules, events, and replay.', href: '/projects/osahr/' },
@@ -45,7 +45,7 @@ function Hero() {
   return <section className="hero" aria-labelledby="hero-title">
     <div className="hero-grid">
       <div className="hero-heading"><p className="eyebrow">SYBERLABS / INDEPENDENT SOFTWARE LAB</p><h1 id="hero-title">Software you can <em>feel.</em><br />Decisions you can <em>inspect.</em></h1></div>
-      <div className="hero-aside"><p>We build experiential software that changes how ideas are encountered, and empirical software that shows how a decision was made.</p><div className="hero-cta"><a className="text-link" href="#work">Meet the two approaches <span aria-hidden="true">↘</span></a><a className="text-link" href="#trial">Run a lab trial <span aria-hidden="true">↗</span></a></div></div>
+      <div className="hero-aside"><p>RISE is our live browser reader. We are evaluating Jev for bounded choices in its Scriptorium; Chamber reading stays local and under the reader's control.</p><div className="hero-cta"><a className="text-link" href="#work">Meet the two approaches <span aria-hidden="true">↘</span></a><a className="text-link" href="#trial">Run a lab trial <span aria-hidden="true">↗</span></a></div></div>
     </div>
     <div className="flagships" id="work">
       <article className="flagship flagship-rise" aria-labelledby="rise-title">
