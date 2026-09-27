@@ -581,7 +581,7 @@
       <header class="topbar syber-header">
         <a class="syber-wordmark" href="/"><img src="/favicon-32x32.png" alt="">SYBERLABS</a>
         <nav class="syber-nav" aria-label="Site navigation">
-          <a href="/#work">Work</a><a href="/jev/">Jev</a><a href="/approach/">Approach</a><a href="#roadmap">Roadmap</a><a class="syber-contact" href="mailto:syberlabs.software@gmail.com">Get in touch ↗</a>
+          <a href="/#work">Work</a><a href="/approach/">Approach</a><a href="#status">Status</a><a class="syber-contact" href="mailto:syberlabs.software@gmail.com">Get in touch ↗</a>
         </nav>
       </header>
       <main class="landing" id="top">
@@ -589,17 +589,12 @@
           <div>
             <p class="eyebrow">A SyberLabs project</p>
             <h1>
-              Organize the work. Make progress reviewable.
+              Shared work. Visible progress.
             </h1>
             <p class="lede">
-              COMMONS is a human-directed workspace in development for
-              community groups and coalitions working on shared problems. It
-              connects a clearly named need to evidence, a plan, responsibilities,
-              independent review, and outcomes people can learn from.
+              A local prototype for community missions: name a need, make a plan,
+              and keep review visible.
             </p>
-            <a class="cta" href="#roadmap"
-              >See current work <span aria-hidden="true">↓</span></a
-            >
             <a class="cta" href="/projects/commons/"
               >Explore the Commons project <span aria-hidden="true">↗</span></a
             >
@@ -615,16 +610,6 @@
             <div class="caption">A shared path from need to outcome</div>
           </div>
         </section>
-        <section class="intro" id="approach">
-          <p class="eyebrow">Built for shared work</p>
-          <h2>Keep community priorities and the evidence of progress together.</h2>
-          <p>
-            Social justice work depends on people being able to set priorities,
-            coordinate contributions, and see whether agreed actions helped.
-            COMMONS is being shaped around that practical loop, with the people
-            doing the work retaining authority over goals and decisions.
-          </p>
-        </section>
         <section class="mission-surface" aria-label="Illustrative Commons mission record">
           <div class="mission-index"><span>PHASE 0 / SYNTHETIC EXAMPLE</span><strong>A mission has a memory.</strong><span>HUMAN-DIRECTED WORK</span></div>
           <div class="mission-grid">
@@ -636,117 +621,10 @@
         </section>
         <section class="status-panel" id="status">
           <p class="eyebrow">Current work</p>
-          <h2>The foundation is in place. The hosted product is not live.</h2>
+          <h2>A local prototype. No hosted product yet.</h2>
           <span class="status-label">Phase 0 scaffolding and CI merged</span>
-          <p>
-            The repository has a local mission prototype using synthetic data,
-            automated checks, and a Cloudflare Workers build path. It can
-            demonstrate creating and reviewing a mission locally. Hosted
-            accounts, participant data, live JEV calls, and funding are not
-            enabled; the application has not been deployed.
-          </p>
-        </section>
-        <section class="roadmap-panel" id="roadmap">
-          <p class="eyebrow">Six-week hackathon roadmap</p>
-          <h2>Build trust and test the workflow before a pilot.</h2>
-          <div class="roadmap-grid" aria-label="Six-week roadmap">
-            <article class="roadmap-item">
-              <span class="week">Week 1</span>
-              <h3>Identity and access</h3>
-              <p>Replace demo identity with verified sessions and workspace-scoped access.</p>
-            </article>
-            <article class="roadmap-item">
-              <span class="week">Week 2</span>
-              <h3>Evidence and review</h3>
-              <p>Version evidence so reviews apply to the material people actually saw.</p>
-            </article>
-            <article class="roadmap-item">
-              <span class="week">Week 3</span>
-              <h3>Tasks and resources</h3>
-              <p>Add owned tasks, resource offers, and reusable mission templates.</p>
-            </article>
-            <article class="roadmap-item">
-              <span class="week">Week 4</span>
-              <h3>Evaluate JEV</h3>
-              <p>Compare bounded recommendations with a manual baseline and route failures to people.</p>
-            </article>
-            <article class="roadmap-item">
-              <span class="week">Week 5</span>
-              <h3>Security and staging</h3>
-              <p>Rehearse access, migrations, recovery, accessibility, and abuse controls using synthetic data.</p>
-            </article>
-            <article class="roadmap-item">
-              <span class="week">Week 6</span>
-              <h3>Pilot rehearsal</h3>
-              <p>Rehearse the full mission and recovery flow with one organization before real participant data.</p>
-            </article>
-          </div>
-          <p class="parallel-note">
-            <strong>Sequence:</strong> identity and workspace access precede
-            evidence, review, integration tests, and deployment. <strong>In
-            parallel:</strong> JEV fixture evaluation and model/privacy research
-            can proceed while access work is underway; live provider calls wait
-            for the privacy boundary. Tasks, resource offers, and template work
-            can proceed on agreed interfaces while evidence storage is built.
-          </p>
-        </section>
-        <section class="integration-panel" id="jev-and-chain">
-          <p class="eyebrow">A proposal for JEV and verifiable records</p>
-          <h2>Use technology to support organizers, not replace them.</h2>
-          <p>
-            Commons is exploring how JEV and, later, an optional blockchain
-            record could support community-led social justice work. Neither
-            integration is live in COMMONS today.
-          </p>
-          <div class="integration-grid">
-            <article class="integration-card">
-              <h3>JEV: bounded recommendations</h3>
-              <p>
-                After privacy and quality evaluation, JEV could help surface an
-                evidence gap, a blocked dependency, or a few next-step options
-                defined by organizers. Recommendations remain reviewable and
-                advisory; low confidence or provider failure returns the choice
-                to a person. JEV will not decide who deserves support or move
-                resources automatically. OpenRouter is the candidate route;
-                COMMONS would need its own server-side key and validated
-                responses, separate from RISE credentials.
-              </p>
-            </article>
-            <article class="integration-card">
-              <h3>Blockchain: only for a real trust need</h3>
-              <p>
-                If separate organizations need shared proof of an agreed
-                commitment or review, a future test could record a minimal,
-                opt-in attestation. Private mission details and personal data
-                stay off-chain. No chain is selected; testnet work would wait
-                until a concrete need outweighs cost, privacy, and dispute
-                risks. The normal workflow does not need a chain, and there is
-                no planned token, required wallet, or automatic payout.
-              </p>
-            </article>
-            <article class="integration-card">
-              <h3>Social justice: community authority</h3>
-              <p>
-                Organizers and participants define the need, evidence, and
-                outcome. The roadmap treats access, independent review, and
-                transparent responsibilities as product requirements. Success
-                should be judged by community-defined outcomes, not activity
-                counts or automated scores about people.
-              </p>
-            </article>
-          </div>
-        </section>
-        <section class="principle">
-          <div>
-            <p class="eyebrow">A human-directed starting point</p>
-            <h2>Useful structure. Decisions stay with people.</h2>
-          </div>
-          <p>
-            The current prototype is local and uses synthetic data. This page
-            describes a roadmap, not live capabilities: COMMONS has no hosted
-            accounts, accepts no real participant information, makes no
-            autonomous decisions, and moves no funds.
-          </p>
+          <p>Local prototype with synthetic data. No hosted accounts, participant
+          data, live Jev calls, or funding.</p>
         </section>
       </main>
       <footer class="footer syber-footer">

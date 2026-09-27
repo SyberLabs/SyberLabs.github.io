@@ -1,7 +1,7 @@
 :root{font-family:'DM Sans',Arial,sans-serif;color:#e8edf6;background:#070b14;font-synthesis:none;--ink:#070b14;--paper:#e8edf6;--muted:#9aa8bc;--line:#304057;--cyan:#79e5e8;--violet:#a99bff;--lime:#d4f791}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:80px}
-body{margin:0;min-width:320px;overflow-x:hidden}
+body{margin:0;overflow-x:hidden}
 a{color:inherit}
 button,a{-webkit-tap-highlight-color:transparent}
 a:focus-visible{outline:2px solid var(--cyan);outline-offset:5px}

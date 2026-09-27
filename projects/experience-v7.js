@@ -3,65 +3,39 @@ import { mountProcedural } from './procedural.js';
 const projects = {
   rise: {
     number: '01', name: 'RISE', category: 'Audiovisual reader', accent: '#a68bff',
-    headline: 'A text can become an experience.',
-    intro: 'Read in time, move through a spatial page, and tune image and sound around the words. RISE turns reading into an instrument you control.',
+    headline: 'Read beyond the page.',
+    intro: 'Shape the timing, space, image, and sound around a text.',
     status: 'Live browser app · sign-in required',
-    actions: [['Open RISE app ↗', 'https://rise.syberlabs.io/'], ['Watch the onsite demo ↗', '/rise-demo/']],
-    caseTitle: 'Make a text move.', caseBody: 'Bring a .txt or .md file into the Chamber. Set the pace in Stream, shift into Page, and tune the visual and sonic conditions around the same reading.', caseTag: 'TEXT → TIME → SPACE',
-    note: 'Text presentation and pacing run in the browser. The Chamber does not require a remote model decision or provider key.',
+    actions: [['Open RISE ↗', 'https://rise.syberlabs.io/'], ['Watch demo ↗', '/rise-demo/']],
   },
   commons: {
     number: '02', name: 'Commons', category: 'Mission coordination', accent: '#adf19b',
-    headline: 'Move a shared mission from need to outcome.',
-    intro: 'Commons gives a human-directed mission a visible path: evidence, an approved plan, people and resources, execution, review, and an outcome others can learn from.',
+    headline: 'Turn a need into a mission.',
+    intro: 'Keep the plan, evidence, review, and outcome together.',
     status: 'Local Phase 0 prototype · private repository',
-    actions: [['View the onsite Commons project ↗', '/commons/']],
-    caseTitle: 'Turn a proposal into a reviewed mission.', caseBody: 'Create a draft from one of three synthetic mission definitions, submit it, switch to the seeded reviewer, request changes, and inspect the audit history.', caseTag: 'NEED → REVIEW → RECORD',
-    note: 'Phase 0 is a local demonstration using synthetic missions. It has no real authentication, funding, AI calls, chain transactions, or participant data.',
+    actions: [['Explore Commons ↗', '/commons/']],
   },
   relay: {
     number: '03', name: 'Relay', category: 'Application workspace', accent: '#64e0da',
-    headline: 'Your application history should survive every handoff.',
-    intro: 'Relay keeps the job, research, facts, reviewed words, and next action together while you work across the assistants you already use.',
+    headline: 'Every application has a history.',
+    intro: 'Keep the job, research, draft, and exact approval connected.',
     status: 'Early release · source available',
-    actions: [['See Relay in SyberLabs projects ↗', '/#work'], ['Explore source ↗', 'https://github.com/SyberLabs/relay']],
-    caseTitle: 'Return to a job without starting over.', caseBody: 'A posting URL rejoins its existing record. Earlier research remains visible, a revised draft needs fresh acceptance, and interview notes do not reset the application state.', caseTag: 'RESEARCH → DRAFT → ACCEPT',
-    note: 'Relay does not submit employer forms, verify every claim, or treat a staged draft as accepted. Human review remains the gate.',
+    actions: [['See the work ↗', '/#work'], ['View source ↗', 'https://github.com/SyberLabs/relay']],
   },
   omnios: {
     number: '04', name: 'OmniOS', category: 'Spatial AI workspace', accent: '#ef91d4',
-    headline: 'See what an AI mind actually knows.',
-    intro: 'Put live data blocks on a canvas, connect them to a persona, and ask a question. The answer has a visible path back to the wires that carried its context.',
+    headline: 'See the sources behind an answer.',
+    intro: 'Connect sources to a question and trace the result.',
     status: 'Local-first, single-user research project',
-    actions: [['See OmniOS in SyberLabs projects ↗', '/#work'], ['Explore source ↗', 'https://github.com/SyberLabs/OmniOS']],
-    caseTitle: 'Ask a question with visible inputs.', caseBody: 'Place a World Bank block beside a market signal, wire them to an Investor persona, and inspect which inputs were available when it answered.', caseTag: 'BLOCKS → WIRES → ANSWER',
-    note: 'The canvas lives in the user’s browser. The project is local-first and has no application authentication for a public hosted instance.',
+    actions: [['See the work ↗', '/#work'], ['View source ↗', 'https://github.com/SyberLabs/OmniOS']],
   },
   osahr: {
     number: '05', name: 'OSAHR', category: 'Simulation research', accent: '#f0c487',
-    headline: 'Watch a system rewrite itself.',
-    intro: 'OSAHR is a stochastic adaptive graph-rewrite kernel. It models typed relationships, chooses events in time, adapts parameters, and preserves a replayable record.',
+    headline: 'Replay a changing system.',
+    intro: 'Run graph rules and inspect the events they produce.',
     status: 'Open research kernel · Python 3.11+',
-    actions: [['See OSAHR in SyberLabs projects ↗', '/#work'], ['Explore source ↗', 'https://github.com/SyberLabs/OSAHR_Cell']],
-    caseTitle: 'Trace a rule through time.', caseBody: 'Define a typed graph and competing rewrite rules, run a seeded stochastic schedule, then review a frozen decision packet and replay the outcome.', caseTag: 'GRAPH → EVENT → REPLAY',
-    note: 'These experiments explore mechanism. They are not calibrated deployments or a replacement for a production simulation twin.',
+    actions: [['See the work ↗', '/#work'], ['View source ↗', 'https://github.com/SyberLabs/OSAHR_Cell']],
   },
-};
-
-const interfaces = {
-  rise: { input: 'Text file + reader settings', transform: 'Stream timing or Page layout', output: 'Visual and sonic reading session', invariant: 'The source text remains the same across modes.', test: 'Change presentation without rewriting the passage.' },
-  commons: { input: 'Mission proposal + cited evidence', transform: 'Draft → reviewer decision → audit record', output: 'Reviewable mission state', invariant: 'A seeded human reviewer approves or requests changes.', test: 'Trace a decision to the proposal and its review.' },
-  relay: { input: 'Job posting + applicant research', transform: 'Versioned draft preparation', output: 'Packet awaiting exact acceptance', invariant: 'A changed draft has no inherited approval.', test: 'Revise accepted wording and verify it needs review again.' },
-  omnios: { input: 'Connected blocks + user question', transform: 'Visible context routing', output: 'Answer with inspectable inputs', invariant: 'Disconnected blocks cannot provide context.', test: 'Disconnect a source and inspect the remaining inputs.' },
-  osahr: { input: 'Typed graph + rewrite rules + seed', transform: 'Stochastic event scheduling', output: 'Replayable event record', invariant: 'A result is interpreted with its generating conditions.', test: 'Replay a seeded run and inspect the event sequence.' },
-};
-
-const fieldExamples = {
-  rise: { sample: { source: 'chapter.txt', mode: 'stream', pace: 'reader_selected', output: 'timed_text' }, failure: 'If playback stops, preserve the text and reader position; do not rewrite the passage.', evidence: 'Compare the same passage in Stream and Page; confirm source words and user controls are preserved.' },
-  commons: { sample: { mission: 'synthetic_01', evidence: ['source_ref'], state: 'submitted', reviewer: 'seeded_reviewer' }, failure: 'A requested change returns the proposal to review. No funding or real participant action follows from the local prototype.', evidence: 'Open the synthetic audit record and trace each state change to the reviewer action.' },
-  relay: { sample: { job: 'posting_014', draft_version: 3, accepted_version: 2, can_submit: false }, failure: 'Editing accepted wording invalidates the earlier acceptance for the new version.', evidence: 'Change version 2 to version 3 and check that the exact new words require human acceptance.' },
-  omnios: { sample: { sources: ['economic_series', 'market_signal'], persona: 'investor', visible_inputs: 2 }, failure: 'A disconnected block contributes no context to the answer.', evidence: 'Disconnect each source and inspect the persona input readout before asking again.' },
-  osahr: { sample: { graph: 'typed_hypergraph', rule: 'rewrite_03', seed: 'fixed_seed', artifact: 'replay_packet' }, failure: 'An event without its graph state, rule, and seed is not a reproducible result.', evidence: 'Replay a seeded schedule and compare the event record and resulting graph.' },
 };
 
 const slug = location.pathname.split('/').filter(Boolean).at(-1);
@@ -87,12 +61,10 @@ else {
     osahr: `<div class="system-heading"><p class="eyebrow">EXPERIMENT TRACE / STOCHASTIC REWRITE</p><h2>From mechanism to inspectable evidence.</h2><p>The kernel operates on a typed directed hypergraph. A scheduler chooses events; replay records let a result be examined under the conditions that produced it.</p></div><div class="osahr-trace"><div class="trace-top"><span>SEEDED EXPERIMENT / ILLUSTRATIVE TRACE</span><span>GRAPH → RULE → EVENT → REPLAY</span></div><div class="trace-events" data-step="0"><article><small>STATE 00</small><b>Typed graph</b><span>Entities and directed relationships</span></article><article><small>RULE 03</small><b>Match + rewrite</b><span>Eligible structure changes</span></article><article><small>EVENT 14</small><b>Scheduler selects</b><span>Stochastic time advances</span></article><article><small>REPLAY</small><b>Frozen packet</b><span>Inspect conditions and outcome</span></article></div><div class="trace-controls"><button class="trace-step" type="button">Advance illustrative trace <span aria-hidden="true">↗</span></button><span class="trace-step-label" aria-live="polite">Current focus: typed graph.</span></div><div class="trace-footer">Research mechanism · illustrative UI sequence, not a kernel run or calibrated prediction</div></div>`,
   }[slug];
   document.getElementById('app').innerHTML = `
-    <header class="syber-header"><a class="syber-wordmark" href="/" aria-label="SyberLabs home"><img src="/favicon-32x32.png" alt="">SYBERLABS</a><nav class="syber-nav" aria-label="Site navigation"><a href="/#work">Work</a><a href="/jev/">Jev</a><a href="/approach/">Approach</a><a href="#mechanics">On this page</a><a class="syber-contact" href="mailto:syberlabs.software@gmail.com">Get in touch ↗</a></nav></header>
+    <header class="syber-header"><a class="syber-wordmark" href="/" aria-label="SyberLabs home"><img src="/favicon-32x32.png" alt="">SYBERLABS</a><nav class="syber-nav" aria-label="Site navigation"><a href="/#work">Work</a><a href="#mechanics">Demo</a><a class="syber-contact" href="mailto:syberlabs.software@gmail.com">Contact ↗</a></nav></header>
     <main><section class="hero" id="overview"><canvas class="procedural-field" aria-hidden="true"></canvas><div class="hero-copy"><p class="eyebrow">SYBERLABS / ${p.number} / ${p.category}</p><h1>${p.headline}</h1><p class="intro">${p.intro}</p><div class="actions">${p.actions.map(([label, url]) => `<a href="${url}">${label}</a>`).join('')}</div><p class="status"><span></span>${p.status}</p></div><div class="product-art art-${slug}" aria-label="Illustration of ${p.name} product concept" role="img">${art}</div></section>
     <section class="product-system" id="mechanics">${system}</section>
-    <section class="interface-section" aria-labelledby="interface-title"><div class="interface-heading"><span>TECHNICAL FIELD NOTE / ${p.number}</span><h2 id="interface-title">The system boundary.</h2><p>A concrete model of this product's current or proposed flow. The verification question is a test to perform, not a measured result.</p></div><div class="interface-grid"><div><small>01 / INPUT</small><strong>${interfaces[slug].input}</strong></div><div><small>02 / TRANSFORM</small><strong>${interfaces[slug].transform}</strong></div><div><small>03 / OUTPUT</small><strong>${interfaces[slug].output}</strong></div><div class="interface-invariant"><small>INVARIANT / HUMAN OR CODE</small><strong>${interfaces[slug].invariant}</strong></div></div><div class="interface-test"><span>WHAT WOULD PROVE IT?</span><p>${interfaces[slug].test}</p></div><div class="field-evidence"><div class="field-code"><div>ILLUSTRATIVE STATE / NOT A LIVE RESPONSE</div><pre><code>${JSON.stringify(fieldExamples[slug].sample, null, 2)}</code></pre></div><div class="field-questions"><article><small>FAILURE MODE</small><p>${fieldExamples[slug].failure}</p></article><article><small>VERIFICATION</small><p>${fieldExamples[slug].evidence}</p></article><article><small>STATUS</small><p>${p.note}</p></article></div></div></section>
-    <section class="case-study" id="field-note"><div class="case-kicker"><span>FIELD NOTE / ${p.number}</span><strong>${p.caseTag}</strong></div><div class="case-body"><p class="eyebrow">A CONCRETE RUN</p><h2>${p.caseTitle}</h2><p>${p.caseBody}</p></div></section>
-    <aside class="boundary"><span>WHAT EXISTS TODAY</span><p>${p.note}</p></aside></main>
+  </main>
     <footer class="syber-footer"><a href="/">SYBERLABS</a><a href="/#work">Explore all projects ↗</a><span>© 2026 SyberLabs</span></footer>`;
   const visual = document.querySelector('.product-art');
   mountProcedural(document.querySelector('.procedural-field'), slug);

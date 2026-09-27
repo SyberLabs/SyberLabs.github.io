@@ -4,29 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f2f0e9">
-  <meta name="description" content="A technical Jev course from SyberLabs: model primitives, decision theory, B2B and B2C SaaS architectures, failure modes, and evaluation.">
+  <meta name="description" content="An independent SyberLabs evaluation of Jev and its bounded composition route in RISE.">
   <link rel="canonical" href="https://syberlabs.io/jev/">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Jev × SyberLabs | Decisions with boundaries">
-  <meta property="og:description" content="Our technical response and integration plan for Jev across SyberLabs.">
+  <meta property="og:description" content="A typed answer, a product boundary, and an independent evaluation.">
   <meta property="og:url" content="https://syberlabs.io/jev/">
   <title>Jev × SyberLabs | Decisions with boundaries</title>
   <link rel="stylesheet" href="/jev/jev.css">
   <link rel="stylesheet" href="/jev/primitives.css">
-  <link rel="stylesheet" href="/jev/systems.css">
   <link rel="stylesheet" href="/projects/site-toolkit.css?v=3">
   <link rel="stylesheet" href="/jev/editorial.css?v=3">
-  <script src="/jev/theme.js?v=2" defer></script>
   <script src="/jev/jev.js" defer></script>
   <script src="/jev/primitives.js" defer></script>
-  <script src="/jev/saas-systems.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="site-header syber-header">
     <a class="syber-wordmark" href="/"><img src="/favicon-32x32.png" alt=""><span>SYBERLABS</span></a>
-    <nav class="syber-nav" aria-label="Site navigation"><a href="/#work">Work</a><a href="/approach/">Approach</a><a href="#technical">Interface</a><a href="#evaluation">Proof</a><a class="syber-contact" href="mailto:syberlabs.software@gmail.com">Get in touch ↗</a><button class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch theme"><span aria-hidden="true">◐</span></button></nav>
+    <nav class="syber-nav" aria-label="Site navigation"><a href="/#work">Work</a><a href="#technical">Interface</a><a class="syber-contact" href="mailto:syberlabs.software@gmail.com">Contact ↗</a></nav>
   </header>
 
   <main id="main">
@@ -35,9 +32,9 @@
       <div class="hero-copy">
         <p class="eyebrow">INDEPENDENT AI LAB / RESEARCH 01</p>
         <h1 id="hero-title">Intelligence<br>at the <em>decision</em><br>boundary.</h1>
-        <p class="hero-lede">Unstructured state and named questions in. Typed, probabilistic answers out. SyberLabs is engineering the boundary that turns those answers into permitted product actions.</p>
-        <div class="hero-actions"><a class="button primary" href="#technical">Explore Jev <span aria-hidden="true">↗</span></a><a class="button ghost" href="#saas">SaaS architecture <span aria-hidden="true">↓</span></a></div>
-        <p class="hero-note">Jev is TypeSafe AI's model. SyberLabs is independently evaluating and integrating it. This page does not imply a partnership or a verified production deployment.</p>
+        <p class="hero-lede">Typed answers. Product rules. Human control.</p>
+        <div class="hero-actions"><a class="button primary" href="#technical">Explore the interface <span aria-hidden="true">↗</span></a></div>
+        <p class="hero-note">Independent evaluation of TypeSafe AI's Jev. No verified live provider outcome.</p>
       </div>
       <div class="scene" role="img" aria-label="Three-dimensional visualization of a bounded decision: context enters a Jev judgment, passes through code and human authority, and becomes a permitted action.">
         <div class="scene-halo"></div><div class="scene-ring ring-a"></div><div class="scene-ring ring-b"></div>
@@ -58,7 +55,7 @@
 
     <section class="technical-section" id="technical" aria-labelledby="technical-title"><div class="section-shell">
       <div class="section-top"><span class="section-index">MODEL / INTERFACE</span><span class="section-rule"></span><span class="section-tag">TYPED ANSWERS</span></div>
-      <div class="technical-head"><div><p class="kicker">STATE → TYPED ANSWER</p><h2 id="technical-title">A decision is<br><em>an interface.</em></h2></div><div><p>TypeSafe describes Jev as a System One model: state and a set of named questions go in; structured, probabilistic answers come out. The output space is declared before inference, so the application can compose those answers in code.</p><p>One request can combine different question types. The examples are illustrative, not live model calls or benchmarks.</p><a class="text-link" href="https://docs.typesafe.ai/introduction/quickstart" target="_blank" rel="noopener noreferrer">TypeSafe API quick start ↗</a></div></div>
+      <div class="technical-head"><div><p class="kicker">STATE → TYPED ANSWER</p><h2 id="technical-title">A decision is<br><em>an interface.</em></h2></div><div><p>Choose a question type. See an illustrative answer. Product code still decides what is permitted.</p><a class="text-link" href="https://docs.typesafe.ai/introduction/quickstart" target="_blank" rel="noopener noreferrer">TypeSafe API quick start ↗</a></div></div>
       <div class="primitive-console">
         <div class="primitive-rail" role="tablist" aria-label="Jev question types">
           <button class="primitive-tab selected" type="button" role="tab" aria-selected="true" aria-controls="primitive-panel" id="tab-choice" data-primitive="choice"><span>01 / CHOICE</span><strong>Select one option</strong><small>Discrete action space</small></button>
@@ -69,26 +66,12 @@
           <div class="primitive-readout"><div><span class="readout-kicker">CURRENT QUESTION</span><h3 id="primitive-title">Which reading action fits this moment?</h3><p id="primitive-description">The product supplies only permitted choices. Jev selects among them; product code still decides whether to act.</p></div><div class="distribution" id="primitive-distribution" aria-label="Illustrative probability distribution"></div></div>
         </div>
       </div>
-      <div class="contract-grid"><div class="contract-copy"><span class="micro-label">SPECIFICATION, NOT A PROMISE</span><h3>The integration contract</h3><p>The request holds a bounded snapshot of product state and explicit question criteria. The provider response is parsed into a versioned internal decision. A separate policy step then validates the chosen action against consent, authorization, and current state.</p></div><div class="contract-code"><div class="code-title"><span>REQUEST → ANSWER</span><span>ILLUSTRATIVE</span></div><pre><code id="primitive-code"></code></pre></div></div>
+      <div class="contract-grid"><div class="contract-copy"><span class="micro-label">ILLUSTRATIVE</span><h3>See the typed answer</h3></div><div class="contract-code"><div class="code-title"><span>REQUEST → ANSWER</span><span>NO PROVIDER CALL</span></div><pre><code id="primitive-code"></code></pre></div></div>
     </div></section>
 
-    <section class="course-section" id="course" aria-labelledby="course-title"><div class="section-shell">
-      <div class="section-top"><span class="section-index">COURSE / POLICY + LIMITS</span><span class="section-rule"></span><span class="section-tag">MODEL → POLICY → EVIDENCE</span></div>
-      <div class="course-heading"><div><p class="kicker">JEV / ENGINEERING SYLLABUS</p><h2 id="course-title">A probabilistic answer.<br><em>A deterministic system.</em></h2></div><p>Turn typed answers into permitted actions, then evaluate them against real outcomes.</p></div>
-      <article class="course-module" id="module-2"><div class="module-label"><span>MODULE 02</span><strong>Policy derivation</strong></div><div class="module-body"><h3>Convert judgment into an admissible action.</h3><p>Jev returns an answer. The application computes the action using the current state and an independently maintained permission set. If state is stale, output is malformed, or no action is permitted, the policy returns <code>hold</code>.</p><div class="equation"><span>APPLICATION</span><code>a = π(s_now, J(s, Q), grants, consent, policy_version)</code><small>a ∈ permitted_actions(s_now) ∪ {hold}</small></div><div class="policy-pipeline" role="img" aria-label="Capture state, ask Jev, validate output, recompute authorization, execute or hold, and log outcome"><div><span>01</span> capture<small>minimized snapshot</small></div><b>→</b><div><span>02</span> judge<small>typed response</small></div><b>→</b><div><span>03</span> validate<small>schema + version</small></div><b>→</b><div><span>04</span> authorize<small>fresh permissions</small></div><b>→</b><div><span>05</span> act / hold<small>receipt + outcome</small></div></div><p>A Choice or Score confidence value summarizes distribution concentration. It is not the probability that an action is safe, correct, or authorized. For a calibrated binary correctness estimate p, a simplified policy acts only when (1 − p) × cost_wrong &lt; cost_review, then separately checks authorization. Estimate p and both costs from labeled outcomes; this formula assumes review resolves the decision.</p></div></article>
-      <article class="course-module" id="module-3"><div class="module-label"><span>MODULE 03</span><strong>Known limits</strong></div><div class="module-body"><h3>Put arithmetic and invariants in code.</h3><p>TypeSafe documents jagged behavior for <code>jev-1.13</code>: literal interpretation, numeric precision, date comparisons, irrelevant state, and adversarial text. Test these failure modes. Keep counting, date arithmetic, budgets, and authorization outside the model.</p><div class="failure-grid"><div><span>MODEL TASK</span><strong>Semantic judgment</strong><p>“Does this message request a refund?”</p></div><div><span>CODE TASK</span><strong>Deterministic fact</strong><p>“Were two charges captured within the allowed window?”</p></div><div><span>HUMAN TASK</span><strong>Consequential acceptance</strong><p>“Should this customer remedy be approved?”</p></div></div><p class="course-citation">Version specific source: <a href="https://docs.typesafe.ai/model-jaggedness/jev-1.13" target="_blank" rel="noopener noreferrer">TypeSafe's jev-1.13 limitations</a>. Recheck the deployed version before relying on them.</p></div></article>
-    </div></section>
-
-    <section class="saas-section" id="saas" aria-labelledby="saas-title"><div class="section-shell"><div class="section-top"><span class="section-index">SYSTEM / B2B + B2C</span><span class="section-rule"></span><span class="section-tag">REFERENCE ARCHITECTURE</span></div><div class="saas-heading"><div><p class="kicker">TWO DEPLOYMENT SHAPES</p><h2 id="saas-title">The model is shared.<br><em>The boundaries differ.</em></h2></div><p>Proposed B2B and B2C systems. Both keep credentials server side and require scoped audit records, a safe fallback, shadow rollout, and an off switch. Tenant isolation and operator rights differ from consumer consent and reversibility.</p></div><div class="saas-switch" role="tablist" aria-label="SaaS architecture"><button id="saas-tab-b2b" type="button" role="tab" aria-controls="saas-panel" aria-selected="true" data-saas="b2b">B2B / multi-tenant</button><button id="saas-tab-b2c" type="button" role="tab" aria-controls="saas-panel" aria-selected="false" tabindex="-1" data-saas="b2c">B2C / personal</button></div><div id="saas-panel" role="tabpanel" aria-labelledby="saas-tab-b2b"><div class="saas-diagram" id="saas-diagram"></div><div class="saas-detail"><div><span class="micro-label" id="saas-example-label">WORKED B2B FLOW</span><h3 id="saas-example-title">Support triage across tenants</h3><p id="saas-example-copy"></p></div><div class="saas-code"><div class="code-title"><span>REFERENCE PSEUDOCODE</span><span>PROPOSED</span></div><pre><code id="saas-code"></code></pre></div></div></div></div></section>
-
-    <section class="evaluation-section" id="evaluation" aria-labelledby="evaluation-title"><div class="section-shell"><div class="section-top"><span class="section-index">EVIDENCE / EXPERIMENT DESIGN</span><span class="section-rule"></span><span class="section-tag">EVIDENCE GATES</span></div><div class="evaluation-heading"><div><p class="kicker">FROM DEMO TO DEPLOYMENT</p><h2 id="evaluation-title">A syllabus for<br><em>proving value.</em></h2></div><p>Every proposed Jev seam needs a predeclared baseline, observable outcome, and failure budget. Measure the complete product action, not the model answer alone.</p></div><div class="evaluation-grid">
-        <article><span>01 / CONTROLLED COMPARISON</span><h3>Same cases. Same rules.</h3><p>Use consented, held-out decision moments with independent labels. Run the existing route and Jev route under the same permissions, review budget, and completion criteria. Stratify by tenant, task, language, and risk.</p></article>
-        <article><span>02 / ERROR SURFACE</span><h3>Calibrate and break it.</h3><p>Compare predicted probabilities with observed frequencies by segment. Test prompt injection, stale state, missing choices, cross-tenant references, revoked consent, timeout, and model changes.</p></article>
-        <article><span>03 / SHIP GATE</span><h3>Measure the whole action.</h3><p>Count accepted outcomes, false actions, review load, p95 latency, retries, and fully loaded cost. Start in shadow mode; stop exposure when a predeclared limit fails.</p></article>
-      </div><div class="evaluation-exit"><span>PASS CONDITION / PROPOSED</span><p>Advance only when the Jev route improves an independently verified user outcome over baseline within the product's risk, privacy, latency, and cost limits. Publish denominators and failure cases.</p></div></div></section>
     <section class="integration-status section-shell" id="integrations" aria-labelledby="status-title">
-      <div class="section-top"><span class="section-index">CURRENT STATUS</span><span class="section-rule"></span><span class="section-tag">RISE / READING</span></div>
-      <div class="status-content"><div><p class="kicker">ONE CONCRETE SEAM</p><h2 id="status-title">RISE has a bounded<br><em>reading decision.</em></h2></div><div><p>The route selects continue, slower, or pause. Consent, passage admission, cancellation, and presentation limits remain in code. The adapter exists; provider activation and representative live reading outcomes are unverified.</p><p><strong>Next proof:</strong> exercise the configured provider in a connected preview, then compare reader outcomes with the existing path.</p><a class="text-link" href="https://github.com/SyberLabs/RISE" target="_blank" rel="noopener noreferrer">Inspect RISE ↗</a></div></div>
+      <div class="section-top"><span class="section-index">CURRENT STATUS</span><span class="section-rule"></span><span class="section-tag">RISE / COMPOSITION</span></div>
+      <div class="status-content"><div><p class="kicker">ONE CONCRETE SEAM</p><h2 id="status-title">An optional route<br><em>in RISE.</em></h2></div><div><p>In the Scriptorium, a reader can supply a Jev API key for a composition-format recommendation. RISE examines the resulting score before admission. Chamber reading and pacing stay local.</p><p><strong>Next proof:</strong> verify the deployed route and compare observed authoring outcomes. A live provider outcome is not yet verified.</p><a class="text-link" href="https://github.com/SyberLabs/RISE" target="_blank" rel="noopener noreferrer">Inspect RISE ↗</a></div></div>
     </section>
 
   </main>
