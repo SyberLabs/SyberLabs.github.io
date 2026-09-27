@@ -36,9 +36,11 @@ jobs:
             apple-touch-icon.png android-chrome-192x192.png \
             android-chrome-512x512.png dist/
           cp -r rise-demo dist/
+          cp -r projects dist/
           test -s dist/index.html
           test -s dist/rise-demo/index.html
           test -s dist/rise-demo/rise-demo-20260926.mp4
+          for project in rise commons relay omnios osahr; do test -s "dist/projects/$project/index.html"; done
           grep -Fxq '/rise https://rise.syberlabs.io/ 301' dist/_redirects
           grep -Fxq '/rise/* https://rise.syberlabs.io/:splat 301' dist/_redirects
       - uses: actions/upload-artifact@v4
