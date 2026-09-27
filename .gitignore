@@ -1,2 +1,2 @@
-# Local notes — never publish to GitHub Pages
-private/
+node_modules/
+dist/
