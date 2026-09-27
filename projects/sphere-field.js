@@ -37,34 +37,62 @@ function arc(a, b, n, lift = 0) {
 // Each engine: build() once, draw(state, t, g, w) every frame; g is the drawing api, w the crossfade weight.
 
 const ENGINES = {
-  // TEXT / SPACE: lines of words wrap the sphere like a score; a reading head on the facing meridian brings each word into focus.
+  // RISE: text branches into timing, spatial presentation, and sound before reaching the reader.
+  // The topology and travelling signal adapt Relay's former provenance network.
   rise: {
     build() {
-      const r = rng(11), bands = [];
-      for (let i = 0; i < 13; i++) {
-        const lat = -1.02 + i * (2.04 / 12), words = [];
-        let lon = r() * TAU;
-        const end = lon + TAU;
-        while (lon < end - .06) { const len = .05 + r() * .17; if (lon + len > end) break; words.push([lon, len]); lon += len + .035 + r() * .03; }
-        bands.push({ lat, words, speed: (.045 + r() * .03) * (i % 2 ? 1 : .86) });
-      }
-      return { bands };
+      const source = [0, 0, 0];
+      const words = Array.from({ length: 18 }, (_, i) => {
+        const y = 1 - 2 * (i + .5) / 18, q = Math.sqrt(1 - y * y), a = i * 2.39996;
+        return [q * Math.cos(a) * .31, y * .31, q * Math.sin(a) * .31];
+      });
+      const systems = [onSphere(.72, -.25, .62), onSphere(-.42, 2.05, .62), onSphere(-.42, 4.35, .62)];
+      const outputs = systems.map((hub, mode) => {
+        const basis = tangent(norm(hub));
+        return Array.from({ length: 12 }, (_, i) => {
+          const a = i * TAU / 12 + mode * .3;
+          return offset(norm(hub), basis, a, .37).map(v => v * .88);
+        });
+      });
+      const edges = [];
+      words.forEach(word => edges.push({ pts: [source, word], mode: -1 }));
+      words.forEach((word, i) => edges.push({ pts: arc(norm(word), norm(words[(i + 3) % words.length]), 10).map(p => p.map(v => v * .31)), mode: -1 }));
+      systems.forEach((hub, mode) => {
+        words.forEach((word, i) => { if (i % 3 === mode) edges.push({ pts: arc(norm(word), norm(hub), 12).map((p, k) => p.map(v => v * (.31 + .31 * k / 12))), mode }); });
+        outputs[mode].forEach(out => edges.push({ pts: arc(norm(hub), norm(out), 14).map((p, k) => p.map(v => v * (.62 + .26 * k / 14))), mode }));
+        outputs[mode].forEach((out, i) => edges.push({ pts: arc(norm(out), norm(outputs[mode][(i + 1) % 12]), 8).map(p => p.map(v => v * .88)), mode }));
+      });
+      const paths = systems.map((hub, mode) => outputs[mode].map((out, i) => [source, words[(i * 3 + mode) % words.length], hub, out]));
+      return { source, words, systems, outputs, edges, paths };
     },
     draw(s, t, g, w) {
-      for (const b of s.bands) {
-        const cl = Math.cos(b.lat), sl = Math.sin(b.lat);
-        for (const [lon0, len] of b.words) {
-          const lon = lon0 + t * b.speed, n = Math.max(2, Math.ceil(len * 22)), pts = [];
-          for (let k = 0; k <= n; k++) { const L = lon + len * k / n; pts.push([cl * Math.sin(L), sl, cl * Math.cos(L)]); }
-          const mid = g.view(pts[n >> 1]);
-          const focus = mid[2] > 0 ? Math.exp(-(mid[0] * mid[0]) / .012) : 0;
-          g.poly(pts, (.3 + .75 * focus) * w, 1 + 1.1 * focus);
-        }
-      }
-      // the reading head, fixed to the viewer
-      const head = [];
-      for (let k = 0; k <= 40; k++) { const y = -.9 + 1.8 * k / 40; head.push([0, y, Math.sqrt(1 - y * y)]); }
-      g.polyView(head, .16 * w, 1);
+      const phase = ((t / 2.8) % 3 + 3) % 3, active = Math.floor(phase), progress = phase % 1;
+      const tones = ['246,194,133', '181,148,255', '108,224,235'];
+      s.edges.forEach(edge => {
+        g.tint(edge.mode < 0 ? null : tones[edge.mode]);
+        const on = edge.mode === active, heat = on ? .55 + .45 * Math.sin(Math.PI * progress) : 0;
+        g.poly(edge.pts, (.34 + heat * .65) * w, 1 + heat * 1.2);
+      });
+      g.tint();
+      s.words.forEach((word, i) => g.dot(word, 1.9 + (i % 3 === active ? 1.2 : 0), (.48 + (i % 3 === active ? .4 : 0)) * w));
+      s.systems.forEach((hub, mode) => {
+        g.tint(tones[mode]);
+        const on = mode === active, pulse = on ? .65 + .35 * Math.sin(Math.PI * progress) : 0;
+        g.dot(hub, 4 + pulse * 2, (.56 + pulse * .44) * w, true);
+        g.ring(hub, 9 + pulse * 5, (.28 + pulse * .46) * w);
+        s.outputs[mode].forEach((out, i) => {
+          const lit = on ? Math.max(0, 1 - Math.abs(progress * 7 - i) / 2) : 0;
+          if (mode === 0) g.ring(out, 2.5 + lit * 2, (.35 + lit * .6) * w);
+          else if (mode === 1) g.square(out, 1.8 + lit, (.4 + lit * .6) * w);
+          else g.dot(out, 2.1 + lit * 1.8, (.48 + lit * .5) * w, lit > .3);
+        });
+      });
+      const path = s.paths[active][((Math.floor(t / 2.8) % 12) + 12) % 12], segment = Math.min(2, Math.floor(progress * 3)), q = progress * 3 - segment;
+      const a = path[segment], b = path[segment + 1];
+      g.dot(a.map((v, i) => v + (b[i] - v) * q), 3.2, w, true);
+      g.tint();
+      g.dot(s.source, 6 + Math.sin(t * 1.3), w, true);
+      g.ring(s.source, 11 + Math.sin(t * 1.3) * 2, .46 * w);
     },
   },
 
@@ -302,9 +330,10 @@ export function mountSphereField(canvas, initialKind, pointer, options = {}) {
     return [x1, y1 * cp - z1 * sp, y1 * sp + z1 * cp];
   }
   function depthAlpha(z) { return z > 0 ? .62 + .5 * z : .26 * (1 + z) + .06; }
-  let rgb = '0,0,0';
+  let rgb = '0,0,0', defaultRgb = rgb;
   const g = {
     view,
+    tint(tone) { rgb = tone || defaultRgb; },
     dot(p, size, alpha, halo) {
       const v = view(p), a = alpha * depthAlpha(v[2]);
       if (a < .01) return;
@@ -400,13 +429,14 @@ export function mountSphereField(canvas, initialKind, pointer, options = {}) {
       // the poster sits deep inside and drifts against the turn: parallax of the interior
       const aspect = poster.height / poster.width, s = Math.max(R * 2 * (2850 / 490), R * 2.5 / aspect), h = s * aspect;
       const ox = -yawOffset * R * .3 + (still ? 0 : Math.sin(t * .05) * R * .08), oy = R * .16 + pitchOffset * R * .22;
-      ctx.globalAlpha = .5 * riseW;
+      ctx.globalAlpha = .12 * riseW;
       ctx.drawImage(poster, cx - s / 2 + ox, cy - h / 2 + oy, s, h);
       ctx.globalAlpha = 1;
     }
 
     ctx.globalCompositeOperation = 'lighter';
-    rgb = `${r},${gg},${b}`;
+    defaultRgb = `${r},${gg},${b}`;
+    rgb = defaultRgb;
     for (const m of graticule) g.poly(m, .07, .8);
     if (prev && wOld > .01) ENGINES[prev].draw(stateOf(prev), t, g, wOld);
     if (!prev || mix >= 1) prev = null;
