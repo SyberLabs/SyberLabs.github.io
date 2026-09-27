@@ -76,3 +76,8 @@
 }
 @media (max-width: 900px) { .home-hero { --cx: 50%; --cy: calc(64px + min(88vw, 340px) / 2); --s: min(88vw, 340px); } }
 @media (max-width: 1180px) { .home-strip__cat { display: none; } }
+
+/* Closing signature: the mark centered above the footer. */
+.home-sign { display: flex; justify-content: center; padding-top: 120px; padding-bottom: 104px; }
+.home-sign img { display: block; width: clamp(120px, 14vw, 200px); height: auto; filter: drop-shadow(0 20px 48px rgb(0 72 240 / .32)); }
+@media (max-width: 767px) { .home-sign { padding-top: 80px; padding-bottom: 72px; } }
