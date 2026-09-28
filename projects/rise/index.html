@@ -1,19 +1,387 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#06051a">
-  <meta name="description" content="Read beyond the page. Shape the timing, space, image, and sound around a text.">
-  <link rel="canonical" href="https://syberlabs.io/projects/rise/">
-  <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Crimson+Pro:wght@400&display=swap">
-  <link rel="stylesheet" href="/syberlabs.css?v=3">
-  <link rel="stylesheet" href="../experience-v7.css?v=12">
-  <script type="module" src="../experience-v7.js?v=13"></script>
-  <title>RISE — SyberLabs</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RISE: AI-Assisted Reading App | SyberLabs</title>
+<meta name="description" content="RISE is a browser-based reading app. Shape the timing, space, image, and sound around a text.">
+<meta name="theme-color" content="#05060a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400;1,7..72,500&display=swap">
+<link rel="canonical" href="https://syberlabs.io/projects/rise/">
+<link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
+<style>
+/* ---------- RISE tokens (single dark world, by choice) ---------- */
+:root{
+  color-scheme: dark;
+  --ink:#05060a;          /* existing site theme-color */
+  --ink-2:#0d0a1c;
+  --paper:#f4f1ff;        /* text on ink */
+  --mute:#a9a3c7;         /* secondary text, 8.3:1 on ink */
+  --acid:#c6ff1a;         /* CTA fill, 17:1 against ink text */
+  --magenta:#ff2bd6;
+  --tangerine:#ff7a1a;
+  --cyan:#19e6ff;
+  --violet:#6a3cff;
+  --display:"Rubik Mono One","Arial Black",Impact,system-ui,sans-serif;
+  --read:"Literata",Georgia,"Iowan Old Style",serif;
+  --gutter:clamp(16px,3.2vw,48px);
+}
+*{box-sizing:border-box}
+html{background:var(--ink)}
+body{
+  margin:0;background:var(--ink);color:var(--paper);
+  font:400 17px/1.55 var(--read);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:4px;border-radius:2px}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.sr-only:focus-visible{position:fixed!important;top:12px;left:12px;z-index:10;width:auto;height:auto;margin:0;padding:12px 18px;overflow:visible;clip:auto;background:var(--acid);color:var(--ink)}
+
+/* ---------- attribution bar: present, quiet ---------- */
+.bar{
+  display:flex;justify-content:space-between;align-items:center;gap:16px;
+  padding:18px var(--gutter) 0;
+  font:500 13px/1 var(--read);letter-spacing:.04em;color:var(--mute);
+  position:relative;z-index:2;
+}
+.bar a{text-decoration:none}
+.bar a:hover{color:var(--paper)}
+.bar nav{display:flex;gap:6px;align-items:center}
+.bar nav span[aria-hidden]{opacity:.5}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;isolation:isolate;overflow-x:clip;
+  padding:clamp(8px,2vw,24px) var(--gutter) clamp(40px,6vw,72px);
+  display:grid;gap:clamp(20px,3vw,36px);
+}
+/* ambient field: contour rings echo the halo, glows sit behind */
+.hero::before{
+  content:"";position:absolute;inset:-10% -20% -20%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(60% 55% at 50% 42%, rgba(106,60,255,.28), transparent 70%),
+    radial-gradient(35% 40% at 88% 18%, rgba(255,43,214,.14), transparent 70%),
+    radial-gradient(40% 45% at 8% 90%, rgba(25,230,255,.10), transparent 70%),
+    repeating-radial-gradient(ellipse at 50% 42%, rgba(244,241,255,.045) 0 1px, transparent 1px 22px);
+}
+.hero h1{margin:0;line-height:0}
+.mark{
+  display:block;width:100%;height:auto;margin-inline:auto;max-width:1600px;overflow:visible;
+  transform:perspective(1400px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform .6s cubic-bezier(.2,.7,.2,1);
+  animation:drift 26s ease-in-out infinite alternate;
+  will-change:transform,filter;
+}
+.mark--m{display:none}
+@keyframes drift{ /* slow colour breathing, never flashes */
+  from{filter:hue-rotate(-14deg)}
+  to{filter:hue-rotate(22deg) saturate(1.12)}
+}
+
+.lede{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  gap:20px 32px;max-width:1600px;width:100%;margin-inline:auto;
+}
+.lede p{
+  margin:0;font:italic 400 clamp(26px,3.1vw,44px)/1.1 var(--read);
+  letter-spacing:-.01em;text-wrap:balance;
+}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px 26px}
+.cta{
+  display:inline-flex;align-items:center;gap:14px;
+  padding:20px 30px 19px;
+  background:var(--acid);color:var(--ink);
+  font:400 clamp(16px,1.35vw,19px)/1 var(--display);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;
+  border-radius:999px;
+  box-shadow:0 0 0 3px var(--ink),0 0 0 5px var(--magenta),8px 10px 0 5px var(--violet);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.cta svg{width:22px;height:22px;flex:none}
+.cta:hover{transform:translate(-2px,-2px);box-shadow:0 0 0 3px var(--ink),0 0 0 5px var(--magenta),11px 13px 0 5px var(--violet)}
+.cta:active{transform:translate(2px,2px);box-shadow:0 0 0 3px var(--ink),0 0 0 5px var(--magenta),4px 5px 0 5px var(--violet)}
+.cta:focus-visible{outline:3px solid var(--cyan);outline-offset:9px}
+.quiet{
+  font:500 16px/1.3 var(--read);color:var(--paper);text-decoration:none;
+  border-bottom:1.5px solid rgba(244,241,255,.35);padding-bottom:3px;
+}
+.quiet:hover{border-color:var(--cyan)}
+
+/* ---------- below the fold: one paced passage ---------- */
+.sample{
+  padding:clamp(56px,8vw,120px) var(--gutter);
+  display:grid;gap:28px;justify-items:start;
+  max-width:980px;margin-inline:auto;
+}
+.sample h2{
+  margin:0;font:400 13px/1 var(--display);letter-spacing:.14em;color:var(--mute);
+}
+.passage{
+  margin:0;font:400 clamp(24px,2.7vw,36px)/1.45 var(--read);text-wrap:pretty;
+  max-width:30em;
+}
+.passage .w{transition:color .25s ease, opacity .25s ease}
+.passage.playing .w{opacity:.28}
+.passage.playing .w.read{opacity:.62}
+.passage.playing .w.now{opacity:1;color:var(--acid)}
+.passage cite{display:block;margin-top:14px;font:italic 400 16px/1.4 var(--read);color:var(--mute)}
+.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{
+  font:400 13px/1 var(--display);letter-spacing:.06em;color:var(--paper);
+  background:transparent;border:2px solid rgba(244,241,255,.5);border-radius:999px;
+  padding:13px 20px;cursor:pointer;
+}
+.btn:hover{border-color:var(--paper)}
+.btn[aria-pressed="true"]{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.pace{display:flex;gap:6px;border:0;margin:0;padding:0}
+.pace legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.pace input{position:absolute;opacity:0;width:1px;height:1px}
+.pace label{
+  font:500 15px/1 var(--read);color:var(--mute);padding:10px 12px;border-radius:999px;cursor:pointer;
+}
+.pace input:checked + label{color:var(--paper);background:rgba(244,241,255,.1)}
+.pace input:focus-visible + label{outline:3px solid var(--cyan);outline-offset:2px}
+
+/* ---------- facts, folded ---------- */
+.notes{
+  max-width:980px;margin-inline:auto;padding:0 var(--gutter) clamp(48px,6vw,80px);
+}
+.notes details{border-top:1px solid rgba(244,241,255,.14);padding-top:18px}
+.notes summary{
+  cursor:pointer;font:500 17px/1.3 var(--read);color:var(--paper);list-style:none;
+  display:inline-flex;gap:10px;align-items:center;
+}
+.notes summary::-webkit-details-marker{display:none}
+.notes summary::before{content:"+";font:400 14px/1 var(--display);color:var(--acid);width:14px}
+.notes details[open] summary::before{content:"–"}
+.notes .body{max-width:62ch;color:var(--mute);padding-top:10px}
+.notes .body p{margin:.6em 0}
+
+footer{
+  padding:24px var(--gutter) 36px;border-top:1px solid rgba(244,241,255,.08);
+  display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;
+  font:400 14px/1.4 var(--read);color:var(--mute);
+}
+footer a{text-decoration-color:rgba(169,163,199,.5);text-underline-offset:3px}
+
+/* ---------- 390-class phones: RISE stacks RI / SE ---------- */
+@media (max-width:640px){
+  .mark--d{display:none}
+  .mark--m{display:block;max-width:560px}
+  .lede{flex-direction:column;align-items:flex-start}
+  .lede p{font-size:30px}
+  .actions{width:100%;justify-content:space-between}
+  .cta{padding:19px 26px 18px}
+}
+
+/* ---------- reduced motion: the same poster, standing still ---------- */
+@media (prefers-reduced-motion:reduce){
+  .mark{animation:none;filter:none;transition:none;transform:none}
+  .cta,.passage .w{transition:none}
+}
+</style>
 </head>
-<body class="syber-project"><div id="app"></div></body>
+<body class="rise-page">
+<a class="sr-only" href="#main">Skip to content</a>
+
+<!-- Shared SVG defs for both wordmark layouts -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- iridescent pearl face -->
+    <linearGradient id="rise-pearl" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff4b8"/>
+      <stop offset=".28" stop-color="#ffc6f1"/>
+      <stop offset=".52" stop-color="#bff4ff"/>
+      <stop offset=".74" stop-color="#e5ff9c"/>
+      <stop offset="1" stop-color="#ffd7a8"/>
+    </linearGradient>
+    <!-- oil-slick sheen laid over the face -->
+    <radialGradient id="rise-sheen" cx=".35" cy=".25" r=".8">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".75"/>
+      <stop offset=".35" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset=".7" stop-color="#6a3cff" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#ff2bd6" stop-opacity=".3"/>
+    </radialGradient>
+    <linearGradient id="rise-deep" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a0f6b"/>
+      <stop offset="1" stop-color="#0b0620"/>
+    </linearGradient>
+    <!-- the melt: low-frequency horizontal ripple, static raster -->
+    <filter id="rise-melt" x="-8%" y="-15%" width="116%" height="135%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.0032 0.011" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="34" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<header class="bar">
+  <a href="/">SyberLabs</a>
+  <nav aria-label="Breadcrumb"><a href="/#work">Projects</a><span aria-hidden="true">/</span><span aria-current="page">RISE</span></nav>
+</header>
+
+<main id="main">
+  <section class="hero" aria-labelledby="rise-title">
+    <h1 id="rise-title">
+      <span class="sr-only">RISE</span>
+
+      <!-- Desktop / tablet: one line -->
+      <svg class="mark mark--d" viewBox="0 0 1600 640" role="presentation" aria-hidden="true" focusable="false">
+        <defs>
+          <text id="rise-word-d" x="800" y="500" text-anchor="middle" textLength="1330" lengthAdjust="spacingAndGlyphs"
+                font-family="Rubik Mono One, Arial Black, Impact, sans-serif" font-size="500" stroke-linejoin="round" stroke-linecap="round">RISE</text>
+        </defs>
+        <g filter="url(#rise-melt)">
+          <!-- extrusion -->
+          <g fill="url(#rise-deep)" stroke="url(#rise-deep)" stroke-width="150">
+            <use href="#rise-word-d" transform="translate(28 30)"/>
+            <use href="#rise-word-d" transform="translate(21 22)"/>
+            <use href="#rise-word-d" transform="translate(14 15)"/>
+            <use href="#rise-word-d" transform="translate(7 7)"/>
+          </g>
+          <!-- contour halo: colour / ink alternating, outside in -->
+          <use href="#rise-word-d" fill="#6a3cff" stroke="#6a3cff" stroke-width="150"/>
+          <use href="#rise-word-d" fill="#05060a" stroke="#05060a" stroke-width="134"/>
+          <use href="#rise-word-d" fill="#ff2bd6" stroke="#ff2bd6" stroke-width="118"/>
+          <use href="#rise-word-d" fill="#05060a" stroke="#05060a" stroke-width="102"/>
+          <use href="#rise-word-d" fill="#ff7a1a" stroke="#ff7a1a" stroke-width="86"/>
+          <use href="#rise-word-d" fill="#05060a" stroke="#05060a" stroke-width="70"/>
+          <use href="#rise-word-d" fill="#c6ff1a" stroke="#c6ff1a" stroke-width="54"/>
+          <use href="#rise-word-d" fill="#05060a" stroke="#05060a" stroke-width="38"/>
+          <use href="#rise-word-d" fill="#19e6ff" stroke="#19e6ff" stroke-width="24"/>
+          <use href="#rise-word-d" fill="#05060a" stroke="#05060a" stroke-width="12"/>
+          <!-- pearl face + sheen -->
+          <use href="#rise-word-d" fill="url(#rise-pearl)"/>
+          <use href="#rise-word-d" fill="url(#rise-sheen)"/>
+        </g>
+      </svg>
+
+      <!-- Phone: RI / SE -->
+      <svg class="mark mark--m" viewBox="0 0 800 900" role="presentation" aria-hidden="true" focusable="false">
+        <defs>
+          <g id="rise-word-m" font-family="Rubik Mono One, Arial Black, Impact, sans-serif" font-size="420" text-anchor="middle" stroke-linejoin="round">
+            <text x="400" y="400" textLength="640" lengthAdjust="spacingAndGlyphs">RI</text>
+            <text x="400" y="810" textLength="640" lengthAdjust="spacingAndGlyphs">SE</text>
+          </g>
+        </defs>
+        <g filter="url(#rise-melt)">
+          <g fill="url(#rise-deep)" stroke="url(#rise-deep)" stroke-width="120">
+            <use href="#rise-word-m" transform="translate(18 20)"/>
+            <use href="#rise-word-m" transform="translate(9 10)"/>
+          </g>
+          <use href="#rise-word-m" fill="#6a3cff" stroke="#6a3cff" stroke-width="120"/>
+          <use href="#rise-word-m" fill="#05060a" stroke="#05060a" stroke-width="106"/>
+          <use href="#rise-word-m" fill="#ff2bd6" stroke="#ff2bd6" stroke-width="92"/>
+          <use href="#rise-word-m" fill="#05060a" stroke="#05060a" stroke-width="78"/>
+          <use href="#rise-word-m" fill="#ff7a1a" stroke="#ff7a1a" stroke-width="64"/>
+          <use href="#rise-word-m" fill="#05060a" stroke="#05060a" stroke-width="50"/>
+          <use href="#rise-word-m" fill="#c6ff1a" stroke="#c6ff1a" stroke-width="36"/>
+          <use href="#rise-word-m" fill="#05060a" stroke="#05060a" stroke-width="24"/>
+          <use href="#rise-word-m" fill="#19e6ff" stroke="#19e6ff" stroke-width="14"/>
+          <use href="#rise-word-m" fill="#05060a" stroke="#05060a" stroke-width="6"/>
+          <use href="#rise-word-m" fill="url(#rise-pearl)"/>
+          <use href="#rise-word-m" fill="url(#rise-sheen)"/>
+        </g>
+      </svg>
+    </h1>
+
+    <div class="lede">
+      <p>Read beyond the page.</p>
+      <div class="actions">
+        <a class="cta" href="https://rise.syberlabs.io/">Open RISE
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        
+        <a class="quiet" href="/rise-demo/">Watch the demo</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sample" id="sample" aria-labelledby="sample-title">
+    <h2 id="sample-title">A PASSAGE, PACED</h2>
+    <blockquote class="passage" id="passage">
+      <p style="margin:0" data-words>Call me Ishmael. Some years ago, having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.</p>
+      <cite>Herman Melville, Moby-Dick</cite>
+    </blockquote>
+    <div class="controls">
+      <button class="btn" id="play" type="button" aria-pressed="false" aria-controls="passage">PLAY</button>
+      <fieldset class="pace">
+        <legend>Pace</legend>
+        <input type="radio" name="pace" id="pace-slow" value="140"><label for="pace-slow">Slow</label>
+        <input type="radio" name="pace" id="pace-nat" value="220" checked><label for="pace-nat">Natural</label>
+        <input type="radio" name="pace" id="pace-brisk" value="320"><label for="pace-brisk">Brisk</label>
+      </fieldset>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="Project details">
+    <details id="build-notes">
+      <summary>How RISE is built</summary>
+      <div class="body">
+        
+        <p>RISE shapes the timing, space, image, and sound around a text.</p>
+        <p>The source includes the reader, automated tests, and provider integrations.</p>
+      </div>
+    </details>
+  </section>
+</main>
+
+<footer>
+  <span>RISE is a <a href="/">SyberLabs</a> project.</span>
+  
+  <a href="https://github.com/SyberLabs/RISE">Source</a>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* Gentle pointer tilt on the wordmark (desktop pointers only, off for reduced motion) */
+  const hero = document.querySelector('.hero');
+  const marks = document.querySelectorAll('.mark');
+  if (matchMedia('(pointer:fine)').matches) {
+    hero.addEventListener('pointermove', e => {
+      if (reduce.matches) return;
+      const r = hero.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      marks.forEach(m => { m.style.setProperty('--ry', (x * 7).toFixed(2) + 'deg'); m.style.setProperty('--rx', (-y * 5).toFixed(2) + 'deg'); });
+    });
+    hero.addEventListener('pointerleave', () => marks.forEach(m => { m.style.setProperty('--ry','0deg'); m.style.setProperty('--rx','0deg'); }));
+  }
+
+  /* Paced passage: user-started only; the full text stays readable at rest */
+  const passage = document.getElementById('passage');
+  const p = passage.querySelector('[data-words]');
+  p.innerHTML = p.textContent.trim().split(/\s+/).map(w => `<span class="w">${w}</span>`).join(' ');
+  const words = [...p.querySelectorAll('.w')];
+  const btn = document.getElementById('play');
+  let i = 0, timer = null;
+
+  const wpm = () => +document.querySelector('input[name="pace"]:checked').value;
+  const delayFor = w => { const base = 60000 / wpm(); return /[.!?]$/.test(w) ? base * 2.6 : /[,;:]$/.test(w) ? base * 1.6 : base * (w.length > 7 ? 1.25 : 1); };
+
+  function stop(done){
+    clearTimeout(timer); timer = null;
+    btn.setAttribute('aria-pressed','false'); btn.textContent = done ? 'PLAY AGAIN' : 'PLAY';
+    if (done) { passage.classList.remove('playing'); words.forEach(w => w.classList.remove('now','read')); i = 0; }
+  }
+  function step(){
+    if (i > 0) { words[i-1].classList.remove('now'); words[i-1].classList.add('read'); }
+    if (i >= words.length) { timer = setTimeout(() => stop(true), 900); return; }
+    words[i].classList.add('now');
+    timer = setTimeout(step, delayFor(words[i].textContent)); i++;
+  }
+  btn.addEventListener('click', () => {
+    if (timer) { stop(false); return; }
+    if (i === 0) words.forEach(w => w.classList.remove('read','now'));
+    passage.classList.add('playing');
+    btn.setAttribute('aria-pressed','true'); btn.textContent = 'PAUSE';
+    step();
+  });
+})();
+</script>
+
+</body>
 </html>
