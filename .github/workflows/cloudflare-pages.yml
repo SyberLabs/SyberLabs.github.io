@@ -35,19 +35,14 @@ jobs:
           test -s dist/syberlabs.css
           test -s dist/404.html
           test -s dist/rise-demo/index.html
-          test -s dist/rise-demo/rise-demo-20260926.mp4
-          test ! -e dist/commons
-          test -s dist/approach/index.html
-          test -s dist/jev/index.html
-          test -s dist/research/jev-execution/index.html
-          test -s dist/research/jev-execution/report.css
+          test -s dist/rise-demo/rise-demo-20260927-v2.mp4
           test -s dist/services/index.html
           test -s dist/services/services.css
           test -s dist/privacy/index.html
-          for project in rise commons relay omnios osahr; do test -s "dist/projects/$project/index.html"; done
+          for gone in approach jev kev research kit commons projects/relay projects/omnios projects/commons mateo_robles_resume.pdf; do test ! -e "dist/$gone"; done
+          for project in rise osahr; do test -s "dist/projects/$project/index.html"; done
           grep -Fxq '/rise https://rise.syberlabs.io/ 301' dist/_redirects
           grep -Fxq '/rise/* https://rise.syberlabs.io/:splat 301' dist/_redirects
-          grep -Fxq '/commons/ /projects/commons/ 301' dist/_redirects
           grep -Fq 'class="sy-header' dist/404.html
       - uses: actions/upload-artifact@v4
         with:

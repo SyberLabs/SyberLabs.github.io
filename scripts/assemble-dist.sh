@@ -6,14 +6,11 @@ cd "$(dirname "$0")/.."
 test -d dist
 cp 404.html robots.txt sitemap.xml site.webmanifest _redirects \
   syber-mark.png syber-logo.png syber-logo.webp syber-logo-96.png \
-  og-image.png mateo_robles_resume.pdf \
+  og-image.png \
   favicon.ico favicon-32x32.png favicon-16x16.png \
   apple-touch-icon.png android-chrome-192x192.png \
   android-chrome-512x512.png dist/
-# kit/v2 is the canonical public home of the design kit: https://syberlabs.io/kit/v2/
-mkdir -p dist/kit
-cp -r kit/v2 dist/kit/
-for dir in rise-demo projects approach jev kev research services privacy; do
+for dir in rise-demo projects services privacy; do
   cp -r "$dir" dist/
 done
 node scripts/prerender.mjs

@@ -37,9 +37,6 @@
 .home-about { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr); gap: 72px; padding-top: 56px; scroll-margin-top: 64px; }
 .home-about__lead { margin: 0 0 22px; color: var(--sy-body); }
 .home-about__copy > p:not(.home-about__lead) { margin: 0 0 20px; max-width: 62ch; color: var(--sy-mist); }
-.home-about__label { margin-top: 34px; }
-.home-about__skills { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 14px 0 0; padding: 0; }
-.home-about__skills li { padding: 9px 12px; border: 1px solid var(--sy-rule); border-radius: 999px; font: 400 12.5px/1 var(--sy-mono); color: var(--sy-mist); }
 .home-about__founder { align-self: start; }
 .home-about__name { margin: 12px 0 6px; font: 400 44px/1 var(--sy-serif); color: var(--sy-vellum); }
 .home-about__role { margin: 0 0 14px; color: var(--sy-vellum); font-weight: 500; }

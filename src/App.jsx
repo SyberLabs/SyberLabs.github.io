@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import syberMark from '../syber-logo-96.png';
-import { projects, nav, workWithUs, footerLinks, skills, EMAIL, CONTACT, RESUME, LINKEDIN, GITHUB } from '../projects/site-data.js';
+import { projects, nav, workWithUs, footerLinks, EMAIL, CONTACT, LINKEDIN, GITHUB } from '../projects/site-data.js';
 import { mount, RING_SVG, paramLine } from '../kit/v2/syber-atmosphere.js';
 import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
@@ -63,7 +63,7 @@ function Hero() {
       <div className="home-hero__copy" ref={copy}>
         <p className="sy-eyebrow">SyberLabs / Independent AI software lab</p>
         <h1 id="hero-title" className="sy-display-xl home-hero__title">Read.<br /> <em>Think.</em><br /> Build.</h1>
-        <p className="sy-body-lg home-hero__intro">SyberLabs builds AI-powered reading software and tools that make AI agents reviewable.</p>
+        <p className="sy-body-lg home-hero__intro">SyberLabs builds AI-assisted reading software and open research tools you can run yourself.</p>
         <div className="home-hero__actions">
           <a className="sy-btn sy-btn--solid" href="https://rise.syberlabs.io/sequences/">Start a short reading<Icon name="arrow" className="sy-icon--trail" /></a>
           <a className="sy-btn sy-btn--line" href="#work">See the work<Icon name="down" /></a>
@@ -71,7 +71,6 @@ function Hero() {
         <div className="home-hero__founder">
           <span>Founded in 2026 by <strong>Mateo Robles</strong></span>
           <ul>
-            <li><a href={RESUME}>Résumé (PDF)</a></li>
             <li><a href={LINKEDIN}>LinkedIn</a></li>
             <li><a href={GITHUB}>GitHub</a></li>
             <li><a href={CONTACT}>Email</a></li>
@@ -107,18 +106,18 @@ function Work() {
 
 function Research() {
   return <section id="research" className="home-sec sy-wrap" aria-labelledby="research-title">
-    <div className="site-head"><p className="sy-eyebrow">Research / September 2026</p><h2 id="research-title" className="sy-display">Reliable execution for AI agents.</h2></div>
+    <div className="site-head"><p className="sy-eyebrow">Research</p><h2 id="research-title" className="sy-display">Replay a changing system.</h2></div>
     <div className="home-research">
       <div>
         <figure className="sy-plate-figure home-research__fig" aria-hidden="true" style={{ '--sy-accent': 'var(--sy-ice)' }}>
-          <div className="sy-plate sy-plate--sigil"><canvas data-sigil="jev-execution" data-caption-for="params-jev-execution" /></div>
-          <figcaption><b>Plate VII · Technical report</b>de Jong map · <span className="sy-nowrap">seed “jev-execution”</span><span className="sy-params" id="params-jev-execution">{sigilParams('jev-execution').caption}</span></figcaption>
+          <div className="sy-plate sy-plate--sigil"><canvas data-sigil="osahr" data-caption-for="params-osahr" /></div>
+          <figcaption><b>Plate II · OSAHR</b>de Jong map · <span className="sy-nowrap">seed “osahr”</span><span className="sy-params" id="params-osahr">{sigilParams('osahr').caption}</span></figcaption>
         </figure>
       </div>
       <div>
-        <p className="sy-body-lg">A model can choose an action, but an application still has to enforce permissions and budgets, check the result, and recover from crashes. Our current research defines that execution layer and tests it with a Python and SQLite prototype that passes 87 regression tests, including process-crash recovery experiments.</p>
-        <p className="sy-plate-caption sy-plate-caption--figure home-research__stat"><b className="sy-figure">87</b><span>passing regression tests</span></p>
-        <a className="sy-link home-research__link" href="/research/jev-execution/">Read the technical report<Icon name="arrow" /></a>
+        <p className="sy-body-lg">OSAHR is an open-source Python library for exact stochastic simulation of networks that rewrite their own structure, with seeded, hash-checked replay of every event. The source, tests, and license are public, so every claim can be checked from a fresh clone.</p>
+        <p className="sy-plate-caption sy-plate-caption--figure home-research__stat"><b className="sy-figure">127</b><span>tests pass from a fresh clone</span></p>
+        <a className="sy-link home-research__link" href="https://github.com/SyberLabs/OSAHR_Cell">Read the source<Icon name="external" /></a>
       </div>
     </div>
   </section>;
@@ -131,8 +130,6 @@ function About() {
       <div className="home-about__copy">
         <p className="sy-body-lg home-about__lead">SyberLabs is an independent software and AI research lab founded in 2026 by Mateo Robles. The lab designs, builds, and evaluates AI products and research software, with a focus on applied machine learning, LLM applications, AI agent reliability, and simulation.</p>
         <p>Every project is published with its current status and its limits. Prototypes, measured results, and planned work are labeled separately so readers can tell what has been shown and what has not.</p>
-        <h3 className="sy-eyebrow home-about__label">Technical skills</h3>
-        <ul className="home-about__skills">{skills.map(s => <li key={s}>{s}</li>)}</ul>
       </div>
       <aside className="sy-plate sy-plate--card home-about__founder" aria-labelledby="founder-name">
         <p className="sy-eyebrow">Founder</p>
@@ -140,7 +137,6 @@ function About() {
         <p className="home-about__role">Founder and Independent Researcher, SyberLabs</p>
         <p>B.S. Computer Science, emphasis in Data Science, Santa Clara University (2026). Software engineer working across machine learning, LLM applications, and full-stack development.</p>
         <ul className="home-about__links">
-          <li><a href={RESUME}>Résumé (PDF)<Icon name="arrow" /></a></li>
           <li><a href={LINKEDIN}>LinkedIn<Icon name="external" /></a></li>
           <li><a href={GITHUB}>GitHub<Icon name="external" /></a></li>
           <li><a href={CONTACT}>{EMAIL}</a></li>
