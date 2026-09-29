@@ -26,6 +26,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://syberlabs.io/projects/fanout/</loc>
+    <lastmod>2026-09-28</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://syberlabs.io/projects/commons/</loc>
     <lastmod>2026-09-27</lastmod>
     <priority>0.7</priority>

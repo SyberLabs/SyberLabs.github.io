@@ -111,6 +111,22 @@ export const projects = [
       ['Source', { label: 'github.com/SyberLabs/OSAHR_Cell', href: 'https://github.com/SyberLabs/OSAHR_Cell' }],
     ],
   },
+  {
+    slug: 'fanout', number: '06', name: 'Fanout', category: 'Agent execution', accent: '#9bc4ff',
+    pageTitle: 'Fanout: Parallel AI Subtask Execution with Checked Results (Design)',
+    headline: 'Split a job. Check every part.',
+    intro: 'A design for splitting one AI task into bounded subtasks, running them in parallel, and keeping only the results that pass a check.',
+    summary: 'A planner (Jev, or the open-source Kev) turns a task into a typed plan with a budget for every part. A consistent hashing ring gives each subtask to one worker, so losing a worker moves only its share. A separate verifier checks every result before it is accepted, and failures stay visible. This page describes a design. Nothing is built or running yet.',
+    status: { kind: 'research', label: 'Research' },
+    secondary: { label: 'Ask about Fanout', href: `${CONTACT}?subject=Fanout` },
+    facts: [
+      ['Stage', 'Design only. Nothing is built or running yet, and there are no measurements.'],
+      ['Planned technology', 'Rust, a message queue (SQS or NATS JetStream), consistent hashing, GraphQL, MongoDB, AWS, Claude Sonnet 5.5 subagents'],
+      ['Planned first test', 'Stop one worker during a 200-subtask run. Pass means no subtask is lost and none is accepted twice.'],
+      ['Mateo’s role', 'Designer and sole engineer'],
+      ['Source', 'No repository yet'],
+    ],
+  },
 ];
 
 export const skills = ['Python', 'TypeScript', 'JavaScript', 'SQL', 'React', 'Next.js', 'FastAPI', 'PostgreSQL', 'SQLite', 'Redis', 'Cloudflare Workers', 'LightGBM', 'scikit-learn', 'pandas', 'NumPy', 'LLM applications', 'AI agents', 'pytest', 'Vitest', 'Playwright'];
