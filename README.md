@@ -13,4 +13,6 @@ Commons has one page, `/projects/commons/`, rendered from `projects/site-data.js
 The current migration status lives in `kev/` and is published at `/kev/`. The prior Jev evaluation and integration case study remains at `/jev/` as historical evidence; its results must not be attributed to Kev.
 
 
+The Sybershoke research note lives at `research/sybershoke/`. It reports a fault-injection harness checked only against a reference simulator; every number on it comes from that project's committed report, and it states that no real system has been checked and that the repository is not yet public. Update it when the repository is published or a real system is checked.
+
 The GrokCell Execution report lives at `research/jev-execution/`. It summarizes the durable offline prototype and its evidence limits; preserve the distinction between observed results and planned live integration.

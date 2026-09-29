@@ -33,6 +33,10 @@
 .home-research__stat { margin-top: 40px; }
 .home-research__link { margin-top: 24px; min-height: 44px; color: var(--sy-vellum); background: linear-gradient(var(--sy-ice), var(--sy-ice)) 0 calc(100% - 10px)/100% 1px no-repeat; }
 .home-research__link:hover { color: var(--sy-ice); }
+.home-research-more { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 64px; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--sy-rule); }
+.home-research-more .sy-eyebrow { margin: 0; }
+.home-research-more .sy-body { max-width: 36em; margin: 0; }
+.home-research-more .home-research__link { margin-top: 16px; }
 
 .home-about { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr); gap: 72px; padding-top: 56px; scroll-margin-top: 64px; }
 .home-about__lead { margin: 0 0 22px; color: var(--sy-body); }
@@ -57,7 +61,7 @@
   .home-hero__scrim { background: linear-gradient(180deg, rgba(6,5,26,0) 0, rgba(6,5,26,0) calc(var(--m) - 70px), rgba(6,5,26,.9) calc(var(--m) + 4px), rgba(6,5,26,.96) 100%); }
   .home-hero__caption { justify-self: start; text-align: left; margin: 22px 0 0; padding: 0; background: none; border: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
   .home-hero__caption i, .home-hero__caption .home-eq { display: none; }
-  .home-research, .home-about { grid-template-columns: 1fr; gap: 40px; }
+  .home-research, .home-about, .home-research-more { grid-template-columns: 1fr; gap: 40px; }
 }
 @media (max-width: 640px) {
   .home-sec { padding-top: 88px; }

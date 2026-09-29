@@ -46,6 +46,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://syberlabs.io/research/sybershoke/</loc>
+    <lastmod>2026-09-28</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://syberlabs.io/rise-demo/</loc>
     <lastmod>2026-09-27</lastmod>
     <priority>0.7</priority>
