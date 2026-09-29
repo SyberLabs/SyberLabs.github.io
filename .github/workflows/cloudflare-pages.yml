@@ -35,7 +35,10 @@ jobs:
           test -s dist/syberlabs.css
           test -s dist/404.html
           test -s dist/rise-demo/index.html
-          test -s dist/rise-demo/rise-demo-20260926.mp4
+          test -s dist/rise-demo/rise-tokyo-drift-jev-20260929-v1.mp4
+          test -s dist/rise-demo/rise-tokyo-drift-jev-20260929-v1-poster.jpg
+          test "$(stat -c%s dist/rise-demo/rise-tokyo-drift-jev-20260929-v1.mp4)" -lt 26214400
+          grep -Fq '/rise-demo/rise-tokyo-drift-jev-20260929-v1.mp4' dist/rise-demo/index.html
           test ! -e dist/commons
           test -s dist/approach/index.html
           test -s dist/jev/index.html
