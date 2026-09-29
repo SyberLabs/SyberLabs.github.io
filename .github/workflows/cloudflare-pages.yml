@@ -41,6 +41,8 @@ jobs:
           test -s dist/jev/index.html
           test -s dist/research/jev-execution/index.html
           test -s dist/research/jev-execution/report.css
+          test -s dist/research/sybershoke/index.html
+          test -s dist/research/sybershoke/report.css
           test -s dist/services/index.html
           test -s dist/services/services.css
           test -s dist/privacy/index.html

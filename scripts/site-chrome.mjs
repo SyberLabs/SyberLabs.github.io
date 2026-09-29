@@ -8,7 +8,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { header, footer } from '../projects/project-template.js';
 
 const pages = ['404.html', 'approach/index.html', 'jev/index.html', 'kev/index.html', 'privacy/index.html',
-  'rise-demo/index.html', 'services/index.html', 'research/jev-execution/index.html'];
+  'rise-demo/index.html', 'services/index.html', 'research/jev-execution/index.html', 'research/sybershoke/index.html'];
 
 const HEADER = /<a class="sy-skip" href="#(\w+)">Skip to content<\/a>\s*<header class="sy-header[\s\S]*?<\/header>/;
 const FOOTER = /<footer class="sy-footer[\s\S]*?<\/footer>/;

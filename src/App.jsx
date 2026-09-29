@@ -121,6 +121,13 @@ function Research() {
         <a className="sy-link home-research__link" href="/research/jev-execution/">Read the technical report<Icon name="arrow" /></a>
       </div>
     </div>
+    <div className="home-research-more">
+      <p className="sy-eyebrow">Also: Sybershoke</p>
+      <div>
+        <p className="sy-body">Sybershoke shock-tests multi-agent systems. It kills workers, duplicates and drops messages, then checks that nothing was lost or accepted twice. So far it runs against a reference simulator, not a real system.</p>
+        <a className="sy-link home-research__link" href="/research/sybershoke/">Read the research note<Icon name="arrow" /></a>
+      </div>
+    </div>
   </section>;
 }
 
