@@ -26,6 +26,10 @@ main { padding: var(--space-9) 0 var(--space-10); }
 .video-frame { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 video, .video-frame iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; background: #000; object-fit: cover; }
 .caption { max-width: var(--measure); margin: var(--space-3) 0 0; font-size: 14px; line-height: 20px; color: var(--text-3); }
+.video-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-5); padding: var(--space-6) 0; border-bottom: 1px solid var(--line); }
+.video-cta h2 { margin: 0; font: 400 40px/1.1 var(--font-display); }
+.video-cta p { max-width: 48ch; margin: var(--space-3) 0 0; color: var(--text-2); line-height: 1.5; }
+.video-cta .sy-btn { flex-shrink: 0; }
 
 .second-film h2 { margin: var(--space-4) 0 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; }
 .second-film .media-meta { margin-bottom: 0; }
