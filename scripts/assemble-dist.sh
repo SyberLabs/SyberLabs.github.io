@@ -13,6 +13,8 @@ cp 404.html robots.txt sitemap.xml site.webmanifest _redirects \
 # kit/v2 is the canonical public home of the design kit: https://syberlabs.io/kit/v2/
 mkdir -p dist/kit
 cp -r kit/v2 dist/kit/
+# social preview cards, one per page (regenerate with `node scripts/og-cards.mjs`)
+cp -r og dist/
 for dir in rise-demo omni-demo projects approach jev kev research services privacy; do
   cp -r "$dir" dist/
 done
