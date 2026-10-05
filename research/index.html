@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en" data-field="calm">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#06051a">
+  <title>Research Index | SyberLabs Research</title>
+  <meta name="description" content="Every SyberLabs research artifact on one page: the technical reports and notes on this site, the RISE reader-owned AI status pages, the five working papers in SyberLabs/papers, the Instrument Panel and the OSAHR decision workbench. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.">
+  <link rel="canonical" href="https://syberlabs.io/research/">
+  <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/syberlabs.css?v=4">
+  <link rel="stylesheet" href="research.css?v=1">
+  <meta property="og:title" content="Research Index | SyberLabs Research">
+  <meta property="og:description" content="One card per research artifact: claim, evidence state, what it does not establish, date and source. Reports, notes, status pages, working papers, instruments and evidence packets.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://syberlabs.io/research/">
+</head>
+<body>
+<a class="sy-skip" href="#main">Skip to content</a>
+<div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
+<header class="sy-header sy-header--sticky"><div class="sy-header__in">
+  <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
+  <nav class="sy-nav" aria-label="Primary"><ul><li><a href="/#work">Work</a></li><li><a href="/#research" aria-current="page">Research</a></li><li><a href="/#about">About</a></li><li><a href="mailto:syberlabs.software@gmail.com">Contact</a></li></ul><a class="sy-btn sy-btn--line" href="/services/">Work with us</a></nav>
+  <details class="sy-menu"><summary aria-expanded="false" aria-controls="sy-atlas"><svg class="sy-icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>Menu</span></summary><div class="sy-atlas" id="sy-atlas" role="dialog" aria-label="Site map">
+  <span class="sy-atlas__backdrop" aria-hidden="true"></span>
+  <div class="sy-atlas__panel">
+    <div class="sy-atlas__head"><p class="sy-eyebrow">Atlas / every page on syberlabs.io</p><button class="sy-atlas__close" type="button" aria-label="Close menu"><svg class="sy-icon " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="sy-atlas__groups"><section class="sy-atlas__group" aria-labelledby="atlas-use"><h2 id="atlas-use" class="sy-atlas__title">Use</h2><ul><li><a href="https://rise.syberlabs.io/" rel="noopener" style="--sy-accent:#f2d9a6"><canvas class="sy-atlas__sigil" data-sigil="rise" data-color="#f2d9a6" aria-hidden="true"></canvas><span class="sy-atlas__label">RISE app <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">rise.syberlabs.io · open beta</span></a></li><li><a href="https://omni.syberlabs.io/" rel="noopener" style="--sy-accent:#f59be0"><canvas class="sy-atlas__sigil" data-sigil="omnios" data-color="#f59be0" aria-hidden="true"></canvas><span class="sy-atlas__label">OmniOS preview <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">omni.syberlabs.io · live preview</span></a></li><li><a href="https://rise.syberlabs.io/jev-scene-demo" rel="noopener"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">RISE interactive sample <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">Change the scene while you read</span></a></li><li><a href="/rise-demo/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">RISE demo</span><span class="sy-atlas__note">Watch the film</span></a></li></ul></section><section class="sy-atlas__group" aria-labelledby="atlas-projects"><h2 id="atlas-projects" class="sy-atlas__title">Projects</h2><ul><li><a href="/projects/rise/" style="--sy-accent:#f2d9a6"><canvas class="sy-atlas__sigil" data-sigil="rise" data-color="#f2d9a6" aria-hidden="true"></canvas><span class="sy-atlas__label">RISE</span><span class="sy-atlas__note">Audiovisual reader</span></a></li><li><a href="/projects/omnios/" style="--sy-accent:#f59be0"><canvas class="sy-atlas__sigil" data-sigil="omnios" data-color="#f59be0" aria-hidden="true"></canvas><span class="sy-atlas__label">OmniOS</span><span class="sy-atlas__note">AI analysis canvas</span></a></li><li><a href="/projects/syberwork/" style="--sy-accent:#a6f08f"><canvas class="sy-atlas__sigil" data-sigil="syberwork" data-color="#a6f08f" aria-hidden="true"></canvas><span class="sy-atlas__label">SyberWork</span><span class="sy-atlas__note">Governed work runtime</span></a></li><li><a href="/projects/relay/" style="--sy-accent:#62e3d8"><canvas class="sy-atlas__sigil" data-sigil="relay" data-color="#62e3d8" aria-hidden="true"></canvas><span class="sy-atlas__label">Relay</span><span class="sy-atlas__note">Job application workspace</span></a></li><li><a href="/projects/osahr/" style="--sy-accent:#ffae63"><canvas class="sy-atlas__sigil" data-sigil="osahr" data-color="#ffae63" aria-hidden="true"></canvas><span class="sy-atlas__label">OSAHR</span><span class="sy-atlas__note">Stochastic simulation library</span></a></li></ul></section><section class="sy-atlas__group" aria-labelledby="atlas-research"><h2 id="atlas-research" class="sy-atlas__title">Research</h2><ul><li><a href="/research/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Research index</span><span class="sy-atlas__note">Every study, note and report</span></a></li><li><a href="/research/jev-execution/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Reliable execution for AI agents</span><span class="sy-atlas__note">Technical report · Sept 2026</span></a></li><li><a href="/research/sybershoke/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Sybershoke</span><span class="sy-atlas__note">Research note · shock tests for multi-agent systems</span></a></li><li><a href="https://github.com/SyberLabs/papers" rel="noopener"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Papers <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">Working papers and studies on GitHub</span></a></li><li><a href="/kev/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">RISE, Jev and Kev</span><span class="sy-atlas__note">Reader-owned AI</span></a></li><li><a href="/jev/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Jev in RISE</span><span class="sy-atlas__note">Earlier case study</span></a></li></ul></section><section class="sy-atlas__group" aria-labelledby="atlas-lab"><h2 id="atlas-lab" class="sy-atlas__title">Lab</h2><ul><li><a href="/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Home</span><span class="sy-atlas__note">Read. Think. Build.</span></a></li><li><a href="/approach/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Approach</span><span class="sy-atlas__note">How we build</span></a></li><li><a href="/services/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Services</span><span class="sy-atlas__note">Interactive reading pilots</span></a></li><li><a href="/#about"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">About</span><span class="sy-atlas__note">The lab and its founder</span></a></li><li><a href="/kit/v2/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Design kit</span><span class="sy-atlas__note">Atlas v2 tokens and components</span></a></li><li><a href="/privacy/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Privacy</span><span class="sy-atlas__note">What this site does with your data</span></a></li></ul></section><section class="sy-atlas__group" aria-labelledby="atlas-contact"><h2 id="atlas-contact" class="sy-atlas__title">Contact</h2><ul><li><a href="mailto:syberlabs.software@gmail.com"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Email</span><span class="sy-atlas__note">syberlabs.software@gmail.com</span></a></li><li><a href="https://github.com/SyberLabs" rel="noopener"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">GitHub <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">github.com/SyberLabs</span></a></li><li><a href="https://www.linkedin.com/in/mateo-robles-71260b189" rel="noopener"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">LinkedIn <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">Mateo Robles</span></a></li><li><a href="/mateo_robles_resume.pdf"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Résumé</span><span class="sy-atlas__note">PDF</span></a></li></ul></section></div>
+    <p class="sy-atlas__foot"><span>Press <kbd>/</kbd> anywhere to open this map · <kbd>Esc</kbd> closes</span><a href="mailto:syberlabs.software@gmail.com">syberlabs.software@gmail.com</a></p>
+  </div>
+</div></details>
+</div></header>
+<script type="module" src="/syberlabs.js"></script>
+<main id="main">
+  <section class="hero">
+    <nav class="sy-crumbs" aria-label="Breadcrumb"><ol><li><a href="/">SyberLabs</a></li><li><span aria-current="page">Research</span></li></ol></nav>
+    <div class="meta"><span>RESEARCH INDEX</span><span>5 OCTOBER 2026</span></div>
+    <p class="kicker">SYBERLABS RESEARCH</p>
+    <h1>Every study,<br><em>with its limits.</em></h1>
+    <p class="dek">One card per research artifact the lab has published: what it claims, the evidence state it has reached, what it does not establish, when, and where the source is. The states are the ones each repository earns. None is promoted by wording.</p>
+    <div class="hero-bottom"><p>11 artifacts<br><span>2 reports on this site · 2 RISE status pages · 5 working papers · 2 instruments</span></p><a href="#on-this-site">Read the cards <svg class="sy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></a></div>
+  </section>
+
+  <div class="status" role="note" aria-label="How evidence states are read">
+    <strong>HOW TO READ A CARD</strong>
+    <ul class="legend">
+      <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> the behaviour exists in code</span></li>
+      <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> a named test exercises it</span></li>
+      <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> numbers exist under stated conditions</span></li>
+      <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> it runs where people can reach it</span></li>
+      <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> named, and still missing</span></li>
+    </ul>
+  </div>
+
+  <div class="layout">
+    <aside><nav aria-label="Index contents"><p>CONTENTS</p><a href="#on-this-site">01 / On this site</a><a href="#rise">02 / RISE and reader-owned AI</a><a href="#papers">03 / Working papers</a><a href="#instruments">04 / Instruments and packets</a><a href="#provenance">05 / Provenance</a></nav><p class="aside-note">Index, not a review.<br>Each card links to the artifact<br>that carries the evidence.</p></aside>
+    <div class="cards">
+
+      <section id="on-this-site" aria-labelledby="on-this-site-title">
+        <p class="section-label">01 / ON THIS SITE</p>
+        <h2 id="on-this-site-title">Reports and notes.</h2>
+
+        <article class="card" id="grokcell-execution">
+          <div class="card__head">
+            <p class="kind">Technical report · GC–01</p>
+            <h3><a href="/research/jev-execution/">GrokCell Execution: reliable execution for AI agents</a></h3>
+            <p class="claim">After an AI model chooses an action, the application still has to enforce permissions and budgets, check the result and recover from crashes. The report defines a small contract for that work (read, decide, call, check, admit, yield) and tests a Python and SQLite prototype of it.</p>
+          </div>
+          <dl class="facts">
+            <div><dt>Status</dt><dd><ul class="states">
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> a single-host Python prototype with optional SQLite persistence and two offline fixtures.</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> 87 passing regression tests and process-kill experiments: fresh-process replay, death during a callback, death around admission.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> live provider calls, verifier isolation, a task-quality or cost benchmark.</span></li>
+            </ul></dd></div>
+            <div><dt>Establishes</dt><dd>Specific recovery behaviour across process exit for two offline fixtures: a restart replays a completed step without another callback, and an interrupted step is not resent under the same identity.</dd></div>
+            <div><dt>Does not establish</dt><dd>Live-provider quality, security isolation (the verifier is trusted host code), exactly-once for remote effects, power-loss recovery, or any live success rate, latency or cost per accepted result.</dd></div>
+            <div><dt>Date</dt><dd>26 September 2026 · revision 1</dd></div>
+            <div><dt>Source</dt><dd><a href="/research/jev-execution/">Read the report</a> · implementation in SyberLabs/grokcell-execution, a private repository (authorized access required)</dd></div>
+          </dl>
+        </article>
+
+        <article class="card" id="sybershoke">
+          <div class="card__head">
+            <p class="kind">Research note · SB–01</p>
+            <h3><a href="/research/sybershoke/">Sybershoke: shock tests for multi-agent systems</a></h3>
+            <p class="claim">A deterministic fault-injection harness: a seed gives a fault plan, the system’s run is recorded as a plain-text history, invariants judge the history alone, and a shrinker reduces a failing plan to the faults that matter. Revision 2 runs the real RISE Worker source against recorded Jev answers.</p>
+          </div>
+          <dl class="facts">
+            <div><dt>Status</dt><dd><ul class="states">
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> Week 0 reference simulator: 43 passing tests, 4 of 4 seeded bugs caught, 0 failing runs for the correct implementation over 2,000 seeds per campaign.</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> the Jev/Kev workspace: 89 tests after an eleven-finding red-team review, each fix with a regression test that failed on the old code.</span></li>
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> the RISE Worker source on 39 recorded production Jev answers: 10 predictions written before the first run, 1 refuted; a keyword override that sends “drift off to sleep” to 300 words per minute and a missing provider fallback, both found with replayable seeds.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> a live system; Kev; the Week 0 repository is unpublished.</span></li>
+            </ul></dd></div>
+            <div><dt>Establishes</dt><dd>The harness catches the seeded bugs it was built to catch, and one real system’s source misbehaves in two replayable ways on recorded answers. The override fix is merged in RISE (SyberLabs/RISE#306).</dd></div>
+            <div><dt>Does not establish</dt><dd>Failure rates: the decision-path counts are set by assumed traffic, fault windows and latencies, so only caught versus not caught survives. Anything about Kev, since no recorded Kev answers exist. The live RISE service: Redis and Neon were stand-ins and time was virtual. The sound-loudness rank is the adapter’s interpretation, not RISE’s.</dd></div>
+            <div><dt>Date</dt><dd>29 September 2026 · revision 2</dd></div>
+            <div><dt>Source</dt><dd><a href="/research/sybershoke/">Read the note</a> · <a href="https://github.com/SyberLabs/sybershoke" rel="noopener">SyberLabs/sybershoke</a> at 45956fe (REPORT.md, docs/REDTEAM.md, docs/ADAPTER-RISE.md)</dd></div>
+          </dl>
+        </article>
+      </section>
+
+      <section id="rise" aria-labelledby="rise-title">
+        <p class="section-label">02 / RISE AND READER-OWNED AI</p>
+        <h2 id="rise-title">Status pages, not papers.</h2>
+
+        <article class="card" id="kev">
+          <div class="card__head">
+            <p class="kind">Status page · RISE</p>
+            <h3><a href="/kev/">RISE, Jev and Kev: reader-owned AI</a></h3>
+            <p class="claim">Since RISE #294 the RISE server calls no model and holds no model key. An AI reading request runs on a connection the reader owns: hosted Jev through the reader’s own OpenRouter account, or a pinned Kev-4B on the reader’s own computer. Reading and manual settings need neither.</p>
+          </div>
+          <dl class="facts">
+            <div><dt>Status</dt><dd><ul class="states">
+              <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> the Cloudflare Worker serves the app and a static decision catalog; the six former inference routes answer 410 with instructions to connect.</span></li>
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> bounded decisions: finite choice questions built from the public catalog, an answer admitted only if every choice was offered, and a deterministic mapping to reading settings. The same contract serves hosted Jev, local Kev and the evaluation harness.</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> the local Kev path, on Windows with an RTX 5080.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> a RISE-specific Kev evaluation; the Apple Silicon path.</span></li>
+            </ul></dd></div>
+            <div><dt>Establishes</dt><dd>Where the model boundary sits in RISE today, and that a model can pick an offered value and nothing else.</dd></div>
+            <div><dt>Does not establish</dt><dd>Kev’s quality on RISE requests. Jev’s 48 of 49 result belongs to the historical evaluation below and is not a Kev result. Nothing hosted runs Kev on SyberLabs’ behalf.</dd></div>
+            <div><dt>Date</dt><dd>October 2026 · page revised 5 October 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="/kev/">Read the status page</a> · <a href="https://github.com/SyberLabs/RISE/blob/main/docs/USER-OWNED-AI.md" rel="noopener">docs/USER-OWNED-AI.md</a> and <a href="https://github.com/SyberLabs/RISE/blob/main/docs/LOCAL-RISE.md" rel="noopener">docs/LOCAL-RISE.md</a> in SyberLabs/RISE</dd></div>
+          </dl>
+        </article>
+
+        <article class="card" id="jev">
+          <div class="card__head">
+            <p class="kind">Case study · historical</p>
+            <h3><a href="/jev/">Jev in RISE: AI decisions with clear limits</a></h3>
+            <p class="claim">The recorded Jev integration. Jev answers typed questions (choose one option, estimate a yes-or-no probability, rate on a scale), RISE’s own code validates every choice before playback, and the reader stays in control.</p>
+          </div>
+          <dl class="facts">
+            <div><dt>Status</dt><dd><ul class="states">
+              <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> the integration ran in RISE before #294 retired shared inference; readers’ requests chose a released text and passage and configured the reader from 23 browser-synthesized sound options, seven typefaces and five text sizes.</span></li>
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> the post-fix live record of 27 September 2026 reran all 39 evaluation cases: all 39 responses valid, 48 of 49 explicit choices matched, all 19 paired contrasts differed.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> independent verification of the Scriptorium composition feature.</span></li>
+            </ul></dd></div>
+            <div><dt>Establishes</dt><dd>That a typed-decision integration with validation in code worked for one request path, and one pass of its choices against a fixed case set.</dd></div>
+            <div><dt>Does not establish</dt><dd>A verified live Kev deployment: these results must not be attributed to Kev. Consistency across runs or reader enjoyment, which a single pass cannot show. Any partnership with TypeSafe AI.</dd></div>
+            <div><dt>Date</dt><dd>Historical · evaluation record 27 September 2026 · page revised 5 October 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="/jev/">Read the case study</a> · <a href="https://github.com/SyberLabs/RISE/blob/main/docs/jev-core/variety-evaluation.md" rel="noopener">docs/jev-core/variety-evaluation.md</a> in SyberLabs/RISE</dd></div>
+          </dl>
+        </article>
+      </section>
+
+      <section id="papers" aria-labelledby="papers-title">
+        <p class="section-label">03 / WORKING PAPERS · SYBERLABS/PAPERS</p>
+        <h2 id="papers-title">Five studies at different stages.</h2>
+        <p class="section-note">The papers repository is an index of research artifacts, not of finished papers. Each folder defines its evidence, claim limits and reproduction steps; the sentences below are taken from those folders.</p>
+
+        <article class="card" id="dtbr">
+          <div class="card__head">
+            <p class="kind">Working paper · internal-review draft</p>
+            <h3><a href="https://github.com/SyberLabs/papers/tree/main/DTBR" rel="noopener">DTBR-MC: the marker is not the binding constraint</a></h3>
+            <p class="claim">A falsification-oriented Monte Carlo audit of deep-time hazard-warning assumptions. In this model family, symbolic factors (markers, legibility, dread) act as modulators while physical factors (access, capability, severity, certainty of consequence) act as gates, and the capacity-threshold hypothesis it set out to test is algebraically impossible in an additive behavioural model.</p>
+          </div>
+          <dl class="facts">
+            <div><dt>Status</dt><dd><ul class="states">
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> a seeded, vectorized simulator; H1, sensitivity and H3 experiments; a first experiment bundle with outputs and figures.</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> deterministic regression and falsifiability tests in <code>tests/</code>.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> review: the draft is internal, and its references still need verification against primary sources.</span></li>
+            </ul></dd></div>
+            <div><dt>Establishes</dt><dd>Which modelling assumptions are load-bearing once the warning-design problem is written as replaceable equations. Every result carries an epistemic label: audit, extrapolation, cartography or exploratory.</dd></div>
+            <div><dt>Does not establish</dt><dd>How distant-future people will behave, operational nuclear-waste policy, or calibrated future-behaviour estimates. The simulator is a consistency auditor, not a predictive instrument.</dd></div>
+            <div><dt>Date</dt><dd>Published to SyberLabs/papers 26 September 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/papers/tree/main/DTBR" rel="noopener">papers/DTBR</a> · <a href="https://github.com/SyberLabs/papers/blob/main/DTBR/PAPER.md" rel="noopener">PAPER.md</a></dd></div>
+          </dl>
+        </article>
+
+        <article class="card" id="green-hypercube">
+          <div class="card__head">
+            <p class="kind">Manuscript · draft</p>
+            <h3><a href="https://github.com/SyberLabs/papers/tree/main/green-hypercube" rel="noopener">Green Hypercube: coverage artifacts in computational ethnobotany</a></h3>
+            <p class="claim">Apparent structure in integrated plant-data search benchmarks can be inflated by coverage and reward-density artifacts. Six sequential search strategies run over a plant manifold with four cue channels, and raw cue–reward coupling is reported beside coverage-controlled and residualized coupling; the manuscript reports that the raw coupling collapses under those controls.</p>
+          </div>
+          <dl class="facts">
+            <div><dt>Status</dt><dd><ul class="states">
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> a Python package with an offline synthetic path, live-data configurations, and a validation suite: reward permutation, graph rewiring, phylogeny shuffles, coupling, residualization and matched-density sweeps.</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> a pytest suite for the pipeline, strategies, controls, coupling and metrics.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> author confirmation and TODO items in the draft; raw external caches and live result bundles are not published.</span></li>
+            </ul></dd></div>
+            <div><dt>Establishes</dt><dd>A methodological result: matched-density comparisons are necessary before a strategy is credited with real signal across pools.</dd></div>
+            <div><dt>Does not establish</dt><dd>Anything about Indigenous discovery mechanisms or community knowledge. It is not a bioprospecting recommendation engine, and documented use is not treated as a proxy for latent biological value.</dd></div>
+            <div><dt>Date</dt><dd>Published to SyberLabs/papers 26 September 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/papers/tree/main/green-hypercube" rel="noopener">papers/green-hypercube</a> · <a href="https://github.com/SyberLabs/papers/blob/main/green-hypercube/green_hypercube_manuscript.md" rel="noopener">green_hypercube_manuscript.md</a></dd></div>
+          </dl>
+        </article>
+
+        <article class="card" id="grokking">
+          <div class="card__head">
+            <p class="kind">Empirical research artifact</p>
+            <h3><a href="https://github.com/SyberLabs/papers/tree/main/grokking-scaling-theory" rel="noopener">Grokking Scaling Theory</a></h3>
+            <p class="claim">Tests scaling-law and order-parameter claims around grokking in modular arithmetic by fit competition across candidate laws rather than one hand-picked curve. Phase 2 (July 2026) asks whether a label-free sheaf “gluing” parameter or a logical-cells decidability parameter supplies the architecture-universal order parameter that phase 1 lacked.</p>
+          </div>
+          <dl class="facts">
+            <div><dt>Status</dt><dd><ul class="states">
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> expanded validation on 21 scaling points, 19 of them measured; phase 2 on 63 deterministic training runs across five architectures, bit-deterministic from the committed seeds (verified 18 of 18).</span></li>
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> fit competition, a corrected scaling law, RG-inspired flow models, and the sheaf and logical-cell instruments.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> publication: more measured runs, tests and manuscript cleanup remain, and some anchors and bibliography assets are research-stage.</span></li>
+            </ul></dd></div>
+            <div><dt>Establishes</dt><dd>As the repository reports it: the sheaf parameter beats the variance incumbent but leads grokking by 10 to 25%, no logical cell assembles, depth amplifies the Fourier code while trainability collapses, and width rather than depth is the dominant quantization pressure. Pooled fits point to regime dependence rather than universality.</dd></div>
+            <div><dt>Does not establish</dt><dd>A solved theory of grokking, or architecture-independent universal scaling laws.</dd></div>
+            <div><dt>Date</dt><dd>Phase 2 July 2026 · published to SyberLabs/papers 26 September 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/papers/tree/main/grokking-scaling-theory" rel="noopener">papers/grokking-scaling-theory</a> · <a href="https://github.com/SyberLabs/papers/blob/main/grokking-scaling-theory/analysis/ORDER_PARAMETER_RESULTS.md" rel="noopener">analysis/ORDER_PARAMETER_RESULTS.md</a></dd></div>
+          </dl>
+        </article>
+
+        <article class="card" id="tok">
+          <div class="card__head">
+            <p class="kind">Curated public package</p>
+            <h3><a href="https://github.com/SyberLabs/papers/tree/main/tok" rel="noopener">TOK: a governed epistemic architecture</a></h3>
+            <p class="claim">Reasoning represented as a sequence of validated artifacts (mechanism graph, dynamics binding, divergence trace, observation registry, evidence-transition proposal, human review gate), each carrying boundaries such as <code>candidate_not_evidence</code> and <code>may_update_evidence: false</code>. The package holds sanitized freeze summaries, replay artifacts, a public validator and a toy reference pipeline.</p>
+          </div>
+          <dl class="facts">
+            <div><dt>Status</dt><dd><ul class="states">
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> public summaries of the Paper 1 benchmark freeze (a naturalistic holdout of 240 problems: exact coordinate accuracy 173/240, axis decision accuracy 885/960) and the Paper 2 dynamics atlas (12 systems across 7 regimes, 116,640 admissibility fits, 144 collapse transects, every recorded acceptance gate passed).</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> 26 safe research checks passed in the source workspace on 18 June 2026; the public validator checks release boundaries, freeze summaries and the toy pipeline.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> public: the full internal engine, private answer keys, maps and scorecards are not in the package.</span></li>
+            </ul></dd></div>
+            <div><dt>Establishes</dt><dd>Narrow claims about how TOK represents reasoning as auditable, human-gated artifacts and how its freeze summaries keep research-only boundaries. The atlas supports claims about the tested implementations, corpus, ladder and measurement grid.</dd></div>
+            <div><dt>Does not establish</dt><dd>That TOK discovers real-world causal truth, proves a candidate mechanism, or autonomously updates evidence or production systems. It does not support broad invalidation of LTC/LNN model classes, and the private benchmark material cannot be re-verified from this package.</dd></div>
+            <div><dt>Date</dt><dd>Freezes through June 2026 · published to SyberLabs/papers 26 September 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/papers/tree/main/tok" rel="noopener">papers/tok</a> · <a href="https://github.com/SyberLabs/papers/blob/main/tok/docs/PUBLIC_SCOPE.md" rel="noopener">docs/PUBLIC_SCOPE.md</a></dd></div>
+          </dl>
+        </article>
+
+        <article class="card" id="vital-language">
+          <div class="card__head">
+            <p class="kind">Exploratory research system · interim findings</p>
+            <h3><a href="https://github.com/SyberLabs/papers/tree/main/vital-language" rel="noopener">Vital Language: coherence, agency and literary vitality</a></h3>
+            <p class="claim">Can controlled generation dynamics make language-model prose feel more alive without collapsing coherence? The founding bet, that deterministic chaotic logit modulation raises multifractal structure and perceived vitality, inverted: at 0.5B to 1.5B scale, token-level chaos does not beat plain sampling on meaningful vitality proxies, and a prompt-level persistent-speaker scaffold is the reliable lever, buying non-collapse rather than vitality.</p>
+          </div>
+          <dl class="facts">
+            <div><dt>Status</dt><dd><ul class="states">
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> paired epsilon sweeps on Qwen2.5-0.5B and 1.5B on CPU (6 prompts × 3 seeds, legibility-gated, bootstrap intervals): white noise drives self-perplexity from 7.8 to 176 while chaos at the same magnitude stays near 10; the agency scaffold leaves 0 of 18 passages degenerate against 3 of 18 for plain sampling.</span></li>
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> one generation harness with chaotic, matched-noise and white-noise controls, MFDFA, coherence and trajectory metrics, and a blind rating scaffold.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> independent human raters.</span></li>
+            </ul></dd></div>
+            <div><dt>Establishes</dt><dd>The coherence and degeneracy results, which are rater-independent counts, and that the MFDFA instrument works on real literature (a shuffle surrogate collapses Joyce’s width and barely moves Austen’s).</dd></div>
+            <div><dt>Does not establish</dt><dd>Any claim about felt vitality. All human-judgment data is n = 1 and the rater is the assistant model itself, so every vitality claim is a hypothesis about sign until independent raters are collected.</dd></div>
+            <div><dt>Date</dt><dd>Interim · published to SyberLabs/papers 26 September 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/papers/tree/main/vital-language" rel="noopener">papers/vital-language</a> · <a href="https://github.com/SyberLabs/papers/blob/main/vital-language/docs/FINDINGS.md" rel="noopener">docs/FINDINGS.md</a></dd></div>
+          </dl>
+        </article>
+      </section>
+
+      <section id="instruments" aria-labelledby="instruments-title">
+        <p class="section-label">04 / INSTRUMENTS AND EVIDENCE PACKETS</p>
+        <h2 id="instruments-title">Run the systems, keep the record.</h2>
+
+        <article class="card" id="instrument-panel">
+          <div class="card__head">
+            <p class="kind">Instrument · SyberLabs/cross-platform</p>
+            <h3><a href="https://github.com/SyberLabs/cross-platform" rel="noopener">The Instrument Panel: five real systems in one inspection shell</a></h3>
+            <p class="claim">A single local platform through which SyberRuntime, Barn, Bough, OSAHR and Relay can be run, inspected and understood. Nothing simulates those systems: every number, refusal, hash and graph shown was produced by the named source repository, and any event opens to the source file and line that produced it.</p>
+          </div>
+          <dl class="facts">
+            <div><dt>Status</dt><dd><ul class="states">
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> an adapter layer over the unmodified source checkouts, an event stream with per-event provenance, six guided scenarios (input configuration, not playback: each step declares what it expects and reports what happened), and the three seams the source systems already define.</span></li>
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> a fidelity matrix that names the symbol that ran for each capability, and an integration map that records the commands run and the pinned source commits.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> an automated test suite in the repository; a public deployment. It runs at 127.0.0.1:8765 from a checkout with a Python environment and Node 24.</span></li>
+            </ul></dd></div>
+            <div><dt>Establishes</dt><dd>That the five systems can be driven live from one shell with their behaviour attributed to source, and that a refusal the scenario did not predict is reported as such.</dd></div>
+            <div><dt>Does not establish</dt><dd>Anything about Jev or Kev: no provider call is active. SyberRuntime’s acceptance gate reports fail on a fresh clone because its evidence corpus is gitignored; two Barn benchmark tests fail upstream; Bough’s Cypher is generated but never pushed; Relay’s Obsidian, database and Cloudflare paths are not exercised; the Barn→Bough twin is a shape from one short run, not a fitted model.</dd></div>
+            <div><dt>Date</dt><dd>27 September 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/cross-platform" rel="noopener">SyberLabs/cross-platform</a> at 5e031ae (README, docs/FIDELITY.md, docs/INTEGRATION_MAP.md)</dd></div>
+          </dl>
+        </article>
+
+        <article class="card" id="osahr-workbench">
+          <div class="card__head">
+            <p class="kind">Evidence packets · SyberLabs/OSAHR_Cell</p>
+            <h3><a href="https://github.com/SyberLabs/OSAHR_Cell/tree/main/workbench" rel="noopener">OSAHR decision workbench: licensed evidence packets</a></h3>
+            <p class="claim">One auditable loop over the frozen Experiment 06 corpus: a scenario is validated, freeze and analysis checksums are pinned, the claim grammar is rescored, an action license and a claim license are derived, and a JSON and HTML packet is written that replay recomputes. Editing a packet does not grant a claim.</p>
+          </div>
+          <dl class="facts">
+            <div><dt>Status</dt><dd><ul class="states">
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> <code>python -m workbench decide</code> and <code>replay</code>, three scenarios (identity, high stress, long outage), and the packet format in <code>workbench/packet.py</code>.</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> 18 tests in <code>workbench/tests/test_workbench.py</code>.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> real-network calibration: it is always graded Proposed, and promoting it to Measured fails replay.</span></li>
+            </ul></dd></div>
+            <div><dt>Establishes</dt><dd>That a named scenario becomes a human-pending action and a replayable evidence packet without licensing a directed effect the ensemble withholds: an unresolved hold acts under hold with the claim license denied. Every packet carries Known, Measured, Inferred and Proposed grades.</dd></div>
+            <div><dt>Does not establish</dt><dd>A new simulator, or any directed effect beyond what the Experiment 06 record admits. It refuses to mint a licensed packet from an attacker-supplied ensemble, from <code>claims.score</code> MCP input, or from a scenario outside the evaluation corpus.</dd></div>
+            <div><dt>Date</dt><dd>27 September 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/OSAHR_Cell/tree/main/workbench" rel="noopener">OSAHR_Cell/workbench</a> at 7293e27 · <a href="/projects/osahr/">the OSAHR project page</a></dd></div>
+          </dl>
+        </article>
+      </section>
+
+      <section id="provenance" aria-labelledby="provenance-title">
+        <p class="section-label">05 / PROVENANCE</p>
+        <h2 id="provenance-title">What this index reflects.</h2>
+        <p class="reflects">Reflects SyberLabs/papers@e925ed6, SyberLabs/cross-platform@5e031ae, SyberLabs/OSAHR_Cell@7293e27, SyberLabs/sybershoke@45956fe and SyberLabs/RISE@998d725, and the site pages linked above as of SyberLabs/SyberLabs.github.io@168fb0d · verified 2026-10-05. Each state is earned by code, a named test, a measurement under stated conditions, or a deployment; none is promoted by wording. When a repository changes, this index changes with it.</p>
+        <p class="reflects">Not indexed here: the private SyberLabs/grokcell-execution repository, reachable only through the report above, and the per-project evidence rows, which live on each <a href="/projects/rise/">project page</a>.</p>
+      </section>
+
+    </div>
+  </div>
+</main>
+<footer class="sy-footer">
+<div class="sy-footer__map"><div class="sy-footer__map-in"><section aria-labelledby="foot-use"><h2 id="foot-use" class="sy-eyebrow">Use</h2><ul><li><a href="https://rise.syberlabs.io/" rel="noopener" style="--sy-accent:#f2d9a6"><span class="sy-footer__dot" aria-hidden="true"></span>RISE app <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="https://omni.syberlabs.io/" rel="noopener" style="--sy-accent:#f59be0"><span class="sy-footer__dot" aria-hidden="true"></span>OmniOS preview <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="https://rise.syberlabs.io/jev-scene-demo" rel="noopener">RISE interactive sample <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="/rise-demo/">RISE demo</a></li></ul></section><section aria-labelledby="foot-projects"><h2 id="foot-projects" class="sy-eyebrow">Projects</h2><ul><li><a href="/projects/rise/" style="--sy-accent:#f2d9a6"><span class="sy-footer__dot" aria-hidden="true"></span>RISE</a></li><li><a href="/projects/omnios/" style="--sy-accent:#f59be0"><span class="sy-footer__dot" aria-hidden="true"></span>OmniOS</a></li><li><a href="/projects/syberwork/" style="--sy-accent:#a6f08f"><span class="sy-footer__dot" aria-hidden="true"></span>SyberWork</a></li><li><a href="/projects/relay/" style="--sy-accent:#62e3d8"><span class="sy-footer__dot" aria-hidden="true"></span>Relay</a></li><li><a href="/projects/osahr/" style="--sy-accent:#ffae63"><span class="sy-footer__dot" aria-hidden="true"></span>OSAHR</a></li></ul></section><section aria-labelledby="foot-research"><h2 id="foot-research" class="sy-eyebrow">Research</h2><ul><li><a href="/research/" aria-current="page">Research index</a></li><li><a href="/research/jev-execution/">Reliable execution for AI agents</a></li><li><a href="/research/sybershoke/">Sybershoke</a></li><li><a href="https://github.com/SyberLabs/papers" rel="noopener">Papers <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="/kev/">RISE, Jev and Kev</a></li><li><a href="/jev/">Jev in RISE</a></li></ul></section><section aria-labelledby="foot-lab"><h2 id="foot-lab" class="sy-eyebrow">Lab</h2><ul><li><a href="/">Home</a></li><li><a href="/approach/">Approach</a></li><li><a href="/services/">Services</a></li><li><a href="/#about">About</a></li><li><a href="/kit/v2/">Design kit</a></li><li><a href="/privacy/">Privacy</a></li></ul></section><section aria-labelledby="foot-contact"><h2 id="foot-contact" class="sy-eyebrow">Contact</h2><ul><li><a href="mailto:syberlabs.software@gmail.com">Email</a></li><li><a href="https://github.com/SyberLabs" rel="noopener">GitHub <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="https://www.linkedin.com/in/mateo-robles-71260b189" rel="noopener">LinkedIn <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="/mateo_robles_resume.pdf">Résumé</a></li></ul></section></div></div>
+<div class="sy-footer__in">
+  <a class="sy-lockup" href="/"><img src="/syber-logo-96.png" alt="" width="18" height="20">© 2026 SyberLabs</a>
+  <nav aria-label="Footer"><a href="/approach/">Approach</a><a href="https://rise.syberlabs.io/">RISE app <svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="https://omni.syberlabs.io/">OmniOS preview <svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="/services/">Services</a><a href="/mateo_robles_resume.pdf">Résumé</a><a href="https://github.com/SyberLabs">GitHub <svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="https://www.linkedin.com/in/mateo-robles-71260b189">LinkedIn <svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="mailto:syberlabs.software@gmail.com">Contact</a><a href="/privacy/">Privacy</a></nav>
+</div></footer>
+</body>
+</html>

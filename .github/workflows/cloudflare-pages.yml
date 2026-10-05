@@ -10,8 +10,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: syberlabs-home-${{ github.ref }}
-  cancel-in-progress: true
+  # push→push on main and PR→PR on a branch still supersede each other, but a manual dispatch
+  # neither cancels nor is cancelled by a queued push run for the same ref. On 2026-10-05, during a
+  # GitHub-hosted-runner incident, dispatch run #184 cancelled push run #183 two seconds after it was
+  # queued; the push would have deployed on its own. Two manual runs queue rather than kill each other.
+  group: syberlabs-home-${{ github.ref }}${{ github.event_name == 'workflow_dispatch' && '-manual' || '' }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
 
 jobs:
   validate:
@@ -52,13 +56,22 @@ jobs:
           grep -Fq 'https://rise.syberlabs.io/' dist/projects/rise/index.html
           grep -Fq '/rise-demo/rise-marketing-20260929-v3.mp4' dist/projects/rise/index.html
           grep -Fq 'pj-evidence' dist/projects/rise/index.html
+          grep -Fq 'pj-gallery' dist/projects/rise/index.html
+          test -s dist/rise-demo/rooms/rise-home-20261005.webp
+          grep -Fq '/rise-demo/rooms/rise-home-20261005.webp' dist/projects/rise/index.html
+          test -s dist/rise-demo/rooms/rise-rooms-begin-20261005.mp4
+          test "$(stat -c%s dist/rise-demo/rooms/rise-rooms-begin-20261005.mp4)" -lt 8388608
           test -s dist/omni-demo/omnios-morning-20261005.mp4
           test -s dist/omni-demo/omnios-morning-20261005-poster.jpg
           test "$(stat -c%s dist/omni-demo/omnios-morning-20261005.mp4)" -lt 8388608
           grep -Fq '/omni-demo/omnios-morning-20261005.mp4' dist/projects/omnios/index.html
+          test -s dist/relay-demo/relay-runtime-20261005.jpg
+          grep -Fq '/relay-demo/relay-runtime-20261005.jpg' dist/projects/relay/index.html
           ! grep -Fq 'rise:sections' dist/projects/rise/index.html
           test -s dist/approach/index.html
           test -s dist/jev/index.html
+          test -s dist/research/index.html
+          test -s dist/research/research.css
           test -s dist/research/jev-execution/index.html
           test -s dist/research/jev-execution/report.css
           test -s dist/research/sybershoke/index.html
@@ -67,11 +80,15 @@ jobs:
           test -s dist/services/services.css
           test -s dist/privacy/index.html
           for project in rise omnios syberwork relay osahr; do test -s "dist/projects/$project/index.html"; done
+          test -s dist/og/omnios.png
+          grep -Fq 'og:image' dist/projects/omnios/index.html
           grep -Fxq '/rise https://rise.syberlabs.io/ 301' dist/_redirects
           grep -Fxq '/rise/* https://rise.syberlabs.io/:splat 301' dist/_redirects
           grep -Fxq '/projects/commons/* / 301' dist/_redirects
           grep -Fxq '/omni https://omni.syberlabs.io/ 301' dist/_redirects
           grep -Fq 'class="sy-header' dist/404.html
+      - name: Quality sweep of the built site
+        run: node scripts/qa.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: syberlabs-home-${{ github.sha }}

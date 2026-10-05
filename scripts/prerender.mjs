@@ -25,9 +25,17 @@ for (const p of projects) {
     continue;
   }
   const page = renderProject(p);
+  // The social preview tags carry the same title and description as the page, and the card from scripts/og-cards.mjs.
+  const image = `https://syberlabs.io/og/${p.slug}.png?v=1`;
   await inject(resolve(`dist/projects/${p.slug}/index.html`), /<div id="app"><\/div>/, html => html
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(page.title)}</title>`)
     .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(page.description)}">`)
+    .replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${esc(page.title)}">`)
+    .replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${esc(page.description)}">`)
+    .replace(/<meta property="og:image" content="[^"]*">/, `<meta property="og:image" content="${image}">`)
+    .replace(/<meta name="twitter:title" content="[^"]*">/, `<meta name="twitter:title" content="${esc(page.title)}">`)
+    .replace(/<meta name="twitter:description" content="[^"]*">/, `<meta name="twitter:description" content="${esc(page.description)}">`)
+    .replace(/<meta name="twitter:image" content="[^"]*">/, `<meta name="twitter:image" content="${image}">`)
     .replace('<html lang="en">', `<html lang="en" style="--accent:${p.accent};--sy-accent:${p.accent}">`)
     .replace('<div id="app"></div>', `<div id="app">${page.body}</div>`));
 }
