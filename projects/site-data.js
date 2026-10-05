@@ -310,6 +310,7 @@ export const siteMap = [
     { label: 'OSAHR', note: 'Stochastic simulation library', href: '/projects/osahr/', sigil: 'osahr', accent: '#ffae63' },
   ] },
   { title: 'Research', items: [
+    { label: 'Research index', note: 'Every study, note and report', href: '/research/' },
     { label: 'Reliable execution for AI agents', note: 'Technical report · Sept 2026', href: '/research/jev-execution/' },
     { label: 'Sybershoke', note: 'Research note · shock tests for multi-agent systems', href: '/research/sybershoke/' },
     { label: 'Papers', note: 'Working papers and studies on GitHub', href: 'https://github.com/SyberLabs/papers', external: true },

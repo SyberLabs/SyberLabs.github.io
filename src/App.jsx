@@ -132,6 +132,7 @@ function Research() {
     <div className="home-research-more" data-reveal>
       <p className="sy-eyebrow">Also</p>
       <ul className="home-research__links">
+        <li><a href="/research/">All research: the index<Icon name="arrow" size={16} /></a></li>
         <li><a href="/kev/">RISE, Jev and Kev: reader-owned AI<Icon name="arrow" size={16} /></a></li>
         <li><a href="/jev/">Jev in RISE: the earlier case study<Icon name="arrow" size={16} /></a></li>
         <li><a href="https://github.com/SyberLabs/papers">Papers: working papers and studies<Icon name="external" size={16} /></a></li>

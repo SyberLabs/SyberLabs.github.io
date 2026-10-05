@@ -15,6 +15,8 @@ Five projects are published: RISE, OmniOS, SyberWork, Relay and OSAHR. Each proj
 The reader-owned AI status lives in `kev/` and is published at `/kev/`. The prior Jev evaluation and integration case study remains at `/jev/` as historical evidence; its results must not be attributed to Kev.
 
 
+The research index at `research/` (published at `/research/`) carries one card per research artifact, on this site and in the SyberLabs/papers, cross-platform and OSAHR_Cell repositories, with its claim, evidence state, limits, date and source; the `Reflects` line at its foot names the commits it was checked against, so update it when they move.
+
 The Sybershoke research note lives at `research/sybershoke/`. Revision 2 reports the Week 0 harness against its reference simulator (that repository is still unpublished), the public [SyberLabs/sybershoke](https://github.com/SyberLabs/sybershoke) workspace, and its first real system, the RISE Worker source run against recorded Jev answers; every number on it comes from that project's committed reports (`REPORT.md`, `docs/REDTEAM.md`, `docs/ADAPTER-RISE.md`), so update the note when they change.
 
 The GrokCell Execution report lives at `research/jev-execution/`. It summarizes the durable offline prototype and its evidence limits; preserve the distinction between observed results and planned live integration.

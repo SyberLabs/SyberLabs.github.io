@@ -59,6 +59,8 @@ jobs:
           ! grep -Fq 'rise:sections' dist/projects/rise/index.html
           test -s dist/approach/index.html
           test -s dist/jev/index.html
+          test -s dist/research/index.html
+          test -s dist/research/research.css
           test -s dist/research/jev-execution/index.html
           test -s dist/research/jev-execution/report.css
           test -s dist/research/sybershoke/index.html
