@@ -11,6 +11,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400;1,7..72,500&display=swap">
 <link rel="canonical" href="https://syberlabs.io/projects/rise/">
 <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/syberlabs.css?v=4">
 <style>
 /* ---------- RISE tokens (single dark world, by choice) ---------- */
 :root{
@@ -30,14 +32,21 @@
 }
 *{box-sizing:border-box}
 html{background:var(--ink)}
+html.sy-field-live{background:var(--sy-ink)}
 body{
   margin:0;background:var(--ink);color:var(--paper);
   font:400 17px/1.55 var(--read);
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
-a{color:inherit}
-:focus-visible{outline:3px solid var(--cyan);outline-offset:4px;border-radius:2px}
+main a{color:inherit}
+.rise-page main :focus-visible{outline:3px solid var(--cyan);outline-offset:4px;border-radius:2px}
+.rise-page{--sy-accent:var(--sy-accent-rise)}
+html.sy-field-live .rise-page{background:transparent}
+.rise-page .sy-crumbs{max-width:1600px;margin:18px auto 0;padding:0 var(--gutter)}
+.rise-page .sy-crumbs ol{margin:0}
+.rise-page .sy-footer a{color:var(--sy-mist)}
+.rise-page .sy-footer .sy-lockup{color:var(--sy-mist)}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .sr-only:focus-visible{position:fixed!important;top:12px;left:12px;z-index:10;width:auto;height:auto;margin:0;padding:12px 18px;overflow:visible;clip:auto;background:var(--acid);color:var(--ink)}
 
@@ -185,7 +194,21 @@ footer a{text-decoration-color:rgba(169,163,199,.5);text-underline-offset:3px}
 </style>
 </head>
 <body class="rise-page">
-<a class="sr-only" href="#main">Skip to content</a>
+<a class="sy-skip" href="#main">Skip to content</a>
+<div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
+<header class="sy-header sy-header--sticky"><div class="sy-header__in">
+  <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
+  <nav class="sy-nav" aria-label="Primary"><ul><li><a href="/#work">Work</a></li><li><a href="/#research">Research</a></li><li><a href="/#about">About</a></li><li><a href="mailto:syberlabs.software@gmail.com">Contact</a></li></ul><a class="sy-btn sy-btn--line" href="/services/">Work with us</a></nav>
+  <details class="sy-menu"><summary aria-expanded="false" aria-controls="sy-atlas"><svg class="sy-icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>Menu</span></summary><div class="sy-atlas" id="sy-atlas" role="dialog" aria-label="Site map">
+  <span class="sy-atlas__backdrop" aria-hidden="true"></span>
+  <div class="sy-atlas__panel">
+    <div class="sy-atlas__head"><p class="sy-eyebrow">Atlas / every page on syberlabs.io</p><button class="sy-atlas__close" type="button" aria-label="Close menu"><svg class="sy-icon " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="sy-atlas__groups"><section class="sy-atlas__group" aria-labelledby="atlas-projects"><h2 id="atlas-projects" class="sy-atlas__title">Projects</h2><ul><li><a href="/projects/rise/" style="--sy-accent:#f2d9a6"><canvas class="sy-atlas__sigil" data-sigil="rise" data-color="#f2d9a6" aria-hidden="true"></canvas><span class="sy-atlas__label">RISE</span><span class="sy-atlas__note">AI-assisted reading app</span></a></li><li><a href="/projects/commons/" style="--sy-accent:#a6f08f"><canvas class="sy-atlas__sigil" data-sigil="commons" data-color="#a6f08f" aria-hidden="true"></canvas><span class="sy-atlas__label">Commons</span><span class="sy-atlas__note">Project coordination</span></a></li><li><a href="/projects/relay/" style="--sy-accent:#62e3d8"><canvas class="sy-atlas__sigil" data-sigil="relay" data-color="#62e3d8" aria-hidden="true"></canvas><span class="sy-atlas__label">Relay</span><span class="sy-atlas__note">Job application workspace</span></a></li><li><a href="/projects/omnios/" style="--sy-accent:#f59be0"><canvas class="sy-atlas__sigil" data-sigil="omnios" data-color="#f59be0" aria-hidden="true"></canvas><span class="sy-atlas__label">OmniOS</span><span class="sy-atlas__note">AI analysis canvas</span></a></li><li><a href="/projects/osahr/" style="--sy-accent:#ffae63"><canvas class="sy-atlas__sigil" data-sigil="osahr" data-color="#ffae63" aria-hidden="true"></canvas><span class="sy-atlas__label">OSAHR</span><span class="sy-atlas__note">Stochastic simulation library</span></a></li><li><a href="/rise-demo/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">RISE demo</span><span class="sy-atlas__note">Watch the film, try the sample</span></a></li></ul></section><section class="sy-atlas__group" aria-labelledby="atlas-research"><h2 id="atlas-research" class="sy-atlas__title">Research</h2><ul><li><a href="/research/jev-execution/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Reliable execution for AI agents</span><span class="sy-atlas__note">Technical report · Sept 2026</span></a></li><li><a href="/research/sybershoke/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Sybershoke</span><span class="sy-atlas__note">Research note · shock tests for multi-agent systems</span></a></li><li><a href="/kev/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">RISE and Kev</span><span class="sy-atlas__note">Migration status</span></a></li><li><a href="/jev/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Jev in RISE</span><span class="sy-atlas__note">Earlier case study</span></a></li></ul></section><section class="sy-atlas__group" aria-labelledby="atlas-lab"><h2 id="atlas-lab" class="sy-atlas__title">Lab</h2><ul><li><a href="/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Home</span><span class="sy-atlas__note">Read. Think. Build.</span></a></li><li><a href="/approach/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Approach</span><span class="sy-atlas__note">How we build</span></a></li><li><a href="/services/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Services</span><span class="sy-atlas__note">Interactive reading pilots</span></a></li><li><a href="/#about"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">About</span><span class="sy-atlas__note">The lab and its founder</span></a></li><li><a href="/kit/v2/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Design kit</span><span class="sy-atlas__note">Atlas v2 tokens and components</span></a></li><li><a href="/privacy/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Privacy</span><span class="sy-atlas__note">What this site does with your data</span></a></li></ul></section><section class="sy-atlas__group" aria-labelledby="atlas-contact"><h2 id="atlas-contact" class="sy-atlas__title">Contact</h2><ul><li><a href="mailto:syberlabs.software@gmail.com"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Email</span><span class="sy-atlas__note">syberlabs.software@gmail.com</span></a></li><li><a href="https://github.com/SyberLabs" rel="noopener"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">GitHub <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">github.com/SyberLabs</span></a></li><li><a href="https://www.linkedin.com/in/mateo-robles-71260b189" rel="noopener"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">LinkedIn <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">Mateo Robles</span></a></li><li><a href="/mateo_robles_resume.pdf"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Résumé</span><span class="sy-atlas__note">PDF</span></a></li></ul></section></div>
+    <p class="sy-atlas__foot"><span>Press <kbd>/</kbd> anywhere to open this map · <kbd>Esc</kbd> closes</span><a href="mailto:syberlabs.software@gmail.com">syberlabs.software@gmail.com</a></p>
+  </div>
+</div></details>
+</div></header>
+<script type="module" src="/syberlabs.js"></script>
 
 <!-- Shared SVG defs for both wordmark layouts -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -217,12 +240,9 @@ footer a{text-decoration-color:rgba(169,163,199,.5);text-underline-offset:3px}
   </defs>
 </svg>
 
-<header class="bar">
-  <a href="/">SyberLabs</a>
-  <nav aria-label="Breadcrumb"><a href="/#work">Projects</a><span aria-hidden="true">/</span><span aria-current="page">RISE</span></nav>
-</header>
 
 <main id="main">
+  <nav class="sy-crumbs" aria-label="Breadcrumb"><ol><li><a href="/">SyberLabs</a></li><li><a href="/#work">Work</a></li><li><span aria-current="page">RISE</span></li></ol></nav>
   <section class="hero" aria-labelledby="rise-title">
     <h1 id="rise-title">
       <span class="sr-only">RISE</span>
@@ -299,7 +319,7 @@ footer a{text-decoration-color:rgba(169,163,199,.5);text-underline-offset:3px}
     </div>
   </section>
 
-  <section class="sample" id="sample" aria-labelledby="sample-title">
+  <section class="sample" id="sample" aria-labelledby="sample-title" data-reveal-children>
     <h2 id="sample-title">A PASSAGE, PACED</h2>
     <blockquote class="passage" id="passage">
       <p style="margin:0" data-words>Call me Ishmael. Some years ago, having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.</p>
@@ -316,23 +336,24 @@ footer a{text-decoration-color:rgba(169,163,199,.5);text-underline-offset:3px}
     </div>
   </section>
 
-  <section class="notes" aria-label="Project details">
+  <section class="notes" aria-label="Project details" data-reveal>
     <details id="build-notes">
       <summary>How RISE is built</summary>
       <div class="body">
         
         <p>RISE shapes the timing, space, image, and sound around a text.</p>
-        <p>The source includes the reader, automated tests, and provider integrations.</p>
+        <p>The source includes the reader, automated tests, and provider integrations. <a href="https://github.com/SyberLabs/RISE">Source on GitHub</a> · <a href="/kev/">Migration status (RISE and Kev)</a> · <a href="/jev/">Earlier case study</a>.</p>
       </div>
     </details>
   </section>
 </main>
 
-<footer>
-  <span>RISE is a <a href="/">SyberLabs</a> project.</span>
-  
-  <a href="https://github.com/SyberLabs/RISE">Source</a>
-</footer>
+<footer class="sy-footer">
+<div class="sy-footer__map"><div class="sy-footer__map-in"><section aria-labelledby="foot-projects"><h2 id="foot-projects" class="sy-eyebrow">Projects</h2><ul><li><a href="/projects/rise/" aria-current="page" style="--sy-accent:#f2d9a6"><span class="sy-footer__dot" aria-hidden="true"></span>RISE</a></li><li><a href="/projects/commons/" style="--sy-accent:#a6f08f"><span class="sy-footer__dot" aria-hidden="true"></span>Commons</a></li><li><a href="/projects/relay/" style="--sy-accent:#62e3d8"><span class="sy-footer__dot" aria-hidden="true"></span>Relay</a></li><li><a href="/projects/omnios/" style="--sy-accent:#f59be0"><span class="sy-footer__dot" aria-hidden="true"></span>OmniOS</a></li><li><a href="/projects/osahr/" style="--sy-accent:#ffae63"><span class="sy-footer__dot" aria-hidden="true"></span>OSAHR</a></li><li><a href="/rise-demo/">RISE demo</a></li></ul></section><section aria-labelledby="foot-research"><h2 id="foot-research" class="sy-eyebrow">Research</h2><ul><li><a href="/research/jev-execution/">Reliable execution for AI agents</a></li><li><a href="/research/sybershoke/">Sybershoke</a></li><li><a href="/kev/">RISE and Kev</a></li><li><a href="/jev/">Jev in RISE</a></li></ul></section><section aria-labelledby="foot-lab"><h2 id="foot-lab" class="sy-eyebrow">Lab</h2><ul><li><a href="/">Home</a></li><li><a href="/approach/">Approach</a></li><li><a href="/services/">Services</a></li><li><a href="/#about">About</a></li><li><a href="/kit/v2/">Design kit</a></li><li><a href="/privacy/">Privacy</a></li></ul></section><section aria-labelledby="foot-contact"><h2 id="foot-contact" class="sy-eyebrow">Contact</h2><ul><li><a href="mailto:syberlabs.software@gmail.com">Email</a></li><li><a href="https://github.com/SyberLabs" rel="noopener">GitHub <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="https://www.linkedin.com/in/mateo-robles-71260b189" rel="noopener">LinkedIn <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="/mateo_robles_resume.pdf">Résumé</a></li></ul></section></div></div>
+<div class="sy-footer__in">
+  <a class="sy-lockup" href="/"><img src="/syber-logo-96.png" alt="" width="18" height="20">© 2026 SyberLabs</a>
+  <nav aria-label="Footer"><a href="/approach/">Approach</a><a href="/jev/">Jev</a><a href="/services/">Services</a><a href="/mateo_robles_resume.pdf">Résumé</a><a href="https://github.com/SyberLabs">GitHub <svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="https://www.linkedin.com/in/mateo-robles-71260b189">LinkedIn <svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="mailto:syberlabs.software@gmail.com">Contact</a><a href="/privacy/">Privacy</a></nav>
+</div></footer>
 
 <script>
 (() => {

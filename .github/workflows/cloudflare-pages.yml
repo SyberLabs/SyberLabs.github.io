@@ -33,6 +33,9 @@ jobs:
           pnpm build:site
           test -s dist/index.html
           test -s dist/syberlabs.css
+          test -s dist/syberlabs.js
+          grep -Fq 'sy-atlas' dist/index.html
+          grep -Fq 'syberlabs.js' dist/services/index.html
           test -s dist/404.html
           test -s dist/rise-demo/index.html
           test -s dist/rise-demo/rise-marketing-20260929-v3.mp4
