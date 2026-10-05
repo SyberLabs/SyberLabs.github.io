@@ -94,7 +94,10 @@ function OutcomeFace({ map }) {
   </div>;
 }
 
-export default function SystemMaps() {
+// `only` restricts the exhibit to one system and drops the section heading, tabs and notes, for a project page
+// (src/system-map-embed.jsx mounts it into [data-system-map]).
+export default function SystemMaps({ only = null } = {}) {
+  const list = useMemo(() => only ? systems.filter(s => s.id === only) : systems, [only]);
   const [active, setActive] = useState(0);
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -110,7 +113,7 @@ export default function SystemMaps() {
   const tabsRef = useRef([]);
   const touched = useRef(false);
 
-  const map = systems[active];
+  const map = list[active];
   const frame = map.frames[index];
   const last = map.frames.length - 1;
   const pace = map.pace || 2900;
@@ -164,15 +167,15 @@ export default function SystemMaps() {
   const choose = next => {
     touched.current = true;
     setActive(next); setIndex(0); setAnimate(false); setSelected(null);
-    setAnnounce(`${systems[next].name}: ${systems[next].form}. Step 1 of ${systems[next].frames.length}.`);
+    setAnnounce(`${list[next].name}: ${list[next].form}. Step 1 of ${list[next].frames.length}.`);
   };
 
   const onTabKey = event => {
     const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
     let next = null;
-    if (event.key in keys) next = (active + keys[event.key] + systems.length) % systems.length;
+    if (event.key in keys) next = (active + keys[event.key] + list.length) % list.length;
     if (event.key === 'Home') next = 0;
-    if (event.key === 'End') next = systems.length - 1;
+    if (event.key === 'End') next = list.length - 1;
     if (next === null) return;
     event.preventDefault(); choose(next); tabsRef.current[next]?.focus();
   };
@@ -199,21 +202,21 @@ export default function SystemMaps() {
 
   const stepLabel = `${String(index + 1).padStart(2, '0')} / ${String(last + 1).padStart(2, '0')}`;
 
-  return <section className="network-section maps-section" id="maps" aria-labelledby="maps-title" ref={sectionRef}>
+  return <section className={`network-section maps-section${only ? ' maps-section--embed' : ''}`} id={only ? `map-${only}` : 'maps'} aria-label={only ? `${map.name} system map` : undefined} aria-labelledby={only ? undefined : 'maps-title'} ref={sectionRef}>
     <div className="network-inner">
-      <div className="network-heading">
+      {!only && <div className="network-heading">
         <p className="network-eyebrow">SYSTEM MAPS / DRAWN FROM THE REPOSITORIES</p>
         <h2 id="maps-title">Separate systems.<br /><em>Each one inspectable.</em></h2>
         <p>Each map uses the structure of its own system: a provenance graph, a context graph, a decision pipeline, an event ledger, a hypergraph, or a hash-chained log. Step through what happened, open any node, and see who or what was allowed to act. Flip any card to see what the system does for you.</p>
-      </div>
+      </div>}
 
       <div className="maps-exhibit" onKeyDown={onExhibitKey}>
-        <div className="maps-tabs" role="tablist" aria-label="Systems">
-          {systems.map((s, i) => <button type="button" role="tab" key={s.id} id={`map-tab-${s.id}`} aria-controls="map-panel" aria-selected={i === active} tabIndex={i === active ? 0 : -1}
+        {list.length > 1 && <div className="maps-tabs" role="tablist" aria-label="Systems">
+          {list.map((s, i) => <button type="button" role="tab" key={s.id} id={`map-tab-${s.id}`} aria-controls="map-panel" aria-selected={i === active} tabIndex={i === active ? 0 : -1}
             ref={el => { tabsRef.current[i] = el; }} className={i === active ? 'is-active' : ''} onClick={() => choose(i)} onKeyDown={onTabKey}>
             <span>{String(i + 1).padStart(2, '0')}</span><strong>{s.name}</strong><small>{s.form}</small>
           </button>)}
-        </div>
+        </div>}
 
         <div className="maps-panel" id="map-panel" role="tabpanel" aria-labelledby={`map-tab-${map.id}`}>
           <div className="maps-intro">
@@ -271,7 +274,7 @@ export default function SystemMaps() {
 
       <div className="maps-notes">
         <div>
-          <span>HOW TO READ THE MAPS</span>
+          <span>HOW TO READ THE MAP</span>
           <ul className="maps-legend">
             <li><i className="lg lg-record" />Record: authoritative state</li>
             <li><i className="lg lg-artifact" />Artifact, source, or proposal</li>
@@ -283,14 +286,14 @@ export default function SystemMaps() {
           </ul>
           <p>A moving token marks an edge the current step traversed. Nothing moves between steps.</p>
         </div>
-        <div>
+        {!only && <div>
           <span>WHERE THEY MEET</span>
           <p>These systems do not share a runtime. Bough calls OSAHR’s schedulers to check its exact results. Two other meetings happen only in <a href="https://github.com/SyberLabs/cross-platform">cross-platform</a>, a separate test harness: it runs a Relay draft through SyberRuntime and passes Bough’s advice to Barn. Barn’s own plan makes that advice a suggestion, never an authorization.</p>
-        </div>
-        <div>
+        </div>}
+        {!only && <div>
           <span>NOT MAPPED YET</span>
           <p><strong>Turtle</strong> evaluates authority policies (P0); it is not connected to SyberRuntime and was not run here. <strong>SyberWork</strong> is a separate contract runtime. The <strong>SyberLabs SDK</strong> has no public repository yet. OmniOS’s persistent lineage needs its optional ledger database.</p>
-        </div>
+        </div>}
       </div>
     </div>
   </section>;

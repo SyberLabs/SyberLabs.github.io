@@ -150,9 +150,21 @@ const evidenceSection = p => p.evidence ? `
   </div>
 </section>` : '';
 
+// An inspectable system map (src/system-maps/), drawn from the repository's own recorded or rule-based trace.
+// The host keeps a paragraph for readers without JavaScript; /system-map.js replaces it with the exhibit.
+const mapSection = p => p.map ? `
+<section class="pj-section pj-map sy-container" aria-labelledby="map-title">
+  <div class="pj-split" data-reveal>
+    <h2 id="map-title" class="sy-eyebrow">Inspect</h2>
+    <div class="pj-split__main"><p class="sy-title">${esc(p.map.title)}</p><p class="sy-small pj-split__note">${esc(p.map.note)}</p></div>
+  </div>
+  <div class="pj-map__host" data-system-map="${esc(p.map.id)}" data-reveal><p class="sy-small pj-map__fallback">${esc(p.map.fallback)}</p></div>
+  <script type="module" src="/system-map.js"></script>
+</section>` : '';
+
 // Every section below the hero, in reading order. Exported so the static RISE page (projects/rise/index.html,
 // authored by hand) can carry the same sections: scripts/prerender.mjs fills its marker at build time.
-export const renderSections = p => `${liveBar(p)}${videoSection(p)}${whySection(p)}${useSection(p)}${designSection(p)}${evidenceSection(p)}${facts(p)}`;
+export const renderSections = p => `${liveBar(p)}${videoSection(p)}${whySection(p)}${useSection(p)}${mapSection(p)}${designSection(p)}${evidenceSection(p)}${facts(p)}`;
 
 function facts(p) {
   const value = v => typeof v === 'string' ? esc(v) : `<a class="sy-link pj-facts__link" href="${v.href}">${esc(v.label)}${/^https?:/.test(v.href) ? icon('external', 16) : ''}</a>`;

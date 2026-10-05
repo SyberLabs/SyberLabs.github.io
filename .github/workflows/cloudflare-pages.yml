@@ -34,6 +34,8 @@ jobs:
           test -s dist/index.html
           test -s dist/syberlabs.css
           test -s dist/syberlabs.js
+          test -s dist/system-map.js
+          for project in omnios relay osahr; do grep -Fq "data-system-map=\"$project\"" "dist/projects/$project/index.html"; done
           grep -Fq 'sy-atlas' dist/index.html
           grep -Fq 'syberlabs.js' dist/services/index.html
           test -s dist/404.html

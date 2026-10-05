@@ -21,7 +21,7 @@ const nodes = [
   { id: 'runS', n: ['Strategist run'], type: 'record', label: 'Strategist answer', sub: 'not asked yet', x: 700, y: 440, m: [280, 640], about: 'Its source is the Analyst’s answer, recorded as kind inference with parentRunId naming that run.', owner: 'The server records runs.', evidence: 'wire.schema.ts ContextSource' },
 ];
 
-const wireAbout = 'A wire says “this feeds that”, block to block. Ports are drawn as hints; no wire checks a data type.';
+const wireAbout = 'A wire says “this feeds that”, block to block. A wire is an admitted edge: declared ports are checked when it is created, and a mismatch is refused with a sentence naming both ports.';
 const edges = [
   ...sources.map((s, i) => ({ id: `w-${s.id}`, from: s.id, to: 'analyst', label: 'wire', bend: [-18, -6, 6, 18][i], about: wireAbout, status: 'ok' })),
   { id: 'w-analyst', from: 'analyst', to: 'strategist', label: 'wire · inference', about: 'Persona to persona. The context carries the Analyst’s last answer and the id of that run.', status: 'ok' },
@@ -34,7 +34,7 @@ const edges = [
 
 const frames = [
   { title: 'The Investor Shell is placed', grade: 'rule', outcome: '6 blocks, 5 wires', focus: ['analyst'], set: Object.fromEntries(sources.map(s => [s.id, 'ok'])),
-    detail: 'The template spawns four data blocks and two personas, already wired: four sources into the Analyst, and the Analyst into the Strategist. Wires connect block ids; the typed ports on each card are hints and are not enforced.',
+    detail: 'The template spawns four data blocks and two personas, already wired: four sources into the Analyst, and the Analyst into the Strategist. Persisted wires are re-admitted on every load, so a wire that would be refused today is dropped rather than trusted.',
     authority: 'You. Blocks and wires stay local to your browser.', source: 'src/core/shells/templates.ts INVESTOR_SHELL' },
   { title: 'The Hacker News fetch fails', grade: 'illustrative', kind: 'refused', outcome: 'Wire status → error', focus: ['hn'], set: { hn: 'error' }, edges: { 'w-hn': 'error' },
     detail: 'When a source block is in error, updateWireStatuses marks its wires error. The wire still exists; it no longer counts as active.',
@@ -69,7 +69,7 @@ function Readout({ index }) {
     <div><span>REACHED THE ANALYST’S LAST ANSWER</span>{reach[index].length ? reach[index].map(r => <p key={r}>{r}</p>) : <p className="is-empty">No question asked yet.</p>}</div>
     <div><span>WIRED BUT EXCLUDED</span>{excluded[index].length ? excluded[index].map(r => <p key={r}>{r}</p>) : <p className="is-empty">None.</p>}</div>
     <div><span>RULE</span><p>status === 'active' and the source returns data</p></div>
-    <div><span>BASIS</span><p>Rules from SyberLabs/OmniOS @ 955a6ad. Feed failures and run numbers are illustrative.</p></div>
+    <div><span>BASIS</span><p>Rules from SyberLabs/OmniOS @ e95ae73 (wire status and context selection unchanged since 955a6ad). Feed failures and run numbers are illustrative.</p></div>
   </div>;
 }
 
@@ -81,5 +81,5 @@ export default {
     { id: 'canvas', label: 'CANVAS · LOCAL TO THE BROWSER', at: [18, 18, 924, 504], m: [8, 18, 384, 672] },
   ],
   nodes, edges, frames, Readout,
-  evidence: ['SyberLabs/OmniOS @ 955a6ad', 'src/core/services/wire.service.ts', 'src/core/shells/templates.ts'],
+  evidence: ['SyberLabs/OmniOS @ e95ae73', 'src/core/services/wire.service.ts', 'src/core/stores/wireStore.ts admitWire', 'src/core/shells/templates.ts'],
 };

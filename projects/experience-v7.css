@@ -59,6 +59,14 @@
 .pj-why { margin-top: var(--space-5); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
 .pj-why p { margin: 0; color: var(--sy-mist); }
 
+/* Inspect: the system map exhibit (its own styles travel with /system-map.js) */
+.pj-map__host { margin-top: var(--space-7); }
+.pj-map__fallback { margin: 0; padding: var(--space-5); border: 1px solid var(--sy-rule); border-radius: var(--sy-r-panel); color: var(--sy-mist); }
+.pj-map .maps-section { padding: 0; }
+.pj-map .network-inner { max-width: none; padding: 0; }
+.pj-map .maps-exhibit { border-radius: var(--sy-r-panel); overflow: hidden; }
+.pj-map .maps-notes { margin-top: var(--space-5); }
+
 /* Design: named mechanisms */
 .pj-design { margin: var(--space-7) 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
 .pj-design__item { padding: var(--space-6); }

@@ -118,6 +118,9 @@ export const projects = [
         ['04 / Ask', 'Locally, with your key', 'Ask a persona a question. The answer cites only the sources its wires carried, and the inference ledger records provider, model, latency and which runs fed the turn.'],
         ['05 / Talk', 'Spoken canvas control', 'Hold Talk and say a command from a fixed grammar: “wire hacker news to the analyst”, “delete this”, “undo”. Speech only proposes; the interaction engine decides, previews a delete, and refuses ambiguous names.'],
       ] },
+    map: { id: 'omnios', title: 'Which sources reach an answer.',
+      note: 'The Investor shell, stepped through by rule: a feed fails, a feed goes stale, and the record says exactly which sources each answer used. Open any node to see who owns it.',
+      fallback: 'This map needs JavaScript. It steps through the Investor shell: four sources wired into an Analyst, a failed and a stale feed excluded from the answer, and the lineage from the Strategist back to the two sources that reached it.' },
     design: { title: 'How it is built',
       items: [
         ['Blocks, wires, personas', 'A block is a live view of one source; a wire is an admitted edge, not a line drawn first; a persona answers from its inbound active wires and cannot choose its own inputs.'],
@@ -211,6 +214,9 @@ export const projects = [
         ['04 / Accept', 'Approve the exact words', 'Acceptance records approval of one draft version. Change the text and it needs review again.'],
         ['05 / Send and record', 'You press submit', 'A human Inspect Accept arms a first-party Chrome extension to fill a form once. Relay does not POST the employer form, and outcomes are recorded with a receipt.'],
       ] },
+    map: { id: 'relay', title: 'What leaves Relay, and what comes back.',
+      note: 'Recorded by running the repository’s own modules: the bounded packet, the returned draft, the identity and version gate, the claim gate, and the five refusals that leave nothing written.',
+      fallback: 'This map needs JavaScript. It replays a recorded handoff: a posting canonicalised to one job, a bounded packet handed to an assistant, the returned draft re-validated, one claim flagged, and acceptance refused while a blocker is open.' },
     design: { title: 'How it is built',
       items: [
         ['One history per job', 'Posting observations are preserved as rows; rediscovery keeps an existing interview or submitted status instead of resetting it.'],
@@ -252,6 +258,9 @@ export const projects = [
         ['03 / Replay', 'Reproduce every state', 'Seeded runs reproduce their trace, and delta replay reproduces every recorded state hash. The site’s own OSAHR map was exported this way.'],
         ['04 / Review', 'Graded evidence packets', 'The decision workbench turns frozen experiments into reviewable packets. GrokCell is a prototype agent control plane on the same kernel.'],
       ] },
+    map: { id: 'osahr', title: 'A hypergraph, one committed event at a time.',
+      note: 'Recorded by running the adaptive-signal example and exported from the trace. Every state is hashed; the replay reproduces every hash.',
+      fallback: 'This map needs JavaScript. It replays a recorded run: two agents exchanging typed signal hyperedges, parameters adapting as rules fire, and the state hash after every committed event.' },
     design: { title: 'How it is built',
       items: [
         ['Exact stochastic rewriting', 'Continuous-time rules over a typed directed hypergraph, with the invariants written down in the architecture document.'],
