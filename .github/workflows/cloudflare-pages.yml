@@ -56,6 +56,8 @@ jobs:
           test -s dist/omni-demo/omnios-morning-20261005-poster.jpg
           test "$(stat -c%s dist/omni-demo/omnios-morning-20261005.mp4)" -lt 8388608
           grep -Fq '/omni-demo/omnios-morning-20261005.mp4' dist/projects/omnios/index.html
+          test -s dist/relay-demo/relay-runtime-20261005.jpg
+          grep -Fq '/relay-demo/relay-runtime-20261005.jpg' dist/projects/relay/index.html
           ! grep -Fq 'rise:sections' dist/projects/rise/index.html
           test -s dist/approach/index.html
           test -s dist/jev/index.html
