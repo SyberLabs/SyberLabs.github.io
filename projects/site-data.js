@@ -113,4 +113,37 @@ export const projects = [
   },
 ];
 
+// The Atlas: every destination on the site, grouped. Rendered as the full-screen menu on every page
+// (projects/project-template.js `atlas()`), so no screen is more than one tap from any other.
+export const siteMap = [
+  { title: 'Projects', items: [
+    { label: 'RISE', note: 'AI-assisted reading app', href: '/projects/rise/', sigil: 'rise', accent: '#f2d9a6' },
+    { label: 'Commons', note: 'Project coordination', href: '/projects/commons/', sigil: 'commons', accent: '#a6f08f' },
+    { label: 'Relay', note: 'Job application workspace', href: '/projects/relay/', sigil: 'relay', accent: '#62e3d8' },
+    { label: 'OmniOS', note: 'AI analysis canvas', href: '/projects/omnios/', sigil: 'omnios', accent: '#f59be0' },
+    { label: 'OSAHR', note: 'Stochastic simulation library', href: '/projects/osahr/', sigil: 'osahr', accent: '#ffae63' },
+    { label: 'RISE demo', note: 'Watch the film, try the sample', href: '/rise-demo/' },
+  ] },
+  { title: 'Research', items: [
+    { label: 'Reliable execution for AI agents', note: 'Technical report · Sept 2026', href: '/research/jev-execution/' },
+    { label: 'Sybershoke', note: 'Research note · shock tests for multi-agent systems', href: '/research/sybershoke/' },
+    { label: 'RISE and Kev', note: 'Migration status', href: '/kev/' },
+    { label: 'Jev in RISE', note: 'Earlier case study', href: '/jev/' },
+  ] },
+  { title: 'Lab', items: [
+    { label: 'Home', note: 'Read. Think. Build.', href: '/' },
+    { label: 'Approach', note: 'How we build', href: '/approach/' },
+    { label: 'Services', note: 'Interactive reading pilots', href: '/services/' },
+    { label: 'About', note: 'The lab and its founder', href: '/#about' },
+    { label: 'Design kit', note: 'Atlas v2 tokens and components', href: '/kit/v2/' },
+    { label: 'Privacy', note: 'What this site does with your data', href: '/privacy/' },
+  ] },
+  { title: 'Contact', items: [
+    { label: 'Email', note: EMAIL, href: CONTACT },
+    { label: 'GitHub', note: 'github.com/SyberLabs', href: GITHUB, external: true },
+    { label: 'LinkedIn', note: 'Mateo Robles', href: LINKEDIN, external: true },
+    { label: 'Résumé', note: 'PDF', href: RESUME },
+  ] },
+];
+
 export const skills = ['Python', 'TypeScript', 'JavaScript', 'SQL', 'React', 'Next.js', 'FastAPI', 'PostgreSQL', 'SQLite', 'Redis', 'Cloudflare Workers', 'LightGBM', 'scikit-learn', 'pandas', 'NumPy', 'LLM applications', 'AI agents', 'pytest', 'Vitest', 'Playwright'];
