@@ -189,7 +189,7 @@ export function sigil3d(canvas, P, opts = {}) {
   const scene = new Scene(), cam = new PerspectiveCamera(38, 1, 0.1, 20); cam.position.z = 3.1;
   // exposure follows the plate size: a 112px phone plate gets far fewer pixels per point than a 380px one
   const K = () => Math.min(1, Math.max(0.3, (canvas.clientWidth || 300) / 380));
-  const GAIN = () => 0.55 * K();
+  const GAIN = () => 0.55 * K() * SPREAD;
   const cw = canvas.clientWidth || 300, small = cw < 200;
   const N = small ? 14000 : 36000, geo = new BufferGeometry();
   // try the product's own parameters in a few scalings; fall back to a brand form so no sigil is ever empty
@@ -199,6 +199,10 @@ export function sigil3d(canvas, P, opts = {}) {
   if (!pos) pos = cloud(FORMS[(Math.abs(Math.round(P[0] * 100)) % FORMS.length)], N);
   geo.setAttribute('position', new BufferAttribute(pos, 3));
   ['p0', 'p1', 'p2', 'p3'].forEach(k => geo.setAttribute(k, geo.getAttribute('position')));
+  // exposure also follows how spread out the form is: a compact, dense cloud piles many points per pixel
+  const occ = new Uint8Array(64 * 64); let cells = 0;
+  for (let i = 0; i < N; i++) { const j = (((pos[i * 3] + 1) * 31.99) | 0) + (((pos[i * 3 + 1] + 1) * 31.99) | 0) * 64; if (!occ[j]) { occ[j] = 1; cells++; } }
+  const SPREAD = Math.min(1, Math.max(0.3, cells / 4096 / 0.4));
   const seeds = new Float32Array(N); for (let i = 0; i < N; i++) seeds[i] = Math.random();
   geo.setAttribute('seed', new BufferAttribute(seeds, 1));
   const accent = new Color(opts.color || getComputedStyle(canvas).getPropertyValue('--sy-accent').trim() || '#90d8f0');
