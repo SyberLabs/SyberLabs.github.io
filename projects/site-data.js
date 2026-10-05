@@ -89,7 +89,7 @@ export const projects = [
       ['Privacy', 'Texts you bring and compositions you make stay in your browser. See the app’s posted Privacy and Terms.'],
       ['License', 'Apache 2.0 for application code; texts and visual works carry their own terms'],
       ['Earlier evidence', { label: 'Jev integration in RISE', href: '/jev/' }],
-      ['Migration status', { label: 'RISE and Kev', href: '/kev/' }],
+      ['Your own model', { label: 'Reader-owned AI: Jev and Kev', href: '/kev/' }],
       ['Source', { label: 'github.com/SyberLabs/RISE', href: 'https://github.com/SyberLabs/RISE' }],
     ],
   },
@@ -303,7 +303,7 @@ export const siteMap = [
     { label: 'Reliable execution for AI agents', note: 'Technical report · Sept 2026', href: '/research/jev-execution/' },
     { label: 'Sybershoke', note: 'Research note · shock tests for multi-agent systems', href: '/research/sybershoke/' },
     { label: 'Papers', note: 'Working papers and studies on GitHub', href: 'https://github.com/SyberLabs/papers', external: true },
-    { label: 'RISE and Kev', note: 'Migration status', href: '/kev/' },
+    { label: 'RISE, Jev and Kev', note: 'Reader-owned AI', href: '/kev/' },
     { label: 'Jev in RISE', note: 'Earlier case study', href: '/jev/' },
   ] },
   { title: 'Lab', items: [

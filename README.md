@@ -1,4 +1,4 @@
-> **RISE model migration:** RISE has used Jev for bounded reading decisions and is moving that path to Kev. The migration work adds pinned server-side provider configuration; a live Kev deployment and outcome have not yet been verified. The separate Scriptorium composition route still needs an independently verified authoring outcome.
+> **RISE and AI models:** since RISE #294 the RISE server calls no model. An AI reading request runs on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s machine (`/kev/` on the site). No RISE-specific Kev evaluation has been published.
 
 # SyberLabs homepage
 
@@ -12,7 +12,7 @@ The **System maps** components (`src/system-maps/`) draw Relay, OmniOS, RISE, Ba
 
 Five projects are published: RISE, OmniOS, SyberWork, Relay and OSAHR. Each project page is rendered from `projects/site-data.js` through `projects/project-template.js`: a live bar when the thing runs somewhere (RISE at rise.syberlabs.io, the OmniOS preview at omni.syberlabs.io), an optional demo film, then Why, Use, Design, Evidence and Facts. The RISE page keeps its hand-authored hero and paced passage, and `scripts/prerender.mjs` fills its `<!-- rise:sections -->` marker with the same sections at build time. Every evidence row carries the state it has reached (implemented, tested, measured, deployed, not yet) and the page names the commit it reflects. Commons was removed on 2026-10-05; its old addresses redirect to the homepage (`_redirects`). OmniOS is deployed from its own repository (see its `DEPLOYMENT.md`); the earlier manual deploy workflow in this repository was removed with it.
 
-The current migration status lives in `kev/` and is published at `/kev/`. The prior Jev evaluation and integration case study remains at `/jev/` as historical evidence; its results must not be attributed to Kev.
+The reader-owned AI status lives in `kev/` and is published at `/kev/`. The prior Jev evaluation and integration case study remains at `/jev/` as historical evidence; its results must not be attributed to Kev.
 
 
 The Sybershoke research note lives at `research/sybershoke/`. Revision 2 reports the Week 0 harness against its reference simulator (that repository is still unpublished), the public [SyberLabs/sybershoke](https://github.com/SyberLabs/sybershoke) workspace, and its first real system, the RISE Worker source run against recorded Jev answers; every number on it comes from that project's committed reports (`REPORT.md`, `docs/REDTEAM.md`, `docs/ADAPTER-RISE.md`), so update the note when they change.
