@@ -1,6 +1,6 @@
 # System maps: technical basis
 
-This document specifies the homepage **System maps** section (`src/system-maps/`). It
+This document specifies the **System maps** (`src/system-maps/`). Since 2026-10-05 the OmniOS, Relay and OSAHR maps are mounted on their project pages as an Inspect section (`src/system-map-embed.jsx`); the RISE map records the Worker-side Jev path that RISE #294 retired and is not mounted; Barn and SyberRuntime have no project page. It
 states the network form chosen for each system, what its nodes and edges mean, what
 changes over time, what a visitor can inspect, and the repository evidence behind
 each choice.
