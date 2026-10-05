@@ -67,6 +67,9 @@ export const projects = [
         ['04 / Make', 'Compose your own', 'Workshop, Scriptorium and Visual Lab author audiovisual compositions; the Vault saves them in your browser.'],
         ['05 / Ask', 'A reading from your own model', 'Describe what you want to read and a bounded decision model picks a book and presentation from the held catalog. Connect OpenRouter, or run Kev-4B locally; nothing is billed to SyberLabs and nothing leaves your connection.'],
       ] },
+    map: { id: 'rise', title: 'What a model may choose, and what it may not.',
+      note: 'The reader-owned decision contract, stepped through by rule from the code at 998d725: the finite menu, one call on the reader’s own connection, admission of offered keys only, and two refusals that open no reading.',
+      fallback: 'This map needs JavaScript. It steps through RISE’s decision contract: a request, the catalog’s finite questions, a refusal without a connection, one call on the reader’s OpenRouter key or local Kev, a refusal of an unoffered key, and the admitted answer becoming reading settings in the browser.' },
     design: { title: 'How it is built',
       items: [
         ['One-way pipeline', 'Source text → timed units → pacing → compiled session → clock-driven player. The same compiled session drives Stream and Page.'],
@@ -105,6 +108,8 @@ export const projects = [
     secondary: { label: 'Run it locally', href: 'https://github.com/SyberLabs/OmniOS#run' },
     ghost: { label: 'View source', href: 'https://github.com/SyberLabs/OmniOS', icon: 'external' },
     live: { href: OMNI_PREVIEW, label: 'omni.syberlabs.io', note: 'Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled in the preview.' },
+    video: { src: '/omni-demo/omnios-morning-20261005.mp4', poster: '/omni-demo/omnios-morning-20261005-poster.jpg', title: 'The morning: one question, cited sources, a crystal, a second persona',
+      caption: 'Recorded on 2026-10-05 from a local production build of OmniOS@e95ae73, driven through the “morning” journey its own acceptance test specifies. The data in the blocks and the two persona answers are that test’s fixed fixtures, not live markets or a live model; the canvas, wires, provenance chips and lineage are the real interface. Silent, 30 seconds.' },
     why: { title: 'Why a canvas.',
       paragraphs: [
         'When you ask an AI about the world, its context is invisible: you cannot see which numbers it was given, which it was not, and whether a source it cites carried anything at all. OmniOS makes the context physical. A block is a live view of one source. A wire says this feeds that. A persona is a mind whose entire context is what its incoming wires carry.',
@@ -168,6 +173,11 @@ export const projects = [
         ['04 / check', 'The host runs the checks', 'Exit codes, durations and output digests are recorded against the candidate’s exact tree. A provider’s own claim never counts as a result.'],
         ['05 / accept and publish', 'Compare-and-swap, then separate effects', 'Accept moves one branch with a compare-and-swap and nothing else. Push, pull request and publish are separate admitted actions, each idempotent and reconcilable after a crash.'],
       ] },
+    run: { title: 'A model’s claim is not a result.',
+      note: 'The repository’s own Build Thread example, run on 2026-10-05 from SyberWork@208eaf6 with Python 3.11 and git. No model, no network.',
+      command: 'PYTHONPATH=. python examples/build_thread.py',
+      output: '{\n  "context": ["tests/test_report.py:1-7", "src/report.py:1-2"],\n  "model": {\n    "candidate": "c1",\n    "claimed": { "tests": "passed", "confidence": 0.97 },\n    "verdict": "candidate_check_failed:tests",\n    "accept": "denied:candidate_check_failed:tests"\n  },\n  "patch": {\n    "candidate": "c2",\n    "verdict": "all_checks_passed",\n    "accept": "succeeded",\n    "branch": "refs/heads/syberlabs/e643ed26",\n    "commit": "7c606ae8f44f3f999c010799e1d2fdcee1166011"\n  },\n  "working_tree_and_main_untouched": true,\n  "resumed": { "status": "complete", "accepted": "c2", "events": 18, "chain_valid": true },\n  "replay_under_v2": ["candidate_check_missing:lint", "candidate_check_missing:lint"]\n}\nbuild-thread complete',
+      caption: 'Candidate c1 arrived with a provider claiming the tests passed at 0.97 confidence; the host ran the checks on c1’s exact tree, they failed, and acceptance was denied. Candidate c2 passed every check and was accepted with a compare-and-swap of one branch. The working tree and main were untouched; the thread resumed from its journal with a valid 18-event chain; replaying it under a contract version that adds a lint check shows both candidates would now be refused for the missing check.' },
     design: { title: 'How it is built',
       items: [
         ['Two packages, one direction', 'syberlabs is the reusable core: canonical JSON, the event hash chain, admission rules, the planner interface and an in-memory Session. syberwork is the application: storage, HTTP API, CLI, console and connectors. The core never imports the app.'],

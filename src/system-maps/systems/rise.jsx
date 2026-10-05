@@ -1,76 +1,83 @@
 import React from 'react';
-import record from '../../rise-record.json';
 
-const d = record.case.decision;
-const audio = record.case.checks.find(c => c.field === 'audio');
-const matched = record.case.checks.filter(c => c.matched).length;
+// Rule-based map of RISE's reader-owned decision contract (src/core/decision/ at 998d725).
+// The path is reproduced from the cited files over one illustrative request; no model was called.
+// It replaces the earlier recorded map of the Worker-side Jev route, which RISE #294 retired.
+
+const REQUEST = 'Something slow and calm tonight, with a little sound.';
+const ANSWER = 'pace 150 · curve induction · chunk phrase · audio rain · visual focals · visualStyle gentle';
 
 const nodes = [
-  { id: 'reader', type: 'human', label: 'Reader', sub: 'short request', x: 108, y: 110, m: [110, 76], about: 'The person reading. Their request is a preference, never an instruction that changes what can be chosen.', owner: 'Starts the request; controls the reading.', evidence: 'worker/jev-recommend.mjs' },
-  { id: 'controls', n: ['Controls', 'look · sound'], type: 'human', label: 'Reader controls', sub: 'look · sound · pace', x: 108, y: 480, m: [200, 640], about: 'The Chamber Look panel: face, size, ink, backdrop, visual strength, sound bed and volume, plus restoring Jev’s choices.', owner: 'The reader, at any time during the reading.', evidence: 'docs/jev-core/README.md' },
-  { id: 'menu', n: ['Menu', '27 questions'], type: 'record', label: 'Bounded menu', sub: '1 book + 27 questions', x: 338, y: 110, m: [72, 250], about: 'The Worker offers admitted editions and 27 presentation questions, each with a fixed set of keys (for example 24 sound beds, including silence).', owner: 'RISE code builds the menu.', evidence: 'worker/jev-recommend.mjs CHOICES' },
-  { id: 'validate', n: ['validDecision', 'offered keys'], type: 'gate', label: 'validDecision', sub: 'offered keys only', x: 338, y: 265, m: [200, 250], about: 'Accepts only choices from the menu. Anything else returns DECISION_INVALID_RESPONSE and no reading opens. The model cannot supply CSS or media URLs.', owner: 'RISE code.', evidence: 'worker/jev-recommend.mjs validDecision' },
-  { id: 'cache', n: ['Cache', '1 h · no raw text'], type: 'record', label: 'Decision cache', sub: '1 hour · no raw text', x: 338, y: 400, m: [328, 250], about: 'Identical requests may reuse a validated choice in Redis for up to one hour. Redis stores no raw preference text.', owner: 'RISE Worker.', evidence: 'README, Privacy' },
-  { id: 'jev', type: 'external', label: 'Jev', sub: record.model.replace('typesafe/', ''), x: 570, y: 188, m: [300, 430], about: 'TypeSafe’s choice model via the OpenRouter decisions API. It picks among offered keys; it writes no prose that reaches the reader.', owner: 'Chooses within the menu. Cannot change the menu or the Chamber.', evidence: 'worker/jev-recommend.mjs API_URL, MODEL' },
-  { id: 'plan', n: ['Chamber plan', 'in code'], type: 'gate', label: 'Chamber plan', sub: 'resolved in code', x: 810, y: 110, m: [72, 560], about: 'Expands the decision into existing Chamber controls. Some choices are rewritten by code: psychedelic always means Gallery, fractal flames, lively cadence and the prism theme.', owner: 'RISE code.', evidence: 'src/core/jev-config.js' },
-  { id: 'chamber', n: ['Chamber', 'in the browser'], type: 'artifact', label: 'Chamber', sub: 'renders in the browser', x: 810, y: 480, m: [328, 560], about: 'Text, time, visual and sound are rendered locally. Reading does not send excerpts or pacing to a model.', owner: 'The reader’s browser.', evidence: 'README, The Chamber · Privacy' },
+  { id: 'reader', type: 'human', label: 'Reader', sub: 'short request', x: 108, y: 110, m: [110, 76], about: 'The person reading. Their request is a preference, never an instruction that changes what can be chosen. Reading and manual settings need no model at all.', owner: 'Starts the request; controls the reading.', evidence: 'src/core/decision/recommend.js' },
+  { id: 'connection', n: ['Connection', 'yours, or none'], type: 'gate', label: 'Reader’s connection', sub: 'OpenRouter · local Kev · none', x: 108, y: 300, m: [110, 196], about: 'Connect OpenRouter (OAuth PKCE; the key lives in this tab’s memory and reaches only openrouter.ai) or run RISE locally with a pinned Kev-4B on loopback. With neither, an AI request is refused with NOT_CONNECTED and nothing else changes.', owner: 'The reader. No SyberLabs credential exists on this path.', evidence: 'src/core/ai-connection.js · docs/USER-OWNED-AI.md' },
+  { id: 'controls', n: ['Controls', 'look · sound'], type: 'human', label: 'Reader controls', sub: 'look · sound · pace', x: 108, y: 480, m: [110, 640], about: 'The Chamber’s own controls: pace, visuals, sound bed and volume. Any choice the model made can be changed, and reading never waits on a model.', owner: 'The reader, at any time.', evidence: 'src/components (Chamber)' },
+  { id: 'catalog', n: ['Catalog', 'static · public'], type: 'record', label: 'Public catalog', sub: '/content/catalog.json', x: 338, y: 110, m: [72, 320], about: 'Released books, active sounds and type options, public columns only, written by the build and served as a static file. Withdrawing a row is an editorial commit and a release.', owner: 'RISE code builds it; the Worker serves it.', evidence: 'src/core/decision/catalog.js · browser.js loadPublicCatalog' },
+  { id: 'questions', n: ['Questions', 'finite choices'], type: 'record', label: 'Finite choice questions', sub: 'one key per question', x: 338, y: 300, m: [200, 320], about: 'recommend.js turns the catalog into choice questions: a book, then pace, curve, chunk, audio, visual, style, engine, arc and more, each with a fixed set of offered keys.', owner: 'RISE code defines every possible answer.', evidence: 'src/core/decision/recommend.js CHOICES' },
+  { id: 'provider', n: ['Jev or Kev', 'one call'], type: 'external', label: 'Jev or Kev', sub: 'one call · deadline · no retry', x: 570, y: 188, m: [328, 320], about: 'Hosted Jev (typesafe/jev-1.13 through OpenRouter’s decisions API) or local Kev-4B. call.js makes exactly one call with a deadline and the reader’s cancel signal; a timeout, a 401, a 402 or a malformed answer ends the request without a paid retry. Neither model is a fallback for the other.', owner: 'Chooses within the offered keys. Cannot change the menu or the Chamber.', evidence: 'src/core/decision/call.js · providers.js' },
+  { id: 'admit', n: ['Admission', 'offered keys only'], type: 'gate', label: 'Admission', sub: 'provider · model · offered keys', x: 570, y: 400, m: [200, 460], about: 'providers.js accepts a Jev answer only as provider TypeSafe with the jev-1.13 family, and a Kev answer only with the pinned X-Kev-Revision attestation. recommend.js then admits an answer only if every choice was offered. Anything else is INVALID_RESPONSE or UNATTESTED, and no reading opens.', owner: 'RISE code accepts or rejects the answer.', evidence: 'src/core/decision/providers.js validProviderResult · recommend.js' },
+  { id: 'plan', n: ['Settings', 'in code'], type: 'gate', label: 'Reading settings', sub: 'resolved deterministically', x: 810, y: 110, m: [72, 560], about: 'An admitted answer is mapped to reading settings by deterministic code: an audio program, a visual program and a Chamber configuration. A model answer can select an offered value and nothing else.', owner: 'RISE code.', evidence: 'src/core/jev-config.js · src/core/jev-sequence.js' },
+  { id: 'chamber', n: ['Chamber', 'in the browser'], type: 'artifact', label: 'Chamber', sub: 'renders in the browser', x: 810, y: 480, m: [328, 560], about: 'Text, time, visual and sound are rendered locally. Nothing about the reading is sent back to a model; the Worker calls no model and the six former inference routes answer 410.', owner: 'The reader’s browser.', evidence: 'worker/retired-inference.mjs · README' },
 ];
 
 const edges = [
-  { id: 'r1', from: 'reader', to: 'menu', label: 'request', about: 'Up to 1 KB, same-origin.' },
-  { id: 'm1', from: 'menu', to: 'jev', label: 'choice questions', about: 'Books and presentation keys, with instructions.' },
-  { id: 'j1', from: 'jev', to: 'validate', label: 'chosen keys', about: 'One key per question.' },
-  { id: 'v1', from: 'validate', to: 'cache', label: 'stores', about: 'Validated decisions only.' },
-  { id: 'v2', from: 'validate', to: 'plan', label: 'validated decision', bend: -40, about: 'Only a valid decision opens a reading.' },
-  { id: 'p1', from: 'plan', to: 'chamber', label: 'configures', about: 'Existing controls only.' },
-  { id: 'c1', from: 'controls', to: 'chamber', label: 'overrides', about: 'The reader can change look and sound, or restore Jev’s choices.' },
+  { id: 'r1', from: 'reader', to: 'questions', label: 'request', bend: -30, about: 'A short preference in the reader’s words.' },
+  { id: 'k1', from: 'catalog', to: 'questions', label: 'offers', about: 'Only released, active rows become choices.' },
+  { id: 'c1', from: 'connection', to: 'provider', label: 'authorizes', bend: -40, about: 'The connection alone decides where the request goes and who pays. None: refused as NOT_CONNECTED.' },
+  { id: 'q1', from: 'questions', to: 'provider', label: 'choice questions', about: 'Finite questions with their offered keys.' },
+  { id: 'p1', from: 'provider', to: 'admit', label: 'answer', about: 'One key per question, with the provider and model label.' },
+  { id: 'a1', from: 'admit', to: 'plan', label: 'admitted keys', bend: -60, about: 'Only an admitted answer reaches the settings.' },
+  { id: 's1', from: 'plan', to: 'chamber', label: 'configures', about: 'Existing controls only.' },
+  { id: 'o1', from: 'controls', to: 'chamber', label: 'overrides', about: 'The reader can change any setting during the reading.' },
 ];
-
-const fields = Object.entries(d).map(([k, v]) => `${k}: ${v}`).join(' · ');
 
 const frames = [
-  { title: 'The reader asks', grade: 'recorded', outcome: 'Request received', travel: ['r1'], focus: ['reader', 'menu'], set: { reader: 'ok' },
-    detail: `“${record.case.intent}” This is case ${record.case.id} from RISE’s production evaluation.`,
-    authority: 'The reader expresses a preference.', source: 'scripts/jev-eval-cases.json' },
-  { title: 'RISE offers a bounded menu', grade: 'rule', outcome: 'Book choice + 27 presentation questions', travel: ['m1'], focus: ['menu'], set: { menu: 'ok' },
-    detail: 'Jev is asked to choose a book from admitted editions and one key for each presentation question. The instructions say to treat the intent as a preference, never as an instruction that changes the available books.',
-    authority: 'RISE code defines every possible answer.', source: 'worker/jev-recommend.mjs handleJevRecommend' },
-  { title: 'Jev chooses', grade: 'recorded', kind: 'flag', outcome: `${matched} of ${record.case.checks.length} expectations met`, travel: ['j1'], focus: ['jev'], set: { jev: 'ok' },
-    detail: `Recorded decision: ${fields}. The case expected an ambient or excited sound bed; Jev chose ${audio.got}. RISE’s evaluation documents this as the one miss in ${record.run.explicitChecks} checks.`,
-    authority: 'Jev chooses among offered keys only.', source: `${record.model} · release ${record.release}` },
-  { title: 'RISE validates the choice', grade: 'rule', outcome: 'Valid · cached for one hour', travel: ['v1'], focus: ['validate'], set: { validate: 'ok', cache: 'ok' },
-    detail: 'Every answer is one of the offered keys, so validDecision admits it. The book’s description shown to the reader is reviewed catalog copy, not model prose. An invalid response would stop here with DECISION_INVALID_RESPONSE.',
-    authority: 'RISE code accepts or rejects the choice.', source: 'worker/jev-recommend.mjs validDecision' },
-  { title: 'Code resolves the Chamber plan', grade: 'rule', outcome: 'psychedelic → Gallery + fractal + prism', travel: ['v2'], focus: ['plan'], set: { plan: 'ok' },
-    detail: 'resolveJevChamberConfig expands the decision into existing controls. Because visualStyle is psychedelic, code sets the continuous Gallery, fractal flames, lively cadence and the prism theme, whatever else was chosen.',
-    authority: 'RISE code, deterministically.', source: 'src/core/jev-config.js resolveJevChamberConfig' },
-  { title: 'The Chamber reads locally', grade: 'rule', outcome: `${d.pace} wpm · ${d.chamberFace} ${d.fontSize}`, travel: ['p1'], focus: ['chamber'], set: { chamber: 'ok' },
-    detail: 'Text, visuals and sound are rendered in the browser. Nothing about the reading is sent back to Jev.',
-    authority: 'The reader’s browser.', source: 'README, The Chamber' },
-  { title: 'The reader changes the sound', grade: 'illustrative', outcome: `${audio.got} → aurora`, travel: ['c1'], focus: ['controls', 'chamber'], set: { controls: 'ok' },
-    detail: 'The reader switches the sound bed in the Look panel. The override stays local to this reading, and “restore Jev’s choices” remains available. This step is an example of the control, not a recorded session.',
-    authority: 'The reader overrides Jev.', source: 'docs/jev-core/README.md' },
+  { title: 'The reader asks for a reading', grade: 'illustrative', outcome: 'Request held in the tab', travel: ['r1'], focus: ['reader', 'questions'], set: { reader: 'ok' },
+    detail: `“${REQUEST}” The words are a preference. They cannot add a book, a sound or a visual that the catalog does not offer.`,
+    authority: 'The reader expresses a preference.', source: 'src/core/decision/recommend.js' },
+  { title: 'The catalog offers the menu', grade: 'rule', outcome: 'Finite questions, offered keys', travel: ['k1'], focus: ['catalog', 'questions'], set: { catalog: 'ok', questions: 'ok' },
+    detail: 'The browser loads the public catalog from its own origin (cached for a minute) and recommend.js builds the choice questions from it: a book from the released editions, then pace, curve, chunk, audio, visual, style, engine and arc, each with a fixed set of keys.',
+    authority: 'RISE code defines every possible answer.', source: 'browser.js loadPublicCatalog · recommend.js CHOICES' },
+  { title: 'No connection: refused', grade: 'rule', kind: 'refused', outcome: 'NOT_CONNECTED · nothing changes', blocked: ['c1'], focus: ['connection'], set: { connection: 'error' },
+    detail: 'Without an OpenRouter connection or a local RISE, the request stops here with a message that reading and manual settings work without either. No SyberLabs credential exists to fall back on.',
+    authority: 'RISE code refuses.', source: 'src/core/decision/call.js MESSAGES.NOT_CONNECTED' },
+  { title: 'The reader connects OpenRouter', grade: 'rule', outcome: 'One call, on the reader’s key', travel: ['c1', 'q1'], focus: ['connection', 'provider'], set: { connection: 'ok', provider: 'ok' },
+    detail: 'OAuth PKCE mints a key in the reader’s own OpenRouter account; it lives in this tab’s memory and the page’s CSP lets it reach only openrouter.ai. call.js makes exactly one call with an 8-second deadline and the reader’s cancel signal. Running RISE locally takes the same path to a pinned Kev-4B on loopback instead.',
+    authority: 'The reader’s connection authorizes and pays. No retry, no fallback.', source: 'src/core/openrouter-oauth.js · call.js DEFAULT_DEADLINE_MS' },
+  { title: 'The model answers', grade: 'illustrative', outcome: 'One key per question', travel: ['p1'], focus: ['provider', 'admit'],
+    detail: `Illustrative answer: ${ANSWER}. The model wrote no prose that reaches the reader; it chose among offered keys.`,
+    authority: 'The model chooses within the menu only.', source: 'src/core/decision/providers.js JEV · KEV' },
+  { title: 'An unoffered key: refused', grade: 'rule', kind: 'refused', outcome: 'INVALID_RESPONSE · no reading opens', blocked: ['a1'], focus: ['admit'], set: { admit: 'error' },
+    detail: 'Suppose the answer named a visual the catalog did not offer, or arrived under the wrong provider or model label, or a local Kev without the pinned revision attestation. Admission refuses it and the reader sees a plain message. Nothing is retried on their account.',
+    authority: 'RISE code accepts or rejects the answer.', source: 'providers.js validProviderResult · recommend.js' },
+  { title: 'An admitted answer becomes settings', grade: 'rule', outcome: 'Deterministic mapping to the Chamber', travel: ['a1', 's1'], focus: ['plan', 'chamber'], set: { admit: 'ok', plan: 'ok', chamber: 'ok' },
+    detail: 'Every key was offered, so the answer is admitted and mapped by code to an audio program, a visual program and a Chamber configuration. The Chamber renders text, time, visuals and sound in the browser; the Worker is not involved and calls no model.',
+    authority: 'RISE code, deterministically; the reader’s browser renders.', source: 'src/core/jev-config.js · jev-sequence.js · worker/retired-inference.mjs' },
+  { title: 'The reader changes the sound', grade: 'illustrative', outcome: 'rain → silence', travel: ['o1'], focus: ['controls', 'chamber'], set: { controls: 'ok' },
+    detail: 'The reader switches the sound bed off in the Chamber. The override is local to this reading. This step is an example of the control, not a recorded session.',
+    authority: 'The reader overrides the model.', source: 'src/components (Chamber controls)' },
 ];
+
+const STATE = ['not asked', 'questions built', 'refused: not connected', 'call in flight', 'answered', 'refused: unoffered key', 'reading', 'reading · sound off'];
 
 function Readout({ index }) {
   return <div className="readout-grid">
-    <div><span>REQUEST</span><p>“{record.case.intent}”</p></div>
-    <div><span>JEV’S RECORDED CHOICES</span>{index < 2 ? <p className="is-empty">Not chosen yet.</p> : record.case.checks.map(c => <p key={c.field} className={c.matched ? '' : 'is-miss'}>{c.field}: {c.field === 'audio' && index >= 6 ? `${c.got} → aurora (reader)` : c.got} {c.matched ? '✓' : `✕ expected ${c.expected.join(' / ')}`}</p>)}</div>
-    <div><span>EVALUATION RUN</span><p>{record.run.matched} of {record.run.explicitChecks} explicit choices matched across {record.run.cases} live cases</p></div>
-    <div><span>NOT ON THIS PATH</span><p>Scene sample: fixed preset, no Jev request. Scriptorium routing: optional, uses the reader’s own key.</p></div>
+    <div><span>REQUEST</span><p>“{REQUEST}”</p></div>
+    <div><span>STATE</span><p>{STATE[index]}</p></div>
+    <div><span>WHO PAYS</span><p>{index >= 3 ? 'The reader’s OpenRouter account, or nobody when RISE runs locally with Kev.' : 'Nobody yet.'}</p></div>
+    <div><span>NOT ON THIS PATH</span><p>The RISE Worker: it serves the app and the static catalog and answers the six former inference routes with 410. Composer in ChatGPT uses a different, sealed input (rise.current.v1).</p></div>
   </div>;
 }
 
 export default {
-  id: 'rise', name: 'RISE', form: 'Decision pipeline', grade: 'recorded',
-  summary: 'A reading request, Jev’s choice from a bounded menu, the code that validates and expands it, and the reader who can override it.',
+  id: 'rise', name: 'RISE', form: 'Decision contract', grade: 'rule',
+  summary: 'A reading request, the finite menu RISE offers, one call on the reader’s own connection, the admission that accepts offered keys only, and the reader who can override everything.',
   wide: [960, 540], narrow: [400, 700],
   regions: [
     { id: 'reader', kind: 'human', label: 'READER', at: [18, 18, 186, 504], m: [8, 18, 384, 110] },
-    { id: 'worker', label: 'RISE · WORKER', at: [222, 18, 232, 504], m: [8, 146, 384, 212] },
-    { id: 'jev', kind: 'external', label: 'JEV · EXTERNAL', at: [472, 18, 196, 504], m: [8, 376, 384, 110] },
-    { id: 'browser', label: 'RISE · BROWSER', at: [686, 18, 256, 504], m: [8, 504, 384, 184] },
+    { id: 'browser', label: 'RISE · BROWSER', at: [222, 18, 232, 504], m: [8, 146, 384, 212] },
+    { id: 'model', kind: 'external', label: 'READER-OWNED MODEL', at: [472, 18, 196, 504], m: [8, 376, 384, 110] },
+    { id: 'chamber', label: 'RISE · BROWSER', at: [686, 18, 256, 504], m: [8, 504, 384, 184] },
   ],
   nodes, edges, frames, Readout,
-  evidence: [`SyberLabs/RISE @ ${record.commit}`, 'worker/jev-recommend.mjs', 'src/core/jev-config.js', 'scripts/jev-eval-production-broad-post-2026-09-27.json'],
+  evidence: ['SyberLabs/RISE @ 998d725', 'src/core/decision/recommend.js', 'src/core/decision/call.js', 'src/core/decision/providers.js', 'docs/USER-OWNED-AI.md'],
 };

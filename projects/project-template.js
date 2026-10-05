@@ -162,9 +162,22 @@ const mapSection = p => p.map ? `
   <script type="module" src="/system-map.js"></script>
 </section>` : '';
 
+// A recorded run: the output of running the repository's own example, shown as it came back.
+const runSection = p => p.run ? `
+<section class="pj-section pj-run sy-container" aria-labelledby="run-title">
+  <div class="pj-split" data-reveal>
+    <h2 id="run-title" class="sy-eyebrow">Recorded run</h2>
+    <div class="pj-split__main"><p class="sy-title">${esc(p.run.title)}</p><p class="sy-small pj-split__note">${esc(p.run.note)}</p></div>
+  </div>
+  <figure class="pj-run__figure" data-reveal>
+    <div class="sy-plate pj-run__box" data-tilt="2"><p class="pj-run__cmd sy-label">${esc(p.run.command)}</p><pre class="pj-run__out"><code>${esc(p.run.output)}</code></pre></div>
+    <figcaption class="sy-small pj-run__caption">${esc(p.run.caption)}</figcaption>
+  </figure>
+</section>` : '';
+
 // Every section below the hero, in reading order. Exported so the static RISE page (projects/rise/index.html,
 // authored by hand) can carry the same sections: scripts/prerender.mjs fills its marker at build time.
-export const renderSections = p => `${liveBar(p)}${videoSection(p)}${whySection(p)}${useSection(p)}${mapSection(p)}${designSection(p)}${evidenceSection(p)}${facts(p)}`;
+export const renderSections = p => `${liveBar(p)}${videoSection(p)}${whySection(p)}${useSection(p)}${mapSection(p)}${runSection(p)}${designSection(p)}${evidenceSection(p)}${facts(p)}`;
 
 function facts(p) {
   const value = v => typeof v === 'string' ? esc(v) : `<a class="sy-link pj-facts__link" href="${v.href}">${esc(v.label)}${/^https?:/.test(v.href) ? icon('external', 16) : ''}</a>`;
