@@ -27,7 +27,6 @@ python scripts/export-osahr-trace.py   path/to/OSAHR_Cell           # src/osahr-
 python scripts/export-barn-trace.py    path/to/bough-and-barn       # src/barn-trace.json
 python scripts/export-runtime-trace.py path/to/cross-platform path/to/syber_runtime  # src/runtime-trace.json
 node --experimental-strip-types scripts/export-relay-trace.mjs path/to/relay  # src/relay-trace.json
-python scripts/export-rise-record.py   path/to/RISE                 # src/rise-record.json
 ```
 
 Commits used for the published data:
@@ -39,7 +38,7 @@ Commits used for the published data:
 | SyberLabs/cross-platform | `5b31b6f` |
 | sykosyber/syber_runtime | `5251df5` (the commit cross-platform pins) |
 | SyberLabs/relay | `ff7e5aa` |
-| SyberLabs/RISE | `3a32412` |
+| SyberLabs/RISE | `998d725` (read, not executed; the map is rule-based) |
 | SyberLabs/OmniOS | `955a6ad` (read, not executed) |
 
 Each script asserts its own consistency check and fails rather than writing data
@@ -99,24 +98,25 @@ The job version advances only on the accepted write.
 
 **Inspectable:** which wires reached each answer, and why each excluded wire was excluded. The lineage from the Strategist's answer through the Analyst's run is shown. The persistent lineage walk requires the optional Postgres ledger, which was not exercised.
 
-## RISE: decision pipeline with authority lanes
+## RISE: the reader-owned decision contract
 
-**Grade:** Recorded decision, plus rules. The reader request and Jev's decision are case `vivid-combined` from RISE's production evaluation: release `789cd63`, model `typesafe/jev-1.13-20260917`, 48 of 49 explicit checks matched. The pipeline stages reproduce `worker/jev-recommend.mjs` and `src/core/jev-config.js`. The reader-override step is illustrative.
+**Grade:** Rule. Reproduced from `src/core/decision/` at `998d725` (`recommend.js`, `call.js`, `providers.js`, `browser.js`, `catalog.js`) and `docs/USER-OWNED-AI.md` over one illustrative request. No model was called. This map replaced the recorded map of the Worker-side Jev route on 2026-10-05, because RISE #294 retired that route: the Worker now calls no model and holds no model key.
 
 | Node | Meaning | Evidence |
 | --- | --- | --- |
-| Reader request | Short intent text. The Worker body is limited to 1 KB | `MAX_BODY_BYTES` |
-| Worker menu | Admitted editions plus 27 bounded choice questions | `CHOICES`, `handleJevRecommend` |
-| Jev | External choice model via OpenRouter decisions API. It chooses among offered keys | `API_URL`, `MODEL` |
-| Validation | `validDecision`: only offered choices. Otherwise `DECISION_INVALID_RESPONSE` and no reading opens | `validDecision` |
-| Decision cache | Redis, 1 hour, no raw preference text | README "Privacy" |
-| Chamber plan | `resolveJevChamberConfig`: deterministic expansion. For example, psychedelic becomes Gallery, fractal flames and the prism theme | `src/core/jev-config.js` |
-| Chamber | Local text, time, visual and sound rendering. No excerpt goes to a model | README "Privacy" |
-| Reader controls | Look, sound and volume overrides, plus restoring Jev's choices | `docs/jev-core/README.md` |
+| Reader request | A short preference, never an instruction that changes the menu | `recommend.js` |
+| Reader's connection | OpenRouter (OAuth PKCE, key in tab memory) or local RISE with pinned Kev-4B; with neither, `NOT_CONNECTED` | `src/core/ai-connection.js`, `docs/USER-OWNED-AI.md` |
+| Public catalog | Static `/content/catalog.json`, public columns only, written by the build | `catalog.js`, `browser.js loadPublicCatalog` |
+| Finite choice questions | Book, pace, curve, chunk, audio, visual, style, engine, arc; each with fixed keys | `recommend.js CHOICES` |
+| Jev or Kev | One call with a deadline and the reader's cancel signal; no retry, no fallback | `call.js`, `providers.js` |
+| Admission | Provider and model label checked (Kev: pinned `X-Kev-Revision`); only offered keys admitted; else `INVALID_RESPONSE` / `UNATTESTED` | `providers.js validProviderResult`, `recommend.js` |
+| Reading settings | Deterministic mapping of an admitted answer to audio and visual programs and a Chamber configuration | `src/core/jev-config.js`, `jev-sequence.js` |
+| Chamber | Local rendering; the Worker's six former inference routes answer 410 | `worker/retired-inference.mjs` |
+| Reader controls | Any setting can be changed during the reading | Chamber controls |
 
-**What changes:** request → questions → choice → validation → plan → reading, followed by a reader override.
+**What changes:** request → questions → (refused without a connection) → one call → answer → (refused if any key was not offered) → settings → reading, followed by a reader override.
 
-**Not the live reading path:** the scene sample (a fixed preset, no Jev request), Scriptorium routing (optional, uses the reader's own key), and the retired per-passage Jev gate.
+**Not on this path:** the Worker, and Composer in ChatGPT, which uses the sealed `rise.current.v1` input.
 
 ## Barn: work graph, transition engine and append-only ledger
 

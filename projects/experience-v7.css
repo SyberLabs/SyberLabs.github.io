@@ -67,6 +67,13 @@
 .pj-map .maps-exhibit { border-radius: var(--sy-r-panel); overflow: hidden; }
 .pj-map .maps-notes { margin-top: var(--space-5); }
 
+/* Recorded run: a command and its output, in a plate */
+.pj-run__figure { margin: var(--space-7) 0 0; }
+.pj-run__box { padding: 0; overflow: hidden; background: var(--sy-ink-2); }
+.pj-run__cmd { margin: 0; padding: 14px var(--space-5); border-bottom: 1px solid var(--sy-rule); color: var(--sy-accent); text-transform: none; letter-spacing: 0; font-size: 13px; }
+.pj-run__out { margin: 0; padding: var(--space-5); overflow-x: auto; font: 400 13px/1.55 var(--sy-mono); color: var(--sy-vellum); white-space: pre; }
+.pj-run__caption { margin: var(--space-4) 0 0; max-width: 72ch; color: var(--sy-dim); }
+
 /* Design: named mechanisms */
 .pj-design { margin: var(--space-7) 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
 .pj-design__item { padding: var(--space-6); }

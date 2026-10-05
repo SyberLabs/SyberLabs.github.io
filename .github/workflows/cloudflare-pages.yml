@@ -35,7 +35,8 @@ jobs:
           test -s dist/syberlabs.css
           test -s dist/syberlabs.js
           test -s dist/system-map.js
-          for project in omnios relay osahr; do grep -Fq "data-system-map=\"$project\"" "dist/projects/$project/index.html"; done
+          for project in rise omnios relay osahr; do grep -Fq "data-system-map=\"$project\"" "dist/projects/$project/index.html"; done
+          grep -Fq 'pj-run__out' dist/projects/syberwork/index.html
           grep -Fq 'sy-atlas' dist/index.html
           grep -Fq 'syberlabs.js' dist/services/index.html
           test -s dist/404.html
@@ -51,6 +52,10 @@ jobs:
           grep -Fq 'https://rise.syberlabs.io/' dist/projects/rise/index.html
           grep -Fq '/rise-demo/rise-marketing-20260929-v3.mp4' dist/projects/rise/index.html
           grep -Fq 'pj-evidence' dist/projects/rise/index.html
+          test -s dist/omni-demo/omnios-morning-20261005.mp4
+          test -s dist/omni-demo/omnios-morning-20261005-poster.jpg
+          test "$(stat -c%s dist/omni-demo/omnios-morning-20261005.mp4)" -lt 8388608
+          grep -Fq '/omni-demo/omnios-morning-20261005.mp4' dist/projects/omnios/index.html
           ! grep -Fq 'rise:sections' dist/projects/rise/index.html
           test -s dist/approach/index.html
           test -s dist/jev/index.html
