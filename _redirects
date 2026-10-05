@@ -10,3 +10,5 @@
 /commons/* / 301
 /projects/commons / 301
 /projects/commons/* / 301
+/kit/v2 /kit/v2/demo.html 301
+/kit/v2/ /kit/v2/demo.html 301
