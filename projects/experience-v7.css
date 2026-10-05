@@ -59,6 +59,15 @@
 .pj-why { margin-top: var(--space-5); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
 .pj-why p { margin: 0; color: var(--sy-mist); }
 
+/* Gallery: screenshots of the rooms, in plate frames; 3 columns, 2 on a tablet, 1 on a phone */
+.pj-gallery__grid { margin: var(--space-7) 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6) var(--space-4); }
+.pj-gallery__figure { margin: 0; }
+.pj-gallery__plate { padding: 0; overflow: hidden; background: var(--sy-ink-2); }
+.pj-gallery__plate img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; background: var(--sy-ink); }
+.pj-gallery__caption { margin: var(--space-3) 0 0; color: var(--sy-dim); }
+.pj-gallery__caption b { display: block; margin-bottom: 2px; font-weight: 500; color: var(--sy-vellum); }
+.pj-gallery__link { color: var(--sy-vellum); }
+
 /* Inspect: the system map exhibit (its own styles travel with /system-map.js) */
 .pj-map__host { margin-top: var(--space-7); }
 .pj-map__fallback { margin: 0; padding: var(--space-5); border: 1px solid var(--sy-rule); border-radius: var(--sy-r-panel); color: var(--sy-mist); }
@@ -118,6 +127,7 @@ main#main { padding-bottom: var(--space-10); }
   .pj-facts__label { padding-top: 0; }
   .pj-how--steps, .pj-how--5, .pj-how--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pj-design { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pj-gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pj-live__card { grid-template-columns: auto minmax(0, 1fr); }
   .pj-live__go { grid-column: 2; justify-self: start; }
   .pj-how--steps .pj-how__item { padding: var(--space-5) var(--space-5) var(--space-5) 0; }
@@ -141,6 +151,7 @@ main#main { padding-bottom: var(--space-10); }
   .pj-how__item, .pj-how__item:first-child, .pj-how__item:last-child { padding: var(--space-5) 0; }
   .pj-how__item + .pj-how__item { border-left: 0; border-top: 1px solid var(--sy-rule); }
   .pj-how--steps, .pj-how--5, .pj-how--3, .pj-design, .pj-why { grid-template-columns: 1fr; }
+  .pj-gallery__grid { grid-template-columns: 1fr; gap: var(--space-6); }
   .pj-evidence__row { grid-template-columns: 1fr; row-gap: var(--space-1); }
   .pj-live { margin-top: var(--space-7); }
   .pj-live__card { grid-template-columns: auto minmax(0, 1fr); padding: var(--space-5); }

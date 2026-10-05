@@ -125,6 +125,19 @@ const useSection = p => p.use ? `
   </ol>
 </section>` : '';
 
+// Gallery: screenshots of the real thing, each in a plate frame with a caption that says exactly what it shows
+// (room, build, date, source of the text). p.gallery = { title, note, link?, items: [{ src, alt, label?, caption, width?, height? }] }.
+const gallerySection = p => p.gallery ? `
+<section class="pj-section pj-gallery sy-container" aria-labelledby="gallery-title">
+  <div class="pj-split" data-reveal>
+    <h2 id="gallery-title" class="sy-eyebrow">${esc(p.gallery.eyebrow || 'Gallery')}</h2>
+    <div class="pj-split__main"><p class="sy-title">${esc(p.gallery.title)}</p>${p.gallery.note ? `<p class="sy-small pj-split__note">${esc(p.gallery.note)}${p.gallery.link ? ` <a class="sy-link pj-gallery__link" href="${p.gallery.link.href}">${esc(p.gallery.link.label)}</a>` : ''}</p>` : ''}</div>
+  </div>
+  <ul class="pj-gallery__grid" data-reveal-children>
+    ${p.gallery.items.map(it => `<li class="pj-gallery__item"><figure class="pj-gallery__figure"><div class="sy-plate pj-gallery__plate" data-tilt="3"><img src="${it.src}" alt="${esc(it.alt)}" width="${it.width || 1440}" height="${it.height || 900}" loading="lazy" decoding="async"></div><figcaption class="sy-small pj-gallery__caption">${it.label ? `<b>${esc(it.label)}</b>` : ''}${esc(it.caption)}</figcaption></figure></li>`).join('')}
+  </ul>
+</section>` : '';
+
 // Design: how it is built, as a grid of named mechanisms.
 const designSection = p => p.design ? `
 <section class="pj-section sy-container" aria-labelledby="design-title">
@@ -177,7 +190,7 @@ const runSection = p => p.run ? `
 
 // Every section below the hero, in reading order. Exported so the static RISE page (projects/rise/index.html,
 // authored by hand) can carry the same sections: scripts/prerender.mjs fills its marker at build time.
-export const renderSections = p => `${liveBar(p)}${videoSection(p)}${whySection(p)}${useSection(p)}${mapSection(p)}${runSection(p)}${designSection(p)}${evidenceSection(p)}${facts(p)}`;
+export const renderSections = p => `${liveBar(p)}${videoSection(p)}${whySection(p)}${useSection(p)}${gallerySection(p)}${mapSection(p)}${runSection(p)}${designSection(p)}${evidenceSection(p)}${facts(p)}`;
 
 function facts(p) {
   const value = v => typeof v === 'string' ? esc(v) : `<a class="sy-link pj-facts__link" href="${v.href}">${esc(v.label)}${/^https?:/.test(v.href) ? icon('external', 16) : ''}</a>`;
