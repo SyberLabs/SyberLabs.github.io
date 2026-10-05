@@ -81,49 +81,90 @@ function actions(p) {
   return `<div class="sy-actions pj-actions">${primary}${secondary}${ghost}</div>`;
 }
 
-const riseFrame = () => `
-<section class="pj-frame sy-container" aria-label="RISE preview" data-reveal>
-  <div class="sy-plate pj-frame__box" role="img" aria-label="The RISE reader in Stream mode: one line of Meditations by Marcus Aurelius on a dark stage, with a progress line and playback controls." data-tilt="3">
-    <div class="pj-frame__bar sy-label">
-      <div class="pj-frame__work"><span class="pj-frame__work-title">Meditations</span><span aria-hidden="true">·</span><span>Marcus Aurelius</span></div>
-      <div class="pj-frame__tabs"><span class="is-active">Stream</span><span>Page</span><span>Conditions</span></div>
-    </div>
-    <div class="pj-frame__stage">
-      <p class="pj-frame__line">Very little is needed to make <span>a happy life.</span></p>
-      <span class="pj-frame__source sy-label">Meditations · Marcus Aurelius</span>
-    </div>
-    <div class="pj-frame__progress"><span></span></div>
-    <div class="pj-frame__controls sy-label">
-      <div class="pj-frame__time">${icon('pause')}<span><span class="pj-frame__hi">04:12</span> / 11:08</span></div>
-      <div class="pj-frame__meta"><span class="pj-frame__pace">Pace <span class="pj-frame__hi">180 wpm</span></span><span class="pj-frame__sound">${icon('sound')}<span class="pj-frame__hi">Sound on</span></span></div>
-    </div>
-  </div>
-</section>`;
+// A live destination, named at the top of the page so a visitor can reach the running thing in one tap.
+const liveBar = p => p.live ? `
+<section class="pj-live sy-container" aria-label="Where to use ${esc(p.name)}" data-reveal>
+  <a class="pj-live__card sy-card" href="${p.live.href}" rel="noopener" data-tilt="2">
+    <span class="pj-live__dot" aria-hidden="true"></span>
+    <span class="pj-live__text"><span class="pj-live__label">${esc(p.status.label)} · <b>${esc(p.live.label)}</b></span><span class="pj-live__note">${esc(p.live.note)}</span></span>
+    <span class="sy-btn sy-btn--solid pj-live__go">Open${icon('external', 18, 'sy-icon--trail')}</span>
+  </a>
+</section>` : '';
 
-const riseHow = () => `
-<section class="pj-section sy-container" aria-labelledby="how-title">
+// A demo film in a plate frame. The video never autoplays; the poster is the page's still.
+const videoSection = p => p.video ? `
+<section class="pj-section pj-video sy-container" aria-labelledby="video-title">
   <div class="pj-split" data-reveal>
-    <h2 id="how-title" class="sy-eyebrow">How it works</h2>
-    <p class="sy-title pj-split__main">One text. Many ways to feel it.</p>
+    <h2 id="video-title" class="sy-eyebrow">Demo film</h2>
+    <p class="sy-title pj-split__main">${esc(p.video.title)}</p>
   </div>
-  <div class="pj-how" data-reveal-children>
-    ${[['stream', 'Stream', 'Words arrive through time. Set pacing and playback.'], ['page', 'Page', 'Words occupy a spatial surface you can navigate.'], ['conditions', 'Conditions', 'Tune visual fields and sound around the reading.']]
-      .map(([key, title, text]) => `<div class="pj-how__item sy-card" data-tilt="5">${icon(key)}<h3 class="sy-subheading">${title}</h3><p>${text}</p></div>`).join('')}
-  </div>
-</section>`;
+  <figure class="pj-video__figure" data-reveal>
+    <div class="sy-plate pj-video__box" data-tilt="2"><video controls preload="none" playsinline poster="${p.video.poster}" aria-label="${esc(p.video.title)}"><source src="${p.video.src}" type="video/mp4"><a href="${p.video.src}">Download the film (MP4)</a></video></div>
+    <figcaption class="sy-small pj-video__caption">${esc(p.video.caption)}</figcaption>
+  </figure>
+</section>` : '';
 
-// Commons: the record every project keeps (formerly the separate /commons/ page).
-const commonsHow = () => `
-<section class="pj-section sy-container" aria-labelledby="how-title">
+// Motivation: why the thing exists, in two paragraphs.
+const whySection = p => p.why ? `
+<section class="pj-section sy-container" aria-labelledby="why-title">
   <div class="pj-split" data-reveal>
-    <h2 id="how-title" class="sy-eyebrow">How it works</h2>
-    <div class="pj-split__main"><p class="sy-title">Every project keeps its history.</p><p class="sy-small pj-split__note">Phase 0 example with synthetic data.</p></div>
+    <h2 id="why-title" class="sy-eyebrow">Why</h2>
+    <div class="pj-split__main"><p class="sy-title">${esc(p.why.title)}</p><div class="pj-why" data-reveal-children>${p.why.paragraphs.map(t => `<p class="sy-body">${esc(t)}</p>`).join('')}</div></div>
   </div>
-  <ol class="pj-how pj-how--steps" data-reveal-children>
-    ${[['01 / Need', 'Name the problem', 'Describe the need and the outcome the community would recognize.'], ['02 / Evidence', 'Show the basis', 'Keep supporting material and unanswered questions close to the plan.'], ['03 / Human review', 'Request changes', 'A reviewer can send a draft back for changes. Each decision is kept in the audit history.'], ['04 / Outcome', 'Carry learning forward', 'Planned: make results and reusable patterns easy to review and apply to the next project.']]
-      .map(([label, title, text]) => `<li class="pj-how__item sy-card" data-tilt="5"><span class="sy-label">${label}</span><h3 class="sy-subheading">${title}</h3><p>${text}</p></li>`).join('')}
+</section>` : '';
+
+// Use case: the numbered steps a person actually takes.
+const useSection = p => p.use ? `
+<section class="pj-section sy-container" aria-labelledby="use-title">
+  <div class="pj-split" data-reveal>
+    <h2 id="use-title" class="sy-eyebrow">Use</h2>
+    <div class="pj-split__main"><p class="sy-title">${esc(p.use.title)}</p>${p.use.note ? `<p class="sy-small pj-split__note">${esc(p.use.note)}</p>` : ''}</div>
+  </div>
+  <ol class="pj-how pj-how--steps pj-how--${p.use.steps.length}" data-reveal-children>
+    ${p.use.steps.map(([label, title, text]) => `<li class="pj-how__item sy-card" data-tilt="5"><span class="sy-label">${esc(label)}</span><h3 class="sy-subheading">${esc(title)}</h3><p>${esc(text)}</p></li>`).join('')}
   </ol>
-</section>`;
+</section>` : '';
+
+// Design: how it is built, as a grid of named mechanisms.
+const designSection = p => p.design ? `
+<section class="pj-section sy-container" aria-labelledby="design-title">
+  <div class="pj-split" data-reveal>
+    <h2 id="design-title" class="sy-eyebrow">Design</h2>
+    <p class="sy-title pj-split__main">${esc(p.design.title)}</p>
+  </div>
+  <ul class="pj-design" data-reveal-children>
+    ${p.design.items.map(([title, text]) => `<li class="pj-design__item sy-card" data-tilt="4"><h3 class="sy-subheading">${esc(title)}</h3><p>${esc(text)}</p></li>`).join('')}
+  </ul>
+</section>` : '';
+
+// Evidence: each claim labelled with the state it has reached, and what has not been shown.
+const STATES = { deployed: 'Deployed', measured: 'Measured', tested: 'Tested', implemented: 'Implemented', 'not yet': 'Not yet' };
+const evidenceSection = p => p.evidence ? `
+<section class="pj-section sy-container" aria-labelledby="evidence-title">
+  <div class="pj-split pj-split--facts" data-reveal>
+    <h2 id="evidence-title" class="sy-eyebrow pj-facts__label">Evidence</h2>
+    <div class="pj-split__main">
+      <ul class="pj-evidence" data-reveal-children>${p.evidence.map(([state, text]) => `<li class="pj-evidence__row is-${state.replace(/\s+/g, '-')}"><span class="pj-evidence__state sy-label"><i aria-hidden="true"></i>${esc(STATES[state] || state)}</span><p>${esc(text)}</p></li>`).join('')}</ul>
+      ${p.reflects ? `<p class="sy-small pj-evidence__ref">Reflects ${esc(p.reflects)}. Each state is earned by code, a named test, a measurement under stated conditions, or a deployment; none is promoted by wording.</p>` : ''}
+    </div>
+  </div>
+</section>` : '';
+
+// An inspectable system map (src/system-maps/), drawn from the repository's own recorded or rule-based trace.
+// The host keeps a paragraph for readers without JavaScript; /system-map.js replaces it with the exhibit.
+const mapSection = p => p.map ? `
+<section class="pj-section pj-map sy-container" aria-labelledby="map-title">
+  <div class="pj-split" data-reveal>
+    <h2 id="map-title" class="sy-eyebrow">Inspect</h2>
+    <div class="pj-split__main"><p class="sy-title">${esc(p.map.title)}</p><p class="sy-small pj-split__note">${esc(p.map.note)}</p></div>
+  </div>
+  <div class="pj-map__host" data-system-map="${esc(p.map.id)}" data-reveal><p class="sy-small pj-map__fallback">${esc(p.map.fallback)}</p></div>
+  <script type="module" src="/system-map.js"></script>
+</section>` : '';
+
+// Every section below the hero, in reading order. Exported so the static RISE page (projects/rise/index.html,
+// authored by hand) can carry the same sections: scripts/prerender.mjs fills its marker at build time.
+export const renderSections = p => `${liveBar(p)}${videoSection(p)}${whySection(p)}${useSection(p)}${mapSection(p)}${designSection(p)}${evidenceSection(p)}${facts(p)}`;
 
 function facts(p) {
   const value = v => typeof v === 'string' ? esc(v) : `<a class="sy-link pj-facts__link" href="${v.href}">${esc(v.label)}${/^https?:/.test(v.href) ? icon('external', 16) : ''}</a>`;
@@ -187,9 +228,7 @@ export function renderProject(p) {
     </div>
     ${sigilPlate(p.slug, PLATES[i] || 'II', p.name, 'pj-sigil')}
   </section>
-  ${p.slug === 'rise' ? riseFrame() + riseHow() : ''}
-  ${p.slug === 'commons' ? commonsHow() : ''}
-  ${facts(p)}
+  ${renderSections(p)}
   ${others(p)}
   ${neighbours(p)}
 </main>

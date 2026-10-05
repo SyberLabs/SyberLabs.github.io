@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { projects, skills, EMAIL, CONTACT, RESUME, LINKEDIN, GITHUB } from '../projects/site-data.js';
+import { projects, skills, EMAIL, CONTACT, RESUME, LINKEDIN, GITHUB, RISE_APP, OMNI_PREVIEW } from '../projects/site-data.js';
 import { header as chromeHeader, footer as chromeFooter } from '../projects/project-template.js';
 import { mount, RING_SVG, paramLine } from '../kit/v2/syber-atmosphere.js';
 import plateStill from './plate-i.webp';
@@ -46,10 +46,11 @@ function Hero() {
       <div className="home-hero__copy" ref={copy}>
         <p className="sy-eyebrow" data-reveal>SyberLabs / Independent AI software lab</p>
         <h1 id="hero-title" className="sy-display-xl home-hero__title" data-split>Read.<br /> <em>Think.</em><br /> Build.</h1>
-        <p className="sy-body-lg home-hero__intro" data-reveal>SyberLabs builds AI-powered reading software and tools that make AI agents reviewable.</p>
+        <p className="sy-body-lg home-hero__intro" data-reveal>SyberLabs builds an audiovisual reader, a canvas for thinking with AI over live data, and infrastructure that makes AI agents reviewable. Two of them are live.</p>
         <div className="home-hero__actions" data-reveal>
-          <a className="sy-btn sy-btn--solid" href="https://rise.syberlabs.io/sequences/">Start a short reading<Icon name="arrow" className="sy-icon--trail" /></a>
-          <a className="sy-btn sy-btn--line" href="#work">See the work<Icon name="down" /></a>
+          <a className="sy-btn sy-btn--solid" href={RISE_APP}>Open RISE<Icon name="arrow" className="sy-icon--trail" /></a>
+          <a className="sy-btn sy-btn--line" href={OMNI_PREVIEW}>Try the OmniOS preview<Icon name="external" /></a>
+          <a className="sy-btn sy-btn--ghost" href="#work">See the work<Icon name="down" /></a>
         </div>
         <div className="home-hero__founder" data-reveal>
           <span>Founded in 2026 by <strong>Mateo Robles</strong></span>
@@ -76,7 +77,7 @@ function Work() {
   return <section id="work" className="home-sec sy-wrap" aria-labelledby="work-title">
     <div className="site-head home-head" data-reveal>
       <div><p className="sy-eyebrow">Work / 01–05</p><h2 id="work-title" className="sy-display">Five <em>projects.</em></h2></div>
-      <p className="home-head__note sy-small">Each page says what has been shown and what has not.</p>
+      <p className="home-head__note sy-small">Each page says why it exists, what you can do with it, how it is built, and what has been shown and what has not.</p>
     </div>
     <ul className="home-cards" data-reveal-children>
       {projects.map(p => <li key={p.slug}><a className="home-card sy-card" href={`/projects/${p.slug}/`} style={{ '--sy-accent': p.accent }} data-tilt="6" onMouseEnter={redraw}>
@@ -133,6 +134,8 @@ function Research() {
       <ul className="home-research__links">
         <li><a href="/kev/">RISE and Kev: migration status<Icon name="arrow" size={16} /></a></li>
         <li><a href="/jev/">Jev in RISE: the earlier case study<Icon name="arrow" size={16} /></a></li>
+        <li><a href="https://github.com/SyberLabs/papers">Papers: working papers and studies<Icon name="external" size={16} /></a></li>
+        <li><a href="https://github.com/SyberLabs/cross-platform">Instrument panel: run and inspect five systems<Icon name="external" size={16} /></a></li>
         <li><a href="/kit/v2/">Design system v2 “Atlas”: the kit<Icon name="arrow" size={16} /></a></li>
       </ul>
     </div>
@@ -144,7 +147,7 @@ function About() {
     <div className="site-head" data-reveal><p className="sy-eyebrow">About</p><h2 id="about-title" className="sy-display">About <em>SyberLabs.</em></h2></div>
     <div className="home-about">
       <div className="home-about__copy" data-reveal-children>
-        <p className="sy-body-lg home-about__lead">SyberLabs is an independent software and AI research lab founded in 2026 by Mateo Robles. The lab designs, builds, and evaluates AI products and research software, with a focus on applied machine learning, LLM applications, AI agent reliability, and simulation.</p>
+        <p className="sy-body-lg home-about__lead">SyberLabs is an independent software and AI research lab founded in 2026 by Mateo Robles. The lab designs, builds, and evaluates AI products and research software, with a focus on applied machine learning, LLM applications, AI agent reliability, and simulation. Seth Carlson builds the engineering infrastructure behind RISE and co-builds Relay.</p>
         <p>Every project is published with its current status and its limits. Prototypes, measured results, and planned work are labeled separately so readers can tell what has been shown and what has not.</p>
         <h3 className="sy-eyebrow home-about__label">Technical skills</h3>
         <ul className="home-about__skills" data-reveal-children>{skills.map(s => <li key={s}>{s}</li>)}</ul>

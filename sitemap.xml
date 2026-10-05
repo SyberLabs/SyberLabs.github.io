@@ -2,33 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://syberlabs.io/</loc>
-    <lastmod>2026-09-27</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://syberlabs.io/projects/rise/</loc>
-    <lastmod>2026-09-27</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://syberlabs.io/projects/relay/</loc>
-    <lastmod>2026-09-27</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://syberlabs.io/projects/omnios/</loc>
-    <lastmod>2026-09-27</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://syberlabs.io/projects/osahr/</loc>
-    <lastmod>2026-09-27</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://syberlabs.io/projects/commons/</loc>
-    <lastmod>2026-09-27</lastmod>
-    <priority>0.7</priority>
+    <loc>https://syberlabs.io/projects/syberwork/</loc>
+    <lastmod>2026-10-05</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://syberlabs.io/kev/</loc>
@@ -57,7 +57,7 @@
   </url>
   <url>
     <loc>https://syberlabs.io/approach/</loc>
-    <lastmod>2026-09-27</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
