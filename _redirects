@@ -3,6 +3,7 @@
 /omni https://omni.syberlabs.io/ 301
 /omni/* https://omni.syberlabs.io/:splat 301
 /omnios https://omni.syberlabs.io/ 301
+/omnios/* https://omni.syberlabs.io/:splat 301
 /jev /jev/ 301
 /kev /kev/ 301
 /commons / 301
