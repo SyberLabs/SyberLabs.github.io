@@ -26,7 +26,7 @@ drawAll(document);                     // canvas[data-sigil="relay"][data-color]
 ```
 - `hero`: 160k particles, placed right of `avoid` on wide screens and above the copy on phones. It sets `--cx/--cy/--s` on the parent for `RING_SVG`.
 - `ambient`: 40k particles, slower, 35% intensity, full-bleed. Always put `sy-scrim--heavy` over it.
-- Sigil names are trimmed and lower-cased. Product seeds: `rise`, `commons`, `relay`, `omnios`, `osahr`. For record fingerprints, seed by the ID.
+- Sigil names are trimmed and lower-cased. Product seeds: `rise`, `omnios`, `syberwork`, `relay`, `osahr`. For record fingerprints, seed by the ID.
 - In apps with a first-load budget, lazy-load the atmosphere: `import('./syber-atmosphere.js').then(m => m.mount(...))`, and call `destroy()` on unmount.
 
 ## Rules (accessibility and performance)

@@ -17,9 +17,13 @@ const { render } = await import(pathToFileURL(resolve('dist-ssr/entry-server.js'
 await inject(resolve('dist/index.html'), /<div id="root"><\/div>/, html => html.replace('<div id="root"></div>', `<div id="root">${render()}</div>`));
 await rm('dist-ssr', { recursive: true, force: true });
 
-const { projects, renderProject } = await import(pathToFileURL(resolve('projects/project-template.js')).href);
+const { projects, renderProject, renderSections } = await import(pathToFileURL(resolve('projects/project-template.js')).href);
 for (const p of projects) {
-  if (p.slug === 'rise') continue; // The RISE landing page is authored as static HTML.
+  if (p.slug === 'rise') {
+    // The RISE landing page is authored as static HTML; its sections below the hero come from the same data.
+    await inject(resolve('dist/projects/rise/index.html'), /<!-- rise:sections -->/, html => html.replace('<!-- rise:sections -->', renderSections(p)));
+    continue;
+  }
   const page = renderProject(p);
   await inject(resolve(`dist/projects/${p.slug}/index.html`), /<div id="app"><\/div>/, html => html
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(page.title)}</title>`)
@@ -27,4 +31,4 @@ for (const p of projects) {
     .replace('<html lang="en">', `<html lang="en" style="--accent:${p.accent};--sy-accent:${p.accent}">`)
     .replace('<div id="app"></div>', `<div id="app">${page.body}</div>`));
 }
-console.log(`prerender: homepage and ${projects.length - 1} project pages (RISE is static)`);
+console.log(`prerender: homepage, ${projects.length - 1} project pages and the RISE sections`);

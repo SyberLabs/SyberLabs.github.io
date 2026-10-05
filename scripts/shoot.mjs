@@ -1,14 +1,15 @@
 // Screenshot every page of the built site (dist/, served at BASE) at desktop and phone widths, with the
 // WebGL field forced on (window.SY_ALLOW_SOFTWARE_GL) so the 3D layer renders under headless SwiftShader.
-// Usage: node scripts/shoot.mjs [outDir] [BASE]   (needs a Playwright install; the RISE repo's is used by default)
+// Usage: node scripts/shoot.mjs [outDir] [BASE]   (needs a Playwright install resolvable from here, or PW_REQUIRE_FROM=/path/to/package.json;
+// PW_EXECUTABLE=/path/to/chrome uses a preinstalled Chromium instead of Playwright's own download)
 import { createRequire } from 'node:module';
 import { mkdirSync } from 'node:fs';
-const require = createRequire(process.env.PW_REQUIRE_FROM || '/Users/sethcarlson/Documents/SyberLabs/repos/RISE/package.json');
+const require = createRequire(process.env.PW_REQUIRE_FROM || import.meta.url);
 const { chromium } = require('playwright');
 const out = process.argv[2] || 'shots', BASE = process.argv[3] || 'http://localhost:4173';
 mkdirSync(out, { recursive: true });
-const pages = ['/', '/projects/rise/', '/projects/relay/', '/projects/commons/', '/approach/', '/services/', '/research/sybershoke/', '/kev/', '/jev/', '/rise-demo/', '/privacy/', '/404.html'];
-const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+const pages = ['/', '/projects/rise/', '/projects/omnios/', '/projects/syberwork/', '/projects/relay/', '/projects/osahr/', '/approach/', '/services/', '/research/sybershoke/', '/kev/', '/jev/', '/rise-demo/', '/privacy/', '/404.html'];
+const browser = await chromium.launch({ executablePath: process.env.PW_EXECUTABLE || undefined, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const errors = [];
 for (const [label, vp] of [['desktop', { width: 1440, height: 900 }], ['phone', { width: 390, height: 844 }]]) {
   const ctx = await browser.newContext({ viewport: vp, deviceScaleFactor: 1, isMobile: label === 'phone', hasTouch: label === 'phone' });

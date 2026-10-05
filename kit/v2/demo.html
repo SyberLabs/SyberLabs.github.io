@@ -55,7 +55,7 @@
   </div>
   <nav class="sy-strip" aria-label="Projects at a glance"><ol>
     <li style="--sy-accent:var(--sy-accent-rise)"><a href="https://syberlabs.io/projects/rise/"><span class="sy-strip__n">01 · Reading app</span><span class="sy-strip__t">RISE</span><span class="sy-badge sy-badge--bare sy-badge--live">Live</span></a></li>
-    <li style="--sy-accent:var(--sy-accent-commons)"><a href="https://syberlabs.io/projects/commons/"><span class="sy-strip__n">02 · Coordination</span><span class="sy-strip__t">Commons</span><span class="sy-badge sy-badge--bare sy-badge--private">Private prototype</span></a></li>
+    <li style="--sy-accent:var(--sy-accent-syberwork)"><a href="https://syberlabs.io/projects/syberwork/"><span class="sy-strip__n">02 · Governed work</span><span class="sy-strip__t">SyberWork</span><span class="sy-badge sy-badge--bare sy-badge--private">Private prototype</span></a></li>
     <li style="--sy-accent:var(--sy-accent-relay)"><a href="https://syberlabs.io/projects/relay/"><span class="sy-strip__n">03 · Job applications</span><span class="sy-strip__t">Relay</span><span class="sy-badge sy-badge--bare sy-badge--early">Early release</span></a></li>
     <li style="--sy-accent:var(--sy-accent-omnios)"><a href="https://syberlabs.io/projects/omnios/"><span class="sy-strip__n">04 · Analysis canvas</span><span class="sy-strip__t">OmniOS</span><span class="sy-badge sy-badge--bare sy-badge--research">Research</span></a></li>
     <li style="--sy-accent:var(--sy-accent-osahr)"><a href="https://syberlabs.io/projects/osahr/"><span class="sy-strip__n">05 · Simulation</span><span class="sy-strip__t">OSAHR</span><span class="sy-badge sy-badge--bare sy-badge--research">Research</span></a></li>
@@ -104,7 +104,7 @@
   <p class="sy-eyebrow">States · ambient mode</p><h2 class="sy-display">Empty, alert, skeleton</h2>
   <div class="amb sy-nebula--center">
     <canvas class="sy-atmosphere" id="amb" aria-hidden="true"></canvas><div class="sy-scrim sy-scrim--heavy" aria-hidden="true"></div>
-    <div class="sy-empty" style="--sy-accent:var(--sy-accent-commons)"><canvas data-sigil="commons" aria-hidden="true"></canvas><p class="sy-heading">No missions yet</p><p>Write down a need and Commons turns it into a plan you can review.</p><button class="sy-btn sy-btn--line" type="button">Start a mission</button></div>
+    <div class="sy-empty" style="--sy-accent:var(--sy-accent-syberwork)"><canvas data-sigil="syberwork" aria-hidden="true"></canvas><p class="sy-heading">No missions yet</p><p>Open a thread and SyberWork records every proposal, check and acceptance.</p><button class="sy-btn sy-btn--line" type="button">Start a thread</button></div>
   </div>
   <div class="grid" style="margin-top:32px">
     <div class="sy-alert sy-alert--danger" role="alert"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" style="color:var(--sy-danger);flex:none"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg><span><strong>Error.</strong> The source could not be reached. Try again.</span></div>
@@ -122,7 +122,7 @@
   import { mount, RING_SVG } from './syber-atmosphere.js';
   import { drawAll } from './syber-sigil.js';
   const sw = document.getElementById('sw');
-  for (const n of ['ink','ink-2','ink-3','vellum','body','mist','dim','deep','blue','ice','violet','magenta','amber','success','research','warning','danger','accent-rise','accent-commons','accent-relay','accent-omnios','accent-osahr'])
+  for (const n of ['ink','ink-2','ink-3','vellum','body','mist','dim','deep','blue','ice','violet','magenta','amber','success','research','warning','danger','accent-rise','accent-omnios','accent-syberwork','accent-relay','accent-osahr'])
     sw.insertAdjacentHTML('beforeend', `<div><i style="background:var(--sy-${n})"></i>--sy-${n}</div>`);
   const plate = document.getElementById('plate');
   plate.insertAdjacentHTML('afterend', RING_SVG);
