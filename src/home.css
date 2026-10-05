@@ -163,3 +163,22 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
   .home-sign { padding-top: 80px; padding-bottom: 72px; }
 }
 @media (max-width: 900px) { .home-hero { --cx: 50%; --cy: calc(64px + min(88vw, 340px) / 2); --s: min(88vw, 340px); } }
+
+/* Latest: dated rows, state as dot + word */
+.home-latest { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--sy-rule); }
+.home-latest__row { display: grid; grid-template-columns: 84px 120px minmax(0, 1fr); column-gap: var(--sy-space-5, 20px); padding: 18px 0; border-bottom: 1px solid var(--sy-rule); }
+.home-latest__date { color: var(--sy-dim); line-height: 24px; }
+.home-latest__state { --d: var(--sy-mist); display: inline-flex; align-items: center; gap: 8px; line-height: 24px; color: var(--sy-vellum); text-transform: uppercase; }
+.home-latest__state i { width: 8px; height: 8px; border-radius: 50%; background: var(--d); box-shadow: 0 0 10px var(--d); }
+.is-deployed .home-latest__state { --d: var(--sy-live); }
+.is-merged .home-latest__state { --d: var(--sy-ice); }
+.is-decided .home-latest__state { --d: var(--sy-amber, #ffae63); }
+.is-recorded .home-latest__state { --d: var(--sy-mist); }
+.home-latest__body { display: grid; gap: 4px; }
+.home-latest__title { display: inline-flex; align-items: center; gap: 6px; font-size: 17px; line-height: 24px; color: var(--sy-vellum); text-decoration: none; }
+.home-latest__title:hover { color: var(--sy-ice); }
+.home-latest__text { font-size: 15px; line-height: 1.55; color: var(--sy-mist); max-width: 72ch; }
+@media (max-width: 720px) {
+  .home-latest__row { grid-template-columns: 1fr; row-gap: 6px; }
+  .home-latest__date { order: 2; }
+}
