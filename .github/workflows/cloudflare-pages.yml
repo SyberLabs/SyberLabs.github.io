@@ -72,6 +72,8 @@ jobs:
           grep -Fxq '/projects/commons/* / 301' dist/_redirects
           grep -Fxq '/omni https://omni.syberlabs.io/ 301' dist/_redirects
           grep -Fq 'class="sy-header' dist/404.html
+      - name: Quality sweep of the built site
+        run: node scripts/qa.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: syberlabs-home-${{ github.sha }}
