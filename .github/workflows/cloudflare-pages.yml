@@ -56,6 +56,11 @@ jobs:
           grep -Fq 'https://rise.syberlabs.io/' dist/projects/rise/index.html
           grep -Fq '/rise-demo/rise-marketing-20260929-v3.mp4' dist/projects/rise/index.html
           grep -Fq 'pj-evidence' dist/projects/rise/index.html
+          grep -Fq 'pj-gallery' dist/projects/rise/index.html
+          test -s dist/rise-demo/rooms/rise-home-20261005.webp
+          grep -Fq '/rise-demo/rooms/rise-home-20261005.webp' dist/projects/rise/index.html
+          test -s dist/rise-demo/rooms/rise-rooms-begin-20261005.mp4
+          test "$(stat -c%s dist/rise-demo/rooms/rise-rooms-begin-20261005.mp4)" -lt 8388608
           test -s dist/omni-demo/omnios-morning-20261005.mp4
           test -s dist/omni-demo/omnios-morning-20261005-poster.jpg
           test "$(stat -c%s dist/omni-demo/omnios-morning-20261005.mp4)" -lt 8388608

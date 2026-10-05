@@ -125,15 +125,16 @@ const useSection = p => p.use ? `
   </ol>
 </section>` : '';
 
-// Gallery: real screens of the thing, each with a caption that says where it came from.
+// Gallery: screenshots of the real thing, each in a plate frame with a caption that says exactly what it shows
+// (room, build, date, source of the text). p.gallery = { title, note, link?, items: [{ src, alt, label?, caption, width?, height? }] }.
 const gallerySection = p => p.gallery ? `
-<section class="pj-section pj-gallery-section sy-container" aria-labelledby="gallery-title">
+<section class="pj-section pj-gallery sy-container" aria-labelledby="gallery-title">
   <div class="pj-split" data-reveal>
-    <h2 id="gallery-title" class="sy-eyebrow">Screens</h2>
-    <div class="pj-split__main"><p class="sy-title">${esc(p.gallery.title)}</p>${p.gallery.note ? `<p class="sy-small pj-split__note">${esc(p.gallery.note)}</p>` : ''}</div>
+    <h2 id="gallery-title" class="sy-eyebrow">${esc(p.gallery.eyebrow || 'Gallery')}</h2>
+    <div class="pj-split__main"><p class="sy-title">${esc(p.gallery.title)}</p>${p.gallery.note ? `<p class="sy-small pj-split__note">${esc(p.gallery.note)}${p.gallery.link ? ` <a class="sy-link pj-gallery__link" href="${p.gallery.link.href}">${esc(p.gallery.link.label)}</a>` : ''}</p>` : ''}</div>
   </div>
-  <ul class="pj-gallery" data-reveal-children>
-    ${p.gallery.items.map(it => `<li class="pj-gallery__item"><figure class="pj-gallery__figure"><div class="sy-plate pj-gallery__box" data-tilt="2"><img class="pj-gallery__img" src="${it.src}" alt="${esc(it.alt)}" loading="lazy" decoding="async" width="1440" height="900"></div><figcaption class="sy-small pj-gallery__caption">${esc(it.caption)}</figcaption></figure></li>`).join('')}
+  <ul class="pj-gallery__grid" data-reveal-children>
+    ${p.gallery.items.map(it => `<li class="pj-gallery__item"><figure class="pj-gallery__figure"><div class="sy-plate pj-gallery__plate" data-tilt="3"><img src="${it.src}" alt="${esc(it.alt)}" width="${it.width || 1440}" height="${it.height || 900}" loading="lazy" decoding="async"></div><figcaption class="sy-small pj-gallery__caption">${it.label ? `<b>${esc(it.label)}</b>` : ''}${esc(it.caption)}</figcaption></figure></li>`).join('')}
   </ul>
 </section>` : '';
 
