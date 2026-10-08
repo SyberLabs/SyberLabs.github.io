@@ -30,6 +30,7 @@ export const workWithUs = { label: 'Work with us', href: '/services/' };
 
 export const footerLinks = [
   { label: 'Approach', href: '/approach/' },
+  { label: 'How we build', href: '/stack/' },
   { label: 'RISE app', href: RISE_APP, external: true },
   { label: 'OmniOS preview', href: OMNI_PREVIEW, external: true },
   { label: 'RISE Sketch', href: SKETCH_APP, external: true },
@@ -356,7 +357,8 @@ export const siteMap = [
   ] },
   { title: 'Lab', items: [
     { label: 'Home', note: 'Read. Think. Build.', href: '/' },
-    { label: 'Approach', note: 'How we build', href: '/approach/' },
+    { label: 'Approach', note: 'Make the work observable', href: '/approach/' },
+    { label: 'How we build', note: 'Agent tooling and build-time evidence', href: '/stack/' },
     { label: 'Services', note: 'Interactive reading pilots', href: '/services/' },
     { label: 'About', note: 'The lab and its founder', href: '/#about' },
     { label: 'Design kit', note: 'Atlas v2 tokens and components', href: '/kit/v2/' },

@@ -15,7 +15,12 @@ mkdir -p dist/kit
 cp -r kit/v2 dist/kit/
 # social preview cards, one per page (regenerate with `node scripts/og-cards.mjs`)
 cp -r og dist/
-for dir in rise-demo omni-demo relay-demo projects approach jev kev research services privacy; do
+for dir in rise-demo omni-demo relay-demo projects approach jev kev research services privacy stack; do
   cp -r "$dir" dist/
 done
+# GitHits dependency snapshots (regenerate with `node scripts/githits-snapshot.mjs`)
+mkdir -p dist/githits
+cp data/githits/*.json dist/githits/
+# llms.txt / llms-full.txt are generated from projects/site-data.js; fails the build if stale (regenerate with `node scripts/llms.mjs`)
+node scripts/llms.mjs --check; cp llms.txt llms-full.txt dist/
 node scripts/prerender.mjs

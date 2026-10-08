@@ -1,0 +1,17 @@
+{
+  "slug": "syberwork",
+  "generatedAt": "2026-10-08T21:26:33.029Z",
+  "source": "fixture",
+  "apiBase": "https://api.githits.dev/v1",
+  "repo": "SyberLabs/SyberWork",
+  "ref": "208eaf65bb9cb1413d02acafe9b46ed298c055a6",
+  "manifest": "pyproject.toml",
+  "packages": [],
+  "omitted": [],
+  "summary": {
+    "packages": 0,
+    "withKnownVulnerabilities": null,
+    "licenses": null
+  },
+  "errors": []
+}

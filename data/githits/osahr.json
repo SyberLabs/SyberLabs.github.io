@@ -1,0 +1,17 @@
+{
+  "slug": "osahr",
+  "generatedAt": "2026-10-08T21:26:33.029Z",
+  "source": "fixture",
+  "apiBase": "https://api.githits.dev/v1",
+  "repo": "SyberLabs/OSAHR_Cell",
+  "ref": "7293e278ef30047b780a91ec56301395c0119805",
+  "manifest": "pyproject.toml",
+  "packages": [],
+  "omitted": [],
+  "summary": {
+    "packages": 0,
+    "withKnownVulnerabilities": null,
+    "licenses": null
+  },
+  "errors": []
+}

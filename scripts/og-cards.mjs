@@ -54,6 +54,8 @@ const pages = [
     line: 'The earlier Jev integration in RISE, kept as historical evidence while the reading-decision path moves to Kev.', seed: 'jev', accent: RISE },
   { slug: 'approach', path: '/approach/', eyebrow: 'SyberLabs · Approach', headline: 'Make the work observable.',
     line: 'Establish what a system knows, design what a person can do with it, and verify that they can review and change the result.', seed: 'approach', accent: ICE },
+  { slug: 'stack', path: '/stack/', eyebrow: 'SyberLabs · How we build', headline: 'Read the source, not the memory.',
+    line: 'Our coding agents read open-source dependencies at the exact version a project uses, through GitHits.', seed: 'stack', accent: ICE },
   { slug: 'services', path: '/services/', eyebrow: 'SyberLabs · Services', headline: 'An interactive way to read your text.',
     line: 'Scoped, paid interactive reading pilots for publishers and authors, built on RISE.', seed: 'services', accent: ICE },
   { slug: 'rise-demo', path: '/rise-demo/', eyebrow: 'Product demo · Audiovisual reader', headline: 'See RISE in motion.',

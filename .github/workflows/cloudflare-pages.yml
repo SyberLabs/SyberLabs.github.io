@@ -32,6 +32,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Check shared header and footer
         run: node scripts/site-chrome.mjs --check
+      - name: GitHits dependency snapshot
+        # Fail soft: without the secret this writes the fixture schema; GitHits never blocks a build.
+        run: node scripts/githits-snapshot.mjs
+        continue-on-error: true
+        env:
+          GITHITS_API_TOKEN: ${{ secrets.GITHITS_API_TOKEN }}
       - name: Prepare public site
         run: |
           pnpm build:site
