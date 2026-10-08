@@ -142,29 +142,54 @@ function GitHits() {
   </section>;
 }
 
-// RISE Plus voice, right under the hero. One switch, RISE_PLUS.state in projects/site-data.js: 'coming' names the
-// price and offers only the free reader; 'live' sends the reader to the Plus voice row in RISE's Settings (RISE_PLUS.href), where the purchase starts. The copy says no more than the state allows.
-function PlusVoice() {
+const RISE_MCP = 'https://rise.syberlabs.io/api/mcp';
+const CLAUDE_CONNECTORS = 'https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp';
+
+// The runtime, right under the hero: RISE Composer, free and live in Claude, leads; RISE Plus is the paid add-on beside it.
+// What it claims is what runs: Claude composes a reading over the connector (rise_present with a Current), RISE checks
+// it before anything plays, and the reader steps into it. Plus copy follows RISE_PLUS.state ('coming' never offers a sale).
+const RUNTIME = [
+  ['01', 'Compose', 'A model writes the reading: the words, how they arrive, and the scene around them.'],
+  ['02', 'Admit', 'RISE checks every choice against what it can perform. Nothing plays that it did not admit.'],
+  ['03', 'Experience', 'Words arrive in time, with image, sound and procedural motion. You step inside the answer.'],
+];
+function Runtime() {
   const live = RISE_PLUS.state === 'live';
-  return <section id="plus" className="home-sec sy-wrap" aria-labelledby="plus-title">
-    <div className="home-plus sy-card" style={{ '--sy-accent': '#f2d9a6' }} data-reveal data-tilt="2">
-      <div className="home-plus__copy">
-        <p className="home-plus__top"><span className="sy-eyebrow">RISE Plus / Voice</span><Badge status={live ? { kind: 'live', label: 'Live' } : { kind: 'early', label: 'Coming · not yet available' }} /></p>
-        <h2 id="plus-title" className="sy-display">Your own reading, <em>read aloud.</em></h2>
-        <p className="sy-body-lg">RISE Plus voice is an ElevenLabs voice for RISE, the browser-based audiovisual reader. It voices a reading of your own as the words arrive on screen.</p>
-        <p className="home-plus__price"><b>{RISE_PLUS.price}</b><span>a month</span></p>
-        <p className="sy-small home-plus__state">{live
-          ? 'RISE itself stays free. Plus adds the voice.'
-          : <>Not available yet. It is built and tested in <a href={RISE_PLUS.source}>draft pull requests</a> that are not merged or deployed. RISE itself is free today.</>}</p>
-        <div className="sy-actions home-plus__actions">
-          {live
-            ? <><a className="sy-btn sy-btn--solid" href={RISE_PLUS.href}>Get Plus voice in RISE<Icon name="external" /></a><a className="sy-btn sy-btn--line" href={RISE_APP}>Try RISE free<Icon name="external" /></a></>
-            : <><a className="sy-btn sy-btn--solid" href={RISE_APP}>Try RISE free<Icon name="external" /></a><a className="sy-btn sy-btn--ghost" href="/projects/rise/">About RISE<Icon name="arrow" /></a></>}
+  return <section id="runtime" className="home-sec sy-wrap" aria-labelledby="runtime-title">
+    <div className="home-rt sy-card" style={{ '--sy-accent': '#f2d9a6' }} data-reveal data-tilt="1">
+      <div className="home-rt__main">
+        <div className="home-rt__copy">
+          <p className="home-rt__top"><span className="sy-eyebrow">RISE Composer</span><Badge status={{ kind: 'live', label: 'Free · live in Claude' }} /></p>
+          <h2 id="runtime-title" className="sy-display home-rt__title">The experiential runtime <em>for machine intelligence.</em></h2>
+          <p className="sy-body-lg home-rt__lede">Models think in text. RISE gives their answers time, image, sound and motion: a reading you step inside, not a block you scroll past.</p>
+          <div className="home-rt__connect">
+            <p className="sy-label">Add it to Claude as a custom connector</p>
+            <span className="home-suite__conn"><span className="sy-label">Name</span><code>RISE</code><CopyButton text="RISE" label="the connector name" /></span>
+            <span className="home-suite__conn"><span className="sy-label">URL</span><code>{RISE_MCP.split(/(?=\/api\/)/).flatMap((part, i) => i ? [<wbr key={i} />, part] : [part])}</code><CopyButton text={RISE_MCP} label="the connector URL" /></span>
+          </div>
+          <div className="sy-actions home-rt__actions">
+            <a className="sy-btn sy-btn--solid" href={CLAUDE_CONNECTORS}>How to add a connector<Icon name="external" /></a>
+            <a className="sy-btn sy-btn--line" href={RISE_APP}>Open RISE<Icon name="external" /></a>
+          </div>
         </div>
+        <ol className="home-rt__flow" aria-label="How the runtime works">
+          {RUNTIME.map(([n, term, text]) => <li key={n} className="home-rt__stage">
+            <span className="home-rt__node" aria-hidden="true"><i /></span>
+            <span className="home-rt__n">{n}</span>
+            <span className="home-rt__term">{term}</span>
+            <span className="home-rt__text">{text}</span>
+          </li>)}
+        </ol>
       </div>
-      <dl className="home-plus__points">
-        {RISE_PLUS.points.map(([term, text]) => <div key={term}><dt className="sy-label">{term}</dt><dd>{text}</dd></div>)}
-      </dl>
+      <aside className="home-rt__plus" aria-labelledby="plus-title">
+        <div className="home-rt__plus-head">
+          <p className="home-rt__top"><span className="sy-eyebrow">RISE Plus</span><Badge status={live ? { kind: 'live', label: 'Live' } : { kind: 'early', label: 'Coming · not yet available' }} /></p>
+          <h3 id="plus-title" className="home-rt__plus-title">Give it a <em>voice.</em></h3>
+        </div>
+        <p className="home-rt__plus-text">A premium ElevenLabs voice speaks your readings phrase by phrase, in time with the words on screen. Five voices, no account, no key.{live ? '' : ' Built and tested; not released yet.'}</p>
+        <p className="home-rt__price"><b>{RISE_PLUS.price}</b><span>a month</span></p>
+        <a className="sy-link home-rt__plus-go" href={live ? RISE_PLUS.href : '/plus/'}>{live ? 'Get Plus in RISE' : 'What Plus adds'}<Icon name={live ? 'external' : 'arrow'} size={16} /></a>
+      </aside>
     </div>
   </section>;
 }
@@ -172,8 +197,6 @@ function PlusVoice() {
 // The homepage leads with three products, in the order of the hero: Read (RISE), Think (FLYSPACE), Build (SyberWork).
 // Names, accents, statuses and project pages come from projects/site-data.js; what each one is for lives here.
 // Every claim below is one the project's own page carries (what is live, what is in testing, what is not yet).
-const RISE_MCP = 'https://rise.syberlabs.io/api/mcp';
-const CLAUDE_CONNECTORS = 'https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp';
 const SHOW = {
   rise: {
     kicker: 'Creative suite',
@@ -472,7 +495,7 @@ export default function App() {
   }, []);
   return <>
     <Header />
-    <main id="main"><Hero /><PlusVoice /><Work /><Sketch />{INTERNAL_SECTIONS && <><Latest /><Factory /></>}<Research /><GitHits /><About /><Sign /></main>
+    <main id="main"><Hero /><Runtime /><Work /><Sketch />{INTERNAL_SECTIONS && <><Latest /><Factory /></>}<Research /><GitHits /><About /><Sign /></main>
     <Footer />
   </>;
 }
