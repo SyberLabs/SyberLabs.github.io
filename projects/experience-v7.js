@@ -47,6 +47,18 @@ async function loadDependencies(name) {
   } catch { return null; } // offline or not JSON: render nothing
 }
 
+// Scroll to the panel, and keep it there while the page above it is still settling (system maps, media) for up
+// to 3 s, unless the reader scrolls first.
+function alignTo(el) {
+  const go = () => el.scrollIntoView({ behavior: 'instant' });
+  const ro = new ResizeObserver(go);
+  const stop = () => { ro.disconnect(); for (const t of ['wheel', 'touchstart', 'keydown', 'pointerdown']) removeEventListener(t, stop); };
+  for (const t of ['wheel', 'touchstart', 'keydown', 'pointerdown']) addEventListener(t, stop, { passive: true });
+  ro.observe(document.body);
+  setTimeout(stop, 3000);
+  go();
+}
+
 async function mountDependencies(host) {
   if (host.dataset.state) return;
   host.dataset.state = 'loading';
@@ -56,6 +68,8 @@ async function mountDependencies(host) {
     host.innerHTML = renderDependencies(data);
     host.hidden = false;
     host.dataset.state = 'ready';
+    // Linked from the homepage as #dependency-evidence: the host was hidden when the browser looked for it.
+    if (host.id && location.hash === `#${host.id}`) alignTo(host);
   } catch { host.innerHTML = ''; host.hidden = true; host.dataset.state = 'none'; }
 }
 

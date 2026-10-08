@@ -191,7 +191,7 @@ const runSection = p => p.run ? `
 // Dependency evidence: an empty, hidden host that experience-v7.js fills from /githits/<slug>.json (the
 // project's declared packages as GitHits reported them). No file, no JavaScript or a failed fetch: nothing shows.
 const depsSection = p => `
-<section class="pj-section pj-deps sy-container" aria-labelledby="deps-title" data-githits="${esc(p.slug)}" hidden></section>`;
+<section id="dependency-evidence" class="pj-section pj-deps sy-container" aria-labelledby="deps-title" data-githits="${esc(p.slug)}" hidden></section>`;
 
 const sections = p => `${liveBar(p)}${videoSection(p)}${whySection(p)}${useSection(p)}${gallerySection(p)}${mapSection(p)}${runSection(p)}${designSection(p)}${evidenceSection(p)}${facts(p)}${depsSection(p)}`;
 
@@ -199,7 +199,7 @@ const sections = p => `${liveBar(p)}${videoSection(p)}${whySection(p)}${useSecti
 // authored by hand) can carry the same sections: scripts/prerender.mjs fills its marker at build time. That page
 // does not otherwise load experience-v7.js, so the sections bring it along to fill the dependency panel.
 export const renderSections = p => `${sections(p)}
-<script type="module" src="/projects/experience-v7.js?v=14"></script>`;
+<script type="module" src="/projects/experience-v7.js?v=15"></script>`;
 
 function facts(p) {
   const value = v => typeof v === 'string' ? esc(v) : `<a class="sy-link pj-facts__link" href="${v.href}">${esc(v.label)}${/^https?:/.test(v.href) ? icon('external', 16) : ''}</a>`;
