@@ -69,17 +69,17 @@ function Readout({ index }) {
     <div><span>REACHED THE ANALYST’S LAST ANSWER</span>{reach[index].length ? reach[index].map(r => <p key={r}>{r}</p>) : <p className="is-empty">No question asked yet.</p>}</div>
     <div><span>WIRED BUT EXCLUDED</span>{excluded[index].length ? excluded[index].map(r => <p key={r}>{r}</p>) : <p className="is-empty">None.</p>}</div>
     <div><span>RULE</span><p>status === 'active' and the source returns data</p></div>
-    <div><span>BASIS</span><p>Rules from SyberLabs/OmniOS @ e95ae73 (wire status and context selection unchanged since 955a6ad). Feed failures and run numbers are illustrative.</p></div>
+    <div><span>BASIS</span><p>Rules from SyberLabs/Flyspace @ e95ae73 (wire status and context selection unchanged since 955a6ad). Feed failures and run numbers are illustrative.</p></div>
   </div>;
 }
 
 export default {
-  id: 'omnios', name: 'OmniOS', form: 'Directed context graph', grade: 'rule',
+  id: 'omnios', name: 'FLYSPACE', form: 'Directed context graph', grade: 'rule',
   summary: 'Blocks, wires and personas on a canvas. Only active wires with data reach an answer, and the answer records which ones did.',
   wide: [960, 540], narrow: [400, 700],
   regions: [
     { id: 'canvas', label: 'CANVAS · LOCAL TO THE BROWSER', at: [18, 18, 924, 504], m: [8, 18, 384, 672] },
   ],
   nodes, edges, frames, Readout,
-  evidence: ['SyberLabs/OmniOS @ e95ae73', 'src/core/services/wire.service.ts', 'src/core/stores/wireStore.ts admitWire', 'src/core/shells/templates.ts'],
+  evidence: ['SyberLabs/Flyspace @ e95ae73', 'src/core/services/wire.service.ts', 'src/core/stores/wireStore.ts admitWire', 'src/core/shells/templates.ts'],
 };

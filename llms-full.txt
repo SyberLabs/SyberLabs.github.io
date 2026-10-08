@@ -1,6 +1,6 @@
 # SyberLabs
 
-> SyberLabs is an independent AI and software lab founded by Mateo Robles. RISE, a browser-based audiovisual reader, and the OmniOS preview are live; SyberWork, Relay and OSAHR are open source.
+> SyberLabs is an independent AI and software lab founded by Mateo Robles. Creative tools for people and dependable infrastructure for AI agents: the RISE creative suite (Reader, Composer, Sketch), FLYSPACE, a spatial workspace for AI over live data, and SyberWork, a governed runtime for AI agents.
 
 > **RISE and AI models:** since RISE #294 the RISE server calls no model. An AI reading request runs on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s machine (`/kev/` on the site). local Kev did not meet RISE’s bar in internal checks on RISE’s evaluations (RISE `docs/product/tasks/SCR-004.json`), and there is no production Kev deployment, by design. Once the reader connects, RISE’s visual direction sends sections of the reading text to that connection.
 
@@ -109,21 +109,22 @@ Text version of the interactive map: This map needs JavaScript. It steps through
 - AI integration: Optional and reader-owned: Connect OpenRouter (TypeSafe AI’s hosted Jev), or run RISE locally with a pinned Kev-4B; there is no production Kev deployment, by design. The server makes no model calls.
 - Privacy: Texts you bring and compositions you make stay in your browser. Once you connect your own AI, visual direction sends sections of the reading text to that connection (a text you bring, only with your consent). See the app’s posted Privacy and Terms.
 - License: Apache 2.0 for application code; texts and visual works carry their own terms
+- Composer in Claude: Live as a custom connector: add one named RISE with the URL https://rise.syberlabs.io/api/mcp. Submission to Claude’s connector directory is planned.
 - Earlier evidence: [Jev integration in RISE](https://syberlabs.io/jev/)
 - Your own model: [Reader-owned AI: Jev and Kev](https://syberlabs.io/kev/)
 - RISE Plus: [Your own reading, read aloud: decided and built, not yet released](https://syberlabs.io/plus/)
 - Source: [github.com/SyberLabs/RISE](https://github.com/SyberLabs/RISE)
 
-## OmniOS: AI analysis canvas
+## FLYSPACE: Spatial AI workspace
 
-Page: https://syberlabs.io/projects/omnios/
+Page: https://syberlabs.io/projects/flyspace/
 Status: Live preview
-Reflects: SyberLabs/OmniOS@e95ae73 · verified 2026-10-05
-Source: https://github.com/SyberLabs/OmniOS
+Reflects: SyberLabs/Flyspace@e95ae73 · verified 2026-10-05
+Source: https://github.com/SyberLabs/Flyspace
 
-A canvas for thinking with AI over live data. Drop blocks that pull real numbers, wire them into personas, and ask a question that is answered only from what the wires actually carry.
+A spatial workspace for thinking with AI over live data, with APIs on the fly. Drop Data blocks that pull real numbers, wire them into AI personas, and ask a question that is answered only from what the wires actually carry. Formerly OmniOS.
 
-Page title: OmniOS: Canvas for Thinking with AI over Live Data
+Page title: FLYSPACE: Spatial Workspace for AI over Live Data
 
 Headline: See the sources behind an answer.
 
@@ -131,9 +132,9 @@ A limited public preview is live at omni.syberlabs.io: the canvas, the Shell Sto
 
 Primary link: [Open the preview](https://omni.syberlabs.io/)
 
-Secondary link: [Run it locally](https://github.com/SyberLabs/OmniOS#run)
+Secondary link: [Run it locally](https://github.com/SyberLabs/Flyspace#run)
 
-Also: [View source](https://github.com/SyberLabs/OmniOS)
+Also: [View source](https://github.com/SyberLabs/Flyspace)
 
 Live at [omni.syberlabs.io](https://omni.syberlabs.io/): Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled in the preview.
 
@@ -145,7 +146,7 @@ Recorded on 2026-10-05 from a local production build of OmniOS@e95ae73, driven t
 
 ### Why a canvas.
 
-When you ask an AI about the world, its context is invisible: you cannot see which numbers it was given, which it was not, and whether a source it cites carried anything at all. OmniOS makes the context physical. A block is a live view of one source. A wire says this feeds that. A persona is a mind whose entire context is what its incoming wires carry.
+When you ask an AI about the world, its context is invisible: you cannot see which numbers it was given, which it was not, and whether a source it cites carried anything at all. FLYSPACE makes the context physical. A block is a live view of one source. A wire says this feeds that. A persona is a mind whose entire context is what its incoming wires carry.
 
 So the question “what does this thing actually know?” has a literal answer you can point at on screen. A source that carried no data is never cited, and an answer records which runs fed it, however many personas deep.
 
@@ -184,16 +185,17 @@ Text version of the interactive map: This map needs JavaScript. It steps through
 ### Facts
 
 - Stage: Local-first, single-user app with a limited public preview
+- Formerly: OmniOS, renamed in October 2026; the preview address, omni.syberlabs.io, keeps the old name for now
 - Technology: TypeScript, Next.js, React, Zustand, IndexedDB, PostgreSQL (optional), Tailwind CSS, Vitest, Playwright, Cloudflare Workers
 - AI models: Anthropic Claude, Google Gemini, and local models through Ollama; optional Kev persona suggestions
 - Data sources: Polymarket, CoinGecko, Hacker News, World Bank, OpenAlex, Metaculus, NewsAPI (keyed)
 - License: No license file yet; the repository is public
-- Source: [github.com/SyberLabs/OmniOS](https://github.com/SyberLabs/OmniOS)
+- Source: [github.com/SyberLabs/Flyspace](https://github.com/SyberLabs/Flyspace)
 
 ## SyberWork: Governed work runtime
 
 Page: https://syberlabs.io/projects/syberwork/
-Status: Open source · v0.1
+Status: Work in progress
 Reflects: SyberLabs/SyberWork@208eaf6 · verified 2026-10-05
 Source: https://github.com/SyberLabs/SyberWork
 
@@ -448,7 +450,7 @@ Complete output, unedited. From seed 20260729 the kernel committed 25 events in 
 ## Use now
 
 - [RISE app](https://rise.syberlabs.io/): rise.syberlabs.io · open beta
-- [OmniOS preview](https://omni.syberlabs.io/): omni.syberlabs.io · live preview
+- [FLYSPACE preview](https://omni.syberlabs.io/): omni.syberlabs.io · live preview
 - [RISE Sketch](https://sketch.syberlabs.io/): sketch.syberlabs.io · living ink
 - [RISE interactive sample](https://rise.syberlabs.io/jev-scene-demo): Change the scene while you read
 - [RISE demo](https://syberlabs.io/rise-demo/): Make reading an experience. See how RISE turns a book and a mood into text, motion, and sound, then try it yourself.

@@ -4,6 +4,10 @@
 /omni/* https://omni.syberlabs.io/:splat 301
 /omnios https://omni.syberlabs.io/ 301
 /omnios/* https://omni.syberlabs.io/:splat 301
+/flyspace https://omni.syberlabs.io/ 301
+/flyspace/* https://omni.syberlabs.io/:splat 301
+/projects/omnios /projects/flyspace/ 301
+/projects/omnios/* /projects/flyspace/:splat 301
 /sketch https://sketch.syberlabs.io/ 301
 /sketch/* https://sketch.syberlabs.io/:splat 301
 /jev /jev/ 301

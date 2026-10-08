@@ -51,8 +51,8 @@
     ],
     "omitted": []
   },
-  "omnios": {
-    "repo": "SyberLabs/OmniOS",
+  "flyspace": {
+    "repo": "SyberLabs/Flyspace",
     "ref": "5e94be6d1c10a738b64af20818176fcf1059ef9d",
     "manifest": "package.json",
     "lockfile": "package-lock.json",

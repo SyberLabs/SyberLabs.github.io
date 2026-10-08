@@ -11,7 +11,7 @@
 // would otherwise exceed 200 KB.
 //
 //   node scripts/og-cards.mjs            all cards
-//   node scripts/og-cards.mjs omnios kev  only those slugs
+//   node scripts/og-cards.mjs flyspace kev  only those slugs
 //
 // Playwright is resolved from OG_PLAYWRIGHT (a directory holding node_modules/playwright) or the
 // scratchpad install used when the cards were first made; Chromium from OG_CHROME.
@@ -38,7 +38,7 @@ const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 // mark as the page); `line` is the single sentence under the headline.
 const pages = [
   { slug: 'home', path: '/', eyebrow: 'Independent AI software lab', headline: 'Read. Think. Build.',
-    line: 'An audiovisual reader, a canvas for thinking with AI over live data, and infrastructure that makes AI agents reviewable.', seed: 'syberlabs', accent: ICE },
+    line: 'Creative humans, reliable agents: the RISE creative suite, FLYSPACE for thinking with AI over live data, and SyberWork for governed agent work.', seed: 'syberlabs', accent: ICE },
   ...projects.map(p => ({
     slug: p.slug, path: `/projects/${p.slug}/`, eyebrow: `Project ${p.number} · ${p.category}`, headline: p.headline,
     // the whole intro when it fits four lines, otherwise its first sentence
@@ -70,7 +70,7 @@ const logo = `data:image/png;base64,${(await readFile(resolve(root, 'syber-logo-
 // The sigil module, with its exports hoisted onto window so an inline module script can draw with it.
 const sigil = (await readFile(resolve(root, 'kit/v2/syber-sigil.js'), 'utf8')).replace(/^export /gm, '') + '\nwindow.__sigil = { params, draw };';
 
-const DOT = { live: '#6ff5a8', early: ICE, research: RESEARCH };
+const DOT = { live: '#6ff5a8', early: ICE, research: RESEARCH, wip: '#ffb54a' };
 
 function card(p) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><style>
