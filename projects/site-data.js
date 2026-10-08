@@ -19,6 +19,27 @@ export const RISE_SAMPLE = 'https://rise.syberlabs.io/jev-scene-demo';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
 export const SKETCH_APP = 'https://sketch.syberlabs.io/';
 
+// RISE Plus voice: the homepage section (src/App.jsx, PlusVoice) and a RISE evidence row, switched by `state` alone.
+// 'coming': built and tested in draft RISE pull requests (#542 gate and voice, #546 app, #545 legal), not merged
+// or deployed, so the page names the price and offers only the free reader. 'live': set it once Plus is deployed at
+// rise.syberlabs.io; the section then offers the purchase. Every line of `points` is checked against RISE's
+// worker/plus.mjs (wp/rise/plus-gate) and src/app/plus.js (wp/rise/plus-voice-ui).
+export const RISE_PLUS = {
+  state: 'coming', // 'coming' | 'live'
+  price: '$8.99',
+  // TODO: RISE's Plus entry point. Today the purchase is a Stripe payment link offered from Settings in the app
+  // (PLUS_PAYMENT_LINK in RISE src/app/plus.js, still a placeholder); there is no public Plus address yet.
+  href: RISE_APP,
+  source: 'https://github.com/SyberLabs/RISE/pull/542',
+  points: [
+    ['Your own reading', 'A reading of your own, such as a Composer Current, is spoken phrase by phrase, each phrase timed to the words on screen.'],
+    ['Voiced once', 'A voicing is cached by its text, so the same text is never paid for twice. One voicing is at most 10,000 characters.'],
+    ['Allowance', '105,000 characters voiced per billing period. It resets with the next one.'],
+    ['No account', 'Payment goes through Stripe, and a signed cookie in your browser carries the subscription. You bring no key.'],
+    ['If it lapses', 'Reading continues silently, and the rest of RISE stays free.'],
+  ],
+};
+
 export const nav = [
   { id: 'work', label: 'Work', href: '/#work' },
   { id: 'research', label: 'Research', href: '/#research' },
@@ -103,6 +124,9 @@ export const projects = [
       ['deployed', 'The reader, Library, Chapel, Make rooms and the interactive sample run at rise.syberlabs.io.'],
       ['tested', 'Unit, integration and browser suites run in CI; the first-load budget and the design diagram are checked on every release.'],
       ['measured', 'Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.'],
+      RISE_PLUS.state === 'live'
+        ? ['deployed', `RISE Plus voice runs at rise.syberlabs.io: a premium ElevenLabs voice for a reading of your own, ${RISE_PLUS.price} a month through Stripe, with no account.`]
+        : ['not yet', `RISE Plus voice (a premium ElevenLabs voice, ${RISE_PLUS.price} a month) is not available yet. It is built and tested in draft pull requests that are not merged or deployed.`],
       ['not yet', 'No reader study has been run; release evidence still records zero real-device and stranger-testing records. Realtime Live and Dive are out of current scope by decision.'],
     ],
     facts: [
