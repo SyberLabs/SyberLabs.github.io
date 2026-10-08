@@ -17,6 +17,7 @@ export const GITHUB = 'https://github.com/SyberLabs';
 export const RISE_APP = 'https://rise.syberlabs.io/';
 export const RISE_SAMPLE = 'https://rise.syberlabs.io/jev-scene-demo';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
+export const SKETCH_APP = 'https://sketch.syberlabs.io/';
 
 export const nav = [
   { id: 'work', label: 'Work', href: '/#work' },
@@ -31,6 +32,7 @@ export const footerLinks = [
   { label: 'Approach', href: '/approach/' },
   { label: 'RISE app', href: RISE_APP, external: true },
   { label: 'OmniOS preview', href: OMNI_PREVIEW, external: true },
+  { label: 'RISE Sketch', href: SKETCH_APP, external: true },
   { label: 'Services', href: '/services/' },
   { label: 'Résumé', href: RESUME },
   { label: 'GitHub', href: GITHUB, external: true },
@@ -333,6 +335,7 @@ export const siteMap = [
   { title: 'Use', items: [
     { label: 'RISE app', note: 'rise.syberlabs.io · open beta', href: RISE_APP, external: true, accent: '#f2d9a6', sigil: 'rise' },
     { label: 'OmniOS preview', note: 'omni.syberlabs.io · live preview', href: OMNI_PREVIEW, external: true, accent: '#f59be0', sigil: 'omnios' },
+    { label: 'RISE Sketch', note: 'sketch.syberlabs.io · living ink', href: SKETCH_APP, external: true, accent: '#c7a4ff' },
     { label: 'RISE interactive sample', note: 'Change the scene while you read', href: RISE_SAMPLE, external: true },
     { label: 'RISE demo', note: 'Watch the film', href: '/rise-demo/' },
   ] },

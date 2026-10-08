@@ -3,6 +3,9 @@
 // `state` follows the same discipline as project evidence rows (deployed, merged, decided, recorded).
 // Keep this to the last few weeks and prune older entries rather than letting it grow.
 export const latest = [
+  { date: '2026-10-08', project: 'RISE Sketch', state: 'deployed', title: 'Ripple and kaleidoscope symmetry live at sketch.syberlabs.io',
+    text: 'The drawing instrument gains its eleventh Form, Ripple (interference contours that beat into moiré), and a Free | Symmetry switch that folds every stroke into a mirror or up to 12 copies, each in its own hue with Spectral ink.',
+    href: 'https://github.com/SyberLabs/RISE-Sketch/pull/10' },
   { date: '2026-10-05', project: 'Site', state: 'deployed', title: 'syberlabs.io re-pointed at what runs',
     text: 'RISE and the OmniOS preview one tap from the hero; Commons retired; SyberWork published; every project page carries why, use, inspect, design, evidence and facts, with the commit it reflects.',
     href: 'https://github.com/SyberLabs/SyberLabs.github.io/pull/56' },
