@@ -1,7 +1,7 @@
 {
   "rise": {
     "repo": "SyberLabs/RISE",
-    "ref": "998d72538504ea3956c628a6f38e63b69fb90595",
+    "ref": "6c7168b863b12c0048b9f5c9b4902202484d6b31",
     "manifest": "package.json",
     "lockfile": "package-lock.json",
     "scope": "package.json \"dependencies\" (devDependencies excluded)",
@@ -18,6 +18,20 @@
         "name": "@huggingface/tokenizers",
         "version": "0.2.0",
         "constraint": "0.2.0",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "acorn",
+        "version": "8.19.0",
+        "constraint": "^8.19.0",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "katex",
+        "version": "0.19.0",
+        "constraint": "^0.19.0",
         "versionSource": "package-lock.json"
       },
       {
@@ -39,7 +53,7 @@
   },
   "omnios": {
     "repo": "SyberLabs/OmniOS",
-    "ref": "e95ae735ce1bb83f84ff1d4223c533d37da20fe0",
+    "ref": "5e94be6d1c10a738b64af20818176fcf1059ef9d",
     "manifest": "package.json",
     "lockfile": "package-lock.json",
     "scope": "package.json \"dependencies\" (devDependencies excluded)",
@@ -75,8 +89,8 @@
       {
         "registry": "npm",
         "name": "jose",
-        "version": "6.1.0",
-        "constraint": "6.1.0",
+        "version": "6.2.12",
+        "constraint": "6.2.12",
         "versionSource": "package-lock.json"
       },
       {
@@ -89,15 +103,15 @@
       {
         "registry": "npm",
         "name": "next",
-        "version": "16.3.6",
-        "constraint": "16.3.6",
+        "version": "16.3.8",
+        "constraint": "16.3.8",
         "versionSource": "package-lock.json"
       },
       {
         "registry": "npm",
         "name": "pg",
-        "version": "8.23.0",
-        "constraint": "^8.23.0",
+        "version": "8.23.1",
+        "constraint": "^8.23.1",
         "versionSource": "package-lock.json"
       },
       {
@@ -140,7 +154,7 @@
   },
   "syberwork": {
     "repo": "SyberLabs/SyberWork",
-    "ref": "208eaf65bb9cb1413d02acafe9b46ed298c055a6",
+    "ref": "e5a74c4aceb68d11101f5bb89939b0b298b016e3",
     "manifest": "pyproject.toml",
     "lockfile": null,
     "scope": "pyproject.toml [project] dependencies (optional-dependencies excluded)",

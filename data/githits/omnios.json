@@ -1,10 +1,10 @@
 {
   "slug": "omnios",
-  "generatedAt": "2026-10-08T21:26:33.029Z",
+  "generatedAt": "2026-10-08T21:51:49.342Z",
   "source": "fixture",
   "apiBase": "https://api.githits.dev/v1",
   "repo": "SyberLabs/OmniOS",
-  "ref": "e95ae735ce1bb83f84ff1d4223c533d37da20fe0",
+  "ref": "5e94be6d1c10a738b64af20818176fcf1059ef9d",
   "manifest": "package.json",
   "packages": [
     {
@@ -50,7 +50,7 @@
     {
       "registry": "npm",
       "name": "jose",
-      "version": "6.1.0",
+      "version": "6.2.12",
       "license": null,
       "latestVersion": null,
       "directDependencies": null,
@@ -70,7 +70,7 @@
     {
       "registry": "npm",
       "name": "next",
-      "version": "16.3.6",
+      "version": "16.3.8",
       "license": null,
       "latestVersion": null,
       "directDependencies": null,
@@ -80,7 +80,7 @@
     {
       "registry": "npm",
       "name": "pg",
-      "version": "8.23.0",
+      "version": "8.23.1",
       "license": null,
       "latestVersion": null,
       "directDependencies": null,

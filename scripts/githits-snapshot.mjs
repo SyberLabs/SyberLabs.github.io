@@ -2,11 +2,14 @@
 // GitHits dependency snapshot for the project pages.
 //
 //   node scripts/githits-snapshot.mjs --targets   regenerate data/githits/targets.json from the
-//                                                 project manifests (needs network: GitHub)
+//                                                 project manifests at each repo's default-branch
+//                                                 head (needs network: GitHub; CI runs it per build)
 //   node scripts/githits-snapshot.mjs             write data/githits/<slug>.json + index.json
 //
 // Truth rule (projects/site-data.js): nothing here is invented. targets.json records the exact
-// manifest, the full commit it was read at (the commit named in each project's `reflects`), and
+// manifest, the full commit it was read at (the repo's default-branch head when --targets ran, so
+// the panel shows the dependencies the project ships today, not those of the page's older
+// `reflects` commit; the panel names its own repo@commit), and
 // where each version came from. Snapshot mode only copies fields GitHits returned; without
 // GITHITS_API_TOKEN every GitHits-derived field is null and source is "fixture". A GitHits
 // failure is recorded in errors[] and never fails the build: this script always exits 0 in
@@ -31,19 +34,21 @@ const OMIT = {
   omnios: ['clsx', 'cmdk', 'react-server-dom-webpack', 'remark-gfm', 'server-only', 'tailwind-merge'],
 };
 
-// ---------- --targets: read manifests at the reflected commit ----------
+// ---------- --targets: read manifests at the default-branch head ----------
 
 async function projectsFromSiteData() {
   const { projects } = await import(join(ROOT, 'projects', 'site-data.js'));
   return projects.map((p) => {
     const m = /^([\w.-]+)\/([\w.-]+)@([0-9a-f]{7,40})/.exec(p.reflects || '');
     if (!m) throw new Error(`${p.slug}: cannot parse reflects "${p.reflects}"`);
-    return { slug: p.slug, repo: `${m[1]}/${m[2]}`, shortRef: m[3] };
+    return { slug: p.slug, repo: `${m[1]}/${m[2]}`, shortRef: 'HEAD' };
   });
 }
 
 async function get(url, as = 'text') {
-  const res = await fetch(url, { headers: { 'user-agent': 'syberlabs-githits-snapshot' }, signal: AbortSignal.timeout(20000) });
+  const headers = { 'user-agent': 'syberlabs-githits-snapshot' };
+  if (process.env.GITHUB_TOKEN && url.startsWith('https://api.github.com/')) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  const res = await fetch(url, { headers, signal: AbortSignal.timeout(20000) });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
   return as === 'json' ? res.json() : res.text();
