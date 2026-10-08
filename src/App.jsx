@@ -143,7 +143,7 @@ function GitHits() {
 }
 
 // RISE Plus voice, right under the hero. One switch, RISE_PLUS.state in projects/site-data.js: 'coming' names the
-// price and offers only the free reader; 'live' offers the purchase. The copy says no more than the state allows.
+// price and offers only the free reader; 'live' sends the reader to the Plus voice row in RISE's Settings (RISE_PLUS.href), where the purchase starts. The copy says no more than the state allows.
 function PlusVoice() {
   const live = RISE_PLUS.state === 'live';
   return <section id="plus" className="home-sec sy-wrap" aria-labelledby="plus-title">
@@ -158,7 +158,7 @@ function PlusVoice() {
           : <>Not available yet. It is built and tested in <a href={RISE_PLUS.source}>draft pull requests</a> that are not merged or deployed. RISE itself is free today.</>}</p>
         <div className="sy-actions home-plus__actions">
           {live
-            ? <><a className="sy-btn sy-btn--solid" href={RISE_PLUS.href}>Get Plus voice — {RISE_PLUS.price}/month<Icon name="external" /></a><a className="sy-btn sy-btn--line" href={RISE_APP}>Try RISE free<Icon name="external" /></a></>
+            ? <><a className="sy-btn sy-btn--solid" href={RISE_PLUS.href}>Get Plus voice in RISE<Icon name="external" /></a><a className="sy-btn sy-btn--line" href={RISE_APP}>Try RISE free<Icon name="external" /></a></>
             : <><a className="sy-btn sy-btn--solid" href={RISE_APP}>Try RISE free<Icon name="external" /></a><a className="sy-btn sy-btn--ghost" href="/projects/rise/">About RISE<Icon name="arrow" /></a></>}
         </div>
       </div>
