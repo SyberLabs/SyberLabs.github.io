@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-field-mood="plus">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="/syberlabs.css?v=4">
-  <link rel="stylesheet" href="/plus/plus.css?v=1">
+  <link rel="stylesheet" href="/plus/plus.css?v=2">
 </head>
 <body class="syber-plus">
   <a class="sy-skip" href="#main">Skip to content</a>
@@ -60,6 +60,26 @@
       </div>
     </section>
 
+    <section class="plus-section" id="hear" aria-labelledby="hear-title">
+      <div class="section-heading">
+        <p class="eyebrow">HEAR THE CLOCK</p>
+        <h2 id="hear-title">Press a line. The words arrive as the voice says them.</h2>
+      </div>
+      <div class="prose">
+        <div class="hear" data-hear>
+          <p class="hear-note">RISE paces words through time; Plus lets a voice set that time. This is the same clock in miniature: your browser speaks a public-domain line, each word appears on the onset the speech engine reports, and the field behind this page pulses once per word.</p>
+          <div class="hear-lines" role="group" aria-label="Three lines to hear">
+            <button type="button" class="hear-line" data-text="I wandered lonely as a cloud that floats on high o’er vales and hills, when all at once I saw a crowd, a host, of golden daffodils."><span class="hear-line__who">Wordsworth, 1807</span><span class="hear-line__text">I wandered lonely as a cloud that floats on high o’er vales and hills, when all at once I saw a crowd, a host, of golden daffodils.</span></button>
+            <button type="button" class="hear-line" data-text="We are such stuff as dreams are made on, and our little life is rounded with a sleep."><span class="hear-line__who">Shakespeare, The Tempest</span><span class="hear-line__text">We are such stuff as dreams are made on, and our little life is rounded with a sleep.</span></button>
+            <button type="button" class="hear-line" data-text="Hope is the thing with feathers that perches in the soul, and sings the tune without the words, and never stops at all."><span class="hear-line__who">Dickinson, c. 1861</span><span class="hear-line__text">Hope is the thing with feathers that perches in the soul, and sings the tune without the words, and never stops at all.</span></button>
+          </div>
+          <p class="hear-stage" aria-live="off"><span class="hear-words" data-words></span></p>
+          <p class="hear-status" data-status>Browser voice, free, on your device. Plus uses a premium ElevenLabs voice rendered once; same clock.</p>
+          <p class="hear-foot">Nothing leaves the browser: the line goes to your device’s own speech engine and no request is made. No text field, no form.</p>
+        </div>
+      </div>
+    </section>
+
     <section class="plus-section" id="how" aria-labelledby="how-title">
       <div class="section-heading">
         <p class="eyebrow">HOW IT IS BUILT</p>
@@ -68,6 +88,32 @@
       <div class="prose">
         <div>
           <p>No accounts. A Stripe receipt becomes one signed cookie. The lab’s Worker voices a reading once on its own ElevenLabs key, keeps the result so the same reading is never rendered twice, meters a monthly allowance of 105,000 characters, and holds no table. Your text is sent once to ElevenLabs and nowhere else.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="plus-section" id="compare" aria-labelledby="compare-title">
+      <div class="section-heading">
+        <p class="eyebrow">FREE AND PLUS</p>
+        <h2 id="compare-title">Reading stays free. Plus adds one thing.</h2>
+      </div>
+      <div class="prose">
+        <div>
+          <table class="compare">
+            <caption>What each tier has, as of 8 October 2026</caption>
+            <thead><tr><th scope="col">In RISE</th><th scope="col">Free</th><th scope="col">Plus</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Reading, paced through time</th><td>Yes</td><td>Yes</td></tr>
+              <tr><th scope="row">Visuals: the procedural fields behind the text</th><td>Yes</td><td>Yes</td></tr>
+              <tr><th scope="row">Library of public-domain texts</th><td>Yes</td><td>Yes</td></tr>
+              <tr><th scope="row">Your own text: Composer Currents and imports</th><td>Yes</td><td>Yes</td></tr>
+              <tr><th scope="row">Browser voice, your device’s own</th><td>Yes</td><td>Yes</td></tr>
+              <tr><th scope="row">Premium voice: ElevenLabs, rendered once, in step with the text</th><td class="no">No</td><td class="plus-yes">Yes, within 105,000 characters a month</td></tr>
+              <tr><th scope="row">Reader-owned AI: hosted Jev on your own OpenRouter account, or local Kev</th><td>Yes, your own connection</td><td>Yes, unchanged</td></tr>
+              <tr><th scope="row">Cost</th><td>$0</td><td>$8.99 a month once released. Not for sale yet.</td></tr>
+            </tbody>
+          </table>
+          <p class="allowance"><b>What the allowance buys.</b> The Worker meters 105,000 characters a month. A Composer Current is about 3,000 characters, so <code>105,000 ÷ 3,000 = 35</code> Currents. A printed book page is about 1,800 characters (300 words of six characters, spaces included), so <code>105,000 ÷ 1,800 ≈ 58</code>, about 60 pages of a book. The count is of characters sent to the voice.</p>
         </div>
       </div>
     </section>
@@ -103,6 +149,7 @@
       </div>
     </section>
   </main>
+  <script type="module" src="/plus/plus.js?v=1"></script>
   <footer class="sy-footer">
 <div class="sy-footer__map"><div class="sy-footer__map-in"><section aria-labelledby="foot-use"><h2 id="foot-use" class="sy-eyebrow">Use</h2><ul><li><a href="https://rise.syberlabs.io/" rel="noopener" style="--sy-accent:#f2d9a6"><span class="sy-footer__dot" aria-hidden="true"></span>RISE app <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="https://omni.syberlabs.io/" rel="noopener" style="--sy-accent:#f59be0"><span class="sy-footer__dot" aria-hidden="true"></span>OmniOS preview <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="https://sketch.syberlabs.io/" rel="noopener" style="--sy-accent:#c7a4ff"><span class="sy-footer__dot" aria-hidden="true"></span>RISE Sketch <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="https://rise.syberlabs.io/jev-scene-demo" rel="noopener">RISE interactive sample <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="/rise-demo/">RISE demo</a></li></ul></section><section aria-labelledby="foot-projects"><h2 id="foot-projects" class="sy-eyebrow">Projects</h2><ul><li><a href="/projects/rise/" style="--sy-accent:#f2d9a6"><span class="sy-footer__dot" aria-hidden="true"></span>RISE</a></li><li><a href="/plus/" aria-current="page">RISE Plus</a></li><li><a href="/projects/omnios/" style="--sy-accent:#f59be0"><span class="sy-footer__dot" aria-hidden="true"></span>OmniOS</a></li><li><a href="/projects/syberwork/" style="--sy-accent:#a6f08f"><span class="sy-footer__dot" aria-hidden="true"></span>SyberWork</a></li><li><a href="/projects/relay/" style="--sy-accent:#62e3d8"><span class="sy-footer__dot" aria-hidden="true"></span>Relay</a></li><li><a href="/projects/osahr/" style="--sy-accent:#ffae63"><span class="sy-footer__dot" aria-hidden="true"></span>OSAHR</a></li></ul></section><section aria-labelledby="foot-research"><h2 id="foot-research" class="sy-eyebrow">Research</h2><ul><li><a href="/research/">Research index</a></li><li><a href="/research/jev-execution/">Reliable execution for AI agents</a></li><li><a href="/research/sybershoke/">Sybershoke</a></li><li><a href="https://github.com/SyberLabs/papers" rel="noopener">Papers <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="/kev/">RISE, Jev and Kev</a></li><li><a href="/jev/">Jev in RISE</a></li></ul></section><section aria-labelledby="foot-lab"><h2 id="foot-lab" class="sy-eyebrow">Lab</h2><ul><li><a href="/">Home</a></li><li><a href="/approach/">Approach</a></li><li><a href="/stack/">How we build</a></li><li><a href="/services/">Services</a></li><li><a href="/#about">About</a></li><li><a href="/kit/v2/">Design kit</a></li><li><a href="/privacy/">Privacy</a></li></ul></section><section aria-labelledby="foot-contact"><h2 id="foot-contact" class="sy-eyebrow">Contact</h2><ul><li><a href="mailto:syberlabs.software@gmail.com">Email</a></li><li><a href="https://github.com/SyberLabs" rel="noopener">GitHub <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="https://www.linkedin.com/in/mateo-robles-71260b189" rel="noopener">LinkedIn <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="/mateo_robles_resume.pdf">Résumé</a></li></ul></section></div></div>
 <div class="sy-footer__in">
