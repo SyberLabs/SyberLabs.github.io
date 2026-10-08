@@ -20,8 +20,9 @@ export function counters(root = document) {
   if (!els.length || reducedMotion() || !('IntersectionObserver' in window)) return;
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (!e.isIntersecting) return; io.unobserve(e.target);
-    const el = e.target, end = parseFloat(el.dataset.count), t0 = performance.now(), dur = 1400;
-    const tick = now => { const k = Math.min(1, (now - t0) / dur), v = Math.round(end * (1 - Math.pow(1 - k, 3))); el.textContent = String(v); if (k < 1) requestAnimationFrame(tick); };
+    const el = e.target, t0 = performance.now(), dur = 1400;
+    // data-count is read every frame: a live number that lands mid-count (factory-stats.js) ends the count where it should
+    const tick = now => { const k = Math.min(1, (now - t0) / dur), v = Math.round(parseFloat(el.dataset.count) * (1 - Math.pow(1 - k, 3))); el.textContent = String(v); if (k < 1) requestAnimationFrame(tick); };
     requestAnimationFrame(tick);
   }), { threshold: 0.4 });
   els.forEach(el => io.observe(el));
