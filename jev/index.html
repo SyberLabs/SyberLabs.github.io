@@ -4,16 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#06051a">
-  <meta name="description" content="Historical case study of SyberLabs' Jev integration in RISE. RISE is migrating its bounded reading decisions to Kev; live Kev behavior is not yet verified.">
+  <meta name="description" content="Historical case study of RISE’s integration of TypeSafe AI’s Jev. Jev is still available in RISE through the reader’s own OpenRouter account; the hosted path this page records was retired in September 2026.">
   <link rel="canonical" href="https://syberlabs.io/jev/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Jev Integration in RISE: AI Decisions with Clear Limits | SyberLabs">
-  <meta property="og:description" content="Historical Jev integration in RISE. The reading-decision path is migrating to Kev.">
+  <meta property="og:description" content="Historical case study of RISE’s integration of TypeSafe AI’s Jev. Jev is still available through the reader’s own OpenRouter account.">
   <meta property="og:url" content="https://syberlabs.io/jev/">
   <meta property="og:image" content="https://syberlabs.io/og/jev.png?v=1">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Jev Integration in RISE: AI Decisions with Clear Limits | SyberLabs">
-  <meta name="twitter:description" content="Historical Jev integration in RISE. The reading-decision path is migrating to Kev.">
+  <meta name="twitter:description" content="Historical case study of RISE’s integration of TypeSafe AI’s Jev. Jev is still available through the reader’s own OpenRouter account.">
   <meta name="twitter:image" content="https://syberlabs.io/og/jev.png?v=1">
   <link rel="icon" href="/favicon.ico?v=prism" sizes="any">
   <title>Jev Integration in RISE: AI Decisions with Clear Limits | SyberLabs</title>
@@ -48,7 +48,7 @@
         <h1 id="hero-title" class="sy-display-xl jev-hero__title">AI decisions with <em>clear</em> limits.</h1>
         <p class="sy-body-lg jev-hero__lede">Structured AI answers. Rules in code. The reader stays in control.</p>
         <div class="sy-actions jev-hero__actions"><a class="sy-btn sy-btn--solid" href="#technical">See how it works<svg class="sy-icon sy-icon--trail" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></a></div>
-        <p class="sy-small jev-hero__note">Historical Jev integration and evaluation. RISE is <a href="/kev/">migrating its bounded reading decisions to Kev</a>; this page does not describe a verified live Kev deployment. SyberLabs has no partnership with TypeSafe AI.</p>
+        <p class="sy-small jev-hero__note">Historical case study of RISE’s integration of TypeSafe AI’s Jev, on a hosted path retired in September 2026. Jev is still available in RISE through the reader’s own OpenRouter account; see <a href="/kev/">reader-owned AI in RISE</a>. SyberLabs has no partnership with TypeSafe AI.</p>
       </div>
       <figure class="sy-plate-figure site-sigil jev-sigil" aria-hidden="true"><div class="sy-plate sy-plate--sigil"><canvas data-sigil="jev" data-caption-for="params-jev"></canvas></div><figcaption><b>Plate VIII · Jev</b>de Jong map · <span class="sy-nowrap">seed “jev”</span><span class="sy-params" id="params-jev">a 1.891 · b −0.362 · c −2.879 · d 0.907</span></figcaption></figure>
     </section>
@@ -71,10 +71,10 @@
         <div class="primitive-panel" id="primitive-panel" role="tabpanel" aria-labelledby="tab-choice">
           <div class="primitive-readout">
             <div><p class="sy-label">Current question</p><h3 id="primitive-title" class="sy-heading">Which composition route fits this request?</h3><p id="primitive-description">RISE offers an optional route choice in its Scriptorium composition feature. RISE’s own code still checks the resulting composition before it is used.</p></div>
-            <div class="distribution" id="primitive-distribution" aria-label="Illustrative probability distribution"><div class="distribution-row"><span>experience program</span><span class="track"><span class="fill" style="--width:68%"></span></span><span class="percent">68%</span></div><div class="distribution-row"><span>agent operation set</span><span class="track"><span class="fill" style="--width:32%"></span></span><span class="percent">32%</span></div></div>
+            <div><p class="sy-label">Example only · no live API call</p><div class="distribution" id="primitive-distribution" aria-label="Illustrative probability distribution"><div class="distribution-row"><span>experience program</span><span class="track"><span class="fill" style="--width:68%"></span></span><span class="percent">68%</span></div><div class="distribution-row"><span>agent operation set</span><span class="track"><span class="fill" style="--width:32%"></span></span><span class="percent">32%</span></div></div></div>
           </div>
           <div class="contract-code">
-            <div class="code-title"><span>Request and answer</span><span>Example only · no live API call</span></div>
+            <div class="code-title"><span>Request and answer</span></div>
             <pre tabindex="0" role="region" aria-label="Example request and answer"><code id="primitive-code">REQUEST
 {
   "state": "Typed composition intent; target word count.",
@@ -120,8 +120,8 @@ validate → authorize → act or hold</code></pre>
         <div class="jev-split__main">
           <h2 id="status-title" class="sy-title">One request. Many ways to read.</h2>
           <p class="jev-copy">In the recorded Jev integration, readers described the reading they wanted. Jev chose a released text and passage, then configured the reader. RISE offered 23 sound options synthesized in the browser: gentle piano and jazz, six other keyboard styles from lullaby to ragtime, six cinematic themes, six mood beds, rain, and two ambient pieces. RISE validated every choice before playback.</p>
-          <p class="jev-copy">Sound options were stored in PostgreSQL and briefly cached in Redis. Jev received a short list matched to each request, so a growing catalog did not enlarge the set of options it chose from. Seven typefaces and five text sizes added visual range, and repeated open-ended requests rotated reading and presentation suggestions. A separate AI composition feature, the Scriptorium, has not yet been independently verified.</p>
-          <a class="sy-link jev-link" href="/kev/">See the Kev migration status<svg class="sy-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></a>
+          <p class="jev-copy">Sound options were stored in PostgreSQL and briefly cached in Redis (retired September 2026). Jev received a short list matched to each request, so a growing catalog did not enlarge the set of options it chose from. Seven typefaces and five text sizes added visual range, and repeated open-ended requests rotated reading and presentation suggestions. A separate AI composition feature, the Scriptorium, has not yet been independently verified.</p>
+          <a class="sy-link jev-link" href="/kev/">See RISE’s reader-owned AI status<svg class="sy-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></a>
         </div>
       </div>
     </section>

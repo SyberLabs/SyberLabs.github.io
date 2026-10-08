@@ -118,12 +118,13 @@
               <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> the Cloudflare Worker serves the app and a static decision catalog; the six former inference routes answer 410 with instructions to connect.</span></li>
               <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> bounded decisions: finite choice questions built from the public catalog, an answer admitted only if every choice was offered, and a deterministic mapping to reading settings. The same contract serves hosted Jev, local Kev and the evaluation harness.</span></li>
               <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> the local Kev path, on Windows with an RTX 5080.</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> a RISE-specific Kev evaluation; the Apple Silicon path.</span></li>
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Checked</b> local Kev on RISE’s internal evaluations: it did not meet the bar for reading requests (results not published).</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> the Apple Silicon path.</span></li>
             </ul></dd></div>
             <div><dt>Establishes</dt><dd>Where the model boundary sits in RISE today, and that a model can pick an offered value and nothing else.</dd></div>
-            <div><dt>Does not establish</dt><dd>Kev’s quality on RISE requests. Jev’s 48 of 49 result belongs to the historical evaluation below and is not a Kev result. Nothing hosted runs Kev on SyberLabs’ behalf.</dd></div>
+            <div><dt>Does not establish</dt><dd>Kev scores: RISE records only that local Kev did not meet its bar; no Kev scores are published. Jev’s 48 of 49 result belongs to the historical evaluation below and is not a Kev result. Nothing hosted runs Kev on SyberLabs’ behalf; there is no production Kev deployment, by design.</dd></div>
             <div><dt>Date</dt><dd>October 2026 · page revised 5 October 2026</dd></div>
-            <div><dt>Source</dt><dd><a href="/kev/">Read the status page</a> · <a href="https://github.com/SyberLabs/RISE/blob/main/docs/USER-OWNED-AI.md" rel="noopener">docs/USER-OWNED-AI.md</a> and <a href="https://github.com/SyberLabs/RISE/blob/main/docs/LOCAL-RISE.md" rel="noopener">docs/LOCAL-RISE.md</a> in SyberLabs/RISE</dd></div>
+            <div><dt>Source</dt><dd><a href="/kev/">Read the status page</a> · <a href="https://github.com/SyberLabs/RISE/blob/main/docs/USER-OWNED-AI.md" rel="noopener">docs/USER-OWNED-AI.md</a>, <a href="https://github.com/SyberLabs/RISE/blob/main/docs/LOCAL-RISE.md" rel="noopener">docs/LOCAL-RISE.md</a> and <a href="https://github.com/SyberLabs/RISE/blob/main/docs/product/tasks/SCR-004.json" rel="noopener">docs/product/tasks/SCR-004.json</a> in SyberLabs/RISE</dd></div>
           </dl>
         </article>
 
@@ -140,7 +141,7 @@
               <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> independent verification of the Scriptorium composition feature.</span></li>
             </ul></dd></div>
             <div><dt>Establishes</dt><dd>That a typed-decision integration with validation in code worked for one request path, and one pass of its choices against a fixed case set.</dd></div>
-            <div><dt>Does not establish</dt><dd>A verified live Kev deployment: these results must not be attributed to Kev. Consistency across runs or reader enjoyment, which a single pass cannot show. Any partnership with TypeSafe AI.</dd></div>
+            <div><dt>Does not establish</dt><dd>A verified live Kev deployment: these results must not be attributed to Kev. Consistency across runs or reader enjoyment, which a single pass cannot show. Cost, latency or calibration, which were not measured. Any partnership with TypeSafe AI.</dd></div>
             <div><dt>Date</dt><dd>Historical · evaluation record 27 September 2026 · page revised 5 October 2026</dd></div>
             <div><dt>Source</dt><dd><a href="/jev/">Read the case study</a> · <a href="https://github.com/SyberLabs/RISE/blob/main/docs/jev-core/variety-evaluation.md" rel="noopener">docs/jev-core/variety-evaluation.md</a> in SyberLabs/RISE</dd></div>
           </dl>
@@ -294,7 +295,7 @@
       <section id="provenance" aria-labelledby="provenance-title">
         <p class="section-label">05 / PROVENANCE</p>
         <h2 id="provenance-title">What this index reflects.</h2>
-        <p class="reflects">Reflects SyberLabs/papers@e925ed6, SyberLabs/cross-platform@5e031ae, SyberLabs/OSAHR_Cell@7293e27, SyberLabs/sybershoke@45956fe and SyberLabs/RISE@998d725, and the site pages linked above as of SyberLabs/SyberLabs.github.io@168fb0d · verified 2026-10-05. Each state is earned by code, a named test, a measurement under stated conditions, or a deployment; none is promoted by wording. When a repository changes, this index changes with it.</p>
+        <p class="reflects">Reflects SyberLabs/papers@e925ed6, SyberLabs/cross-platform@5e031ae, SyberLabs/OSAHR_Cell@7293e27, SyberLabs/sybershoke@45956fe and SyberLabs/RISE@998d725 (its task SCR-004 at @681ccaa, checked 2026-10-08), and the site pages linked above as of SyberLabs/SyberLabs.github.io@168fb0d · verified 2026-10-05. Each state is earned by code, a named test, a measurement under stated conditions, or a deployment; none is promoted by wording. When a repository changes, this index changes with it.</p>
         <p class="reflects">Not indexed here: the private SyberLabs/grokcell-execution repository, reachable only through the report above, and the per-project evidence rows, which live on each <a href="/projects/rise/">project page</a>.</p>
       </section>
 

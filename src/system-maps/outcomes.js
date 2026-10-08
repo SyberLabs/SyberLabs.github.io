@@ -50,9 +50,9 @@ export const outcomes = {
       { who: 'you', actor: 'You', title: 'Change anything', text: 'Adjust pace, look and sound as you go. Reading never waits on a model.' },
     ],
     results: [
-      { title: 'Matched to your mood', text: 'In an earlier evaluation on the retired hosted path, Jev matched 48 of 49 explicit preferences. Kev has not been evaluated on RISE requests.' },
+      { title: 'Stated preferences honoured', text: 'In one earlier run on the retired hosted path, Jev matched 48 of 49 explicit preferences; cost, latency and calibration were not measured. Local Kev did not meet RISE’s bar in internal checks.' },
       { title: 'Text, image and sound together', text: 'A reading room rather than a page.' },
-      { title: 'Your files stay with you', text: 'Texts you bring are read in your browser. A short reading request goes to a model only on your own connection; SyberLabs holds no key.' },
+      { title: 'Your files stay with you', text: 'Texts you bring are read in your browser. Requests, and sections of the text for visual direction, go to a model only on your own connection (a text you bring, only with your consent); SyberLabs holds no key.' },
     ],
     control: 'The model only suggests. You can override every choice at any time, and reading needs no model.',
     status: 'Live app',
