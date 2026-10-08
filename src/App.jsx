@@ -223,7 +223,7 @@ function Latest() {
   return <section id="latest" className="home-sec sy-wrap" aria-labelledby="latest-title">
     <div className="site-head" data-reveal><div><p className="sy-eyebrow">Latest / October 2026</p><h2 id="latest-title" className="sy-display">What <em>changed.</em></h2></div><p className="home-head__note sy-small">Merged, deployed, decided or recorded, newest first. Each line links to its evidence.</p></div>
     <ol className="home-latest" data-reveal-children>
-      {latest.map(item => <li key={item.href + item.title} className={`home-latest__row is-${item.state}`}>
+      {latest.map(item => <li key={item.href + item.title} className={`home-latest__row is-${item.state.replace(/\s+/g, '-')}`}>
         <span className="home-latest__date sy-label"><time dateTime={item.date}>{fmt(item.date)}</time></span>
         <span className="home-latest__state sy-label"><i aria-hidden="true" />{item.state}</span>
         <span className="home-latest__body"><a className="home-latest__title" href={item.href} rel="noopener">{item.project} · {item.title}<Icon name="external" size={14} /></a><span className="home-latest__text">{item.text}</span></span>

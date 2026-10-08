@@ -137,6 +137,7 @@ export const projects = [
       ['License', 'Apache 2.0 for application code; texts and visual works carry their own terms'],
       ['Earlier evidence', { label: 'Jev integration in RISE', href: '/jev/' }],
       ['Your own model', { label: 'Reader-owned AI: Jev and Kev', href: '/kev/' }],
+      ['RISE Plus', { label: 'A premium voice for what you read: decided and built, not yet released', href: '/plus/' }],
       ['Source', { label: 'github.com/SyberLabs/RISE', href: 'https://github.com/SyberLabs/RISE' }],
     ],
   },
@@ -366,6 +367,7 @@ export const siteMap = [
   ] },
   { title: 'Projects', items: [
     { label: 'RISE', note: 'Audiovisual reader', href: '/projects/rise/', sigil: 'rise', accent: '#f2d9a6' },
+    { label: 'RISE Plus', note: 'A premium voice · in progress, not for sale', href: '/plus/' },
     { label: 'OmniOS', note: 'AI analysis canvas', href: '/projects/omnios/', sigil: 'omnios', accent: '#f59be0' },
     { label: 'SyberWork', note: 'Governed work runtime', href: '/projects/syberwork/', sigil: 'syberwork', accent: '#a6f08f' },
     { label: 'Relay', note: 'Job application workspace', href: '/projects/relay/', sigil: 'relay', accent: '#62e3d8' },

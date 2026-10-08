@@ -15,7 +15,7 @@ mkdir -p dist/kit
 cp -r kit/v2 dist/kit/
 # social preview cards, one per page (regenerate with `node scripts/og-cards.mjs`)
 cp -r og dist/
-for dir in rise-demo omni-demo relay-demo projects approach jev kev research services privacy stack; do
+for dir in rise-demo omni-demo relay-demo projects approach jev kev research services privacy stack plus; do
   cp -r "$dir" dist/
 done
 # GitHits dependency snapshots (regenerate with `node scripts/githits-snapshot.mjs`)
