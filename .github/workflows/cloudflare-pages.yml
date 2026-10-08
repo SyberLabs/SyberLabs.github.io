@@ -78,7 +78,12 @@ jobs:
           grep -Fq '/omni-demo/omnios-morning-20261005.mp4' dist/projects/flyspace/index.html
           test -s dist/relay-demo/relay-runtime-20261005.jpg
           grep -Fq '/relay-demo/relay-runtime-20261005.jpg' dist/projects/relay/index.html
-          ! grep -Fq 'rise:sections' dist/projects/rise/index.html
+          # Absence guards use `if ...; then exit 1; fi`: bash -e ignores a failing `!`-negated command, so `! grep` never fails a step.
+          if grep -Fq 'rise:sections' dist/projects/rise/index.html; then echo 'rise:sections leaked into dist/projects/rise/index.html'; exit 1; fi
+          # "What changed" is staff-only (MasterMind RFC 0002): no raw data file, no rows or heading note in any page or script.
+          test ! -e dist/projects/latest.js
+          if grep -rqF 'home-latest__row' dist --include='*.html' --include='*.js'; then echo 'What changed leaked: row markup in dist/'; exit 1; fi
+          if grep -rqF 'Each line links to its evidence' dist --include='*.html' --include='*.js'; then echo 'What changed leaked: section copy in dist/'; exit 1; fi
           test -s dist/approach/index.html
           test -s dist/jev/index.html
           test -s dist/research/index.html
@@ -110,6 +115,8 @@ jobs:
           name: syberlabs-home-${{ github.sha }}
           path: dist/
           if-no-files-found: error
+          # artifacts on a public repo can be downloaded by any signed-in GitHub user; keep them only as long as a deploy needs
+          retention-days: 7
 
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
