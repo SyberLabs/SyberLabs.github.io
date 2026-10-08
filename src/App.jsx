@@ -9,6 +9,7 @@ import { params as sigilParams, drawAll, draw } from '../kit/v2/syber-sigil.js';
 import { boot, reducedMotion } from './site/site.js';
 import { mountThink } from './site/think.js';
 import { gallery } from './sketch-gallery/index.js';
+import { githits } from './githits.js';
 import '../kit/v2/syber-atlas.css';
 import './syberlabs.css';
 import './home.css';
@@ -61,6 +62,7 @@ function Hero() {
     <div className="sy-scrim home-hero__scrim" aria-hidden="true" />
     <div className="home-hero__in sy-wrap">
       <div className="home-hero__copy" ref={copy}>
+        <a className="home-gh-chip" href="/stack/" data-reveal><span className="home-gh-chip__k">How we build</span><span className="home-gh-chip__t">Dependencies read at their exact version, through <b>GitHits</b></span><Icon name="arrow" size={16} /></a>
         <p className="sy-eyebrow" data-reveal>SyberLabs / Independent AI software lab</p>
         <h1 id="hero-title" className="sy-display-xl home-hero__title" data-split>Read.<br /> <Think ref={think} /><br /> Build.</h1>
         <p className="sy-body-lg home-hero__intro" data-reveal>SyberLabs builds an audiovisual reader, a canvas for thinking with AI over live data, and infrastructure that makes AI agents reviewable. Two of them are live.</p>
@@ -86,6 +88,47 @@ function Hero() {
       <ol>{projects.map(p => <li key={p.slug} style={{ '--sy-accent': p.accent }}><a href={`/projects/${p.slug}/`}><span className="sy-strip__n">{p.number}<span className="home-strip__cat"> · {p.category}</span></span><span className="sy-strip__t">{p.name}</span><Badge status={p.status} bare /></a></li>)}</ol>
     </nav>
     <a className="home-scrollcue" href="#work" aria-label="Scroll to the work"><span /></a>
+  </section>;
+}
+
+// GitHits, right under the hero: what our agents use it for, and totals from the project pages' dependency panels,
+// computed at build time from data/githits (src/githits.js). A fixture snapshot shows "Snapshot pending", no numbers.
+// GitHits is a third-party tool we use: no logo, no partnership or endorsement wording.
+function GitHits() {
+  const g = githits;
+  const day = g.day ? <time dateTime={g.iso}>{g.day}</time> : 'an unrecorded date';
+  const plural = (n, one, many = one + 's') => `${n} ${n === 1 ? one : many}`;
+  const row = r => !g.live ? 'Snapshot pending'
+    : !r.packages ? 'No runtime dependencies declared'
+    : `${plural(r.packages, 'package')} · ${r.affected === null ? 'vulnerabilities not checked' : r.affected ? `${r.affected} with known vulnerabilities` : 'known vulnerabilities: none reported'}`;
+  const stats = [
+    [g.packages, 'Packages checked', 'declared runtime dependencies'],
+    [g.projects, 'Projects', 'each with a dependency panel'],
+    [g.affected ?? 'Not checked', 'Known vulnerabilities', g.affected === null ? 'not every package was checked' : 'packages with advisories reported'],
+    [g.licenses, 'Licenses', 'distinct, as GitHits reports them'],
+  ];
+  return <section id="githits" className="home-sec sy-wrap" aria-labelledby="githits-title">
+    <div className="home-gh sy-card" style={{ '--sy-accent': 'var(--sy-ice)' }} data-reveal data-tilt="2">
+      <div className="home-gh__copy">
+        <p className="sy-eyebrow">How we build / GitHits</p>
+        <h2 id="githits-title" className="sy-display">Read the source, <em>not the memory.</em></h2>
+        <p className="sy-body-lg">Our coding agents look up open-source code at the exact version a project uses, through GitHits, a third-party index of public code. A model’s memory blends releases; the pinned source does not.</p>
+        <p className="sy-body">Every project page shows a dependency check: license, latest version and known vulnerabilities for each declared package, fetched from the GitHits package API each time this site is built.</p>
+        <div className="sy-actions home-gh__actions">
+          <a className="sy-btn sy-btn--solid" href="/stack/">How we build<Icon name="arrow" className="sy-icon--trail" /></a>
+          <a className="sy-btn sy-btn--line" href="https://githits.com/" rel="noopener">githits.com<Icon name="external" /></a>
+        </div>
+      </div>
+      <div className="home-gh__data">
+        {g.live
+          ? <dl className="home-gh__stats">{stats.map(([value, term, note]) => <div key={term}><dt className="sy-label">{term}</dt><dd><b className={typeof value === 'number' ? '' : 'is-word'}>{value}</b><span>{note}</span></dd></div>)}</dl>
+          : <p className="home-gh__pending sy-label" role="note"><i aria-hidden="true" />Snapshot pending — GitHits data not yet fetched</p>}
+        <ul className="home-gh__rows">
+          {g.rows.map(r => <li key={r.slug} style={{ '--sy-accent': r.accent }}><a href={r.href}><span className="home-gh__name">{r.name}</span><span className="home-gh__val">{row(r)}</span><Icon name="arrow" size={16} /></a></li>)}
+        </ul>
+        <p className="sy-small home-gh__attr">{g.live ? <>Package data from GitHits, retrieved {day}.</> : <>Package data from GitHits once fetched. Snapshot made {day}.</>}</p>
+      </div>
+    </div>
   </section>;
 }
 
@@ -302,7 +345,7 @@ export default function App() {
   }, []);
   return <>
     <Header />
-    <main id="main"><Hero /><PlusVoice /><Work /><Sketch /><Latest /><Research /><About /><Sign /></main>
+    <main id="main"><Hero /><GitHits /><PlusVoice /><Work /><Sketch /><Latest /><Research /><About /><Sign /></main>
     <Footer />
   </>;
 }

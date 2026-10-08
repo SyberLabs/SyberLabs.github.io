@@ -384,7 +384,7 @@ export const siteMap = [
   { title: 'Lab', items: [
     { label: 'Home', note: 'Read. Think. Build.', href: '/' },
     { label: 'Approach', note: 'Make the work observable', href: '/approach/' },
-    { label: 'How we build', note: 'Agent tooling and build-time evidence', href: '/stack/' },
+    { label: 'How we build', note: 'Dependencies read through GitHits', href: '/stack/' },
     { label: 'Services', note: 'Interactive reading pilots', href: '/services/' },
     { label: 'About', note: 'The lab and its founder', href: '/#about' },
     { label: 'Design kit', note: 'Atlas v2 tokens and components', href: '/kit/v2/' },
