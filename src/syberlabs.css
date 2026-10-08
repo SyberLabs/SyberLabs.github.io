@@ -239,6 +239,10 @@ html.sy-atlas-open, html.sy-atlas-open body { overflow: hidden; }
   .sy-neighbour--all { order: 3; min-height: 64px; }
 }
 
+/* ---------- "work in progress" badge: an amber dot with a dashed ring (kit badges: live, early, research) ---------- */
+.sy-badge--wip { --d: var(--sy-amber, #ffb54a); }
+.sy-badge--wip::before { background: var(--d); box-shadow: 0 0 0 2px rgba(6,5,26,.9), 0 0 0 3px color-mix(in srgb, var(--d) 70%, transparent); }
+
 /* ---------- back to top ---------- */
 .sy-totop { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 40; display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--sy-rule-2); background: rgba(8,7,31,.78); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); color: var(--sy-vellum); opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; transition: opacity var(--sy-t-enter), transform var(--sy-t-enter) var(--sy-ease), border-color var(--sy-t-hover); }
 .sy-totop.is-on { opacity: 1; transform: none; pointer-events: auto; }

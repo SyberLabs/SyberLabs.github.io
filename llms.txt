@@ -1,6 +1,6 @@
 # SyberLabs
 
-> SyberLabs is an independent AI and software lab founded by Mateo Robles. RISE, a browser-based audiovisual reader, and the OmniOS preview are live; SyberWork, Relay and OSAHR are open source.
+> SyberLabs is an independent AI and software lab founded by Mateo Robles. Creative tools for people and dependable infrastructure for AI agents: the RISE creative suite (Reader, Composer, Sketch), FLYSPACE, a spatial workspace for AI over live data, and SyberWork, a governed runtime for AI agents.
 
 > **RISE and AI models:** since RISE #294 the RISE server calls no model. An AI reading request runs on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s machine (`/kev/` on the site). local Kev did not meet RISE’s bar in internal checks on RISE’s evaluations (RISE `docs/product/tasks/SCR-004.json`), and there is no production Kev deployment, by design. Once the reader connects, RISE’s visual direction sends sections of the reading text to that connection.
 
@@ -31,17 +31,17 @@ This file is generated from the site’s own data (projects/site-data.js in gith
   - Evidence, measured: Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.
   - Evidence, not yet: RISE Plus voice (an ElevenLabs voice, $8.99 a month) is not available yet. It is built and tested in draft pull requests that are not merged or deployed.
   - Evidence, not yet: No reader study has been run; release evidence still records zero real-device and stranger-testing records. Realtime Live and Dive are out of current scope by decision.
-- [OmniOS](https://syberlabs.io/projects/omnios/): AI analysis canvas. A canvas for thinking with AI over live data. Drop blocks that pull real numbers, wire them into personas, and ask a question that is answered only from what the wires actually carry.
+- [FLYSPACE](https://syberlabs.io/projects/flyspace/): Spatial AI workspace. A spatial workspace for thinking with AI over live data, with APIs on the fly. Drop Data blocks that pull real numbers, wire them into AI personas, and ask a question that is answered only from what the wires actually carry. Formerly OmniOS.
   - Status: Live preview
-  - Reflects: SyberLabs/OmniOS@e95ae73 · verified 2026-10-05
-  - Source: https://github.com/SyberLabs/OmniOS
+  - Reflects: SyberLabs/Flyspace@e95ae73 · verified 2026-10-05
+  - Source: https://github.com/SyberLabs/Flyspace
   - Live: https://omni.syberlabs.io/ (Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled in the preview.)
   - Evidence, deployed: The limited public preview has run at omni.syberlabs.io since 2026-10-03, deployed by hand from a recorded commit on Cloudflare Workers.
   - Evidence, tested: Unit tests across the stores, services and capability engine, and six Playwright specs including the “morning” golden path: shell → question → cited sources → crystal → second persona.
   - Evidence, implemented: The capability compiler and the server-side broker are implemented and hardened against fixtures and stubbed transports.
   - Evidence, not yet: No third-party API or MCP server has been measured in production use. Speech is tested with typed transcripts; there is no live microphone measurement. The hosted identity boundary exists in code with no provisioned issuer.
 - [SyberWork](https://syberlabs.io/projects/syberwork/): Governed work runtime. A runtime and Python SDK for governed work. A contract says what may happen, a rule in code admits or refuses each step, a named person approves, and a hash-chained case history records what was proposed, observed, approved and executed.
-  - Status: Open source · v0.1
+  - Status: Work in progress
   - Reflects: SyberLabs/SyberWork@208eaf6 · verified 2026-10-05
   - Source: https://github.com/SyberLabs/SyberWork
   - Evidence, tested: Twenty-three golden conformance traces, a clean-install release gate and CI green on CPython 3.11 to 3.13.
@@ -85,7 +85,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 ## Use now
 
 - [RISE app](https://rise.syberlabs.io/): rise.syberlabs.io · open beta
-- [OmniOS preview](https://omni.syberlabs.io/): omni.syberlabs.io · live preview
+- [FLYSPACE preview](https://omni.syberlabs.io/): omni.syberlabs.io · live preview
 - [RISE Sketch](https://sketch.syberlabs.io/): sketch.syberlabs.io · living ink
 - [RISE interactive sample](https://rise.syberlabs.io/jev-scene-demo): Change the scene while you read
 - [RISE demo](https://syberlabs.io/rise-demo/): Make reading an experience. See how RISE turns a book and a mood into text, motion, and sound, then try it yourself.

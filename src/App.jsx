@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { projects, skills, EMAIL, CONTACT, RESUME, LINKEDIN, GITHUB, RISE_APP, OMNI_PREVIEW, SKETCH_APP, RISE_PLUS } from '../projects/site-data.js';
 import { latest } from '../projects/latest.js';
 import { header as chromeHeader, footer as chromeFooter } from '../projects/project-template.js';
-import { mount, RING_SVG, paramLine } from '../kit/v2/syber-atmosphere.js';
+import { mount, RING_SVG } from '../kit/v2/syber-atmosphere.js';
 import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
-import { params as sigilParams, drawAll, draw } from '../kit/v2/syber-sigil.js';
+import { drawAll, draw } from '../kit/v2/syber-sigil.js';
 import { boot, reducedMotion } from './site/site.js';
 import { mountThink } from './site/think.js';
 import { gallery } from './sketch-gallery/index.js';
@@ -23,6 +23,19 @@ function Icon({ name, size = 18, className = '' }) {
   return <svg className={`sy-icon ${className}`} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>;
 }
 
+function CopyButton({ text, label }) {
+  const [done, setDone] = useState(false);
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(text); }
+    catch (e) {
+      const t = document.createElement('textarea'); t.value = text; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;opacity:0';
+      document.body.append(t); t.select(); try { document.execCommand('copy'); } catch (e2) {} t.remove();
+    }
+    setDone(true); setTimeout(() => setDone(false), 1600);
+  };
+  return <button type="button" className={`home-copy${done ? ' is-done' : ''}`} onClick={copy} aria-label={`Copy ${label}`}><span aria-live="polite">{done ? 'Copied' : 'Copy'}</span></button>;
+}
+
 const Badge = ({ status, bare }) => <span className={`sy-badge sy-badge--${status.kind}${bare ? ' sy-badge--bare' : ''}`}>{status.label}</span>;
 
 // The header, the field canvas and the footer are the same markup every page gets (projects/project-template.js);
@@ -31,8 +44,7 @@ const Header = () => <div className="home-chrome" dangerouslySetInnerHTML={{ __h
 const Footer = () => <div className="home-chrome home-footer" dangerouslySetInnerHTML={{ __html: chromeFooter('/') }} />;
 
 // Plate I: the one live 2D long-exposure attractor on the site. Without JS, without WebGL2 or on software GL,
-// a still exposure of the same plate (src/plate-i.webp, parameters STILL) sits in the ring instead.
-const STILL = [-1.378, 1.637, 0.958, 0.685];
+// a still exposure of the same plate (src/plate-i.webp) sits in the ring instead.
 
 // "Think.": one span per letter (src/site/think.js, .home-think in home.css). Each letter's scatter (--dx, --dy, --r)
 // is where it condenses from on the way in. The text stays "Think." for search, readers and the no-JS page.
@@ -42,12 +54,12 @@ const Think = React.forwardRef((_, ref) => <em ref={ref} className="home-think" 
 </em>);
 
 function Hero() {
-  const canvas = useRef(null), copy = useRef(null), caption = useRef(null), think = useRef(null);
+  const canvas = useRef(null), copy = useRef(null), think = useRef(null);
   const [live, setLive] = useState(false);
   // before boot() splits and reveals the title (child effects run first), so the letters start from their scatter
   useEffect(() => { const t = mountThink(think.current); return () => t.destroy(); }, []);
   useEffect(() => {
-    const plate = mount(canvas.current, { mode: 'hero', avoid: copy.current, caption: caption.current, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
+    const plate = mount(canvas.current, { mode: 'hero', avoid: copy.current, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
     setLive(plate.supported);
     // the Atlas covers the page with a blurred backdrop: hold the plate instead of re-blurring a moving one
     const html = document.documentElement;
@@ -65,10 +77,10 @@ function Hero() {
         <a className="home-gh-chip" href="/stack/" data-reveal><span className="home-gh-chip__k">How we build</span><span className="home-gh-chip__t">Dependencies read at their exact version, through <b>GitHits</b></span><Icon name="arrow" size={16} /></a>
         <p className="sy-eyebrow" data-reveal>SyberLabs / Independent AI software lab</p>
         <h1 id="hero-title" className="sy-display-xl home-hero__title" data-split>Read.<br /> <Think ref={think} /><br /> Build.</h1>
-        <p className="sy-body-lg home-hero__intro" data-reveal>SyberLabs builds an audiovisual reader, a canvas for thinking with AI over live data, and infrastructure that makes AI agents reviewable. Two of them are live.</p>
+        <p className="sy-body-lg home-hero__intro" data-reveal>SyberLabs builds creative tools for people and dependable infrastructure for AI agents. Read with <a href="#work">RISE</a>, think on <a href="#work">FLYSPACE</a>, build with <a href="#work">SyberWork</a>.</p>
         <div className="home-hero__actions" data-reveal>
           <a className="sy-btn sy-btn--solid" href={RISE_APP}>Open RISE<Icon name="arrow" className="sy-icon--trail" /></a>
-          <a className="sy-btn sy-btn--line" href={OMNI_PREVIEW}>Try the OmniOS preview<Icon name="external" /></a>
+          <a className="sy-btn sy-btn--line" href={OMNI_PREVIEW}>Try the FLYSPACE preview<Icon name="external" /></a>
           <a className="sy-btn sy-btn--ghost" href="#sketch">Play: RISE Sketch<Icon name="down" /></a>
           <a className="sy-btn sy-btn--ghost" href="#work">See the work<Icon name="down" /></a>
         </div>
@@ -82,10 +94,9 @@ function Hero() {
           </ul>
         </div>
       </div>
-      <p className="sy-plate-caption home-hero__caption" aria-hidden="true" data-reveal><b>Plate I · Clifford attractor</b><i>Order, drawn out of chaos.</i><span className="home-eq">x′ = sin(a·y) + c·cos(a·x)<br />y′ = sin(b·x) + d·cos(b·y)</span><span className="sy-params" ref={caption}>{paramLine(STILL)}</span></p>
     </div>
     <nav className="sy-strip home-strip" aria-label="Projects at a glance">
-      <ol>{projects.map(p => <li key={p.slug} style={{ '--sy-accent': p.accent }}><a href={`/projects/${p.slug}/`}><span className="sy-strip__n">{p.number}<span className="home-strip__cat"> · {p.category}</span></span><span className="sy-strip__t">{p.name}</span><Badge status={p.status} bare /></a></li>)}</ol>
+      <ol>{featured.map((p, i) => <li key={p.slug} style={{ '--sy-accent': p.accent }}><a href={`/projects/${p.slug}/`}><span className="sy-strip__n">0{i + 1}<span className="home-strip__cat"> · {SHOW[p.slug].kicker}</span></span><span className="sy-strip__t">{p.name}</span><Badge status={p.status} bare /></a></li>)}</ol>
     </nav>
     <a className="home-scrollcue" href="#work" aria-label="Scroll to the work"><span /></a>
   </section>;
@@ -159,30 +170,94 @@ function PlusVoice() {
   </section>;
 }
 
-// Work: five projects as leaning glass cards, each with its sigil large and its accent lighting the card.
+// The homepage leads with three products, in the order of the hero: Read (RISE), Think (FLYSPACE), Build (SyberWork).
+// Names, accents, statuses and project pages come from projects/site-data.js; what each one is for lives here.
+// Every claim below is one the project's own page carries (what is live, what is in testing, what is not yet).
+const RISE_MCP = 'https://rise.syberlabs.io/api/mcp';
+const CLAUDE_CONNECTORS = 'https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp';
+const SHOW = {
+  rise: {
+    kicker: 'Creative suite',
+    what: 'Turn words and strokes into something you experience.',
+    who: 'Readers, writers and visual artists',
+    suite: [
+      { name: 'Reader', sigil: 'rise reader', status: { kind: 'live', label: 'Live · open beta' }, href: RISE_APP, cta: 'Read now', external: true,
+        what: 'Read any text as a timed stream of words, image, sound and procedural visuals, or as a typeset page.' },
+      { name: 'Composer', sigil: 'rise composer', status: { kind: 'live', label: 'Live · in Claude' }, href: CLAUDE_CONNECTORS, cta: 'How to add a connector', external: true,
+        what: 'Ask Claude for a reading and RISE presents the answer as a spoken, visual reading. Add it as a custom connector:',
+        connector: { name: 'RISE', url: RISE_MCP }, later: 'Submission to Claude’s connector directory is planned.' },
+      { name: 'Sketch', sigil: 'rise sketch', status: { kind: 'live', label: 'Live' }, href: SKETCH_APP, cta: 'Draw now', external: true,
+        what: 'Draw with living ink that grows, ripples and folds into mandalas of up to twelve.' },
+    ],
+    note: 'Working on interoperability, so a reading, a composition and a drawing can move between all three.',
+    primary: { label: 'Open RISE Reader', href: RISE_APP },
+  },
+  flyspace: {
+    kicker: 'Spatial AI workspace',
+    what: 'A spatial workspace with APIs on the fly.',
+    who: 'Analysts, researchers and builders who need answers traced to live data',
+    points: [
+      ['Data blocks', 'Live numbers from public sources: prediction markets, crypto prices, World Bank series, research papers and news.'],
+      ['AI blocks', 'Wire data into AI personas that answer only from what their wires carry, and cite it.'],
+      ['APIs on the fly', 'Hand it an OpenAPI document or MCP tools and they become blocks. Anything that writes waits for your approval.'],
+    ],
+    note: 'The public preview runs the canvas and live data blocks. AI answers run in the local app with your own keys.',
+    primary: { label: 'Try the preview', href: OMNI_PREVIEW },
+  },
+  syberwork: {
+    kicker: 'Governed agent runtime',
+    what: 'Put AI agents to work with contracts, sign-off and a record.',
+    who: 'Teams bringing agents into workflows that need approvals and an audit trail',
+    points: [
+      ['Contracts', 'Say what may happen. A rule in code admits or refuses each step.'],
+      ['Sign-off', 'A named person approves before anything consequential runs.'],
+      ['A record', 'A hash-chained history of what was proposed, observed, approved and executed.'],
+    ],
+    note: 'SyberWork is evolving. Version 0.1 is open source under Apache 2.0 while the next version takes shape.',
+    primary: { label: 'View source', href: 'https://github.com/SyberLabs/SyberWork' },
+  },
+};
+const featured = Object.keys(SHOW).map(slug => projects.find(p => p.slug === slug)).filter(Boolean);
+const isExternal = href => /^https?:/.test(href);
+
 function Work() {
-  const redraw = event => { const c = event.currentTarget.querySelector('canvas[data-sigil]'); if (c) draw(c, c.dataset.sigil); };
+  const redraw = event => event.currentTarget.querySelectorAll('canvas[data-sigil]').forEach(c => draw(c, c.dataset.sigil));
   return <section id="work" className="home-sec sy-wrap" aria-labelledby="work-title">
     <div className="site-head home-head" data-reveal>
-      <div><p className="sy-eyebrow">Work / 01–05</p><h2 id="work-title" className="sy-display">Five <em>projects.</em></h2></div>
-      <p className="home-head__note sy-small">Each page says why it exists, what you can do with it, how it is built, and what has been shown and what has not.</p>
+      <div><p className="sy-eyebrow">Work</p><h2 id="work-title" className="sy-display home-work__title">Creative <em>humans.</em><br /> Reliable <em>agents.</em></h2></div>
+      <p className="home-head__note sy-small">Tools that make people more expressive, and infrastructure that keeps AI accountable. What each one does, who it is for, and where it stands.</p>
     </div>
-    <ul className="home-cards" data-reveal-children>
-      {projects.map(p => <li key={p.slug}><a className="home-card sy-card" href={`/projects/${p.slug}/`} style={{ '--sy-accent': p.accent }} data-tilt="6" onMouseEnter={redraw}>
-        <span className="home-card__top"><span className="home-card__index">{p.number}</span><Badge status={p.status} /></span>
-        <span className="home-card__sigil-wrap"><canvas className="home-card__sigil" data-sigil={p.slug} aria-hidden="true" /></span>
-        <span className="home-card__name"><span className="home-card__title">{p.name}</span><span className="home-card__cat">{p.category}</span></span>
-        <span className="home-card__headline">{p.headline}</span>
-        <span className="home-card__intro">{p.intro}</span>
-        <span className="home-card__foot"><span className="home-card__stack">{p.facts.find(([k]) => k === 'Technology')?.[1]?.split(',').slice(0, 3).map(s => s.trim()).join(' · ') || p.facts[0]?.[1]}</span><span className="home-card__go">Open<Icon name="arrow" size={16} /></span></span>
-      </a></li>)}
-      <li><a className="home-card home-card--more sy-card" href="/approach/" data-tilt="6">
-        <span className="home-card__top"><span className="home-card__index">+</span></span>
-        <span className="home-card__name"><span className="home-card__title">How we build</span><span className="home-card__cat">Approach</span></span>
-        <span className="home-card__headline">Observe. Design. Verify.</span>
-        <span className="home-card__intro">Start with what is true, decide what a person should be able to see, choose or approve, then test that they can steer the result.</span>
-        <span className="home-card__foot"><span className="home-card__stack">Also: Services · Design kit</span><span className="home-card__go">Read<Icon name="arrow" size={16} /></span></span>
-      </a></li>
+    <ul className="home-show" data-reveal-children>
+      {featured.map(p => { const s = SHOW[p.slug]; return <li key={p.slug} className={`home-show__item home-show__item--${p.slug}`}>
+        <article className={`home-show__card sy-card${p.status.kind === 'wip' ? ' is-wip' : ''}`} style={{ '--sy-accent': p.accent }} aria-labelledby={`show-${p.slug}`} data-tilt="2" onMouseEnter={redraw}>
+          {!s.suite && <span className="home-card__sigil-wrap home-show__sigil"><canvas className="home-card__sigil" data-sigil={p.slug} aria-hidden="true" /></span>}
+          <div className="home-show__info">
+            <p className="home-show__top"><span className="home-show__kicker">{s.kicker}</span><Badge status={p.status} /></p>
+            <h3 id={`show-${p.slug}`} className="home-show__name">{p.name}</h3>
+            <p className="home-show__what">{s.what}</p>
+            <p className="home-show__who"><span className="sy-label">For</span><span>{s.who}</span></p>
+            {s.points && <dl className="home-show__points">{s.points.map(([t, d]) => <div key={t}><dt>{t}</dt><dd>{d}</dd></div>)}</dl>}
+            <p className={`home-show__note${s.suite ? ' home-show__note--link' : ''}`}>{s.suite && <span className="home-show__link-icon" aria-hidden="true"><i /><i /><i /></span>}{s.note}</p>
+            <p className="home-show__foot">
+              <a className="sy-btn sy-btn--solid" href={s.primary.href}>{s.primary.label}<Icon name={isExternal(s.primary.href) ? 'external' : 'arrow'} /></a>
+              <a className="sy-link home-show__more" href={`/projects/${p.slug}/`}>Details<Icon name="arrow" size={16} /></a>
+            </p>
+          </div>
+          {s.suite && <ol className="home-suite">{s.suite.map((x, i) => <li key={x.name}>
+            <div className="home-suite__item">
+              <span className="home-suite__head"><span className="home-suite__sigil"><canvas className="home-card__sigil" data-sigil={x.sigil} aria-hidden="true" /></span><span className="home-suite__n">0{i + 1}</span></span>
+              <span className="home-suite__name"><small>RISE</small> {x.name}</span>
+              <Badge status={x.status} bare />
+              <span className="home-suite__what">{x.what}</span>
+              {x.connector && <span className="home-suite__connector">
+                <span className="home-suite__conn"><span className="sy-label">Name</span><code>{x.connector.name}</code><CopyButton text={x.connector.name} label="the connector name" /></span>
+                <span className="home-suite__conn"><span className="sy-label">URL</span><code>{x.connector.url.split(/(?=\/api\/)/).flatMap((part, i) => i ? [<wbr key={i} />, part] : [part])}</code><CopyButton text={x.connector.url} label="the connector URL" /></span>
+              </span>}
+              {x.later && <span className="home-suite__later">{x.later}</span>}
+              <a className="home-suite__go" href={x.href}>{x.cta}<Icon name={x.external ? 'external' : 'arrow'} size={16} /></a>
+            </div></li>)}</ol>}
+        </article>
+      </li>; })}
     </ul>
   </section>;
 }
@@ -240,42 +315,43 @@ function SketchGallery() {
   </div>;
 }
 
+// Research: one featured study, chosen because it ran against a real system's source and changed it. Every number
+// and limit here is quoted from research/sybershoke/ (revision 2), which cites SyberLabs/sybershoke@45956fe.
+const SHOKE = 'https://github.com/SyberLabs/sybershoke', SHOKE_FIX = 'https://github.com/SyberLabs/RISE/pull/306';
 function Research() {
   return <section id="research" className="home-sec sy-wrap" aria-labelledby="research-title">
-    <div className="site-head" data-reveal><p className="sy-eyebrow">Research / September 2026</p><h2 id="research-title" className="sy-display">Reliable <em>execution</em> for AI agents.</h2></div>
-    <div className="home-research" data-reveal-children>
-      <a className="home-paper sy-card" href="/research/jev-execution/" style={{ '--sy-accent': 'var(--sy-ice)' }} data-tilt="4">
-        <figure className="sy-plate-figure home-research__fig" aria-hidden="true">
-          <div className="sy-plate sy-plate--sigil"><canvas data-sigil="jev-execution" data-caption-for="params-jev-execution" /></div>
-          <figcaption><b>Plate VII · Technical report</b>de Jong map · <span className="sy-nowrap">seed “jev-execution”</span><span className="sy-params" id="params-jev-execution">{sigilParams('jev-execution').caption}</span></figcaption>
-        </figure>
-        <div className="home-paper__body">
-          <p className="sy-eyebrow">Technical report</p>
-          <h3 className="home-paper__title">An execution layer that enforces permissions, checks results, and survives crashes.</h3>
-          <p className="sy-body">A model can choose an action, but an application still has to enforce permissions and budgets, check the result, and recover from crashes. Our current research defines that layer and tests it with a Python and SQLite prototype.</p>
-          <p className="sy-plate-caption sy-plate-caption--figure home-research__stat"><b className="sy-figure" data-count="87">87</b><span>passing regression tests, including process-crash recovery experiments</span></p>
-          <span className="sy-link home-research__link">Read the technical report<Icon name="arrow" /></span>
-        </div>
-      </a>
-      <a className="home-paper home-paper--note sy-card" href="/research/sybershoke/" style={{ '--sy-accent': 'var(--sy-magenta)' }} data-tilt="4">
-        <figure className="sy-plate-figure home-research__fig" aria-hidden="true">
-          <div className="sy-plate sy-plate--sigil"><canvas data-sigil="sybershoke" data-caption-for="params-sybershoke" /></div>
-          <figcaption><b>Plate VIII · Research note</b>de Jong map · <span className="sy-nowrap">seed “sybershoke”</span><span className="sy-params" id="params-sybershoke">{sigilParams('sybershoke').caption}</span></figcaption>
-        </figure>
-        <div className="home-paper__body">
-          <p className="sy-eyebrow">Research note / Sybershoke</p>
-          <h3 className="home-paper__title">Shock the run. Then count.</h3>
-          <p className="sy-body">Sybershoke shock-tests multi-agent systems. It kills workers, duplicates and drops messages, then checks that nothing was lost or accepted twice. It has now checked one real system’s source, the RISE Worker, against recorded answers.</p>
-          <span className="sy-link home-research__link">Read the research note<Icon name="arrow" /></span>
-        </div>
-      </a>
+    <div className="site-head home-head" data-reveal>
+      <div><p className="sy-eyebrow">Research / Reliable agents</p><h2 id="research-title" className="sy-display">Break it <em>on purpose.</em></h2></div>
+      <p className="home-head__note sy-small">We test agent systems by injecting the faults production will, and publish what each study does and does not establish.</p>
     </div>
+    <article className="home-study sy-card" style={{ '--sy-accent': 'var(--sy-magenta)' }} aria-labelledby="study-title" data-reveal data-tilt="2">
+      <figure className="sy-plate-figure home-study__fig" aria-hidden="true">
+        <div className="sy-plate sy-plate--sigil"><canvas data-sigil="sybershoke" /></div>
+        <figcaption><b>Sybershoke</b>Research note · revision 2 · 29 September 2026</figcaption>
+      </figure>
+      <div className="home-study__body">
+        <p className="sy-eyebrow">Fault injection · a real system</p>
+        <h3 id="study-title" className="home-study__title">We shock-tested the source of RISE’s production Worker and found two bugs, each replayable from a seed.</h3>
+        <p className="sy-body">Sybershoke turns a seed into a fault plan (killed workers, duplicated and dropped messages), records the run as a plain-text history, judges that history against invariants, and shrinks a failing plan to the faults that matter. Run against the Worker’s source on recorded production AI answers, it found a keyword override that sent “drift off to sleep” to 300 words per minute, and a missing provider fallback.</p>
+        <dl className="home-study__stats">
+          <div><dt><b data-count="39">39</b></dt><dd>recorded production AI answers replayed</dd></div>
+          <div><dt><b data-count="2">2</b></dt><dd>bugs found, each reproducible from its seed</dd></div>
+          <div><dt><b>#306</b></dt><dd>the override fix, <a href={SHOKE_FIX}>merged in RISE</a></dd></div>
+        </dl>
+        <p className="home-study__method"><span className="sy-label">Method</span><span>Fault injection in the tradition of <a href="https://jepsen.io/">Jepsen</a>; failing plans minimized by delta debugging (Zeller and Hildebrandt, <a href="https://doi.org/10.1109/32.988498">IEEE Transactions on Software Engineering, 2002</a>).</span></p>
+        <p className="home-study__method"><span className="sy-label">Limits</span><span>The Worker’s source ran with stand-ins for Redis and Neon and with virtual time, so the study reports caught versus not caught, not live failure rates.</span></p>
+        <p className="home-study__foot">
+          <a className="sy-btn sy-btn--solid" href="/research/sybershoke/">Read the research note<Icon name="arrow" className="sy-icon--trail" /></a>
+          <a className="sy-btn sy-btn--line" href={SHOKE}>Source<Icon name="external" /></a>
+        </p>
+      </div>
+    </article>
     <div className="home-research-more" data-reveal>
       <p className="sy-eyebrow">Also</p>
       <ul className="home-research__links">
         <li><a href="/research/">All research: the index<Icon name="arrow" size={16} /></a></li>
+        <li><a href="/research/jev-execution/">GrokCell Execution: technical report on a prototype<Icon name="arrow" size={16} /></a></li>
         <li><a href="/kev/">RISE, Jev and Kev: reader-owned AI<Icon name="arrow" size={16} /></a></li>
-        <li><a href="/jev/">Jev in RISE: the earlier case study<Icon name="arrow" size={16} /></a></li>
         <li><a href="https://github.com/SyberLabs/papers">Papers: working papers and studies<Icon name="external" size={16} /></a></li>
         <li><a href="https://github.com/SyberLabs/cross-platform">Instrument panel: run and inspect five systems<Icon name="external" size={16} /></a></li>
         <li><a href="/kit/v2/">Design system v2 “Atlas”: the kit<Icon name="arrow" size={16} /></a></li>
@@ -287,8 +363,10 @@ function Research() {
 // Latest: what merged, deployed or was decided, newest first, each with its link (projects/latest.js).
 function Latest() {
   const fmt = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  // the month of the newest record, not a month typed into the page
+  const newest = latest.length ? new Date(latest[0].date + 'T12:00:00Z').toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }) : '';
   return <section id="latest" className="home-sec sy-wrap" aria-labelledby="latest-title">
-    <div className="site-head" data-reveal><div><p className="sy-eyebrow">Latest / October 2026</p><h2 id="latest-title" className="sy-display">What <em>changed.</em></h2></div><p className="home-head__note sy-small">Merged, deployed, decided or recorded, newest first. Each line links to its evidence.</p></div>
+    <div className="site-head" data-reveal><div><p className="sy-eyebrow">Latest{newest && ` / ${newest}`}</p><h2 id="latest-title" className="sy-display">What <em>changed.</em></h2></div><p className="home-head__note sy-small">Merged, deployed, decided or recorded, newest first. Each line links to its evidence.</p></div>
     <ol className="home-latest" data-reveal-children>
       {latest.map(item => <li key={item.href + item.title} className={`home-latest__row is-${item.state.replace(/\s+/g, '-')}`}>
         <span className="home-latest__date sy-label"><time dateTime={item.date}>{fmt(item.date)}</time></span>

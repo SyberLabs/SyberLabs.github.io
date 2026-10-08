@@ -50,7 +50,7 @@ jobs:
           test -s dist/syberlabs.css
           test -s dist/syberlabs.js
           test -s dist/system-map.js
-          for project in rise omnios relay osahr; do grep -Fq "data-system-map=\"$project\"" "dist/projects/$project/index.html"; done
+          for pair in rise:rise flyspace:omnios relay:relay osahr:osahr; do grep -Fq "data-system-map=\"${pair##*:}\"" "dist/projects/${pair%%:*}/index.html"; done
           grep -Fq 'pj-run__out' dist/projects/syberwork/index.html
           grep -Fq 'sy-atlas' dist/index.html
           grep -Fq 'syberlabs.js' dist/services/index.html
@@ -63,7 +63,7 @@ jobs:
           test ! -e dist/commons
           test ! -e dist/projects/commons
           grep -Fq 'https://omni.syberlabs.io/' dist/index.html
-          grep -Fq 'https://omni.syberlabs.io/' dist/projects/omnios/index.html
+          grep -Fq 'https://omni.syberlabs.io/' dist/projects/flyspace/index.html
           grep -Fq 'https://rise.syberlabs.io/' dist/projects/rise/index.html
           grep -Fq '/rise-demo/rise-marketing-20260929-v3.mp4' dist/projects/rise/index.html
           grep -Fq 'pj-evidence' dist/projects/rise/index.html
@@ -75,7 +75,7 @@ jobs:
           test -s dist/omni-demo/omnios-morning-20261005.mp4
           test -s dist/omni-demo/omnios-morning-20261005-poster.jpg
           test "$(stat -c%s dist/omni-demo/omnios-morning-20261005.mp4)" -lt 8388608
-          grep -Fq '/omni-demo/omnios-morning-20261005.mp4' dist/projects/omnios/index.html
+          grep -Fq '/omni-demo/omnios-morning-20261005.mp4' dist/projects/flyspace/index.html
           test -s dist/relay-demo/relay-runtime-20261005.jpg
           grep -Fq '/relay-demo/relay-runtime-20261005.jpg' dist/projects/relay/index.html
           ! grep -Fq 'rise:sections' dist/projects/rise/index.html
@@ -93,9 +93,11 @@ jobs:
           test -s dist/plus/index.html
           test -s dist/plus/plus.css
           grep -Fq 'No payment is taken on this page' dist/plus/index.html
-          for project in rise omnios syberwork relay osahr; do test -s "dist/projects/$project/index.html"; done
-          test -s dist/og/omnios.png
-          grep -Fq 'og:image' dist/projects/omnios/index.html
+          for project in rise flyspace syberwork relay osahr; do test -s "dist/projects/$project/index.html"; done
+          test -s dist/og/flyspace.png
+          grep -Fq 'og:image' dist/projects/flyspace/index.html
+          test ! -e dist/projects/omnios
+          grep -Fxq '/projects/omnios/* /projects/flyspace/:splat 301' dist/_redirects
           grep -Fxq '/rise https://rise.syberlabs.io/ 301' dist/_redirects
           grep -Fxq '/rise/* https://rise.syberlabs.io/:splat 301' dist/_redirects
           grep -Fxq '/projects/commons/* / 301' dist/_redirects

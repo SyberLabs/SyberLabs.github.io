@@ -1,9 +1,9 @@
 {
-  "slug": "omnios",
+  "slug": "flyspace",
   "generatedAt": "2026-10-08T21:51:49.342Z",
   "source": "fixture",
   "apiBase": "https://api.githits.dev/v1",
-  "repo": "SyberLabs/OmniOS",
+  "repo": "SyberLabs/Flyspace",
   "ref": "5e94be6d1c10a738b64af20818176fcf1059ef9d",
   "manifest": "package.json",
   "packages": [

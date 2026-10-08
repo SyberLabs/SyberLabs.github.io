@@ -39,7 +39,7 @@ Commits used for the published data:
 | sykosyber/syber_runtime | `5251df5` (the commit cross-platform pins) |
 | SyberLabs/relay | `ff7e5aa` |
 | SyberLabs/RISE | `998d725` (read, not executed; the map is rule-based) |
-| SyberLabs/OmniOS | `955a6ad` (read, not executed) |
+| SyberLabs/Flyspace (formerly OmniOS) | `955a6ad` (read, not executed) |
 
 Each script asserts its own consistency check and fails rather than writing data
 that does not pass.

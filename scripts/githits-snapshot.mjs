@@ -31,7 +31,7 @@ const CAP = 12;
 // Direct runtime dependencies beyond the cap, dropped by hand as the least significant to what the
 // project does (small UI/build utilities). Listed in targets.json under `omitted` so nothing is hidden.
 const OMIT = {
-  omnios: ['clsx', 'cmdk', 'react-server-dom-webpack', 'remark-gfm', 'server-only', 'tailwind-merge'],
+  flyspace: ['clsx', 'cmdk', 'react-server-dom-webpack', 'remark-gfm', 'server-only', 'tailwind-merge'],
 };
 
 // ---------- --targets: read manifests at the default-branch head ----------
