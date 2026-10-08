@@ -5,7 +5,7 @@ import { header as chromeHeader, footer as chromeFooter } from '../projects/proj
 import { mount, RING_SVG } from '../kit/v2/syber-atmosphere.js';
 import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
-import { drawAll, draw } from '../kit/v2/syber-sigil.js';
+import { params as sigilParams, drawAll, draw } from '../kit/v2/syber-sigil.js';
 import { boot, reducedMotion } from './site/site.js';
 import { mountThink } from './site/think.js';
 import { gallery } from './sketch-gallery/index.js';
@@ -377,6 +377,51 @@ function Latest() {
   </section>;
 }
 
+// The factory: how the pull requests get made. The loop as a numbered strip (it is a sequence), four
+// numbers that src/site/factory-stats.js refreshes from GitHub after load (the served text is the
+// Oct 8 snapshot, so the section reads the same without JS), and the why beside its plate.
+const FACTORY_STATS = [
+  { id: 'merged-7d', n: 290, label: 'pull requests merged in the last 7 days' },
+  { id: 'reviewed-7d', n: 236, label: 'of them reviewed by Codex' },
+  { id: 'merged-24h', n: 171, label: 'merged in the last 24 hours' },
+  { id: 'repos', n: 15, label: 'public repositories in the org' },
+];
+const FACTORY_LOOP = [
+  { who: 'Claude Code', accent: 'var(--sy-ice)', title: 'writes the pull request', text: 'One task, one branch, one PR, opened by the agent that did the work.' },
+  { who: 'Codex', accent: 'var(--sy-amber)', title: 'reviews every PR', text: 'OpenAI’s GitHub app reads the diff: a different model family from the author.' },
+  { who: 'Claude', accent: 'var(--sy-ice)', title: 'answers every finding', text: <><code>Fixed in &lt;sha&gt;</code> or <code>Not a defect: &lt;reason&gt;</code>, and resolves the thread. A GitHub Action, <code>codex-feedback.yml</code>, answers when no session is live.</> },
+  { who: 'The gate', accent: 'var(--sy-live)', title: 'merges', text: 'main requires CI green and every review thread resolved. Auto-merge, no human click.' },
+];
+function Factory() {
+  return <section id="factory" className="home-sec sy-wrap" aria-labelledby="factory-title">
+    <div className="site-head home-head" data-reveal><div><p className="sy-eyebrow">Factory / October 2026</p><h2 id="factory-title" className="sy-display">Agents build. Agents review. <em>Humans look at the product.</em></h2></div><p className="home-head__note sy-small">Humans review the product at syberlabs.io and in production, not the pull request.</p></div>
+    <ol className="home-loop" data-reveal-children>
+      {FACTORY_LOOP.map((s, i) => <li key={s.who + s.title} className="sy-card" style={{ '--sy-accent': s.accent }}>
+        <span className="home-loop__n">{String(i + 1).padStart(2, '0')}</span>
+        <span className="home-loop__t"><b>{s.who}</b> {s.title}</span>
+        <p className="home-loop__d">{s.text}</p>
+      </li>)}
+    </ol>
+    <ul className="home-stats" data-reveal-children>
+      {FACTORY_STATS.map(s => <li key={s.id} className="home-stat sy-card" data-stat={s.id}>
+        <b className="home-stat__n sy-figure" data-count={s.n}>{s.n}</b>
+        <span className="home-stat__l">{s.label}</span>
+        <span className="home-stat__src" data-stat-src><i aria-hidden="true" />snapshot · Oct 8</span>
+      </li>)}
+    </ul>
+    <div className="home-why" data-reveal>
+      <figure className="sy-plate-figure home-why__fig" aria-hidden="true">
+        <div className="sy-plate sy-plate--sigil"><canvas data-sigil="factory" data-caption-for="params-factory" /></div>
+        <figcaption><b>Plate X · The factory</b>de Jong map · <span className="sy-nowrap">seed “factory”</span><span className="sy-params" id="params-factory">{sigilParams('factory').caption}</span></figcaption>
+      </figure>
+      <div className="home-why__body">
+        <p className="sy-eyebrow">Why</p>
+        <p className="sy-body-lg">Two people cannot read fifty pull requests a day, and a reviewer’s output only counts if something acts on it. So <a href="https://github.com/SyberLabs/RISE/blob/main/AGENTS.md#reviewer-findings" rel="noopener">the contract</a> makes an unanswered finding a merge blocker instead of an opinion: every thread is fixed or refuted, in writing, before the gate opens. <a href="https://github.com/SyberLabs/RISE/blob/main/.github/workflows/codex-feedback.yml" rel="noopener">The workflow</a> keeps that true when nobody is at the keyboard. What we look at is the thing that shipped.</p>
+      </div>
+    </div>
+  </section>;
+}
+
 function About() {
   return <section id="about" className="home-sec sy-wrap" aria-labelledby="about-title">
     <div className="site-head" data-reveal><p className="sy-eyebrow">About</p><h2 id="about-title" className="sy-display">About <em>SyberLabs.</em></h2></div>
@@ -419,11 +464,12 @@ export default function App() {
     const sigils = drawAll(document);
     // The homepage field sits low and left, behind the copy and under Plate I, and climbs as the page scrolls.
     boot(document, { density: 'calm', offset: [-0.34, -0.42] });
+    import('./site/factory-stats.js').then(m => m.factoryStats(document));
     return () => sigils.disconnect();
   }, []);
   return <>
     <Header />
-    <main id="main"><Hero /><GitHits /><PlusVoice /><Work /><Sketch /><Latest /><Research /><About /><Sign /></main>
+    <main id="main"><Hero /><GitHits /><PlusVoice /><Work /><Sketch /><Latest /><Factory /><Research /><About /><Sign /></main>
     <Footer />
   </>;
 }
