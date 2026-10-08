@@ -381,10 +381,10 @@ function Latest() {
 // numbers that src/site/factory-stats.js refreshes from GitHub after load (the served text is the
 // Oct 8 snapshot, so the section reads the same without JS), and the why beside its plate.
 const FACTORY_STATS = [
-  { id: 'merged-7d', n: 300, label: 'pull requests merged in the last 7 days' },
-  { id: 'reviewed-7d', n: 220, label: 'of them reviewed by Codex' },
-  { id: 'merged-24h', n: 40, label: 'merged in the last 24 hours' },
-  { id: 'repos', n: 27, label: 'public repositories in the org' },
+  { id: 'merged-7d', n: 290, label: 'pull requests merged in the last 7 days' },
+  { id: 'reviewed-7d', n: 236, label: 'of them reviewed by Codex' },
+  { id: 'merged-24h', n: 171, label: 'merged in the last 24 hours' },
+  { id: 'repos', n: 15, label: 'public repositories in the org' },
 ];
 const FACTORY_LOOP = [
   { who: 'Claude Code', accent: 'var(--sy-ice)', title: 'writes the pull request', text: 'One task, one branch, one PR, opened by the agent that did the work.' },

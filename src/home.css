@@ -403,7 +403,7 @@ html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0
 .home-loop__t { font: 400 clamp(24px, 1.9vw, 28px)/1.1 var(--sy-serif); letter-spacing: -.01em; color: var(--sy-vellum); }
 .home-loop__t b { font-weight: 400; color: var(--sy-accent); }
 .home-loop__d { margin: 0; font-size: 15px; line-height: 1.55; color: var(--sy-mist); }
-.home-loop__d code { font: 400 13px/1.5 var(--sy-mono); color: var(--sy-vellum); white-space: nowrap; }
+.home-loop__d code { font: 400 13px/1.5 var(--sy-mono); color: var(--sy-vellum); }
 .home-stats { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
 .home-stat { display: grid; gap: 10px; align-content: start; padding: 22px 24px 18px; }
 .home-stat__n.sy-figure { font-size: clamp(56px, 5.4vw, 84px); font-variant-numeric: tabular-nums; }
