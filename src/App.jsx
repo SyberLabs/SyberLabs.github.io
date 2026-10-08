@@ -98,7 +98,7 @@ function PlusVoice() {
       <div className="home-plus__copy">
         <p className="home-plus__top"><span className="sy-eyebrow">RISE Plus / Voice</span><Badge status={live ? { kind: 'live', label: 'Live' } : { kind: 'early', label: 'Coming · not yet available' }} /></p>
         <h2 id="plus-title" className="sy-display">Your own reading, <em>read aloud.</em></h2>
-        <p className="sy-body-lg">RISE Plus voice is a premium ElevenLabs voice for RISE, the browser-based audiovisual reader. It voices a reading of your own as the words arrive on screen.</p>
+        <p className="sy-body-lg">RISE Plus voice is an ElevenLabs voice for RISE, the browser-based audiovisual reader. It voices a reading of your own as the words arrive on screen.</p>
         <p className="home-plus__price"><b>{RISE_PLUS.price}</b><span>a month</span></p>
         <p className="sy-small home-plus__state">{live
           ? 'RISE itself stays free. Plus adds the voice.'

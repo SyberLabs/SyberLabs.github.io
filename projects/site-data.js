@@ -125,8 +125,8 @@ export const projects = [
       ['tested', 'Unit, integration and browser suites run in CI; the first-load budget and the design diagram are checked on every release.'],
       ['measured', 'Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.'],
       RISE_PLUS.state === 'live'
-        ? ['deployed', `RISE Plus voice runs at rise.syberlabs.io: a premium ElevenLabs voice for a reading of your own, ${RISE_PLUS.price} a month through Stripe, with no account.`]
-        : ['not yet', `RISE Plus voice (a premium ElevenLabs voice, ${RISE_PLUS.price} a month) is not available yet. It is built and tested in draft pull requests that are not merged or deployed.`],
+        ? ['deployed', `RISE Plus voice runs at rise.syberlabs.io: an ElevenLabs voice for a reading of your own, ${RISE_PLUS.price} a month through Stripe, with no account.`]
+        : ['not yet', `RISE Plus voice (an ElevenLabs voice, ${RISE_PLUS.price} a month) is not available yet. It is built and tested in draft pull requests that are not merged or deployed.`],
       ['not yet', 'No reader study has been run; release evidence still records zero real-device and stranger-testing records. Realtime Live and Dive are out of current scope by decision.'],
     ],
     facts: [
@@ -137,7 +137,7 @@ export const projects = [
       ['License', 'Apache 2.0 for application code; texts and visual works carry their own terms'],
       ['Earlier evidence', { label: 'Jev integration in RISE', href: '/jev/' }],
       ['Your own model', { label: 'Reader-owned AI: Jev and Kev', href: '/kev/' }],
-      ['RISE Plus', { label: 'A premium voice for what you read: decided and built, not yet released', href: '/plus/' }],
+      ['RISE Plus', { label: 'Your own reading, read aloud: decided and built, not yet released', href: '/plus/' }],
       ['Source', { label: 'github.com/SyberLabs/RISE', href: 'https://github.com/SyberLabs/RISE' }],
     ],
   },
@@ -367,7 +367,7 @@ export const siteMap = [
   ] },
   { title: 'Projects', items: [
     { label: 'RISE', note: 'Audiovisual reader', href: '/projects/rise/', sigil: 'rise', accent: '#f2d9a6' },
-    { label: 'RISE Plus', note: 'A premium voice · in progress, not for sale', href: '/plus/' },
+    { label: 'RISE Plus', note: 'Your own reading, read aloud · in progress, not for sale', href: '/plus/' },
     { label: 'OmniOS', note: 'AI analysis canvas', href: '/projects/omnios/', sigil: 'omnios', accent: '#f59be0' },
     { label: 'SyberWork', note: 'Governed work runtime', href: '/projects/syberwork/', sigil: 'syberwork', accent: '#a6f08f' },
     { label: 'Relay', note: 'Job application workspace', href: '/projects/relay/', sigil: 'relay', accent: '#62e3d8' },

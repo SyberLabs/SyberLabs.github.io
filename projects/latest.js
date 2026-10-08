@@ -4,7 +4,7 @@
 // `in progress` for work that is decided and built but not released).
 // Keep this to the last few weeks and prune older entries rather than letting it grow.
 export const latest = [
-  { date: '2026-10-08', project: 'RISE Plus', state: 'in progress', title: 'A premium voice for what you read',
+  { date: '2026-10-08', project: 'RISE Plus', state: 'in progress', title: 'Your own reading, read aloud',
     text: 'Accepted by the owner at $8.99 a month (MasterMind record #30). The Worker gate, voice route, claim page and legal text are built in draft pull requests; no real render has been shown and nothing is for sale yet.',
     href: '/plus/' },
   { date: '2026-10-08', project: 'RISE Sketch', state: 'deployed', title: 'Share a drawing as a timelapse or a remix link',

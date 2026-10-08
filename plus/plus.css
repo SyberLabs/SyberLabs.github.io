@@ -41,3 +41,40 @@
   .section-heading { margin-bottom: var(--space-6); }
   .section-heading h2 { font-size: 32px; line-height: 36px; }
 }
+
+/* Hear the clock: three public-domain lines, spoken by the browser, each word shown on its onset (plus.js). */
+.hear .hear-note { max-width: 62ch; }
+.hear-lines { display: grid; gap: var(--space-3); margin: var(--space-5) 0; padding: 0; list-style: none; }
+.hear-line { display: grid; gap: 6px; width: 100%; text-align: left; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: rgba(6, 5, 26, .45); color: var(--text-2); font: inherit; cursor: pointer; transition: border-color .2s, box-shadow .2s, transform .2s; }
+.hear-line:hover { border-color: var(--sy-ice); box-shadow: 0 0 28px -8px var(--sy-blue, #4890f0); transform: translateY(-1px); }
+.hear-line[aria-pressed="true"] { border-color: var(--sy-amber); box-shadow: 0 0 34px -8px var(--sy-amber); color: var(--text); }
+.hear-line__who { font-family: var(--font-mono); font-size: 11px; line-height: 16px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+.hear-line__text { font-size: 15px; line-height: 22px; }
+.hear-line__who::after { content: " · press to hear"; letter-spacing: .08em; }
+.hear-line[aria-pressed="true"] .hear-line__who::after { content: " · press to stop"; }
+html:not(.sy-js) .hear-line__who::after { content: ""; }
+.hear .hear-stage { min-height: 2.6em; margin: var(--space-5) 0 var(--space-3); font-family: var(--font-display); font-size: clamp(26px, 3.2vw, 40px); line-height: 1.2; letter-spacing: -0.01em; color: var(--text); }
+.hear .hear-words:empty::before { content: "The line you press appears here, one word at a time."; color: var(--text-3); font-size: 16px; line-height: 26px; font-family: var(--font-sans, inherit); letter-spacing: 0; }
+.hear-w { opacity: 0; transform: translateY(.25em); transition: opacity .32s ease-out, transform .42s cubic-bezier(.2,.8,.2,1), color .4s; }
+.hear-w.is-on { opacity: 1; transform: none; }
+.hear-w.is-now { color: var(--sy-amber); text-shadow: 0 0 22px rgba(255, 181, 74, .45); }
+@media (prefers-reduced-motion: reduce) { .hear-w { transition: opacity .2s linear; transform: none; } .hear-line, .hear-line:hover { transform: none; transition: none; } }
+.hear .hear-status { margin: 0 0 var(--space-2); font-family: var(--font-mono); font-size: 12px; line-height: 18px; letter-spacing: .04em; color: var(--text-3); }
+.hear .hear-foot { margin: 0; font-size: 13px; line-height: 20px; color: var(--text-3); }
+
+/* Free vs Plus */
+.compare { width: 100%; border-collapse: collapse; margin: 0 0 var(--space-5); font-size: 15px; line-height: 22px; color: var(--text-2); }
+.compare caption { text-align: left; margin-bottom: var(--space-3); font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); }
+.compare th, .compare td { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; font-weight: 400; }
+.compare thead th { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); border-bottom-color: var(--text-3); }
+.compare tbody th { color: var(--text); width: 46%; }
+.compare td.no { color: var(--text-3); }
+.compare td.plus-yes { color: var(--sy-amber); }
+.prose .allowance { max-width: 72ch; }
+.allowance b { color: var(--text); font-weight: 500; }
+.allowance code { font-family: var(--font-mono); font-size: 14px; color: var(--text); white-space: nowrap; }
+@media (max-width: 640px) {
+  .compare { font-size: 14px; line-height: 20px; }
+  .compare tbody th { width: 40%; }
+  .hear .hear-stage { font-size: 26px; }
+}

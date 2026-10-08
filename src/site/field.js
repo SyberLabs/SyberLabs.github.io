@@ -13,10 +13,16 @@
      - nothing draws in hidden tabs or while the Atlas menu covers the page;
      - the four cloud forms are generated one per idle slice, so mounting never blocks the main thread.
 
-   mountField(canvas, { accent, density, offset }) -> { supported, destroy() }
+   mountField(canvas, { accent, density, offset, mood }) -> { supported, pulse(k), destroy() }
      accent   '#rrggbb' tint mixed into the cloud (defaults to --sy-accent on <html>).
      density  'full' | 'calm' (fewer points, dimmer: for long reading pages).
-     offset   [x, y] in viewport fractions, where the cloud's centre sits before scroll (default right of centre). */
+     offset   [x, y] in viewport fractions, where the cloud's centre sits before scroll (default right of centre).
+     mood     'plus' (or data-field-mood="plus" on <html>): the cloud and nebula lean amber-magenta-violet and
+              iridesce with the view angle, and the cloud breathes at 60 beats a minute while idle.
+   Pulses: pulse(k) or window.dispatchEvent(new CustomEvent('sy-field-pulse', { detail: k })) swells the cloud
+   and brightens it for a moment (k = 0..1). A page that speaks text sends one per word onset: for about two
+   seconds after a pulse the idle breathing is held, so the words set the clock. Pulses are a few scalars per
+   frame, no allocations, and are ignored under reduced motion (that still never changes). */
 
 const SOFT = /swiftshader|llvmpipe|softpipe|software|basic render/i;
 // window.SY_ALLOW_SOFTWARE_GL is set only by screenshot tooling (same convention as the kit); real visitors on software GL get the CSS nebula.
@@ -71,7 +77,7 @@ const PALETTE = `const vec3 K[7]=vec3[](vec3(.0,.28,.94),vec3(.28,.56,.94),vec3(
 vec3 spectrum(float h){h=fract(h)*6.;int i=int(h);return mix(K[i],K[i+1],fract(h));}`;
 
 const POINT_VS = `in vec3 p0,p1,p2,p3;in float seed;
-uniform mat4 uMV,uP;uniform float uMorph,uTime,uSize,uDpr,uTint;uniform vec3 uAccent;out vec3 vC;out float vA;
+uniform mat4 uMV,uP;uniform float uMorph,uTime,uSize,uDpr,uTint,uWarm;uniform vec3 uAccent;out vec3 vC;out float vA;
 ${PALETTE}
 void main(){
   float m=clamp(uMorph,0.,3.);int k=int(floor(min(m,2.999)));float f=fract(m);
@@ -81,6 +87,8 @@ void main(){
   vec4 mv=uMV*vec4(p,1.);
   float d=-mv.z;
   float h=length(p)*.42+seed*.08+uTime*.012;
+  // mood: hue leans into the warm half of the spectrum and shifts with the view angle (thin-film iridescence)
+  h+=uWarm*(.38+.09*sin(mv.x*2.3+mv.y*1.7+uTime*.35));
   vC=mix(spectrum(h),uAccent,uTint);
   vA=1.-smoothstep(2.6,7.,d);
   gl_PointSize=uSize*uDpr*(1.5+1.7*(1.-smoothstep(2.,6.,d)));
@@ -92,7 +100,7 @@ void main(){vec2 q=gl_PointCoord-.5;float r=dot(q,q);if(r>.25)discard;float s=ex
 // A single fullscreen triangle for both screen passes.
 const QUAD_VS = `in vec2 a;void main(){gl_Position=vec4(a,0.,1.);}`;
 // hash() is the .x of the earlier vec3 hash (the only lane noise() read), at a third of the cost.
-const NEBULA_FS = `uniform vec2 uRes;uniform float uTime,uScroll,uGain;uniform vec2 uPointer;uniform vec3 uAccent;out vec4 o;
+const NEBULA_FS = `uniform vec2 uRes;uniform float uTime,uScroll,uGain,uWarm;uniform vec2 uPointer;uniform vec3 uAccent;out vec4 o;
 ${PALETTE}
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);float a=hash(i),b=hash(i+vec2(1,0)),c=hash(i+vec2(0,1)),d=hash(i+vec2(1,1));return mix(mix(a,b,f.x),mix(c,d,f.x),f.y);}
@@ -103,7 +111,7 @@ void main(){
   vec2 q=vec2(fbm(uv*1.4+t),fbm(uv*1.4-t*.7+2.));
   vec2 r=vec2(fbm(uv*1.4+q*1.9+vec2(1.7,9.2)+t*.4),fbm(uv*1.4+q*1.9+vec2(8.3,2.8)-t*.3));
   float f=fbm(uv*1.4+r*1.6);
-  float h=.6+f*.42+uScroll*.18+uPointer.x*.03+t*.25; // violet > magenta > deep blue: cool, never muddy
+  float h=.6+f*.42+uScroll*.18+uPointer.x*.03+t*.25+uWarm*(.18+.1*r.x); // violet > magenta > deep blue: cool, never muddy (mood: warmer, more amber)
   vec3 col=spectrum(h)*(f*f*1.25);
   col=mix(col,uAccent*f*.9,.14);
   float vign=1.-smoothstep(.35,1.15,length(uv*vec2(.9,1.2)-vec2(.25-uScroll*.1,.1)));
@@ -192,7 +200,7 @@ const cancelIdle = id => ('cancelIdleCallback' in window ? cancelIdleCallback(id
 
 export function mountField(canvas, opts = {}) {
   const reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const off = () => { if (canvas) canvas.style.display = 'none'; return { supported: false, destroy() {} }; };
+  const off = () => { if (canvas) canvas.style.display = 'none'; return { supported: false, pulse() {}, destroy() {} }; };
   if (!canvas) return off();
   // low-power: on dual-GPU laptops the field never wakes the discrete GPU
   const gl = context(canvas, { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'low-power', premultipliedAlpha: true, preserveDrawingBuffer: false });
@@ -232,6 +240,12 @@ function runField(canvas, gl, opts, reduced) {
   let scroll = 0, sScroll = 0, lastInput = -1e9, lastNeb = -1e9, lite = false, slow = 0, frames = 0;
   const ptr = [0, 0], sPtr = [0, 0], due = pacer();
   const docH = () => Math.max(1, document.documentElement.scrollHeight - innerHeight);
+  // mood and pulses (see the header): warm = 0 or 1; pulse decays each frame; holdUntil keeps the idle breath quiet after a pulse
+  const mood = opts.mood || document.documentElement.dataset.fieldMood || '';
+  const warm = mood === 'plus' ? 1 : 0;
+  let pulse = 0, holdUntil = -1e9, energy = 0;
+  const kick = k => { if (reduced || dead) return; pulse = Math.min(1, pulse + (Number.isFinite(k) ? Math.max(0, k) : 1) * 0.9); holdUntil = performance.now() + 2000; lastInput = holdUntil - 1400; go(); };
+  const onPulse = e => kick(typeof e.detail === 'number' ? e.detail : e.detail?.k);
 
   function size() {
     const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight;
@@ -262,13 +276,21 @@ function runField(canvas, gl, opts, reduced) {
     const t = (now - t0) / 1000, dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now;
     const k = 1 - Math.pow(0.001, dt);
     sScroll += (scroll - sScroll) * k; sPtr[0] += (ptr[0] - sPtr[0]) * k * 0.8; sPtr[1] += (ptr[1] - sPtr[1]) * k * 0.8;
+    // energy 0..1: a pulse (fast attack, ~0.4 s decay) or, in a mood and left alone, a slow breath at 60 bpm;
+    // for two seconds after a pulse the breath is held so a spoken text's words set the clock
+    pulse *= Math.exp(-dt * 7);
+    if (pulse < 0.002) pulse = 0;
+    const hold = Math.max(0, Math.min(1, (holdUntil - now) / 2000));
+    const breath = warm && !reduced ? (0.5 + 0.5 * Math.sin(t * 2 * Math.PI)) * 0.28 * (1 - hold) : 0;
+    energy = Math.min(1, pulse + breath);
+    const lift = 1 + energy * 0.55; // gain multiplier at full energy
 
     // nebula: half resolution, at most 30 times a second
     if (resized || reduced || now - lastNeb >= NEB_GAP - 1.5) {
       lastNeb = now;
       gl.bindFramebuffer(gl.FRAMEBUFFER, fb); gl.viewport(0, 0, RW, RH); gl.disable(gl.BLEND);
       gl.useProgram(neb.p); gl.bindVertexArray(quad);
-      gl.uniform2f(neb.u.uRes, RW, RH); gl.uniform1f(neb.u.uTime, t); gl.uniform1f(neb.u.uScroll, sScroll); gl.uniform1f(neb.u.uGain, calm ? 0.32 : 0.5);
+      gl.uniform2f(neb.u.uRes, RW, RH); gl.uniform1f(neb.u.uTime, t); gl.uniform1f(neb.u.uScroll, sScroll); gl.uniform1f(neb.u.uGain, (calm ? 0.32 : 0.5) * (1 + energy * 0.22)); gl.uniform1f(neb.u.uWarm, warm);
       gl.uniform2f(neb.u.uPointer, sPtr[0], sPtr[1]); gl.uniform3f(neb.u.uAccent, accent[0], accent[1], accent[2]);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -282,14 +304,15 @@ function runField(canvas, gl, opts, reduced) {
     const wide = W / H > 1;
     // wide: right of the copy column; tall (phones): high and small, behind the hero, then it drifts away as you scroll
     const ox = wide ? offset[0] : 0.12, oy = wide ? offset[1] : 0.55;
-    const s = (wide ? 0.9 : 0.62) + Math.sin(t * 0.17) * 0.04 + sScroll * 0.2;
+    const s = ((wide ? 0.9 : 0.62) + Math.sin(t * 0.17) * 0.04 + sScroll * 0.2) * (1 + energy * 0.07);
     modelView(MV, ox * 2 * aspect + sPtr[0] * 0.12, oy * 2 - sScroll * 1.1 + sPtr[1] * 0.08, -4.4,
       0.35 + sScroll * 1.9 + sPtr[1] * 0.25, t * 0.11 + sScroll * 2.6 + sPtr[0] * 0.35, 0.12, s);
     gl.enable(gl.BLEND); gl.blendEquation(gl.FUNC_ADD); gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE, gl.ONE, gl.ONE);
     gl.useProgram(pts.p); gl.bindVertexArray(cloudP.vao);
     gl.uniformMatrix4fv(pts.u.uMV, false, MV); gl.uniformMatrix4fv(pts.u.uP, false, PR);
-    gl.uniform1f(pts.u.uMorph, sScroll * 3); gl.uniform1f(pts.u.uTime, t); gl.uniform1f(pts.u.uSize, calm ? 1.0 : 1.2); gl.uniform1f(pts.u.uDpr, dpr);
-    gl.uniform1f(pts.u.uTint, 0.22); gl.uniform1f(pts.u.uGain, calm ? 0.3 : 0.48); gl.uniform3f(pts.u.uAccent, accent[0], accent[1], accent[2]);
+    gl.uniform1f(pts.u.uMorph, sScroll * 3); gl.uniform1f(pts.u.uTime, t); gl.uniform1f(pts.u.uSize, (calm ? 1.0 : 1.2) * (1 + energy * 0.25)); gl.uniform1f(pts.u.uDpr, dpr);
+    gl.uniform1f(pts.u.uTint, warm ? 0.14 : 0.22); gl.uniform1f(pts.u.uGain, (calm ? 0.3 : 0.48) * lift); gl.uniform3f(pts.u.uAccent, accent[0], accent[1], accent[2]);
+    gl.uniform1f(pts.u.uWarm, warm);
     gl.drawArrays(gl.POINTS, 0, cloudP.n);
     gl.bindVertexArray(null);
     if (!reduced) go();
@@ -308,13 +331,15 @@ function runField(canvas, gl, opts, reduced) {
   addEventListener('resize', onResize);
   document.addEventListener('visibilitychange', onVis);
   canvas.addEventListener('webglcontextlost', onLost, false);
+  addEventListener('sy-field-pulse', onPulse);
   onScroll(); go();
   return {
     supported: true,
+    pulse: kick,
     destroy() {
       dead = true; if (raf) cancelAnimationFrame(raf); if (pending) cancelIdle(pending);
       mo.disconnect();
-      removeEventListener('scroll', onScroll); removeEventListener('pointermove', onPointer); removeEventListener('resize', onResize);
+      removeEventListener('scroll', onScroll); removeEventListener('pointermove', onPointer); removeEventListener('resize', onResize); removeEventListener('sy-field-pulse', onPulse);
       document.removeEventListener('visibilitychange', onVis); canvas.removeEventListener('webglcontextlost', onLost);
       cloudP.dispose(); gl.deleteBuffer(qb); gl.deleteVertexArray(quad); gl.deleteTexture(tex); gl.deleteFramebuffer(fb);
       [neb, blit, pts].forEach(x => gl.deleteProgram(x.p));

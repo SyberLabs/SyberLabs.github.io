@@ -99,7 +99,7 @@ Text version of the interactive map: This map needs JavaScript. It steps through
 - deployed: The reader, Library, Chapel, Make rooms and the interactive sample run at rise.syberlabs.io.
 - tested: Unit, integration and browser suites run in CI; the first-load budget and the design diagram are checked on every release.
 - measured: Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.
-- not yet: RISE Plus voice (a premium ElevenLabs voice, $8.99 a month) is not available yet. It is built and tested in draft pull requests that are not merged or deployed.
+- not yet: RISE Plus voice (an ElevenLabs voice, $8.99 a month) is not available yet. It is built and tested in draft pull requests that are not merged or deployed.
 - not yet: No reader study has been run; release evidence still records zero real-device and stranger-testing records. Realtime Live and Dive are out of current scope by decision.
 
 ### Facts
@@ -111,7 +111,7 @@ Text version of the interactive map: This map needs JavaScript. It steps through
 - License: Apache 2.0 for application code; texts and visual works carry their own terms
 - Earlier evidence: [Jev integration in RISE](https://syberlabs.io/jev/)
 - Your own model: [Reader-owned AI: Jev and Kev](https://syberlabs.io/kev/)
-- RISE Plus: [A premium voice for what you read: decided and built, not yet released](https://syberlabs.io/plus/)
+- RISE Plus: [Your own reading, read aloud: decided and built, not yet released](https://syberlabs.io/plus/)
 - Source: [github.com/SyberLabs/RISE](https://github.com/SyberLabs/RISE)
 
 ## OmniOS: AI analysis canvas
