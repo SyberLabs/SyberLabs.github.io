@@ -55,7 +55,7 @@
       <div class="prose">
         <div>
           <p>Reading in RISE is free and stays free. The reader-owned AI connection (your own key, hosted Jev) and local Kev are not a trial of Plus; they are the product. Plus adds one voice and nothing else.</p>
-          <p>RISE paces a text through time. With Plus, a word appears on the screen at the millisecond the recording says it, not on RISE’s own timer. It works on your own material: a Composer Current, or an imported text of up to 10,000 characters per voicing. The voice is ElevenLabs Flash v2.5, a premade voice, chosen by the owner by ear.</p>
+          <p>RISE paces a text through time. With Plus, a word appears on the screen at the millisecond the recording says it, not on RISE’s own timer. It works on your own material: a Composer Current, or an imported text of up to 10,000 characters per voicing. The voices are ElevenLabs Flash v2.5 premade voices; you choose one of five.</p>
         </div>
       </div>
     </section>
@@ -87,8 +87,8 @@
       </div>
       <div class="prose">
         <div>
-          <p>No accounts. A Stripe receipt becomes one signed cookie in your browser. The lab’s Worker sends your text to ElevenLabs once on the lab’s key, keeps the audio under a hash of the text, and counts characters in the cookie. The same text is never paid for twice. Nothing about you is stored on the server.</p>
-          <p>Your email goes to Stripe once. The text you voice goes to ElevenLabs once. Neither reaches the lab’s storage as yours: the Worker checks a signature and keeps audio under a hash.</p>
+          <p>No accounts. A Stripe receipt becomes one signed cookie in your browser that names your subscription. To voice a reading, your browser sends its text to the lab’s Worker, which sends it to ElevenLabs on the lab’s account and returns the audio to your browser. The Worker keeps no copy of your text or of the audio; the audio lives only in your browser. For each subscription the server keeps one number, the characters voiced this billing period, and asks Stripe before every voicing that the subscription is still active. Voicing the same text again on another device, or after Erase, uses the allowance again. A daily cap across all subscribers bounds what the lab can spend. You choose among five voices.</p>
+          <p>Your email goes to Stripe once. The text you voice goes through the lab’s Worker to ElevenLabs once per voicing. The lab keeps neither; it keeps a character count per subscription and nothing else.</p>
           <p>If the subscription lapses, the next phrase reads silently at its authored pace and a one-line notice says “Plus voice has lapsed. Reading continues silently.” Nothing else changes.</p>
           <p>How the price was set: $8.99 covers a full month’s allowance at the vendor’s list price (105,000 characters at $0.04 per thousand, $4.20), Stripe’s fee ($0.62), and the rest to the lab, so one reader at full use costs the lab nothing.</p>
         </div>
@@ -111,12 +111,12 @@
               <tr><th scope="row">Library of public-domain texts</th><td>Yes</td><td>Yes</td></tr>
               <tr><th scope="row">Your own text: Composer Currents and imports</th><td>Yes</td><td>Yes</td></tr>
               <tr><th scope="row">Browser voice, your device’s own</th><td>Yes</td><td>Yes</td></tr>
-              <tr><th scope="row">ElevenLabs voice (Flash v2.5, premade), rendered once, the reading following its timing</th><td class="no">No</td><td class="plus-yes">Yes, your own text, within 105,000 characters a billing period</td></tr>
+              <tr><th scope="row">ElevenLabs voice (Flash v2.5, one of five premade voices), rendered per voicing and kept in your browser, the reading following its timing</th><td class="no">No</td><td class="plus-yes">Yes, your own text, within 105,000 characters a billing period</td></tr>
               <tr><th scope="row">Reader-owned AI: hosted Jev on your own OpenRouter account, or local Kev</th><td>Yes, your own connection</td><td>Yes, unchanged</td></tr>
               <tr><th scope="row">Cost</th><td>$0</td><td>$8.99 a month once released. Not for sale yet.</td></tr>
             </tbody>
           </table>
-          <p class="allowance"><b>What the allowance buys.</b> The Worker meters 105,000 characters a month. A Composer Current is about 3,000 characters, so <code>105,000 ÷ 3,000 = 35</code> Currents. A printed book page is about 1,800 characters (300 words of six characters, spaces included), so <code>105,000 ÷ 1,800 ≈ 58</code>, about 60 pages of a book, or about two hours of speech. Past it, the voice stops until the next billing period; reading continues. The count is of characters sent to the voice.</p>
+          <p class="allowance"><b>What the allowance buys.</b> The Worker meters 105,000 characters a month. A Composer Current is about 3,000 characters, so <code>105,000 ÷ 3,000 = 35</code> Currents. A printed book page is about 1,800 characters (300 words of six characters, spaces included), so <code>105,000 ÷ 1,800 ≈ 58</code>, about 60 pages of a book, or about two hours of speech. Past it, the voice stops until the next billing period; reading continues. The count is of characters sent to the voice, and voicing the same text again counts again.</p>
         </div>
       </div>
     </section>
