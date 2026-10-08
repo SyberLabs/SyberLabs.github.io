@@ -274,3 +274,20 @@ html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0
   .home-plus__points > div { grid-template-columns: 1fr; gap: 4px; padding: 14px 0; }
   .home-plus__actions .sy-btn { flex: 1 1 auto; }
 }
+
+/* Grown in RISE Sketch: three looping timelapses under Plate IX, each a link into the app with that drawing */
+.home-sketch__gallery { grid-column: 1 / -1; display: grid; gap: 16px; margin-top: 24px; }
+.home-sketch__gallery > .sy-eyebrow { margin: 0; }
+.home-sketch__reel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 0; padding: 0; list-style: none; }
+.home-sketch__clip { display: grid; overflow: hidden; padding: 0; text-decoration: none; color: inherit; border-radius: var(--sy-r-panel); }
+.home-sketch__clip video { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; background: #06051a; }
+.home-sketch__clip-body { display: grid; gap: 4px; padding: 14px 16px 16px; }
+.home-sketch__clip-title { font-family: var(--sy-serif); font-size: 24px; line-height: 1.1; color: var(--sy-vellum); }
+.home-sketch__clip-cap { font-size: 14px; color: var(--sy-mist); }
+.home-sketch__clip-go { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 15px; color: var(--sy-ice); }
+.home-sketch__clip:hover .home-sketch__clip-go { color: var(--sy-vellum); }
+.home-sketch__reel-note { margin: 0; color: var(--sy-dim); }
+@media (max-width: 900px) {
+  .home-sketch__reel { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 78%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; }
+  .home-sketch__reel > li { scroll-snap-align: start; }
+}
