@@ -85,7 +85,8 @@ export function spy() {
   map.forEach((_, sec) => io.observe(sec));
 }
 
-/* Split a heading into word spans so the words can rise in one by one. Keeps the original text for AT. */
+/* Split a heading into word spans so the words can rise in one by one. Keeps the original text for AT.
+   Elements marked [data-split-skip] keep their own markup (e.g. the hero's "Think.", which animates per letter). */
 export function splitWords(el) {
   if (!el || el.classList.contains('sy-split')) return;
   const label = el.textContent.trim().replace(/\s+/g, ' ');
@@ -101,7 +102,7 @@ export function splitWords(el) {
           const i = document.createElement('span'); i.textContent = part; w.appendChild(i); frag.appendChild(w);
         });
         child.replaceWith(frag);
-      } else if (child.nodeType === 1 && child.tagName !== 'BR') walk(child);
+      } else if (child.nodeType === 1 && child.tagName !== 'BR' && !child.hasAttribute('data-split-skip')) walk(child);
     }
   };
   walk(el);

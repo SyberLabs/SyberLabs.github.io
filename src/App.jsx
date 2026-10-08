@@ -7,6 +7,7 @@ import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
 import { params as sigilParams, drawAll, draw } from '../kit/v2/syber-sigil.js';
 import { boot, reducedMotion } from './site/site.js';
+import { mountThink } from './site/think.js';
 import '../kit/v2/syber-atlas.css';
 import './syberlabs.css';
 import './home.css';
@@ -30,9 +31,19 @@ const Footer = () => <div className="home-chrome home-footer" dangerouslySetInne
 // Plate I: the one live 2D long-exposure attractor on the site. Without JS, without WebGL2 or on software GL,
 // a still exposure of the same plate (src/plate-i.webp, parameters STILL) sits in the ring instead.
 const STILL = [-1.378, 1.637, 0.958, 0.685];
+
+// "Think.": one span per letter (src/site/think.js, .home-think in home.css). Each letter's scatter (--dx, --dy, --r)
+// is where it condenses from on the way in. The text stays "Think." for search, readers and the no-JS page.
+const THINK = [['T', -0.2, 0.34, -9], ['h', 0.12, -0.3, 7], ['i', -0.08, 0.4, -5], ['n', 0.16, -0.24, 8], ['k', -0.14, 0.32, -7], ['.', 0.24, -0.36, 12]];
+const Think = React.forwardRef((_, ref) => <em ref={ref} className="home-think" data-split-skip data-text="Think.">
+  {THINK.map(([ch, dx, dy, r], i) => <span key={i} className={`home-think__l${ch === '.' ? ' home-think__dot' : ''}`} style={{ '--i': i, '--dx': dx + 'em', '--dy': dy + 'em', '--r': r + 'deg' }}>{ch}</span>)}
+</em>);
+
 function Hero() {
-  const canvas = useRef(null), copy = useRef(null), caption = useRef(null);
+  const canvas = useRef(null), copy = useRef(null), caption = useRef(null), think = useRef(null);
   const [live, setLive] = useState(false);
+  // before boot() splits and reveals the title (child effects run first), so the letters start from their scatter
+  useEffect(() => { const t = mountThink(think.current); return () => t.destroy(); }, []);
   useEffect(() => {
     const plate = mount(canvas.current, { mode: 'hero', avoid: copy.current, caption: caption.current, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
     setLive(plate.supported);
@@ -50,7 +61,7 @@ function Hero() {
     <div className="home-hero__in sy-wrap">
       <div className="home-hero__copy" ref={copy}>
         <p className="sy-eyebrow" data-reveal>SyberLabs / Independent AI software lab</p>
-        <h1 id="hero-title" className="sy-display-xl home-hero__title" data-split>Read.<br /> <em>Think.</em><br /> Build.</h1>
+        <h1 id="hero-title" className="sy-display-xl home-hero__title" data-split>Read.<br /> <Think ref={think} /><br /> Build.</h1>
         <p className="sy-body-lg home-hero__intro" data-reveal>SyberLabs builds an audiovisual reader, a canvas for thinking with AI over live data, and infrastructure that makes AI agents reviewable. Two of them are live.</p>
         <div className="home-hero__actions" data-reveal>
           <a className="sy-btn sy-btn--solid" href={RISE_APP}>Open RISE<Icon name="arrow" className="sy-icon--trail" /></a>

@@ -258,8 +258,7 @@ html.sy-atlas-open, html.sy-atlas-open body { overflow: hidden; }
 /* ---------- spectrum text + glow helpers ---------- */
 .sy-glow { text-shadow: 0 0 40px color-mix(in srgb, var(--sy-accent) 40%, transparent); }
 @media (prefers-reduced-motion: no-preference) {
-  /* background-position repaints the text each step; 30 steps a second is indistinguishable at this speed and half the paints at 60 Hz */
-  .sy-display-xl em, .sy-display em, .sy-spectrum-text { background-size: 220% 100%; animation: sy-hue 9s steps(270) infinite; }
+  .sy-display-xl em, .sy-display em, .sy-spectrum-text { background-size: 220% 100%; animation: sy-hue 9s linear infinite; }
   @keyframes sy-hue { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
 }
 
