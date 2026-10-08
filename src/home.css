@@ -352,16 +352,8 @@ html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0
 }
 
 /* ---------- hero chip + GitHits section (src/githits.js) ---------- */
-.home-gh-chip { display: inline-flex; align-items: center; gap: 12px; max-width: 100%; min-height: 44px; margin-bottom: 22px; padding: 8px 16px 8px 8px; border: 1px solid color-mix(in srgb, var(--sy-ice) 45%, transparent); border-radius: var(--sy-r-pill); background: rgba(6, 5, 26, .62); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: var(--sy-vellum); font-size: 15px; line-height: 1.35; text-decoration: none; box-shadow: 0 0 24px color-mix(in srgb, var(--sy-ice) 14%, transparent); transition: border-color 200ms var(--sy-ease), box-shadow 200ms var(--sy-ease); }
-.home-gh-chip:hover { text-decoration: none; border-color: var(--sy-ice); box-shadow: 0 0 32px color-mix(in srgb, var(--sy-ice) 28%, transparent); }
-.home-gh-chip:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
-.home-gh-chip__k { padding: 5px 10px; border-radius: var(--sy-r-pill); background: color-mix(in srgb, var(--sy-ice) 16%, transparent); font: 500 11px/1 var(--sy-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--sy-ice); white-space: nowrap; }
-.home-gh-chip__t { min-width: 0; }
-.home-gh-chip__t b { font-weight: 600; color: var(--sy-ice); }
-.home-gh-chip .sy-icon { flex: none; color: var(--sy-ice); }
-@media (prefers-reduced-motion: no-preference) { .home-gh-chip:hover .sy-icon { transform: translateX(3px); transition: transform 200ms var(--sy-ease); } }
 
-.home-gh { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(28px, 4vw, 64px); padding: clamp(26px, 3vw, 44px); background: linear-gradient(130deg, color-mix(in srgb, var(--sy-accent) 11%, transparent), rgba(72,144,240,.05) 55%, rgba(8,7,31,.6)); }
+.home-gh { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(28px, 4vw, 64px); padding: clamp(26px, 3vw, 44px); background: rgba(8, 7, 31, .55); }
 .home-gh__copy { display: grid; gap: 18px; align-content: start; }
 .home-gh__copy > * { margin: 0; }
 .home-gh__copy h2 em { background: var(--sy-spectrum); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -371,7 +363,7 @@ html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0
 .home-gh__stats > div { display: grid; gap: 8px; align-content: start; padding: 16px 18px; background: rgba(8, 7, 31, .82); }
 .home-gh__stats dt { color: var(--sy-accent); }
 .home-gh__stats dd { display: grid; gap: 6px; margin: 0; }
-.home-gh__stats b { font: 400 clamp(40px, 4vw, 56px)/.9 var(--sy-serif); color: var(--sy-vellum); font-variant-numeric: tabular-nums; }
+.home-gh__stats b { font: 400 clamp(34px, 3.2vw, 44px)/.9 var(--sy-serif); color: var(--sy-vellum); font-variant-numeric: tabular-nums; }
 .home-gh__stats b.is-word { font-size: clamp(26px, 2.4vw, 32px); line-height: 1.1; }
 .home-gh__stats span { font-size: 14px; line-height: 1.4; color: var(--sy-mist); }
 .home-gh__pending { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1px dashed var(--sy-rule-2); border-radius: var(--sy-r-panel); color: var(--sy-vellum); }
@@ -386,8 +378,6 @@ html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0
 .home-gh__attr { color: var(--sy-dim); }
 @media (max-width: 900px) { .home-gh { grid-template-columns: 1fr; } }
 @media (max-width: 640px) {
-  .home-gh-chip { margin-bottom: 14px; padding: 8px 16px; border-radius: 18px; font-size: 14.5px; }
-  .home-gh-chip__k { display: none; }
   .home-gh { padding: 22px 18px; }
   .home-gh__actions .sy-btn { flex: 1 1 auto; }
   .home-gh__stats > div { padding: 14px; }
