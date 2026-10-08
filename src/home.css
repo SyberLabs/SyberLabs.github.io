@@ -182,3 +182,30 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
   .home-latest__row { grid-template-columns: 1fr; row-gap: 6px; }
   .home-latest__date { order: 2; }
 }
+
+/* Plate IX: the drawable kaleidoscope (RISE Sketch). Copy left, plate right; the plate is the one live
+   canvas in this view (Plate I has scrolled away), and it pauses off-screen. */
+.home-sketch { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
+.home-sketch__copy { display: grid; gap: 18px; align-content: center; }
+.home-sketch__copy .sy-eyebrow, .home-sketch__copy h2, .home-sketch__copy p { margin: 0; }
+.home-sketch__copy h2 em { background: var(--sy-spectrum); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.home-sketch__actions { margin-top: 6px; }
+.home-sketch__hint { color: var(--sy-dim); font-family: var(--sy-mono); letter-spacing: .02em; }
+.home-sketch__fig { display: grid; gap: 14px; justify-items: center; }
+.home-sketch__plate { position: relative; width: min(100%, 600px); aspect-ratio: 1; border-radius: 50%; isolation: isolate;
+  background: radial-gradient(closest-side, #120a3a 0%, #090626 62%, #06051a 100%); box-shadow: 0 0 120px -20px rgba(154,107,255,.45), inset 0 0 80px rgba(0,0,0,.6); }
+.home-sketch__canvas { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; touch-action: none; cursor: crosshair; z-index: 0; }
+.home-sketch__ring { position: absolute; inset: -3px; border-radius: 50%; z-index: -1; padding: 2px; pointer-events: none;
+  background: conic-gradient(from var(--home-sketch-a, 0deg), #90d8f0, #4890f0, #9a6bff, #ff58d6, #ffb54a, #6ff5a8, #90d8f0);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .8; filter: blur(.4px) drop-shadow(0 0 14px rgba(255,88,214,.5)); }
+@property --home-sketch-a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@media (prefers-reduced-motion: no-preference) { .home-sketch__ring { animation: home-sketch-spin 18s linear infinite; } }
+@keyframes home-sketch-spin { to { --home-sketch-a: 360deg; } }
+.home-sketch__fig .sy-plate-caption { text-align: center; }
+@media (max-width: 900px) {
+  .home-sketch { grid-template-columns: 1fr; }
+  .home-sketch__fig { order: -1; }
+  .home-sketch__plate { width: min(84%, 460px); }
+}
+/* On touch screens a vertical swipe still scrolls the page; sideways strokes draw. */
+@media (pointer: coarse) { .home-sketch__canvas { touch-action: pan-y pinch-zoom; } }

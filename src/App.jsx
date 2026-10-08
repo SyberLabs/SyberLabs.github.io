@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { projects, skills, EMAIL, CONTACT, RESUME, LINKEDIN, GITHUB, RISE_APP, OMNI_PREVIEW } from '../projects/site-data.js';
+import { projects, skills, EMAIL, CONTACT, RESUME, LINKEDIN, GITHUB, RISE_APP, OMNI_PREVIEW, SKETCH_APP } from '../projects/site-data.js';
 import { latest } from '../projects/latest.js';
 import { header as chromeHeader, footer as chromeFooter } from '../projects/project-template.js';
 import { mount, RING_SVG, paramLine } from '../kit/v2/syber-atmosphere.js';
 import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
 import { params as sigilParams, drawAll, draw } from '../kit/v2/syber-sigil.js';
-import { boot } from './site/site.js';
+import { boot, reducedMotion } from './site/site.js';
 import '../kit/v2/syber-atlas.css';
 import './syberlabs.css';
 import './home.css';
@@ -97,6 +97,37 @@ function Work() {
         <span className="home-card__foot"><span className="home-card__stack">Also: Services · Design kit</span><span className="home-card__go">Read<Icon name="arrow" size={16} /></span></span>
       </a></li>
     </ul>
+  </section>;
+}
+
+// Plate IX: a drawable kaleidoscope previewing RISE Sketch. The plate is decoration you can play with; the
+// copy and the link beside it carry everything, and stay in the served HTML.
+function Sketch() {
+  const canvas = useRef(null);
+  useEffect(() => {
+    let plate;
+    import('./site/sketch-plate.js').then(m => { if (canvas.current) plate = m.mountSketchPlate(canvas.current, { reduced: reducedMotion() }); });
+    return () => plate?.destroy();
+  }, []);
+  return <section id="sketch" className="home-sec home-sketch sy-wrap" aria-labelledby="sketch-title" style={{ '--sy-accent': 'var(--sy-research)' }}>
+    <div className="home-sketch__copy" data-reveal-children>
+      <p className="sy-eyebrow">Play / RISE Sketch</p>
+      <h2 id="sketch-title" className="sy-display">Your stroke is <em>the seed.</em></h2>
+      <p className="sy-body-lg">RISE Sketch is a drawing instrument where every mark is alive. A stroke grows into coastline, crystal, botany, smoke, braids or interference rings, read from your speed, pressure and stillness. There are no sliders.</p>
+      <p className="sy-body">Turn on symmetry and each stroke folds into a mirror or a mandala of up to twelve, every fold in its own hue. It runs in the browser, works offline and keeps your drawings on your device.</p>
+      <div className="sy-actions home-sketch__actions">
+        <a className="sy-btn sy-btn--solid" href={SKETCH_APP}>Draw in RISE Sketch<Icon name="external" /></a>
+        <a className="sy-btn sy-btn--ghost" href="https://github.com/SyberLabs/RISE-Sketch">Source<Icon name="external" /></a>
+      </div>
+      <p className="sy-small home-sketch__hint" aria-hidden="true">Drag inside the plate. Every stroke folds twelve ways.</p>
+    </div>
+    <figure className="sy-plate-figure home-sketch__fig">
+      <div className="home-sketch__plate">
+        <canvas ref={canvas} className="home-sketch__canvas" aria-hidden="true" />
+        <span className="home-sketch__ring" aria-hidden="true" />
+      </div>
+      <figcaption className="sy-plate-caption"><b>Plate IX · Living ink</b><i>Six turns, each mirrored.</i><span className="sy-params">D<sub>6</sub> · sprouts to gen 4 · rings at 1.32<sup>k</sup></span></figcaption>
+    </figure>
   </section>;
 }
 
@@ -205,7 +236,7 @@ export default function App() {
   }, []);
   return <>
     <Header />
-    <main id="main"><Hero /><Work /><Latest /><Research /><About /><Sign /></main>
+    <main id="main"><Hero /><Work /><Sketch /><Latest /><Research /><About /><Sign /></main>
     <Footer />
   </>;
 }
