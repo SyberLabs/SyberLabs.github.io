@@ -145,14 +145,92 @@ function GitHits() {
 const RISE_MCP = 'https://rise.syberlabs.io/api/mcp';
 const CLAUDE_CONNECTORS = 'https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp';
 
-// The runtime, right under the hero: RISE Composer, free and live in Claude, leads; RISE Plus is the paid add-on beside it.
+// The runtime, right under the hero: RISE Composer, free and live in Claude, with RISE Premium as a panel beneath it.
 // What it claims is what runs: Claude composes a reading over the connector (rise_present with a Current), RISE checks
-// it before anything plays, and the reader steps into it. Plus copy follows RISE_PLUS.state ('coming' never offers a sale).
+// it before anything plays, and the reader steps into it. Premium copy follows RISE_PLUS.state ('coming' never offers a sale).
 const RUNTIME = [
   ['01', 'Compose', 'A model writes the reading: the words, how they arrive, and the scene around them.'],
   ['02', 'Admit', 'RISE checks every choice against what it can perform. Nothing plays that it did not admit.'],
   ['03', 'Experience', 'Words arrive in time, with image, sound and procedural motion. You step inside the answer.'],
 ];
+
+// The strike, played once when the flow comes into view, then frozen on the burst: node 1 charges, a spectral bolt
+// strikes node 2, a second bolt strikes node 3, and node 3 erupts. Bolt shapes and the burst are seeded, so every
+// visit draws the same picture. Reduced motion shows the frozen end state.
+const SPECTRUM = ['#90d8f0', '#4890f0', '#9a6bff', '#ff58d6', '#ffb54a', '#6ff5a8'];
+const seeded = seed => () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+function bolt([x1, y1], [x2, y2], seed) {
+  const r = seeded(seed), steps = Math.max(5, Math.round((y2 - y1) / 16)), pts = [[x1, y1]];
+  for (let i = 1; i < steps; i++) { const t = i / steps, swing = (i % 2 ? 1 : -1) * (5 + r() * 11); pts.push([x1 + (x2 - x1) * t + swing, y1 + (y2 - y1) * t + (r() - .5) * 6]); }
+  pts.push([x2, y2]);
+  const k = 2 + Math.floor(r() * (steps - 3)), [bx, by] = pts[k], dir = pts[k][0] > x1 ? 1 : -1; // one fork, off the outer side
+  const branch = [[bx, by], [bx + dir * (10 + r() * 8), by + 9 + r() * 6], [bx + dir * (16 + r() * 10), by + 20 + r() * 8]];
+  const d = p => p.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+  return { main: d(pts), branch: d(branch) };
+}
+// The splash leans left, into the open gutter: anything aimed right (towards the stage's text) stays short.
+const BURST = (() => {
+  const r = seeded(20261008), rays = [], sparks = [], right = a => Math.cos(a * Math.PI / 180) > 0.15;
+  for (let i = 0; i < 16; i++) { const a = i * 22.5 + (r() - .5) * 10, l = 34 + r() * 46; rays.push({ a, l: right(a) ? l * .42 : l, c: SPECTRUM[i % SPECTRUM.length], d: Math.round(r() * 90) }); }
+  for (let i = 0; i < 22; i++) { const a = r() * 360, d = 30 + r() * 52; sparks.push({ a, r: right(a) ? d * .38 : d, s: 2 + r() * 4.5, c: SPECTRUM[(i * 5) % SPECTRUM.length], d: Math.round(r() * 160) }); }
+  return { rays, sparks };
+})();
+
+function RuntimeFlow() {
+  const wrap = useRef(null);
+  const [geo, setGeo] = useState(null);
+  const [state, setState] = useState('idle'); // idle -> playing (once) | still (reduced motion)
+  useEffect(() => {
+    const el = wrap.current;
+    if (!el) return;
+    const measure = () => {
+      const box = el.getBoundingClientRect();
+      const pts = [...el.querySelectorAll('.home-rt__node')].map(n => { const b = n.getBoundingClientRect(); return [b.left - box.left + b.width / 2, b.top - box.top + b.height / 2, b.height / 2]; });
+      if (pts.length === 3) setGeo({ w: box.width, h: box.height, pts });
+    };
+    measure();
+    const ro = 'ResizeObserver' in window ? new ResizeObserver(measure) : null;
+    ro?.observe(el);
+    let io = null;
+    if (reducedMotion() || !('IntersectionObserver' in window)) setState('still');
+    else {
+      io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setState('playing'); io.disconnect(); } }, { threshold: 0.55 });
+      io.observe(el);
+    }
+    return () => { ro?.disconnect(); io?.disconnect(); };
+  }, []);
+  const bolts = geo && [0, 1].map(i => { const [a, b] = [geo.pts[i], geo.pts[i + 1]]; return bolt([a[0], a[1] + a[2]], [b[0], b[1] - b[2]], 7919 * (i + 3)); });
+  return <div ref={wrap} className={`home-rt__flow is-${state}`}>
+    {geo && <svg className="home-rt__bolts" width={geo.w} height={geo.h} viewBox={`0 0 ${geo.w} ${geo.h}`} aria-hidden="true">
+      <defs>
+        <linearGradient id="rt-spectral" gradientUnits="userSpaceOnUse" x1="0" y1={geo.pts[0][1]} x2="0" y2={geo.pts[2][1]}>
+          <stop offset="0" stopColor="#90d8f0" /><stop offset=".3" stopColor="#4890f0" /><stop offset=".55" stopColor="#9a6bff" /><stop offset=".8" stopColor="#ff58d6" /><stop offset="1" stopColor="#ffb54a" />
+        </linearGradient>
+        <filter id="rt-glow" x="-200%" y="-10%" width="500%" height="120%"><feGaussianBlur stdDeviation="3.2" /></filter>
+      </defs>
+      <line className="home-rt__rail" x1={geo.pts[0][0]} y1={geo.pts[0][1]} x2={geo.pts[2][0]} y2={geo.pts[2][1]} />
+      {bolts.map((b, i) => <g key={i} className={`home-rt__bolt home-rt__bolt--${i + 1}`}>
+        <path className="home-rt__bolt-glow" d={b.main} pathLength="1" filter="url(#rt-glow)" />
+        <path className="home-rt__bolt-core" d={b.main} pathLength="1" />
+        <path className="home-rt__bolt-fork" d={b.branch} pathLength="1" />
+      </g>)}
+    </svg>}
+    {geo && <div className="home-rt__burst" style={{ left: geo.pts[2][0], top: geo.pts[2][1] }} aria-hidden="true">
+      <i className="home-rt__bloom" />
+      {BURST.rays.map((x, i) => <i key={'r' + i} className="home-rt__ray" style={{ '--a': x.a + 'deg', '--l': x.l + 'px', '--c': x.c, '--d': x.d + 'ms' }} />)}
+      {BURST.sparks.map((x, i) => <i key={'s' + i} className="home-rt__spark" style={{ '--a': x.a + 'deg', '--r': x.r + 'px', '--s': x.s + 'px', '--c': x.c, '--d': x.d + 'ms' }} />)}
+    </div>}
+    <ol className="home-rt__stages" aria-label="How the runtime works">
+      {RUNTIME.map(([n, term, text]) => <li key={n} className="home-rt__stage">
+        <span className="home-rt__node" aria-hidden="true"><i /></span>
+        <span className="home-rt__n">{n}</span>
+        <span className="home-rt__term">{term}</span>
+        <span className="home-rt__text">{text}</span>
+      </li>)}
+    </ol>
+  </div>;
+}
+
 function Runtime() {
   const live = RISE_PLUS.state === 'live';
   return <section id="runtime" className="home-sec sy-wrap" aria-labelledby="runtime-title">
@@ -172,24 +250,12 @@ function Runtime() {
             <a className="sy-btn sy-btn--line" href={RISE_APP}>Open RISE<Icon name="external" /></a>
           </div>
         </div>
-        <ol className="home-rt__flow" aria-label="How the runtime works">
-          {RUNTIME.map(([n, term, text]) => <li key={n} className="home-rt__stage">
-            <span className="home-rt__node" aria-hidden="true"><i /></span>
-            <span className="home-rt__n">{n}</span>
-            <span className="home-rt__term">{term}</span>
-            <span className="home-rt__text">{text}</span>
-          </li>)}
-        </ol>
+        <RuntimeFlow />
       </div>
-      <aside className="home-rt__plus" aria-labelledby="plus-title">
-        <div className="home-rt__plus-head">
-          <p className="home-rt__top"><span className="sy-eyebrow">RISE Plus</span><Badge status={live ? { kind: 'live', label: 'Live' } : { kind: 'early', label: 'Coming · not yet available' }} /></p>
-          <h3 id="plus-title" className="home-rt__plus-title">Give it a <em>voice.</em></h3>
-        </div>
-        <p className="home-rt__plus-text">A premium ElevenLabs voice speaks your readings phrase by phrase, in time with the words on screen. Five voices, no account, no key.{live ? '' : ' Built and tested; not released yet.'}</p>
-        <p className="home-rt__price"><b>{RISE_PLUS.price}</b><span>a month</span></p>
-        <a className="sy-link home-rt__plus-go" href={live ? RISE_PLUS.href : '/plus/'}>{live ? 'Get Plus in RISE' : 'What Plus adds'}<Icon name={live ? 'external' : 'arrow'} size={16} /></a>
-      </aside>
+    </div>
+    <div className="home-premium sy-card" style={{ '--sy-accent': '#f2d9a6' }} data-reveal>
+      <p className="home-premium__text"><b className="home-premium__name">RISE Premium</b> offers ElevenLabs integration for <b className="home-premium__price">{RISE_PLUS.price}</b> a month.{!live && <Badge status={{ kind: 'early', label: 'Coming soon' }} />}</p>
+      <a className="sy-btn sy-btn--line home-premium__go" href="/plus/">Learn more<Icon name="arrow" /></a>
     </div>
   </section>;
 }
