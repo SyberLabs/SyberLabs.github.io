@@ -8,6 +8,7 @@ import plateStillSm from './plate-i-sm.webp';
 import { params as sigilParams, drawAll, draw } from '../kit/v2/syber-sigil.js';
 import { boot, reducedMotion } from './site/site.js';
 import { mountThink } from './site/think.js';
+import { gallery } from './sketch-gallery/index.js';
 import '../kit/v2/syber-atlas.css';
 import './syberlabs.css';
 import './home.css';
@@ -66,6 +67,7 @@ function Hero() {
         <div className="home-hero__actions" data-reveal>
           <a className="sy-btn sy-btn--solid" href={RISE_APP}>Open RISE<Icon name="arrow" className="sy-icon--trail" /></a>
           <a className="sy-btn sy-btn--line" href={OMNI_PREVIEW}>Try the OmniOS preview<Icon name="external" /></a>
+          <a className="sy-btn sy-btn--ghost" href="#sketch">Play: RISE Sketch<Icon name="down" /></a>
           <a className="sy-btn sy-btn--ghost" href="#work">See the work<Icon name="down" /></a>
         </div>
         <div className="home-hero__founder" data-reveal>
@@ -170,7 +172,29 @@ function Sketch() {
       </div>
       <figcaption className="sy-plate-caption"><b>Plate IX · Living ink</b><i>Six turns, each mirrored.</i><span className="sy-params">D<sub>6</sub> · sprouts to gen 4 · rings at 1.32<sup>k</sup></span></figcaption>
     </figure>
+    <SketchGallery />
   </section>;
+}
+
+// Grown in RISE Sketch: timelapses exported by the app itself; each card opens that drawing (its remix link).
+function SketchGallery() {
+  const list = useRef(null);
+  useEffect(() => {
+    let g;
+    import('./site/sketch-gallery.js').then(m => { if (list.current) g = m.mountSketchGallery(list.current); });
+    return () => g?.destroy();
+  }, []);
+  if (!gallery.length) return null;
+  return <div className="home-sketch__gallery">
+    <p className="sy-eyebrow">Grown in RISE Sketch</p>
+    <ul ref={list} className="home-sketch__reel" data-reveal-children>
+      {gallery.map(g => <li key={g.title}><a className="home-sketch__clip sy-card" href={g.remix}>
+        <video data-sketch-loop src={g.video} poster={g.poster} muted loop playsInline preload="none" width="720" height="720" aria-hidden="true" />
+        <span className="home-sketch__clip-body"><span className="home-sketch__clip-title">{g.title}</span><span className="home-sketch__clip-cap">{g.caption}</span><span className="home-sketch__clip-go">Remix this drawing<Icon name="external" size={16} /></span></span>
+      </a></li>)}
+    </ul>
+    <p className="sy-small home-sketch__reel-note">Each video was exported by the app's own Share timelapse. Open one and it grows again, then it's yours to keep drawing.</p>
+  </div>;
 }
 
 function Research() {
