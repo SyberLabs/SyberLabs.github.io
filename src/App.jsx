@@ -74,7 +74,6 @@ function Hero() {
     <div className="sy-scrim home-hero__scrim" aria-hidden="true" />
     <div className="home-hero__in sy-wrap">
       <div className="home-hero__copy" ref={copy}>
-        <a className="home-gh-chip" href="/stack/" data-reveal><span className="home-gh-chip__k">How we build</span><span className="home-gh-chip__t">Dependencies read at their exact version, through <b>GitHits</b></span><Icon name="arrow" size={16} /></a>
         <p className="sy-eyebrow" data-reveal>SyberLabs / Independent AI software lab</p>
         <h1 id="hero-title" className="sy-display-xl home-hero__title" data-split>Read.<br /> <Think ref={think} /><br /> Build.</h1>
         <p className="sy-body-lg home-hero__intro" data-reveal>SyberLabs builds creative tools for people and dependable infrastructure for AI agents. Read with <a href="#work">RISE</a>, think on <a href="#work">FLYSPACE</a>, build with <a href="#work">SyberWork</a>.</p>
@@ -102,7 +101,7 @@ function Hero() {
   </section>;
 }
 
-// GitHits, right under the hero: what our agents use it for, and totals from the project pages' dependency panels,
+// GitHits, after the projects, as supporting evidence of how we build (a third party, so it never leads the page): what our agents use it for, and totals from the project pages' dependency panels,
 // computed at build time from data/githits (src/githits.js). A fixture snapshot shows "Snapshot pending", no numbers.
 // GitHits is a third-party tool we use: no logo, no partnership or endorsement wording.
 function GitHits() {
@@ -119,14 +118,14 @@ function GitHits() {
     [g.licenses, 'Licenses', 'distinct, as GitHits reports them'],
   ];
   return <section id="githits" className="home-sec sy-wrap" aria-labelledby="githits-title">
-    <div className="home-gh sy-card" style={{ '--sy-accent': 'var(--sy-ice)' }} data-reveal data-tilt="2">
+    <div className="home-gh sy-card" style={{ '--sy-accent': 'var(--sy-ice)' }} data-reveal>
       <div className="home-gh__copy">
         <p className="sy-eyebrow">How we build / GitHits</p>
         <h2 id="githits-title" className="sy-display">Read the source, <em>not the memory.</em></h2>
         <p className="sy-body-lg">Our coding agents look up open-source code at the exact version a project uses, through GitHits, a third-party index of public code. A model’s memory blends releases; the pinned source does not.</p>
         <p className="sy-body">Every project page shows a dependency check: license, latest version and known vulnerabilities for each declared package, fetched from the GitHits package API each time this site is built.</p>
         <div className="sy-actions home-gh__actions">
-          <a className="sy-btn sy-btn--solid" href="/stack/">How we build<Icon name="arrow" className="sy-icon--trail" /></a>
+          <a className="sy-btn sy-btn--line" href="/stack/">How we build<Icon name="arrow" className="sy-icon--trail" /></a>
           <a className="sy-btn sy-btn--line" href="https://githits.com/" rel="noopener">githits.com<Icon name="external" /></a>
         </div>
       </div>
@@ -144,7 +143,7 @@ function GitHits() {
 }
 
 // RISE Plus voice, right under the hero. One switch, RISE_PLUS.state in projects/site-data.js: 'coming' names the
-// price and offers only the free reader; 'live' offers the purchase. The copy says no more than the state allows.
+// price and offers only the free reader; 'live' sends the reader to the Plus voice row in RISE's Settings (RISE_PLUS.href), where the purchase starts. The copy says no more than the state allows.
 function PlusVoice() {
   const live = RISE_PLUS.state === 'live';
   return <section id="plus" className="home-sec sy-wrap" aria-labelledby="plus-title">
@@ -159,7 +158,7 @@ function PlusVoice() {
           : <>Not available yet. It is built and tested in <a href={RISE_PLUS.source}>draft pull requests</a> that are not merged or deployed. RISE itself is free today.</>}</p>
         <div className="sy-actions home-plus__actions">
           {live
-            ? <><a className="sy-btn sy-btn--solid" href={RISE_PLUS.href}>Get Plus voice — {RISE_PLUS.price}/month<Icon name="external" /></a><a className="sy-btn sy-btn--line" href={RISE_APP}>Try RISE free<Icon name="external" /></a></>
+            ? <><a className="sy-btn sy-btn--solid" href={RISE_PLUS.href}>Get Plus voice in RISE<Icon name="external" /></a><a className="sy-btn sy-btn--line" href={RISE_APP}>Try RISE free<Icon name="external" /></a></>
             : <><a className="sy-btn sy-btn--solid" href={RISE_APP}>Try RISE free<Icon name="external" /></a><a className="sy-btn sy-btn--ghost" href="/projects/rise/">About RISE<Icon name="arrow" /></a></>}
         </div>
       </div>
@@ -469,7 +468,7 @@ export default function App() {
   }, []);
   return <>
     <Header />
-    <main id="main"><Hero /><GitHits /><PlusVoice /><Work /><Sketch /><Latest /><Factory /><Research /><About /><Sign /></main>
+    <main id="main"><Hero /><PlusVoice /><Work /><GitHits /><Sketch /><Latest /><Factory /><Research /><About /><Sign /></main>
     <Footer />
   </>;
 }

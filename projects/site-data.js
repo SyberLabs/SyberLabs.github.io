@@ -19,23 +19,27 @@ export const RISE_SAMPLE = 'https://rise.syberlabs.io/jev-scene-demo';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
 export const SKETCH_APP = 'https://sketch.syberlabs.io/';
 
-// RISE Plus voice: the homepage section (src/App.jsx, PlusVoice) and a RISE evidence row, switched by `state` alone.
-// 'coming': built and tested in draft RISE pull requests (#542 gate and voice, #546 app, #545 legal), not merged
-// or deployed, so the page names the price and offers only the free reader. 'live': set it once Plus is deployed at
-// rise.syberlabs.io; the section then offers the purchase. Every line of `points` is checked against RISE's
-// worker/plus.mjs (wp/rise/plus-gate) and src/app/plus.js (wp/rise/plus-voice-ui).
+// RISE Plus voice: the homepage section (src/App.jsx, PlusVoice), a RISE evidence row and the Atlas note, switched by
+// `state` alone. 'coming': built and tested in draft RISE pull requests (#542 gate and voice, #546 app, #545 legal), not
+// merged or deployed, so the page names the price and offers only the free reader. 'live': set it once Plus is deployed
+// at rise.syberlabs.io; the section then sends the reader to RISE's Settings, where the Plus voice row offers the
+// purchase. After flipping, run `node scripts/site-chrome.mjs` (Atlas note) and `node scripts/llms.mjs`. /plus/ is
+// static and has its own status labels, updated by its owner. Every line of `points` is checked against RISE's
+// worker/plus.mjs and wrangler PLUS_VOICES (wp/rise/plus-gate), src/app/plus.js and src/audio/plus-voice-store.js
+// (wp/rise/plus-voice-ui), and PRIVACY.md section 4 (wp/rise/plus-legal).
 export const RISE_PLUS = {
   state: 'coming', // 'coming' | 'live'
   price: '$8.99',
-  // TODO: RISE's Plus entry point. Today the purchase is a Stripe payment link offered from Settings in the app
-  // (PLUS_PAYMENT_LINK in RISE src/app/plus.js, still a placeholder); there is no public Plus address yet.
-  href: RISE_APP,
+  // RISE's Plus entry point: the Plus voice row in Settings (route `settings`, src/core/route-url.js), which links to
+  // the Stripe payment link (PLUS_PAYMENT_LINK in RISE src/app/plus.js). The reader starts inside RISE, not at Stripe.
+  href: 'https://rise.syberlabs.io/settings',
   source: 'https://github.com/SyberLabs/RISE/pull/542',
   points: [
-    ['Your own reading', 'A reading of your own, such as a Composer Current, is spoken phrase by phrase, each phrase timed to the words on screen.'],
-    ['Voiced once', 'A voicing is cached by its text, so the same text is never paid for twice. One voicing is at most 10,000 characters.'],
-    ['Allowance', '105,000 characters voiced per billing period. It resets with the next one.'],
-    ['No account', 'Payment goes through Stripe, and a signed cookie in your browser carries the subscription. You bring no key.'],
+    ['Your own reading', 'A reading of your own, such as a Composer Current, is spoken phrase by phrase, each phrase timed to the words on screen. One voicing is at most 10,000 characters.'],
+    ['Choose a voice', 'One of five premade ElevenLabs voices (Flash v2.5): Default, George, Rachel, Daniel or Charlotte. You pick it in Settings.'],
+    ['Kept in your browser', 'The audio lives only in your browser, so playing it again there costs nothing. The server keeps no copy of your text or the audio; voicing the same text again on another device, or after Erase, uses allowance again.'],
+    ['Allowance', '105,000 characters voiced per billing period, counted on the server for your subscription. It resets with the next one. A daily cap across all subscribers can pause the voice until the next day.'],
+    ['No account', 'Payment goes through Stripe, and a signed cookie in your browser names the subscription; Stripe is asked again before every voicing. You bring no key.'],
     ['If it lapses', 'Reading continues silently, and the rest of RISE stays free.'],
   ],
 };
@@ -138,7 +142,7 @@ export const projects = [
       ['Composer in Claude', 'Live as a custom connector: add one named RISE with the URL https://rise.syberlabs.io/api/mcp. Submission to Claude’s connector directory is planned.'],
       ['Earlier evidence', { label: 'Jev integration in RISE', href: '/jev/' }],
       ['Your own model', { label: 'Reader-owned AI: Jev and Kev', href: '/kev/' }],
-      ['RISE Plus', { label: 'Your own reading, read aloud: decided and built, not yet released', href: '/plus/' }],
+      ['RISE Plus', { label: RISE_PLUS.state === 'live' ? 'Your own reading, read aloud: live in RISE' : 'Your own reading, read aloud: decided and built, not yet released', href: '/plus/' }],
       ['Source', { label: 'github.com/SyberLabs/RISE', href: 'https://github.com/SyberLabs/RISE' }],
     ],
   },
@@ -369,7 +373,7 @@ export const siteMap = [
   ] },
   { title: 'Projects', items: [
     { label: 'RISE', note: 'Creative suite · Reader, Composer, Sketch', href: '/projects/rise/', sigil: 'rise', accent: '#f2d9a6' },
-    { label: 'RISE Plus', note: 'Your own reading, read aloud · in progress, not for sale', href: '/plus/' },
+    { label: 'RISE Plus', note: `Your own reading, read aloud · ${RISE_PLUS.state === 'live' ? `live, ${RISE_PLUS.price} a month` : 'in progress, not for sale'}`, href: '/plus/' },
     { label: 'FLYSPACE', note: 'Spatial AI workspace · formerly OmniOS', href: '/projects/flyspace/', sigil: 'flyspace', accent: '#f59be0' },
     { label: 'SyberWork', note: 'Governed work runtime · work in progress', href: '/projects/syberwork/', sigil: 'syberwork', accent: '#a6f08f' },
     { label: 'Relay', note: 'Job application workspace', href: '/projects/relay/', sigil: 'relay', accent: '#62e3d8' },
