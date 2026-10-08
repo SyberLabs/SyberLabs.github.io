@@ -114,6 +114,46 @@
 .pj-facts__link { gap: var(--space-1); color: var(--sy-vellum); background: linear-gradient(var(--sy-accent), var(--sy-accent)) 0 100%/100% 1px no-repeat; }
 .pj-facts__link:hover { color: var(--sy-ice); }
 
+/* Dependency evidence: the declared packages as GitHits reported them (filled by experience-v7.js from
+   /githits/<slug>.json). A real table; it scrolls inside its own frame, never the page. */
+.pj-deps__main { min-width: 0; }
+.pj-deps__source { margin: 0; padding-top: 14px; color: var(--sy-mist); }
+.pj-deps__code, .pj-deps__mono { font: 400 13px/1.5 var(--sy-mono); color: var(--sy-vellum); }
+.pj-deps__link { display: inline; color: var(--sy-vellum); text-decoration: none; background: linear-gradient(var(--sy-accent), var(--sy-accent)) 0 100%/100% 1px no-repeat; padding-bottom: 1px; }
+.pj-deps__link:hover { color: var(--sy-ice); }
+.pj-deps__link .sy-icon { vertical-align: -2px; margin-left: 2px; }
+.pj-deps__pending { display: flex; align-items: center; gap: 8px; margin: var(--space-4) 0 0; padding: 10px 14px; border: 1px solid var(--sy-rule-2); border-left: 3px solid var(--sy-warning); border-radius: var(--sy-r-sm); background: var(--sy-ink-2); color: var(--sy-vellum); text-transform: none; letter-spacing: .02em; line-height: 1.5; }
+.pj-deps__pending i { flex: none; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--sy-warning); }
+.pj-deps__scroll { position: relative; margin-top: var(--space-4); max-width: 100%; max-height: 32rem; overflow: auto; border-top: 1px solid var(--sy-rule); overscroll-behavior-x: contain; }
+.pj-deps__scroll:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
+.pj-deps__table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 15px; line-height: 22px; color: var(--sy-body); }
+.pj-deps__caption { caption-side: top; padding: 12px 0; text-align: left; font: 400 14px/20px var(--sy-sans); color: var(--sy-mist); position: sticky; left: 0; max-width: calc(100vw - 2 * var(--sy-gutter)); }
+.pj-deps__table th, .pj-deps__table td { padding: 12px var(--space-4) 12px 0; text-align: left; vertical-align: top; border-bottom: 1px solid var(--sy-rule); }
+.pj-deps__table thead th { position: sticky; top: 0; z-index: 1; background: var(--sy-ink); font: 500 12px/1.4 var(--sy-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--sy-dim); white-space: nowrap; }
+.pj-deps__table tbody th { font-weight: 400; }
+.pj-deps__table td:last-child, .pj-deps__table th:last-child { padding-right: 0; }
+.pj-deps__pkg { font: 400 13px/22px var(--sy-mono); color: var(--sy-vellum); overflow-wrap: anywhere; }
+.pj-deps__ver { color: var(--sy-mist); }
+.pj-deps__registry { display: block; font: 500 12px/1.4 var(--sy-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--sy-dim); }
+.pj-deps__na { color: var(--sy-dim); }
+.pj-deps__mono.is-newer { color: var(--sy-ice); }
+.pj-deps__none { color: var(--sy-mist); }
+.pj-deps__vuln { --d: var(--sy-mist); display: inline-flex; align-items: baseline; gap: 6px; color: var(--sy-body); }
+.pj-deps__vuln i { align-self: center; width: 8px; height: 8px; border-radius: 50%; background: var(--d); }
+.pj-deps__vuln b { font-weight: 600; color: var(--sy-vellum); }
+.pj-deps__vuln.is-high { --d: var(--sy-danger); }
+.pj-deps__vuln.is-moderate { --d: var(--sy-warning); }
+.pj-deps__ids { display: flex; flex-wrap: wrap; gap: 2px 10px; margin-top: 4px; }
+.pj-deps__id { font: 400 12px/1.5 var(--sy-mono); color: var(--sy-mist); text-decoration: none; }
+.pj-deps__id:hover { color: var(--sy-ice); }
+.pj-deps__summary { margin: var(--space-4) 0 0; font-size: 16px; line-height: 24px; color: var(--sy-body); }
+.pj-deps__licenses, .pj-deps__errors, .pj-deps__omitted { margin: var(--space-2) 0 0; }
+.pj-deps__attr { margin: var(--space-3) 0 0; max-width: 72ch; color: var(--sy-dim); }
+@media (prefers-reduced-motion: no-preference) {
+  .pj-deps[data-state="ready"] { animation: pj-deps-in 500ms var(--sy-ease) both; }
+  @keyframes pj-deps-in { from { opacity: 0; transform: translate3d(0, 12px, 0); } }
+}
+
 .pj-others__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5); }
 .pj-others__all { min-height: 44px; color: var(--sy-vellum); }
 .pj-others .sy-project-row { padding-top: 22px; padding-bottom: 22px; }

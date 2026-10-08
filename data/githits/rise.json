@@ -1,0 +1,58 @@
+{
+  "slug": "rise",
+  "generatedAt": "2026-10-08T21:26:33.029Z",
+  "source": "fixture",
+  "apiBase": "https://api.githits.dev/v1",
+  "repo": "SyberLabs/RISE",
+  "ref": "998d72538504ea3956c628a6f38e63b69fb90595",
+  "manifest": "package.json",
+  "packages": [
+    {
+      "registry": "npm",
+      "name": "@ai-ecoverse/kev.js",
+      "version": "0.6.0",
+      "license": null,
+      "latestVersion": null,
+      "directDependencies": null,
+      "vulnerabilities": null,
+      "githitsUrl": null
+    },
+    {
+      "registry": "npm",
+      "name": "@huggingface/tokenizers",
+      "version": "0.2.0",
+      "license": null,
+      "latestVersion": null,
+      "directDependencies": null,
+      "vulnerabilities": null,
+      "githitsUrl": null
+    },
+    {
+      "registry": "npm",
+      "name": "onnxruntime-web",
+      "version": "1.30.0",
+      "license": null,
+      "latestVersion": null,
+      "directDependencies": null,
+      "vulnerabilities": null,
+      "githitsUrl": null
+    },
+    {
+      "registry": "npm",
+      "name": "sql.js",
+      "version": "1.14.2",
+      "license": null,
+      "latestVersion": null,
+      "directDependencies": null,
+      "vulnerabilities": null,
+      "githitsUrl": null
+    }
+  ],
+  "omitted": [],
+  "summary": {
+    "packages": 4,
+    "withKnownVulnerabilities": null,
+    "licenses": null
+  },
+  "errors": []
+}

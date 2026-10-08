@@ -1,3 +1,4 @@
+# Agents and LLMs: start at https://syberlabs.io/llms.txt (index) or https://syberlabs.io/llms-full.txt (full text).
 User-agent: *
 Allow: /
 

@@ -8,7 +8,7 @@ const require = createRequire(process.env.PW_REQUIRE_FROM || import.meta.url);
 const { chromium } = require('playwright');
 const out = process.argv[2] || 'shots', BASE = process.argv[3] || 'http://localhost:4173';
 mkdirSync(out, { recursive: true });
-const pages = ['/', '/projects/rise/', '/projects/omnios/', '/projects/syberwork/', '/projects/relay/', '/projects/osahr/', '/approach/', '/services/', '/research/', '/research/sybershoke/', '/kev/', '/jev/', '/rise-demo/', '/privacy/', '/404.html'];
+const pages = ['/', '/projects/rise/', '/projects/omnios/', '/projects/syberwork/', '/projects/relay/', '/projects/osahr/', '/approach/', '/stack/', '/services/', '/research/', '/research/sybershoke/', '/kev/', '/jev/', '/rise-demo/', '/privacy/', '/404.html'];
 const browser = await chromium.launch({ executablePath: process.env.PW_EXECUTABLE || undefined, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const errors = [];
 for (const [label, vp] of [['desktop', { width: 1440, height: 900 }], ['phone', { width: 390, height: 844 }]]) {

@@ -62,8 +62,13 @@
   </url>
   <url>
     <loc>https://syberlabs.io/approach/</loc>
-    <lastmod>2026-10-05</lastmod>
+    <lastmod>2026-10-08</lastmod>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://syberlabs.io/stack/</loc>
+    <lastmod>2026-10-08</lastmod>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://syberlabs.io/services/</loc>

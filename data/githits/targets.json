@@ -1,0 +1,253 @@
+{
+  "rise": {
+    "repo": "SyberLabs/RISE",
+    "ref": "998d72538504ea3956c628a6f38e63b69fb90595",
+    "manifest": "package.json",
+    "lockfile": "package-lock.json",
+    "scope": "package.json \"dependencies\" (devDependencies excluded)",
+    "packages": [
+      {
+        "registry": "npm",
+        "name": "@ai-ecoverse/kev.js",
+        "version": "0.6.0",
+        "constraint": "0.6.0",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "@huggingface/tokenizers",
+        "version": "0.2.0",
+        "constraint": "0.2.0",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "onnxruntime-web",
+        "version": "1.30.0",
+        "constraint": "1.30.0",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "sql.js",
+        "version": "1.14.2",
+        "constraint": "^1.14.2",
+        "versionSource": "package-lock.json"
+      }
+    ],
+    "omitted": []
+  },
+  "omnios": {
+    "repo": "SyberLabs/OmniOS",
+    "ref": "e95ae735ce1bb83f84ff1d4223c533d37da20fe0",
+    "manifest": "package.json",
+    "lockfile": "package-lock.json",
+    "scope": "package.json \"dependencies\" (devDependencies excluded)",
+    "packages": [
+      {
+        "registry": "npm",
+        "name": "@dnd-kit/core",
+        "version": "6.3.1",
+        "constraint": "^6.3.1",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "@modelcontextprotocol/client",
+        "version": "2.2.0",
+        "constraint": "2.2.0",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "framer-motion",
+        "version": "13.4.4",
+        "constraint": "^13.4.4",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "idb",
+        "version": "8.0.3",
+        "constraint": "^8.0.3",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "jose",
+        "version": "6.1.0",
+        "constraint": "6.1.0",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "lucide-react",
+        "version": "0.562.0",
+        "constraint": "^0.562.0",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "next",
+        "version": "16.3.6",
+        "constraint": "16.3.6",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "pg",
+        "version": "8.23.0",
+        "constraint": "^8.23.0",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "react",
+        "version": "19.3.0",
+        "constraint": "19.3.0",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "react-dom",
+        "version": "19.3.0",
+        "constraint": "19.3.0",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "react-markdown",
+        "version": "10.1.0",
+        "constraint": "^10.1.0",
+        "versionSource": "package-lock.json"
+      },
+      {
+        "registry": "npm",
+        "name": "zustand",
+        "version": "5.0.15",
+        "constraint": "^5.0.15",
+        "versionSource": "package-lock.json"
+      }
+    ],
+    "omitted": [
+      "clsx",
+      "cmdk",
+      "react-server-dom-webpack",
+      "remark-gfm",
+      "server-only",
+      "tailwind-merge"
+    ]
+  },
+  "syberwork": {
+    "repo": "SyberLabs/SyberWork",
+    "ref": "208eaf65bb9cb1413d02acafe9b46ed298c055a6",
+    "manifest": "pyproject.toml",
+    "lockfile": null,
+    "scope": "pyproject.toml [project] dependencies (optional-dependencies excluded)",
+    "packages": [],
+    "omitted": []
+  },
+  "relay": {
+    "repo": "SyberLabs/relay",
+    "ref": "00006053e69af224e24f77e8c9f3bcffb4259347",
+    "manifest": "package.json",
+    "lockfile": null,
+    "scope": "package.json \"dependencies\" (devDependencies excluded)",
+    "packages": [
+      {
+        "registry": "npm",
+        "name": "@fontsource/instrument-sans",
+        "version": "5.3.0",
+        "constraint": "5.3.0",
+        "versionSource": "manifest-exact"
+      },
+      {
+        "registry": "npm",
+        "name": "@fontsource/instrument-serif",
+        "version": "5.3.0",
+        "constraint": "5.3.0",
+        "versionSource": "manifest-exact"
+      },
+      {
+        "registry": "npm",
+        "name": "@fontsource/jetbrains-mono",
+        "version": "5.3.0",
+        "constraint": "5.3.0",
+        "versionSource": "manifest-exact"
+      },
+      {
+        "registry": "npm",
+        "name": "csv-parse",
+        "version": "7.0.2",
+        "constraint": "7.0.2",
+        "versionSource": "manifest-exact"
+      },
+      {
+        "registry": "npm",
+        "name": "drizzle-orm",
+        "version": "0.45.2",
+        "constraint": "0.45.2",
+        "versionSource": "manifest-exact"
+      },
+      {
+        "registry": "npm",
+        "name": "jose",
+        "version": "6.2.12",
+        "constraint": "6.2.12",
+        "versionSource": "manifest-exact"
+      },
+      {
+        "registry": "npm",
+        "name": "lucide-react",
+        "version": "1.48.0",
+        "constraint": "1.48.0",
+        "versionSource": "manifest-exact"
+      },
+      {
+        "registry": "npm",
+        "name": "react",
+        "version": "19.3.0",
+        "constraint": "19.3.0",
+        "versionSource": "manifest-exact"
+      },
+      {
+        "registry": "npm",
+        "name": "react-dom",
+        "version": "19.3.0",
+        "constraint": "19.3.0",
+        "versionSource": "manifest-exact"
+      },
+      {
+        "registry": "npm",
+        "name": "react-server-dom-webpack",
+        "version": "19.3.0",
+        "constraint": "19.3.0",
+        "versionSource": "manifest-exact"
+      },
+      {
+        "registry": "npm",
+        "name": "vinext",
+        "version": "1.0.0-beta.12",
+        "constraint": "1.0.0-beta.12",
+        "versionSource": "manifest-exact"
+      },
+      {
+        "registry": "npm",
+        "name": "yaml",
+        "version": "2.9.1",
+        "constraint": "2.9.1",
+        "versionSource": "manifest-exact"
+      }
+    ],
+    "omitted": []
+  },
+  "osahr": {
+    "repo": "SyberLabs/OSAHR_Cell",
+    "ref": "7293e278ef30047b780a91ec56301395c0119805",
+    "manifest": "pyproject.toml",
+    "lockfile": null,
+    "scope": "pyproject.toml [project] dependencies (optional-dependencies excluded)",
+    "packages": [],
+    "omitted": []
+  }
+}
