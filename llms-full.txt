@@ -110,6 +110,7 @@ Text version of the interactive map: This map needs JavaScript. It steps through
 - License: Apache 2.0 for application code; texts and visual works carry their own terms
 - Earlier evidence: [Jev integration in RISE](https://syberlabs.io/jev/)
 - Your own model: [Reader-owned AI: Jev and Kev](https://syberlabs.io/kev/)
+- RISE Plus: [A premium voice for what you read: decided and built, not yet released](https://syberlabs.io/plus/)
 - Source: [github.com/SyberLabs/RISE](https://github.com/SyberLabs/RISE)
 
 ## OmniOS: AI analysis canvas

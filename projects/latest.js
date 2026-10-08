@@ -1,8 +1,12 @@
 // Latest: dated, linked changes across the repositories, newest first. Shown on the homepage
 // (src/App.jsx Latest). Each entry names what merged or deployed and where the evidence is; the
-// `state` follows the same discipline as project evidence rows (deployed, merged, decided, recorded).
+// `state` follows the same discipline as project evidence rows (deployed, merged, decided, recorded;
+// `in progress` for work that is decided and built but not released).
 // Keep this to the last few weeks and prune older entries rather than letting it grow.
 export const latest = [
+  { date: '2026-10-08', project: 'RISE Plus', state: 'in progress', title: 'A premium voice for what you read',
+    text: 'Accepted by the owner at $8.99 a month (MasterMind record #30). The Worker gate, voice route, claim page and legal text are built in draft pull requests; no real render has been shown and nothing is for sale yet.',
+    href: '/plus/' },
   { date: '2026-10-08', project: 'RISE Sketch', state: 'deployed', title: 'Share a drawing as a timelapse or a remix link',
     text: 'Shift+P turns a drawing into a 6–12 s video of the ink growing, sent to the share sheet on phones. Copy remix link puts the drawing itself in the URL, so the recipient watches it grow and keeps drawing. No server: the drawing travels in the link.',
     href: 'https://github.com/SyberLabs/RISE-Sketch/pull/14' },

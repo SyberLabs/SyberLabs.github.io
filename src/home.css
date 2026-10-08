@@ -175,6 +175,8 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 .is-merged .home-latest__state { --d: var(--sy-ice); }
 .is-decided .home-latest__state { --d: var(--sy-amber, #ffae63); }
 .is-recorded .home-latest__state { --d: var(--sy-mist); }
+.is-in-progress .home-latest__state { color: var(--sy-mist); }
+.is-in-progress .home-latest__state i { background: none; box-shadow: none; border: 1.5px solid var(--sy-mist); width: 7px; height: 7px; }
 .home-latest__body { display: grid; gap: 4px; }
 .home-latest__title { display: inline-flex; align-items: center; gap: 6px; font-size: 17px; line-height: 24px; color: var(--sy-vellum); text-decoration: none; }
 .home-latest__title:hover { color: var(--sy-ice); }
