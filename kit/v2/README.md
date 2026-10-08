@@ -16,7 +16,7 @@ Apps copy the files into their repo (e.g. `src/vendor/syber/`) unmodified, and n
 ```js
 import { mount, RING_SVG, paramLine } from './syber-atmosphere.js';
 const plate = mount(canvas, { mode: 'hero' | 'ambient', avoid: copyEl, caption: paramsEl, reduced, allowSoftware });
-// -> { supported: boolean, destroy() }. supported:false = no WebGL2, a failIfMajorPerformanceCaveat probe fails, or the
+// -> { supported: boolean, pause(), resume(), destroy() }. supported:false = no WebGL2, a failIfMajorPerformanceCaveat probe fails, or the
 // renderer is software (SwiftShader/llvmpipe/softpipe/Basic Render); the canvas is hidden, so the CSS nebula shows.
 // allowSoftware: true skips the software guard. Screenshot tooling only, never for real visitors.
 import { params, draw, drawAll } from './syber-sigil.js';
@@ -34,5 +34,5 @@ drawAll(document);                     // canvas[data-sigil="relay"][data-color]
 2. The canvas is always `aria-hidden="true"`, `pointer-events:none` and the lowest z-index of its container. Copy never sits on the plate. Use scrims so every text run keeps ≥4.5:1 (≥3:1 for display ≥24px) against the brightest frame.
 3. Reduced motion is detected automatically. It gives one still exposure, sigils render instantly, and CSS transitions and animations are off.
 4. All copy lives in the served HTML. The canvas is progressive enhancement, and the page reads fine with JS disabled or without WebGL2.
-5. The engine renders ≤1 texel per CSS px, pauses off-screen (IntersectionObserver) and while the tab is hidden, and `destroy()` cancels the RAF and loses the GL context.
+5. The engine renders ≤1 texel per CSS px and at most 60 frames a second, pauses off-screen (IntersectionObserver) and while the tab is hidden, `pause()`/`resume()` hold the frame while something covers the plate (a full-screen menu), and `destroy()` cancels the RAF and loses the GL context.
 6. Status is always shown as dot + word, never as colour alone. Nothing is set below 12px, and serif is never used below 32px.

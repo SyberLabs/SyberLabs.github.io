@@ -3,8 +3,8 @@
    its own spectral hue; it then grows the way RISE Sketch Forms do, as fractal sprouts off the stroke and
    Ripple-style contour rings that breathe and beat into moiré. When nobody is drawing, a ghost hand does.
 
-   Canvas 2D, no dependencies. Pauses off-screen and in hidden tabs. Reduced motion: strokes appear fully
-   grown and nothing moves. The canvas is decorative (aria-hidden); the link beside it is the real action. */
+   Canvas 2D, no dependencies. At most 60 frames a second; pauses off-screen, in hidden tabs and under the
+   Atlas menu. Reduced motion: strokes appear fully grown and nothing moves. The canvas is decorative (aria-hidden); the link beside it is the real action. */
 
 const FOLDS = 6;                    // rotational order; each turn is also mirrored
 const MAX_STROKES = 4;              // older strokes fade out beyond this
@@ -97,6 +97,7 @@ export function mountSketchPlate(canvas, { reduced = false } = {}) {
   let W = 0, H = 0, R = 0, dpr = 1;
   // Lite mode: if frames run slow (no GPU canvas), drop the halo and the outer rings for good.
   let lite = false, slow = 0, lastFrame = 0;
+  const GAP = 1000 / 60, html = document.documentElement;
 
   const size = () => {
     const b = canvas.getBoundingClientRect();
@@ -138,22 +139,24 @@ export function mountSketchPlate(canvas, { reduced = false } = {}) {
     // plate units → device pixels, rotated by fold k, mirrored across the fold's axis
     ctx.setTransform(c * R, s * R, -s * R * m, c * R * m, W / 2, H / 2);
   };
-  const path = (pts, upto = 1) => {
+  // Geometry is in plate units and identical in every fold, so each path is built once per frame (Path2D)
+  // and stroked under the 12 fold transforms (same strokes, same order, a twelfth of the path building).
+  const path = (into, pts, upto = 1) => {
     const n = Math.min(pts.length, Math.max(2, Math.ceil(pts.length * upto)));
-    ctx.moveTo(pts[0][0], pts[0][1]);
-    for (let i = 1; i < n; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    into.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < n; i++) into.lineTo(pts[i][0], pts[i][1]);
+    return into;
   };
   const ring = (s, k, off, t) => {
-    const amp = off * 0.16, lam = 9, lag = 0.55 * k;
-    ctx.beginPath();
+    const amp = off * 0.16, lam = 9, lag = 0.55 * k, p = new Path2D();
     for (const side of [-1, 1]) {
       for (let i = 0; i < s.pts.length; i++) {
         const d = side * (off + amp * Math.sin(i / lam - lag + t * 0.0011 * (k % 2 ? 1 : -1)));
         const x = s.pts[i][0] + s.nrm[i][0] * d, y = s.pts[i][1] + s.nrm[i][1] * d;
-        i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        i ? p.lineTo(x, y) : p.moveTo(x, y);
       }
     }
-    ctx.stroke();
+    return p;
   };
 
   // `inking` is the stroke still under the pen (the visitor's or the ghost's): trunk only, in the next hue.
@@ -170,38 +173,45 @@ export function mountSketchPlate(canvas, { reduced = false } = {}) {
       if (fadeOut <= 0) continue;
       const gSprout = ease((age - GROW_MS * 0.2) / (GROW_MS * 0.6));
       const gRing = ease((age - GROW_MS * 0.35) / (GROW_MS * 0.65));
+      // rings (Ripple): wider apart outward, breathing, alternating brightness
+      const rings = [];
+      if (gRing > 0 && s.pts.length > 2) {
+        for (let r = 0; r < (lite ? 3 : 5); r++) {
+          const off = (0.022 * Math.pow(1.32, r)) * Math.min(1, gRing * 1.6 - r * 0.2);
+          if (off > 0) rings.push([r, ring(s, r, off, now)]);
+        }
+      }
+      // sprouts (fractal botany), generation by generation
+      const gens = [];
+      if (gSprout > 0) for (let gen = 1; gen <= 4; gen++) {
+        const p = new Path2D();
+        let any = false;
+        for (const b of s.branches) {
+          if (b.gen !== gen) continue;
+          const g = (gSprout - b.born) / (1 - b.born) * 4 - (b.gen - 1);
+          if (g <= 0) continue;
+          path(p, b.pts, Math.min(1, g)); any = true;
+        }
+        if (any) gens.push([gen, p]);
+      }
+      const trunk = s.pts.length > 1 ? path(new Path2D(), s.pts) : null;
       for (let k = 0; k < FOLDS; k++) for (const mirror of [false, true]) {
         fold(rot, k, mirror);
         const foldHue = (s.hue + (k * 2 + (mirror ? 1 : 0)) * (360 / (FOLDS * 2)) + (reduced ? 0 : now * 0.006)) % 360;
-        // rings (Ripple): wider apart outward, breathing, alternating brightness
-        if (gRing > 0 && s.pts.length > 2) {
-          for (let r = 0; r < (lite ? 3 : 5); r++) {
-            const off = (0.022 * Math.pow(1.32, r)) * Math.min(1, gRing * 1.6 - r * 0.2);
-            if (off <= 0) continue;
-            ctx.strokeStyle = `hsla(${(foldHue + r * 18) % 360}, 95%, 64%, ${(r % 2 ? 0.09 : 0.18) * fadeOut})`;
-            ctx.lineWidth = px * (r < 2 ? 0.8 : 1.4);
-            ring(s, r, off, now);
-          }
+        for (const [r, p] of rings) {
+          ctx.strokeStyle = `hsla(${(foldHue + r * 18) % 360}, 95%, 64%, ${(r % 2 ? 0.09 : 0.18) * fadeOut})`;
+          ctx.lineWidth = px * (r < 2 ? 0.8 : 1.4);
+          ctx.stroke(p);
         }
-        // sprouts (fractal botany), generation by generation
-        if (gSprout > 0) for (let gen = 1; gen <= 4; gen++) {
-          ctx.beginPath();
-          let any = false;
-          for (const b of s.branches) {
-            if (b.gen !== gen) continue;
-            const g = (gSprout - b.born) / (1 - b.born) * 4 - (b.gen - 1);
-            if (g <= 0) continue;
-            path(b.pts, Math.min(1, g)); any = true;
-          }
-          if (!any) continue;
+        for (const [gen, p] of gens) {
           ctx.strokeStyle = `hsla(${(foldHue + gen * 14) % 360}, 100%, ${62 + gen * 4}%, ${0.38 * Math.pow(0.78, gen) * fadeOut})`;
           ctx.lineWidth = px * (2.4 - gen * 0.42);
-          ctx.stroke();
+          ctx.stroke(p);
         }
         // trunk: a soft halo, then the hot core
-        if (s.pts.length > 1) {
-          if (!lite) { ctx.strokeStyle = `hsla(${foldHue}, 100%, 60%, ${0.12 * fadeOut})`; ctx.lineWidth = px * 9; ctx.beginPath(); path(s.pts); ctx.stroke(); }
-          ctx.strokeStyle = `hsla(${foldHue}, 100%, 72%, ${0.6 * fadeOut})`; ctx.lineWidth = px * 2.6; ctx.beginPath(); path(s.pts); ctx.stroke();
+        if (trunk) {
+          if (!lite) { ctx.strokeStyle = `hsla(${foldHue}, 100%, 60%, ${0.12 * fadeOut})`; ctx.lineWidth = px * 9; ctx.stroke(trunk); }
+          ctx.strokeStyle = `hsla(${foldHue}, 100%, 72%, ${0.6 * fadeOut})`; ctx.lineWidth = px * 2.6; ctx.stroke(trunk);
         }
       }
     }
@@ -212,6 +222,8 @@ export function mountSketchPlate(canvas, { reduced = false } = {}) {
   const frame = now => {
     raf = 0;
     if (!visible || document.hidden) { lastFrame = 0; return; }
+    // 120/144 Hz screens draw at 60 (everything here is timed, not counted in frames); nothing draws under the Atlas
+    if ((lastFrame && now - lastFrame < GAP - 1.5) || html.classList.contains('sy-atlas-open')) { raf = requestAnimationFrame(frame); return; }
     if (lastFrame && !lite) { slow = now - lastFrame > 45 ? slow + 1 : Math.max(0, slow - 1); if (slow > 30) lite = true; }
     lastFrame = now;
     strokes = strokes.filter(s => !s.dying || now - s.dying < 1200);
