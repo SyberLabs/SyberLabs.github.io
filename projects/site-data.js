@@ -391,7 +391,7 @@ export const siteMap = [
     { label: 'Home', note: 'Read. Think. Build.', href: '/' },
     { label: 'Approach', note: 'Make the work observable', href: '/approach/' },
     { label: 'How we build', note: 'Dependencies read through GitHits', href: '/stack/' },
-    { label: 'The factory', note: 'Agents build and review; humans look at the product', href: '/#factory' },
+    // { label: 'The factory', note: 'Agents build and review; humans look at the product', href: '/#factory' }, // hidden with the factory section (src/App.jsx INTERNAL_SECTIONS)
     { label: 'Services', note: 'Interactive reading pilots', href: '/services/' },
     { label: 'About', note: 'The lab and its founder', href: '/#about' },
     { label: 'Design kit', note: 'Atlas v2 tokens and components', href: '/kit/v2/' },

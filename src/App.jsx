@@ -360,6 +360,10 @@ function Research() {
 }
 
 // Latest: what merged, deployed or was decided, newest first, each with its link (projects/latest.js).
+// Internal sections (What changed, The factory) are hidden from the public homepage while they move to the internal
+// dashboard. They still compile; set INTERNAL_SECTIONS to true to show them again (and restore the Atlas link in projects/site-data.js).
+const INTERNAL_SECTIONS = false;
+
 function Latest() {
   const fmt = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
   // the month of the newest record, not a month typed into the page
@@ -468,7 +472,7 @@ export default function App() {
   }, []);
   return <>
     <Header />
-    <main id="main"><Hero /><PlusVoice /><Work /><GitHits /><Sketch /><Latest /><Factory /><Research /><About /><Sign /></main>
+    <main id="main"><Hero /><PlusVoice /><Work /><Sketch />{INTERNAL_SECTIONS && <><Latest /><Factory /></>}<Research /><GitHits /><About /><Sign /></main>
     <Footer />
   </>;
 }
