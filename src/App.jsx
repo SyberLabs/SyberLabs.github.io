@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { projects, skills, EMAIL, CONTACT, RESUME, LINKEDIN, GITHUB, RISE_APP, OMNI_PREVIEW, SKETCH_APP } from '../projects/site-data.js';
+import { projects, skills, EMAIL, CONTACT, RESUME, LINKEDIN, GITHUB, RISE_APP, OMNI_PREVIEW, SKETCH_APP, RISE_PLUS } from '../projects/site-data.js';
 import { latest } from '../projects/latest.js';
 import { header as chromeHeader, footer as chromeFooter } from '../projects/project-template.js';
 import { mount, RING_SVG, paramLine } from '../kit/v2/syber-atmosphere.js';
@@ -73,6 +73,33 @@ function Hero() {
       <ol>{projects.map(p => <li key={p.slug} style={{ '--sy-accent': p.accent }}><a href={`/projects/${p.slug}/`}><span className="sy-strip__n">{p.number}<span className="home-strip__cat"> · {p.category}</span></span><span className="sy-strip__t">{p.name}</span><Badge status={p.status} bare /></a></li>)}</ol>
     </nav>
     <a className="home-scrollcue" href="#work" aria-label="Scroll to the work"><span /></a>
+  </section>;
+}
+
+// RISE Plus voice, right under the hero. One switch, RISE_PLUS.state in projects/site-data.js: 'coming' names the
+// price and offers only the free reader; 'live' offers the purchase. The copy says no more than the state allows.
+function PlusVoice() {
+  const live = RISE_PLUS.state === 'live';
+  return <section id="plus" className="home-sec sy-wrap" aria-labelledby="plus-title">
+    <div className="home-plus sy-card" style={{ '--sy-accent': '#f2d9a6' }} data-reveal data-tilt="2">
+      <div className="home-plus__copy">
+        <p className="home-plus__top"><span className="sy-eyebrow">RISE Plus / Voice</span><Badge status={live ? { kind: 'live', label: 'Live' } : { kind: 'early', label: 'Coming · not yet available' }} /></p>
+        <h2 id="plus-title" className="sy-display">Your own reading, <em>read aloud.</em></h2>
+        <p className="sy-body-lg">RISE Plus voice is a premium ElevenLabs voice for RISE, the browser-based audiovisual reader. It voices a reading of your own as the words arrive on screen.</p>
+        <p className="home-plus__price"><b>{RISE_PLUS.price}</b><span>a month</span></p>
+        <p className="sy-small home-plus__state">{live
+          ? 'RISE itself stays free. Plus adds the voice.'
+          : <>Not available yet. It is built and tested in <a href={RISE_PLUS.source}>draft pull requests</a> that are not merged or deployed. RISE itself is free today.</>}</p>
+        <div className="sy-actions home-plus__actions">
+          {live
+            ? <><a className="sy-btn sy-btn--solid" href={RISE_PLUS.href}>Get Plus voice — {RISE_PLUS.price}/month<Icon name="external" /></a><a className="sy-btn sy-btn--line" href={RISE_APP}>Try RISE free<Icon name="external" /></a></>
+            : <><a className="sy-btn sy-btn--solid" href={RISE_APP}>Try RISE free<Icon name="external" /></a><a className="sy-btn sy-btn--ghost" href="/projects/rise/">About RISE<Icon name="arrow" /></a></>}
+        </div>
+      </div>
+      <dl className="home-plus__points">
+        {RISE_PLUS.points.map(([term, text]) => <div key={term}><dt className="sy-label">{term}</dt><dd>{text}</dd></div>)}
+      </dl>
+    </div>
   </section>;
 }
 
@@ -240,7 +267,7 @@ export default function App() {
   }, []);
   return <>
     <Header />
-    <main id="main"><Hero /><Work /><Sketch /><Latest /><Research /><About /><Sign /></main>
+    <main id="main"><Hero /><PlusVoice /><Work /><Sketch /><Latest /><Research /><About /><Sign /></main>
     <Footer />
   </>;
 }

@@ -29,6 +29,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
   - Evidence, deployed: The reader, Library, Chapel, Make rooms and the interactive sample run at rise.syberlabs.io.
   - Evidence, tested: Unit, integration and browser suites run in CI; the first-load budget and the design diagram are checked on every release.
   - Evidence, measured: Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.
+  - Evidence, not yet: RISE Plus voice (a premium ElevenLabs voice, $8.99 a month) is not available yet. It is built and tested in draft pull requests that are not merged or deployed.
   - Evidence, not yet: No reader study has been run; release evidence still records zero real-device and stranger-testing records. Realtime Live and Dive are out of current scope by decision.
 - [OmniOS](https://syberlabs.io/projects/omnios/): AI analysis canvas. A canvas for thinking with AI over live data. Drop blocks that pull real numbers, wire them into personas, and ask a question that is answered only from what the wires actually carry.
   - Status: Live preview
