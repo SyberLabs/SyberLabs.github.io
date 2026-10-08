@@ -65,10 +65,9 @@ function sprouts(pts, nrm, seed) {
   return out;
 }
 
-function makeStroke(raw, seed, hue) {
-  const pts = resample(raw, 0.012);
-  const nrm = normals(pts);
-  return { pts, nrm, seed, hue, born: performance.now(), fade: 1, branches: sprouts(pts, nrm, seed) };
+function makeStroke(raw, seed, hue, born) {
+  const pts = resample(raw, 0.012), nrm = normals(pts);
+  return { pts, nrm, hue, born, branches: sprouts(pts, nrm, seed) };
 }
 
 /** A ghost-hand gesture: a petal, spiral or wave, somewhere in one wedge of the mandala. */
@@ -88,13 +87,13 @@ const ease = k => 1 - Math.pow(1 - Math.min(1, Math.max(0, k)), 3);
 
 /**
  * Mount the plate on a canvas. Returns { destroy }.
- * opts.reduced: draw fully grown strokes once, no animation.
+ * reduced: strokes appear fully grown, drawn only on input; nothing animates.
  */
-export function mountSketchPlate(canvas, opts = {}) {
+export function mountSketchPlate(canvas, { reduced = false } = {}) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return { destroy() {} };
-  const reduced = !!opts.reduced;
-  let strokes = [], live = null, ghostLive = null, raf = 0, visible = true, lastInput = 0, ghost = null, seedN = 1, hue0 = 200;
+  const GROWN = -Infinity;            // birth time of a stroke that appears fully grown
+  let strokes = [], live = null, ghost = null, raf = 0, visible = true, lastInput = 0, seedN = 1, hue = 247;
   let W = 0, H = 0, R = 0, dpr = 1;
   // Lite mode: if frames run slow (no GPU canvas), drop the halo and the outer rings for good.
   let lite = false, slow = 0, lastFrame = 0;
@@ -112,22 +111,22 @@ export function mountSketchPlate(canvas, opts = {}) {
     return [(e.clientX - b.left - b.width / 2) / s, (e.clientY - b.top - b.height / 2) / s];
   };
 
-  const commit = raw => {
-    if (raw.length < 2) { const [x, y] = raw[0] || [0.2, 0]; raw = [[x, y], [x + 0.002, y + 0.002]]; }
-    hue0 = (hue0 + 47) % 360;
-    strokes.push(makeStroke(raw, (seedN++ * 2654435761) >>> 0, hue0));
-    if (strokes.length > MAX_STROKES) strokes[strokes.length - MAX_STROKES - 1].dying = performance.now();
-    if (reduced) { strokes.forEach(s => (s.born = -1e9)); strokes = strokes.filter(s => !s.dying); draw(performance.now()); }
+  const commit = (raw, born) => {
+    if (raw.length < 2) { const [x, y] = raw[0]; raw = [[x, y], [x + 0.002, y + 0.002]]; }
+    strokes.push(makeStroke(raw, (seedN++ * 2654435761) >>> 0, hue, born));
+    hue = (hue + 47) % 360;
+    if (reduced) strokes = strokes.slice(-MAX_STROKES);
+    else strokes.slice(0, -MAX_STROKES).forEach(s => (s.dying ??= born));
   };
 
   // ---- input
   const down = e => {
     if (e.button > 0) return;
     canvas.setPointerCapture?.(e.pointerId);
-    live = [toPlate(e)]; ghost = null; ghostLive = null; lastInput = performance.now(); kick();
+    live = [toPlate(e)]; ghost = null; lastInput = performance.now(); kick();
   };
   const move = e => { if (!live) return; const p = toPlate(e), q = live[live.length - 1]; if (Math.hypot(p[0] - q[0], p[1] - q[1]) > 0.006) live.push(p); lastInput = performance.now(); if (reduced) draw(lastInput); };
-  const up = () => { if (!live) return; commit(live); live = null; lastInput = performance.now(); kick(); };
+  const up = () => { if (!live) return; lastInput = performance.now(); commit(live, reduced ? GROWN : lastInput); live = null; if (reduced) draw(lastInput); };
   canvas.addEventListener('pointerdown', down);
   canvas.addEventListener('pointermove', move);
   canvas.addEventListener('pointerup', up);
@@ -139,17 +138,16 @@ export function mountSketchPlate(canvas, opts = {}) {
     // plate units → device pixels, rotated by fold k, mirrored across the fold's axis
     ctx.setTransform(c * R, s * R, -s * R * m, c * R * m, W / 2, H / 2);
   };
-  const path = (pts, upto, append) => {
-    const n = Math.max(2, Math.ceil(pts.length * upto));
-    if (!append) ctx.beginPath();
+  const path = (pts, upto = 1) => {
+    const n = Math.min(pts.length, Math.max(2, Math.ceil(pts.length * upto)));
     ctx.moveTo(pts[0][0], pts[0][1]);
-    for (let i = 1; i < n && i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    for (let i = 1; i < n; i++) ctx.lineTo(pts[i][0], pts[i][1]);
   };
-  const ring = (s, k, off, t, upto) => {
-    const amp = off * 0.16, lam = 9, lag = 0.55 * k, n = Math.max(2, Math.ceil(s.pts.length * upto));
+  const ring = (s, k, off, t) => {
+    const amp = off * 0.16, lam = 9, lag = 0.55 * k;
     ctx.beginPath();
     for (const side of [-1, 1]) {
-      for (let i = 0; i < n; i++) {
+      for (let i = 0; i < s.pts.length; i++) {
         const d = side * (off + amp * Math.sin(i / lam - lag + t * 0.0011 * (k % 2 ? 1 : -1)));
         const x = s.pts[i][0] + s.nrm[i][0] * d, y = s.pts[i][1] + s.nrm[i][1] * d;
         i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
@@ -158,33 +156,31 @@ export function mountSketchPlate(canvas, opts = {}) {
     ctx.stroke();
   };
 
-  const draw = now => {
+  // `inking` is the stroke still under the pen (the visitor's or the ghost's): trunk only, in the next hue.
+  const draw = (now, inking = live) => {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, W, H);
     ctx.globalCompositeOperation = 'lighter';
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     const rot = reduced ? 0 : now * 0.00004, px = 1 / R * dpr; // one CSS pixel in plate units
-    const inking = live || ghostLive;
-    const all = inking ? [...strokes, { pts: resample(inking, 0.012), nrm: null, hue: (hue0 + 47) % 360, born: now, live: true, branches: [] }] : strokes;
+    const all = inking ? [...strokes, { pts: resample(inking, 0.012), hue, born: now, branches: [] }] : strokes;
     for (const s of all) {
-      const age = s.live ? 0 : now - s.born;
+      const age = now - s.born;
       const fadeOut = s.dying ? Math.max(0, 1 - (now - s.dying) / 1200) : 1;
       if (fadeOut <= 0) continue;
-      const gTrunk = s.live ? 1 : ease(age / (GROW_MS * 0.35));
       const gSprout = ease((age - GROW_MS * 0.2) / (GROW_MS * 0.6));
       const gRing = ease((age - GROW_MS * 0.35) / (GROW_MS * 0.65));
-      if (!s.nrm && s.pts.length > 1) s.nrm = normals(s.pts);
       for (let k = 0; k < FOLDS; k++) for (const mirror of [false, true]) {
         fold(rot, k, mirror);
-        const hue = (s.hue + (k * 2 + (mirror ? 1 : 0)) * (360 / (FOLDS * 2)) + (reduced ? 0 : now * 0.006)) % 360;
+        const foldHue = (s.hue + (k * 2 + (mirror ? 1 : 0)) * (360 / (FOLDS * 2)) + (reduced ? 0 : now * 0.006)) % 360;
         // rings (Ripple): wider apart outward, breathing, alternating brightness
         if (gRing > 0 && s.pts.length > 2) {
           for (let r = 0; r < (lite ? 3 : 5); r++) {
             const off = (0.022 * Math.pow(1.32, r)) * Math.min(1, gRing * 1.6 - r * 0.2);
             if (off <= 0) continue;
-            ctx.strokeStyle = `hsla(${(hue + r * 18) % 360}, 95%, 64%, ${(r % 2 ? 0.09 : 0.18) * fadeOut})`;
+            ctx.strokeStyle = `hsla(${(foldHue + r * 18) % 360}, 95%, 64%, ${(r % 2 ? 0.09 : 0.18) * fadeOut})`;
             ctx.lineWidth = px * (r < 2 ? 0.8 : 1.4);
-            ring(s, r, off, now, gTrunk);
+            ring(s, r, off, now);
           }
         }
         // sprouts (fractal botany), generation by generation
@@ -195,23 +191,22 @@ export function mountSketchPlate(canvas, opts = {}) {
             if (b.gen !== gen) continue;
             const g = (gSprout - b.born) / (1 - b.born) * 4 - (b.gen - 1);
             if (g <= 0) continue;
-            path(b.pts, Math.min(1, g), true); any = true;
+            path(b.pts, Math.min(1, g)); any = true;
           }
           if (!any) continue;
-          ctx.strokeStyle = `hsla(${(hue + gen * 14) % 360}, 100%, ${62 + gen * 4}%, ${0.38 * Math.pow(0.78, gen) * fadeOut})`;
+          ctx.strokeStyle = `hsla(${(foldHue + gen * 14) % 360}, 100%, ${62 + gen * 4}%, ${0.38 * Math.pow(0.78, gen) * fadeOut})`;
           ctx.lineWidth = px * (2.4 - gen * 0.42);
           ctx.stroke();
         }
         // trunk: a soft halo, then the hot core
         if (s.pts.length > 1) {
-          if (!lite) { ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${0.12 * fadeOut})`; ctx.lineWidth = px * 9; path(s.pts, gTrunk); ctx.stroke(); }
-          ctx.strokeStyle = `hsla(${hue}, 100%, 72%, ${0.6 * fadeOut})`; ctx.lineWidth = px * 2.6; path(s.pts, gTrunk); ctx.stroke();
+          if (!lite) { ctx.strokeStyle = `hsla(${foldHue}, 100%, 60%, ${0.12 * fadeOut})`; ctx.lineWidth = px * 9; ctx.beginPath(); path(s.pts); ctx.stroke(); }
+          ctx.strokeStyle = `hsla(${foldHue}, 100%, 72%, ${0.6 * fadeOut})`; ctx.lineWidth = px * 2.6; ctx.beginPath(); path(s.pts); ctx.stroke();
         }
       }
     }
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalCompositeOperation = 'source-over';
-    strokes = strokes.filter(s => !s.dying || now - s.dying < 1200);
   };
 
   const frame = now => {
@@ -219,14 +214,16 @@ export function mountSketchPlate(canvas, opts = {}) {
     if (!visible || document.hidden) { lastFrame = 0; return; }
     if (lastFrame && !lite) { slow = now - lastFrame > 45 ? slow + 1 : Math.max(0, slow - 1); if (slow > 30) lite = true; }
     lastFrame = now;
+    strokes = strokes.filter(s => !s.dying || now - s.dying < 1200);
     // the ghost hand: when idle, trace a gesture point by point, then let it grow
+    let inking = live;
     if (!live && now - lastInput > IDLE_MS) {
-      if (!ghost) ghost = { pts: ghostPath((seedN * 7919) >>> 0), i: 1, t0: now };
-      const want = Math.min(ghost.pts.length, 1 + Math.floor((now - ghost.t0) / 22));
-      if (want >= ghost.pts.length) { commit(ghost.pts); ghost = null; ghostLive = null; lastInput = now - IDLE_MS + 2200; }
-      else ghostLive = ghost.pts.slice(0, want);
-    } else ghostLive = null;
-    draw(now);
+      ghost ??= { pts: ghostPath((seedN * 7919) >>> 0), t0: now };
+      const n = 1 + Math.floor((now - ghost.t0) / 22);
+      if (n >= ghost.pts.length) { commit(ghost.pts, now); ghost = null; lastInput = now - IDLE_MS + 2200; }
+      else inking = ghost.pts.slice(0, n);
+    }
+    draw(now, inking);
     raf = requestAnimationFrame(frame);
   };
   const kick = () => { if (!reduced && !raf && visible && !document.hidden) raf = requestAnimationFrame(frame); };
@@ -239,10 +236,9 @@ export function mountSketchPlate(canvas, opts = {}) {
   ro?.observe(canvas);
 
   // seed the plate so it is never empty: two gestures, already grown
-  size();
-  for (let i = 0; i < 2; i++) { commit(ghostPath(1000 + i * 31)); strokes[strokes.length - 1].born = performance.now() - GROW_MS * 2 - i * 400; }
+  commit(ghostPath(1000), GROWN); commit(ghostPath(1031), GROWN);
   lastInput = performance.now() - IDLE_MS + 1500;
-  draw(performance.now());
+  size();
   kick();
 
   return {
