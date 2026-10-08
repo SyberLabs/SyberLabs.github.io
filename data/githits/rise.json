@@ -1,10 +1,10 @@
 {
   "slug": "rise",
-  "generatedAt": "2026-10-08T21:26:33.029Z",
+  "generatedAt": "2026-10-08T21:51:49.342Z",
   "source": "fixture",
   "apiBase": "https://api.githits.dev/v1",
   "repo": "SyberLabs/RISE",
-  "ref": "998d72538504ea3956c628a6f38e63b69fb90595",
+  "ref": "6c7168b863b12c0048b9f5c9b4902202484d6b31",
   "manifest": "package.json",
   "packages": [
     {
@@ -21,6 +21,26 @@
       "registry": "npm",
       "name": "@huggingface/tokenizers",
       "version": "0.2.0",
+      "license": null,
+      "latestVersion": null,
+      "directDependencies": null,
+      "vulnerabilities": null,
+      "githitsUrl": null
+    },
+    {
+      "registry": "npm",
+      "name": "acorn",
+      "version": "8.19.0",
+      "license": null,
+      "latestVersion": null,
+      "directDependencies": null,
+      "vulnerabilities": null,
+      "githitsUrl": null
+    },
+    {
+      "registry": "npm",
+      "name": "katex",
+      "version": "0.19.0",
       "license": null,
       "latestVersion": null,
       "directDependencies": null,
@@ -50,7 +70,7 @@
   ],
   "omitted": [],
   "summary": {
-    "packages": 4,
+    "packages": 6,
     "withKnownVulnerabilities": null,
     "licenses": null
   },
