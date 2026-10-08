@@ -37,13 +37,13 @@ function Hero() {
     setLive(plate.supported);
     return () => plate.destroy();
   }, []);
-  return <section className={`home-hero sy-nebula${live ? ' is-live' : ''}`} aria-labelledby="hero-title">
+  return <section className={`home-hero sy-nebula${live ? ' is-live' : ''}`} aria-labelledby="hero-title" data-parallax>
     <canvas ref={canvas} className="sy-atmosphere" aria-hidden="true" />
     <img className="home-still" src={plateStill} srcSet={`${plateStillSm} 560w, ${plateStill} 1000w`} sizes="(max-width: 900px) 400px, 60vw" width="1000" height="1000" alt="" aria-hidden="true" decoding="async" />
     <span className="home-ring" aria-hidden="true" dangerouslySetInnerHTML={{ __html: RING_SVG }} />
     <div className="sy-scrim home-hero__scrim" aria-hidden="true" />
     <div className="home-hero__in sy-wrap">
-      <div className="home-hero__copy" ref={copy}>
+      <div className="home-hero__copy sy-fade" ref={copy} data-depth="0.18" style={{ '--d': 0.18 }}>
         <p className="sy-eyebrow" data-reveal>SyberLabs / Independent AI software lab</p>
         <h1 id="hero-title" className="sy-display-xl home-hero__title" data-split>Read.<br /> <em>Think.</em><br /> Build.</h1>
         <p className="sy-body-lg home-hero__intro" data-reveal>SyberLabs builds AI-powered reading software and tools that make AI agents reviewable.</p>
@@ -61,7 +61,7 @@ function Hero() {
           </ul>
         </div>
       </div>
-      <p className="sy-plate-caption home-hero__caption" aria-hidden="true" data-reveal><b>Plate I · Clifford attractor</b><i>Order, drawn out of chaos.</i><span className="home-eq">x′ = sin(a·y) + c·cos(a·x)<br />y′ = sin(b·x) + d·cos(b·y)</span><span className="sy-params" ref={caption}>{paramLine(STILL)}</span></p>
+      <p className="sy-plate-caption home-hero__caption" aria-hidden="true" data-reveal data-depth="0.32" style={{ '--d': 0.32 }}><b>Plate I · Clifford attractor</b><i>Order, drawn out of chaos.</i><span className="home-eq">x′ = sin(a·y) + c·cos(a·x)<br />y′ = sin(b·x) + d·cos(b·y)</span><span className="sy-params" ref={caption}>{paramLine(STILL)}</span></p>
     </div>
     <nav className="sy-strip home-strip" aria-label="Projects at a glance">
       <ol>{projects.map(p => <li key={p.slug} style={{ '--sy-accent': p.accent }}><a href={`/projects/${p.slug}/`}><span className="sy-strip__n">{p.number}<span className="home-strip__cat"> · {p.category}</span></span><span className="sy-strip__t">{p.name}</span><Badge status={p.status} bare /></a></li>)}</ol>

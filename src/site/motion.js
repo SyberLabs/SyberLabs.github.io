@@ -26,6 +26,11 @@ export function reveal(root = document) {
     });
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
   items.forEach(el => io.observe(el));
+  // Safety net: anything on screen that the observer somehow missed is shown after a beat, and
+  // everything is shown before printing. Copy must never stay hidden because of a decoration.
+  const sweep = () => { for (const el of items) if (!el.classList.contains('is-in')) { const r = el.getBoundingClientRect(); if (r.top < innerHeight * 1.1 && r.bottom > 0) el.classList.add('is-in'); } };
+  setTimeout(sweep, 1800); addEventListener('pageshow', sweep);
+  addEventListener('beforeprint', () => items.forEach(el => el.classList.add('is-in')));
   return io;
 }
 
@@ -71,7 +76,7 @@ export function progress() {
 }
 
 export function spy() {
-  const links = [...document.querySelectorAll('.sy-nav a[href^="/#"], .sy-nav a[href^="#"]')];
+  const links = [...document.querySelectorAll('.sy-nav a[href^="/#"], .sy-nav a[href^="#"], aside nav a[href^="#"], .sy-toc a[href^="#"]')];
   if (!links.length || !('IntersectionObserver' in window)) return;
   const map = new Map();
   for (const a of links) { const id = a.getAttribute('href').split('#')[1]; const sec = id && document.getElementById(id); if (sec) map.set(sec, a); }
@@ -79,7 +84,7 @@ export function spy() {
   const io = new IntersectionObserver(entries => {
     for (const e of entries) {
       const a = map.get(e.target);
-      if (e.isIntersecting) { links.forEach(l => l.removeAttribute('aria-current')); a.setAttribute('aria-current', 'location'); }
+      if (e.isIntersecting) { const group = a.closest('nav'); links.filter(l => l.closest('nav') === group).forEach(l => l.removeAttribute('aria-current')); a.setAttribute('aria-current', 'location'); }
     }
   }, { rootMargin: '-40% 0px -55% 0px' });
   map.forEach((_, sec) => io.observe(sec));
@@ -134,6 +139,19 @@ export function toTop() {
   document.body.appendChild(b);
   let raf = 0;
   const paint = () => { raf = 0; b.classList.toggle('is-on', scrollY > innerHeight * 0.8); };
+  addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(paint); }, { passive: true });
+  paint();
+}
+
+/* Hero parallax: [data-parallax] containers get --sy-py (px scrolled while the hero is on screen);
+   children opt in with [data-depth="0.2"] and drift at that fraction. Off under reduced motion. */
+export function parallax() {
+  if (reducedMotion()) return;
+  const hosts = [...document.querySelectorAll('[data-parallax]')];
+  if (!hosts.length) return;
+  for (const h of hosts) for (const c of h.querySelectorAll('[data-depth]')) c.classList.add('sy-depth');
+  let raf = 0;
+  const paint = () => { raf = 0; for (const h of hosts) { const r = h.getBoundingClientRect(); if (r.bottom < 0) continue; h.style.setProperty('--sy-py', Math.max(0, -r.top).toFixed(1)); h.style.setProperty('--sy-pf', Math.min(1, Math.max(0, -r.top / Math.max(1, r.height * 0.7))).toFixed(3)); } };
   addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(paint); }, { passive: true });
   paint();
 }

@@ -270,3 +270,22 @@ html.sy-atlas-open, html.sy-atlas-open body { overflow: hidden; }
 .sy-footer__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sy-accent); box-shadow: 0 0 10px var(--sy-accent); }
 @media (max-width: 900px) { .sy-footer__map-in { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; padding-top: 36px; } }
 @media (max-width: 480px) { .sy-footer__map-in { grid-template-columns: 1fr; } }
+
+/* ---------- round 2: page transitions, parallax depth, lift, print ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root) { animation: sy-vt-out 220ms var(--sy-ease) both; }
+  ::view-transition-new(root) { animation: sy-vt-in 360ms var(--sy-ease) both; }
+  @keyframes sy-vt-out { to { opacity: 0; filter: blur(6px); } }
+  @keyframes sy-vt-in { from { opacity: 0; transform: translateY(10px); } }
+  .sy-header, .sy-field-host, .sy-totop { view-transition-name: none; }
+}
+.sy-depth { transform: translate3d(0, calc(var(--sy-py, 0) * var(--d, .2) * -1px), 0); will-change: transform; }
+[data-parallax] .sy-fade { opacity: calc(1 - var(--sy-pf, 0) * 1.1); }
+.sy-lift { transition: transform var(--sy-t-enter) var(--sy-ease), box-shadow var(--sy-t-enter) var(--sy-ease), background var(--sy-t-enter); border-radius: var(--sy-r-panel); }
+.sy-lift:hover { transform: translateY(-3px); background: rgba(160, 170, 255, .045); box-shadow: 0 30px 60px -40px color-mix(in srgb, var(--sy-accent) 50%, transparent); }
+aside nav a[aria-current="location"], .sy-toc a[aria-current="location"] { color: var(--sy-vellum) !important; background: linear-gradient(var(--sy-accent), var(--sy-accent)) 0 50%/2px 60% no-repeat; padding-left: 10px !important; }
+@media print {
+  .sy-field-host, .sy-totop, .sy-menu, .sy-progress { display: none !important; }
+  html.sy-js .sy-reveal, html.sy-js .sy-split .sy-word > span { opacity: 1 !important; transform: none !important; filter: none !important; }
+}

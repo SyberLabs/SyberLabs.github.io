@@ -1,13 +1,13 @@
 /* SyberLabs site v3 "Observatory": the one script every static page loads, built unhashed to /syberlabs.js
    (vite.config.js). The homepage bundle (src/App.jsx) calls the same modules directly.
    Order: mark JS present -> chrome behaviours -> reveal/tilt -> the 3D field (lazy, so first paint never waits). */
-import { reveal, tilt, magnetic, progress, spy, splitWords, toTop, reducedMotion } from './motion.js';
+import { reveal, tilt, magnetic, progress, spy, splitWords, toTop, parallax, reducedMotion } from './motion.js';
 import { atlas } from './nav.js';
 import { params as sigilParams } from '../../kit/v2/syber-sigil.js';
 
 export function boot(root = document, fieldOpts) {
   document.documentElement.classList.add('sy-js');
-  atlas(); progress(); spy(); toTop(); counters(root);
+  atlas(); progress(); spy(); toTop(); counters(root); parallax();
   root.querySelectorAll('[data-split]').forEach(el => { splitWords(el); el.setAttribute('data-reveal', ''); });
   reveal(root); tilt(root); magnetic(root);
   mountFieldLazy(fieldOpts);

@@ -21,7 +21,12 @@ for (const [label, vp] of [['desktop', { width: 1440, height: 900 }], ['phone', 
     await page.waitForTimeout(2600);
     const name = path.replace(/[\/.]+/g, '_').replace(/^_|_$/g, '') || 'home';
     await page.screenshot({ path: `${out}/${label}-${name}-top.png` });
-    if (process.argv.includes('--full')) await page.screenshot({ path: `${out}/${label}-${name}-full.png`, fullPage: true });
+    if (process.argv.includes('--full')) {
+      // walk the page so every reveal has fired, then return to the top
+      const H = await page.evaluate(() => document.documentElement.scrollHeight);
+      for (let y = 0; y < H; y += vp.height * 0.8) { await page.evaluate(v => scrollTo(0, v), y); await page.waitForTimeout(120); }
+      // the full capture audits layout, not motion: show every reveal (SwiftShader frames are too slow for the observer to keep up)
+      await page.evaluate(() => { scrollTo(0, 0); document.querySelectorAll('.sy-reveal').forEach(e => e.classList.add('is-in')); }); await page.waitForTimeout(1200); try { await page.screenshot({ path: `${out}/${label}-${name}-full.png`, fullPage: true }); } catch (e) { errors.push(`${label} ${path}: full-page screenshot failed (${e.message.split('\n')[0]})`); } }
     // mid-page: scroll a screen and a half so reveals, tilt cards and the field's scroll response are visible
     await page.mouse.wheel(0, vp.height * 1.5); await page.waitForTimeout(1400);
     await page.screenshot({ path: `${out}/${label}-${name}-mid.png` });

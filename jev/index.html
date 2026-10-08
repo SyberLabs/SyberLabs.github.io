@@ -37,19 +37,19 @@
 <script type="module" src="/syberlabs.js"></script>
 
   <main id="main">
-    <section class="jev-hero sy-container" aria-labelledby="hero-title">
-      <div class="jev-hero__copy">
+    <section class="jev-hero sy-container" aria-labelledby="hero-title" data-parallax>
+      <div class="jev-hero__copy" data-reveal-children>
         <p class="sy-eyebrow">AI integration / Case study</p>
-        <h1 id="hero-title" class="sy-display-xl jev-hero__title">AI decisions with <em>clear</em> limits.</h1>
+        <h1 id="hero-title" class="sy-display-xl jev-hero__title" data-split>AI decisions with <em>clear</em> limits.</h1>
         <p class="sy-body-lg jev-hero__lede">Structured AI answers. Rules in code. The reader stays in control.</p>
         <div class="sy-actions jev-hero__actions"><a class="sy-btn sy-btn--solid" href="#technical">See how it works<svg class="sy-icon sy-icon--trail" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></a></div>
         <p class="sy-small jev-hero__note">Historical Jev integration and evaluation. RISE is <a href="/kev/">migrating its bounded reading decisions to Kev</a>; this page does not describe a verified live Kev deployment. SyberLabs has no partnership with TypeSafe AI.</p>
       </div>
-      <figure class="sy-plate-figure site-sigil jev-sigil" aria-hidden="true"><div class="sy-plate sy-plate--sigil"><canvas data-sigil="jev" data-caption-for="params-jev"></canvas></div><figcaption><b>Plate VIII · Jev</b>de Jong map · <span class="sy-nowrap">seed “jev”</span><span class="sy-params" id="params-jev">a 1.891 · b −0.362 · c −2.879 · d 0.907</span></figcaption></figure>
+      <figure class="sy-plate-figure site-sigil jev-sigil" aria-hidden="true" data-tilt="6" data-reveal><div class="sy-plate sy-plate--sigil"><canvas data-sigil="jev" data-caption-for="params-jev"></canvas></div><figcaption><b>Plate VIII · Jev</b>de Jong map · <span class="sy-nowrap">seed “jev”</span><span class="sy-params" id="params-jev">a 1.891 · b −0.362 · c −2.879 · d 0.907</span></figcaption></figure>
     </section>
 
     <section class="jev-section sy-container" id="technical" aria-labelledby="technical-title">
-      <div class="jev-split">
+      <div class="jev-split" data-reveal>
         <p class="sy-eyebrow">How Jev answers</p>
         <div class="jev-split__main">
           <h2 id="technical-title" class="sy-title">Every AI decision has a fixed format.</h2>
@@ -57,7 +57,7 @@
           <a class="sy-link jev-link" href="https://docs.typesafe.ai/introduction/quickstart" target="_blank" rel="noopener noreferrer">TypeSafe API quick start<svg class="sy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a>
         </div>
       </div>
-      <div class="primitive-console">
+      <div class="primitive-console" data-reveal>
         <div class="primitive-rail" role="tablist" aria-label="Jev question types">
           <button class="primitive-tab selected" type="button" role="tab" aria-selected="true" aria-controls="primitive-panel" id="tab-choice" data-primitive="choice"><span>01 / Choice</span><strong>Select one option</strong><small>Discrete action space</small></button>
           <button class="primitive-tab" type="button" role="tab" aria-selected="false" aria-controls="primitive-panel" id="tab-noul" data-primitive="noul" tabindex="-1"><span>02 / Noul</span><strong>Answer yes or no</strong><small>Probability of a condition</small></button>
@@ -110,7 +110,7 @@ validate → authorize → act or hold</code></pre>
     </section>
 
     <section class="jev-section jev-status sy-container" id="integrations" aria-labelledby="status-title">
-      <div class="jev-split">
+      <div class="jev-split" data-reveal>
         <p class="sy-eyebrow">Recorded Jev integration</p>
         <div class="jev-split__main">
           <h2 id="status-title" class="sy-title">One request. Many ways to read.</h2>
