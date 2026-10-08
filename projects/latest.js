@@ -3,6 +3,12 @@
 // `state` follows the same discipline as project evidence rows (deployed, merged, decided, recorded).
 // Keep this to the last few weeks and prune older entries rather than letting it grow.
 export const latest = [
+  { date: '2026-10-08', project: 'RISE Sketch', state: 'deployed', title: 'Share a drawing as a timelapse or a remix link',
+    text: 'Shift+P turns a drawing into a 6–12 s video of the ink growing, sent to the share sheet on phones. Copy remix link puts the drawing itself in the URL, so the recipient watches it grow and keeps drawing. No server: the drawing travels in the link.',
+    href: 'https://github.com/SyberLabs/RISE-Sketch/pull/14' },
+  { date: '2026-10-08', project: 'RISE Sketch', state: 'deployed', title: 'Installable, offline, with link previews',
+    text: 'sketch.syberlabs.io installs as an app and reloads offline through a service worker that keeps the last complete build; shared links unfurl with a mandala drawn by the engine.',
+    href: 'https://github.com/SyberLabs/RISE-Sketch/pull/15' },
   { date: '2026-10-08', project: 'RISE Sketch', state: 'deployed', title: 'Ripple and kaleidoscope symmetry live at sketch.syberlabs.io',
     text: 'The drawing instrument gains its eleventh Form, Ripple (interference contours that beat into moiré), and a Free | Symmetry switch that folds every stroke into a mirror or up to 12 copies, each in its own hue with Spectral ink.',
     href: 'https://github.com/SyberLabs/RISE-Sketch/pull/10' },

@@ -114,7 +114,7 @@ function Sketch() {
       <p className="sy-eyebrow">Play / RISE Sketch</p>
       <h2 id="sketch-title" className="sy-display">Your stroke is <em>the seed.</em></h2>
       <p className="sy-body-lg">RISE Sketch is a drawing instrument where every mark is alive. A stroke grows into coastline, crystal, botany, smoke, braids or interference rings, read from your speed, pressure and stillness. There are no sliders.</p>
-      <p className="sy-body">Turn on symmetry and each stroke folds into a mirror or a mandala of up to twelve, every fold in its own hue. It runs in the browser, works offline and keeps your drawings on your device.</p>
+      <p className="sy-body">Turn on symmetry and each stroke folds into a mirror or a mandala of up to twelve, every fold in its own hue. It runs in the browser, works offline and keeps your drawings on your device. Share one as a video of it growing, or as a link that lets a friend keep drawing.</p>
       <div className="sy-actions home-sketch__actions">
         <a className="sy-btn sy-btn--solid" href={SKETCH_APP}>Draw in RISE Sketch<Icon name="external" /></a>
         <a className="sy-btn sy-btn--ghost" href="https://github.com/SyberLabs/RISE-Sketch">Source<Icon name="external" /></a>
