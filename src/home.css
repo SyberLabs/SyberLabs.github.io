@@ -8,7 +8,8 @@
 .home-hero { --tr: calc(max((100vw - var(--sy-max)) / 2, 0px) + var(--sy-gutter) + 640px); --s: min(90vh, (100vw - var(--tr)) * 1.02); --cx: calc(var(--tr) + var(--s) / 2); --cy: 47%; position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
 html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, #2a1a7a33, #0000 70%); }
 .home-ring .sy-ring { z-index: -2; }
-@media (prefers-reduced-motion: no-preference) { .home-ring .sy-ring { animation: home-spin 240s linear infinite; } .home-ring .sy-ring text { animation: home-unspin 240s linear infinite; transform-box: fill-box; transform-origin: center; } }
+/* the ring itself turns on the compositor; its labels counter-turn inside the SVG, which repaints the whole ring, so they step once per degree (upright to within 1°) */
+@media (prefers-reduced-motion: no-preference) { .home-ring .sy-ring { animation: home-spin 240s linear infinite; } .home-ring .sy-ring text { animation: home-unspin 240s steps(360) infinite; transform-box: fill-box; transform-origin: center; } }
 @keyframes home-spin { to { transform: translate(-50%, -50%) rotate(1turn); } }
 @keyframes home-unspin { to { transform: rotate(-1turn); } }
 .home-still { position: absolute; z-index: -2; left: var(--cx); top: var(--cy); width: calc(var(--s) * 1.12); max-width: none; height: auto; aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(closest-side, #000 82%, transparent); mask-image: radial-gradient(closest-side, #000 82%, transparent); }
@@ -196,11 +197,12 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
   background: radial-gradient(closest-side, #120a3a 0%, #090626 62%, #06051a 100%); box-shadow: 0 0 120px -20px rgba(154,107,255,.45), inset 0 0 80px rgba(0,0,0,.6); }
 .home-sketch__canvas { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; touch-action: none; cursor: crosshair; z-index: 0; }
 .home-sketch__ring { position: absolute; inset: -3px; border-radius: 50%; z-index: -1; padding: 2px; pointer-events: none;
-  background: conic-gradient(from var(--home-sketch-a, 0deg), #90d8f0, #4890f0, #9a6bff, #ff58d6, #ffb54a, #6ff5a8, #90d8f0);
+  background: conic-gradient(#90d8f0, #4890f0, #9a6bff, #ff58d6, #ffb54a, #6ff5a8, #90d8f0);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .8; filter: blur(.4px) drop-shadow(0 0 14px rgba(255,88,214,.5)); }
-@property --home-sketch-a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+/* the ring is a circle, so turning the element is the same picture as turning the gradient, but runs on the
+   compositor instead of repainting the gradient, mask and glow every frame */
 @media (prefers-reduced-motion: no-preference) { .home-sketch__ring { animation: home-sketch-spin 18s linear infinite; } }
-@keyframes home-sketch-spin { to { --home-sketch-a: 360deg; } }
+@keyframes home-sketch-spin { to { transform: rotate(1turn); } }
 .home-sketch__fig .sy-plate-caption { text-align: center; }
 @media (max-width: 900px) {
   .home-sketch { grid-template-columns: 1fr; }

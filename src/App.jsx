@@ -36,7 +36,11 @@ function Hero() {
   useEffect(() => {
     const plate = mount(canvas.current, { mode: 'hero', avoid: copy.current, caption: caption.current, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
     setLive(plate.supported);
-    return () => plate.destroy();
+    // the Atlas covers the page with a blurred backdrop: hold the plate instead of re-blurring a moving one
+    const html = document.documentElement;
+    const mo = new MutationObserver(() => html.classList.contains('sy-atlas-open') ? plate.pause() : plate.resume());
+    mo.observe(html, { attributes: true, attributeFilter: ['class'] });
+    return () => { mo.disconnect(); plate.destroy(); };
   }, []);
   return <section className={`home-hero sy-nebula${live ? ' is-live' : ''}`} aria-labelledby="hero-title">
     <canvas ref={canvas} className="sy-atmosphere" aria-hidden="true" />

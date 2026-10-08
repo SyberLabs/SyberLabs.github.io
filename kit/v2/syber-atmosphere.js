@@ -1,15 +1,17 @@
 /* SyberLabs Design System v2 "Atlas": atmosphere engine (Plate I).
    A live Clifford attractor. Particles iterate the map in the vertex shader, blend additively into a
    float buffer that decays each frame (long exposure), then tone-map + 2-level mip bloom.
-   Dependency-free ES module, raw WebGL2, 1 texel per CSS px, pauses off-screen and when hidden.
+   Dependency-free ES module, raw WebGL2, 1 texel per CSS px, at most 60 frames a second (the decay is per
+   frame, so 120/144 Hz screens see the same exposure for half the work), pauses off-screen and when hidden.
 
-   mount(canvas, { mode, avoid, caption, reduced, allowSoftware }) -> { supported, destroy() }
+   mount(canvas, { mode, avoid, caption, reduced, allowSoftware }) -> { supported, pause(), resume(), destroy() }
      mode     'hero' (default): 160k particles; plate beside `avoid` on wide screens, above copy on phones.
               'ambient': 40k particles, slower, 35% intensity, full-bleed (put a heavy scrim over it).
      avoid    Element whose right edge the plate stays clear of (the copy column). Hero only.
      caption  Element that receives the live "a … · b … · c … · d …" parameter line.
      reduced  true = one still exposure. Defaults to prefers-reduced-motion.
      allowSoftware  true = also run on software WebGL. For screenshot tooling only.
+   pause() holds the current frame (e.g. while a full-screen menu covers the plate); resume() picks up again.
    No WebGL2, a major-performance-caveat context, or a software renderer (SwiftShader, llvmpipe ...)
    -> { supported:false } and the canvas is hidden, so the CSS nebula behind it shows.
    Hero also sets --cx, --cy, --s (px) on the canvas parent so the degree ring (RING_SVG) follows the plate. */
@@ -20,22 +22,21 @@ export const paramLine = P => 'a\u00a0' + fmt(P[0]) + ' · b\u00a0' + fmt(P[1]) 
 
 export function mount(canvas, opts = {}) {
   const RM = opts.reduced != null ? !!opts.reduced : !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const off = () => { if (canvas) canvas.style.display = 'none'; return { supported: false, destroy() {} }; };
-  if (!canvas || !canvas.getContext || (!opts.allowSoftware && !fastGL())) return off();
-  const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, powerPreference: 'low-power' });
+  const off = () => { if (canvas) canvas.style.display = 'none'; return { supported: false, pause() {}, resume() {}, destroy() {} }; };
+  if (!canvas || !canvas.getContext) return off();
+  let gl = null;
+  try { gl = canvas.getContext('webgl2', { antialias: false, alpha: false, depth: false, stencil: false, powerPreference: 'low-power', failIfMajorPerformanceCaveat: !opts.allowSoftware }); } catch (e) { return off(); }
   if (!gl) return off();
+  if (!opts.allowSoftware && soft(gl)) { lose(gl); return off(); }
   try { return run(canvas, gl, opts.mode === 'ambient', RM, opts); } catch (e) { lose(gl); return off(); }
 }
 
 // Perf guard: software WebGL (SwiftShader, llvmpipe ...) stalls the main thread, so it counts as unsupported.
+// The plate's own context is the probe, so no throwaway context is created.
 const SOFT = /swiftshader|llvmpipe|softpipe|software|basic render/i;
-function fastGL() {
-  let g;
-  try { g = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true }); } catch (e) { return false; }
-  if (!g) return false;
+function soft(g) {
   const x = g.getExtension('WEBGL_debug_renderer_info'), r = x ? String(g.getParameter(x.UNMASKED_RENDERER_WEBGL)) : '';
-  lose(g);
-  return !SOFT.test(r);
+  return SOFT.test(r);
 }
 
 function lose(gl) { const x = gl.getExtension('WEBGL_lose_context'); if (x) x.loseContext(); }
@@ -61,7 +62,8 @@ vec3 c=pow(1.-exp(-a*E),vec3(.9));float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.
   const seeds = new Float32Array(N * 2); for (let i = 0; i < seeds.length; i++) seeds[i] = Math.random();
   const vP = vao(seeds), vQ = vao(new Float32Array([-1, -1, 3, -1, -1, 3]));
   const tex = gl.createTexture(), fb = gl.createFramebuffer();
-  let W = 0, H = 0, L, warm = 0, t = 0, last = 0, raf = 0, onScreen = true, lastCap = -1e9, dead = false;
+  let W = 0, H = 0, L, warm = 0, t = 0, last = 0, raf = 0, onScreen = true, lastCap = -1e9, dead = false, held = false, then = 0;
+  const GAP = 1000 / 60;
 
   function size() {
     const w = Math.max(1, Math.round(cv.clientWidth)), h = Math.max(1, Math.round(cv.clientHeight)); // DPR <= 1
@@ -87,7 +89,10 @@ vec3 c=pow(1.-exp(-a*E),vec3(.9));float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.
   const forms = t => { const k = Math.floor(t / 17), f = ss((t % 17 - 11) / 6); return [[drift(KF[k % 6], t), 1 - f], [drift(KF[(k + 1) % 6], t), f]]; };
 
   function frame(now) {
-    raf = 0; if (dead || gl.isContextLost()) return; size();
+    raf = 0; if (dead || held || gl.isContextLost()) return;
+    // at most 60 fps; the remainder carries so a 144 Hz screen still averages 60
+    if (!RM && then) { const el = now - then; if (el < GAP - 1.5) { go(); return; } then = now - (el % GAP < GAP - 1.5 ? el % GAP : 0); } else then = now;
+    size();
     const dt = last ? Math.min(0.05, (now - last) / 1000) : 0; last = now; t += dt * SPEED;
     const fs = forms(t + 2), P = fs[fs[1][1] > 0.5 ? 1 : 0][0];
     gl.bindFramebuffer(gl.FRAMEBUFFER, fb); gl.viewport(0, 0, W, H); gl.enable(gl.BLEND);
@@ -110,13 +115,13 @@ vec3 c=pow(1.-exp(-a*E),vec3(.9));float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.
     if (out && now - lastCap > 250) { lastCap = now; out.textContent = paramLine(P); }
     if (!RM) go();
   }
-  const go = () => { if (!dead && !RM && !raf && onScreen && !document.hidden) raf = requestAnimationFrame(frame); };
-  const onVis = () => { last = 0; go(); };
+  const go = () => { if (!dead && !held && !RM && !raf && onScreen && !document.hidden) raf = requestAnimationFrame(frame); };
+  const onVis = () => { last = 0; then = 0; go(); };
   const onResize = () => { if (!raf && !dead) raf = requestAnimationFrame(frame); };
   const onLost = e => { e.preventDefault(); dead = true; if (raf) cancelAnimationFrame(raf); raf = 0; };
   document.addEventListener('visibilitychange', onVis);
   cv.addEventListener('webglcontextlost', onLost);
-  const io = 'IntersectionObserver' in window ? new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; last = 0; go(); }) : null;
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; last = 0; then = 0; go(); }) : null;
   if (io) io.observe(cv);
   if (RM) addEventListener('resize', onResize);
   raf = requestAnimationFrame(frame);
@@ -124,6 +129,8 @@ vec3 c=pow(1.-exp(-a*E),vec3(.9));float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.
   let destroyed = false;
   return {
     supported: true,
+    pause() { held = true; if (raf) cancelAnimationFrame(raf); raf = 0; },
+    resume() { if (!held) return; held = false; last = 0; then = 0; go(); },
     destroy() {
       if (destroyed) return; destroyed = dead = true;
       if (raf) cancelAnimationFrame(raf); raf = 0;

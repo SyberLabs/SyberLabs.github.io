@@ -148,7 +148,9 @@ html.sy-field-live .sy-nebula, html.sy-field-live .sy-nebula--center { backgroun
 .sy-btn--solid.sy-magnetic:hover { transform: translate(var(--tx, 0px), calc(var(--ty, 0px) - 1px)); }
 
 /* ---------- reveal ---------- */
-html.sy-js .sy-reveal { opacity: 0; transform: translate3d(0, 28px, 0); filter: blur(6px); transition: opacity 700ms var(--sy-ease) var(--sy-delay, 0ms), transform 800ms var(--sy-ease) var(--sy-delay, 0ms), filter 700ms var(--sy-ease) var(--sy-delay, 0ms); will-change: opacity, transform; }
+html.sy-js .sy-reveal { opacity: 0; transform: translate3d(0, 28px, 0); filter: blur(6px); transition: opacity 700ms var(--sy-ease) var(--sy-delay, 0ms), transform 800ms var(--sy-ease) var(--sy-delay, 0ms), filter 700ms var(--sy-ease) var(--sy-delay, 0ms); }
+/* layer hint only while waiting: once revealed, an element drops back into the page instead of staying its own compositor layer */
+html.sy-js .sy-reveal:not(.is-in):not(.sy-split) { will-change: opacity, transform; }
 html.sy-js .sy-reveal.is-in { opacity: 1; transform: none; filter: none; }
 html.sy-js .sy-reveal.sy-split { opacity: 1; transform: none; filter: none; }
 html.sy-js .sy-split .sy-word { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .08em; margin-bottom: -.08em; }
@@ -256,7 +258,8 @@ html.sy-atlas-open, html.sy-atlas-open body { overflow: hidden; }
 /* ---------- spectrum text + glow helpers ---------- */
 .sy-glow { text-shadow: 0 0 40px color-mix(in srgb, var(--sy-accent) 40%, transparent); }
 @media (prefers-reduced-motion: no-preference) {
-  .sy-display-xl em, .sy-display em, .sy-spectrum-text { background-size: 220% 100%; animation: sy-hue 9s linear infinite; }
+  /* background-position repaints the text each step; 30 steps a second is indistinguishable at this speed and half the paints at 60 Hz */
+  .sy-display-xl em, .sy-display em, .sy-spectrum-text { background-size: 220% 100%; animation: sy-hue 9s steps(270) infinite; }
   @keyframes sy-hue { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
 }
 
