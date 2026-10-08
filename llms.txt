@@ -99,7 +99,6 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 ## Optional
 
-- [The factory](https://syberlabs.io/#factory): Agents build and review; humans look at the product
 - [Services](https://syberlabs.io/services/): Ask SyberLabs about a scoped, paid interactive reading pilot for a text you have the rights to use.
 - [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics.
 - [Full text for agents](https://syberlabs.io/llms-full.txt): Every project field in one file.
