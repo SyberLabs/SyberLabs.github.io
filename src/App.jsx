@@ -5,7 +5,7 @@ import { header as chromeHeader, footer as chromeFooter } from '../projects/proj
 import { mount, RING_SVG } from '../kit/v2/syber-atmosphere.js';
 import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
-import { drawAll, draw } from '../kit/v2/syber-sigil.js';
+import { params as sigilParams, drawAll, draw } from '../kit/v2/syber-sigil.js';
 import { boot, reducedMotion } from './site/site.js';
 import { mountThink } from './site/think.js';
 import { gallery } from './sketch-gallery/index.js';
