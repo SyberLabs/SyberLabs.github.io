@@ -21,6 +21,7 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 .home-hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 26px; margin-top: 32px; }
 .home-hero__explore { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--sy-vellum); font-weight: 500; background: linear-gradient(var(--sy-ice), var(--sy-ice)) 0 calc(100% - 10px)/100% 1px no-repeat; }
 .home-hero__explore:hover { color: var(--sy-ice); text-decoration: none; }
+.home-hero__voice { display: flex; flex-wrap: wrap; align-items: center; gap: 0 16px; margin: 12px 0 0; font-size: 14px; color: var(--sy-mist); }
 /* the RISE preview: a still of a reading in the middle of the plate, the attractor around it */
 .home-preview { position: absolute; z-index: 0; left: var(--cx); top: var(--cy); width: min(440px, calc(var(--s) * .74)); margin: 0; transform: translate(-50%, -50%); pointer-events: auto; }
 .home-preview img { display: block; width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--sy-rule-2); box-shadow: 0 30px 80px -30px #000, 0 0 60px -12px rgba(154,107,255,.45); }

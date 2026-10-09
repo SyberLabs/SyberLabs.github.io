@@ -18,6 +18,7 @@ import './home.css';
 // approach, about and contact (#about). The header and footer (nav, Sign in, All pages) are the shared chrome. The Claude connector instructions now live on /projects/rise/#composer and the
 // GitHits dependency totals on /stack/#dependencies (src/githits-panel.jsx).
 const RISE_TRY = 'https://rise.syberlabs.io/try/';
+const RISE_VOICE_DEMO = 'https://rise.syberlabs.io/voice-demo';
 
 function Icon({ name, size = 18, className = '' }) {
   const paths = {
@@ -65,6 +66,10 @@ function Hero() {
           <a className="sy-btn sy-btn--solid home-hero__cta" href={RISE_TRY}>Try a one-minute reading<Icon name="arrow" className="sy-icon--trail" /></a>
           <a className="home-hero__explore" href="#work">Explore the lab<Icon name="down" size={16} /></a>
         </div>
+        <p className="home-hero__voice">
+          <a className="home-hero__explore" href={RISE_VOICE_DEMO}>Custom ElevenLabs reading<Icon name="external" size={16} /></a>
+          <span>Plus or admin access required</span>
+        </p>
       </div>
     </div>
     <div className="home-hero__art">
