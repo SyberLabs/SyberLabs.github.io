@@ -154,7 +154,7 @@ for (const [rel, { html, list }] of parsed) {
       continue;
     }
     if (!resolves(path, file)) {
-      if (redirected(path)) continue;
+      if (redirected(path) || dynamicRoute(path)) continue;
       report(rel, `broken internal link (${key}): ${value}`, true);
       continue;
     }
