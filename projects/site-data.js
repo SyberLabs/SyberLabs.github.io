@@ -7,8 +7,8 @@
 // under stated conditions), deployed (it runs somewhere people can reach). Nothing is promoted
 // from one state to the next by wording.
 
-export const CONTACT = 'mailto:syberlabs.software@gmail.com';
-export const EMAIL = 'syberlabs.software@gmail.com';
+export const CONTACT = 'mailto:hello.mateorobles@gmail.com';
+export const EMAIL = 'hello.mateorobles@gmail.com';
 export const RESUME = '/mateo_robles_resume.pdf';
 export const LINKEDIN = 'https://www.linkedin.com/in/mateo-robles-71260b189';
 export const GITHUB = 'https://github.com/SyberLabs';
@@ -42,17 +42,12 @@ export const nav = [
 
 export const workWithUs = { label: 'Work with us', href: '/services/' };
 
+// The footer carries a few essentials; the full site map lives in the header's Menu (the Atlas), which works without JavaScript.
 export const footerLinks = [
-  { label: 'Approach', href: '/approach/' },
-  { label: 'How we build', href: '/stack/' },
-  { label: 'RISE app', href: RISE_APP, external: true },
-  { label: 'FLYSPACE preview', href: OMNI_PREVIEW, external: true },
-  { label: 'RISE Sketch', href: SKETCH_APP, external: true },
+  { label: 'Research', href: '/research/' },
   { label: 'Services', href: '/services/' },
-  { label: 'Résumé', href: RESUME },
   { label: 'GitHub', href: GITHUB, external: true },
-  { label: 'LinkedIn', href: LINKEDIN, external: true },
-  { label: 'Contact', href: CONTACT },
+  { label: 'Email', href: CONTACT },
   { label: 'Privacy', href: '/privacy/' },
 ];
 

@@ -458,7 +458,7 @@ Complete output, unedited. From seed 20260729 the kernel committed 25 events in 
 
 ## Contact
 
-- [Email](mailto:syberlabs.software@gmail.com): syberlabs.software@gmail.com
+- [Email](mailto:hello.mateorobles@gmail.com): hello.mateorobles@gmail.com
 - [GitHub](https://github.com/SyberLabs): github.com/SyberLabs
 - [LinkedIn](https://www.linkedin.com/in/mateo-robles-71260b189): Mateo Robles
 - [Résumé](https://syberlabs.io/mateo_robles_resume.pdf): PDF
