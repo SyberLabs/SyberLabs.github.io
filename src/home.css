@@ -316,28 +316,32 @@ html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0
 .home-rt { padding: 0; overflow: hidden;
   background: radial-gradient(70% 90% at 0% 0%, color-mix(in srgb, var(--sy-accent) 12%, transparent), transparent 60%),
     radial-gradient(60% 80% at 100% 100%, rgba(154,107,255,.14), transparent 60%), linear-gradient(160deg, rgba(20,18,56,.6), rgba(8,7,31,.7)); }
-.home-rt__main { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 80px); padding: clamp(26px, 3.2vw, 52px); }
-.home-rt__copy { display: grid; gap: 20px; align-content: start; }
+/* one scale for both columns: the flow is set as large as the copy it answers, and the card's padding and the
+   gutter between the columns come from the same step (--rt-pad), so the two halves read as one composition */
+.home-rt { --rt-pad: clamp(28px, 4.6vw, 72px); }
+.home-rt__main { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: calc(var(--rt-pad) * 1.35); padding: var(--rt-pad); align-items: stretch; }
+/* the copy: tight inside a group, generous between groups (eyebrow / title + lede / connector / actions) */
+.home-rt__copy { display: flex; flex-direction: column; align-items: flex-start; }
 .home-rt__copy > * { margin: 0; }
-.home-rt__top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 0; }
-.home-rt__title { max-width: 14ch; font-size: clamp(44px, 5vw, 80px); line-height: .95; text-wrap: balance; }
-.home-rt__lede { max-width: 34em; color: var(--sy-body); }
-.home-rt__connect { display: grid; gap: 8px; max-width: 460px; }
-.home-rt__connect > .sy-label { color: var(--sy-mist); }
-.home-rt__actions { margin-top: 4px; }
+.home-rt__copy > .home-rt__top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 28px; }
+.home-rt__copy > .home-rt__title { max-width: 14ch; font-size: clamp(46px, 5.4vw, 86px); line-height: .94; text-wrap: balance; margin-bottom: 30px; }
+.home-rt__copy > .home-rt__lede { max-width: 32em; color: var(--sy-body); margin-bottom: 44px; }
+.home-rt__copy > .home-rt__connect { display: grid; gap: 10px; width: 100%; max-width: 480px; margin-bottom: 30px; }
+.home-rt__connect > .sy-label { color: var(--sy-mist); margin: 0 0 2px; }
 
 /* the flow: three stages on a faint rail */
-.home-rt__flow { position: relative; align-self: center; }
-.home-rt__stages { position: relative; z-index: 1; list-style: none; margin: 0; padding: 6px 0; display: grid; gap: 40px; }
-.home-rt__stage { position: relative; z-index: 1; display: grid; grid-template-columns: 28px auto 1fr; grid-template-areas: "node n term" ". text text"; align-items: baseline; gap: 4px 12px; }
-.home-rt__node { grid-area: node; position: relative; z-index: 2; align-self: center; width: 27px; height: 27px; border-radius: 50%; border: 1px solid var(--sy-rule-2); background: #07061c; display: grid; place-items: center; }
-.home-rt__node i { width: 9px; height: 9px; border-radius: 50%; background: var(--c, var(--sy-accent)); opacity: .45; }
+.home-rt__flow { position: relative; align-self: center; padding-left: clamp(0px, 3vw, 48px); }
+/* the stages span the copy's height: their spacing grows with the card, not a fixed 40px */
+.home-rt__stages { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(52px, 6.4vw, 96px); }
+.home-rt__stage { position: relative; z-index: 1; display: grid; grid-template-columns: 38px auto 1fr; grid-template-areas: "node n term" ". text text"; align-items: baseline; gap: 10px 16px; }
+.home-rt__node { grid-area: node; position: relative; z-index: 2; align-self: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--sy-rule-2); background: #07061c; display: grid; place-items: center; }
+.home-rt__node i { width: 12px; height: 12px; border-radius: 50%; background: var(--c, var(--sy-accent)); opacity: .45; }
 .home-rt__stage:nth-of-type(1) .home-rt__node { --c: #90d8f0; }
 .home-rt__stage:nth-of-type(2) .home-rt__node { --c: #9a6bff; }
 .home-rt__stage:nth-of-type(3) .home-rt__node { --c: #ffb54a; }
-.home-rt__n { grid-area: n; font: 500 12px/1 var(--sy-mono); letter-spacing: .12em; color: var(--sy-dim); }
-.home-rt__term { grid-area: term; font: 400 clamp(30px, 2.6vw, 40px)/1 var(--sy-serif); }
-.home-rt__text { grid-area: text; font-size: 14.5px; line-height: 1.5; color: var(--sy-mist); max-width: 36ch; }
+.home-rt__n { grid-area: n; font: 500 13px/1 var(--sy-mono); letter-spacing: .14em; color: var(--sy-dim); }
+.home-rt__term { grid-area: term; font: 400 clamp(38px, 3.6vw, 56px)/.95 var(--sy-serif); letter-spacing: -.01em; }
+.home-rt__text { grid-area: text; font-size: clamp(16px, 1.15vw, 17.5px); line-height: 1.55; color: var(--sy-mist); max-width: 34ch; }
 
 /* the strike is drawn on a canvas (src/site/strike.js) that overhangs the flow; the nodes above it keep their CSS charge */
 .home-rt__strike { position: absolute; z-index: 0; pointer-events: none; }
@@ -346,11 +350,13 @@ html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0
 .home-rt__flow.is-still .home-rt__node i { opacity: 1; box-shadow: 0 0 14px var(--c); }
 .home-rt__flow.is-still .home-rt__stage:nth-of-type(3) .home-rt__node { border-color: #ffb54a; box-shadow: 0 0 24px rgba(255,181,74,.55); }
 
-/* the sequence: charge 0 ms, bolt 1 at 380 ms, node 2 at 640 ms, bolt 2 at 900 ms, burst at 1160 ms */
-.home-rt__flow.is-playing .home-rt__stage:nth-of-type(1) .home-rt__node i { animation: rt-charge 520ms ease-out both; }
-.home-rt__flow.is-playing .home-rt__stage:nth-of-type(2) .home-rt__node i { animation: rt-charge 520ms ease-out 640ms both; }
-.home-rt__flow.is-playing .home-rt__stage:nth-of-type(3) .home-rt__node i { animation: rt-charge 520ms ease-out 1160ms both; }
-.home-rt__flow.is-playing .home-rt__stage:nth-of-type(3) .home-rt__node { animation: rt-hit 900ms cubic-bezier(.16,1,.3,1) 1160ms both; }
+/* the sequence, in step with src/site/strike.js: (beat) 1 -> 2 (beat) 2 -> 3 (tiny beat) splash
+   node 1 builds 0-750 ms, node 2 lands at 1200, node 3 lands at 2550 and swells, the burst hits at 2850 */
+.home-rt__flow.is-playing .home-rt__stage:nth-of-type(1) .home-rt__node i { animation: rt-build 750ms cubic-bezier(.5,0,.75,0) both; }
+.home-rt__flow.is-playing .home-rt__stage:nth-of-type(2) .home-rt__node i { animation: rt-charge 700ms ease-out 1200ms both; }
+.home-rt__flow.is-playing .home-rt__stage:nth-of-type(3) .home-rt__node i { animation: rt-build 300ms cubic-bezier(.5,0,.75,0) 2550ms both; }
+.home-rt__flow.is-playing .home-rt__stage:nth-of-type(3) .home-rt__node { animation: rt-hit 1100ms cubic-bezier(.16,1,.3,1) 2850ms both; }
+@keyframes rt-build { from { opacity: .45; transform: scale(1); } to { opacity: 1; transform: scale(1.25); box-shadow: 0 0 16px var(--c), 0 0 30px var(--c); } }
 @keyframes rt-charge { 0% { opacity: .45; transform: scale(1); } 45% { opacity: 1; transform: scale(1.9); box-shadow: 0 0 22px var(--c), 0 0 40px var(--c); } 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 14px var(--c); } }
 @keyframes rt-hit { 0% { transform: scale(1); } 30% { transform: scale(1.35); border-color: #fff; box-shadow: 0 0 40px rgba(255,255,255,.8); } 100% { transform: scale(1); border-color: #ffb54a; box-shadow: 0 0 24px rgba(255,181,74,.55); } }
 
@@ -361,7 +367,8 @@ html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0
 .home-premium__text .sy-badge { margin-left: 12px; vertical-align: .15em; }
 .home-premium__name { font: 400 1.35em/1 var(--sy-serif); color: var(--sy-vellum); margin-right: .2em; }
 .home-premium__price { color: var(--sy-accent); font-weight: 600; }
-@media (max-width: 900px) { .home-rt__main { grid-template-columns: 1fr; } .home-rt__stages { padding-bottom: 50px; } }
+@media (max-width: 900px) { .home-rt__main { grid-template-columns: 1fr; gap: 64px; } .home-rt__flow { padding-left: 0; } .home-rt__stages { gap: 56px; padding-bottom: 50px; } .home-rt__copy > .home-rt__lede { margin-bottom: 36px; } }
+@media (max-width: 640px) { .home-rt__stage { grid-template-columns: 34px auto 1fr; gap: 8px 14px; } .home-rt__node { width: 34px; height: 34px; } .home-rt__term { font-size: 36px; } .home-rt__copy > .home-rt__title { margin-bottom: 24px; } }
 @media (max-width: 640px) { .home-rt__actions .sy-btn, .home-premium__go { flex: 1 1 auto; } .home-premium { padding: 18px; } }
 
 /* Grown in RISE Sketch: three looping timelapses under Plate IX, each a link into the app with that drawing */

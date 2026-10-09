@@ -14,9 +14,11 @@
      pts: the three node centres [x, y, radius] in the flow's own coordinates; w, h: the flow's size. */
 
 const PAD_X = 190, PAD_Y = 150;                  // the canvas overhangs the flow so the splash has room
-const T = { charge: 0, bolt1: 380, bolt2: 900, burst: 1160, end: 2500 };
-const LEADER = 260;                               // ms for a stepped leader to reach the next node
-const BURST = 1300;                               // ms for the burst to reach its frozen extent
+// The rhythm: (beat) 1 -> 2 (beat) 2 -> 3 (tiny beat) splash.
+//   0-750 node 1 charges | 750-1200 bolt 1 | 1200-2100 node 2 holds | 2100-2550 bolt 2 | 2550-2850 node 3 swells | 2850 burst
+const LEADER = 450;                               // ms for a stepped leader to reach the next node
+const BURST = 1500;                               // ms for the burst to reach its frozen extent
+const T = { bolt1: 750, bolt2: 2100, burst: 2850, end: 2850 + BURST + 100 };
 
 const rng32 = seed => () => { seed |= 0; seed = seed + 0x6d2b79f5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 const clamp01 = x => x < 0 ? 0 : x > 1 ? 1 : x;
@@ -125,10 +127,10 @@ function glow(ctx, x, y, r, c, a) {
   g.addColorStop(0, rgba(whiten(c, .8), a)); g.addColorStop(.25, rgba(c, a * .45)); g.addColorStop(1, rgba(c, 0));
   ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
 }
-function corona(x, y, seed) { // short fractal sparks around a charging node
+function corona(x, y, r, seed) { // short fractal sparks around a charging node (r: the node's radius)
   const rng = rng32(seed), out = [];
   for (let i = 0; i < 9; i++) {
-    const a = Math.PI * (.55 + rng() * .95) + (rng() < .25 ? Math.PI : 0), L = 7 + rng() * 13, r0 = 11;
+    const a = Math.PI * (.55 + rng() * .95) + (rng() < .25 ? Math.PI : 0), L = 8 + rng() * 15, r0 = r + 2;
     const p = [x + Math.cos(a) * r0, y + Math.sin(a) * r0], q = [x + Math.cos(a) * (r0 + L), y + Math.sin(a) * (r0 + L)];
     const pts = subdivide(p, q, rng, .7, 1.2); out.push({ pts, s: arc(pts), ph: rng() * 6.28 });
   }
@@ -241,7 +243,9 @@ export function mountStrike(canvas) {
     const b1 = boltState(time, T.bolt1), b2 = boltState(time, T.bolt2);
     if (b1) drawBolt(ctx, bolts[0], b1, colorAt);
     if (b2) drawBolt(ctx, bolts[1], b2, colorAt);
-    if (land2 > -40) drawBurst(ctx, n3[0], n3[1], time - T.burst, model);
+    // the tiny beat: node 3 swells with the arrived charge, then bursts
+    if (land2 > 0 && time < T.burst + 160) { const k = clamp01(land2 / (T.burst - T.bolt2 - LEADER)); glow(ctx, n3[0], n3[1], 18 + 22 * k, [255, 181, 74], (.25 + .55 * k) * (.85 + .15 * Math.sin(time / 19))); }
+    if (time >= T.burst - 16) drawBurst(ctx, n3[0], n3[1], time - T.burst, model);
     ctx.globalCompositeOperation = 'source-over';
   }
 
@@ -260,7 +264,7 @@ export function mountStrike(canvas) {
       canvas.width = Math.round((W + 2 * PAD_X) * dpr); canvas.height = Math.round((H + 2 * PAD_Y) * dpr);
       const railX = p[0][0];
       bolts = [bolt([p[0][0], p[0][1] + p[0][2]], [p[1][0], p[1][1] - p[1][2]], 101, railX), bolt([p[1][0], p[1][1] + p[1][2]], [p[2][0], p[2][1] - p[2][2]], 202, railX)];
-      coronas = [corona(p[0][0], p[0][1], 7), corona(p[1][0], p[1][1], 13)];
+      coronas = [corona(p[0][0], p[0][1], p[0][2], 7), corona(p[1][0], p[1][1], p[1][2], 13)];
       scene(t);
     },
     play() { if (raf || t >= T.end) return; t0 = performance.now() - Math.max(0, t); raf = requestAnimationFrame(frame); },
