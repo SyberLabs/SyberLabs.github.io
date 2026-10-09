@@ -5,7 +5,7 @@
 // Keep this to the last few weeks and prune older entries rather than letting it grow.
 export const latest = [
   { date: '2026-10-08', project: 'RISE Plus', state: 'in progress', title: 'Your own reading, read aloud',
-    text: 'Accepted by the owner at $8.99 a month (MasterMind record #30). Redesigned in its draft pull requests so the server keeps no copy of your text or the audio, meters each subscription and checks Stripe on every voicing; no real render has been shown and nothing is for sale yet.',
+    text: 'Accepted by the owner at $8.99 a month (MasterMind record #30). Merged and running in production on Stripe test mode: the server keeps no copy of your text or the audio, meters each subscription and checks Stripe on every voicing. A test purchase unlocked it and the voice was heard reading the buyer’s own file; nothing is for sale yet.',
     href: '/plus/' },
   { date: '2026-10-08', project: 'RISE Sketch', state: 'deployed', title: 'Share a drawing as a timelapse or a remix link',
     text: 'Shift+P turns a drawing into a 6–12 s video of the ink growing, sent to the share sheet on phones. Copy remix link puts the drawing itself in the URL, so the recipient watches it grow and keeps drawing. No server: the drawing travels in the link.',
