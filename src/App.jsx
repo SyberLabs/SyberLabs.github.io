@@ -8,6 +8,7 @@ import plateStillSm from './plate-i-sm.webp';
 import { params as sigilParams, drawAll, draw } from '../kit/v2/syber-sigil.js';
 import { boot, reducedMotion } from './site/site.js';
 import { mountThink } from './site/think.js';
+import { mountStrike } from './site/strike.js';
 import { gallery } from './sketch-gallery/index.js';
 import { githits } from './githits.js';
 import '../kit/v2/syber-atlas.css';
@@ -154,72 +155,31 @@ const RUNTIME = [
   ['03', 'Experience', 'Words arrive in time, with image, sound and procedural motion. You step inside the answer.'],
 ];
 
-// The strike, played once when the flow comes into view, then frozen on the burst: node 1 charges, a spectral bolt
-// strikes node 2, a second bolt strikes node 3, and node 3 erupts. Bolt shapes and the burst are seeded, so every
-// visit draws the same picture. Reduced motion shows the frozen end state.
-const SPECTRUM = ['#90d8f0', '#4890f0', '#9a6bff', '#ff58d6', '#ffb54a', '#6ff5a8'];
-const seeded = seed => () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
-function bolt([x1, y1], [x2, y2], seed) {
-  const r = seeded(seed), steps = Math.max(5, Math.round((y2 - y1) / 16)), pts = [[x1, y1]];
-  for (let i = 1; i < steps; i++) { const t = i / steps, swing = (i % 2 ? 1 : -1) * (5 + r() * 11); pts.push([x1 + (x2 - x1) * t + swing, y1 + (y2 - y1) * t + (r() - .5) * 6]); }
-  pts.push([x2, y2]);
-  const k = 2 + Math.floor(r() * (steps - 3)), [bx, by] = pts[k], dir = pts[k][0] > x1 ? 1 : -1; // one fork, off the outer side
-  const branch = [[bx, by], [bx + dir * (10 + r() * 8), by + 9 + r() * 6], [bx + dir * (16 + r() * 10), by + 20 + r() * 8]];
-  const d = p => p.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
-  return { main: d(pts), branch: d(branch) };
-}
-// The splash leans left, into the open gutter: anything aimed right (towards the stage's text) stays short.
-const BURST = (() => {
-  const r = seeded(20261008), rays = [], sparks = [], right = a => Math.cos(a * Math.PI / 180) > 0.15;
-  for (let i = 0; i < 16; i++) { const a = i * 22.5 + (r() - .5) * 10, l = 34 + r() * 46; rays.push({ a, l: right(a) ? l * .42 : l, c: SPECTRUM[i % SPECTRUM.length], d: Math.round(r() * 90) }); }
-  for (let i = 0; i < 22; i++) { const a = r() * 360, d = 30 + r() * 52; sparks.push({ a, r: right(a) ? d * .38 : d, s: 2 + r() * 4.5, c: SPECTRUM[(i * 5) % SPECTRUM.length], d: Math.round(r() * 160) }); }
-  return { rays, sparks };
-})();
-
+// The strike (src/site/strike.js), played once when the flow comes into view and frozen on its last frame: node 1
+// charges, a fractal bolt strikes node 2, a second strikes node 3, and node 3 bursts. Reduced motion shows that frame.
 function RuntimeFlow() {
-  const wrap = useRef(null);
-  const [geo, setGeo] = useState(null);
+  const wrap = useRef(null), canvas = useRef(null);
   const [state, setState] = useState('idle'); // idle -> playing (once) | still (reduced motion)
   useEffect(() => {
-    const el = wrap.current;
-    if (!el) return;
+    const el = wrap.current, strike = mountStrike(canvas.current);
     const measure = () => {
       const box = el.getBoundingClientRect();
       const pts = [...el.querySelectorAll('.home-rt__node')].map(n => { const b = n.getBoundingClientRect(); return [b.left - box.left + b.width / 2, b.top - box.top + b.height / 2, b.height / 2]; });
-      if (pts.length === 3) setGeo({ w: box.width, h: box.height, pts });
+      if (pts.length === 3) strike.layout(pts, box.width, box.height);
     };
     measure();
     const ro = 'ResizeObserver' in window ? new ResizeObserver(measure) : null;
     ro?.observe(el);
     let io = null;
-    if (reducedMotion() || !('IntersectionObserver' in window)) setState('still');
+    if (reducedMotion() || !('IntersectionObserver' in window)) { strike.still(); setState('still'); }
     else {
-      io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setState('playing'); io.disconnect(); } }, { threshold: 0.55 });
+      io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { strike.play(); setState('playing'); io.disconnect(); } }, { threshold: 0.55 });
       io.observe(el);
     }
-    return () => { ro?.disconnect(); io?.disconnect(); };
+    return () => { ro?.disconnect(); io?.disconnect(); strike.destroy(); };
   }, []);
-  const bolts = geo && [0, 1].map(i => { const [a, b] = [geo.pts[i], geo.pts[i + 1]]; return bolt([a[0], a[1] + a[2]], [b[0], b[1] - b[2]], 7919 * (i + 3)); });
   return <div ref={wrap} className={`home-rt__flow is-${state}`}>
-    {geo && <svg className="home-rt__bolts" width={geo.w} height={geo.h} viewBox={`0 0 ${geo.w} ${geo.h}`} aria-hidden="true">
-      <defs>
-        <linearGradient id="rt-spectral" gradientUnits="userSpaceOnUse" x1="0" y1={geo.pts[0][1]} x2="0" y2={geo.pts[2][1]}>
-          <stop offset="0" stopColor="#90d8f0" /><stop offset=".3" stopColor="#4890f0" /><stop offset=".55" stopColor="#9a6bff" /><stop offset=".8" stopColor="#ff58d6" /><stop offset="1" stopColor="#ffb54a" />
-        </linearGradient>
-        <filter id="rt-glow" x="-200%" y="-10%" width="500%" height="120%"><feGaussianBlur stdDeviation="3.2" /></filter>
-      </defs>
-      <line className="home-rt__rail" x1={geo.pts[0][0]} y1={geo.pts[0][1]} x2={geo.pts[2][0]} y2={geo.pts[2][1]} />
-      {bolts.map((b, i) => <g key={i} className={`home-rt__bolt home-rt__bolt--${i + 1}`}>
-        <path className="home-rt__bolt-glow" d={b.main} pathLength="1" filter="url(#rt-glow)" />
-        <path className="home-rt__bolt-core" d={b.main} pathLength="1" />
-        <path className="home-rt__bolt-fork" d={b.branch} pathLength="1" />
-      </g>)}
-    </svg>}
-    {geo && <div className="home-rt__burst" style={{ left: geo.pts[2][0], top: geo.pts[2][1] }} aria-hidden="true">
-      <i className="home-rt__bloom" />
-      {BURST.rays.map((x, i) => <i key={'r' + i} className="home-rt__ray" style={{ '--a': x.a + 'deg', '--l': x.l + 'px', '--c': x.c, '--d': x.d + 'ms' }} />)}
-      {BURST.sparks.map((x, i) => <i key={'s' + i} className="home-rt__spark" style={{ '--a': x.a + 'deg', '--r': x.r + 'px', '--s': x.s + 'px', '--c': x.c, '--d': x.d + 'ms' }} />)}
-    </div>}
+    <canvas ref={canvas} className="home-rt__strike" aria-hidden="true" />
     <ol className="home-rt__stages" aria-label="How the runtime works">
       {RUNTIME.map(([n, term, text]) => <li key={n} className="home-rt__stage">
         <span className="home-rt__node" aria-hidden="true"><i /></span>
