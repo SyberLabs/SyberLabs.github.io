@@ -13,20 +13,17 @@ export const RESUME = '/mateo_robles_resume.pdf';
 export const LINKEDIN = 'https://www.linkedin.com/in/mateo-robles-71260b189';
 export const GITHUB = 'https://github.com/SyberLabs';
 
-// The two things a visitor can use right now. Linked from the hero, the Atlas, the footer and each project page.
+// Public tools and previews. Linked from the hero, the Atlas, the footer and each project page.
 export const RISE_APP = 'https://rise.syberlabs.io/';
 export const RISE_SAMPLE = 'https://rise.syberlabs.io/jev-scene-demo';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
 export const SKETCH_APP = 'https://sketch.syberlabs.io/';
 
-// RISE Plus voice: the homepage section (src/App.jsx, PlusVoice), a RISE evidence row and the Atlas note, switched by
-// `state` alone. 'coming': built and tested in draft RISE pull requests (#542 gate and voice, #546 app, #545 legal), not
-// merged or deployed, so the page names the price and offers only the free reader. 'live': set it once Plus is deployed
-// at rise.syberlabs.io; the section then sends the reader to RISE's Settings, where the Plus voice row offers the
-// purchase. After flipping, run `node scripts/site-chrome.mjs` (Atlas note) and `node scripts/llms.mjs`. /plus/ is
-// static and has its own status labels, updated by its owner. Every line of `points` is checked against RISE's
-// worker/plus.mjs and wrangler PLUS_VOICES (wp/rise/plus-gate), src/app/plus.js and src/audio/plus-voice-store.js
-// (wp/rise/plus-voice-ui), and PRIVACY.md section 4 (wp/rise/plus-legal).
+// RISE Plus voice: the homepage runtime section (src/App.jsx), a RISE evidence row and the Atlas note, switched by
+// `state` alone. 'coming' keeps purchase links closed until a paid launch is verified. The implementation
+// in RISE #542 is merged; a merge does not establish live payment availability. 'live' sends the reader
+// to RISE's Settings. After verifying a paid launch and flipping, run `node scripts/site-chrome.mjs`
+// (Atlas note) and `node scripts/llms.mjs`. /plus/ is static and has its own status labels and full details.
 export const RISE_PLUS = {
   state: 'coming', // 'coming' | 'live'
   price: '$8.99',
@@ -34,14 +31,6 @@ export const RISE_PLUS = {
   // the Stripe payment link (PLUS_PAYMENT_LINK in RISE src/app/plus.js). The reader starts inside RISE, not at Stripe.
   href: 'https://rise.syberlabs.io/settings',
   source: 'https://github.com/SyberLabs/RISE/pull/542',
-  points: [
-    ['Your own reading', 'A reading of your own, such as a Composer Current, is spoken phrase by phrase, each phrase timed to the words on screen. One voicing is at most 10,000 characters.'],
-    ['Choose a voice', 'One of five premade ElevenLabs voices (Flash v2.5): Default, George, Rachel, Daniel or Charlotte. You pick it in Settings.'],
-    ['Kept in your browser', 'The audio lives only in your browser, so playing it again there costs nothing. The server keeps no copy of your text or the audio; voicing the same text again on another device, or after Erase, uses allowance again.'],
-    ['Allowance', '105,000 characters voiced per billing period, counted on the server for your subscription. It resets with the next one. A daily cap across all subscribers can pause the voice until the next day.'],
-    ['No account', 'Payment goes through Stripe, and a signed cookie in your browser names the subscription; Stripe is asked again before every voicing. You bring no key.'],
-    ['If it lapses', 'Reading continues silently, and the rest of RISE stays free.'],
-  ],
 };
 
 export const nav = [
@@ -142,7 +131,7 @@ export const projects = [
       ['Composer in Claude', 'Live as a custom connector: add one named RISE with the URL https://rise.syberlabs.io/api/mcp. Submission to Claude’s connector directory is planned.'],
       ['Earlier evidence', { label: 'Jev integration in RISE', href: '/jev/' }],
       ['Your own model', { label: 'Reader-owned AI: Jev and Kev', href: '/kev/' }],
-      ['RISE Plus', { label: RISE_PLUS.state === 'live' ? 'Your own reading, read aloud: live in RISE' : 'Your own reading, read aloud: decided and built, not yet released', href: '/plus/' }],
+      ['RISE Plus', { label: RISE_PLUS.state === 'live' ? 'Your own reading, read aloud: live in RISE' : 'Your own reading, read aloud: paid launch pending verification', href: '/plus/' }],
       ['Source', { label: 'github.com/SyberLabs/RISE', href: 'https://github.com/SyberLabs/RISE' }],
     ],
   },
@@ -157,7 +146,7 @@ export const projects = [
     primary: { label: 'Open the preview', href: OMNI_PREVIEW },
     secondary: { label: 'Run it locally', href: 'https://github.com/SyberLabs/Flyspace#run' },
     ghost: { label: 'View source', href: 'https://github.com/SyberLabs/Flyspace', icon: 'external' },
-    live: { href: OMNI_PREVIEW, label: 'omni.syberlabs.io', note: 'Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled in the preview.' },
+    live: { href: OMNI_PREVIEW, label: 'omni.syberlabs.io', note: 'The preview opens as OmniOS. Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled.' },
     video: { src: '/omni-demo/omnios-morning-20261005.mp4', poster: '/omni-demo/omnios-morning-20261005-poster.jpg', title: 'The morning: one question, cited sources, a crystal, a second persona',
       caption: 'Recorded on 2026-10-05 from a local production build of OmniOS@e95ae73, driven through the “morning” journey its own acceptance test specifies. The data in the blocks and the two persona answers are that test’s fixed fixtures, not live markets or a live model; the canvas, wires, provenance chips and lineage are the real interface. Silent, 30 seconds.' },
     why: { title: 'Why a canvas.',

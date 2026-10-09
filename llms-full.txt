@@ -112,7 +112,7 @@ Text version of the interactive map: This map needs JavaScript. It steps through
 - Composer in Claude: Live as a custom connector: add one named RISE with the URL https://rise.syberlabs.io/api/mcp. Submission to Claude’s connector directory is planned.
 - Earlier evidence: [Jev integration in RISE](https://syberlabs.io/jev/)
 - Your own model: [Reader-owned AI: Jev and Kev](https://syberlabs.io/kev/)
-- RISE Plus: [Your own reading, read aloud: decided and built, not yet released](https://syberlabs.io/plus/)
+- RISE Plus: [Your own reading, read aloud: paid launch pending verification](https://syberlabs.io/plus/)
 - Source: [github.com/SyberLabs/RISE](https://github.com/SyberLabs/RISE)
 
 ## FLYSPACE: Spatial AI workspace
@@ -136,7 +136,7 @@ Secondary link: [Run it locally](https://github.com/SyberLabs/Flyspace#run)
 
 Also: [View source](https://github.com/SyberLabs/Flyspace)
 
-Live at [omni.syberlabs.io](https://omni.syberlabs.io/): Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled in the preview.
+Live at [omni.syberlabs.io](https://omni.syberlabs.io/): The preview opens as OmniOS. Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled.
 
 ### The morning: one question, cited sources, a crystal, a second persona
 

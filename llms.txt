@@ -35,7 +35,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
   - Status: Live preview
   - Reflects: SyberLabs/Flyspace@e95ae73 · verified 2026-10-05
   - Source: https://github.com/SyberLabs/Flyspace
-  - Live: https://omni.syberlabs.io/ (Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled in the preview.)
+  - Live: https://omni.syberlabs.io/ (The preview opens as OmniOS. Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled.)
   - Evidence, deployed: The limited public preview has run at omni.syberlabs.io since 2026-10-03, deployed by hand from a recorded commit on Cloudflare Workers.
   - Evidence, tested: Unit tests across the stores, services and capability engine, and six Playwright specs including the “morning” golden path: shell → question → cited sources → crystal → second persona.
   - Evidence, implemented: The capability compiler and the server-side broker are implemented and hardened against fixtures and stubbed transports.
