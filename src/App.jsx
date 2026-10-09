@@ -115,7 +115,7 @@ function Hero() {
     </div>
     <nav className="home-launch" aria-label="Try a tool">
       <ul className="sy-wrap">
-        <li style={{ '--sy-accent': '#f2d9a6' }}><a href={RISE_APP}><span className="home-launch__meta">RISE Reader · Open beta</span><span className="home-launch__title">Read a poem<Icon name="external" /></span><span className="home-launch__note">Begin with words, light and sound.</span></a></li>
+        <li style={{ '--sy-accent': '#f2d9a6' }}><a href="https://rise.syberlabs.io/voice-demo"><span className="home-launch__meta">RISE Reader · Open beta</span><span className="home-launch__title">Try a custom voice reading<Icon name="external" /></span><span className="home-launch__note">ElevenLabs voice and psychedelic visuals. Plus or admin access required.</span></a></li>
         <li style={{ '--sy-accent': '#ff91df' }}><a href={SKETCH_APP}><span className="home-launch__meta">RISE Sketch · Live</span><span className="home-launch__title">Draw with living ink<Icon name="external" /></span><span className="home-launch__note">Make a mark. Watch it grow.</span></a></li>
         <li style={{ '--sy-accent': '#90d8f0' }}><a href={OMNI_PREVIEW}><span className="home-launch__meta">FLYSPACE · Preview</span><span className="home-launch__title">Explore a workspace<Icon name="external" /></span><span className="home-launch__note">Opens as OmniOS. AI needs the local app.</span></a></li>
       </ul>
