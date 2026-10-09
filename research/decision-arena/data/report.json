@@ -1,0 +1,334 @@
+{
+  "schema": "syberlabs.decision-arena-report/v1",
+  "runId": "arena-20261008T194257-ee72038",
+  "file": "run-1c8b7b636f83.json",
+  "partial": false,
+  "matchesRecorded": true,
+  "matchesReplay": true,
+  "scores": {
+    "rules": {
+      "results": 267,
+      "errors": 0,
+      "valid": {
+        "raw": 267,
+        "admitted": 267
+      },
+      "outOfMenu": 0,
+      "missing": 0,
+      "refusals": 0,
+      "explicit": {
+        "raw": {
+          "passed": 123,
+          "total": 147
+        },
+        "admitted": {
+          "passed": 123,
+          "total": 147
+        }
+      },
+      "contrast": {
+        "raw": {
+          "passed": 54,
+          "total": 57
+        },
+        "admitted": {
+          "passed": 54,
+          "total": 57
+        }
+      },
+      "stability": {
+        "cases": 89,
+        "identicalRaw": 89,
+        "identicalAdmitted": 89
+      },
+      "latencyMs": {
+        "p50": 0,
+        "p95": 0
+      },
+      "cost": {
+        "totalUsd": 0,
+        "per1kUsd": 0,
+        "unreported": 0
+      },
+      "calibration": {
+        "primary": {
+          "metric": "binary Brier, explicit-constraint fields",
+          "n": 0
+        },
+        "secondary": {
+          "probabilities": {
+            "n": 0,
+            "multiclassBrier": {
+              "n": 0,
+              "value": null
+            }
+          },
+          "confidence": {
+            "n": 0
+          }
+        },
+        "skipped": {
+          "noOutcome": 0,
+          "noProbabilities": 147,
+          "outOfRangeProbabilities": 0,
+          "noConfidence": 147,
+          "outOfRangeConfidence": 0
+        }
+      }
+    },
+    "rules-floor": {
+      "results": 267,
+      "errors": 0,
+      "valid": {
+        "raw": 267,
+        "admitted": 267
+      },
+      "outOfMenu": 0,
+      "missing": 0,
+      "refusals": 0,
+      "explicit": {
+        "raw": {
+          "passed": 36,
+          "total": 147
+        },
+        "admitted": {
+          "passed": 36,
+          "total": 147
+        }
+      },
+      "contrast": {
+        "raw": {
+          "passed": 0,
+          "total": 57
+        },
+        "admitted": {
+          "passed": 0,
+          "total": 57
+        }
+      },
+      "stability": {
+        "cases": 89,
+        "identicalRaw": 89,
+        "identicalAdmitted": 89
+      },
+      "latencyMs": {
+        "p50": 0,
+        "p95": 0
+      },
+      "cost": {
+        "totalUsd": 0,
+        "per1kUsd": 0,
+        "unreported": 0
+      },
+      "calibration": {
+        "primary": {
+          "metric": "binary Brier, explicit-constraint fields",
+          "n": 0
+        },
+        "secondary": {
+          "probabilities": {
+            "n": 0,
+            "multiclassBrier": {
+              "n": 0,
+              "value": null
+            }
+          },
+          "confidence": {
+            "n": 0
+          }
+        },
+        "skipped": {
+          "noOutcome": 0,
+          "noProbabilities": 147,
+          "outOfRangeProbabilities": 0,
+          "noConfidence": 147,
+          "outOfRangeConfidence": 0
+        }
+      }
+    },
+    "openai": {
+      "status": "not run: no key"
+    },
+    "jev": {
+      "status": "not run: no key"
+    },
+    "kev": {
+      "status": "not run: hardware/setup"
+    }
+  },
+  "agreement": {
+    "decisions": "admitted",
+    "deciders": {
+      "rules": {
+        "headlineRun": 1,
+        "explicit": {
+          "passed": 41,
+          "total": 49,
+          "rate": 0.836735,
+          "cases": 39,
+          "interval": {
+            "method": "case-clustered percentile bootstrap, 95%",
+            "estimate": 0.836735,
+            "lo": 0.744681,
+            "hi": 0.925,
+            "reps": 2000
+          }
+        },
+        "contrast": {
+          "passed": 18,
+          "total": 19,
+          "rate": 0.947368,
+          "interval": {
+            "method": "Wilson score over pairs, 95%",
+            "lo": 0.753613,
+            "hi": 0.990648
+          }
+        },
+        "runs": [
+          {
+            "run": 1,
+            "explicit": {
+              "passed": 41,
+              "total": 49,
+              "rate": 0.836735
+            },
+            "contrast": {
+              "passed": 18,
+              "total": 19,
+              "rate": 0.947368
+            }
+          },
+          {
+            "run": 2,
+            "explicit": {
+              "passed": 41,
+              "total": 49,
+              "rate": 0.836735
+            },
+            "contrast": {
+              "passed": 18,
+              "total": 19,
+              "rate": 0.947368
+            }
+          },
+          {
+            "run": 3,
+            "explicit": {
+              "passed": 41,
+              "total": 49,
+              "rate": 0.836735
+            },
+            "contrast": {
+              "passed": 18,
+              "total": 19,
+              "rate": 0.947368
+            }
+          }
+        ],
+        "acrossRuns": {
+          "runs": 3,
+          "explicitRate": {
+            "min": 0.836735,
+            "max": 0.836735
+          },
+          "contrastRate": {
+            "min": 0.947368,
+            "max": 0.947368
+          }
+        }
+      },
+      "rules-floor": {
+        "headlineRun": 1,
+        "explicit": {
+          "passed": 12,
+          "total": 49,
+          "rate": 0.244898,
+          "cases": 39,
+          "interval": {
+            "method": "case-clustered percentile bootstrap, 95%",
+            "estimate": 0.244898,
+            "lo": 0.069767,
+            "hi": 0.440058,
+            "reps": 2000
+          }
+        },
+        "contrast": {
+          "passed": 0,
+          "total": 19,
+          "rate": 0,
+          "interval": {
+            "method": "Wilson score over pairs, 95%",
+            "lo": 0,
+            "hi": 0.168179
+          }
+        },
+        "runs": [
+          {
+            "run": 1,
+            "explicit": {
+              "passed": 12,
+              "total": 49,
+              "rate": 0.244898
+            },
+            "contrast": {
+              "passed": 0,
+              "total": 19,
+              "rate": 0
+            }
+          },
+          {
+            "run": 2,
+            "explicit": {
+              "passed": 12,
+              "total": 49,
+              "rate": 0.244898
+            },
+            "contrast": {
+              "passed": 0,
+              "total": 19,
+              "rate": 0
+            }
+          },
+          {
+            "run": 3,
+            "explicit": {
+              "passed": 12,
+              "total": 49,
+              "rate": 0.244898
+            },
+            "contrast": {
+              "passed": 0,
+              "total": 19,
+              "rate": 0
+            }
+          }
+        ],
+        "acrossRuns": {
+          "runs": 3,
+          "explicitRate": {
+            "min": 0.244898,
+            "max": 0.244898
+          },
+          "contrastRate": {
+            "min": 0,
+            "max": 0
+          }
+        }
+      }
+    },
+    "differences": [
+      {
+        "a": "rules",
+        "b": "rules-floor",
+        "metric": "explicit agreement, a minus b, headline run, paired case-clustered bootstrap, 95%",
+        "estimate": 0.591837,
+        "lo": 0.38295,
+        "hi": 0.8,
+        "reps": 2000,
+        "clusters": 39,
+        "withinNoise": false
+      }
+    ]
+  },
+  "controls": "sealed"
+}

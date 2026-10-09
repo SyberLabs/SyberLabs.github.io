@@ -46,6 +46,8 @@ jobs:
         env:
           GITHITS_API_TOKEN: ${{ secrets.GITHITS_API_TOKEN }}
           GITHUB_TOKEN: ${{ github.token }}
+      - name: Check the Decision Arena report and replay match their recorded hashes
+        run: node scripts/export-arena.mjs --check
       - name: Prepare public site
         run: |
           pnpm build:site
@@ -95,6 +97,10 @@ jobs:
           test -s dist/research/jev-execution/report.css
           test -s dist/research/sybershoke/index.html
           test -s dist/research/sybershoke/report.css
+          test -s dist/research/decision-arena/index.html
+          test -s dist/research/decision-arena/arena.js
+          test -s dist/research/decision-arena/data/report.json
+          test -s dist/research/decision-arena/data/replay.json
           test -s dist/services/index.html
           test -s dist/services/services.css
           test -s dist/privacy/index.html
