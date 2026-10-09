@@ -1,6 +1,6 @@
 // /admin/account (RFC-0002 2.6, 3.3, 3.5): your sign-in methods with the date each was added, when this
 // session ends and started, Sign out everywhere, and the "Don't recognise one of these?" line. A user who
-// holds no keys at all sees the no-pages empty state first. While Google is on (Packet 5): Add Google, or
+// holds no keys at all sees guidance to their personal workspace first. While Google is on (Packet 5): Add Google, or
 // Continue with GitHub first when the session is over 10 minutes old, and the Add Google outcomes.
 import { esc, html } from '../http.js';
 import { ADD_GOOGLE_FRESH_MS, googleEnabled } from '../oauth.js';
@@ -62,9 +62,9 @@ export async function accountPage(ctx) {
   // "This session ends in 11 h 40 min, at 02:02 UTC. It started at 2026-10-09 14:02 UTC." (RFC-0002 3.5)
   const sessionLine = `This session ends in ${duration(expires - ctx.now)}, at <time datetime="${new Date(expires).toISOString()}">${utc(expires).slice(11)}</time>.${
     started != null ? ` It started at ${time(started)}.` : ''}`;
-  // The test is "holds no keys", not "no page opens" (RFC-0002 3.3). "an admin" keeps names out of the repo.
+  // Personal pages are available to every session; roles unlock team tools.
   const empty = ctx.perms.size === 0
-    ? `<div class="sy-empty staff-empty"><p>You're signed in, but only this account page is open to you. Ask an admin for a role: ${contact('Email SyberLabs')}.</p></div>`
+    ? `<div class="sy-empty staff-empty"><p>Your account is ready. Open your <a href="/admin/">launchpad</a> or view your <a href="/admin/saves">saved things</a>. If you need team tools, ask an admin for a role: ${contact('Email SyberLabs')}.</p></div>`
     : '';
 
   const body = `${head('Staff', 'Account.')}

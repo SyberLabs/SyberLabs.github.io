@@ -121,9 +121,9 @@ test('case 11: a signed-in GET writes zero rows and reads with permissions fresh
 test('/admin/ renders a portal whose tool cards follow the current permissions', async () => {
   const env = makeEnv();
   const cases = [
-    [['role_admin'], undefined, ['changes', 'people', 'roles', 'audit', 'saves', 'account']],
-    [[], ['id:users.read', 'id:audit.read'], ['people', 'roles', 'audit', 'saves', 'account']],
-    [[], ['id:audit.read'], ['audit', 'saves', 'account']],
+    [['role_admin'], undefined, ['saves', 'account', 'changes', 'people', 'roles', 'audit']],
+    [[], ['id:users.read', 'id:audit.read'], ['saves', 'account', 'people', 'roles', 'audit']],
+    [[], ['id:audit.read'], ['saves', 'account', 'audit']],
     [[], [], ['saves', 'account']],
   ];
   for (const [roles, perms, tools] of cases) {
@@ -138,6 +138,10 @@ test('/admin/ renders a portal whose tool cards follow the current permissions',
     const main = body.match(/<main[^>]*>([\s\S]*?)<\/main>/)[1];
     const cards = [...main.matchAll(/<a\b[^>]*>/g)].map(m => m[0]).filter(tag => /class="[^"]*\bportal-card\b/.test(tag)).map(tag => tag.match(/href="\/admin\/([^"/]+)"/)[1]);
     assert.deepEqual(cards, tools);
+    assert.ok(main.indexOf('id="apps-title"') < main.indexOf('id="tools-title"'), 'open a tool before personal and team administration');
+    for (const origin of ['rise', 'sketch', 'omni']) assert.match(main, new RegExp(`href="https://${origin}\\.syberlabs\\.io/"`));
+    assert.equal(main.includes('id="team-title"'), tools.length > 2, 'team section only appears when an allowed team destination exists');
+    assert.doesNotMatch(main, /portal-strip|portal-orbit|Pick up where you left off/);
     assert.doesNotMatch(body, /<script/i);
   }
 });
