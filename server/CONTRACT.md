@@ -114,7 +114,7 @@ the `admins` view).
   its Google Fonts links, `noindex`, `<!--email_off-->`, `staffHeader()`, public `footer()`); `alert(kind, html)`.
 - `signin.js`: handler `signinPage` (no D1 access); `ERROR_COPY` (RFC 3.4 codes: cancelled, expired, provider,
   disabled, expired_session, signed_out, signed_out_all; `p` names the provider), `contact(text)`.
-  `admin-home.js`: `adminHome` (303 to the first page the keys open, else `/admin/account`). `account.js`: `accountPage`
+  `admin-home.js`: `adminHome` (200 private portal; permission-filtered tool cards and account access for every staff session). `account.js`: `accountPage`
   (the no-keys empty state lives here).
 - `forbidden.js`: `forbiddenHtml(ctx, key)`, `deniedHtml(ctx, {provider, name, next})`,
   `notFoundHtml(ctx)`, `errorHtml(ctx, httpError)` (CSRF copy per RFC 3.4), `unavailableHtml(pathname)` (no ctx).

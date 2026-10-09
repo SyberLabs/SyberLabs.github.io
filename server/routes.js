@@ -26,7 +26,7 @@ export const ROUTES = [
   ['POST /auth/start/:provider',               PUBLIC,               startLogin],
   ['GET  /auth/callback/:provider',            PUBLIC,               callback],       // HEAD -> 405
   ['POST /auth/signout',                       PUBLIC,               signout],        // RFC-0002 2.2: works after the session ended
-  ['GET  /admin/',                             SIGNED_IN,            adminHome],      // 303 to the first page the keys open
+  ['GET  /admin/',                             SIGNED_IN,            adminHome],      // private portal; tools follow the session permissions
   ['GET  /admin/account',                      SIGNED_IN,            accountPage],
   ['POST /admin/account/signout-everywhere',   SIGNED_IN,            revokeOwnSessions],
   // Packet 3

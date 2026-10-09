@@ -37,7 +37,7 @@ function assertShell(body) {
   assert.match(body, /<html lang="en" data-field="calm">/);
   assert.match(body, /<meta name="robots" content="noindex, nofollow">/);
   assert.match(body, /<link rel="stylesheet" href="\/syberlabs\.css\?v=4">/);
-  assert.match(body, /<link rel="stylesheet" href="\/staff\.css\?v=3">/);
+  assert.match(body, /<link rel="stylesheet" href="\/staff\.css\?v=4">/);
   assert.match(body, /<!--email_off-->[\s\S]*<main id="main" class="staff sy-container">[\s\S]*<\/main>[\s\S]*<!--\/email_off-->/);
   // RFC-0002 2.6 and test 10: the staff header, never the public one, its Atlas or remote fonts.
   assert.match(body, /<a class="sy-skip" href="#main">Skip to content<\/a>\n<div class="sy-field-host" aria-hidden="true"><\/div>\n<header class="staff-header">/);
@@ -57,14 +57,14 @@ const noRawXss = body => {
 
 // ---- layout and nav ------------------------------------------------------------------------------
 
-test('nav is filtered by permissions and shown even when it holds only Account (RFC-0002 3.3, test 10)', () => {
-  assert.deepEqual(navItems(ctxFor()).map(i => i.id), ['account']);
-  assert.deepEqual(navItems(ctxFor({ perms: ['site:changes.read'] })).map(i => i.id), ['changes', 'account']);
-  assert.deepEqual(navItems(ctxFor({ perms: ['id:users.read', 'id:audit.read'] })).map(i => i.id), ['people', 'roles', 'audit', 'account']);
+test('nav is filtered by permissions and always includes Portal and Account (RFC-0002 3.3, test 10)', () => {
+  assert.deepEqual(navItems(ctxFor()).map(i => i.id), ['portal', 'account']);
+  assert.deepEqual(navItems(ctxFor({ perms: ['site:changes.read'] })).map(i => i.id), ['portal', 'changes', 'account']);
+  assert.deepEqual(navItems(ctxFor({ perms: ['id:users.read', 'id:audit.read'] })).map(i => i.id), ['portal', 'people', 'roles', 'audit', 'account']);
 
   const none = page(ctxFor(), { title: 'X', body: '', section: 'account' });
   assertShell(none);
-  assert.match(none, /<nav class="staff-nav" aria-label="Staff"><ul><li><a href="\/admin\/account" aria-current="page">Account<\/a><\/li><\/ul><\/nav>/);
+  assert.match(none, /<nav class="staff-nav" aria-label="Staff"><ul><li><a href="\/admin\/">Portal<\/a><\/li><li><a href="\/admin\/account" aria-current="page">Account<\/a><\/li><\/ul><\/nav>/);
   const reader = page(ctxFor({ perms: ['site:changes.read'] }), { title: 'X', body: '', section: 'changes' });
   assert.match(reader, /<a href="\/admin\/changes" aria-current="page">What changed<\/a>/);
   assert.match(reader, /<a href="\/admin\/account">Account<\/a>/);
@@ -275,11 +275,16 @@ test('503 renders in place: sign-in unavailable on /auth/, staff pages unavailab
 
 // ---- admin pages through handle() --------------------------------------------------------------
 
-test('no keys at all: /admin/ lands on the account page, which starts with the no-pages empty state', async () => {
+test('no keys at all: the portal offers Account and the account page explains access', async () => {
   const env = makeEnv();
   const nobody = await signIn(env.DB, { perms: [], login: XSS });
   const home = await call(env, '/admin/', { cookie: nobody.cookie });
-  assert.equal(home.headers.get('Location'), '/admin/account');
+  assert.equal(home.status, 200);
+  const portal = await home.text();
+  noRawXss(portal);
+  assert.match(portal, /<a\b(?=[^>]*class="[^"]*\bportal-card\b)(?=[^>]*href="\/admin\/account")[^>]*>/);
+  assert.doesNotMatch(portal, /href="\/admin\/(?:changes|people|roles|audit)"/);
+  assert.match(portal, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
   const empty = await (await call(env, '/admin/account', { cookie: nobody.cookie })).text();
   assertShell(empty);
   noRawXss(empty);

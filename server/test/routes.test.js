@@ -177,6 +177,9 @@ test('signed in without the route key: 403 page naming the permission', async ()
   assert.match(body, /This page is for people who can see staff accounts, their roles and sign-ins\. Ask an admin for access: <a href="mailto:[^"]+">Email SyberLabs<\/a>\./);
   assert.match(body, /<title>No access · SyberLabs staff<\/title>/);
   res = await call(env, '/admin/', { cookie });
-  assert.equal(res.status, 303);
-  assert.equal(res.headers.get('Location'), '/admin/changes');
+  assert.equal(res.status, 200);
+  const portal = await res.text();
+  assert.match(portal, /launchpad\./);
+  assert.match(portal, /href="\/admin\/changes"/);
+  assert.doesNotMatch(portal, /href="\/admin\/people"/);
 });
