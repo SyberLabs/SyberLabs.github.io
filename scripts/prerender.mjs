@@ -13,8 +13,10 @@ async function inject(file, markerRe, replacement) {
   await writeFile(file, replacement(html));
 }
 
-const { render } = await import(pathToFileURL(resolve('dist-ssr/entry-server.js')).href);
+const { render, renderGitHits } = await import(pathToFileURL(resolve('dist-ssr/entry-server.js')).href);
 await inject(resolve('dist/index.html'), /<div id="root"><\/div>/, html => html.replace('<div id="root"></div>', `<div id="root">${render()}</div>`));
+// /stack/ carries the GitHits dependency totals (src/githits-panel.jsx), built from the same snapshots as the project panels.
+await inject(resolve('dist/stack/index.html'), /<!-- stack:githits -->/, html => html.replace('<!-- stack:githits -->', renderGitHits()));
 await rm('dist-ssr', { recursive: true, force: true });
 
 const { projects, renderProject, renderSections } = await import(pathToFileURL(resolve('projects/project-template.js')).href);
@@ -39,4 +41,4 @@ for (const p of projects) {
     .replace('<html lang="en">', `<html lang="en" style="--accent:${p.accent};--sy-accent:${p.accent}">`)
     .replace('<div id="app"></div>', `<div id="app">${page.body}</div>`));
 }
-console.log(`prerender: homepage, ${projects.length - 1} project pages and the RISE sections`);
+console.log(`prerender: homepage, ${projects.length - 1} project pages, the RISE sections and the /stack/ dependency totals`);

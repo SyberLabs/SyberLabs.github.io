@@ -204,6 +204,17 @@ footer a{text-decoration-color:rgba(169,163,199,.5);text-underline-offset:3px}
   .mark{animation:none;filter:none;transition:none;transform:none}
   .cta,.passage .w{transition:none}
 }
+/* ---------- Composer in Claude: the custom connector (moved here from the homepage) ---------- */
+.rise-connector{display:grid;gap:8px;max-width:520px;margin:var(--space-6,32px) 0 0;font-family:var(--sy-sans)}
+.rise-connector>div{display:grid;grid-template-columns:3.2em minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px 8px 8px 12px;border:1px solid var(--sy-rule-2);border-radius:10px;background:rgba(6,5,26,.7)}
+.rise-connector dt{font:500 11px/1 var(--sy-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--sy-dim)}
+.rise-connector dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.rise-connector code{font:500 13px/1.4 var(--sy-mono);color:var(--sy-vellum);user-select:all}
+.rise-copy{min-width:64px;min-height:32px;padding:0 10px;border:1px solid color-mix(in srgb,var(--sy-accent) 50%,var(--sy-rule-2));border-radius:999px;background:transparent;color:var(--sy-vellum);font:500 12px/1 var(--sy-sans);cursor:pointer}
+.rise-copy:hover{background:color-mix(in srgb,var(--sy-accent) 16%,transparent)}
+.rise-copy.is-done{border-color:var(--sy-live);color:var(--sy-live)}
+.rise-composer a.sy-btn--solid{color:#07061c}
+.rise-composer .sy-small{margin:var(--space-3,12px) 0 0;color:var(--sy-dim)}
 </style>
 </head>
 <body class="rise-page">
@@ -358,6 +369,37 @@ footer a{text-decoration-color:rgba(169,163,199,.5);text-underline-offset:3px}
     </div>
   </section>
 
+  <!-- Composer in Claude: the connector instructions, moved here from the homepage (2026-10-09). -->
+  <section class="pj-section sy-container rise-composer" id="composer" aria-labelledby="composer-title">
+    <div class="pj-split" data-reveal>
+      <h2 id="composer-title" class="sy-eyebrow">Composer in Claude</h2>
+      <div class="pj-split__main">
+        <p class="sy-title">The experiential runtime for machine intelligence.</p>
+        <p class="sy-body">Models think in text. RISE gives their answers time, image, sound and motion: a reading you step inside, not a block you scroll past. RISE Composer is free and live in Claude: ask Claude for a reading and RISE presents the answer as a spoken, visual reading.</p>
+      </div>
+    </div>
+    <ol class="pj-how pj-how--steps pj-how--3" aria-label="How the runtime works" data-reveal-children>
+      <li class="pj-how__item"><span class="sy-label">01</span><h3>Compose</h3><p>A model writes the reading: the words, how they arrive, and the scene around them.</p></li>
+      <li class="pj-how__item"><span class="sy-label">02</span><h3>Admit</h3><p>RISE checks every choice against what it can perform. Nothing plays that it did not admit.</p></li>
+      <li class="pj-how__item"><span class="sy-label">03</span><h3>Experience</h3><p>Words arrive in time, with image, sound and procedural motion. You step inside the answer.</p></li>
+    </ol>
+    <div class="pj-split">
+      <span aria-hidden="true"></span>
+      <div class="pj-split__main">
+        <p class="sy-body" style="margin-top:var(--space-7,48px)">Add it to Claude as a custom connector:</p>
+        <dl class="rise-connector">
+          <div><dt>Name</dt><dd><code>RISE</code></dd><button class="rise-copy" type="button" data-copy="RISE" aria-label="Copy the connector name" hidden>Copy</button></div>
+          <div><dt>URL</dt><dd><code>https://rise.syberlabs.io<wbr>/api/mcp</code></dd><button class="rise-copy" type="button" data-copy="https://rise.syberlabs.io/api/mcp" aria-label="Copy the connector URL" hidden>Copy</button></div>
+        </dl>
+        <p class="sy-small">Submission to Claude’s connector directory is planned.</p>
+        <div class="sy-actions pj-actions">
+          <a class="sy-btn sy-btn--solid" href="https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp" rel="noopener">How to add a connector<svg class="sy-icon sy-icon--trail" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a>
+          <a class="sy-btn sy-btn--line" href="https://rise.syberlabs.io/">Open RISE</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- rise:sections -->
   <!-- Filled at build time by scripts/prerender.mjs from projects/site-data.js: live bar, demo film, why, use, design, evidence and facts. -->
 </main>
@@ -391,6 +433,17 @@ footer a{text-decoration-color:rgba(169,163,199,.5);text-underline-offset:3px}
     });
     hero.addEventListener('pointerleave', () => marks.forEach(m => { m.style.setProperty('--ry','0deg'); m.style.setProperty('--rx','0deg'); }));
   }
+
+  /* Copy buttons for the Claude connector: shown only when this script runs */
+  document.querySelectorAll('[data-copy]').forEach(b => {
+    b.hidden = false;
+    b.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(b.dataset.copy); }
+      catch (e) { const t = document.createElement('textarea'); t.value = b.dataset.copy; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;opacity:0'; document.body.append(t); t.select(); try { document.execCommand('copy'); } catch (e2) {} t.remove(); }
+      b.textContent = 'Copied'; b.classList.add('is-done');
+      setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('is-done'); }, 1600);
+    });
+  });
 
   /* Paced passage: user-started only; the full text stays readable at rest */
   const passage = document.getElementById('passage');
