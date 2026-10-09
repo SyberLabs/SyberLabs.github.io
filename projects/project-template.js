@@ -4,7 +4,7 @@
 // and footer into the static pages.
 // Each project carries its sigil (a de Jong attractor seeded by its slug) large in a plate frame, drawn flat
 // by kit/v2/syber-sigil.js and, when WebGL is fast, spun in 3D over it by src/site/field.js.
-import { projects, nav, workWithUs, footerLinks, siteMap, EMAIL } from './site-data.js';
+import { projects, nav, footerLinks, siteMap, EMAIL } from './site-data.js';
 import { params as sigilParams } from '../kit/v2/syber-sigil.js';
 export { projects };
 
@@ -34,25 +34,29 @@ const atlas = () => `<div class="sy-atlas" id="sy-atlas" role="dialog" aria-labe
   <span class="sy-atlas__backdrop" aria-hidden="true"></span>
   <div class="sy-atlas__panel">
     <div class="sy-atlas__head"><p class="sy-eyebrow">Atlas / every page on syberlabs.io</p><button class="sy-atlas__close" type="button" aria-label="Close menu">${icon('close', 20)}</button></div>
+    <nav class="sy-atlas__primary" aria-label="Main sections"><ul>${navLinks()}</ul></nav>
     <div class="sy-atlas__groups">${siteMap.map(group => `<section class="sy-atlas__group" aria-labelledby="atlas-${group.title.toLowerCase()}"><h2 id="atlas-${group.title.toLowerCase()}" class="sy-atlas__title">${esc(group.title)}</h2><ul>${group.items.map(item => `<li><a href="${item.href}"${item.external ? ' rel="noopener"' : ''}${item.accent ? ` style="--sy-accent:${item.accent}"` : ''}>${item.sigil ? `<canvas class="sy-atlas__sigil" data-sigil="${item.sigil}" data-color="${item.accent}" aria-hidden="true"></canvas>` : '<span class="sy-atlas__dot" aria-hidden="true"></span>'}<span class="sy-atlas__label">${esc(item.label)}${item.external ? ' ' + icon('external', 14) : ''}</span><span class="sy-atlas__note">${esc(item.note)}</span></a></li>`).join('')}</ul></section>`).join('')}</div>
     <p class="sy-atlas__foot"><span>Press <kbd>/</kbd> anywhere to open this map · <kbd>Esc</kbd> closes</span><a href="mailto:${EMAIL}">${EMAIL}</a></p>
   </div>
 </div>`;
 
+// The five primary links (projects/site-data.js `nav`): the header row on wide screens, the top of the Atlas on every
+// screen, so a phone reaches them from Menu in one tap.
+const navLinks = (current = '') => nav.map(item => `<li><a href="${item.href}"${item.id === current ? ' aria-current="page"' : ''}${item.external ? ' rel="noopener"' : ''}>${item.label}${item.external ? ' ' + icon('external', 14) : ''}</a></li>`).join('');
+
 // Site chrome: identical markup on every static page (see scripts/site-chrome.mjs) and the project pages.
 // `current` marks the page: a nav id for the header, a link href for the footer.
 // `sticky` (default) keeps the header in flow; the homepage passes false so it floats over the hero.
+// Sign in (the account control) sits after the Menu, set as a quiet text link (src/syberlabs.css `.sy-account`).
 export const header = (current = '', { sticky = true, script = true } = {}) => {
-  const cur = item => item.id === current ? ' aria-current="page"' : '';
-  const links = nav.map(item => `<li><a href="${item.href}"${cur(item)}>${item.label}</a></li>`).join('');
   return `<a class="sy-skip" href="#main">Skip to content</a>
 <div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
 <header class="sy-header${sticky ? ' sy-header--sticky' : ''}"><div class="sy-header__in">
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
-  <nav class="sy-nav" aria-label="Primary"><ul>${links}</ul><a class="sy-btn sy-btn--line" href="${workWithUs.href}">${workWithUs.label}</a></nav>
+  <nav class="sy-nav" aria-label="Primary"><ul>${navLinks(current)}</ul></nav>
   <details class="sy-menu"><summary aria-label="Menu" aria-expanded="false" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas()}</details>
   <div class="sy-account" data-account-state="checking">
-    <a class="sy-btn sy-account-link" href="/admin/"><span class="sy-account-label">Account</span>${icon('arrow', 16)}</a>
+    <a class="sy-account-link" href="/admin/"><span class="sy-account-label">Account</span></a>
     <div class="sy-account-member" hidden>
       <a class="sy-btn sy-account-launchpad" href="/admin/">Launchpad${icon('arrow', 16)}</a>
       <a class="sy-account-avatar" href="/admin/account" aria-label="Your profile" title="Your profile"><span class="sy-account-initial" aria-hidden="true">${icon('user', 20)}</span></a>
@@ -61,9 +65,9 @@ export const header = (current = '', { sticky = true, script = true } = {}) => {
 </div></header>${script ? '\n<script type="module" src="/syberlabs.js"></script>' : ''}`;
 };
 
-// The footer carries the whole map too, so every page is reachable without opening the menu (and without JS).
-// The footer: one piece of art (the orb from mateo.syberlabs.space) and one hairline bar. Radical simplicity on purpose:
-// every page stays one tap away through the header's Menu (the Atlas), so the footer does not repeat the site map.
+// The footer: one piece of art (the orb from mateo.syberlabs.space), one hairline bar of essentials, and "All pages",
+// the full site map as a secondary directory. It is a <details>, closed by default, so the footer stays quiet and every
+// page is still reachable without JavaScript and without opening the header's Menu.
 export const footer = (current = '') => `<footer class="sy-footer">
 <div class="sy-footer__in">
   <a class="sy-footer__art" href="/" aria-label="SyberLabs home"><img src="/footer-orb.webp" alt="" width="960" height="523" loading="lazy" decoding="async"></a>
@@ -72,6 +76,9 @@ export const footer = (current = '') => `<footer class="sy-footer">
     <nav aria-label="Footer">${footerLinks.map(link => `<a href="${link.href}"${link.href === current ? ' aria-current="page"' : ''}>${link.label}${link.external ? ' ' + icon('external', 14) : ''}</a>`).join('')}</nav>
     <span class="sy-footer__copy">© 2026</span>
   </div>
+  <details class="sy-footer__all"><summary>All pages</summary>
+    <nav class="sy-footer__dir" aria-label="All pages">${siteMap.map(group => `<div><h2>${esc(group.title)}</h2><ul>${group.items.map(item => `<li><a href="${item.href}"${item.href === current ? ' aria-current="page"' : ''}${item.external ? ' rel="noopener"' : ''}>${esc(item.label)}${item.external ? ' ' + icon('external', 12) : ''}</a></li>`).join('')}</ul></div>`).join('')}</nav>
+  </details>
 </div></footer>`;
 
 // Breadcrumb for every page below the homepage.
@@ -262,7 +269,7 @@ export function renderProject(p) {
   return {
     title: `${p.pageTitle || p.name} | SyberLabs`,
     description: `${p.intro} ${p.summary || ''}`.trim(),
-    body: `${header('work')}
+    body: `${header('projects')}
 <main id="main">
   <section class="pj-hero sy-container" aria-labelledby="project-title">
     <div class="pj-hero__copy">

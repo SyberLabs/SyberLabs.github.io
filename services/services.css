@@ -36,3 +36,13 @@
   .inquiry h2 { font-size: 32px; line-height: 36px; }
   .inquiry .primary-action { width: 100%; }
 }
+
+/* What a pilot produces (#pilot): reuses the .details columns; lists and the heading row are its own. */
+.pilot { margin-top: var(--space-9); }
+.pilot-head { max-width: calc(var(--content-max) + 2 * var(--gutter)); margin: 0 auto; padding: var(--space-8) var(--gutter) 0; }
+.pilot-head h2 { max-width: 760px; margin: var(--space-4) 0 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; }
+.pilot-head p:not(.eyebrow) { max-width: var(--measure); margin: var(--space-5) 0 var(--space-5); font-size: 16px; line-height: 24px; color: var(--text-2); }
+.pilot ul, .pilot ol { margin: 0 0 var(--space-3); padding-left: 1.2em; color: var(--text-2); font-size: 16px; line-height: 24px; }
+.pilot li + li { margin-top: var(--space-2); }
+.pilot article p { font-size: 14px; line-height: 22px; }
+@media (max-width: 640px) { .pilot-head h2 { font-size: 32px; line-height: 36px; } .pilot-head .sy-btn { width: 100%; } }
