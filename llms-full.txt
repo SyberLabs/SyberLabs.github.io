@@ -99,7 +99,7 @@ Text version of the interactive map: This map needs JavaScript. It steps through
 - deployed: The reader, Library, Chapel, Make rooms and the interactive sample run at rise.syberlabs.io.
 - tested: Unit, integration and browser suites run in CI; the first-load budget and the design diagram are checked on every release.
 - measured: Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.
-- not yet: RISE Plus voice (an ElevenLabs voice, $8.99 a month) is not available yet. It is built and tested in draft pull requests that are not merged or deployed.
+- not yet: RISE Plus voice (an ElevenLabs voice, $8.99 a month) has a merged implementation in RISE #542; paid launch remains pending verification.
 - not yet: No reader study has been run; release evidence still records zero real-device and stranger-testing records. Realtime Live and Dive are out of current scope by decision.
 
 ### Facts
@@ -112,7 +112,7 @@ Text version of the interactive map: This map needs JavaScript. It steps through
 - Composer in Claude: Live as a custom connector: add one named RISE with the URL https://rise.syberlabs.io/api/mcp. Submission to Claude’s connector directory is planned.
 - Earlier evidence: [Jev integration in RISE](https://syberlabs.io/jev/)
 - Your own model: [Reader-owned AI: Jev and Kev](https://syberlabs.io/kev/)
-- RISE Plus: [Your own reading, read aloud: decided and built, not yet released](https://syberlabs.io/plus/)
+- RISE Plus: [Your own reading, read aloud: paid launch pending verification](https://syberlabs.io/plus/)
 - Source: [github.com/SyberLabs/RISE](https://github.com/SyberLabs/RISE)
 
 ## FLYSPACE: Spatial AI workspace

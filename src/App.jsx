@@ -77,13 +77,12 @@ function Hero() {
       <div className="home-hero__copy" ref={copy}>
         <p className="sy-eyebrow" data-reveal>SyberLabs / Independent AI software lab</p>
         <h1 id="hero-title" className="sy-display-xl home-hero__title" data-split>Read.<br /> <Think ref={think} /><br /> Build.</h1>
-        <p className="sy-body-lg home-hero__intro" data-reveal>SyberLabs builds creative tools for people and dependable infrastructure for AI agents. Read with <a href="#work">RISE</a>, think on <a href="#work">FLYSPACE</a>, build with <a href="#work">SyberWork</a>.</p>
+        <p className="sy-body-lg home-hero__intro" data-reveal>Creative tools for people. Dependable infrastructure for AI agents. Explore the work, try a tool, or inspect the evidence behind it.</p>
         <div className="home-hero__actions" data-reveal>
-          <a className="sy-btn sy-btn--solid" href={RISE_APP}>Open RISE<Icon name="arrow" className="sy-icon--trail" /></a>
-          <a className="sy-btn sy-btn--line" href={OMNI_PREVIEW}>Try the FLYSPACE preview<Icon name="external" /></a>
-          <a className="sy-btn sy-btn--ghost" href="#sketch">Play: RISE Sketch<Icon name="down" /></a>
-          <a className="sy-btn sy-btn--ghost" href="#work">See the work<Icon name="down" /></a>
+          <a className="sy-btn sy-btn--solid" href={RISE_APP}>Read today’s poem<Icon name="arrow" className="sy-icon--trail" /></a>
+          <a className="sy-btn sy-btn--line" href="#work">Explore the work<Icon name="down" /></a>
         </div>
+        <p className="home-hero__note" data-reveal>Free in your browser. No account needed.</p>
         <div className="home-hero__founder" data-reveal>
           <span>Founded in 2026 by <strong>Mateo Robles</strong></span>
           <ul>
@@ -95,10 +94,13 @@ function Hero() {
         </div>
       </div>
     </div>
-    <nav className="sy-strip home-strip" aria-label="Projects at a glance">
-      <ol>{featured.map((p, i) => <li key={p.slug} style={{ '--sy-accent': p.accent }}><a href={`/projects/${p.slug}/`}><span className="sy-strip__n">0{i + 1}<span className="home-strip__cat"> · {SHOW[p.slug].kicker}</span></span><span className="sy-strip__t">{p.name}</span><Badge status={p.status} bare /></a></li>)}</ol>
+    <nav className="home-launch" aria-label="Try a tool">
+      <ul className="sy-wrap">
+        <li style={{ '--sy-accent': '#f2d9a6' }}><a href={RISE_APP}><span className="home-launch__meta">RISE Reader · Open beta</span><span className="home-launch__title">Read a poem<Icon name="external" /></span><span className="home-launch__note">Begin with words, light and sound.</span></a></li>
+        <li style={{ '--sy-accent': '#ff91df' }}><a href={SKETCH_APP}><span className="home-launch__meta">RISE Sketch · Live</span><span className="home-launch__title">Draw with living ink<Icon name="external" /></span><span className="home-launch__note">Make a mark. Watch it grow.</span></a></li>
+        <li style={{ '--sy-accent': '#90d8f0' }}><a href={OMNI_PREVIEW}><span className="home-launch__meta">FLYSPACE · Preview</span><span className="home-launch__title">Explore a workspace<Icon name="external" /></span><span className="home-launch__note">Try the canvas. AI needs the local app.</span></a></li>
+      </ul>
     </nav>
-    <a className="home-scrollcue" href="#work" aria-label="Scroll to the work"><span /></a>
   </section>;
 }
 
