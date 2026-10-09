@@ -3,28 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
   <meta name="theme-color" content="#06051a">
+  <meta name="description" content="State of the lab at 17:05 PDT on 8 October 2026, for the 18:00 review: decided today, live, built but not released, measured, not yet established, waiting on Mateo, waiting on Seth, reviewed and closed. Each line links its record.">
+  <link rel="canonical" href="https://syberlabs.io/review/2026-10-08/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="State of the lab, 8 October 2026 | SyberLabs">
+  <meta property="og:description" content="State of the lab at 17:05 PDT on 8 October 2026, for the 18:00 review: decided today, live, built but not released, measured, not yet established, waiting on Mateo, waiting on Seth, reviewed and closed. Each line links its record.">
+  <meta property="og:url" content="https://syberlabs.io/review/2026-10-08/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="State of the lab, 8 October 2026 | SyberLabs">
+  <meta name="twitter:description" content="State of the lab at 17:05 PDT on 8 October 2026, for the 18:00 review: decided today, live, built but not released, measured, not yet established, waiting on Mateo, waiting on Seth, reviewed and closed. Each line links its record.">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="/syberlabs.css?v=4">
-  <title>Page not found | SyberLabs</title>
-  <style>
-    body { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
-    .nf { position: relative; isolation: isolate; overflow: hidden; flex: 1; display: flex; }
-    .nf main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-top: var(--space-9); padding-bottom: var(--space-9); }
-    .nf .sy-display { margin-top: var(--space-5); }
-    .nf .sy-body-lg { margin-top: var(--space-5); max-width: 480px; }
-    .nf .sy-actions { margin-top: var(--space-7); gap: var(--space-5); }
-    @media (max-width: 640px) {
-      .nf main { padding-top: var(--space-8); padding-bottom: var(--space-8); }
-      .nf .sy-actions { margin-top: var(--space-6); gap: var(--space-2); }
-    }
-  </style>
+  <link rel="stylesheet" href="/review/review.css?v=1">
+  <title>State of the lab, 8 October 2026 | SyberLabs</title>
 </head>
-<body>
+
+<body class="syber-review">
   <a class="sy-skip" href="#main">Skip to content</a>
 <div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
 <header class="sy-header sy-header--sticky"><div class="sy-header__in">
@@ -40,25 +38,168 @@
 </div></details>
 </div></header>
 <script type="module" src="/syberlabs.js"></script>
-  <div class="nf sy-nebula--center">
-    <canvas class="sy-atmosphere" id="plate" aria-hidden="true"></canvas>
-    <div class="sy-scrim sy-scrim--heavy" aria-hidden="true"></div>
-    <main id="main" class="sy-container">
-      <p class="sy-eyebrow">Error 404</p>
-      <h1 class="sy-display">Page not found.</h1>
-      <p class="sy-body-lg">The page you requested does not exist or has moved.</p>
-      <div class="sy-actions">
-        <a class="sy-btn sy-btn--solid" href="/">Go to the homepage</a>
-        <a class="sy-btn sy-btn--ghost" href="/#work">See the work</a>
+  <main class="review-main" id="main">
+    <section class="review-hero" aria-labelledby="review-title">
+      <p class="eyebrow">STATE OF THE LAB · 8 OCTOBER 2026 · 17:05 PDT · FOR THE 18:00 REVIEW</p>
+      <h1 id="review-title">State of the lab, <em>8 October 2026.</em></h1>
+      <p class="lead">RFC 0001, a paid voice for RISE, was accepted by Mateo at $8.99 a month; its build and merge are held pending D9 and D10. The /plus/ page is live with its status labels. The RISE Plus gate and voice routes are merged and deployed to rise.syberlabs.io, switched off until secrets are set; the canon render script is still a draft. No reading has been rendered on the vendor, no Stripe test-mode run has happened, and the merges wait on Mateo. Each line below names its state and links the record.</p>
+      <p class="hero-links"><a class="sy-btn sy-btn--line" href="#decided">Decided today</a><a class="sy-btn sy-btn--ghost" href="/plus/">RISE Plus, where it stands</a></p>
+    </section>
+
+    <section class="review-section" id="decided" aria-labelledby="decided-title">
+      <div class="section-heading">
+        <p class="eyebrow">DECIDED TODAY</p>
+        <h2 id="decided-title">One decision, one hold.</h2>
       </div>
-    </main>
-  </div>
+      <div class="prose">
+        <div>
+          <ul class="evidence">
+            <li class="is-decided"><span class="state"><i aria-hidden="true"></i>Decided</span><p>RFC 0001, revision 5, a paid voice for RISE: accepted by Mateo at $8.99 a month. <a href="https://github.com/SyberLabs/MasterMind/pull/29" rel="noopener">MasterMind #29</a>.</p></li>
+            <li class="is-decided"><span class="state"><i aria-hidden="true"></i>Decided</span><p>Ledger entry for the acceptance: admission pending. <a href="https://github.com/SyberLabs/MasterMind/pull/30" rel="noopener">MasterMind #30</a>.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Held</span><p>Build and merge held pending D9 (scope) and D10 (successor to “no shared inference”) in the economic plan, §7. <a href="https://github.com/SyberLabs/MasterMind/pull/31" rel="noopener">MasterMind #31</a>.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Unresolved</span><p>Seth’s other session owns the RISE Plus build and intends to merge in Stripe test mode; Mateo’s organizer asked to hold. Unresolved between the two owners as of 17:05. <a href="https://github.com/SyberLabs/MasterMind/pull/29" rel="noopener">MasterMind #29</a>.</p></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="review-section" id="live" aria-labelledby="live-title">
+      <div class="section-heading">
+        <p class="eyebrow">LIVE · DEPLOYED, VERIFIED BY FETCHING PRODUCTION</p>
+        <h2 id="live-title">What production serves.</h2>
+      </div>
+      <div class="prose">
+        <div>
+          <ul class="evidence">
+            <li class="is-live"><span class="state"><i aria-hidden="true"></i>Live</span><p><a href="https://syberlabs.io/plus/" rel="noopener">syberlabs.io/plus/</a>: status-labelled page; “Hear the clock” demo on the browser’s own voice with the 3D field pulsing per word; page field mood; Free vs Plus table; allowance arithmetic; copy with no unmeasured words; share card. Site <a href="https://github.com/SyberLabs/SyberLabs.github.io/pull/71" rel="noopener">#71</a>, <a href="https://github.com/SyberLabs/SyberLabs.github.io/pull/74" rel="noopener">#74</a>, <a href="https://github.com/SyberLabs/SyberLabs.github.io/pull/75" rel="noopener">#75</a>, <a href="https://github.com/SyberLabs/SyberLabs.github.io/pull/78" rel="noopener">#78</a>.</p></li>
+            <li class="is-live"><span class="state"><i aria-hidden="true"></i>Live</span><p><a href="https://syberlabs.io/plus/#status" rel="noopener">/plus/ states</a>: Decided at $8.99; Built against a mocked vendor, not released; Not yet shown (no vendor render; the owner’s listen gates any sale); Not for sale, no payment taken.</p></li>
+            <li class="is-live"><span class="state"><i aria-hidden="true"></i>Live</span><p>RISE Plus gate and voice routes: deployed to <a href="https://rise.syberlabs.io/" rel="noopener">rise.syberlabs.io</a> (release 2e9f473f), switched off; <code>POST /api/plus/claim</code> answers 503 <code>PLUS_UNAVAILABLE</code> until <code>STRIPE_SECRET_KEY</code> and <code>PLUS_COOKIE_SECRET</code> are set; no vendor render; no Stripe run; not for sale. <a href="https://github.com/SyberLabs/RISE/pull/542" rel="noopener">RISE #542</a>, <a href="https://github.com/SyberLabs/RISE/pull/545" rel="noopener">RISE #545</a>, <a href="https://github.com/SyberLabs/RISE/pull/546" rel="noopener">RISE #546</a>, <a href="https://github.com/SyberLabs/RISE/pull/552" rel="noopener">RISE #552</a> merged.</p></li>
+            <li class="is-live"><span class="state"><i aria-hidden="true"></i>Live</span><p><a href="https://syberlabs.io/" rel="noopener">Homepage</a> Latest row: “Your own reading, read aloud · in progress”.</p></li>
+            <li class="is-live"><span class="state"><i aria-hidden="true"></i>Live</span><p><a href="https://syberlabs.io/projects/rise/" rel="noopener">RISE project page</a>: facts line for RISE Plus.</p></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="review-section" id="built" aria-labelledby="built-title">
+      <div class="section-heading">
+        <p class="eyebrow">BUILT, NOT RELEASED · DRAFT PRS, UNIT-TESTED, NOT RUN AGAINST VENDORS</p>
+        <h2 id="built-title">In draft, on the branch.</h2>
+      </div>
+      <div class="prose">
+        <div>
+          <ul class="evidence">
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Built</span><p><a href="https://github.com/SyberLabs/RISE/pull/541" rel="noopener">RISE #541</a>: canon render script; plan plus synthetic dry run: 15 works, 944 divisions, 232,351 atoms, 1,003 requests, $404.90 at Flash; no refusals. Owner: Seth’s other session.</p></li>
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Built</span><p><a href="https://github.com/SyberLabs/Flyspace/pull/138" rel="noopener">Flyspace #138</a> (OmniOS): one build system; CI builds, scans and stages what deploys. Draft. Finding: the vinext build is not byte-reproducible.</p></li>
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Built</span><p><a href="https://github.com/SyberLabs/SyberWork/pull/26" rel="noopener">SyberWork #26</a>: Windows <code>sys.executable</code> fix; tested.</p></li>
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Built</span><p><a href="https://github.com/SyberLabs/SyberWork/pull/27" rel="noopener">SyberWork #27</a>: E3 benchmark plan; ≤ $50, worst case $28.73.</p></li>
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Built</span><p><a href="https://github.com/SyberLabs/SyberWork/pull/28" rel="noopener">SyberWork #28</a>: AGENTS.md with the R/C/P/X table; Class C.</p></li>
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Built</span><p><a href="https://github.com/SyberLabs/MasterMind/pull/34" rel="noopener">MasterMind #34</a>: Ada auth, isolation and deletion spec. Draft; the Ada repository is private.</p></li>
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Built</span><p><a href="https://github.com/SyberLabs/MasterMind/pull/35" rel="noopener">MasterMind #35</a>: D8 role proposal and relay pilot close recommendation. Drafts for Seth.</p></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="review-section" id="measured" aria-labelledby="measured-title">
+      <div class="section-heading">
+        <p class="eyebrow">MEASURED TODAY</p>
+        <h2 id="measured-title">Numbers, as recorded.</h2>
+      </div>
+      <div class="prose">
+        <div>
+          <ul class="evidence">
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Measured</span><p>Canon: 15 works, 944 divisions, 10,122,574 characters; render cost $404.90 at Flash v2.5. <a href="https://github.com/SyberLabs/RISE/pull/541" rel="noopener">RISE #541</a>.</p></li>
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Measured</span><p>Alignment mapper on synthetic timing: 232,323 clips, 0 refusals, after leaving 28 letterless atoms silent. <a href="https://github.com/SyberLabs/RISE/pull/541" rel="noopener">RISE #541</a>.</p></li>
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Measured</span><p>Site first load: 57.6 KB brotli of a 64 KB budget. <a href="https://github.com/SyberLabs/SyberLabs.github.io" rel="noopener">SyberLabs.github.io</a>.</p></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="review-section" id="not-yet" aria-labelledby="not-yet-title">
+      <div class="section-heading">
+        <p class="eyebrow">NOT YET ESTABLISHED</p>
+        <h2 id="not-yet-title">Not shown.</h2>
+      </div>
+      <div class="prose">
+        <div>
+          <ul class="evidence">
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Not yet</span><p>Any real vendor render: needs Mateo’s ElevenLabs key; commands sent to him by DM. <a href="https://github.com/SyberLabs/RISE/pull/541" rel="noopener">RISE #541</a>.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Not yet</span><p>Stripe test-mode run: needs keys and D1, a legal entity. <a href="https://github.com/SyberLabs/RISE/pull/542" rel="noopener">RISE #542</a>.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Not yet</span><p>Mateo’s ear: voice choice, D9, D10. <a href="https://github.com/SyberLabs/MasterMind/pull/31" rel="noopener">MasterMind #31</a>.</p></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="review-section" id="mateo" aria-labelledby="mateo-title">
+      <div class="section-heading">
+        <p class="eyebrow">WAITING ON MATEO · ONE DM LISTS ALL</p>
+        <h2 id="mateo-title">On Mateo.</h2>
+      </div>
+      <div class="prose">
+        <div>
+          <ul class="evidence">
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Waiting</span><p>Decisions D9, D10 and D1. <a href="https://github.com/SyberLabs/MasterMind/pull/31" rel="noopener">MasterMind #31</a>.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Waiting</span><p>The two-voice listen. <a href="https://github.com/SyberLabs/RISE/pull/541" rel="noopener">RISE #541</a>.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Waiting</span><p>Merges, in order: <a href="https://github.com/SyberLabs/MasterMind/pull/23" rel="noopener">MasterMind #23</a> → <a href="https://github.com/SyberLabs/MasterMind/pull/27" rel="noopener">MasterMind #27</a> → <a href="https://github.com/SyberLabs/MasterMind/pull/30" rel="noopener">MasterMind #30</a>, then <a href="https://github.com/SyberLabs/MasterMind/pull/31" rel="noopener">MasterMind #31</a>, <a href="https://github.com/SyberLabs/MasterMind/pull/32" rel="noopener">MasterMind #32</a>.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Waiting</span><p>Merges: <a href="https://github.com/SyberLabs/SyberWork/pull/26" rel="noopener">SyberWork #26</a>, <a href="https://github.com/SyberLabs/SyberWork/pull/27" rel="noopener">SyberWork #27</a>, <a href="https://github.com/SyberLabs/SyberWork/pull/28" rel="noopener">SyberWork #28</a>.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Waiting</span><p>Merge: <a href="https://github.com/SyberLabs/Flyspace/pull/138" rel="noopener">Flyspace #138</a>.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Waiting</span><p>Merge: <a href="https://github.com/SyberLabs/MasterMind/pull/34" rel="noopener">MasterMind #34</a>.</p></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="review-section" id="seth" aria-labelledby="seth-title">
+      <div class="section-heading">
+        <p class="eyebrow">WAITING ON SETH</p>
+        <h2 id="seth-title">On Seth.</h2>
+      </div>
+      <div class="prose">
+        <div>
+          <ul class="evidence">
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Waiting</span><p>SyberWork main: one approval required; <code>gh api</code> PUT, command given. <a href="https://github.com/SyberLabs/SyberWork" rel="noopener">SyberWork</a>.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Waiting</span><p>Preview Worker deploy: two <code>wrangler</code> commands. <a href="https://github.com/SyberLabs" rel="noopener">github.com/SyberLabs</a>.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Waiting</span><p>Edit <a href="https://github.com/SyberLabs/MasterMind/pull/35" rel="noopener">MasterMind #35</a>: D8, relay pilot.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Waiting</span><p>Resolve the RISE Plus merge-hold between his two sessions. <a href="https://github.com/SyberLabs/RISE/pull/542" rel="noopener">RISE #542</a>.</p></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="review-section" id="closed" aria-labelledby="closed-title">
+      <div class="section-heading">
+        <p class="eyebrow">REVIEWED AND CLOSED</p>
+        <h2 id="closed-title">Done, recorded.</h2>
+      </div>
+      <div class="prose">
+        <div>
+          <ul class="evidence">
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Closed</span><p><a href="https://github.com/SyberLabs/RISE-Sketch/pull/14" rel="noopener">RISE-Sketch #14</a>, <a href="https://github.com/SyberLabs/RISE-Sketch/pull/15" rel="noopener">RISE-Sketch #15</a>: post-merge reviews; no defects; notes posted.</p></li>
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Closed</span><p>Fleet list stale entry, R1 deploy gate: <a href="https://github.com/SyberLabs/RISE/pull/548" rel="noopener">RISE #548</a> merged by Mateo’s side.</p></li>
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Closed</span><p>Fleet list stale entry, sketch-review: merged. <a href="https://github.com/SyberLabs/RISE-Sketch/pulls" rel="noopener">RISE-Sketch pull requests</a>.</p></li>
+            <li class="is-built"><span class="state"><i aria-hidden="true"></i>Closed</span><p>Fleet list stale entry, O2 origin check: <a href="https://github.com/SyberLabs/Flyspace/pull/86" rel="noopener">Flyspace #86</a> merged 2026-10-05; Mateo told privately.</p></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <p class="review-colophon">Published by Seth’s agent for the 18:00 review; every state is as recorded in the linked repository.</p>
+  </main>
   <footer class="sy-footer">
 <div class="sy-footer__map"><div class="sy-footer__map-in"><section aria-labelledby="foot-use"><h2 id="foot-use" class="sy-eyebrow">Use</h2><ul><li><a href="https://rise.syberlabs.io/" rel="noopener" style="--sy-accent:#f2d9a6"><span class="sy-footer__dot" aria-hidden="true"></span>RISE app <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="https://omni.syberlabs.io/" rel="noopener" style="--sy-accent:#f59be0"><span class="sy-footer__dot" aria-hidden="true"></span>FLYSPACE preview <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="https://sketch.syberlabs.io/" rel="noopener" style="--sy-accent:#c7a4ff"><span class="sy-footer__dot" aria-hidden="true"></span>RISE Sketch <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="https://rise.syberlabs.io/jev-scene-demo" rel="noopener">RISE interactive sample <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="/rise-demo/">RISE demo</a></li></ul></section><section aria-labelledby="foot-projects"><h2 id="foot-projects" class="sy-eyebrow">Projects</h2><ul><li><a href="/projects/rise/" style="--sy-accent:#f2d9a6"><span class="sy-footer__dot" aria-hidden="true"></span>RISE</a></li><li><a href="/plus/">RISE Plus</a></li><li><a href="/projects/flyspace/" style="--sy-accent:#f59be0"><span class="sy-footer__dot" aria-hidden="true"></span>FLYSPACE</a></li><li><a href="/projects/syberwork/" style="--sy-accent:#a6f08f"><span class="sy-footer__dot" aria-hidden="true"></span>SyberWork</a></li><li><a href="/projects/relay/" style="--sy-accent:#62e3d8"><span class="sy-footer__dot" aria-hidden="true"></span>Relay</a></li><li><a href="/projects/osahr/" style="--sy-accent:#ffae63"><span class="sy-footer__dot" aria-hidden="true"></span>OSAHR</a></li></ul></section><section aria-labelledby="foot-research"><h2 id="foot-research" class="sy-eyebrow">Research</h2><ul><li><a href="/research/">Research index</a></li><li><a href="/research/jev-execution/">Reliable execution for AI agents</a></li><li><a href="/research/sybershoke/">Sybershoke</a></li><li><a href="https://github.com/SyberLabs/papers" rel="noopener">Papers <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="/kev/">RISE, Jev and Kev</a></li><li><a href="/jev/">Jev in RISE</a></li></ul></section><section aria-labelledby="foot-lab"><h2 id="foot-lab" class="sy-eyebrow">Lab</h2><ul><li><a href="/">Home</a></li><li><a href="/approach/">Approach</a></li><li><a href="/stack/">How we build</a></li><li><a href="/services/">Services</a></li><li><a href="/#about">About</a></li><li><a href="/kit/v2/">Design kit</a></li><li><a href="/review/">Review</a></li><li><a href="/privacy/">Privacy</a></li></ul></section><section aria-labelledby="foot-contact"><h2 id="foot-contact" class="sy-eyebrow">Contact</h2><ul><li><a href="mailto:syberlabs.software@gmail.com">Email</a></li><li><a href="https://github.com/SyberLabs" rel="noopener">GitHub <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="https://www.linkedin.com/in/mateo-robles-71260b189" rel="noopener">LinkedIn <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a></li><li><a href="/mateo_robles_resume.pdf">Résumé</a></li></ul></section></div></div>
 <div class="sy-footer__in">
   <a class="sy-lockup" href="/"><img src="/syber-logo-96.png" alt="" width="18" height="20">© 2026 SyberLabs</a>
   <nav aria-label="Footer"><a href="/approach/">Approach</a><a href="/stack/">How we build</a><a href="https://rise.syberlabs.io/">RISE app <svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="https://omni.syberlabs.io/">FLYSPACE preview <svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="https://sketch.syberlabs.io/">RISE Sketch <svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="/services/">Services</a><a href="/mateo_robles_resume.pdf">Résumé</a><a href="https://github.com/SyberLabs">GitHub <svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="https://www.linkedin.com/in/mateo-robles-71260b189">LinkedIn <svg class="sy-icon " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="mailto:syberlabs.software@gmail.com">Contact</a><a href="/privacy/">Privacy</a></nav>
 </div></footer>
-  <script type="module">import { mount } from '/kit/v2/syber-atmosphere.js'; mount(document.getElementById('plate'), { mode: 'ambient', allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });</script>
 </body>
 </html>

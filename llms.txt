@@ -100,5 +100,6 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 ## Optional
 
 - [Services](https://syberlabs.io/services/): Ask SyberLabs about a scoped, paid interactive reading pilot for a text you have the rights to use.
+- [Review](https://syberlabs.io/review/): Dated state-of-the-lab pages for SyberLabs reviews: what was decided, what is live, what is built and not released, and what waits on whom, each line linking its record.
 - [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics.
 - [Full text for agents](https://syberlabs.io/llms-full.txt): Every project field in one file.
