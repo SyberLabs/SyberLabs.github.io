@@ -15,7 +15,7 @@ mkdir -p dist/kit
 cp -r kit/v2 dist/kit/
 # social preview cards, one per page (regenerate with `node scripts/og-cards.mjs`)
 cp -r og dist/
-for dir in rise-demo omni-demo relay-demo projects approach jev kev research services privacy stack plus; do
+for dir in rise-demo omni-demo relay-demo projects approach jev kev research services privacy stack plus review; do
   cp -r "$dir" dist/
 done
 # projects/latest.js ("What changed") is staff-only (MasterMind RFC 0002): the homepage imports it at build time,

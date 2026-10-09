@@ -99,7 +99,7 @@ Text version of the interactive map: This map needs JavaScript. It steps through
 - deployed: The reader, Library, Chapel, Make rooms and the interactive sample run at rise.syberlabs.io.
 - tested: Unit, integration and browser suites run in CI; the first-load budget and the design diagram are checked on every release.
 - measured: Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.
-- not yet: RISE Plus voice (an ElevenLabs voice, $8.99 a month) has a merged implementation in RISE #542; paid launch remains pending verification.
+- tested: RISE Plus voice (an ElevenLabs voice, $8.99 a month) runs in production on Stripe test mode: on 2026-10-08 a test purchase unlocked it and the voice was heard reading the buyer's own file. Nothing is for sale yet; payments open after the owner's review.
 - not yet: No reader study has been run; release evidence still records zero real-device and stranger-testing records. Realtime Live and Dive are out of current scope by decision.
 
 ### Facts
@@ -465,5 +465,6 @@ Complete output, unedited. From seed 20260729 the kernel committed 25 events in 
 ## Optional
 
 - [Services](https://syberlabs.io/services/): Ask SyberLabs about a scoped, paid interactive reading pilot for a text you have the rights to use.
+- [Review](https://syberlabs.io/review/): Dated state-of-the-lab pages for SyberLabs reviews: what was decided, what is live, what is built and not released, and what waits on whom, each line linking its record.
 - [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics.
 - [Full text for agents](https://syberlabs.io/llms-full.txt): Every project field in one file.
