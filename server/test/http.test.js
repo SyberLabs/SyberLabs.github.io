@@ -26,7 +26,7 @@ test('security headers are exactly the RFC set', () => {
     'Strict-Transport-Security', 'X-Content-Type-Options', 'X-Frame-Options', 'X-Robots-Tag',
   ]);
   assert.equal(SECURITY_HEADERS['Cache-Control'], 'no-store');
-  assert.equal(SECURITY_HEADERS['Referrer-Policy'], 'no-referrer');
+  assert.equal(SECURITY_HEADERS['Referrer-Policy'], 'same-origin');
   assert.equal(SECURITY_HEADERS['X-Robots-Tag'], 'noindex, nofollow');
 });
 

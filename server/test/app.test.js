@@ -20,7 +20,7 @@ function assertHeaders(res, label) {
   assert.equal(res.headers.get('Cache-Control'), 'no-store', label);
   assert.equal(res.headers.get('X-Robots-Tag'), 'noindex, nofollow', label);
   assert.equal(res.headers.get('X-Frame-Options'), 'DENY', label);
-  assert.equal(res.headers.get('Referrer-Policy'), 'no-referrer', label);
+  assert.equal(res.headers.get('Referrer-Policy'), 'same-origin', label);
   assert.equal(res.headers.get('Access-Control-Allow-Origin'), null, label);
   assert.doesNotMatch(res.headers.get('Clear-Site-Data') || '', /cookies/, label);
 }

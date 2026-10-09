@@ -24,7 +24,10 @@ export const SECURITY_HEADERS = {
   'Content-Security-Policy': CSP,
   'X-Frame-Options': 'DENY',
   'X-Content-Type-Options': 'nosniff',
-  'Referrer-Policy': 'no-referrer', // keeps invite tokens out of Referer
+  // same-origin, not no-referrer: under no-referrer browsers send `Origin: null` on our own form POSTs (Fetch
+  // spec, "append a request Origin header"), which the CSRF check refuses. Cross-site requests still carry no
+  // Referer, so invite tokens in /auth/signin?invite= never leave the site.
+  'Referrer-Policy': 'same-origin',
   'X-Robots-Tag': 'noindex, nofollow',
   'Strict-Transport-Security': 'max-age=31536000',
   'Cross-Origin-Opener-Policy': 'same-origin',
