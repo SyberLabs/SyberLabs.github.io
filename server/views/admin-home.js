@@ -4,6 +4,7 @@ import { navItems, identityName } from './chrome.js';
 import { page, duration } from './layout.js';
 
 const TOOLS = {
+  saves: { label: 'Library', title: 'Saved things', copy: 'Your private Omni, RISE and Sketch backups, ready to pick up wherever you sign in.', icon: '<path d="M5 3h14v18l-7-4-7 4V3Z"/>' },
   changes: { label: 'Updates', title: 'What changed', copy: 'Keep the team in the loop. Read the latest changes and open their evidence.', icon: '<path d="M5 6h14M5 12h9M5 18h6"/><path d="m16 16 2 2 4-4"/>' },
   people: { label: 'Team', title: 'People', copy: 'Find staff accounts, review their access and manage your team.', icon: '<circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6M21 21v-3a6 6 0 0 0-4-5"/>' },
   roles: { label: 'Access', title: 'Roles', copy: 'Explore the permissions behind each role and how access is assigned.', icon: '<path d="m12 3 8 4v5c0 5-8 9-8 9s-8-4-8-9V7l8-4Z"/><path d="m8 12 3 3 5-6"/>' },
@@ -34,6 +35,7 @@ export async function adminHome(ctx) {
       ${ctx.perms.size === 0 ? '<p class="portal-access-note">Your account is ready. Ask an admin for a role to unlock team tools.</p>' : ''}
       <div class="portal-grid">${cards}</div>
     </section>
+    <div class="portal-apps"><a href="https://omni.syberlabs.io/"><span class="portal-kicker">SPATIAL WORKSPACE</span><strong>Open Omni ↗</strong></a><a href="https://rise.syberlabs.io/"><span class="portal-kicker">READING &amp; CREATION</span><strong>Open RISE ↗</strong></a><a href="https://sketch.syberlabs.io/"><span class="portal-kicker">LIVING INK</span><strong>Open Sketch ↗</strong></a></div>
     <aside class="portal-outpost"><div><p class="portal-kicker">BEYOND THE WORKSPACE</p><h2>See what we’re building.</h2><p>Explore the public projects, research and ideas behind SyberLabs.</p></div><a class="sy-btn sy-btn--ghost" href="/">Visit SyberLabs <span aria-hidden="true">↗</span></a></aside>
   </div>`;
   return html(page(ctx, { title: 'Portal', body, section: 'portal', compactFooter: true }));

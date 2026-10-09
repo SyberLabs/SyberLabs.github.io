@@ -37,7 +37,7 @@ function assertShell(body) {
   assert.match(body, /<html lang="en" data-field="calm">/);
   assert.match(body, /<meta name="robots" content="noindex, nofollow">/);
   assert.match(body, /<link rel="stylesheet" href="\/syberlabs\.css\?v=4">/);
-  assert.match(body, /<link rel="stylesheet" href="\/staff\.css\?v=4">/);
+  assert.match(body, /<link rel="stylesheet" href="\/staff\.css\?v=5">/);
   assert.match(body, /<!--email_off-->[\s\S]*<main id="main" class="staff sy-container">[\s\S]*<\/main>[\s\S]*<!--\/email_off-->/);
   // RFC-0002 2.6 and test 10: the staff header, never the public one, its Atlas or remote fonts.
   assert.match(body, /<a class="sy-skip" href="#main">Skip to content<\/a>\n<div class="sy-field-host" aria-hidden="true"><\/div>\n<header class="staff-header">/);
@@ -57,14 +57,14 @@ const noRawXss = body => {
 
 // ---- layout and nav ------------------------------------------------------------------------------
 
-test('nav is filtered by permissions and always includes Portal and Account (RFC-0002 3.3, test 10)', () => {
-  assert.deepEqual(navItems(ctxFor()).map(i => i.id), ['portal', 'account']);
-  assert.deepEqual(navItems(ctxFor({ perms: ['site:changes.read'] })).map(i => i.id), ['portal', 'changes', 'account']);
-  assert.deepEqual(navItems(ctxFor({ perms: ['id:users.read', 'id:audit.read'] })).map(i => i.id), ['portal', 'people', 'roles', 'audit', 'account']);
+test('nav is filtered by permissions and always includes Portal, Saved things and Account (RFC-0002 3.3, test 10)', () => {
+  assert.deepEqual(navItems(ctxFor()).map(i => i.id), ['portal', 'saves', 'account']);
+  assert.deepEqual(navItems(ctxFor({ perms: ['site:changes.read'] })).map(i => i.id), ['portal', 'changes', 'saves', 'account']);
+  assert.deepEqual(navItems(ctxFor({ perms: ['id:users.read', 'id:audit.read'] })).map(i => i.id), ['portal', 'people', 'roles', 'audit', 'saves', 'account']);
 
   const none = page(ctxFor(), { title: 'X', body: '', section: 'account' });
   assertShell(none);
-  assert.match(none, /<nav class="staff-nav" aria-label="Staff"><ul><li><a href="\/admin\/">Portal<\/a><\/li><li><a href="\/admin\/account" aria-current="page">Account<\/a><\/li><\/ul><\/nav>/);
+  assert.match(none, /<nav class="staff-nav" aria-label="Staff"><ul><li><a href="\/admin\/">Portal<\/a><\/li><li><a href="\/admin\/saves">Saved things<\/a><\/li><li><a href="\/admin\/account" aria-current="page">Account<\/a><\/li><\/ul><\/nav>/);
   const reader = page(ctxFor({ perms: ['site:changes.read'] }), { title: 'X', body: '', section: 'changes' });
   assert.match(reader, /<a href="\/admin\/changes" aria-current="page">What changed<\/a>/);
   assert.match(reader, /<a href="\/admin\/account">Account<\/a>/);

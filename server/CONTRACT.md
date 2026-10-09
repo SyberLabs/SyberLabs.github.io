@@ -314,3 +314,20 @@ implemented, with the reason:
 - **`novalidate` on staff forms (3.4).** Fields carry `required` and `maxlength`, but the forms keep `novalidate`, so
   the server's 422 messages (the RFC's own copy) show instead of the browser's.
 - **Packet 5.** Google sign-in, Add Google, Remove on People, `google_taken` and the Google button are implemented. They remain unavailable until both Google credentials are configured. Linking requires a staff session younger than ten minutes; it cannot create a new staff account. Concurrent links cannot add a second Google identity or report success after session revocation.
+
+## Account saves v1 (owner request, 2026-10-08)
+
+The versioned seam is specified in MasterMind `docs/contracts/account-saves-v1.md`.
+`account-api.js` handles only `/admin/api/v1/*`, with JSON failures, exact-origin credentialed
+CORS, live host-only session validation and origin-to-app namespace restrictions. It is separate
+from staff form handlers: their same-origin CSRF checks remain unchanged. POST saves require
+application/json and X-SyberLabs-Account:v1. Names, request UUID, byte size, owner and quota are
+validated server-side; SQL enforces aggregate quota atomically. The payload is private backup data,
+never executable content. Duplicate request IDs are idempotent only for identical snapshots.
+
+Migration0003 adds account_saves without modifying existing staff rows. `/admin/saves` lists only
+the signed-in user's backups; owned download responses are JSON attachments. `/admin/return?app=`
+returns only to Omni or RISE's canonical root. No public enrollment or staff permission grant is
+introduced by this seam. App local stores remain authoritative; uploads and validated restores are
+explicit user actions. Tests: account-api.test.js includes owner isolation, CORS/CSRF, quotas,
+retries, input bounds, disabled/expired sessions and fail-closed storage errors.

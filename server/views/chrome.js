@@ -21,6 +21,7 @@ export const NAV = [
   { id: 'people', label: 'People', href: '/admin/people', key: 'id:users.read' },
   { id: 'roles', label: 'Roles', href: '/admin/roles', key: 'id:users.read' },
   { id: 'audit', label: 'Audit', href: '/admin/audit', key: 'id:audit.read' },
+  { id: 'saves', label: 'Saved things', href: '/admin/saves', key: null },
   { id: 'account', label: 'Account', href: '/admin/account', key: null },
 ];
 

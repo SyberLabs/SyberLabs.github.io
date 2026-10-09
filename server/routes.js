@@ -7,6 +7,7 @@ import { startLogin, callback, addGoogle } from './oauth.js';
 import { googleEnabled } from './providers.js';
 import { signout, revokeOwnSessions } from './session.js';
 import { adminHome } from './views/admin-home.js';
+import { savedThings, downloadSave, appReturn } from './views/saves.js';
 import { accountPage } from './views/account.js';
 import { changesPage, saveChange, deleteChange } from './views/changes.js';
 import {
@@ -27,6 +28,9 @@ export const ROUTES = [
   ['GET  /auth/callback/:provider',            PUBLIC,               callback],       // HEAD -> 405
   ['POST /auth/signout',                       PUBLIC,               signout],        // RFC-0002 2.2: works after the session ended
   ['GET  /admin/',                             SIGNED_IN,            adminHome],      // private portal; tools follow the session permissions
+  ['GET  /admin/saves', SIGNED_IN, savedThings],
+  ['GET  /admin/saves/:id/download', SIGNED_IN, downloadSave],
+  ['GET  /admin/return', SIGNED_IN, appReturn],
   ['GET  /admin/account',                      SIGNED_IN,            accountPage],
   ['POST /admin/account/signout-everywhere',   SIGNED_IN,            revokeOwnSessions],
   // Packet 3

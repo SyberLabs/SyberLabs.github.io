@@ -6,6 +6,7 @@ import { PUBLIC, SIGNED_IN } from './permissions.js';
 import { TABLE, match, ownerPage, tableFor } from './routes.js';
 import { googleEnabled } from './providers.js';
 import { SESSION_COOKIE, loadSession } from './session.js';
+import { accountApi, accountCors, isAccountApi } from './account-api.js';
 import { errorHtml, forbiddenHtml, notFoundHtml, unavailableHtml } from './views/forbidden.js';
 
 const REQUIRED = ['GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET', 'APP_SECRET'];
@@ -86,20 +87,21 @@ export async function handle(request, env, now = Date.now()) {
   const url = new URL(request.url);
   let res;
   if (!env || typeof env.ORIGIN !== 'string' || !env.ORIGIN) {
-    res = unavailable(url.pathname);
+    res = isAccountApi(url.pathname) ? Response.json({ version: 1, error: 'unavailable' }, { status: 503 }) : unavailable(url.pathname);
   } else if (url.origin !== env.ORIGIN) {
     // pages.dev and preview hosts never serve the app; same path on the canonical origin.
     res = redirect(env.ORIGIN + url.pathname + url.search, { status: 308 });
   } else {
     try {
-      res = await route(request, env, now);
+      res = isAccountApi(url.pathname) ? await accountApi(request, env, now) : await route(request, env, now);
     } catch (err) {
       // Fail closed (D1 down, a bug). The message may hold data, so only its class is logged.
       console.error(`staff: unhandled ${err && err.name ? err.name : 'error'}`);
-      res = unavailable(url.pathname);
+      res = isAccountApi(url.pathname) ? Response.json({ version: 1, error: 'unavailable' }, { status: 503 }) : unavailable(url.pathname);
     }
   }
   res = secure(res, googleEnabled(env) ? CSP_WITH_GOOGLE : CSP);
+  if (isAccountApi(url.pathname) && url.origin === env?.ORIGIN) res = accountCors(res, request, env);
   if (request.method === 'HEAD') return new Response(null, { status: res.status, statusText: res.statusText, headers: res.headers });
   return res;
 }
