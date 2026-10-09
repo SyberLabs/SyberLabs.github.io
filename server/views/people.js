@@ -1,13 +1,10 @@
-// /admin/people: staff accounts, their sign-in methods and roles, invites, and every action on them.
-// Each action checks, in order: the up rule (roles), the target rule (people), then the lockout rule,
-// which lives inside the write itself (authz.js). Refusals change no row and answer 403.
+// /admin/people: staff accounts, their sign-in methods and roles, GitHub invites, and every action on them.
+// Every action here needs id:users.manage, which only admin holds, and admin holds every key, so no up or
+// target rule applies (RFC-0002 2.4). The lockout rule lives inside each write (authz.js). Refusals change
+// no row and answer 403.
 import { esc, html, redirect } from '../http.js';
-import { newId, randomToken, sha256Hex } from '../crypto.js';
-import { CATALOGUE } from '../permissions.js';
-import {
-  GUARD_COPY, auditStmt, can, disableUserStmts, isFullAdmin, permsOfRole, permsOfUser, removeIdentityStmt,
-  revokeRoleStmt, subset,
-} from '../authz.js';
+import { newId } from '../crypto.js';
+import { GUARD_COPY, auditStmt, can, disableUserStmts, removeIdentityStmt, revokeRoleStmt } from '../authz.js';
 import { lookupLogin } from '../github.js';
 import { confirmHtml } from './confirm.js';
 import {
@@ -17,7 +14,6 @@ import {
 const DAY = 86400 * 1000;
 export const INVITE_TTL_MS = 7 * DAY;
 const GITHUB_ID = /^[1-9][0-9]{0,19}$/;
-const EMAIL = /^[^\s@<>"'`\\]{1,64}@[A-Za-z0-9.-]{1,190}\.[A-Za-z]{2,}$/;
 
 const NOTICES = {
   granted: 'Role granted.',
@@ -28,8 +24,6 @@ const NOTICES = {
   removed: 'Sign-in method removed. Its sessions have ended.',
   invite_revoked: 'Invite revoked.',
 };
-
-const privilegedKeys = keys => [...keys].some(k => CATALOGUE[k] && CATALOGUE[k].privileged);
 
 async function roleById(db, id) {
   if (!id) return null;
@@ -45,13 +39,11 @@ async function loadPeople(db, now) {
   const [users, identities, grants, roles, invites] = await Promise.all([
     db.prepare('SELECT id, display_name, disabled_at, created_at FROM users ORDER BY created_at, id').all(),
     db.prepare('SELECT id, user_id, provider, login, email, created_at, last_login_at FROM identities ORDER BY created_at, id').all(),
-    db.prepare(`SELECT ur.user_id, ur.role_id, ur.expires_at, r.name FROM user_roles ur JOIN roles r ON r.id = ur.role_id
+    db.prepare(`SELECT ur.user_id, ur.role_id, r.name FROM user_roles ur JOIN roles r ON r.id = ur.role_id
       ORDER BY r.is_system DESC, r.name`).all(),
     db.prepare('SELECT id, name, is_system FROM roles ORDER BY is_system DESC, name').all(),
-    db.prepare(`SELECT i.id, i.provider, i.login_hint, i.subject, i.email_normalized, i.user_id, i.created_at, i.expires_at,
-        r.name AS role_name, inv.display_name AS inviter, t.display_name AS target
-      FROM invites i LEFT JOIN roles r ON r.id = i.role_id LEFT JOIN users inv ON inv.id = i.invited_by
-      LEFT JOIN users t ON t.id = i.user_id
+    db.prepare(`SELECT i.id, i.login_hint, i.subject, i.created_at, i.expires_at, r.name AS role_name, inv.display_name AS inviter
+      FROM invites i JOIN roles r ON r.id = i.role_id LEFT JOIN users inv ON inv.id = i.invited_by
       WHERE i.redeemed_at IS NULL AND i.revoked_at IS NULL AND i.expires_at > ? ORDER BY i.created_at DESC`).bind(now).all(),
   ]);
   return { users: users.results, identities: identities.results, grants: grants.results, roles: roles.results, invites: invites.results };
@@ -66,7 +58,7 @@ function personRow(ctx, u, data, manage) {
   const self = u.id === ctx.user.id;
   const methods = ids.map(i => `<li>${esc(methodLabel(i))}${manage && ids.length > 1
     ? ' ' + postButton('/admin/people/identity/remove', 'Remove', { identity: i.id }, 'sy-btn sy-btn--ghost staff-btn--small') : ''}</li>`).join('');
-  const roles = grants.map(g => `<li>${esc(g.name)}${g.expires_at ? ` (until ${time(g.expires_at)})` : ''}${manage
+  const roles = grants.map(g => `<li>${esc(g.name)}${manage
     ? ' ' + postButton('/admin/people/roles/revoke', 'Revoke', { user: u.id, role: g.role_id }, 'sy-btn sy-btn--ghost staff-btn--small') : ''}</li>`).join('');
   const grantable = data.roles.filter(r => !grants.some(g => g.role_id === r.id));
   const actions = !manage ? '' : `<td class="staff-actions">
@@ -77,10 +69,6 @@ function personRow(ctx, u, data, manage) {
       ${u.disabled_at ? postButton('/admin/people/enable', 'Turn on', { user: u.id }, 'sy-btn sy-btn--line staff-btn--small')
         : self ? '' : postButton('/admin/people/disable', 'Turn off', { user: u.id }, 'sy-btn sy-btn--line staff-btn--small')}
       ${postButton('/admin/people/sessions/revoke', 'End sessions', { user: u.id }, 'sy-btn sy-btn--ghost staff-btn--small')}
-      <form method="post" action="/admin/people/invite" class="staff-inline">${hidden({ user: u.id, provider: 'google' })}
-        <label class="sy-visually-hidden" for="add-${esc(u.id)}">Google address to add</label>
-        <input class="sy-input" id="add-${esc(u.id)}" name="email" type="email" placeholder="Google address">
-        <button class="sy-btn sy-btn--ghost staff-btn--small" type="submit">Add sign-in method</button></form>
     </td>`;
   return `<tr>
       <th scope="row">${esc(u.display_name)}${self ? ' <span class="sy-small">(you)</span>' : ''}</th>
@@ -91,7 +79,7 @@ function personRow(ctx, u, data, manage) {
     </tr>`;
 }
 
-const INVITE_LABELS = { role: 'Role', provider: 'Sign in with', login: 'GitHub username', subject: 'GitHub numeric id', email: 'Google email', note: 'Note' };
+const INVITE_LABELS = { role: 'Role', login: 'GitHub username', subject: 'GitHub numeric id' };
 
 function inviteForm(data, values, errors) {
   const roles = data.roles.map(r => [r.id, r.name]);
@@ -99,11 +87,8 @@ function inviteForm(data, values, errors) {
     <h2 id="invite-h" class="sy-h3">Invite someone</h2>
     <form method="post" action="/admin/people/invite" class="staff-form" novalidate>
       ${field({ name: 'role', label: INVITE_LABELS.role, kind: 'select', options: roles, value: values.role || 'role_viewer', error: errors.role })}
-      ${field({ name: 'provider', label: INVITE_LABELS.provider, kind: 'select', options: [['github', 'GitHub'], ['google', 'Google']], value: values.provider || 'github', error: errors.provider })}
-      ${field({ name: 'login', label: INVITE_LABELS.login, value: values.login, error: errors.login, hint: 'GitHub invites are pinned to the numeric id; we look it up.' })}
+      ${field({ name: 'login', label: INVITE_LABELS.login, value: values.login, error: errors.login, hint: 'Invites are pinned to the GitHub numeric id; we look it up. They sign in at /admin/ with that account.' })}
       ${field({ name: 'subject', label: INVITE_LABELS.subject, value: values.subject, error: errors.subject, hint: 'Only if the lookup fails: gh api users/<name> --jq .id' })}
-      ${field({ name: 'email', label: INVITE_LABELS.email, type: 'email', value: values.email, error: errors.email, hint: 'A @gmail.com or Google Workspace address.' })}
-      ${field({ name: 'note', label: INVITE_LABELS.note, value: values.note, error: errors.note })}
       <button class="sy-btn sy-btn--primary" type="submit">Create invite</button>
     </form>
   </section>`;
@@ -114,9 +99,8 @@ function invitesList(data, manage) {
   return `<section class="staff-section" aria-labelledby="open-h">
     <h2 id="open-h" class="sy-h3">Open invites</h2>
     <ul class="staff-list">${data.invites.map(i => {
-      const who = i.provider === 'github' ? `GitHub @${i.login_hint || '?'} (id ${i.subject})` : `Google ${i.email_normalized}`;
-      const what = i.role_name ? `as ${i.role_name}` : `to add a sign-in method for ${i.target || 'someone'}`;
-      return `<li>${esc(who)} ${esc(what)}, invited by ${esc(i.inviter || 'bootstrap')}, expires ${time(i.expires_at)}${manage
+      const who = `GitHub @${i.login_hint || '?'} (id ${i.subject})`;
+      return `<li>${esc(who)} as ${esc(i.role_name)}, invited by ${esc(i.inviter || 'removed user')}, expires ${time(i.expires_at)}${manage
         ? ' ' + postButton('/admin/people/invite/revoke', 'Revoke', { invite: i.id }, 'sy-btn sy-btn--ghost staff-btn--small') : ''}</li>`;
     }).join('')}</ul>
   </section>`;
@@ -151,101 +135,75 @@ const acting = ctx => `You, ${esc(ctx.user.displayName)} via ${esc(providerLabel
 const confirmed = ctx => ctx.form.get('confirm') === '1';
 const confirmPage = (ctx, opts) => html(confirmHtml(ctx, { cancel: '/admin/people', section: 'people', ...opts }));
 
-// Target rule: you act only on someone whose every key you hold.
-async function targetOk(ctx, userId) {
-  const db = ctx.env.DB;
-  return subset(await permsOfUser(db, userId, ctx.now), ctx.perms);
-}
-
 const ADMIN_LINE = 'Admin can invite people, grant and revoke roles, turn accounts off and on, and create roles.';
 
 // ---- invites ---------------------------------------------------------------------------------
 
+// GitHub only (RFC-0002 2.5): Google is added from a signed-in session, never invited, so a crafted
+// provider=google POST is refused rather than creating an invite nobody could redeem.
 export async function createInvite(ctx) {
   const { env, form, now, user } = ctx;
   const db = env.DB;
-  const values = Object.fromEntries(['role', 'user', 'provider', 'login', 'subject', 'email', 'note']
-    .map(k => [k, (form.get(k) || '').trim()]));
+  const values = Object.fromEntries(['role', 'provider', 'login', 'subject'].map(k => [k, (form.get(k) || '').trim()]));
   const errors = {};
   const invalid = () => renderPeople(ctx, { status: 422, values, errors });
-  if (!['github', 'google'].includes(values.provider)) { errors.provider = 'Choose GitHub or Google.'; return invalid(); }
-  if (values.note.length > 200) { errors.note = 'Notes are up to 200 characters.'; return invalid(); }
-
-  // Exactly one target: a role (a new person) or an existing user (add a sign-in method).
-  let role = null;
-  let target = null;
-  if (values.user) {
-    target = await userById(db, values.user);
-    if (!target || target.disabled_at) return refuse(ctx, 'That account is turned off or does not exist.');
-    if (!(await targetOk(ctx, target.id))) return refuse(ctx, GUARD_COPY.target);
-  } else {
-    role = await roleById(db, values.role);
-    if (!role) { errors.role = 'Choose a role.'; return invalid(); }
-    if (!subset(await permsOfRole(db, role.id), ctx.perms)) return refuse(ctx, GUARD_COPY.up);
+  if (values.provider && values.provider !== 'github') {
+    return renderPeople(ctx, { status: 422, values, notice: alert('danger', 'Invites are for GitHub accounts. Google is added later, from a signed-in account.') });
   }
 
-  let subject = null;
-  let login = null;
-  let email = null;
-  if (values.provider === 'github') {
-    if (GITHUB_ID.test(values.subject)) {
-      subject = values.subject;
-      login = values.login.replace(/^@/, '') || null;
-    } else if (values.login) {
-      const found = await lookupLogin(values.login);
-      if (!found) {
-        errors.login = `That GitHub username was not found. Paste its numeric id instead: gh api users/${values.login.replace(/^@/, '')} --jq .id`;
-        return invalid();
-      }
-      subject = found.id;
-      login = found.login;
-    } else {
-      errors.login = 'Enter a GitHub username.';
-      return invalid();
-    }
-    const taken = await db.prepare("SELECT 1 AS x FROM identities WHERE provider = 'github' AND subject = ?").bind(subject).first();
-    if (taken) { errors.login = 'That GitHub account can already sign in.'; return invalid(); }
-  } else {
-    email = values.email.toLowerCase();
-    if (!EMAIL.test(email) || email.length > 254) {
-      errors.email = 'Google invites need a @gmail.com address or a Google Workspace address.';
-      return invalid();
-    }
-  }
+  const role = await roleById(db, values.role);
+  if (!role) { errors.role = 'Choose a role.'; return invalid(); }
 
-  // One confirm page at most: every GitHub invite (login and id) and every invite to a privileged role.
-  const privileged = role && (role.is_system === 1 || privilegedKeys(await permsOfRole(db, role.id)));
-  if ((values.provider === 'github' || privileged) && !confirmed(ctx)) {
-    const who = values.provider === 'github' ? `@${login || '?'}, GitHub id ${subject}` : email;
-    const what = role ? `as <strong>${esc(role.name)}</strong>` : `to add a sign-in method to ${esc(target.display_name)}'s account`;
+  let subject;
+  let login;
+  if (GITHUB_ID.test(values.subject)) {
+    subject = values.subject;
+    login = values.login.replace(/^@/, '') || null;
+  } else if (values.login) {
+    const found = await lookupLogin(values.login);
+    if (!found) {
+      errors.login = `That GitHub username was not found. Paste its numeric id instead: gh api users/${values.login.replace(/^@/, '')} --jq .id`;
+      return invalid();
+    }
+    subject = found.id;
+    login = found.login;
+  } else {
+    errors.login = 'Enter a GitHub username.';
+    return invalid();
+  }
+  const name = `@${login || subject}`;
+  // RFC-0002 2.5: refused if the id already has an open invite or a sign-in method.
+  const [taken, open] = await Promise.all([
+    db.prepare("SELECT 1 AS x FROM identities WHERE provider = 'github' AND subject = ?").bind(subject).first(),
+    db.prepare('SELECT 1 AS x FROM invites WHERE subject = ? AND redeemed_at IS NULL AND revoked_at IS NULL AND expires_at > ?')
+      .bind(subject, now).first(),
+  ]);
+  if (taken) { errors.login = `${name} already has a SyberLabs account.`; return invalid(); }
+  if (open) { errors.login = `${name} already has an open invite.`; return invalid(); }
+
+  // Every invite has one confirm page: the login and id, plus the admin warning for an invite to admin.
+  const privileged = role.is_system === 1;
+  if (!confirmed(ctx)) {
     return confirmPage(ctx, {
       title: 'Create invite',
-      lines: [`<strong>Confirm.</strong> ${acting(ctx)} are inviting ${esc(who)} ${what}.`, ...(privileged ? [esc(ADMIN_LINE)] : [])],
+      lines: [`<strong>Confirm.</strong> ${acting(ctx)} are inviting ${esc(`@${login || '?'}, GitHub id ${subject}`)} as <strong>${esc(role.name)}</strong>.`,
+        ...(privileged ? [esc(ADMIN_LINE)] : [])],
       action: '/admin/people/invite',
-      fields: { role: role ? role.id : '', user: target ? target.id : '', provider: values.provider, subject, login, email, note: values.note },
-      submitLabel: `Invite ${values.provider === 'github' ? '@' + (login || subject) : email}`,
+      fields: { role: role.id, subject, login },
+      submitLabel: `Invite ${name}`,
     });
   }
 
-  const token = randomToken();
   const id = newId();
   await db.batch([
-    db.prepare(`INSERT INTO invites (id, token_hash, role_id, user_id, provider, subject, login_hint, email_normalized,
-        note, invited_by, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-      .bind(id, await sha256Hex(token), role ? role.id : null, target ? target.id : null, values.provider, subject, login,
-        email, values.note, user.id, now, now + INVITE_TTL_MS),
+    db.prepare(`INSERT INTO invites (id, role_id, subject, login_hint, invited_by, created_at, expires_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)`).bind(id, role.id, subject, login, user.id, now, now + INVITE_TTL_MS),
     auditStmt(db, {
       at: now, actor: user.id, action: 'invite.create', targetType: 'invite', targetId: id, request: ctx.request,
-      detail: { provider: values.provider, role: role ? role.id : null, user: target ? target.id : null },
+      detail: { provider: 'github', role: role.id },
     }),
   ]);
-
-  const as = role ? `as ${esc(role.name)}` : `to add a sign-in method for ${esc(target.display_name)}`;
-  const notice = values.provider === 'github'
-    ? alert('success', `<p>Invite created for @${esc(login || '?')} (id ${esc(subject)}) ${as}. Send them ${esc(env.ORIGIN)}/admin/ and they can sign in with GitHub. The invite works for 7 days.</p>`)
-    : alert('success', `<p>Invite created for ${esc(email)} ${as}. Copy this link now. It is shown once and works for 7 days.</p>
-      <label class="sy-field__label" for="invite-link">Invite link</label>
-      <input class="sy-input" id="invite-link" readonly value="${esc(`${env.ORIGIN}/auth/signin?invite=${token}`)}">`);
+  const notice = alert('success', `<p>Invite created for @${esc(login || '?')} (id ${esc(subject)}) as ${esc(role.name)}. Send them ${esc(env.ORIGIN)}/admin/ and they can sign in with GitHub. The invite works for 7 days.</p>`);
   return renderPeople(ctx, { notice });
 }
 
@@ -275,9 +233,7 @@ export async function grantRole(ctx) {
   const db = env.DB;
   const { target, role } = await personAndRole(ctx);
   if (!target || !role) return renderPeople(ctx, { status: 404, notice: alert('warning', 'That person or role no longer exists.') });
-  const rolePerms = await permsOfRole(db, role.id);
-  if (!subset(rolePerms, ctx.perms)) return refuse(ctx, GUARD_COPY.up);
-  if ((role.is_system === 1 || privilegedKeys(rolePerms)) && !confirmed(ctx)) {
+  if (role.is_system === 1 && !confirmed(ctx)) {
     return confirmPage(ctx, {
       title: `Grant ${role.name}`,
       lines: [`<strong>Confirm.</strong> ${acting(ctx)} are granting <strong>${esc(role.name)}</strong> to ${esc(target.display_name)}.`, esc(ADMIN_LINE)],
@@ -303,11 +259,7 @@ export async function revokeRole(ctx) {
   if (!target || !role) return renderPeople(ctx, { status: 404, notice: alert('warning', 'That person or role no longer exists.') });
   const held = await db.prepare('SELECT 1 AS x FROM user_roles WHERE user_id = ? AND role_id = ?').bind(target.id, role.id).first();
   if (!held) return done('revoked');
-  const rolePerms = await permsOfRole(db, role.id);
-  if (!subset(rolePerms, ctx.perms)) return refuse(ctx, GUARD_COPY.up);
-  if (!(await targetOk(ctx, target.id))) return refuse(ctx, GUARD_COPY.target);
-  const big = role.is_system === 1 || privilegedKeys(rolePerms) || await isFullAdmin(db, target.id);
-  if (big && !confirmed(ctx)) {
+  if (role.is_system === 1 && !confirmed(ctx)) {
     return confirmPage(ctx, {
       title: `Revoke ${role.name}`,
       lines: [`<strong>Confirm.</strong> ${acting(ctx)} are revoking <strong>${esc(role.name)}</strong> from ${esc(target.display_name)}.`],
@@ -334,7 +286,6 @@ export async function disableUser(ctx) {
   if (!target) return renderPeople(ctx, { status: 404, notice: alert('warning', 'That person no longer exists.') });
   if (target.id === user.id) return refuse(ctx, GUARD_COPY.self);
   if (target.disabled_at) return done('disabled');
-  if (!(await targetOk(ctx, target.id))) return refuse(ctx, GUARD_COPY.target);
   if (!confirmed(ctx)) {
     return confirmPage(ctx, {
       title: `Turn off ${target.display_name}`,
@@ -355,9 +306,8 @@ export async function enableUser(ctx) {
   const target = await userById(db, ctx.form.get('user'));
   if (!target) return renderPeople(ctx, { status: 404, notice: alert('warning', 'That person no longer exists.') });
   if (!target.disabled_at) return done('enabled');
-  if (!(await targetOk(ctx, target.id))) return refuse(ctx, GUARD_COPY.target);
   await db.batch([
-    db.prepare('UPDATE users SET disabled_at = NULL, disabled_reason = NULL WHERE id = ? AND disabled_at = ?').bind(target.id, target.disabled_at),
+    db.prepare('UPDATE users SET disabled_at = NULL WHERE id = ? AND disabled_at = ?').bind(target.id, target.disabled_at),
     auditStmt(db, { at: now, actor: user.id, action: 'user.enable', targetType: 'user', targetId: target.id, request: ctx.request,
       when: ['EXISTS (SELECT 1 FROM users WHERE id = ? AND disabled_at IS NULL)', target.id] }),
   ]);
@@ -369,7 +319,6 @@ export async function revokeUserSessions(ctx) {
   const db = env.DB;
   const target = await userById(db, ctx.form.get('user'));
   if (!target) return renderPeople(ctx, { status: 404, notice: alert('warning', 'That person no longer exists.') });
-  if (!(await targetOk(ctx, target.id))) return refuse(ctx, GUARD_COPY.target);
   await db.batch([
     db.prepare('DELETE FROM sessions WHERE user_id = ?').bind(target.id),
     auditStmt(db, { at: now, actor: user.id, action: 'session.revoke', targetType: 'user', targetId: target.id, request: ctx.request }),
@@ -383,7 +332,6 @@ export async function removeIdentity(ctx) {
   const ident = await db.prepare(`SELECT i.id, i.user_id, i.provider, i.login, i.email, u.display_name
       FROM identities i JOIN users u ON u.id = i.user_id WHERE i.id = ?`).bind(String(ctx.form.get('identity') || '')).first();
   if (!ident) return renderPeople(ctx, { status: 404, notice: alert('warning', 'That sign-in method no longer exists.') });
-  if (!(await targetOk(ctx, ident.user_id))) return refuse(ctx, GUARD_COPY.target);
   if (!confirmed(ctx)) {
     return confirmPage(ctx, {
       title: 'Remove sign-in method',

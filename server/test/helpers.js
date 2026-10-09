@@ -16,13 +16,13 @@ export function makeEnv(overrides = {}) {
     GITHUB_CLIENT_ID: 'github-client-test',
     GOOGLE_CLIENT_SECRET: 'google-secret-test',
     GITHUB_CLIENT_SECRET: 'github-secret-test',
-    APP_SECRET: 'test-app-secret-0123456789abcdefghijklmnop',
+    APP_SECRET: 'test-app-secret-0123456789abcdefghijklmnopq', // 43 base64url chars: 32 key bytes
     DB: freshDb(),
     ...overrides,
   };
 }
 
-// A custom role holding exactly `perms`; returns its id.
+// A custom role holding exactly `perms`; returns its id. The migration refuses privileged keys here.
 export function seedRole(db, perms, name = `r-${newId().slice(0, 8)}`) {
   const id = `role_${newId().slice(0, 12)}`;
   db.sqlite.prepare('INSERT INTO roles (id, name, created_at) VALUES (?, ?, ?)').run(id, name, Date.now());
@@ -33,7 +33,7 @@ export function seedRole(db, perms, name = `r-${newId().slice(0, 8)}`) {
 // A user with one identity. Pass roles (ids, e.g. ['role_admin']) and/or perms (a custom role is made).
 export function seedUser(db, {
   roles = [], perms, provider = 'github', subject = `gh-test-${newId().slice(0, 6)}`, login = 'test-user',
-  email = null, displayName = login || 'Test user', disabled = false, now = Date.now(), expiresAt = null,
+  email = null, displayName = login || 'Test user', disabled = false, now = Date.now(),
 } = {}) {
   const userId = newId();
   const identityId = newId();
@@ -44,8 +44,7 @@ export function seedUser(db, {
   const roleIds = [...roles];
   if (perms) roleIds.push(seedRole(db, perms));
   for (const r of roleIds) {
-    db.sqlite.prepare('INSERT INTO user_roles (user_id, role_id, granted_at, expires_at) VALUES (?, ?, ?, ?)')
-      .run(userId, r, now, expiresAt);
+    db.sqlite.prepare('INSERT INTO user_roles (user_id, role_id, granted_at) VALUES (?, ?, ?)').run(userId, r, now);
   }
   return { userId, identityId, roleIds, provider, subject: String(subject), login, displayName };
 }

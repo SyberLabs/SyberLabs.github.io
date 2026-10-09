@@ -22,16 +22,20 @@ export function forbiddenHtml(ctx, key) {
   return page(ctx, { title: 'Not open to you', body });
 }
 
-// Cases c and d of the callback. invite and next come from the state cookie so "Try another account"
-// keeps them; switch=1 (and the contract's prompt=select_account) makes the provider show its picker.
-export function deniedHtml(ctx, { provider, name, emailMatch = false, invite = '', next = '' } = {}) {
+// Case c of the callback. next comes from the state cookie so "Try another account" keeps it; switch=1
+// (and the contract's prompt=select_account) makes the provider show its picker. Google is never invited,
+// so an unknown Google account is told how to add it (RFC-0002 3.4).
+export function deniedHtml(ctx, { provider, name, next = '' } = {}) {
   const p = providerLabel(provider);
   const who = provider === 'github' ? `@${name}` : name;
-  const fields = hidden([['invite', invite], ['next', next], ['switch', '1'], ['prompt', 'select_account']]);
+  const fields = hidden([['next', next], ['switch', '1'], ['prompt', 'select_account']]);
+  const line = provider === 'google'
+    ? `<p class="sy-body-lg staff-lede"><strong>This Google account${name ? ` (${esc(who)})` : ''} isn't on a SyberLabs account.</strong></p>
+  <p class="sy-body">Sign in with GitHub, then add Google from your account page.</p>`
+    : `<p class="sy-body-lg staff-lede"><strong>This ${esc(p)} account${name ? ` (${esc(who)})` : ''} doesn't have access to SyberLabs.</strong></p>
+  <p class="sy-body">SyberLabs staff sign-in is by invite only. If you were invited, you may be signed in to GitHub as a different account.</p>`;
   const body = `${head('Staff / SyberLabs', 'No access.')}
-  <p class="sy-body-lg staff-lede"><strong>This ${esc(p)} account${name ? ` (${esc(who)})` : ''} doesn't have access to SyberLabs.</strong></p>
-  <p class="sy-body">SyberLabs staff sign-in is by invite only.</p>${emailMatch ? `
-  <p class="sy-body">Already have access another way? Sign in with that, or ask an admin to add this sign-in method.</p>` : ''}
+  ${line}
   <div class="staff-actions">
     <form method="post" action="/auth/start/${esc(provider)}" class="staff-inline">${fields}<button class="sy-btn sy-btn--line" type="submit">Try another account</button></form>
     <a class="sy-btn sy-btn--ghost" href="${esc(CONTACT)}">Ask for access</a>

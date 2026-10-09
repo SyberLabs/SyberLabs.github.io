@@ -1,7 +1,7 @@
 // /admin/changes (RFC-0002 2.6, 3.4): "What changed" from D1, newest first, behind site:changes.read; the
 // Add/Edit form, Delete and their audit rows behind site:changes.write. Rows hold no user ids; who wrote
 // what lives only in audit_events (update and delete keep the old row there).
-import { esc, html, json, redirect, HttpError } from '../http.js';
+import { esc, html, redirect, HttpError } from '../http.js';
 import { newId } from '../crypto.js';
 import { auditStmt } from '../authz.js';
 import { page, head, alert, field, errorSummary, fixPrefix, postButton } from './layout.js';
@@ -175,9 +175,4 @@ export async function deleteChange(ctx) {
     auditStmt(db, { at: ctx.now, actor: ctx.user.id, action: 'changes.delete', targetType: 'change_entry', targetId: id, detail: { before }, request: ctx.request }),
   ]);
   return redirect('/admin/changes?done=deleted');
-}
-
-// JSON for a future dashboard; the same gate and order as the page.
-export async function changesJson(ctx) {
-  return json({ entries: await listEntries(ctx.env.DB) });
 }

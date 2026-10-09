@@ -5,8 +5,8 @@ import { signinPage } from './views/signin.js';
 import { startLogin, callback } from './oauth.js';
 import { signout, revokeOwnSessions } from './session.js';
 import { adminHome } from './views/admin-home.js';
-import { accountPage, me } from './views/account.js';
-import { changesPage, saveChange, deleteChange, changesJson } from './views/changes.js';
+import { accountPage } from './views/account.js';
+import { changesPage, saveChange, deleteChange } from './views/changes.js';
 import {
   peoplePage, createInvite, revokeInvite, grantRole, revokeRole, removeIdentity, disableUser, enableUser,
   revokeUserSessions,
@@ -14,9 +14,10 @@ import {
 import { rolesPage, saveRole } from './views/roles.js';
 import { auditPage } from './views/audit.js';
 
-// [method path, access, handler, opts]; access = PUBLIC | SIGNED_IN | '<permission key>'
-// opts.confirm: the handler renders a confirm page first when the action needs one, and acts only on
-// a second POST with confirm=1.
+// [method path, access, handler]; access = PUBLIC | SIGNED_IN | '<permission key>'. Each handler decides
+// for itself whether an action needs a confirm page first (views/confirm.js confirmed), and ownerPage()
+// derives a POST's owning page, so the RFC's opts column has nothing to carry here.
+// No /api/* routes: RFC-0002 R1-8 removed the JSON API, which had no consumer.
 export const ROUTES = [
   // Packet 2
   ['GET  /auth/signin',                        PUBLIC,               signinPage],
@@ -26,20 +27,18 @@ export const ROUTES = [
   ['GET  /admin/',                             SIGNED_IN,            adminHome],      // tiles filtered by perms
   ['GET  /admin/account',                      SIGNED_IN,            accountPage],
   ['POST /admin/account/signout-everywhere',   SIGNED_IN,            revokeOwnSessions],
-  ['GET  /api/me',                             SIGNED_IN,            me],             // {name, provider, permissions}
   // Packet 3
   ['GET  /admin/changes',                      'site:changes.read',  changesPage],
   ['POST /admin/changes',                      'site:changes.write', saveChange],
   ['POST /admin/changes/delete',               'site:changes.write', deleteChange],
-  ['GET  /api/admin/changes',                  'site:changes.read',  changesJson],    // pattern for dashboards
   // Packet 4
   ['GET  /admin/people',                       'id:users.read',      peoplePage],
-  ['POST /admin/people/invite',                'id:users.manage',    createInvite,      { confirm: true }],
+  ['POST /admin/people/invite',                'id:users.manage',    createInvite],
   ['POST /admin/people/invite/revoke',         'id:users.manage',    revokeInvite],
-  ['POST /admin/people/roles/grant',           'id:users.manage',    grantRole,         { confirm: true }],
-  ['POST /admin/people/roles/revoke',          'id:users.manage',    revokeRole,        { confirm: true }],
-  ['POST /admin/people/identity/remove',       'id:users.manage',    removeIdentity,    { confirm: true }],
-  ['POST /admin/people/disable',               'id:users.manage',    disableUser,       { confirm: true }],
+  ['POST /admin/people/roles/grant',           'id:users.manage',    grantRole],
+  ['POST /admin/people/roles/revoke',          'id:users.manage',    revokeRole],
+  ['POST /admin/people/identity/remove',       'id:users.manage',    removeIdentity],
+  ['POST /admin/people/disable',               'id:users.manage',    disableUser],
   ['POST /admin/people/enable',                'id:users.manage',    enableUser],       // RFC-0002 8.2: no confirm
   ['POST /admin/people/sessions/revoke',       'id:users.manage',    revokeUserSessions],
   ['GET  /admin/roles',                        'id:users.read',      rolesPage],
@@ -51,7 +50,7 @@ const METHODS = new Set(['GET', 'POST']);
 
 export function compile(routes) {
   return routes.map((row, i) => {
-    const [spec, access, handler, opts = {}] = row;
+    const [spec, access, handler] = row;
     const m = /^(\S+)\s+(\/\S*)$/.exec(String(spec || '').trim());
     if (!m || !METHODS.has(m[1])) throw new Error(`route ${i}: bad method/path`);
     const [, method, pattern] = m;
@@ -59,7 +58,7 @@ export function compile(routes) {
     if (!ok) throw new Error(`route ${spec}: missing or unknown access slot`);
     if (access === PUBLIC && !pattern.startsWith('/auth/')) throw new Error(`route ${spec}: PUBLIC outside /auth/`);
     if (typeof handler !== 'function') throw new Error(`route ${spec}: handler is not a function`);
-    return { method, pattern, access, handler, opts, segments: pattern.split('/') };
+    return { method, pattern, access, handler, segments: pattern.split('/') };
   });
 }
 

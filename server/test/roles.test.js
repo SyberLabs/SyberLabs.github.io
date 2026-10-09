@@ -40,7 +40,6 @@ test('create a role, then edit its keys; both are audited', async () => {
   assert.equal(res.headers.get('Location'), '/admin/roles?ok=saved');
   const role = env.DB.sqlite.prepare("SELECT * FROM roles WHERE name = 'analyst'").get();
   assert.equal(role.is_system, 0);
-  assert.equal(role.created_by, admin.userId);
   assert.deepEqual(keysOf(env.DB, role.id), ['id:audit.read', 'site:changes.read']);
 
   res = await call(env, '/admin/roles', { cookie: admin.cookie,
@@ -50,6 +49,8 @@ test('create a role, then edit its keys; both are audited', async () => {
   assert.equal(env.DB.sqlite.prepare('SELECT name FROM roles WHERE id = ?').get(role.id).name, 'analyst-2');
   const audits = env.DB.sqlite.prepare("SELECT action, detail_json FROM audit_events WHERE action LIKE 'role.%' ORDER BY id").all();
   assert.deepEqual(audits.map(a => a.action), ['role.create', 'role.perms']);
+  assert.ok(env.DB.sqlite.prepare("SELECT actor_user_id FROM audit_events WHERE action = 'role.create'").get().actor_user_id === admin.userId,
+    'who made a role is in the audit log, not on the row');
   const detail = JSON.parse(audits[1].detail_json);
   assert.deepEqual(detail.added, ['site:changes.write']);
   assert.deepEqual(detail.removed, ['id:audit.read']);

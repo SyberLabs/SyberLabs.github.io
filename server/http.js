@@ -51,7 +51,6 @@ function build(body, { status = 200, headers = {}, cookies = [] } = {}, type) {
 }
 
 export const html = (body, init) => build(body, init, 'text/html; charset=utf-8');
-export const json = (data, init) => build(JSON.stringify(data), init, 'application/json; charset=utf-8');
 export const text = (body, init) => build(body, init, 'text/plain; charset=utf-8');
 
 // Empty-body redirect, 303 unless told otherwise.
@@ -59,10 +58,10 @@ export function redirect(location, { status = 303, headers = {}, cookies = [] } 
   return build(null, { status, headers: { ...headers, Location: location }, cookies });
 }
 
-// API error shape: {"error":{"code","message"}}.
+// [status, default message] per HttpError code. Every error renders as an HTML page: RFC-0002 R1-8
+// removed /api/* and its JSON error shape.
 export const ERRORS = {
   bad_request: [400, 'That request was not valid.'],
-  signin_required: [401, 'Sign in to continue.'],
   forbidden: [403, "You don't have access to this."],
   csrf: [403, 'This request came from another site.'],
   not_found: [404, 'Not found.'],
@@ -71,12 +70,7 @@ export const ERRORS = {
   unconfigured: [503, 'Sign-in is unavailable right now.'],
 };
 
-export function apiError(code, message, init = {}) {
-  const [status, fallback] = ERRORS[code] || [500, 'Something went wrong.'];
-  return json({ error: { code, message: message || fallback } }, { status, ...init });
-}
-
-// Thrown by handlers or helpers; app.js turns it into JSON (under /api/) or an HTML error page.
+// Thrown by handlers or helpers; app.js turns it into an HTML error page.
 export class HttpError extends Error {
   constructor(code, message) {
     super(message || (ERRORS[code] || [0, code])[1]);
@@ -86,7 +80,7 @@ export class HttpError extends Error {
 }
 
 // Thrown inside the OAuth flow; oauth.js answers with 303 /auth/signin?e=<code>.
-// Codes: cancelled, expired, provider, no_email, invite_invalid, disabled.
+// Codes: cancelled, expired, provider, disabled.
 export class AuthError extends Error {
   constructor(code, detail) {
     super(code);
@@ -128,8 +122,6 @@ export function safeReturnTo(raw, origin) {
   return (u.pathname === '/admin/' || u.pathname.startsWith('/admin/')) ? u.pathname + u.search : '/admin/';
 }
 
-export const isApiPath = pathname => pathname === '/api' || pathname.startsWith('/api/');
-
 // /24 of an IPv4 address or /48 of an IPv6 one, from CF-Connecting-IP; null when absent or malformed.
 export function ipPrefix(request) {
   const ip = (request.headers.get('CF-Connecting-IP') || '').trim();
@@ -153,8 +145,6 @@ export function userAgent(request) {
   const ua = request.headers.get('User-Agent');
   return ua ? ua.slice(0, 200) : null;
 }
-
-export const requestId = request => request.headers.get('CF-Ray') || null;
 
 // The body of a plain <form method="post">. Anything that is not urlencoded reads as empty.
 export const MAX_FORM_BYTES = 16384;

@@ -10,7 +10,7 @@ cp 404.html robots.txt sitemap.xml site.webmanifest _redirects \
   favicon.ico favicon-32x32.png favicon-16x16.png \
   apple-touch-icon.png android-chrome-192x192.png \
   android-chrome-512x512.png dist/
-# _routes.json sends only /auth/*, /admin, /admin/* and /api/* to the staff Function; staff.css styles its pages
+# _routes.json sends only /auth/*, /admin and /admin/* to the staff Function; staff.css styles its pages
 cp _routes.json staff.css dist/
 # kit/v2 is the canonical public home of the design kit: https://syberlabs.io/kit/v2/
 mkdir -p dist/kit

@@ -1,36 +1,23 @@
-// /auth/signin (RFC-0002 3.2, 3.4): one POST form per enabled provider, the ?e= alert, and the invite
-// greeting. Its only D1 access is the one indexed invite read, and only for a well-formed token.
+// /auth/signin (RFC-0002 3.2, 3.4): one POST form per enabled provider and the ?e= alert. No D1 access:
+// invites have no link (RFC-0002 2.5), so there is nothing to look up.
 import { esc, html, redirect, safeReturnTo } from '../http.js';
 import { CONTACT } from '../../projects/site-data.js';
-import { inviteForToken } from '../authz.js';
 import { enabledProviders } from '../oauth.js';
 import { page, head, alert, hidden, PROVIDER_LABEL, providerLabel } from './layout.js';
-
-// 32 random bytes in base64url. Anything else is never looked up, echoed or carried on.
-export const INVITE_RE = /^[A-Za-z0-9_-]{43}$/;
 
 const contact = text => `<a href="${esc(CONTACT)}">${esc(text)}</a>`;
 const names = list => list.map(p => PROVIDER_LABEL[p]).join(' or ');
 
 // RFC-0002 3.4. Each entry: alert kind, the <title> lead, and the copy (v = what the page knows:
-// providers, provider, invite). Unknown codes are ignored.
+// providers, provider, switching). Unknown codes are ignored.
 export const ERROR_COPY = {
   cancelled: { kind: 'neutral', title: 'Sign-in was cancelled',
     html: v => `Sign-in was cancelled. Choose ${esc(names(v.providers))} to try again.` },
   expired: { kind: 'warning', title: 'That sign-in took too long',
-    html: () => 'That sign-in took too long or was finished in another tab. Try again. If you came from an invite link, open it again.' },
+    html: () => 'That sign-in took too long or was finished in another tab. Try again. If this keeps happening, allow cookies for syberlabs.io.' },
   provider: { kind: 'danger', title: 'The provider didn’t answer',
     // oauth.js may add &p=<provider> so the page can name it; without it the copy stays generic.
     html: v => `${esc(v.provider ? providerLabel(v.provider) : 'The sign-in provider')} didn't answer. Try again in a minute.` },
-  no_email: { kind: 'danger', title: 'That Google account isn’t the invited one',
-    html: v => `That Google account isn't the one this invite was sent to. Continue with Google and choose ${esc(v.invite?.email_normalized || 'the invited address')}.` },
-  wrong_provider: { kind: 'warning', title: 'This invite is for another provider',
-    html: v => {
-      const p = esc(providerLabel(v.invite?.provider));
-      return `This invite is for ${p}. Continue with ${p}.`;
-    } },
-  invite_invalid: { kind: 'warning', title: 'This invite link has expired or was used',
-    html: () => 'This invite link has expired or was already used. Ask the person who invited you for a new one.' },
   disabled: { kind: 'danger', title: 'This account has been turned off',
     html: () => `This account has been turned off. ${contact('Email SyberLabs')} if you think that's a mistake.` },
   expired_session: { kind: 'neutral', title: 'Your session ended',
@@ -47,55 +34,26 @@ const GITHUB_MARK = '<svg class="staff-provider__mark" width="20" height="20" vi
 // Google's standard-colour G on its white backing, as on Google's dark-theme button.
 const GOOGLE_MARK = '<span class="staff-google__g" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 48 48" focusable="false"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></span>';
 
-// One provider's POST form. `as` labels it with the invited account ("as @name").
-// The switch flag is sent both as RFC-0002's switch=1 and the contract's prompt=select_account.
-// loginHint (Google invites) lets /auth/start send login_hint without a D1 read.
-export function providerForm(provider, { next, invite, switching, as, loginHint } = {}) {
-  const label = `Continue with ${PROVIDER_LABEL[provider]}${as ? ` as ${as}` : ''}`;
-  const fields = hidden([['next', next], ['invite', invite], ['login_hint', loginHint],
-    ['switch', switching ? '1' : ''], ['prompt', switching ? 'select_account' : '']]);
+// One provider's POST form. The switch flag is sent both as RFC-0002's switch=1 and the contract's
+// prompt=select_account.
+export function providerForm(provider, { next, switching } = {}) {
+  const label = `Continue with ${PROVIDER_LABEL[provider]}`;
+  const fields = hidden([['next', next], ['switch', switching ? '1' : ''], ['prompt', switching ? 'select_account' : '']]);
   const button = provider === 'google'
     ? `<button class="staff-google" type="submit">${GOOGLE_MARK}<span>${esc(label)}</span></button>`
     : `<button class="sy-btn sy-btn--line staff-provider" type="submit">${GITHUB_MARK}<span>${esc(label)}</span></button>`;
   return `<form method="post" action="/auth/start/${esc(provider)}">${fields}${button}</form>`;
 }
 
-// What the open invite says, and who it is for ("@name" or an address).
-function inviteAccount(invite) {
-  if (invite.provider === 'github') return invite.login_hint ? `@${invite.login_hint}` : '';
-  return invite.email_normalized || '';
-}
-
-function greeting(found) {
-  const { invite, roleName, inviterName } = found;
-  if (invite.user_id) return `<p class="sy-body-lg staff-greeting"><strong>Add ${esc(providerLabel(invite.provider))} to your SyberLabs account.</strong></p>`;
-  const who = inviterName ? `${esc(inviterName)} invited you` : "You're invited";
-  return `<p class="sy-body-lg staff-greeting"><strong>${who} to SyberLabs as ${esc(roleName || 'staff')}.</strong></p>`;
-}
-
-// The page body, shared with unavailableHtml(). opts: {code, next, invite (raw token, valid), found,
-// switching, provider, providers, showButtons}
+// The page body, shared with unavailableHtml(). opts: {code, next, switching, provider, providers, showButtons}
 export function signinBody(opts) {
-  const { code, next, found, switching, providers } = opts;
+  const { code, next, switching, providers } = opts;
   const copy = ERROR_COPY[code];
-  const v = { providers, provider: opts.provider, invite: found?.invite, switching };
-  const alertHtml = copy ? alert(copy.kind, copy.html(v)) : '';
-  let buttons = '';
-  if (opts.showButtons !== false) {
-    if (found) {
-      // On an invite only its provider shows, labelled with the invited account (RFC-0002 3.2).
-      const as = inviteAccount(found.invite);
-      const loginHint = found.invite.provider === 'google' ? found.invite.email_normalized : '';
-      buttons = providerForm(found.invite.provider, { next, invite: opts.invite, switching, as: as || undefined, loginHint }) +
-        `<p class="sy-small staff-notyou"><a href="/auth/signin?next=${encodeURIComponent(next)}">Not you? Sign in without this invite</a></p>`;
-    } else {
-      buttons = providers.map(p => providerForm(p, { next, switching })).join('');
-    }
-    buttons = `<div class="sy-plate sy-plate--card staff-signin__providers">${buttons}</div>`;
-  }
+  const alertHtml = copy ? alert(copy.kind, copy.html({ providers, provider: opts.provider, switching })) : '';
+  const buttons = opts.showButtons === false ? ''
+    : `<div class="sy-plate sy-plate--card staff-signin__providers">${providers.map(p => providerForm(p, { next, switching })).join('')}</div>`;
   return `${head('Staff / SyberLabs', 'Sign in.')}
   ${alertHtml}
-  ${found ? greeting(found) : ''}
   ${buttons}
   <p class="sy-small staff-signin__note">Only people SyberLabs has invited can sign in. Signing in sets a cookie on syberlabs.io and nothing on our other sites. <a href="/privacy/#staff">Privacy →</a></p>`;
 }
@@ -109,27 +67,15 @@ export function signinTitle(code) {
 export async function signinPage(ctx) {
   const q = ctx.url.searchParams;
   const next = safeReturnTo(q.get('next') || '/admin/', ctx.env.ORIGIN);
-  const raw = q.get('invite');
   let code = q.get('e');
   if (!Object.hasOwn(ERROR_COPY, code || '')) code = null;
 
-  let found = null;
-  let token = null;
-  if (raw != null) {
-    if (INVITE_RE.test(raw)) {
-      found = await inviteForToken(ctx.env.DB, raw, ctx.now);
-      if (found) token = raw;
-    }
-    // A bad or dead invite is the one thing worth saying (it is never echoed).
-    if (!found) code = 'invite_invalid';
-  }
-
-  // Signed in without an invite: there is nothing to do here.
-  if (ctx.user && !found) return redirect(next);
+  // Signed in: there is nothing to do here.
+  if (ctx.user) return redirect(next);
 
   const p = q.get('p');
   const body = signinBody({
-    code, next, found, invite: token,
+    code, next,
     switching: q.get('switch') === '1',
     provider: enabledProviders(ctx.env).includes(p) ? p : null,
     providers: enabledProviders(ctx.env),

@@ -33,13 +33,11 @@
 .staff-section > .sy-alert { margin-bottom: var(--space-4); }
 
 /* Sign-in */
-.staff-greeting { margin: 0; }
 .staff-signin__providers { display: grid; gap: var(--space-3); max-width: 440px; padding: 22px 18px; }
 .staff-signin__providers form { margin: 0; }
 .staff-provider.sy-btn, .staff-google { width: 100%; }
 .staff-provider__mark { width: 20px; height: 20px; color: var(--sy-vellum); }
 .staff-signin__note { max-width: 440px; }
-.staff-notyou { margin: 0; text-align: center; }
 /* Google's dark-theme button: #131314 fill, 1 px #8E918F inside stroke, #E3E3E3 text, 14/20 medium,
    12 px before the G, 10 px after it, 12 px after the text. */
 .staff-google { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 12px;

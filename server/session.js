@@ -9,16 +9,14 @@ export const SESSION_TTL_MS = 12 * 3600 * 1000;
 
 const TOKEN_RE = /^[A-Za-z0-9_-]{43}$/;
 
-// RFC-0002 8.1, plus the two columns this migration has and the RFC's does not: time-boxed grants
-// (user_roles.expires_at) and retired keys (permissions.deprecated_at) grant nothing.
+// RFC-0002 8.1 verbatim: one read resolves the session, its user and its keys.
 const SESSION_SQL = `
 SELECT s.user_id, s.identity_id, s.created_at, s.expires_at,
        u.display_name, i.provider, i.login, i.email,
        (SELECT json_group_array(DISTINCT rp.permission_key)
           FROM user_roles ur
           JOIN role_permissions rp ON rp.role_id = ur.role_id
-          JOIN permissions p ON p.key = rp.permission_key AND p.deprecated_at IS NULL
-         WHERE ur.user_id = s.user_id AND (ur.expires_at IS NULL OR ur.expires_at > ?2)) AS perms
+         WHERE ur.user_id = s.user_id) AS perms
   FROM sessions s
   JOIN users u      ON u.id = s.user_id AND u.disabled_at IS NULL
   JOIN identities i ON i.id = s.identity_id AND i.user_id = s.user_id

@@ -7,7 +7,7 @@ import { brokenDb } from './d1-shim.js';
 import { ORIGIN, SESSION_COOKIE, HOUR, call, makeEnv, seedSession, seedUser, setCookies, signIn, stubFetch } from './helpers.js';
 
 const PATHS = ['/admin/', '/admin', '/admin/changes', '/admin/people', '/admin/roles', '/admin/audit', '/admin/account',
-  '/admin/nope', '/api/me', '/api/admin/changes', '/api/nope', '/auth/signin', '/auth/signin?invite=x&e=expired',
+  '/admin/nope', '/auth/signin', '/auth/signin?e=expired',
   '/auth/callback/github?code=c&state=s', '/auth/nope'];
 const POSTS = ['/auth/start/github', '/auth/signout', '/admin/changes', '/admin/people/invite', '/admin/roles',
   '/admin/account/signout-everywhere'];
@@ -48,16 +48,19 @@ test('case 17: a non-canonical host gets 308 to ORIGIN with the same path and qu
   }
 });
 
-test('case 17: missing config is 503 on every routed path (JSON under /api/), and so is a D1 throw', async () => {
+test('case 17: missing config is 503 on every routed path, and so is a D1 throw', async () => {
   const keys = ['ORIGIN', 'GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET', 'APP_SECRET', 'DB'];
   const envs = keys.map(k => makeEnv({ [k]: undefined }));
-  envs.push(makeEnv({ APP_SECRET: 'too-short' }));
+  // APP_SECRET is the AES-GCM key itself: anything but 32 bytes is unconfigured, not a 503 at first use.
+  for (const bad of ['too-short', 'x'.repeat(40), 'sekret-canary-3-0123456789abcdefghijklmnopqrstuvwxyz']) {
+    envs.push(makeEnv({ APP_SECRET: bad }));
+  }
   for (const env of envs) {
     for (const p of PATHS) {
       const res = await call(env, p);
       assert.equal(res.status, 503, p);
-      if (p.startsWith('/api/')) assert.equal((await res.json()).error.code, 'unconfigured');
-      else assert.match(await res.text(), /unavailable/i);
+      assert.match(res.headers.get('Content-Type'), /^text\/html/, p);
+      assert.match(await res.text(), /unavailable/i);
     }
   }
   // ORIGIN missing: no host to compare against, still 503 (and not a redirect loop).
@@ -70,7 +73,7 @@ test('case 17: missing config is 503 on every routed path (JSON under /api/), an
   const realError = console.error;
   console.error = (...a) => errors.push(a.join(' '));
   try {
-    for (const p of ['/admin/', '/admin/changes', '/api/me', '/api/admin/changes']) {
+    for (const p of ['/admin/', '/admin/changes', '/admin/people']) {
       const r = await call(broken, p, { cookie });
       assert.equal(r.status, 503, p);
     }
@@ -84,7 +87,7 @@ test('case 17: canary secrets never appear in any body or header', async () => {
   const env = makeEnv({
     GITHUB_CLIENT_SECRET: 'sekret-canary-1',
     GOOGLE_CLIENT_SECRET: 'sekret-canary-2',
-    APP_SECRET: 'sekret-canary-3-0123456789abcdefghijklmnopqrstuvwxyz',
+    APP_SECRET: 'sekret-canary-3-0123456789abcdefghijklmnopq',
   });
   const fetchStub = stubFetch(() => new Response('nope', { status: 500 }));
   try {
@@ -108,8 +111,7 @@ test('case 11: a signed-in GET writes zero rows and reads with permissions fresh
   const env = makeEnv();
   const { cookie } = await signIn(env.DB, { roles: ['role_admin'] });
   const before = env.DB.totalChanges();
-  for (const p of ['/admin/', '/admin/changes', '/admin/people', '/admin/roles', '/admin/audit', '/admin/account', '/api/me',
-    '/api/admin/changes']) {
+  for (const p of ['/admin/', '/admin/changes', '/admin/people', '/admin/roles', '/admin/audit', '/admin/account']) {
     const res = await call(env, p, { cookie });
     assert.equal(res.status, 200, p);
   }
@@ -128,8 +130,6 @@ test('case 11: an expired session redirects with e=expired_session and clears th
   assert.equal(res.headers.get('Location'), '/auth/signin?next=%2Fadmin%2Fchanges&e=expired_session');
   const cleared = setCookies(res).find(c => c.startsWith(`${SESSION_COOKIE}=`));
   assert.match(cleared, /Max-Age=0/);
-  res = await call(env, '/api/me', { cookie });
-  assert.equal(res.status, 401);
   // A disabled user's surviving row authenticates nobody either.
   res = await call(env, '/admin/', { cookie: off.cookie });
   assert.equal(res.status, 303);

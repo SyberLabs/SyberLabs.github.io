@@ -1,7 +1,7 @@
 // The OAuth dance for both providers. In-flight state lives in an AES-GCM cookie bound to the provider
 // (AAD), never in D1: an unauthenticated visitor writes nothing, and replay is stopped by single-use
 // codes, the browser-held cookie, its 600 s life and its clearing on the first callback (RFC-0002 2.2).
-import { deriveKeys, sealJson, openJson, randomToken, sha256B64url, sha256Hex, timingSafeEqual } from './crypto.js';
+import { stateKey, sealJson, openJson, randomToken, sha256B64url, timingSafeEqual } from './crypto.js';
 import { AuthError, HttpError, clearCookie, cookie, html, readCookie, redirect, safeReturnTo } from './http.js';
 import { auditStmt, findIdentity, findOpenInvite, redeemInvite } from './authz.js';
 import { mintSession } from './session.js';
@@ -16,8 +16,6 @@ export const PROVIDERS = ['github', 'google'];
 export const enabledProviders = env => PROVIDERS.filter(p => p === 'github' || Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET));
 
 const CLIENTS = { github, google };
-const TOKEN_RE = /^[A-Za-z0-9_-]{43}$/; // randomToken(): 32 bytes, base64url
-const EMAIL_RE = /^[^\s@<>"']{1,64}@[^\s@<>"']{1,190}$/;
 const aad = provider => `sl_oauth|${provider}`;
 
 function providerOf(ctx) {
@@ -26,17 +24,15 @@ function providerOf(ctx) {
   return p;
 }
 
-// payload: {v:1, p, s, cv, n?, inv?, r, t}. Sealed as given, so tests can craft bad payloads.
+// payload: {v:1, p, s, cv, n?, r, t}. Sealed as given, so tests can craft bad payloads.
 export async function sealState(env, provider, payload) {
-  const { stateKey } = await deriveKeys(env.APP_SECRET);
-  return sealJson(stateKey, payload, aad(provider));
+  return sealJson(await stateKey(env.APP_SECRET), payload, aad(provider));
 }
 
 // null for anything we did not seal for this provider within the last 600 s.
 export async function openState(env, provider, sealed, now) {
   if (typeof sealed !== 'string' || !sealed || sealed.length > 4096) return null;
-  const { stateKey } = await deriveKeys(env.APP_SECRET);
-  const st = await openJson(stateKey, sealed, aad(provider));
+  const st = await openJson(await stateKey(env.APP_SECRET), sealed, aad(provider));
   if (!st || typeof st !== 'object' || st.v !== 1 || st.p !== provider) return null;
   if (typeof st.t !== 'number' || now - st.t >= STATE_TTL_MS || st.t - now > 60000) return null;
   if (typeof st.s !== 'string' || !st.s || typeof st.cv !== 'string' || !st.cv) return null;
@@ -47,11 +43,8 @@ export async function openState(env, provider, sealed, now) {
 export async function startLogin(ctx) {
   const { env, form, now } = ctx;
   const provider = providerOf(ctx);
-  const raw = form.get('invite');
-  const inv = typeof raw === 'string' && TOKEN_RE.test(raw) ? raw : null; // malformed is never echoed
   const selectAccount = form.get('switch') === '1' || form.get('prompt') === 'select_account';
   const st = { v: 1, p: provider, s: randomToken(), cv: randomToken(), r: safeReturnTo(form.get('next'), env.ORIGIN), t: now };
-  if (inv) st.inv = inv;
   if (provider === 'google') st.n = randomToken();
 
   const challenge = await sha256B64url(st.cv);
@@ -59,19 +52,15 @@ export async function startLogin(ctx) {
   if (provider === 'github') {
     location = github.authorizeUrl(env, { state: st.s, challenge, selectAccount });
   } else {
-    // The sign-in page renders the invited address as a hidden login_hint, so start needs no D1 read.
-    const hint = form.get('login_hint');
-    const loginHint = inv && typeof hint === 'string' && hint.length <= 254 && EMAIL_RE.test(hint) ? hint : null;
-    location = google.authorizeUrl(env, { state: st.s, challenge, nonce: st.n, loginHint, selectAccount });
+    location = google.authorizeUrl(env, { state: st.s, challenge, nonce: st.n, selectAccount });
   }
   const sealed = await sealState(env, provider, st);
   return redirect(location, { cookies: [cookie(OAUTH_COOKIE, sealed, STATE_TTL_MS / 1000)] });
 }
 
-// Back to the sign-in page. When the cookie decrypted, keep its invite and return path (RFC-0002 2.2).
+// Back to the sign-in page. When the cookie decrypted, keep its return path (RFC-0002 2.2).
 function signinUrl(code, st) {
   const q = new URLSearchParams();
-  if (st && st.inv) q.set('invite', st.inv);
   if (st && st.r) q.set('next', st.r);
   q.set('e', code);
   return `/auth/signin?${q}`;
@@ -109,20 +98,12 @@ export async function callback(ctx) {
 
 const verifiedEmail = id => (id.emailVerified && typeof id.email === 'string' ? id.email.trim().toLowerCase() : null);
 
-// RFC-0002 2.2 callback outcomes a, b, b', c, d.
+// RFC-0002 2.2 callback outcomes a, b and c. Google is added from a signed-in session (Packet 5), never
+// invited, so an unknown Google identity is always case c.
 async function resolve(ctx, provider, id, st, back, cleared) {
   const { env, request, now } = ctx;
   const db = env.DB;
   const email = provider === 'google' ? verifiedEmail(id) : null;
-  const tokenHash = st.inv ? await sha256Hex(st.inv) : null;
-
-  // b'. The cookie carries an open invite for the other provider: send them to the right button.
-  if (tokenHash) {
-    const other = await db.prepare(
-      `SELECT provider FROM invites WHERE token_hash = ?1 AND redeemed_at IS NULL AND revoked_at IS NULL
-          AND expires_at > ?2`).bind(tokenHash, now).first('provider');
-    if (other && other !== provider) return back('wrong_provider', st);
-  }
 
   // a. Known identity.
   const known = await findIdentity(db, provider, id.subject);
@@ -138,37 +119,19 @@ async function resolve(ctx, provider, id, st, back, cleared) {
     return redirect(st.r, { cookies: [s.cookie, cleared] });
   }
 
-  // b. Open invite: GitHub by pinned numeric id (no link needed); Google only by the link's token.
-  let invite = null;
-  if (provider === 'github') invite = await findOpenInvite(db, { provider, subject: id.subject, now });
-  else if (tokenHash) invite = await findOpenInvite(db, { provider, tokenHash, now });
-
-  if (invite && provider === 'google' &&
-      !(email && email === invite.email_normalized && google.googleAuthoritative(email, id.hd))) {
-    return back('no_email', st);
-  }
-
-  if (invite) {
-    const r = await redeemInvite(env, {
-      invite, provider, subject: id.subject, email, login: provider === 'github' ? id.login : null, request, now,
-    });
-    if (!r) return back('invite_invalid', { r: st.r }); // the guarded UPDATE changed 0 rows; invite unburned
+  // b. An open GitHub invite pinned to this numeric id. If the guarded UPDATE changes 0 rows, it is case c.
+  const invite = provider === 'github' ? await findOpenInvite(db, id.subject, now) : null;
+  const r = invite && await redeemInvite(env, { invite, subject: id.subject, login: id.login, request, now });
+  if (r) {
     const s = await mintSession(env, { userId: r.userId, identityId: r.identityId, request, now });
     await db.batch([s.stmt, auditStmt(db, signinAudit(r.userId, r.identityId, provider, request, now))]);
-    const to = invite.user_id ? `/admin/account?added=${provider}` : '/admin/?welcome=1';
-    return redirect(to, { cookies: [s.cookie, cleared] });
+    return redirect('/admin/?welcome=1', { cookies: [s.cookie, cleared] });
   }
 
-  // c / d. Uninvited: nothing is written to D1, one log line with no subject (RFC-0002 2.2, section 0).
-  let emailMatch = false;
-  if (email) {
-    emailMatch = Boolean(await db.prepare('SELECT 1 AS hit FROM identities WHERE lower(email) = ?1 LIMIT 1')
-      .bind(email).first('hit'));
-  }
-  console.log(JSON.stringify({ event: 'signin.denied', provider, emailMatch }));
+  // c. Uninvited: nothing is written to D1, one log line with no subject (RFC-0002 2.2, section 0).
+  console.log(JSON.stringify({ event: 'signin.denied', provider }));
   const name = provider === 'github' ? id.login : id.email;
-  return html(deniedHtml(ctx, { provider, name, emailMatch, invite: st.inv || null, next: st.r }),
-    { status: 403, cookies: [cleared] });
+  return html(deniedHtml(ctx, { provider, name, next: st.r }), { status: 403, cookies: [cleared] });
 }
 
 const signinAudit = (userId, identityId, provider, request, at) => ({

@@ -1,6 +1,6 @@
 // Views: every page renders inside the shared chrome with no script, every value is escaped, the nav
-// follows permissions, invite links behave (RFC-0002 8.5 case 22), the changes form and href rule
-// (case 17) and the import script round-trips.
+// follows permissions, the sign-in page reads no D1 (invites have no link), the changes form and href
+// rule (case 17) and the import script round-trips.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -10,13 +10,13 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { makeEnv, signIn, call, seedUser, HOUR } from './helpers.js';
 import { freshDb } from './d1-shim.js';
-import { randomToken, sha256Hex, newId } from '../crypto.js';
 import { page, navItems, alert, field } from '../views/layout.js';
 import { ERROR_COPY, signinBody } from '../views/signin.js';
 import { forbiddenHtml, deniedHtml, notFoundHtml, errorHtml, unavailableHtml, CSRF_COPY } from '../views/forbidden.js';
 import { confirmHtml, actingAs } from '../views/confirm.js';
 import { changeRow, validHref, validateEntry } from '../views/changes.js';
 import { HttpError } from '../http.js';
+import { newId } from '../crypto.js';
 
 const XSS = `<script>alert(1)</script>'"><img src=x>`;
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
@@ -49,15 +49,6 @@ const noRawXss = body => {
   assert.ok(!body.includes('<img src=x>'), 'raw <img> leaked');
   assert.ok(!body.includes(`'"><img`), 'attribute breakout leaked');
 };
-
-async function seedInvite(db, { token = randomToken(), provider = 'github', subject = 'gh-test-9', login = 'octo-test', email = null,
-  roleId = 'role_viewer', userId = null, invitedBy = null, now = Date.now(), expiresAt = now + 7 * 24 * HOUR, redeemed = null, revoked = null } = {}) {
-  db.sqlite.prepare(`INSERT INTO invites (id, token_hash, role_id, user_id, provider, subject, login_hint, email_normalized,
-      invited_by, created_at, expires_at, redeemed_at, revoked_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-    .run(newId(), await sha256Hex(token), roleId, userId, provider, provider === 'github' ? subject : null,
-      provider === 'github' ? login : null, provider === 'google' ? email : null, invitedBy, now, expiresAt, redeemed, revoked);
-  return token;
-}
 
 // ---- layout and nav ------------------------------------------------------------------------------
 
@@ -103,8 +94,8 @@ test('display names and logins are escaped in every view that shows them', () =>
   const pages = [
     page(ctx, { title: XSS, body: '' }),
     forbiddenHtml(ctx, 'id:audit.read'),
-    deniedHtml(ctx, { provider: 'github', name: XSS, invite: XSS, next: XSS }),
-    deniedHtml(ctx, { provider: 'google', name: XSS, emailMatch: true }),
+    deniedHtml(ctx, { provider: 'github', name: XSS, next: XSS }),
+    deniedHtml(ctx, { provider: 'google', name: XSS }),
     confirmHtml(ctx, { title: XSS, lines: [`${actingAs(ctx.user)} are granting admin.`], action: '/admin/people/roles/grant', fields: { user: XSS }, submitLabel: XSS }),
     errorHtml(ctx, new HttpError('bad_request', XSS)),
     notFoundHtml(ctx),
@@ -165,7 +156,7 @@ test('signed out with switch=1: the copy changes and every button asks for the a
   assert.equal(body.match(/name="prompt" value="select_account"/g).length, 2);
 });
 
-test('signed in without an invite: 303 to the sanitized next', async () => {
+test('signed in: 303 to the sanitized next', async () => {
   const env = makeEnv();
   const { cookie } = await signIn(env.DB, { perms: [] });
   const res = await call(env, '/auth/signin?next=/admin/changes', { cookie });
@@ -173,65 +164,17 @@ test('signed in without an invite: 303 to the sanitized next', async () => {
   assert.equal(res.headers.get('Location'), '/admin/changes');
 });
 
-test('case 22: invite link states', async () => {
+// RFC-0002 3.2: the sign-in page reads nothing from D1, and an ?invite= from an old link is ignored.
+test('the sign-in page never touches D1 and ignores any invite parameter', async () => {
+  let reads = 0;
   const env = makeEnv();
-  const db = env.DB;
-  const now = Date.now();
-
-  // Malformed: never echoed, never looked up, invite_invalid copy, normal buttons.
-  const bad = 'A'.repeat(42) + '"<x>';
-  const r1 = await (await call(env, `/auth/signin?invite=${encodeURIComponent(bad)}`)).text();
-  assert.ok(!r1.includes('AAAAAAAAAAAAAAAAAAAA'), 'malformed token echoed');
-  assert.ok(r1.includes(ERROR_COPY.invite_invalid.html()));
-  assert.match(r1, /\/auth\/start\/github[\s\S]*\/auth\/start\/google/);
-  assert.doesNotMatch(r1, /name="invite"/);
-
-  // Unknown, used, revoked, expired: copy + normal buttons, no write, token not carried.
-  const dead = [
-    randomToken(),
-    await seedInvite(db, { subject: 'gh-test-21', redeemed: now - 1000 }),
-    await seedInvite(db, { subject: 'gh-test-22', revoked: now - 1000 }),
-    await seedInvite(db, { subject: 'gh-test-23', now: now - 9 * 24 * HOUR, expiresAt: now - 2 * 24 * HOUR }),
-  ];
-  for (const token of dead) {
-    const before = db.totalChanges();
-    const body = await (await call(env, `/auth/signin?invite=${token}`)).text();
-    assert.equal(db.totalChanges(), before, 'the sign-in page writes nothing');
-    assert.ok(body.includes(ERROR_COPY.invite_invalid.html()));
-    assert.ok(!body.includes(token), 'dead token not carried');
-    assert.match(body, /\/auth\/start\/github[\s\S]*\/auth\/start\/google/);
-  }
-
-  // Open GitHub invite: only the GitHub button, labelled with the login, plus "Not you?".
-  const open = await seedInvite(db, { subject: 'gh-test-24', login: 'octo-test' });
-  const before = db.totalChanges();
-  const body = await (await call(env, `/auth/signin?invite=${open}&next=/admin/changes`)).text();
-  assert.equal(db.totalChanges(), before);
-  assert.match(body, /Continue with GitHub as @octo-test/);
-  assert.doesNotMatch(body, /\/auth\/start\/google/);
-  assert.match(body, new RegExp(`name="invite" value="${open}"`));
-  assert.match(body, /Not you\? Sign in without this invite/);
-  assert.match(body, /href="\/auth\/signin\?next=%2Fadmin%2Fchanges"/);
-  assert.match(body, /You(?:&#39;|')re invited to SyberLabs as viewer\./);
-  assert.doesNotMatch(body, /sy-alert/);
-});
-
-test('an open Google invite carries login_hint; an add-method invite greets the account; inviter names are escaped', async () => {
-  const env = makeEnv();
-  const inviter = seedUser(env.DB, { roles: ['role_admin'], displayName: XSS, login: 'admin-test' });
-  const token = await seedInvite(env.DB, { provider: 'google', email: 'invitee@example.test', invitedBy: inviter.userId });
-  const body = await (await call(env, `/auth/signin?invite=${token}`)).text();
-  noRawXss(body);
-  assert.match(body, /invited you to SyberLabs as viewer/);
-  assert.match(body, /Continue with Google as invitee@example\.test/);
-  assert.match(body, /name="login_hint" value="invitee@example\.test"/);
-  assert.doesNotMatch(body, /\/auth\/start\/github/);
-
-  const target = seedUser(env.DB, { roles: ['role_viewer'], login: 'target-test' });
-  const add = await seedInvite(env.DB, { provider: 'google', email: 'target@example.test', roleId: null, userId: target.userId });
-  const addBody = await (await call(env, `/auth/signin?invite=${add}&e=no_email`)).text();
-  assert.match(addBody, /Add Google to your SyberLabs account\./);
-  assert.ok(addBody.includes("That Google account isn't the one this invite was sent to. Continue with Google and choose target@example.test."));
+  const real = env.DB;
+  env.DB = { prepare: (...a) => { reads++; return real.prepare(...a); }, batch: (...a) => real.batch(...a) };
+  const body = await (await call(env, `/auth/signin?invite=${'A'.repeat(43)}&next=/admin/changes`)).text();
+  assert.equal(reads, 0);
+  assert.doesNotMatch(body, /AAAAAAAAAA|name="invite"|sy-alert/);
+  assert.match(body, /\/auth\/start\/github[\s\S]*\/auth\/start\/google/);
+  assert.match(body, /name="next" value="\/admin\/changes"/);
 });
 
 test('unavailableHtml: the sign-in shell, the unconfigured alert, no buttons', () => {
@@ -277,7 +220,7 @@ test('account page lists sign-in methods and the session window', async () => {
   assert.match(body, /This session started at <time datetime="/);
   assert.match(body, /\(in 11 h 0 min\)/);
   assert.match(body, /action="\/admin\/account\/signout-everywhere"/);
-  assert.match(body, /Google is added\./);
+  assert.doesNotMatch(body, /is added\./, 'no add-method notice until Packet 5 adds Google');
 });
 
 test('a missing key renders the 403 page with switch-account sign-out', async () => {

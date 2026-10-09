@@ -19,6 +19,9 @@ test('case 1: every route has a valid access slot and PUBLIC sits only under /au
   assert.throws(() => compile([['GET  /admin/x', 'site:nope.read', noop]]), /access/);
   assert.throws(() => compile([['GET  /admin/x', PUBLIC, noop]]), /PUBLIC/);
   assert.throws(() => compile([['GET  /api/x', PUBLIC, noop]]), /PUBLIC/);
+  // RFC-0002 R1-8: no JSON API.
+  assert.ok(TABLE.every(r => !r.pattern.startsWith('/api')));
+  assert.ok(TABLE.every(r => !('opts' in r)));
   assert.throws(() => compile([['GET  /admin/x', SIGNED_IN]]), /handler/);
   assert.throws(() => compile([['PUT  /admin/x', SIGNED_IN, noop]]), /method/);
   assert.doesNotThrow(() => compile([['GET  /auth/x', PUBLIC, noop]]));
@@ -46,14 +49,14 @@ test('ownerPage: a signed-out POST returns to the page that owns the form', () =
   assert.equal(ownerPage(TABLE, '/admin/whatever'), '/admin/');
 });
 
-test('case 1: unknown paths are 303 / 401 / 404 signed out, 404 signed in', async () => {
+test('case 1: unknown paths are 303 / 404 signed out, 404 signed in, always as HTML', async () => {
   const env = makeEnv();
   let res = await call(env, '/admin/x');
   assert.equal(res.status, 303);
   assert.equal(res.headers.get('Location'), '/auth/signin?next=%2Fadmin%2Fx');
   res = await call(env, '/api/x');
-  assert.equal(res.status, 401);
-  assert.equal((await res.json()).error.code, 'signin_required');
+  assert.equal(res.status, 404);
+  assert.match(res.headers.get('Content-Type'), /^text\/html/);
   assert.equal((await call(env, '/auth/nope')).status, 404);
   assert.equal((await call(env, '/')).status, 404);
 
@@ -62,7 +65,6 @@ test('case 1: unknown paths are 303 / 401 / 404 signed out, 404 signed in', asyn
     res = await call(env, p, { cookie });
     assert.equal(res.status, 404, p);
   }
-  assert.equal((await (await call(env, '/api/x', { cookie })).json()).error.code, 'not_found');
 });
 
 test('case 1: GET /admin is a 308 to /admin/, keeping the query', async () => {
@@ -77,7 +79,7 @@ test('case 1: GET /admin is a 308 to /admin/, keeping the query', async () => {
 test('case 1: HEAD gets GET\'s status and headers with no body, except 405 under start and callback', async () => {
   const env = makeEnv();
   const { cookie } = await signIn(env.DB, { roles: ['role_admin'] });
-  for (const p of ['/admin/', '/admin/people', '/admin/account', '/api/me', '/auth/signin']) {
+  for (const p of ['/admin/', '/admin/people', '/admin/account', '/auth/signin']) {
     const get = await call(env, p, { cookie });
     const head = await call(env, p, { cookie, method: 'HEAD' });
     assert.equal(head.status, get.status, p);
@@ -104,12 +106,13 @@ test('case 1: other methods, and known paths with the wrong method, are 405', as
   assert.equal(res.headers.get('Allow'), 'POST');
   res = await call(env, '/auth/start/github');
   assert.equal(res.status, 405);
-  res = await call(env, '/api/me', { cookie, form: {} });
+  res = await call(env, '/admin/people', { cookie, form: {} });
   assert.equal(res.status, 405);
-  assert.equal((await res.json()).error.code, 'method_not_allowed');
+  assert.equal(res.headers.get('Allow'), 'GET, HEAD');
+  assert.match(res.headers.get('Content-Type'), /^text\/html/);
 });
 
-test('case 2: signed out, gated pages 303 with an empty body; JSON 401 with no entry text', async () => {
+test('case 2: signed out, gated pages 303 with an empty body and no entry text', async () => {
   const env = makeEnv();
   env.DB.sqlite.prepare(`INSERT INTO change_entries (id, date, project, state, title, text, href, created_at)
     VALUES ('c1', '2026-10-01', 'RISE', 'merged', 'Secret entry title', 'Secret entry text', '/x', 1)`).run();
@@ -119,11 +122,6 @@ test('case 2: signed out, gated pages 303 with an empty body; JSON 401 with no e
     assert.equal(res.headers.get('Location'), `/auth/signin?next=${encodeURIComponent(p)}`);
     assert.equal(await res.text(), '', p);
   }
-  const res = await call(env, '/api/admin/changes');
-  assert.equal(res.status, 401);
-  const body = await res.text();
-  assert.deepEqual(JSON.parse(body), { error: { code: 'signin_required', message: 'Sign in to continue.' } });
-  assert.doesNotMatch(body, /Secret/);
 });
 
 test('signed-out GET keeps its query in next; a signed-out POST returns to the owning page', async () => {
@@ -153,11 +151,10 @@ test('case 10: POSTs without our exact Origin, or with Sec-Fetch-Site other than
     { origin: true, headers: { 'Sec-Fetch-Site': 'cross-site' } },
   ];
   for (const t of tries) {
-    for (const path of ['/admin/account/signout-everywhere', '/auth/start/github', '/api/me']) {
+    for (const path of ['/admin/account/signout-everywhere', '/auth/start/github', '/admin/people/disable']) {
       const res = await call(env, path, { cookie, form: { user: userId }, ...t });
       assert.equal(res.status, 403, `${path} ${JSON.stringify(t)}`);
-      if (path.startsWith('/api/')) assert.equal((await res.json()).error.code, 'csrf');
-      else assert.match(await res.text(), /another site or an old tab/);
+      assert.match(await res.text(), /another site or an old tab/);
     }
   }
   assert.equal(env.DB.totalChanges(), before);
@@ -166,14 +163,12 @@ test('case 10: POSTs without our exact Origin, or with Sec-Fetch-Site other than
   assert.equal(ok.status, 303);
 });
 
-test('signed in without the route key: 403 page naming the permission, 403 JSON under /api/', async () => {
+test('signed in without the route key: 403 page naming the permission', async () => {
   const env = makeEnv();
   const { cookie } = await signIn(env.DB, { roles: ['role_viewer'] });
   let res = await call(env, '/admin/people', { cookie });
   assert.equal(res.status, 403);
   assert.match(await res.text(), /See staff accounts/);
   res = await call(env, '/admin/', { cookie });
-  assert.equal(res.status, 200);
-  res = await call(env, '/api/me', { cookie });
   assert.equal(res.status, 200);
 });

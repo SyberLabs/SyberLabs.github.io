@@ -1,12 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { hkdfSync, createHmac } from 'node:crypto';
+import { webcrypto } from 'node:crypto';
 import {
   b64urlEncode, b64urlDecode, hex, newId, randomToken, sha256Hex, sha256B64url, timingSafeEqual,
-  deriveKeys, seal, open, sealJson, openJson, hmacHex, AUDIT_INFO,
+  secretKeyBytes, stateKey, seal, open, sealJson, openJson,
 } from '../crypto.js';
 
-const SECRET = 'crypto-test-secret-0123456789abcdefghijk';
+const SECRET = 'crypto-test-secret-0123456789abcdefghijklmn'; // 43 base64url chars = 32 bytes
+const OTHER = 'other-test-secret-0123456789abcdefghijklmno';
 
 test('base64url round-trips and refuses padding, + / and bad lengths', () => {
   for (const n of [0, 1, 2, 3, 31, 32, 33]) {
@@ -42,53 +43,43 @@ test('timingSafeEqual', () => {
   assert.equal(timingSafeEqual('a', null), false);
 });
 
-test('deriveKeys refuses a missing or short APP_SECRET and caches per secret', async () => {
-  await assert.rejects(deriveKeys(undefined));
-  await assert.rejects(deriveKeys('short'));
-  assert.equal(deriveKeys(SECRET), deriveKeys(SECRET));
-  const { stateKey, auditKey } = await deriveKeys(SECRET);
-  assert.equal(stateKey.algorithm.name, 'AES-GCM');
-  assert.equal(auditKey.algorithm.name, 'HMAC');
-  assert.equal(stateKey.extractable, false);
-});
-
-test('the audit HMAC key is HKDF-SHA256(utf8(APP_SECRET), salt empty, info sl-audit-subject-v1)', async () => {
-  const { auditKey } = await deriveKeys(SECRET);
-  const raw = Buffer.from(hkdfSync('sha256', Buffer.from(SECRET), Buffer.alloc(0), AUDIT_INFO, 32));
-  const expected = createHmac('sha256', raw).update('github:gh-test-1').digest('hex');
-  assert.equal(await hmacHex(auditKey, 'github:gh-test-1'), expected);
-  assert.notEqual(expected, await sha256Hex('github:gh-test-1'));
+test('stateKey: APP_SECRET is the AES-GCM key itself (RFC-0002 R1-14), cached, and refused unless 32 bytes', async () => {
+  for (const bad of [undefined, 'short', 'x'.repeat(31), 'x'.repeat(40), 'not base64url but 43 chars long, honestly!!']) {
+    assert.equal(secretKeyBytes(bad), null, String(bad));
+    await assert.rejects(stateKey(bad));
+  }
+  assert.equal(secretKeyBytes(SECRET).length, 32);
+  assert.deepEqual(secretKeyBytes(SECRET), b64urlDecode(SECRET));
+  assert.equal(secretKeyBytes('y'.repeat(32)).length, 32); // exactly 32 UTF-8 bytes also works
+  assert.equal(stateKey(SECRET), stateKey(SECRET));
+  const key = await stateKey(SECRET);
+  assert.equal(key.algorithm.name, 'AES-GCM');
+  assert.equal(key.algorithm.length, 256);
+  assert.equal(key.extractable, false);
+  // No derivation: a key imported straight from the decoded bytes opens what stateKey sealed.
+  const direct = await webcrypto.subtle.importKey('raw', b64urlDecode(SECRET), 'AES-GCM', false, ['decrypt']);
+  assert.equal(new TextDecoder().decode(await open(direct, await seal(key, 'hi', 'aad'), 'aad')), 'hi');
 });
 
 test('seal/open: round trip, random IV, and null for wrong AAD, tampering, other keys or junk', async () => {
-  const { stateKey } = await deriveKeys(SECRET);
-  const { stateKey: otherKey } = await deriveKeys(SECRET + '-other');
-  const a = await sealJson(stateKey, { v: 1, p: 'github', s: 'x' }, 'sl_oauth|github');
-  const b = await sealJson(stateKey, { v: 1, p: 'github', s: 'x' }, 'sl_oauth|github');
+  const key = await stateKey(SECRET);
+  const otherKey = await stateKey(OTHER);
+  const a = await sealJson(key, { v: 1, p: 'github', s: 'x' }, 'sl_oauth|github');
+  const b = await sealJson(key, { v: 1, p: 'github', s: 'x' }, 'sl_oauth|github');
   assert.notEqual(a, b);
   assert.match(a, /^[A-Za-z0-9_-]+$/);
-  assert.deepEqual(await openJson(stateKey, a, 'sl_oauth|github'), { v: 1, p: 'github', s: 'x' });
-  assert.equal(await openJson(stateKey, a, 'sl_oauth|google'), null);
+  assert.deepEqual(await openJson(key, a, 'sl_oauth|github'), { v: 1, p: 'github', s: 'x' });
+  assert.equal(await openJson(key, a, 'sl_oauth|google'), null);
   assert.equal(await openJson(otherKey, a, 'sl_oauth|github'), null);
   const raw = b64urlDecode(a);
   raw[raw.length - 1] ^= 1;
-  assert.equal(await openJson(stateKey, b64urlEncode(raw), 'sl_oauth|github'), null);
+  assert.equal(await openJson(key, b64urlEncode(raw), 'sl_oauth|github'), null);
   raw[raw.length - 1] ^= 1;
   raw[3] ^= 1;
-  assert.equal(await openJson(stateKey, b64urlEncode(raw), 'sl_oauth|github'), null);
+  assert.equal(await openJson(key, b64urlEncode(raw), 'sl_oauth|github'), null);
   for (const junk of ['', 'abc', 'not base64!', b64urlEncode(new Uint8Array(20)), undefined]) {
-    assert.equal(await open(stateKey, junk, 'sl_oauth|github'), null);
+    assert.equal(await open(key, junk, 'sl_oauth|github'), null);
   }
-  const bytes = await open(stateKey, await seal(stateKey, 'plain', 'aad'), 'aad');
+  const bytes = await open(key, await seal(key, 'plain', 'aad'), 'aad');
   assert.equal(new TextDecoder().decode(bytes), 'plain');
-});
-
-test('hmacHex is deterministic per key and message', async () => {
-  const { auditKey } = await deriveKeys(SECRET);
-  const { auditKey: other } = await deriveKeys(SECRET + '-other');
-  const h = await hmacHex(auditKey, 'github:1');
-  assert.match(h, /^[0-9a-f]{64}$/);
-  assert.equal(h, await hmacHex(auditKey, 'github:1'));
-  assert.notEqual(h, await hmacHex(auditKey, 'github:2'));
-  assert.notEqual(h, await hmacHex(other, 'github:1'));
 });

@@ -1,11 +1,8 @@
 // Web Crypto helpers for the staff sign-in. No npm dependencies: runs on Workers and on Node 22+.
-// Two keys come from APP_SECRET by HKDF-SHA256: AES-GCM for the OAuth state cookie, HMAC for the
-// audit subject hash. Session tokens are random and never derived, so rotating APP_SECRET signs nobody out.
+// APP_SECRET is the AES-GCM key for the OAuth state cookie, and nothing else. Session tokens are random
+// and never derived, so rotating APP_SECRET signs nobody out.
 const enc = new TextEncoder();
 const dec = new TextDecoder();
-
-export const STATE_INFO = 'sl-oauth-state-v1';
-export const AUDIT_INFO = 'sl-audit-subject-v1';
 
 export const utf8 = s => enc.encode(s);
 
@@ -63,22 +60,25 @@ export function timingSafeEqual(a, b) {
   return diff === 0;
 }
 
-// The UTF-8 bytes of APP_SECRET are the HKDF input, so any well-formed secret works; 32+ chars required.
+// The 32 key bytes: APP_SECRET as base64url (`openssl rand -base64 32`, RFC-0002 8.4), or exactly 32
+// UTF-8 bytes. null for anything else, which app.js treats as unconfigured.
+export function secretKeyBytes(appSecret) {
+  if (typeof appSecret !== 'string') return null;
+  try {
+    const raw = b64urlDecode(appSecret);
+    if (raw.length === 32) return raw;
+  } catch { /* not base64url */ }
+  const bytes = enc.encode(appSecret);
+  return bytes.length === 32 ? bytes : null;
+}
+
+// RFC-0002 R1-14: APP_SECRET is imported directly as the AES-GCM key, with no HKDF. Cached per secret.
 const keyCache = new Map();
-export function deriveKeys(appSecret) {
-  if (typeof appSecret !== 'string' || appSecret.length < 32) {
-    return Promise.reject(new Error('APP_SECRET missing or shorter than 32 characters'));
-  }
+export function stateKey(appSecret) {
+  const bytes = secretKeyBytes(appSecret);
+  if (!bytes) return Promise.reject(new Error('APP_SECRET must be 32 bytes'));
   if (!keyCache.has(appSecret)) {
-    const p = (async () => {
-      const ikm = await crypto.subtle.importKey('raw', enc.encode(appSecret), 'HKDF', false, ['deriveKey']);
-      const hkdf = info => ({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(0), info: enc.encode(info) });
-      const [stateKey, auditKey] = await Promise.all([
-        crypto.subtle.deriveKey(hkdf(STATE_INFO), ikm, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']),
-        crypto.subtle.deriveKey(hkdf(AUDIT_INFO), ikm, { name: 'HMAC', hash: 'SHA-256', length: 256 }, false, ['sign']),
-      ]);
-      return { stateKey, auditKey };
-    })();
+    const p = crypto.subtle.importKey('raw', bytes, 'AES-GCM', false, ['encrypt', 'decrypt']);
     p.catch(() => keyCache.delete(appSecret));
     keyCache.set(appSecret, p);
   }
@@ -115,8 +115,4 @@ export async function openJson(key, sealed, aad) {
   const pt = await open(key, sealed, aad);
   if (!pt) return null;
   try { return JSON.parse(dec.decode(pt)); } catch { return null; }
-}
-
-export async function hmacHex(key, message) {
-  return hex(new Uint8Array(await crypto.subtle.sign('HMAC', key, bytesOf(message))));
 }

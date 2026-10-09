@@ -1,10 +1,10 @@
 // /admin/roles: roles, their keys and holders; with id:roles.manage, create or edit a role.
 // admin is the system role and is never edited here. Custom roles take non-privileged keys only
-// (RFC-0002 2.4), and never a key the editor lacks (up rule).
+// (RFC-0002 2.4; a migration trigger refuses the rest), and only admin holds id:roles.manage.
 import { esc, html, redirect } from '../http.js';
 import { newId } from '../crypto.js';
 import { CATALOGUE } from '../permissions.js';
-import { GUARD_COPY, MANAGE_KEYS, auditStmt, can, displayNames, removeRolePermStmt } from '../authz.js';
+import { GUARD_COPY, auditStmt, can, displayNames, removeRolePermStmt } from '../authz.js';
 import { alert, errorSummary, field, fixPrefix, head, page } from './layout.js';
 
 const NAME = /^[a-z][a-z0-9-]{1,39}$/;
@@ -92,7 +92,6 @@ export async function saveRole(ctx) {
   if (existing && existing.is_system === 1) return refuse(ctx, GUARD_COPY.system);
   if (wanted.some(k => !(k in CATALOGUE))) return renderRoles(ctx, { status: 400, notice: alert('danger', 'That permission does not exist.') });
   if (wanted.some(k => CATALOGUE[k].privileged)) return refuse(ctx, GUARD_COPY.privileged); // RFC-0002 2.4
-  if (wanted.some(k => !ctx.perms.has(k))) return refuse(ctx, GUARD_COPY.up);
 
   const errors = {};
   if (!NAME.test(name)) errors.name = '2 to 40 characters: a-z, 0-9 and -, starting with a letter.';
@@ -107,18 +106,12 @@ export async function saveRole(ctx) {
     .results.map(r => r.permission_key) : [];
   const added = wanted.filter(k => !before.includes(k));
   const removed = before.filter(k => !wanted.includes(k));
-  // A removed manage key (only on roles seeded outside this editor) must not shrink full_admins.
-  if (removed.some(k => MANAGE_KEYS.includes(k))) {
-    const dependent = await db.prepare(`SELECT 1 AS x WHERE NOT EXISTS (SELECT 1 FROM full_admins
-      WHERE user_id NOT IN (SELECT user_id FROM user_roles WHERE role_id = ?))`).bind(id).first();
-    if (dependent) return refuse(ctx, GUARD_COPY.lockout);
-  }
 
   const roleId = existing ? existing.id : `role_${newId().slice(0, 16)}`;
   const stmts = existing
     ? [db.prepare('UPDATE roles SET name = ?, description = ? WHERE id = ? AND is_system = 0').bind(name, description, roleId)]
-    : [db.prepare('INSERT INTO roles (id, name, description, is_system, created_by, created_at) VALUES (?, ?, ?, 0, ?, ?)')
-      .bind(roleId, name, description, user.id, now)];
+    : [db.prepare('INSERT INTO roles (id, name, description, is_system, created_at) VALUES (?, ?, ?, 0, ?)')
+      .bind(roleId, name, description, now)];
   for (const k of removed) stmts.push(removeRolePermStmt(db, { roleId, key: k }));
   for (const k of added) stmts.push(db.prepare('INSERT INTO role_permissions (role_id, permission_key) VALUES (?, ?)').bind(roleId, k));
   stmts.push(auditStmt(db, {

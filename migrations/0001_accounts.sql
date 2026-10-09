@@ -10,8 +10,7 @@ CREATE TABLE users (
   display_name     TEXT NOT NULL,                 -- GitHub login or verified email at first sign-in
   primary_email    TEXT,                          -- contact/display only, never a lookup key
   created_at       INTEGER NOT NULL,
-  disabled_at      INTEGER,                       -- users are disabled, never deleted (removal on request: RFC-0002 8.4.9)
-  disabled_reason  TEXT
+  disabled_at      INTEGER                        -- users are disabled, never deleted (removal on request: RFC-0002 8.4.9)
 );
 
 -- Sign-in methods. Keyed on the provider's stable subject, never on email or login.
@@ -43,12 +42,12 @@ CREATE INDEX sessions_expiry ON sessions(expires_at);
 
 -- Authorization -----------------------------------------------------------------------------
 -- Keys code can check: app:resource.verb. Rows are added ONLY by migration, because a permission
--- means nothing unless code checks it. Keys are never renamed; retired keys get deprecated_at.
+-- means nothing unless code checks it. Keys are never renamed; a key is retired by a migration that
+-- moves its rows away (RFC-0002 2.4).
 CREATE TABLE permissions (
-  key            TEXT PRIMARY KEY CHECK (key GLOB '[a-z]*:[a-z]*.[a-z]*'),
-  description    TEXT NOT NULL,
-  privileged     INTEGER NOT NULL DEFAULT 0 CHECK (privileged IN (0,1)),  -- two-step confirm when granted
-  deprecated_at  INTEGER
+  key          TEXT PRIMARY KEY CHECK (key GLOB '[a-z]*:[a-z]*.[a-z]*'),
+  description  TEXT NOT NULL,
+  privileged   INTEGER NOT NULL DEFAULT 0 CHECK (privileged IN (0,1))   -- only role_admin may hold it
 );
 
 -- Arbitrary roles are data, created from /admin/roles.
@@ -58,7 +57,6 @@ CREATE TABLE roles (
                                            AND name GLOB '[a-z]*' AND name NOT GLOB '*[^a-z0-9-]*'),
   description  TEXT NOT NULL DEFAULT '',
   is_system    INTEGER NOT NULL DEFAULT 0 CHECK (is_system IN (0,1)),  -- cannot be deleted/renamed
-  created_by   TEXT REFERENCES users(id),
   created_at   INTEGER NOT NULL
 );
 
@@ -67,79 +65,71 @@ CREATE TABLE role_permissions (
   permission_key  TEXT NOT NULL REFERENCES permissions(key),
   PRIMARY KEY (role_id, permission_key)
 );
+-- Privileged keys belong to admin only, and admin keeps every key (RFC-0002 2.4). So everyone who can
+-- invite, grant or edit a role holds every key, and no up or target rule is needed.
+CREATE TRIGGER role_perms_privileged_admin_only BEFORE INSERT ON role_permissions
+  WHEN NEW.role_id <> 'role_admin'
+   AND (SELECT privileged FROM permissions WHERE key = NEW.permission_key) = 1
+  BEGIN SELECT RAISE(ABORT, 'privileged keys belong to admin only'); END;
+CREATE TRIGGER role_perms_admin_keeps_all BEFORE DELETE ON role_permissions
+  WHEN OLD.role_id = 'role_admin'
+  BEGIN SELECT RAISE(ABORT, 'admin holds every key'); END;
 
 CREATE TABLE user_roles (
   user_id     TEXT NOT NULL REFERENCES users(id),
   role_id     TEXT NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
-  granted_by  TEXT REFERENCES users(id),          -- NULL = bootstrap invite seeded by Seth
+  granted_by  TEXT REFERENCES users(id),          -- NULL = bootstrap or break-glass, from Seth's terminal
   granted_at  INTEGER NOT NULL,
-  expires_at  INTEGER,                            -- optional time-boxed grant
   PRIMARY KEY (user_id, role_id)
 );
 CREATE INDEX user_roles_role ON user_roles(role_id);
 
--- Users who could repair any lockout: enabled, holding non-expiring grants of both manage keys.
-CREATE VIEW full_admins AS
+-- Everyone who can repair a lockout: enabled users holding the system admin role (RFC-0002 8.1).
+CREATE VIEW admins AS
   SELECT ur.user_id FROM user_roles ur
     JOIN users u ON u.id = ur.user_id AND u.disabled_at IS NULL
-    JOIN role_permissions rp ON rp.role_id = ur.role_id
-   WHERE ur.expires_at IS NULL AND rp.permission_key IN ('id:users.manage','id:roles.manage')
-   GROUP BY ur.user_id HAVING count(DISTINCT rp.permission_key) = 2;
+   WHERE ur.role_id = 'role_admin';
 
--- Invite-only. Exactly one target: a role (new person) or an existing user (add a sign-in method).
--- github: pinned to the numeric id; the link is optional.
--- google: needs the link (token_hash, carried in the encrypted state cookie) AND a matching
---         Google-authoritative verified email (RFC-0002 section 2.2, case b).
+-- Invites (Packet 4): GitHub only, pinned to the numeric id. No link and no token: the invitee
+-- signs in with that GitHub account. Google is added from a signed-in session, never invited.
 CREATE TABLE invites (
   id                    TEXT PRIMARY KEY,
-  token_hash            TEXT NOT NULL UNIQUE,     -- sha256 hex of the link token; the raw token is never stored
-  role_id               TEXT REFERENCES roles(id) ON DELETE CASCADE,
-  user_id               TEXT REFERENCES users(id),
-  provider              TEXT NOT NULL CHECK (provider IN ('google','github')),
-  subject               TEXT,                     -- GitHub numeric id
+  role_id               TEXT NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+  subject               TEXT NOT NULL CHECK (subject GLOB '[1-9]*' AND subject NOT GLOB '*[^0-9]*'),
   login_hint            TEXT,                     -- GitHub login when created, display only
-  email_normalized      TEXT,                     -- lower(trim(email)), Google only
-  note                  TEXT NOT NULL DEFAULT '',
-  invited_by            TEXT REFERENCES users(id),-- NULL = bootstrap
+  invited_by            TEXT NOT NULL REFERENCES users(id),
   created_at            INTEGER NOT NULL,
   expires_at            INTEGER NOT NULL,         -- default 7 days
   redeemed_at           INTEGER,
   redeemed_identity_id  TEXT,                     -- set by the guarded UPDATE; no FK (row inserted after)
-  revoked_at            INTEGER,
-  CHECK ((role_id IS NULL) <> (user_id IS NULL)),
-  CHECK ((provider = 'github' AND subject IS NOT NULL AND email_normalized IS NULL) OR
-         (provider = 'google' AND email_normalized IS NOT NULL AND subject IS NULL))
+  revoked_at            INTEGER
 );
-CREATE INDEX invites_subject_open ON invites(provider, subject) WHERE redeemed_at IS NULL AND revoked_at IS NULL;
 
 -- Audit log. The app only INSERTs. UPDATE is refused; DELETE is allowed only by retention.
 CREATE TABLE audit_events (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   at             INTEGER NOT NULL,
-  actor_user_id  TEXT,                            -- NULL = anonymous / bootstrap
-  action         TEXT NOT NULL,                   -- signin.ok signin.denied invite.create invite.revoke
-                                                  -- invite.redeem role.grant role.revoke role.create role.perms
+  actor_user_id  TEXT,                            -- NULL = bootstrap, from Seth's terminal
+  action         TEXT NOT NULL,                   -- signin.ok invite.create invite.revoke invite.redeem
+                                                  -- role.grant role.revoke role.create role.perms
                                                   -- user.disable user.enable identity.remove
                                                   -- session.revoke session.revoke_all
-                                                  -- changes.create changes.update changes.delete bootstrap.invite
+                                                  -- changes.create changes.update changes.delete bootstrap
   target_type    TEXT,
-  target_id      TEXT,                            -- signin.denied: HMAC-SHA256(audit key, provider:subject) hex
-  detail_json    TEXT NOT NULL DEFAULT '{}',      -- small JSON; never tokens, secrets or emails of denied people
-  ip_prefix      TEXT,
-  user_agent     TEXT,
-  request_id     TEXT                             -- cf-ray
+  target_id      TEXT,
+  detail_json    TEXT NOT NULL DEFAULT '{}',      -- small JSON; never tokens or secrets
+  ip_prefix      TEXT
 );
 CREATE INDEX audit_at ON audit_events(at DESC);
-CREATE INDEX audit_dedupe ON audit_events(action, target_id, at);
 CREATE TRIGGER audit_no_update BEFORE UPDATE ON audit_events
   BEGIN SELECT RAISE(ABORT, 'audit is append-only'); END;
 CREATE TRIGGER audit_retention_only BEFORE DELETE ON audit_events
-  WHEN NOT (OLD.at < (unixepoch() - 400*86400) * 1000
-            OR (OLD.action = 'signin.denied' AND OLD.at < (unixepoch() - 90*86400) * 1000))
+  WHEN NOT (OLD.at < (unixepoch() - 400*86400) * 1000)
   BEGIN SELECT RAISE(ABORT, 'audit rows are kept until retention'); END;
 
 -- Content: "What changed", now private ------------------------------------------------------
--- Fields mirror projects/latest.js (date, project, state, title, text, href).
+-- Fields mirror projects/latest.js (date, project, state, title, text, href). Holds no user ids:
+-- authorship is in audit_events, and update and delete keep the old row there.
 CREATE TABLE change_entries (
   id          TEXT PRIMARY KEY,
   date        TEXT NOT NULL CHECK (date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
@@ -151,13 +141,9 @@ CREATE TABLE change_entries (
                                    AND (href GLOB 'https://*' OR (href GLOB '/*' AND href NOT GLOB '//*'))
                                    AND href NOT GLOB '*[^!-~]*'            -- no spaces, controls or non-ASCII
                                    AND href NOT GLOB '*["''<>`\]*'),       -- no quotes, angle brackets, backslash
-  created_by  TEXT REFERENCES users(id),          -- opaque id; NULL for the one-off import
-  created_at  INTEGER NOT NULL,
-  updated_by  TEXT REFERENCES users(id),
-  updated_at  INTEGER,
-  deleted_at  INTEGER                             -- soft delete
+  created_at  INTEGER NOT NULL
 );
-CREATE INDEX change_entries_live ON change_entries(date DESC, created_at DESC) WHERE deleted_at IS NULL;
+CREATE INDEX change_entries_order ON change_entries(date DESC, created_at DESC);
 
 -- Seed: catalogue and roles. Contains no people. -------------------------------------------------
 INSERT INTO permissions (key, description, privileged) VALUES

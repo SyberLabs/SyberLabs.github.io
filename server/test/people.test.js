@@ -1,5 +1,5 @@
 // /admin/people through handle(): cases 13 (revocation ends access), 21 (confirm pages) and the invite
-// flows (GitHub lookup pinned to the numeric id, Google link shown once).
+// flow (GitHub only, the lookup pinned to the numeric id, no link).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { sha256Hex } from '../crypto.js';
@@ -78,8 +78,8 @@ test('case 13: turning a user off (confirmed) deletes their sessions and revokes
   const admin = await signIn(env.DB, { roles: ['role_admin'], login: 'boss' });
   const other = await signIn(env.DB, { roles: ['role_admin'], login: 'other' });
   await seedSession(env.DB, other);
-  env.DB.sqlite.prepare(`INSERT INTO invites (id, token_hash, role_id, provider, subject, invited_by, created_at, expires_at)
-    VALUES ('inv1', 'h1', 'role_viewer', 'github', 'gh-test-50', ?, 1, ?)`).run(other.userId, Date.now() + 1e9);
+  env.DB.sqlite.prepare(`INSERT INTO invites (id, role_id, subject, invited_by, created_at, expires_at)
+    VALUES ('inv1', 'role_viewer', '5050', ?, 1, ?)`).run(other.userId, Date.now() + 1e9);
   const before = env.DB.totalChanges();
   let res = await call(env, '/admin/people/disable', { cookie: admin.cookie, form: { user: other.userId } });
   assert.equal(res.status, 200);
@@ -140,14 +140,14 @@ test('end sessions: an admin ends another user\'s sessions', async () => {
 
 test('GitHub invite: the username is looked up once, the confirm page shows login and id, confirm creates it', async () => {
   const env = makeEnv();
-  const admin = await signIn(env.DB, { roles: ['role_admin'], login: 'boss' });
+  const admin = await signIn(env.DB, { roles: ['role_admin'], login: 'boss', subject: '6006' });
   const fetchStub = stubFetch(req => {
     if (req.url === 'https://api.github.com/users/new-person') return { id: 4242, login: 'New-Person' };
     if (req.url.startsWith('https://api.github.com/users/')) return new Response('{}', { status: 404 });
   });
   try {
     const before = env.DB.totalChanges();
-    let res = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'role_viewer', provider: 'github', login: 'new-person' } });
+    let res = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'role_viewer', login: 'new-person' } });
     assert.equal(res.status, 200);
     let page = await res.text();
     assert.match(page, /@New-Person, GitHub id 4242/);
@@ -156,22 +156,32 @@ test('GitHub invite: the username is looked up once, the confirm page shows logi
     assert.equal(env.DB.totalChanges(), before);
 
     res = await call(env, '/admin/people/invite', { cookie: admin.cookie,
-      form: { role: 'role_viewer', provider: 'github', login: 'New-Person', subject: '4242', confirm: '1' } });
+      form: { role: 'role_viewer', login: 'New-Person', subject: '4242', confirm: '1' } });
     assert.equal(res.status, 200);
     page = await res.text();
     assert.match(page, /Invite created for @New-Person \(id 4242\) as viewer/);
     assert.equal(fetchStub.calls.length, 1); // no second lookup
     const inv = q(env.DB, 'SELECT * FROM invites');
-    assert.equal(inv.provider, 'github');
     assert.equal(inv.subject, '4242');
     assert.equal(inv.login_hint, 'New-Person');
     assert.equal(inv.invited_by, admin.userId);
     assert.equal(inv.expires_at - inv.created_at, 7 * 86400 * 1000);
     assert.equal(q(env.DB, "SELECT count(*) AS n FROM audit_events WHERE action = 'invite.create'").n, 1);
+    assert.doesNotMatch(page, /\/auth\/signin\?invite=/, 'no invite link');
+
+    // RFC-0002 2.5: a second invite for an id with an open one, or one that can already sign in, is refused.
+    const after = env.DB.totalChanges();
+    res = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'role_viewer', login: 'New-Person', subject: '4242', confirm: '1' } });
+    assert.equal(res.status, 422);
+    assert.match(await res.text(), /@New-Person already has an open invite\./);
+    res = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'role_viewer', login: 'boss', subject: admin.subject, confirm: '1' } });
+    assert.equal(res.status, 422);
+    assert.match(await res.text(), /@boss already has a SyberLabs account\./);
+    assert.equal(env.DB.totalChanges(), after);
 
     // Unknown username: 422 with the gh api hint, nothing written.
     const mid = env.DB.totalChanges();
-    res = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'role_viewer', provider: 'github', login: 'ghost-user' } });
+    res = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'role_viewer', login: 'ghost-user' } });
     assert.equal(res.status, 422);
     assert.match(await res.text(), /gh api users\/ghost-user --jq \.id/);
     assert.equal(env.DB.totalChanges(), mid);
@@ -180,37 +190,40 @@ test('GitHub invite: the username is looked up once, the confirm page shows logi
   }
 });
 
-test('Google invite to viewer: no confirm, the link is shown once and only its hash is stored', async () => {
-  const env = makeEnv();
-  const admin = await signIn(env.DB, { roles: ['role_admin'] });
-  const res = await call(env, '/admin/people/invite', { cookie: admin.cookie,
-    form: { role: 'role_viewer', provider: 'google', email: '  Invitee@Example.TEST ' } });
-  assert.equal(res.status, 200);
-  const page = await res.text();
-  const m = /\/auth\/signin\?invite=([A-Za-z0-9_-]{43})/.exec(page);
-  assert.ok(m, 'link shown');
-  const inv = q(env.DB, 'SELECT * FROM invites');
-  assert.equal(inv.email_normalized, 'invitee@example.test');
-  assert.equal(inv.token_hash, await sha256Hex(m[1]));
-  assert.doesNotMatch(JSON.stringify(env.DB.sqlite.prepare('SELECT * FROM invites').all()), new RegExp(m[1]));
-  assert.doesNotMatch(JSON.stringify(env.DB.sqlite.prepare('SELECT * FROM audit_events').all()), new RegExp(m[1]));
-  // The people page lists it as open, without the link; Revoke closes it.
-  const list = await (await call(env, '/admin/people', { cookie: admin.cookie })).text();
-  assert.match(list, /invitee@example\.test/);
-  assert.doesNotMatch(list, new RegExp(m[1]));
-  const r = await call(env, '/admin/people/invite/revoke', { cookie: admin.cookie, form: { invite: inv.id } });
-  assert.equal(r.status, 303);
-  assert.ok(q(env.DB, 'SELECT revoked_at FROM invites').revoked_at);
+// Review round 1, finding 1: an invite nobody could redeem must not be created. Google is never invited
+// (RFC-0002 2.5), so provider=google is refused whether or not Google sign-in is turned on.
+test('a provider=google invite is refused with 422 and writes no row, with Google off or on', async () => {
+  for (const env of [makeEnv({ GOOGLE_CLIENT_ID: undefined }), makeEnv()]) {
+    const admin = await signIn(env.DB, { roles: ['role_admin'] });
+    const stub = stubFetch();
+    try {
+      const before = env.DB.totalChanges();
+      for (const confirm of ['', '1']) {
+        const res = await call(env, '/admin/people/invite', { cookie: admin.cookie,
+          form: { role: 'role_viewer', provider: 'google', email: 'invitee@gmail.com', login: 'someone', confirm } });
+        assert.equal(res.status, 422);
+        assert.match(await res.text(), /Invites are for GitHub accounts/);
+      }
+      assert.equal(env.DB.count('invites'), 0);
+      assert.equal(env.DB.totalChanges(), before);
+      assert.equal(stub.calls.length, 0);
+    } finally {
+      stub.restore();
+    }
+    // The page offers no Google invite or add-method form.
+    const page = await (await call(env, '/admin/people', { cookie: admin.cookie })).text();
+    assert.doesNotMatch(page, /name="provider"|value="google"|Add sign-in method|type="email"/);
+  }
 });
 
 test('an invite to admin renders the confirm page with the admin warning first', async () => {
   const env = makeEnv();
   const admin = await signIn(env.DB, { roles: ['role_admin'], login: 'boss' });
-  let res = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'role_admin', provider: 'google', email: 'a@gmail.com' } });
+  let res = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'role_admin', subject: '7777', login: 'x' } });
   assert.equal(res.status, 200);
   assert.match(await res.text(), /Admin can invite people/);
   assert.equal(env.DB.count('invites'), 0);
-  res = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'role_admin', provider: 'google', email: 'a@gmail.com', confirm: '1' } });
+  res = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'role_admin', subject: '7777', login: 'x', confirm: '1' } });
   assert.equal(res.status, 200);
   assert.equal(env.DB.count('invites'), 1);
 });
@@ -218,12 +231,14 @@ test('an invite to admin renders the confirm page with the admin warning first',
 test('invite form validation: 422 with the fixed field markup and values kept', async () => {
   const env = makeEnv();
   const admin = await signIn(env.DB, { roles: ['role_admin'] });
-  const res = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'role_viewer', provider: 'google', email: 'not an email"><x' } });
+  const res = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'role_viewer', login: '' } });
   assert.equal(res.status, 422);
   const page = await res.text();
   assert.match(page, /<title>Fix 1 field · People/);
   assert.match(page, /aria-invalid="true"/);
-  assert.match(page, /Google invites need a @gmail\.com address/);
-  assert.match(page, /value="not an email&quot;&gt;&lt;x"/);
+  assert.match(page, /Enter a GitHub username\./);
+  const bad = await call(env, '/admin/people/invite', { cookie: admin.cookie, form: { role: 'nope', login: '"><x' } });
+  assert.equal(bad.status, 422);
+  assert.doesNotMatch(await bad.text(), /"><x/);
   assert.equal(env.DB.count('invites'), 0);
 });

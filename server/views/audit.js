@@ -8,11 +8,10 @@ const LIMIT = 200;
 // Every action the app writes, with the label the page shows ("turn off", never "disable": RFC-0002 3.5).
 export const ACTION_LABELS = {
   'signin.ok': 'Signed in',
-  'signin.denied': 'Sign-in refused',
   'invite.create': 'Invite created',
   'invite.revoke': 'Invite revoked',
   'invite.redeem': 'Invite redeemed',
-  'bootstrap.invite': 'Bootstrap invite',
+  bootstrap: 'Bootstrap',
   'role.grant': 'Role granted',
   'role.revoke': 'Role revoked',
   'role.create': 'Role created',

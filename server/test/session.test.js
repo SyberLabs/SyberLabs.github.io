@@ -21,7 +21,7 @@ async function ctxFor(env, cookieHeader, { form = {}, now = NOW } = {}) {
   const request = req('/auth/signout', { cookie: cookieHeader, method: 'POST' });
   const { user, perms } = await loadSession(env, request, now);
   return { request, env, url: new URL(request.url), now, waitUntil: () => {}, params: {},
-    form: new URLSearchParams(form), route: null, user, perms };
+    form: new URLSearchParams(form), user, perms };
 }
 
 // Exactly: __Host- name, Path=/, Secure, HttpOnly, SameSite=Lax, Max-Age, and nothing else (no Domain).
@@ -121,15 +121,13 @@ test('a disabled user, or an identity moved to another user, does not authentica
   assert.equal((await loadSession(env, req('/admin/', { cookie: b.cookie }), NOW + 1)).user, null);
 });
 
-test('expired grants and retired keys grant nothing', async () => {
+test('keys come from every role held, and a revoked grant is gone on the next read', async () => {
   const env = makeEnv();
-  const u = await signIn(env.DB, { roles: ['role_viewer'], now: NOW, expiresAt: NOW + HOUR });
-  assert.deepEqual([...(await loadSession(env, req('/admin/', { cookie: u.cookie }), NOW + 1)).perms], ['site:changes.read']);
-  assert.equal((await loadSession(env, req('/admin/', { cookie: u.cookie }), NOW + HOUR)).perms.size, 0);
-
-  const v = await signIn(env.DB, { roles: ['role_viewer'], now: NOW });
-  env.DB.sqlite.prepare("UPDATE permissions SET deprecated_at = 1 WHERE key = 'site:changes.read'").run();
-  assert.equal((await loadSession(env, req('/admin/', { cookie: v.cookie }), NOW + 1)).perms.size, 0);
+  const u = await signIn(env.DB, { roles: ['role_viewer'], perms: ['id:audit.read'], now: NOW });
+  const read = async () => [...(await loadSession(env, req('/admin/', { cookie: u.cookie }), NOW + 1)).perms].sort();
+  assert.deepEqual(await read(), ['id:audit.read', 'site:changes.read']);
+  env.DB.sqlite.prepare("DELETE FROM user_roles WHERE user_id = ? AND role_id = 'role_viewer'").run(u.userId);
+  assert.deepEqual(await read(), ['id:audit.read']);
 });
 
 test('signout deletes only its own row, clears the cookie and lands on e=signed_out', async () => {

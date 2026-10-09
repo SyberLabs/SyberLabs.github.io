@@ -13,34 +13,41 @@ test('the schema applies with foreign keys on, and every table and view exists',
   assert.equal(await db.prepare('PRAGMA foreign_keys').first('foreign_keys'), 1);
   const names = (await db.prepare("SELECT name FROM sqlite_master WHERE type IN ('table','view') AND name NOT LIKE 'sqlite_%' ORDER BY name").all())
     .results.map(r => r.name);
-  assert.deepEqual(names, ['audit_events', 'change_entries', 'full_admins', 'identities', 'invites', 'permissions',
+  assert.deepEqual(names, ['admins', 'audit_events', 'change_entries', 'identities', 'invites', 'permissions',
     'role_permissions', 'roles', 'sessions', 'user_roles', 'users']);
   await assert.rejects(db.prepare("INSERT INTO identities (id, user_id, provider, subject, created_at) VALUES ('i','nope','github','1',1)").run(),
     /FOREIGN KEY/);
 });
 
-test('migrations hold no people, emails or content (the CI grep, run here too)', () => {
+// RFC-0002 8.3 G5 and G6, as CI greps them.
+const G5 = /(INSERT|REPLACE)(\s+OR\s+[A-Z]+)?\s+INTO\s+["`[]?(main\.)?(users|identities|invites|user_roles|sessions|change_entries)/i;
+const G6 = /@|[0-9]{6,}/;
+
+test('migrations hold no people, emails, provider ids or content (the CI greps, run here too)', () => {
   const dir = new URL('../../migrations/', import.meta.url);
   for (const f of readdirSync(dir).filter(n => n.endsWith('.sql'))) {
     const sql = readFileSync(new URL(f, dir), 'utf8');
-    assert.doesNotMatch(sql, /@/, f);
-    assert.doesNotMatch(sql, /INSERT INTO "?(users|identities|invites|user_roles|sessions|change_entries)/i, f);
+    assert.doesNotMatch(sql, G6, f);
+    assert.doesNotMatch(sql, G5, f);
   }
+  // The forms the old guard missed.
+  for (const sql of ['INSERT OR IGNORE INTO users', 'replace into identities', 'INSERT INTO `invites`', 'INSERT INTO [sessions]',
+    'INSERT INTO main.user_roles', 'INSERT INTO "change_entries"']) assert.match(sql, G5, sql);
+  assert.match("VALUES ('gh', '132870419')", G6);
 });
 
 test('catalogue (case 18): CATALOGUE matches the permissions rows exactly', async () => {
-  const rows = (await freshDb().prepare('SELECT key, description, privileged, deprecated_at FROM permissions ORDER BY key').all()).results;
+  const rows = (await freshDb().prepare('SELECT key, description, privileged FROM permissions ORDER BY key').all()).results;
   assert.deepEqual(rows.map(r => r.key), Object.keys(CATALOGUE).sort());
   for (const r of rows) {
     assert.equal(r.description, CATALOGUE[r.key].label, r.key);
     assert.equal(r.privileged === 1, CATALOGUE[r.key].privileged, r.key);
-    assert.equal(r.deprecated_at, null);
   }
 });
 
-test('catalogue (case 18): admin holds every non-deprecated key; viewer holds only site:changes.read', async () => {
+test('catalogue (case 18): admin holds every key; viewer holds only site:changes.read', async () => {
   const db = freshDb();
-  const missing = await db.prepare(`SELECT key FROM permissions WHERE deprecated_at IS NULL AND key NOT IN
+  const missing = await db.prepare(`SELECT key FROM permissions WHERE key NOT IN
     (SELECT permission_key FROM role_permissions WHERE role_id = 'role_admin')`).all();
   assert.deepEqual(missing.results, []);
   const viewer = await db.prepare("SELECT permission_key FROM role_permissions WHERE role_id = 'role_viewer'").all();
@@ -59,18 +66,32 @@ test('permission keys and role names are constrained', async () => {
   await db.prepare("INSERT INTO roles (id, name, created_at) VALUES ('r1', 'ops-2', 1)").run();
 });
 
-test('invites need exactly one target and a provider-shaped key', async () => {
+test('invites are GitHub-only: a numeric subject, a role and an inviter are required', async () => {
   const db = freshDb();
   const { userId } = seedUser(db);
-  const ins = (vals) => db.prepare(`INSERT INTO invites (id, token_hash, role_id, user_id, provider, subject, email_normalized,
-    created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, 1, 2)`).bind(...vals).run();
-  await ins(['i1', 'h1', 'role_viewer', null, 'github', 'gh-test-1', null]);
-  await ins(['i2', 'h2', null, userId, 'google', null, 'test-user.example']);
-  await assert.rejects(ins(['i3', 'h3', 'role_viewer', userId, 'github', 'gh-test-2', null]), /CHECK/);
-  await assert.rejects(ins(['i4', 'h4', null, null, 'github', 'gh-test-2', null]), /CHECK/);
-  await assert.rejects(ins(['i5', 'h5', 'role_viewer', null, 'github', null, null]), /CHECK/);
-  await assert.rejects(ins(['i6', 'h6', 'role_viewer', null, 'google', 'gh-test-3', 'x.example']), /CHECK/);
-  await assert.rejects(ins(['i7', 'h1', 'role_viewer', null, 'github', 'gh-test-4', null]), /UNIQUE/);
+  const ins = (id, role, subject, by) => db.prepare(`INSERT INTO invites (id, role_id, subject, invited_by, created_at, expires_at)
+    VALUES (?, ?, ?, ?, 1, 2)`).bind(id, role, subject, by).run();
+  await ins('i1', 'role_viewer', '4242', userId);
+  for (const bad of ['gh-test-1', '0123', '12a', '', '-1']) await assert.rejects(ins(`b-${bad}`, 'role_viewer', bad, userId), /CHECK/, bad);
+  await assert.rejects(ins('i2', null, '4242', userId), /NOT NULL/);
+  await assert.rejects(ins('i3', 'role_viewer', null, userId), /NOT NULL/);
+  await assert.rejects(ins('i4', 'role_viewer', '4242', null), /NOT NULL/);
+  await assert.rejects(ins('i5', 'role_viewer', '4242', 'nobody'), /FOREIGN KEY/);
+  const cols = (await db.prepare('PRAGMA table_info(invites)').all()).results.map(c => c.name);
+  for (const gone of ['token_hash', 'provider', 'email_normalized', 'user_id', 'note']) assert.ok(!cols.includes(gone), gone);
+});
+
+test('privileged keys sit only on admin, and admin keeps every key (RFC-0002 2.4 triggers)', async () => {
+  const db = freshDb();
+  await db.prepare("INSERT INTO roles (id, name, created_at) VALUES ('r-ops', 'ops', 1)").run();
+  for (const key of ['id:users.manage', 'id:roles.manage']) {
+    await assert.rejects(db.prepare('INSERT INTO role_permissions VALUES (?, ?)').bind('r-ops', key).run(), /admin only/, key);
+    await assert.rejects(db.prepare('INSERT INTO role_permissions VALUES (?, ?)').bind('role_viewer', key).run(), /admin only/, key);
+  }
+  await db.prepare("INSERT INTO role_permissions VALUES ('r-ops', 'id:users.read')").run();
+  await assert.rejects(db.prepare("DELETE FROM role_permissions WHERE role_id = 'role_admin'").run(), /every key/);
+  assert.equal(await db.prepare("SELECT count(*) AS n FROM role_permissions WHERE role_id = 'role_admin'").first('n'), 6);
+  assert.equal((await db.prepare("DELETE FROM role_permissions WHERE role_id = 'r-ops'").run()).meta.changes, 1);
 });
 
 test('audit (case 15): UPDATE raises; recent DELETE raises; retention DELETE succeeds', async () => {
@@ -78,24 +99,20 @@ test('audit (case 15): UPDATE raises; recent DELETE raises; retention DELETE suc
   const now = Date.now();
   const add = (action, at) => raw(db).prepare('INSERT INTO audit_events (at, action) VALUES (?, ?)').run(at, action).lastInsertRowid;
   const recent = add('signin.ok', now);
-  const deniedOld = add('signin.denied', now - 91 * DAY);
-  const okAt91 = add('signin.ok', now - 91 * DAY);
+  const at399 = add('signin.ok', now - 399 * DAY);
   const okOld = add('role.grant', now - 401 * DAY);
-  const deniedRecent = add('signin.denied', now - 89 * DAY);
 
   await assert.rejects(db.prepare("UPDATE audit_events SET action = 'x' WHERE id = ?").bind(recent).run(), /append-only/);
   await assert.rejects(db.prepare("UPDATE audit_events SET at = 0 WHERE id = ?").bind(okOld).run(), /append-only/);
-  for (const id of [recent, okAt91, deniedRecent]) {
+  for (const id of [recent, at399]) {
     await assert.rejects(db.prepare('DELETE FROM audit_events WHERE id = ?').bind(id).run(), /kept until retention/, String(id));
   }
-  for (const id of [deniedOld, okOld]) {
-    assert.equal((await db.prepare('DELETE FROM audit_events WHERE id = ?').bind(id).run()).meta.changes, 1);
-  }
-  // The retention statement the callback runs in waitUntil deletes only expired rows.
-  const r = await db.prepare(`DELETE FROM audit_events WHERE (action = 'signin.denied' AND at < ?1) OR at < ?2`)
-    .bind(now - 90 * DAY, now - 400 * DAY).run();
-  assert.equal(r.meta.changes, 0);
-  assert.equal(db.count('audit_events'), 3);
+  assert.equal((await db.prepare('DELETE FROM audit_events WHERE id = ?').bind(okOld).run()).meta.changes, 1);
+  // The retention statement deletes only expired rows.
+  assert.equal((await db.prepare('DELETE FROM audit_events WHERE at < ?').bind(now - 400 * DAY).run()).meta.changes, 0);
+  assert.equal(db.count('audit_events'), 2);
+  const cols = (await db.prepare('PRAGMA table_info(audit_events)').all()).results.map(c => c.name);
+  assert.deepEqual(cols, ['id', 'at', 'actor_user_id', 'action', 'target_type', 'target_id', 'detail_json', 'ip_prefix']);
 });
 
 test('change_entries href CHECK (case 12) refuses unsafe links on a direct INSERT', async () => {
@@ -119,32 +136,39 @@ test('change_entries href CHECK (case 12) refuses unsafe links on a direct INSER
     VALUES ('c3', '2026-10-08', 'RISE', 'merged', '', '', '/', 1)`).run(), /CHECK/);
 });
 
-test('full_admins: enabled users with non-expiring grants of both manage keys', async () => {
+test('admins: the enabled holders of role_admin', async () => {
   const db = freshDb();
   const admin = seedUser(db, { roles: ['role_admin'] });
   seedUser(db, { roles: ['role_admin'], disabled: true });
-  seedUser(db, { roles: ['role_admin'], expiresAt: Date.now() + DAY });
-  seedUser(db, { perms: ['id:users.manage', 'id:users.read'] });
-  const split = seedUser(db, { perms: ['id:users.manage'] });
-  raw(db).prepare('INSERT INTO user_roles (user_id, role_id, granted_at) VALUES (?, ?, 1)')
-    .run(split.userId, (await db.prepare("INSERT INTO roles (id, name, created_at) VALUES ('r-rm', 'roles-only', 1) RETURNING id").first('id')));
-  raw(db).prepare("INSERT INTO role_permissions VALUES ('r-rm', 'id:roles.manage')").run();
-  const ids = (await db.prepare('SELECT user_id FROM full_admins ORDER BY user_id').all()).results.map(r => r.user_id);
-  assert.deepEqual(ids, [admin.userId, split.userId].sort());
+  seedUser(db, { roles: ['role_viewer'], perms: ['id:users.read'] });
+  const ids = (await db.prepare('SELECT user_id FROM admins').all()).results.map(r => r.user_id);
+  assert.deepEqual(ids, [admin.userId]);
 });
 
-test('the lockout-safe revoke (RFC-0002 5.3) refuses to remove the last full admin', async () => {
+test('the lockout-safe revoke (RFC-0002 8.1) refuses to remove the last admin', async () => {
   const db = freshDb();
-  const a = seedUser(db, { roles: ['role_admin'] });
+  const a = seedUser(db, { roles: ['role_admin', 'role_viewer'] });
   const b = seedUser(db, { roles: ['role_admin'] });
-  const revoke = user => db.prepare(`DELETE FROM user_roles
+  const revoke = (user, role = 'role_admin') => db.prepare(`DELETE FROM user_roles
      WHERE user_id = ?1 AND role_id = ?2
-       AND (?1 NOT IN (SELECT user_id FROM full_admins)
-            OR EXISTS (SELECT 1 FROM full_admins WHERE user_id <> ?1))`).bind(user, 'role_admin');
+       AND (?2 <> 'role_admin' OR EXISTS (SELECT 1 FROM admins WHERE user_id <> ?1))`).bind(user, role);
   const [first, second] = await db.batch([revoke(a.userId), revoke(b.userId)]);
   assert.equal(first.meta.changes, 1);
   assert.equal(second.meta.changes, 0);
-  assert.equal(await db.prepare('SELECT count(*) AS n FROM full_admins').first('n'), 1);
+  assert.equal(await db.prepare('SELECT count(*) AS n FROM admins').first('n'), 1);
+  assert.equal((await revoke(a.userId, 'role_viewer').run()).meta.changes, 1); // other roles are never guarded
+});
+
+test('no speculative columns: what nothing reads or writes is not in the schema (RFC-0002 rev 3)', async () => {
+  const db = freshDb();
+  const cols = async t => (await db.prepare(`PRAGMA table_info(${t})`).all()).results.map(c => c.name);
+  assert.ok(!(await cols('users')).includes('disabled_reason'));
+  assert.ok(!(await cols('roles')).includes('created_by'));
+  assert.ok(!(await cols('user_roles')).includes('expires_at'));
+  assert.ok(!(await cols('permissions')).includes('deprecated_at'));
+  assert.deepEqual(await cols('change_entries'), ['id', 'date', 'project', 'state', 'title', 'text', 'href', 'created_at']);
+  const idx = await db.prepare("SELECT sql FROM sqlite_master WHERE name = 'change_entries_order'").first('sql');
+  assert.match(idx, /ON change_entries\(date DESC, created_at DESC\)$/);
 });
 
 test('the per-request read (RFC-0002 8.1) resolves a live session and its keys in one query', async () => {
@@ -153,16 +177,15 @@ test('the per-request read (RFC-0002 8.1) resolves a live session and its keys i
   const u = seedUser(db, { roles: ['role_viewer'], perms: ['site:changes.read', 'id:audit.read'] });
   raw(db).prepare('INSERT INTO sessions (id_hash, user_id, identity_id, created_at, expires_at) VALUES (?, ?, ?, ?, ?)')
     .run('h1', u.userId, u.identityId, now, now + 1000);
-  const q = `SELECT s.user_id, s.identity_id, s.expires_at,
+  const q = `SELECT s.user_id, s.identity_id, s.created_at, s.expires_at,
        u.display_name, i.provider, i.login, i.email,
        (SELECT json_group_array(DISTINCT rp.permission_key)
           FROM user_roles ur
           JOIN role_permissions rp ON rp.role_id = ur.role_id
-          JOIN permissions p ON p.key = rp.permission_key AND p.deprecated_at IS NULL
-         WHERE ur.user_id = s.user_id AND (ur.expires_at IS NULL OR ur.expires_at > ?2)) AS perms
+         WHERE ur.user_id = s.user_id) AS perms
   FROM sessions s
   JOIN users u      ON u.id = s.user_id AND u.disabled_at IS NULL
-  JOIN identities i ON i.id = s.identity_id
+  JOIN identities i ON i.id = s.identity_id AND i.user_id = s.user_id
  WHERE s.id_hash = ?1 AND s.expires_at > ?2`;
   const row = await db.prepare(q).bind('h1', now).first();
   assert.deepEqual(JSON.parse(row.perms).sort(), ['id:audit.read', 'site:changes.read']);

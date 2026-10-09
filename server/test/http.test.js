@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  esc, CSP, SECURITY_HEADERS, secure, html, json, redirect, apiError, HttpError, AuthError, cookie, clearCookie,
-  readCookie, checkCsrf, safeReturnTo, isApiPath, ipPrefix, userAgent, readForm, MAX_FORM_BYTES,
+  esc, CSP, SECURITY_HEADERS, secure, html, redirect, HttpError, AuthError, cookie, clearCookie,
+  readCookie, checkCsrf, safeReturnTo, ipPrefix, userAgent, readForm, MAX_FORM_BYTES,
 } from '../http.js';
 
 const ORIGIN = 'https://syberlabs.io';
@@ -32,7 +32,7 @@ test('security headers are exactly the RFC set', () => {
 
 test('every builder sets the headers; secure() strips CORS', async () => {
   const responses = [
-    html('<p>x</p>'), json({ a: 1 }), redirect('/admin/'), apiError('signin_required'),
+    html('<p>x</p>'), redirect('/admin/'),
     secure(new Response('x', { headers: { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public' } })),
   ];
   for (const res of responses) {
@@ -40,7 +40,6 @@ test('every builder sets the headers; secure() strips CORS', async () => {
     assert.equal(res.headers.get('Access-Control-Allow-Origin'), null);
   }
   assert.equal(responses[0].headers.get('Content-Type'), 'text/html; charset=utf-8');
-  assert.equal(responses[1].headers.get('Content-Type'), 'application/json; charset=utf-8');
 });
 
 test('redirect: 303 by default, empty body, Location as given, cookies appended', async () => {
@@ -52,14 +51,12 @@ test('redirect: 303 by default, empty body, Location as given, cookies appended'
   assert.equal(redirect('/admin/', { status: 308 }).status, 308);
 });
 
-test('apiError uses the one error shape', async () => {
-  const res = apiError('signin_required');
-  assert.equal(res.status, 401);
-  assert.deepEqual(await res.json(), { error: { code: 'signin_required', message: 'Sign in to continue.' } });
-  assert.equal(apiError('csrf').status, 403);
-  assert.equal(apiError('unconfigured').status, 503);
-  assert.equal(apiError('method_not_allowed').status, 405);
-  assert.deepEqual((await apiError('forbidden', 'Needs id:users.read').json()).error.message, 'Needs id:users.read');
+test('HttpError carries the status and default message for its code', () => {
+  assert.equal(new HttpError('csrf').status, 403);
+  assert.equal(new HttpError('unconfigured').status, 503);
+  assert.equal(new HttpError('method_not_allowed').status, 405);
+  assert.equal(new HttpError('forbidden', 'Needs id:users.read').message, 'Needs id:users.read');
+  assert.equal(new HttpError('nope').status, 500);
   const e = new HttpError('not_found');
   assert.equal(e.status, 404);
   assert.equal(e.code, 'not_found');
@@ -104,13 +101,6 @@ test('safeReturnTo (case 9): everything outside /admin/ on our origin becomes /a
   assert.equal(safeReturnTo('/admin/changes#frag', ORIGIN), '/admin/changes');
   assert.equal(safeReturnTo('/admin/a/../people', ORIGIN), '/admin/people');
   assert.equal(safeReturnTo('/admin/' + 'a'.repeat(505), ORIGIN), '/admin/' + 'a'.repeat(505));
-});
-
-test('isApiPath', () => {
-  assert.equal(isApiPath('/api/me'), true);
-  assert.equal(isApiPath('/api'), true);
-  assert.equal(isApiPath('/apis'), false);
-  assert.equal(isApiPath('/admin/'), false);
 });
 
 test('ipPrefix: /24 for IPv4, /48 for IPv6, null otherwise', () => {

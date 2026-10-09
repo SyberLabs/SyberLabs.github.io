@@ -9,10 +9,11 @@ dependencies: Web Crypto, `fetch`, `URL` and D1 `prepare/bind/first/all/run/batc
 
 - **Times** are unix milliseconds (`ctx.now`). **Ids** are `newId()` (32 hex). **Tokens** are `randomToken()`.
 - **env:** `ORIGIN` (`https://syberlabs.io`, no trailing slash), `GOOGLE_CLIENT_ID`, `GITHUB_CLIENT_ID`,
-  `GOOGLE_CLIENT_SECRET`, `GITHUB_CLIENT_SECRET`, `APP_SECRET` (32+ chars), `DB`. Any missing: 503.
-- **Handler:** `async (ctx) => Response`. Build responses only with `http.js` helpers (`html`, `json`,
-  `redirect`, `apiError`); `app.js` re-applies `secure()` to whatever comes back. To fail, either return a
-  response or `throw new HttpError(code, message?)`; app.js renders it as JSON under `/api/`, HTML elsewhere.
+  `GOOGLE_CLIENT_SECRET`, `GITHUB_CLIENT_SECRET`, `APP_SECRET` (32 bytes: base64url, or exactly 32 UTF-8 bytes),
+  `DB`. Any missing or malformed: 503. Google is optional (on only when both of its values are set).
+- **Handler:** `async (ctx) => Response`. Build responses only with `http.js` helpers (`html`, `redirect`);
+  `app.js` re-applies `secure()` to whatever comes back. To fail, either return a response or
+  `throw new HttpError(code, message?)`; app.js renders it as an HTML page. There is no `/api/*` (RFC-0002 R1-8).
 - **Never** put a secret, provider token, session token or exception message in a response, header or log.
 - **SQL** binds every value (`?1`, `?2` or `?`). Multi-row writes go in one `env.DB.batch([...])`.
 - **Status codes, all produced by app.js unless noted:**
@@ -20,21 +21,19 @@ dependencies: Web Crypto, `fetch`, `URL` and D1 `prepare/bind/first/all/run/batc
     cleared session cookie when the cookie was present but dead). `next` is the GET's own path+search; for a
     POST it is the longest GET route path that prefixes the POST path (`/admin/people/roles/grant` ->
     `/admin/people`), else `/admin/` (RFC-0002 3.6).
-  - 401 `signin_required`: signed-out `/api/*`. 403 `csrf`: any POST failing `checkCsrf`. 403 `forbidden`:
+  - 403 `csrf`: any POST failing `checkCsrf`. 403 `forbidden`:
     signed in without the route's key (HTML: `forbiddenHtml(ctx, key)`). 404 `not_found`: unknown path when
     signed in, or under `/auth/`. 405 `method_not_allowed`: a method other than GET/HEAD/POST, a known path
     with the wrong method, or HEAD under `/auth/start/*` and `/auth/callback/*`.
   - 308: non-canonical host -> `env.ORIGIN` + path + search; `GET /admin` -> `/admin/`.
   - 503 `unconfigured`: missing env, or any uncaught non-HttpError throw (D1 down). HTML: `unavailableHtml()`.
   - OAuth failures (handlers in oauth.js): 303 `/auth/signin?e=<code>`; uninvited identity: 403 `deniedHtml`.
-- **API error body:** `{"error":{"code","message"}}` via `apiError(code, message?)`.
 
 ## ctx (built by app.js, passed to every handler)
 
 ```js
 { request, env, url /* URL */, now /* ms */, waitUntil /* (promise) => void */,
   params /* {provider} from :segments, decoded */, form /* URLSearchParams; empty unless POST */,
-  route /* {method, pattern, access, opts} */,
   user /* null or {id, identityId, sessionHash, displayName, provider, login, email, expiresAt} */,
   perms /* Set<string>, empty when signed out */ }
 ```
@@ -46,27 +45,27 @@ dependencies: Web Crypto, `fetch`, `URL` and D1 `prepare/bind/first/all/run/batc
 
 **crypto.js** (foundation): `utf8(s)`, `hex(bytes)`, `b64urlEncode(bytes|string)`, `b64urlDecode(s)` (throws),
 `randomBytes(n)`, `newId()`, `randomToken(n=32)`, `sha256(x)` -> Uint8Array, `sha256Hex(x)`, `sha256B64url(x)`
-(PKCE S256), `timingSafeEqual(a, b)` (strings), `deriveKeys(APP_SECRET)` -> `Promise<{stateKey, auditKey}>`
-(HKDF-SHA256 over utf8(APP_SECRET), empty salt, infos `STATE_INFO`/`AUDIT_INFO`; cached; rejects if <32 chars),
-`seal(key, bytes|string, aad)` / `open(key, sealed, aad)` -> Uint8Array|null, `sealJson` / `openJson` -> value|null
-(AES-GCM, random 96-bit IV, `b64url(iv||ct)`; open never throws), `hmacHex(key, msg)`.
+(PKCE S256), `timingSafeEqual(a, b)` (strings), `secretKeyBytes(APP_SECRET)` -> 32 bytes | null,
+`stateKey(APP_SECRET)` -> `Promise<CryptoKey>` (APP_SECRET imported directly as the AES-GCM key, no HKDF, RFC-0002
+R1-14; cached; rejects unless 32 bytes), `seal(key, bytes|string, aad)` / `open(key, sealed, aad)` -> Uint8Array|null,
+`sealJson` / `openJson` -> value|null (AES-GCM, random 96-bit IV, `b64url(iv||ct)`; open never throws).
 
 **http.js** (foundation): `esc(v)` (& < > " ', null -> ''), `CSP`, `SECURITY_HEADERS`, `secure(res)` (copy with
-every header set and `Access-Control-Allow-Origin` removed), `html(body, init?)`, `json(data, init?)`,
-`text(body, init?)`, `redirect(location, init?)` (303 default, empty body); `init = {status, headers, cookies:
-string[]}`. `ERRORS`, `apiError(code, message?, init?)`, `class HttpError(code, message?)` (`.status` from
-`ERRORS`), `class AuthError(code, detail?)` (codes: cancelled, expired, provider, no_email, invite_invalid,
-disabled). `cookie(name, value, maxAgeSeconds)` (`Path=/; Secure; HttpOnly; SameSite=Lax`, never Domain),
+every header set and `Access-Control-Allow-Origin` removed), `html(body, init?)`, `text(body, init?)`,
+`redirect(location, init?)` (303 default, empty body); `init = {status, headers, cookies: string[]}`. `ERRORS`
+(`[status, message]` per code), `class HttpError(code, message?)` (`.status` from `ERRORS`),
+`class AuthError(code, detail?)` (codes: cancelled, expired, provider, disabled). `cookie(name, value, maxAgeSeconds)` (`Path=/; Secure; HttpOnly; SameSite=Lax`, never Domain),
 `clearCookie(name)`, `readCookie(request, name)` -> string|null. `checkCsrf(request, origin)` -> boolean,
-`safeReturnTo(raw, origin)` (RFC 3.6, verbatim), `isApiPath(p)`, `ipPrefix(request)` (/24 or /48 of
-CF-Connecting-IP, or null), `userAgent(request)` (<=200 chars or null), `requestId(request)` (cf-ray),
+`safeReturnTo(raw, origin)` (RFC 3.6, verbatim), `ipPrefix(request)` (/24 or /48 of
+CF-Connecting-IP, or null), `userAgent(request)` (<=200 chars or null; sessions only),
 `readForm(request)` -> URLSearchParams (urlencoded only; >16 KiB throws `HttpError('too_large')`).
 
 **app.js**: `handle(request, env, waitUntil = () => {}, now = Date.now())` -> Response. Order: ORIGIN present
 (else 503) -> host 308 -> rest of config (else 503) -> method rules -> `/admin` 308 -> CSRF on POST ->
 `loadSession` -> `match` -> access -> `readForm` -> handler -> `secure()`; HEAD gets GET's headers, no body.
 
-**routes.js**: `ROUTES` (the RFC 8.2 table verbatim: `['GET  /auth/signin', PUBLIC, signinPage]`, ...),
+**routes.js**: `ROUTES` (the RFC 8.2 table without its opts column: `['GET  /auth/signin', PUBLIC, signinPage]`, ...;
+each handler decides its own confirm step and `ownerPage()` derives a POST's owning page),
 `compile(routes)` -> compiled rows; throws at load if the access slot is missing or not PUBLIC / SIGNED_IN /
 a `CATALOGUE` key, the handler is not a function, or PUBLIC sits outside `/auth/`. `TABLE = compile(ROUTES)`.
 `match(table, method, pathname)` -> `{route, params}` | `{methods: [...]}` (path known, method not) | `null`.
@@ -83,46 +82,46 @@ form has `next`), `revokeOwnSessions` (deletes the user's *other* sessions, RFC 
 
 **oauth.js**: `OAUTH_COOKIE = '__Host-sl_oauth'`, `STATE_TTL_MS = 600000`, `PROVIDERS = ['github','google']`,
 `sealState(env, provider, payload)` / `openState(env, provider, sealed, now)` -> payload|null (AAD
-`sl_oauth|<provider>`; payload `{v:1, p, s, cv, n?, inv?, r, t}`; null if undecryptable, `p` mismatch,
-`v !== 1`, or `now - t >= 600000`). Handlers: `startLogin` (form: `next`, `invite`, `prompt=select_account`;
+`sl_oauth|<provider>`; payload `{v:1, p, s, cv, n?, r, t}`; null if undecryptable, `p` mismatch,
+`v !== 1`, or `now - t >= 600000`). Handlers: `startLogin` (form: `next`, `switch=1` or `prompt=select_account`;
 unknown provider 404; no D1 access; 303 to the provider + state cookie Max-Age=600) and `callback` (RFC 2.2:
 always clears the state cookie; every state check before any fetch; `error=access_denied` -> `e=cancelled`;
-outcomes a-d; 303 to the sealed `r`, or `/admin/?welcome=1` after an invite redemption).
+outcomes a-c; 303 to the sealed `r`, or `/admin/?welcome=1` after an invite redemption).
 
 **github.js**: `authorizeUrl(env, {state, challenge, selectAccount})`, `fetchIdentity(env, {code, verifier,
 waitUntil})` -> `{subject /* numeric id as text */, login, email /* primary && verified, or null */}`;
 throws `AuthError('provider')`; schedules the token revoke (Basic auth) exactly once whenever a token was
 issued. `lookupLogin(login)` -> `{id, login}` | null (Packet 4 invite form).
 
-**google.js**: `authorizeUrl(env, {state, challenge, nonce, loginHint, selectAccount})`,
-`fetchIdentity(env, {code, verifier, nonce, now})` -> `{subject, email, emailVerified, hd}` (token failure:
+**google.js**: `authorizeUrl(env, {state, challenge, nonce, selectAccount})`,
+`fetchIdentity(env, {code, verifier, nonce, now})` -> `{subject, email, emailVerified}` (token failure:
 `AuthError('provider')`; any id_token check: `AuthError('expired')`), `verifyIdToken(env, jwt, {nonce, now})`
--> claims, `googleAuthoritative(email, hd)` -> boolean, `resetJwksCache()` (tests).
+-> claims.
 
 **authz.js** (Packet 2 part): `can(ctx, key)`, `displayNames(db, ids)` -> `Map<id, name>`,
 `auditStmt(db, {at, actor, action, targetType, targetId, detail, request})` -> unexecuted stmt,
 `findIdentity(db, provider, subject)` -> `{identityId, userId, displayName, disabledAt}` | null,
-`findOpenInvite(db, {provider, subject, tokenHash, now})` -> invite row | null,
-`inviteForToken(db, token, now)` -> `{invite, roleName, inviterName, targetName}` | null (sign-in greeting),
-`redeemInvite(env, {invite, provider, subject, email, login, request, now})` -> `{userId, identityId}` | null
-(one guarded batch, RFC 8.1). (`recordDenied` was removed in integration: RFC section 0 records nothing for refusals.)
-(Packet 4 part, appended below a `// --- Packet 4: guards` line, never rewriting the part above):
-`permsOfUser(db, userId, now)` -> Set, `permsOfRole(db, roleId)` -> Set, `subset(a, b)`, `GUARD_COPY`
-`{up, target, lockout, system, self}` (RFC 3.5 strings), and lockout-safe statement builders.
+`findOpenInvite(db, subject, now)` -> `{id, role_id, invited_by}` | null (GitHub, by pinned numeric id),
+`redeemInvite(env, {invite, subject, login, request, now})` -> `{userId, identityId}` | null
+(one guarded batch, RFC 8.1: the inviter must still be in `admins`). (`recordDenied` was removed in integration: RFC
+section 0 records nothing for refusals.)
+(Packet 4 part, below a `// --- Packet 4: guards` line): `GUARD_COPY` `{lockout, system, self, privileged, lastMethod}`
+(RFC 3.5 strings), `revokeRoleStmt`, `disableUserStmts`, `removeRolePermStmt`, `removeIdentityStmt` (lockout-safe
+statement builders over the `admins` view).
 
 **views/** — each returns HTML strings; handlers return Responses.
 - `layout.js`: `page(ctx, {title, body, section, admin = true})` -> full document (privacy-page shell, `noindex`,
   `<!--email_off-->`, header()/footer(); admin chrome with "Staff only" badge, account line, Sign out form, nav
   filtered by `ctx.perms`); `alert(kind, html)`.
-- `signin.js`: handler `signinPage`; `ERROR_COPY` (RFC 3.4 codes). `admin-home.js`: `adminHome`.
-  `account.js`: `accountPage`, `me` (JSON `{name, provider, permissions: [sorted]}`).
-- `forbidden.js`: `forbiddenHtml(ctx, key)`, `deniedHtml(ctx, {provider, name, emailMatch})`,
+- `signin.js`: handler `signinPage` (no D1 access); `ERROR_COPY` (RFC 3.4 codes). `admin-home.js`: `adminHome`.
+  `account.js`: `accountPage`.
+- `forbidden.js`: `forbiddenHtml(ctx, key)`, `deniedHtml(ctx, {provider, name, next})`,
   `notFoundHtml(ctx)`, `errorHtml(ctx, httpError)` (CSRF copy per RFC 3.4), `unavailableHtml()` (no ctx).
-- Packet 3 `changes.js`: `changesPage`, `saveChange`, `deleteChange`, `changesJson`, `validHref(raw)` -> string|null.
+- Packet 3 `changes.js`: `changesPage`, `saveChange`, `deleteChange`, `validHref(raw)` -> string|null.
 - Packet 4 `people.js`: `peoplePage`, `createInvite`, `revokeInvite`, `grantRole`, `revokeRole`,
   `removeIdentity`, `disableUser`, `enableUser`, `revokeUserSessions`; `roles.js`: `rolesPage`, `saveRole`;
   `audit.js`: `auditPage`; `confirm.js`: `confirmHtml(ctx, {title, lines, action, fields, submitLabel})`
-  (re-posts every field plus `confirm=1`). A `confirm` route acts only when `ctx.form.get('confirm') === '1'`.
+  (re-posts every field plus `confirm=1`). A handler that needs a confirm acts only when `ctx.form.get('confirm') === '1'`.
 
 ## Tests (`node --test 'server/test/**/*.test.js'`; RFC 8.5 case numbers)
 
@@ -188,8 +187,8 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
     prefix on sessions and audit rows, nothing recorded for refusals, ~400 days). If Packet 2 ships with
     `PROVIDERS = ['github']`, drop Google from the staff entry. "About 400 days" needs the retention delete (RFC 5.1).
 - **core (authz.js, routes.js, app.js, views/people.js, views/roles.js)**:
-  - `ROUTES` is RFC 8.2 plus the routes this contract already names: `GET /api/me`, `GET /api/admin/changes`,
-    `POST /admin/people/sessions/revoke`. `enableUser` and `saveRole` have no confirm (RFC 8.2).
+  - `ROUTES` is RFC 8.2 (Packets 2-4, plus `POST /admin/people/identity/remove`) and `POST /admin/people/sessions/revoke`.
+    `enableUser` and `saveRole` have no confirm (RFC 8.2).
   - The on-disk migration has `full_admins` and no privileged-key triggers, so authz keeps the up rule, the target rule
     and the `full_admins` lockout, and `saveRole` also refuses any privileged key on a custom role (RFC 2.4, 403).
   - `auditStmt(db, {..., when: [sqlCondition, ...params]})` writes `INSERT … SELECT … WHERE <cond>`, so batch rows
@@ -210,5 +209,26 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
 - **integration**:
   - `recordDenied` is gone (dead under RFC section 0); plan case 7 is now "ten uninvited tries write no row" in oauth.test.js.
   - `CSP` has no `script-src` or `connect-src` (RFC 8.2); app.test asserts it on every response.
-  - `_routes.json` keeps `/api/*` because `GET /api/me` and `GET /api/admin/changes` exist (RFC 2.1 drops `/api/*`; reconcile
-    before merge). The deploy job installs wrangler from `deploy/package-lock.json` with `npm ci` (RFC D12).
+  - `_routes.json` includes only `/auth/*`, `/admin` and `/admin/*` (RFC 2.1, R1-8). The deploy job installs wrangler
+    from `deploy/package-lock.json` with `npm ci` in a step with no token, and validate builds the Function with it (RFC D12, 8.3).
+- **review round 1 (RFC-0002 rev 3 adopted where it cuts):** the bullets above that mention invite links, Google
+  invites, `login_hint`, `wrong_provider`, `no_email`, add-method invites, `full_admins`, the up and target rules,
+  expiring grants, retired keys or `/api/*` are superseded by this list.
+  - Invites are GitHub only, pinned to the numeric id, with no token and no link (RFC 2.5): `invites(id, role_id NOT
+    NULL, subject NOT NULL numeric, login_hint, invited_by NOT NULL, …)`. Creation refuses an id with an open invite
+    or a sign-in method, and any `provider` other than github (422). Google is added from a signed-in session in
+    Packet 5; until then every unknown Google identity gets the 403 page ("Sign in with GitHub, then add Google from
+    your account page."). A redemption whose guarded UPDATE changes 0 rows is that same 403 page (case c).
+  - The sign-in page reads no D1 and ignores `?invite=`. Its codes are cancelled, expired, provider, disabled,
+    expired_session, signed_out and unconfigured.
+  - Privileged keys sit only on `role_admin`, enforced by the `role_perms_privileged_admin_only` and
+    `role_perms_admin_keeps_all` triggers (RFC 8.1), so the up and target rules are gone and lockout uses the
+    `admins` view (enabled holders of `role_admin`). Confirm pages: granting or revoking admin, turning off,
+    removing a method, every invite.
+  - Dropped columns: `users.disabled_reason`, `roles.created_by`, `user_roles.expires_at`, `permissions.deprecated_at`,
+    `invites.note`/`token_hash`/`provider`/`email_normalized`/`user_id`, `audit_events.user_agent`/`request_id`,
+    `change_entries.created_by`/`updated_by`/`updated_at`/`deleted_at`; `audit_dedupe` and the 90-day `signin.denied`
+    retention tier are gone. `change_entries_order` replaces the partial index.
+  - `/api/me`, `/api/admin/changes` and `/api/*` in `_routes.json` are gone (RFC R1-8); every error is HTML.
+  - Bootstrap writes users, identities and grants directly from Seth's terminal (RFC 8.4.8); its audit action is
+    `bootstrap`.
