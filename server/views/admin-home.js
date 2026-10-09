@@ -1,7 +1,7 @@
 // Private launchpad. Permissions come from the resolved session, never from the browser.
 import { esc, html } from '../http.js';
 import { navItems, identityName } from './chrome.js';
-import { page, duration } from './layout.js';
+import { page } from './layout.js';
 
 const TOOLS = {
   saves: { label: 'Library', title: 'Saved things', copy: 'Your private Omni, RISE and Sketch backups, ready to pick up wherever you sign in.', icon: '<path d="M5 3h14v18l-7-4-7 4V3Z"/>' },
@@ -14,28 +14,32 @@ const TOOLS = {
 
 export async function adminHome(ctx) {
   const tools = navItems(ctx).filter(item => item.id !== 'portal');
-  const cards = tools.map((item, i) => {
+  const personal = tools.filter(item => item.key === null);
+  const team = tools.filter(item => item.key !== null);
+  const cards = (items, teamTools = false) => items.map(item => {
     const tool = TOOLS[item.id];
-    return `<a class="portal-card" href="${item.href}">
-      <div class="portal-card__top"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${tool.icon}</svg><span>${String(i + 1).padStart(2, '0')} / ${tool.label}</span></div>
-      <h3>${tool.title}</h3><p>${tool.copy}</p><span class="portal-card__open">Open ${tool.title.toLowerCase()} <span aria-hidden="true">↗</span></span>
+    return `<a class="portal-card${teamTools ? ' portal-card--team' : ''}" href="${item.href}">
+      <div class="portal-card__top"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${tool.icon}</svg><span>${tool.label}</span></div>
+      <h3>${tool.title}</h3><p>${tool.copy}</p><span class="portal-card__open">Open ${tool.title.toLowerCase()} <span aria-hidden="true">→</span></span>
     </a>`;
   }).join('');
   const body = `<div class="portal">
     <section class="portal-hero" aria-labelledby="portal-title">
       <div class="portal-hero__copy"><p class="portal-kicker"><span></span> SYBERLABS / PRIVATE WORKSPACE</p>
         <h1 id="portal-title">Your <em>launchpad.</em></h1>
-        <p class="portal-intro">Welcome back, <strong>${esc(identityName(ctx.user))}</strong>.<br>Pick up where you left off.</p>
+        <p class="portal-intro">Welcome back, <strong>${esc(identityName(ctx.user))}</strong>.<br>Open a tool or find your saved things.</p>
       </div>
-      <div class="portal-orbit" aria-hidden="true"><div class="portal-orbit__ring portal-orbit__ring--one"></div><div class="portal-orbit__ring portal-orbit__ring--two"></div><div class="portal-orbit__ring portal-orbit__ring--three"></div><div class="portal-orbit__core"><img src="/syber-logo.png" alt="" width="120" height="120"></div><span class="portal-orbit__label">CONNECTED / SYBERLABS</span><span class="portal-orbit__point"></span></div>
     </section>
-    <div class="portal-strip"><div><span class="portal-strip__label">Workspace</span><strong>SyberLabs</strong></div><div><span class="portal-strip__label">Available to you</span><strong>${tools.length} ${tools.length === 1 ? 'tool' : 'tools'}</strong></div><div><span class="portal-strip__label">Session remaining</span><strong>${esc(duration(ctx.user.expiresAt - ctx.now))}</strong></div></div>
-    <section id="portal-tools" class="portal-tools" aria-labelledby="tools-title"><div class="portal-section-head"><h2 id="tools-title">Your tools</h2></div>
-      ${ctx.perms.size === 0 ? '<p class="portal-access-note">Your account is ready. Ask an admin for a role to unlock team tools.</p>' : ''}
-      <div class="portal-grid">${cards}</div>
+    <section class="portal-app-section" aria-labelledby="apps-title"><div class="portal-section-head"><h2 id="apps-title">Open a tool</h2></div>
+      <div class="portal-apps">
+        <a href="https://rise.syberlabs.io/"><span class="portal-kicker">READ</span><strong>RISE Reader</strong><p>Give your words time, light and sound.</p><span class="portal-apps__arrow" aria-hidden="true">↗</span></a>
+        <a href="https://sketch.syberlabs.io/"><span class="portal-kicker">DRAW</span><strong>RISE Sketch</strong><p>Make a mark with living ink.</p><span class="portal-apps__arrow" aria-hidden="true">↗</span></a>
+        <a href="https://omni.syberlabs.io/"><span class="portal-kicker">EXPLORE</span><strong>FLYSPACE</strong><p>A spatial workspace. Opens as OmniOS.</p><span class="portal-apps__arrow" aria-hidden="true">↗</span></a>
+      </div>
     </section>
-    <div class="portal-apps"><a href="https://omni.syberlabs.io/"><span class="portal-kicker">SPATIAL WORKSPACE</span><strong>Open Omni ↗</strong></a><a href="https://rise.syberlabs.io/"><span class="portal-kicker">READING &amp; CREATION</span><strong>Open RISE ↗</strong></a><a href="https://sketch.syberlabs.io/"><span class="portal-kicker">LIVING INK</span><strong>Open Sketch ↗</strong></a></div>
-    <aside class="portal-outpost"><div><p class="portal-kicker">BEYOND THE WORKSPACE</p><h2>See what we’re building.</h2><p>Explore the public projects, research and ideas behind SyberLabs.</p></div><a class="sy-btn sy-btn--ghost" href="/">Visit SyberLabs <span aria-hidden="true">↗</span></a></aside>
+    <section id="portal-tools" class="portal-tools" aria-labelledby="tools-title"><div class="portal-section-head"><h2 id="tools-title">Your workspace</h2></div><div class="portal-grid">${cards(personal)}</div></section>
+    ${team.length ? `<section class="portal-team" aria-labelledby="team-title"><div class="portal-section-head"><h2 id="team-title">Team tools</h2></div><div class="portal-grid">${cards(team, true)}</div></section>` : '<p class="portal-access-note">Your tools, saved things and account are available. An admin can grant you a role if you need team tools.</p>'}
+    <aside class="portal-outpost"><p>Explore the projects and research behind SyberLabs.</p><a href="/">Visit the public site <span aria-hidden="true">→</span></a></aside>
   </div>`;
   return html(page(ctx, { title: 'Launchpad', body, section: 'portal', compactFooter: true }));
 }

@@ -276,7 +276,7 @@ test('503 renders in place: sign-in unavailable on /auth/, staff pages unavailab
 
 // ---- admin pages through handle() --------------------------------------------------------------
 
-test('no keys at all: the portal offers Account and the account page explains access', async () => {
+test('no keys at all: personal pages remain available and the account page explains team access', async () => {
   const env = makeEnv();
   const nobody = await signIn(env.DB, { perms: [], login: XSS });
   const home = await call(env, '/admin/', { cookie: nobody.cookie });
@@ -289,12 +289,18 @@ test('no keys at all: the portal offers Account and the account page explains ac
   const empty = await (await call(env, '/admin/account', { cookie: nobody.cookie })).text();
   assertShell(empty);
   noRawXss(empty);
-  assert.match(empty, /<div class="sy-empty staff-empty"><p>You're signed in, but only this account page is open to you\. Ask an admin for a role: <a href="mailto:[^"]+">Email SyberLabs<\/a>\.<\/p><\/div>/);
+  const guidance = empty.match(/<div class="sy-empty staff-empty">([\s\S]*?)<\/div>/)?.[1];
+  assert.ok(guidance, 'zero-permission users receive guidance');
+  assert.match(guidance, /href="\/admin\/">launchpad<\/a>/);
+  assert.match(guidance, /href="\/admin\/saves">saved things<\/a>/);
+  assert.match(guidance, /If you need team tools, ask an admin for a role/);
+  assert.match(guidance, /href="mailto:[^"]+">Email SyberLabs<\/a>/);
+  assert.doesNotMatch(empty, /only this account page is open to you/);
   assert.ok(empty.indexOf('sy-empty') < empty.indexOf('Sign-in methods'), 'above everything else');
 
   const reader = await signIn(env.DB, { perms: ['site:changes.read'] });
   const page = await (await call(env, '/admin/account', { cookie: reader.cookie })).text();
-  assert.doesNotMatch(page, /only this account page is open to you/);
+  assert.doesNotMatch(page, /If you need team tools, ask an admin for a role/);
 });
 
 test('account page: methods with date added, the session line, the "Don\'t recognise" line', async () => {
