@@ -1,0 +1,8 @@
+{
+  "name": "syberlabs-home-deploy",
+  "private": true,
+  "description": "Deploy tools only, installed with npm ci in the deploy job (RFC-0002 D12): no npx resolution with the token in the environment.",
+  "dependencies": {
+    "wrangler": "4.141.0"
+  }
+}

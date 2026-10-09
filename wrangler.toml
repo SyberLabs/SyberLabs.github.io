@@ -1,0 +1,29 @@
+# Cloudflare Pages config for syberlabs-home (auth plan 11.3, RFC-0002 8.4.3). Once this file exists it is the
+# source of truth: the dashboard can no longer edit these fields. Every REPLACE_ME is filled in by Seth from
+# `wrangler d1 create` and the OAuth app pages before merge; until then a deploy fails on purpose.
+# Client ids are public by nature. Secrets (APP_SECRET, *_CLIENT_SECRET) never go here.
+name = "syberlabs-home"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-10-01"
+
+[vars]
+ORIGIN = "https://syberlabs.io"
+GITHUB_CLIENT_ID = "REPLACE_ME_prod_github_oauth_app_client_id"
+# Google stays off until both its id and secret are set (RFC-0002 2.1: Packet 5).
+# GOOGLE_CLIENT_ID = "REPLACE_ME_prod.apps.googleusercontent.com"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "syberlabs-accounts"
+database_id = "039dab7a-ea89-44b9-a516-8509bf2848f3"
+
+# vars and d1_databases do not inherit, so preview repeats both (RFC-0002 8.4.3).
+[env.preview.vars]
+ORIGIN = "https://staging.syberlabs.io"
+GITHUB_CLIENT_ID = "REPLACE_ME_staging_github_oauth_app_client_id"
+# GOOGLE_CLIENT_ID = "REPLACE_ME_staging.apps.googleusercontent.com"
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "syberlabs-accounts-staging"
+database_id = "64a028aa-c639-4b53-8b17-645d7610cfc8"

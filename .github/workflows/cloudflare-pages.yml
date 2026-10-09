@@ -30,6 +30,9 @@ jobs:
           node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Staff sign-in tests
+        # Quoted glob: `node --test server/` does not find them. The PR pastes the reported pass count.
+        run: node --test 'server/test/**/*.test.js'
       - name: Check shared header and footer
         run: node scripts/site-chrome.mjs --check
       - name: GitHits dependency snapshot
@@ -111,6 +114,25 @@ jobs:
           grep -Fxq '/projects/commons/* / 301' dist/_redirects
           grep -Fxq '/omni https://omni.syberlabs.io/ 301' dist/_redirects
           grep -Fq 'class="sy-header' dist/404.html
+          test ! -e dist/admin
+          test ! -e dist/auth
+          test ! -e dist/api
+          test -s dist/staff.css
+      - name: Build and check the staff Function
+        # Negative guards use `if ...; then exit 1; fi`: bash -e ignores a failing `! cmd` (RFC-0002 8.3).
+        # The Function is built here, by the lockfile-pinned wrangler the deploy job also uses (RFC-0002 D12),
+        # and deployed as is (--no-bundle), so production runs the tested bundle. No token in this job.
+        run: |
+          npm ci --prefix deploy
+          deploy/node_modules/.bin/wrangler pages functions build --outdir dist/_worker.js --compatibility-date 2026-10-01
+          test -s dist/_worker.js/index.js
+          grep -Fq '"/admin/*"' dist/_routes.json
+          if grep -Fq '"/*"' dist/_routes.json; then echo 'routes too wide'; exit 1; fi
+          if grep -rqF 'GOCSPX-' dist; then echo 'Google client secret in dist'; exit 1; fi
+          if grep -REiq '(INSERT|REPLACE)([[:space:]]+OR[[:space:]]+[A-Z]+)?[[:space:]]+INTO[[:space:]]+["`[]?(main\.)?(users|identities|invites|user_roles|sessions|change_entries)' migrations/; then echo 'people in migrations'; exit 1; fi
+          if grep -Eq '@|[0-9]{6,}' migrations/*.sql; then echo 'email or provider id in migrations'; exit 1; fi
+          if grep -rqiE "<script[^>]+src=[\"']?(https?:)?//" dist --include='*.html'; then echo 'third-party script on a public page'; exit 1; fi
+          if grep -rqiE "<link[^>]+rel=[\"']?modulepreload[^>]+href=[\"']?(https?:)?//" dist --include='*.html'; then echo 'third-party modulepreload'; exit 1; fi
       - name: Quality sweep of the built site
         run: node scripts/qa.mjs
       - uses: actions/upload-artifact@v4
@@ -119,6 +141,16 @@ jobs:
           path: dist/
           if-no-files-found: error
           # artifacts on a public repo can be downloaded by any signed-in GitHub user; keep them only as long as a deploy needs
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          # The deploy job has no checkout: it gets the Pages config and its locked deploy tools from here.
+          name: pages-config-${{ github.sha }}
+          path: |
+            wrangler.toml
+            deploy/package.json
+            deploy/package-lock.json
+          if-no-files-found: error
           retention-days: 7
 
   deploy:
@@ -129,13 +161,23 @@ jobs:
     steps:
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
       - uses: actions/download-artifact@v4
         with:
           name: syberlabs-home-${{ github.sha }}
           path: dist/
+      - uses: actions/download-artifact@v4
+        with:
+          name: pages-config-${{ github.sha }}
+          path: .
+      - name: Install the pinned wrangler
+        # No Cloudflare token in this step's environment (RFC-0002 8.3). --ignore-scripts goes one step
+        # further than the RFC: no install script runs in a job that will hold the token.
+        run: npm ci --prefix deploy --ignore-scripts
       - name: Publish to Cloudflare Pages
-        run: npx --yes wrangler@4.141.0 pages deploy dist --project-name=syberlabs-home --branch=main
+        # wrangler comes from the committed lockfile, not npx (RFC-0002 D12). --no-bundle ships
+        # dist/_worker.js exactly as the validate job built and tested it.
+        run: deploy/node_modules/.bin/wrangler pages deploy dist --project-name=syberlabs-home --branch=main --no-bundle
         env:
           CLOUDFLARE_ACCOUNT_ID: 1080d513988ebb38f832ce7cbea7ab1d
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
