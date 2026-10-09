@@ -9,10 +9,32 @@ export async function appReturn(ctx) {
   return redirect(APP_ORIGINS[app] + '/');
 }
 
+const APPS = { omni: 'Omni', rise: 'RISE', sketch: 'Sketch' };
+const size = bytes => bytes < 1024 ? `${bytes} B` : bytes < 1024 * 1024 ? `${(bytes / 1024).toFixed(1)} KB` : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+const savesUrl = (app = '', query = '') => {
+  const params = new URLSearchParams();
+  if (app) params.set('app', app);
+  if (query) params.set('q', query);
+  return '/admin/saves' + (params.size ? '?' + params.toString() : '');
+};
+
 export async function savedThings(ctx) {
+  const requestedApp = (ctx.url.searchParams.get('app') || '').trim().toLowerCase();
+  const app = Object.hasOwn(APPS, requestedApp) ? requestedApp : '';
+  const query = (ctx.url.searchParams.get('q') || '').trim().slice(0, 100);
   const { results } = await ctx.env.DB.prepare('SELECT id, app, name, created_at, bytes FROM account_saves WHERE user_id = ? ORDER BY created_at DESC, id DESC').bind(ctx.user.id).all();
-  const rows = results.map(row => `<li class="saved-item"><div><span class="portal-kicker">${row.app.toUpperCase()} / PRIVATE BACKUP</span><h2>${esc(row.name)}</h2><p class="sy-small">${time(row.created_at)} · ${Math.ceil(row.bytes / 1024)} KB</p></div><a class="sy-btn sy-btn--ghost" href="/admin/saves/${encodeURIComponent(row.id)}/download">Download JSON</a></li>`).join('');
-  const body = `${head('Your account', 'Saved things.')}<p class="sy-body staff-lede">Private backups you explicitly saved from Omni, RISE and Sketch. Open the app to save or restore your work.</p><div class="staff-actions"><a class="sy-btn sy-btn--line" href="https://omni.syberlabs.io/">Open Omni ↗</a><a class="sy-btn sy-btn--line" href="https://rise.syberlabs.io/">Open RISE ↗</a><a class="sy-btn sy-btn--line" href="https://sketch.syberlabs.io/">Open Sketch ↗</a></div>${rows ? `<ul class="saved-list">${rows}</ul>` : '<div class="sy-empty"><p>No account backups yet. Your existing browser saves stay in their apps until you choose Save to account.</p></div>'}`;
+  const matching = results.filter(row => (!app || row.app === app) && row.name.toLowerCase().includes(query.toLowerCase()));
+  const counts = Object.keys(APPS).map(key => [key, results.filter(row => row.app === key).length]);
+  const tabs = [['', `All apps (${results.length})`], ...counts.map(([key, count]) => [key, `${APPS[key]} (${count})`])].map(([key, label]) => `<a href="${esc(savesUrl(key, query))}"${app === key ? ' aria-current="page"' : ''}>${label}</a>`).join('');
+  const rows = matching.map(row => `<li class="saved-item" data-app="${esc(row.app)}"><div class="saved-item__copy"><span class="portal-kicker">${esc(APPS[row.app] || row.app)} / PRIVATE BACKUP</span><h2>${esc(row.name)}</h2><p class="saved-meta">${time(row.created_at)}<span>${size(row.bytes)}</span></p></div><div class="saved-item__actions"><a class="sy-btn sy-btn--line" href="/admin/return?app=${encodeURIComponent(row.app)}" aria-label="${esc(`Open ${APPS[row.app] || row.app} to restore ${row.name}`)}">Open ${esc(APPS[row.app] || row.app)} ↗</a><a class="saved-download" href="/admin/saves/${encodeURIComponent(row.id)}/download" aria-label="${esc(`Download ${row.name} as JSON`)}">Download JSON ↓</a></div></li>`).join('');
+  const empty = results.length ? `<div class="sy-empty saved-empty"><h2>No matching backups.</h2><p>Try another name or app. Your ${results.length} saved ${results.length === 1 ? 'backup is' : 'backups are'} still in your account.</p><a class="sy-btn sy-btn--line" href="/admin/saves">Clear all filters</a></div>` : `<div class="sy-empty saved-empty"><h2>Your next idea starts here.</h2><p>No account backups yet. Open an app and choose Save to account when you want a private backup. Your browser saves stay in their apps.</p><div class="staff-actions">${Object.entries(APPS).map(([key, label]) => `<a class="sy-btn sy-btn--line" href="/admin/return?app=${key}">Open ${label} ↗</a>`).join('')}</div></div>`;
+  const body = `<div class="saved-library">${head('Your private library', 'Saved things.')}<p class="sy-body staff-lede">Find the work you saved, then pick it up in the app that made it.</p>
+    <div class="saved-overview"><span><strong>${results.length}</strong> ${results.length === 1 ? 'private backup' : 'private backups'}</span><span><strong>${size(results.reduce((total, row) => total + row.bytes, 0))}</strong> in your account</span></div>
+    <nav class="saved-apps" aria-label="Filter backups by app">${tabs}</nav>
+    <form class="saved-search" method="get" action="/admin/saves">${app ? `<input type="hidden" name="app" value="${app}">` : ''}<div><label for="backup-search">Find a backup by name</label><input class="sy-input" type="search" id="backup-search" name="q" value="${esc(query)}" maxlength="100" placeholder="Search your saved work"></div><button class="sy-btn sy-btn--line" type="submit">Search</button>${query ? `<a href="${esc(savesUrl(app))}">Clear search</a>` : ''}</form>
+    <div class="saved-results"><h2>${app ? `${APPS[app]} backups` : 'All backups'}</h2><p>${matching.length} of ${results.length} ${results.length === 1 ? 'backup' : 'backups'}${query ? ` matching “${esc(query)}”` : ''} · newest first</p></div>
+    ${rows ? `<ul class="saved-list">${rows}</ul>` : empty}
+    <aside class="saved-guide"><span class="portal-kicker">PICK UP WHERE YOU LEFT OFF</span><h2>Restore in the app.</h2><p>Choose Open beside a backup, open Account in that app, then select the named backup and confirm Restore. Your browser work stays yours until you choose to restore.</p><p class="sy-small">Download JSON keeps an offline copy of the account backup. It is separate from the app’s own project download.</p></aside></div>`;
   return html(page(ctx, { title: 'Saved things', body, section: 'saves', compactFooter: true }));
 }
 

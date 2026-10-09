@@ -305,3 +305,56 @@ test('idempotent retry cannot cross account identity even when request UUID is u
   assert.equal((await json(await save(env, a.cookie, input, { expectedUserId: a.userId }), 200)).save.id, first.id);
   assert.equal(env.DB.count('account_saves'), 1);
 });
+
+
+test('saved-things app filters and name search show only owned matching backups and preserve each other', async () => {
+  const env = makeEnv(), owner = await signIn(env.DB), foreign = await signIn(env.DB);
+  const omni = (await json(await save(env, owner.cookie, snapshot({ name: 'Morning orbit' })), 201)).save;
+  await json(await save(env, owner.cookie, snapshot({ app: 'rise', name: 'Morning pages' }), { origin: RISE }), 201);
+  await json(await save(env, owner.cookie, snapshot({ app: 'sketch', name: 'Evening ink' }), { origin: 'https://sketch.syberlabs.io' }), 201);
+  const outsider = (await json(await save(env, foreign.cookie, snapshot({ name: 'Foreign morning' })), 201)).save;
+  const filtered = await request(env, '/admin/saves?app=OMNI&q=morning', { cookie: owner.cookie });
+  assert.equal(filtered.status, 200);
+  const body = await filtered.text();
+  assert.match(body, /Morning orbit/);
+  assert.doesNotMatch(body, /Morning pages|Evening ink|Foreign morning/);
+  assert.match(body, /1 of 3 backups matching/);
+  assert.match(body, /name="app" value="omni"/);
+  assert.match(body, /href="\/admin\/saves\?app=rise&amp;q=morning"/);
+  assert.match(body, /href="\/admin\/saves\?app=omni">Clear search/);
+  assert.match(body, /href="\/admin\/return\?app=omni"/);
+  assert.match(body, new RegExp(omni.id));
+  assert.doesNotMatch(body, new RegExp(outsider.id));
+  for (const [app, name] of [['rise', 'Morning pages'], ['sketch', 'Evening ink']]) {
+    const html = await (await request(env, `/admin/saves?app=${app}`, { cookie: owner.cookie })).text();
+    assert.match(html, new RegExp(name));
+    assert.equal((html.match(/class="saved-item"/g) || []).length, 1);
+    assert.match(html, new RegExp(`href="/admin/return\\?app=${app}"`));
+  }
+});
+
+test('saved-things search handles unsafe characters literally, escapes attributes and normalizes unknown apps', async () => {
+  const env = makeEnv(), owner = await signIn(env.DB);
+  const name = '<img src=x onerror="alert(1)"> & notes';
+  await json(await save(env, owner.cookie, snapshot({ name })), 201);
+  const body = await (await request(env, '/admin/saves?' + new URLSearchParams({ app: '__proto__', q: name }), { cookie: owner.cookie })).text();
+  assert.doesNotMatch(body, /<img src=x|value="__proto__"/);
+  assert.match(body, /&lt;img src=x onerror=&quot;alert\(1\)&quot;&gt; &amp; notes/);
+  assert.match(body, /1 of 1 backup matching/);
+  assert.match(body, /aria-label="Download &lt;img/);
+});
+
+test('saved-things distinguishes a new library from filtered no-results and explains app restoration', async () => {
+  const env = makeEnv(), owner = await signIn(env.DB);
+  const empty = await (await request(env, '/admin/saves', { cookie: owner.cookie })).text();
+  assert.match(empty, /No account backups yet/);
+  assert.match(empty, /Save to account/);
+  await json(await save(env, owner.cookie), 201);
+  const filtered = await (await request(env, '/admin/saves?app=sketch&q=missing', { cookie: owner.cookie })).text();
+  assert.match(filtered, /No matching backups/);
+  assert.match(filtered, /Your 1 saved backup is still in your account/);
+  assert.match(filtered, /Clear all filters/);
+  assert.doesNotMatch(filtered, /No account backups yet/);
+  assert.match(filtered, /Restore in the app/);
+  assert.match(filtered, /separate from the app’s own project download/);
+});

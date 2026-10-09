@@ -37,7 +37,7 @@ function assertShell(body) {
   assert.match(body, /<html lang="en" data-field="calm">/);
   assert.match(body, /<meta name="robots" content="noindex, nofollow">/);
   assert.match(body, /<link rel="stylesheet" href="\/syberlabs\.css\?v=4">/);
-  assert.match(body, /<link rel="stylesheet" href="\/staff\.css\?v=7">/);
+  assert.match(body, /<link rel="stylesheet" href="\/staff\.css\?v=8">/);
   assert.match(body, /<!--email_off-->[\s\S]*<main id="main" class="staff sy-container">[\s\S]*<\/main>[\s\S]*<!--\/email_off-->/);
   // RFC-0002 2.6 and test 10: the staff header, never the public one, its Atlas or remote fonts.
   assert.match(body, /<a class="sy-skip" href="#main">Skip to content<\/a>\n<div class="sy-field-host" aria-hidden="true"><\/div>\n<header class="staff-header">/);
