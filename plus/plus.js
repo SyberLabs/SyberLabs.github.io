@@ -86,7 +86,7 @@ if (host) {
     const r = run = { button, list, timer: 0, watchdog: 0, utter: null, note: '' };
     const finish = () => { if (run === r) { r.note = r.note || BASE; stop(); } };
     if (!synth) {
-      r.note = 'No voice available here, so the words are paced by a timer at reading speed. Plus uses a premium ElevenLabs voice rendered once; same clock.';
+      r.note = 'No voice available here, so the words are paced by a timer at reading speed. Plus (optional; paid launch pending verification) uses a premium ElevenLabs voice rendered once; same clock.';
       say('No voice available here; words paced by a timer.');
       timed(list, 0, finish);
       return;
@@ -109,7 +109,7 @@ if (host) {
     u.onerror = e => {
       if (run !== r) return;
       if (e.error === 'interrupted' || e.error === 'canceled') return finish();
-      if (!heard && !fallback) { r.note = 'No voice available here, so the words were paced by a timer. Plus uses a premium ElevenLabs voice rendered once; same clock.'; say('No voice available here; words paced by a timer.'); fallback = true; timed(list, i + 1, finish); }
+      if (!heard && !fallback) { r.note = 'No voice available here, so the words were paced by a timer. Plus (optional; paid launch pending verification) uses a premium ElevenLabs voice rendered once; same clock.'; say('No voice available here; words paced by a timer.'); fallback = true; timed(list, i + 1, finish); }
       else finish();
     };
     // a voice that reports no word boundaries (network voices do not): pace the words by a timer while it speaks

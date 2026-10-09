@@ -6,6 +6,7 @@
 // the link to the page itself.
 import { readFile, writeFile } from 'node:fs/promises';
 import { header, footer } from '../projects/project-template.js';
+import { nav } from '../projects/site-data.js';
 
 const pages = ['404.html', 'approach/index.html', 'stack/index.html', 'jev/index.html', 'kev/index.html', 'privacy/index.html',
   'rise-demo/index.html', 'services/index.html', 'plus/index.html', 'review/index.html', 'review/2026-10-08/index.html', 'research/index.html', 'research/jev-execution/index.html', 'research/sybershoke/index.html',
@@ -18,7 +19,10 @@ const FOOTER = /<footer class="sy-footer[\s\S]*?<\/footer>/;
 function applyChrome(html, file) {
   const head = HEADER.exec(html);
   if (!head || !FOOTER.test(html)) throw new Error(`site-chrome: ${file} needs a skip link, header and footer`);
-  const current = (head[0].match(/aria-current="page">(\w+)</) || [])[1]?.toLowerCase() || '';
+  // The marked nav item, by its label (or its old one-word id: "Work" became Projects in October 2026).
+  const label = (head[0].match(/<li><a [^>]*aria-current="page"[^>]*>([^<]+)</) || [])[1]?.trim() || '';
+  const current = nav.find(item => item.label === label)?.id || (label === 'Work' ? 'projects' : label.toLowerCase())
+    || (file.startsWith('services/') ? 'services' : file.startsWith('projects/') ? 'projects' : '');
   const self = file.endsWith('/index.html') ? `/${file.slice(0, -'index.html'.length)}` : '';
   return html
     .replace(HEADER, () => header(current).replace('href="#main"', `href="#${head[1]}"`))

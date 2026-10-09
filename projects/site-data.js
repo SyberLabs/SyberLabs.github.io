@@ -19,6 +19,8 @@ export const MATEO_SITE = 'https://mateo.syberlabs.space/';
 // Public tools and previews. Linked from the hero, the Atlas, the footer and each project page.
 export const RISE_APP = 'https://rise.syberlabs.io/';
 export const RISE_SAMPLE = 'https://rise.syberlabs.io/jev-scene-demo';
+// The public one-minute sample: the first item of the primary nav ("Try RISE") and the sample linked from /services/.
+export const RISE_TRY = 'https://rise.syberlabs.io/try/';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
 export const SKETCH_APP = 'https://sketch.syberlabs.io/';
 
@@ -36,19 +38,24 @@ export const RISE_PLUS = {
   source: 'https://github.com/SyberLabs/RISE/pull/542',
 };
 
+// The primary nav, the same on every page (projects/project-template.js `header()`; the homepage renders the same
+// markup). Exactly five items, in this order. `id` is what a page passes as `current`; scripts/site-chrome.mjs finds it
+// again from the label a page marks with aria-current. Sign in stays in the header's account control, set quieter than these.
 export const nav = [
-  { id: 'work', label: 'Work', href: '/#work' },
-  { id: 'research', label: 'Research', href: '/#research' },
+  { id: 'try', label: 'Try RISE', href: RISE_TRY, external: true },
+  { id: 'projects', label: 'Projects', href: '/#work' },
+  { id: 'research', label: 'Research', href: '/research/' },
+  { id: 'services', label: 'Work with us', href: '/services/' },
   { id: 'about', label: 'About', href: '/#about' },
-  { id: 'contact', label: 'Contact', href: CONTACT },
 ];
 
 export const workWithUs = { label: 'Work with us', href: '/services/' };
 
-// The footer carries a few essentials; the full site map lives in the header's Menu (the Atlas), which works without JavaScript.
+// The footer carries a few essentials, then "All pages": the full site map (siteMap below) as a secondary directory
+// that works without JavaScript. The same map opens full-screen from the header's Menu (the Atlas).
 export const footerLinks = [
   { label: 'Research', href: '/research/' },
-  { label: 'Services', href: '/services/' },
+  { label: 'Work with us', href: '/services/' },
   { label: 'GitHub', href: GITHUB, external: true },
   { label: 'Email', href: CONTACT },
   { label: 'Privacy', href: '/privacy/' },
@@ -116,8 +123,8 @@ export const projects = [
       ['tested', 'Unit, integration and browser suites run in CI; the first-load budget and the design diagram are checked on every release.'],
       ['measured', 'Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.'],
       RISE_PLUS.state === 'live'
-        ? ['deployed', `RISE Plus voice runs at rise.syberlabs.io: an ElevenLabs voice for a reading of your own, ${RISE_PLUS.price} a month through Stripe, with no account.`]
-        : ['tested', `RISE Plus voice (an ElevenLabs voice, ${RISE_PLUS.price} a month) runs in production on Stripe test mode: on 2026-10-08 a test purchase unlocked it and the voice was heard reading the buyer's own file. Nothing is for sale yet; payments open after the owner's review.`],
+        ? ['deployed', `RISE Plus voice (optional) runs at rise.syberlabs.io: an ElevenLabs voice for a reading of your own, ${RISE_PLUS.price} a month through Stripe, with no account.`]
+        : ['tested', `RISE Plus voice, an optional ElevenLabs voice (${RISE_PLUS.price} a month): implementation merged; paid launch pending verification. It runs in production on Stripe test mode: on 2026-10-08 a test purchase unlocked it and the voice was heard reading the buyer's own file. Nothing is for sale yet; payments open after the owner's review. Reading in RISE does not need it.`],
       ['not yet', 'No reader study has been run; release evidence still records zero real-device and stranger-testing records. Realtime Live and Dive are out of current scope by decision.'],
     ],
     facts: [
@@ -129,7 +136,7 @@ export const projects = [
       ['Composer in Claude', 'Live as a custom connector: add one named RISE with the URL https://rise.syberlabs.io/api/mcp. Submission to Claude’s connector directory is planned.'],
       ['Earlier evidence', { label: 'Jev integration in RISE', href: '/jev/' }],
       ['Your own model', { label: 'Reader-owned AI: Jev and Kev', href: '/kev/' }],
-      ['RISE Plus', { label: RISE_PLUS.state === 'live' ? 'Your own reading, read aloud: live in RISE' : 'Your own reading, read aloud: paid launch pending verification', href: '/plus/' }],
+      ['RISE Plus', { label: RISE_PLUS.state === 'live' ? 'Optional voice, your own reading read aloud: live in RISE' : 'Optional voice, your own reading read aloud: paid launch pending verification', href: '/plus/' }],
       ['Source', { label: 'github.com/SyberLabs/RISE', href: 'https://github.com/SyberLabs/RISE' }],
     ],
   },
@@ -138,7 +145,7 @@ export const projects = [
     reflects: 'SyberLabs/Flyspace@e95ae73 · verified 2026-10-05',
     pageTitle: 'FLYSPACE: Spatial Workspace for AI over Live Data',
     headline: 'See the sources behind an answer.',
-    intro: 'A spatial workspace for thinking with AI over live data, with APIs on the fly. Drop Data blocks that pull real numbers, wire them into AI personas, and ask a question that is answered only from what the wires actually carry. Formerly OmniOS.',
+    intro: 'A spatial workspace for live data and the AI personas it feeds. Drop Data blocks that pull real numbers and wire them into personas; the public preview lets you explore that data and wiring. Run FLYSPACE locally with your own model (for example through Ollama) to ask a persona a question, answered only from what its wires actually carry. Formerly OmniOS.',
     summary: 'A limited public preview is live at omni.syberlabs.io: the canvas, the Shell Store and every keyless public data source run in your browser. AI answers and keyed sources are switched off there; the full app runs on your own machine with your own model keys.',
     status: { kind: 'live', label: 'Live preview' },
     primary: { label: 'Open the preview', href: OMNI_PREVIEW },
@@ -352,6 +359,7 @@ export const projects = [
 // (projects/project-template.js `atlas()`), so no screen is more than one tap from any other.
 export const siteMap = [
   { title: 'Use', items: [
+    { label: 'Try RISE', note: 'A one-minute sample · no account, no install', href: RISE_TRY, external: true },
     { label: 'RISE app', note: 'rise.syberlabs.io · open beta', href: RISE_APP, external: true, accent: '#f2d9a6', sigil: 'rise' },
     { label: 'FLYSPACE preview', note: 'omni.syberlabs.io · live preview', href: OMNI_PREVIEW, external: true, accent: '#f59be0', sigil: 'flyspace' },
     { label: 'RISE Sketch', note: 'sketch.syberlabs.io · living ink', href: SKETCH_APP, external: true, accent: '#c7a4ff' },
@@ -360,7 +368,7 @@ export const siteMap = [
   ] },
   { title: 'Projects', items: [
     { label: 'RISE', note: 'Creative suite · Reader, Composer, Sketch', href: '/projects/rise/', sigil: 'rise', accent: '#f2d9a6' },
-    { label: 'RISE Plus', note: `Your own reading, read aloud · ${RISE_PLUS.state === 'live' ? `live, ${RISE_PLUS.price} a month` : 'in progress, not for sale'}`, href: '/plus/' },
+    { label: 'RISE Plus', note: `Optional voice · ${RISE_PLUS.state === 'live' ? `live, ${RISE_PLUS.price} a month` : 'paid launch pending verification'}`, href: '/plus/' },
     { label: 'FLYSPACE', note: 'Spatial AI workspace · formerly OmniOS', href: '/projects/flyspace/', sigil: 'flyspace', accent: '#f59be0' },
     { label: 'SyberWork', note: 'Governed work runtime · work in progress', href: '/projects/syberwork/', sigil: 'syberwork', accent: '#a6f08f' },
     { label: 'Relay', note: 'Job application workspace', href: '/projects/relay/', sigil: 'relay', accent: '#62e3d8' },
@@ -380,7 +388,7 @@ export const siteMap = [
     { label: 'Approach', note: 'Make the work observable', href: '/approach/' },
     { label: 'How we build', note: 'Dependencies read through GitHits', href: '/stack/' },
     // { label: 'The factory', note: 'Agents build and review; humans look at the product', href: '/#factory' }, // hidden with the factory section (src/App.jsx INTERNAL_SECTIONS)
-    { label: 'Services', note: 'Interactive reading pilots', href: '/services/' },
+    { label: 'Work with us', note: 'Reading pilots for publishers and creators', href: '/services/' },
     { label: 'About', note: 'The lab and its founder', href: '/#about' },
     { label: 'Review', note: 'State of the lab, by date', href: '/review/' },
     { label: 'Privacy', note: 'What this site does with your data', href: '/privacy/' },
