@@ -64,23 +64,23 @@ export async function accountPage(ctx) {
     started != null ? ` It started at ${time(started)}.` : ''}`;
   // Personal pages are available to every session; roles unlock team tools.
   const empty = ctx.perms.size === 0
-    ? `<div class="sy-empty staff-empty"><p>Your account is ready. Open your <a href="/admin/">launchpad</a> or view your <a href="/admin/saves">saved things</a>. If you need team tools, ask an admin for a role: ${contact('Email SyberLabs')}.</p></div>`
+    ? `<aside class="account-guidance"><p>Your account is ready. Open your <a href="/admin/">launchpad</a> or view your <a href="/admin/saves">saved things</a>. If you need team tools, ask an admin for a role: ${contact('Email SyberLabs')}.</p></aside>`
     : '';
 
   const body = `${head('Staff', 'Account.')}
-  ${empty}
   ${google ? addGoogleNotice(ctx.url.searchParams, hasGoogle) : ''}
-  <section class="staff-section" aria-labelledby="methods-h">
+  <section class="staff-section account-panel" aria-labelledby="methods-h">
     <h2 class="sy-heading" id="methods-h">Sign-in methods</h2>
     <ul class="staff-methods">${rows}</ul>
     ${google && !hasGoogle ? addGoogleBlock(ctx) : ''}
     <p class="sy-small">Don't recognise one of these? Press Sign out everywhere, then ${contact('email SyberLabs')} and we'll remove it.</p>
   </section>
-  <section class="staff-section" aria-labelledby="session-h">
+  <section class="staff-section account-panel" aria-labelledby="session-h">
     <h2 class="sy-heading" id="session-h">This session</h2>
     <p class="sy-body">${sessionLine}</p>
-    <p class="sy-small">Sign out everywhere ends this session and every other one, in every browser and on every device.</p>
-    ${postButton('/admin/account/signout-everywhere', 'Sign out everywhere')}
-  </section>`;
-  return html(page(ctx, { title: 'Account', body, section: 'account' }));
+    <div class="account-signout"><p class="sy-small">Sign out everywhere ends this session and every other one, in every browser and on every device.</p>
+    ${postButton('/admin/account/signout-everywhere', 'Sign out everywhere')}</div>
+  </section>
+  ${empty}`;
+  return html(page(ctx, { title: 'Account', body, section: 'account', compactFooter: true }));
 }
