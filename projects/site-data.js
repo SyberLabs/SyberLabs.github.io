@@ -130,7 +130,7 @@ export const projects = [
       ['measured', 'Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.'],
       RISE_PLUS.state === 'live'
         ? ['deployed', `RISE Plus voice runs at rise.syberlabs.io: an ElevenLabs voice for a reading of your own, ${RISE_PLUS.price} a month through Stripe, with no account.`]
-        : ['not yet', `RISE Plus voice (an ElevenLabs voice, ${RISE_PLUS.price} a month) is not available yet. It is built and tested in draft pull requests that are not merged or deployed.`],
+        : ['tested', `RISE Plus voice (an ElevenLabs voice, ${RISE_PLUS.price} a month) runs in production on Stripe test mode: on 2026-10-08 a test purchase unlocked it and the voice was heard reading the buyer's own file. Nothing is for sale yet; payments open after the owner's review.`],
       ['not yet', 'No reader study has been run; release evidence still records zero real-device and stranger-testing records. Realtime Live and Dive are out of current scope by decision.'],
     ],
     facts: [
