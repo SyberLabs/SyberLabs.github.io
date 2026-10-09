@@ -6,7 +6,7 @@ import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
 import { params as sigilParams, drawAll, draw } from '../kit/v2/syber-sigil.js';
 import { boot, reducedMotion } from './site/site.js';
-import { mountThink } from './site/think.js';
+import { mountMorph } from './site/morph.js';
 import { mountStrike } from './site/strike.js';
 import { gallery } from './sketch-gallery/index.js';
 import { githits } from './githits.js';
@@ -46,18 +46,29 @@ const Footer = () => <div className="home-chrome home-footer" dangerouslySetInne
 // Plate I: the one live 2D long-exposure attractor on the site. Without JS, without WebGL2 or on software GL,
 // a still exposure of the same plate (src/plate-i.webp) sits in the ring instead.
 
-// "Think.": one span per letter (src/site/think.js, .home-think in home.css). Each letter's scatter (--dx, --dy, --r)
-// is where it condenses from on the way in. The text stays "Think." for search, readers and the no-JS page.
-const THINK = [['T', -0.2, 0.34, -9], ['h', 0.12, -0.3, 7], ['i', -0.08, 0.4, -5], ['n', 0.16, -0.24, 8], ['k', -0.14, 0.32, -7], ['.', 0.24, -0.36, 12]];
-const Think = React.forwardRef((_, ref) => <em ref={ref} className="home-think" data-split-skip data-text="Think.">
-  {THINK.map(([ch, dx, dy, r], i) => <span key={i} className={`home-think__l${ch === '.' ? ' home-think__dot' : ''}`} style={{ '--i': i, '--dx': dx + 'em', '--dy': dy + 'em', '--r': r + 'deg' }}>{ch}</span>)}
-</em>);
+// The hero line (src/site/morph.js): Reliable agents. -> Creative agents. -> Creative humans. One word changes per step
+// and the line rests on "Creative humans." Each letter carries its own scatter (--dx, --dy, --r), seeded by the word, so
+// every visit draws the same motion. Search engines and screen readers get the whole statement from the .sy-sr text.
+const scatter = (word, i) => {
+  let h = 7; for (const c of word) h = (h * 31 + c.charCodeAt(0)) % 100003;
+  const r = k => { const x = Math.sin(h * .0137 + i * 12.9898 + k * 78.233) * 43758.5453; return x - Math.floor(x); };
+  return { dx: ((r(1) - .5) * .44).toFixed(2), dy: ((r(2) - .5) * .8).toFixed(2), rot: Math.round((r(3) - .5) * 22) };
+};
+const MorphWord = ({ word, rest }) => <span className={`home-morph__w${rest ? ' is-rest' : ''}`}>
+  {[...word].map((ch, i) => { const k = scatter(word, i); return <span key={i} className="home-morph__l" style={{ '--i': i, '--dx': k.dx + 'em', '--dy': k.dy + 'em', '--r': k.rot + 'deg' }}>{ch}</span>; })}
+</span>;
+const Morph = React.forwardRef((_, ref) => <h1 ref={ref} id="hero-title" className="sy-display-xl home-hero__title home-morph">
+  <span className="sy-sr">Reliable agents. Creative agents. Creative humans.</span>
+  <span className="home-morph__line" aria-hidden="true">
+    <span className="home-morph__slot home-morph__slot--a"><MorphWord word="Reliable" /><MorphWord word="Creative" rest /></span>
+    <em className="home-morph__slot home-morph__slot--b"><MorphWord word="agents." /><MorphWord word="humans." rest /></em>
+  </span>
+</h1>);
 
 function Hero() {
-  const canvas = useRef(null), copy = useRef(null), think = useRef(null);
+  const canvas = useRef(null), copy = useRef(null), morph = useRef(null);
   const [live, setLive] = useState(false);
-  // before boot() splits and reveals the title (child effects run first), so the letters start from their scatter
-  useEffect(() => { const t = mountThink(think.current); return () => t.destroy(); }, []);
+  useEffect(() => { const m = mountMorph(morph.current); return () => m.destroy(); }, []);
   useEffect(() => {
     const plate = mount(canvas.current, { mode: 'hero', avoid: copy.current, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
     setLive(plate.supported);
@@ -75,11 +86,11 @@ function Hero() {
     <div className="home-hero__in sy-wrap">
       <div className="home-hero__copy" ref={copy}>
         <p className="sy-eyebrow" data-reveal>SyberLabs / Independent AI software lab</p>
-        <h1 id="hero-title" className="sy-display-xl home-hero__title" data-split>Read.<br /> <Think ref={think} /><br /> Build.</h1>
+        <Morph ref={morph} />
         <p className="sy-body-lg home-hero__intro" data-reveal>Creative tools for people. Dependable infrastructure for AI agents. Explore the work, try a tool, or inspect the evidence behind it.</p>
         <div className="home-hero__actions" data-reveal>
           <a className="sy-btn sy-btn--solid" href={RISE_APP}>Read today’s poem<Icon name="arrow" className="sy-icon--trail" /></a>
-          <a className="sy-btn sy-btn--line" href="#work">Explore the work<Icon name="down" /></a>
+          <a className="sy-btn sy-btn--line" href="#reliability">For teams: reliable agents<Icon name="down" /></a>
         </div>
         <p className="home-hero__note" data-reveal>Free in your browser. No account needed.</p>
         <div className="home-hero__founder" data-reveal>
@@ -221,9 +232,9 @@ function Runtime() {
   </section>;
 }
 
-// The homepage leads with three products, in the order of the hero: Read (RISE), Think (FLYSPACE), Build (SyberWork).
-// Names, accents, statuses and project pages come from projects/site-data.js; what each one is for lives here.
-// Every claim below is one the project's own page carries (what is live, what is in testing, what is not yet).
+// The page is in three parts, in the order of the hero's resting line: 01 Creative humans (RISE, FLYSPACE, Sketch),
+// 02 Reliable agents (SyberWork, Sybershoke, GitHits), 03 About. Product names, accents, statuses and pages come from
+// projects/site-data.js; what each one is for lives here, and every claim is one the project's own page carries.
 const SHOW = {
   rise: {
     kicker: 'Creative suite',
@@ -266,18 +277,23 @@ const SHOW = {
     primary: { label: 'View source', href: 'https://github.com/SyberLabs/SyberWork' },
   },
 };
-const featured = Object.keys(SHOW).map(slug => projects.find(p => p.slug === slug)).filter(Boolean);
 const isExternal = href => /^https?:/.test(href);
 
-function Work() {
+// A part's opening: its number, the half of the hero line it delivers, and who it is for.
+function PartHead({ id, n, title, em, note }) {
+  return <header id={id} className="home-part sy-wrap" data-reveal>
+    <p className="home-part__n">{n}</p>
+    <h2 className="sy-display home-part__title">{title} <em>{em}</em></h2>
+    <p className="home-part__note">{note}</p>
+  </header>;
+}
+
+function Products({ slugs, label }) {
+  const list = slugs.map(slug => projects.find(p => p.slug === slug)).filter(Boolean);
   const redraw = event => event.currentTarget.querySelectorAll('canvas[data-sigil]').forEach(c => draw(c, c.dataset.sigil));
-  return <section id="work" className="home-sec sy-wrap" aria-labelledby="work-title">
-    <div className="site-head home-head" data-reveal>
-      <div><p className="sy-eyebrow">Work</p><h2 id="work-title" className="sy-display home-work__title">Creative <em>humans.</em><br /> Reliable <em>agents.</em></h2></div>
-      <p className="home-head__note sy-small">Tools that make people more expressive, and infrastructure that keeps AI accountable. What each one does, who it is for, and where it stands.</p>
-    </div>
+  return <section className="home-sec home-products sy-wrap" aria-label={label}>
     <ul className="home-show" data-reveal-children>
-      {featured.map(p => { const s = SHOW[p.slug]; return <li key={p.slug} className={`home-show__item home-show__item--${p.slug}`}>
+      {list.map(p => { const s = SHOW[p.slug]; return <li key={p.slug} className={`home-show__item home-show__item--${p.slug}`}>
         <article className={`home-show__card sy-card${p.status.kind === 'wip' ? ' is-wip' : ''}`} style={{ '--sy-accent': p.accent }} aria-labelledby={`show-${p.slug}`} data-tilt="2" onMouseEnter={redraw}>
           {!s.suite && <span className="home-card__sigil-wrap home-show__sigil"><canvas className="home-card__sigil" data-sigil={p.slug} aria-hidden="true" /></span>}
           <div className="home-show__info">
@@ -465,7 +481,7 @@ function Factory() {
 
 function About() {
   return <section id="about" className="home-sec sy-wrap" aria-labelledby="about-title">
-    <div className="site-head" data-reveal><p className="sy-eyebrow">About</p><h2 id="about-title" className="sy-display">About <em>SyberLabs.</em></h2></div>
+    <div className="site-head" data-reveal><p className="sy-eyebrow">03 / About</p><h2 id="about-title" className="sy-display">About <em>SyberLabs.</em></h2></div>
     <div className="home-about">
       <div className="home-about__copy" data-reveal-children>
         <p className="sy-body-lg home-about__lead">SyberLabs is an independent software and AI research lab founded in 2026 by Mateo Robles. The lab designs, builds, and evaluates AI products and research software, with a focus on applied machine learning, LLM applications, AI agent reliability, and simulation. Seth Carlson builds the engineering infrastructure behind RISE and co-builds Relay.</p>
@@ -511,7 +527,14 @@ export default function App() {
   }, []);
   return <>
     <Header />
-    <main id="main"><Hero /><Runtime /><Work /><Sketch />{INTERNAL_SECTIONS && <Factory />}<Research /><GitHits /><About /><Sign /></main>
+    <main id="main">
+      <Hero />
+      <PartHead id="work" n="01" title="Creative" em="humans." note="Tools that turn words, strokes and live data into something people experience. Free in the browser." />
+      <Runtime /><Products slugs={['rise', 'flyspace']} label="Creative tools" /><Sketch />
+      <PartHead id="reliability" n="02" title="Reliable" em="agents." note="Infrastructure that keeps AI accountable: governed execution with human sign-off, tested under failure before it ships." />
+      <Products slugs={['syberwork']} label="Agent infrastructure" /><Research /><GitHits />{INTERNAL_SECTIONS && <Factory />}
+      <About /><Sign />
+    </main>
     <Footer />
   </>;
 }
