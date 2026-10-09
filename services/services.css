@@ -1,5 +1,7 @@
 /* Services page. Tokens, header, buttons and footer come from /syberlabs.css. */
-.intro, .inquiry, .details-inner { max-width: calc(var(--content-max) + 2 * var(--gutter)); margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter); }
+.intro, .sample, .inquiry, .details-inner { max-width: calc(var(--content-max) + 2 * var(--gutter)); margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter); }
+main section[id] { scroll-margin-top: 100px; }
+main h1, main h2 { text-wrap: balance; }
 .eyebrow, .number { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2); }
 
 .intro { padding-top: var(--space-10); padding-bottom: var(--space-9); }
@@ -17,13 +19,30 @@
 .details h2 { margin: var(--space-4) 0 var(--space-2); font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; }
 .details p { margin: 0; font-size: 16px; line-height: 24px; color: var(--text-2); }
 
-.inquiry { padding-top: var(--space-9); padding-bottom: var(--space-10); }
+.sample { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; gap: var(--space-7); padding-bottom: var(--space-9); }
+.sample h2 { margin: var(--space-4) 0; font-family: var(--font-display); font-size: clamp(32px, 3.4vw, 48px); font-weight: 400; line-height: 1.1; }
+.sample-copy > p:not(.eyebrow) { font-size: 16px; line-height: 24px; color: var(--text-2); }
+.sample .sy-btn { margin-top: var(--space-3); }
+.sample-copy .sample-note, .sample-copy .sample-source { font-size: 14px; line-height: 22px; }
+.sample-source a, .email-fallback a { text-decoration: underline; text-underline-offset: 4px; }
+.sample-figure { min-width: 0; margin: 0; }
+.sample-figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 16px; }
+.sample-figure figcaption { margin-top: var(--space-3); font-size: 13px; line-height: 20px; color: var(--text-2); }
+
+.inquiry { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-8); padding-top: var(--space-9); padding-bottom: var(--space-10); }
 .inquiry h2 { max-width: 760px; margin: var(--space-4) 0 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; }
-.inquiry > p:not(.eyebrow) { max-width: var(--measure); margin: var(--space-5) 0 0; font-size: 16px; line-height: 24px; color: var(--text-2); }
+.inquiry-copy > p:not(.eyebrow) { max-width: var(--measure); margin: var(--space-5) 0 0; font-size: 16px; line-height: 24px; color: var(--text-2); }
 .inquiry .primary-action { margin-top: var(--space-6); }
-.inquiry .privacy { margin-top: var(--space-6) !important; font-size: 14px !important; line-height: 20px !important; color: var(--text-3) !important; }
+.inquiry-copy .email-fallback { font-size: 14px; overflow-wrap: anywhere; }
+.inquiry-brief { border-left: 1px solid var(--line); padding-left: var(--space-7); }
+.inquiry-brief h3 { margin: 0 0 var(--space-4); font-size: 20px; font-weight: 500; }
+.inquiry-brief ol { margin: 0; padding-left: 1.25em; color: var(--text-2); }
+.inquiry-brief li { padding-left: .35em; margin-bottom: var(--space-3); line-height: 24px; }
+.inquiry .privacy { margin: var(--space-6) 0 0; font-size: 14px; line-height: 22px; color: var(--text-2); }
 
 @media (max-width: 860px) {
+  .sample, .inquiry { grid-template-columns: 1fr; gap: var(--space-6); }
+  .inquiry-brief { border-left: 0; border-top: 1px solid var(--line); padding: var(--space-6) 0 0; }
   .details-inner { grid-template-columns: 1fr; }
   .details article, .details article:first-child, .details article:last-child { padding: var(--space-6) 0; }
   .details article + article { border-left: 0; border-top: 1px solid var(--line); }
@@ -35,4 +54,5 @@
   .inquiry { padding-top: var(--space-8); padding-bottom: var(--space-8); }
   .inquiry h2 { font-size: 32px; line-height: 36px; }
   .inquiry .primary-action { width: 100%; }
+  .sample .sy-btn { width: 100%; }
 }
