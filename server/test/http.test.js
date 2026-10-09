@@ -18,9 +18,8 @@ test('esc escapes & < > " \' and renders null as empty', () => {
 });
 
 test('security headers are exactly the RFC set', () => {
-  assert.equal(CSP, "default-src 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-    "font-src https://fonts.gstatic.com; img-src 'self' data:; " +
-    "form-action 'self' https://accounts.google.com https://github.com; frame-ancestors 'none'; base-uri 'none'; object-src 'none'");
+  assert.equal(CSP, "default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; " +
+    "form-action 'self' https://github.com; frame-ancestors 'none'; base-uri 'none'; object-src 'none'");
   assert.deepEqual(Object.keys(SECURITY_HEADERS).sort(), [
     'Cache-Control', 'Content-Security-Policy', 'Cross-Origin-Opener-Policy', 'Permissions-Policy', 'Referrer-Policy',
     'Strict-Transport-Security', 'X-Content-Type-Options', 'X-Frame-Options', 'X-Robots-Tag',
@@ -64,8 +63,8 @@ test('HttpError carries the status and default message for its code', () => {
 });
 
 test('cookies: __Host- shape, no Domain; readCookie finds the exact name', () => {
-  const c = cookie('__Host-sl_session', 'tok', 43200);
-  assert.equal(c, '__Host-sl_session=tok; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=43200');
+  const c = cookie('__Host-sl_session', 'tok', 46800);
+  assert.equal(c, '__Host-sl_session=tok; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=46800');
   assert.doesNotMatch(c, /domain/i);
   assert.equal(clearCookie('__Host-sl_oauth'), '__Host-sl_oauth=; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=0');
   const req = new Request(ORIGIN, { headers: { Cookie: 'x__Host-sl_session=bad; __Host-sl_session=good; rise_plus=1' } });
@@ -73,6 +72,21 @@ test('cookies: __Host- shape, no Domain; readCookie finds the exact name', () =>
   assert.equal(readCookie(req, '__Host-sl_oauth'), null);
   assert.equal(readCookie(new Request(ORIGIN), '__Host-sl_session'), null);
   assert.equal(readCookie(new Request(ORIGIN, { headers: { Cookie: '__Host-sl_session=' } }), '__Host-sl_session'), null);
+});
+
+// Review round 3, finding 4 (RFC-0002 2.2 cookie parsing): a same-site host can toss a duplicate or a nameless
+// cookie with a longer Path, which the browser sends first. Two of a name count as absent, and the match
+// is case-sensitive, so a variant never stands in for the real cookie.
+test('readCookie: a name sent twice is absent; a case variant is not the name', () => {
+  const read = (header, name = '__Host-sl_oauth') => readCookie(new Request(ORIGIN, { headers: { Cookie: header } }), name);
+  assert.equal(read('__Host-sl_oauth=planted; __Host-sl_oauth=real'), null);
+  assert.equal(read('__Host-sl_session=a; rise_plus=1; __Host-sl_session=b', '__Host-sl_session'), null);
+  assert.equal(read('__Host-sl_session=a; __Host-sl_session=a', '__Host-sl_session'), null, 'even with equal values');
+  // A nameless cookie whose value is "__Host-sl_oauth=planted" serializes exactly like a second one.
+  assert.equal(read('__Host-sl_oauth=planted; __Host-sl_oauth=real; x=1'), null);
+  assert.equal(read('__host-sl_oauth=planted'), null);
+  assert.equal(read('__host-sl_oauth=planted; __Host-sl_oauth=real'), 'real');
+  assert.equal(read('__HOST-SL_SESSION=x', '__Host-sl_session'), null);
 });
 
 test('CSRF (case 10): exact Origin, Sec-Fetch-Site same-origin when present', () => {

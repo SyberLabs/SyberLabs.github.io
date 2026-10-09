@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { projects, skills, EMAIL, CONTACT, RESUME, LINKEDIN, MATEO_GITHUB, MATEO_SITE, RISE_APP, OMNI_PREVIEW, SKETCH_APP, RISE_PLUS } from '../projects/site-data.js';
-import { latest } from '../projects/latest.js';
 import { header as chromeHeader, footer as chromeFooter } from '../projects/project-template.js';
 import { mount, RING_SVG } from '../kit/v2/syber-atmosphere.js';
 import plateStill from './plate-i.webp';
@@ -414,28 +413,10 @@ function Research() {
   </section>;
 }
 
-// Latest: what merged, deployed or was decided, newest first, each with its link (projects/latest.js).
-// Internal sections (What changed, The factory) are hidden from the public homepage while they move to the internal
-// dashboard. They still compile; set INTERNAL_SECTIONS to true to show them again (and restore the Atlas link in projects/site-data.js).
-// What changed is staff-only (MasterMind RFC 0002): with this true, CI's absence guards fail the build; the staff page
-// /admin/changes replaces it.
+// The factory is hidden from the public homepage while it moves to the internal dashboard (#81). It still
+// compiles; set INTERNAL_SECTIONS to true to show it again (and restore the Atlas link in projects/site-data.js).
+// ("What changed", the other section #81 hid, is gone from here: it is staff-only at /admin/changes, MasterMind RFC 0002.)
 const INTERNAL_SECTIONS = false;
-
-function Latest() {
-  const fmt = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
-  // the month of the newest record, not a month typed into the page
-  const newest = latest.length ? new Date(latest[0].date + 'T12:00:00Z').toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }) : '';
-  return <section id="latest" className="home-sec sy-wrap" aria-labelledby="latest-title">
-    <div className="site-head" data-reveal><div><p className="sy-eyebrow">Latest{newest && ` / ${newest}`}</p><h2 id="latest-title" className="sy-display">What <em>changed.</em></h2></div><p className="home-head__note sy-small">Merged, deployed, decided or recorded, newest first. Each line links to its evidence.</p></div>
-    <ol className="home-latest" data-reveal-children>
-      {latest.map(item => <li key={item.href + item.title} className={`home-latest__row is-${item.state.replace(/\s+/g, '-')}`}>
-        <span className="home-latest__date sy-label"><time dateTime={item.date}>{fmt(item.date)}</time></span>
-        <span className="home-latest__state sy-label"><i aria-hidden="true" />{item.state}</span>
-        <span className="home-latest__body"><a className="home-latest__title" href={item.href} rel="noopener">{item.project} · {item.title}<Icon name="external" size={14} /></a><span className="home-latest__text">{item.text}</span></span>
-      </li>)}
-    </ol>
-  </section>;
-}
 
 // The factory: how the pull requests get made. The loop as a numbered strip (it is a sequence), four
 // numbers that src/site/factory-stats.js refreshes from GitHub after load (the served text is the
@@ -530,7 +511,7 @@ export default function App() {
   }, []);
   return <>
     <Header />
-    <main id="main"><Hero /><Runtime /><Work /><Sketch />{INTERNAL_SECTIONS && <><Latest /><Factory /></>}<Research /><GitHits /><About /><Sign /></main>
+    <main id="main"><Hero /><Runtime /><Work /><Sketch />{INTERNAL_SECTIONS && <Factory />}<Research /><GitHits /><About /><Sign /></main>
     <Footer />
   </>;
 }

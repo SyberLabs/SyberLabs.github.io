@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
 import {
   b64urlEncode, b64urlDecode, hex, newId, randomToken, sha256Hex, sha256B64url, timingSafeEqual,
-  secretKeyBytes, stateKey, seal, open, sealJson, openJson,
+  secretKeyBytes, stateKey, sealJson, openJson,
 } from '../crypto.js';
 
 const SECRET = 'crypto-test-secret-0123456789abcdefghijklmn'; // 43 base64url chars = 32 bytes
@@ -50,17 +50,19 @@ test('stateKey: APP_SECRET is the AES-GCM key itself (RFC-0002 R1-14), and refus
   }
   assert.equal(secretKeyBytes(SECRET).length, 32);
   assert.deepEqual(secretKeyBytes(SECRET), b64urlDecode(SECRET));
-  assert.equal(secretKeyBytes('y'.repeat(32)).length, 32); // exactly 32 UTF-8 bytes also works
+  // Review round 4, finding 3: only base64url (RFC-0002 8.4). A 32-character passphrase is not a 32-byte key.
+  assert.equal(secretKeyBytes('y'.repeat(32)), null);
+  await assert.rejects(stateKey('y'.repeat(32)));
   const key = await stateKey(SECRET);
   assert.equal(key.algorithm.name, 'AES-GCM');
   assert.equal(key.algorithm.length, 256);
   assert.equal(key.extractable, false);
   // No derivation: a key imported straight from the decoded bytes opens what stateKey sealed.
   const direct = await webcrypto.subtle.importKey('raw', b64urlDecode(SECRET), 'AES-GCM', false, ['decrypt']);
-  assert.equal(new TextDecoder().decode(await open(direct, await seal(key, 'hi', 'aad'), 'aad')), 'hi');
+  assert.equal(await openJson(direct, await sealJson(key, 'hi', 'aad'), 'aad'), 'hi');
 });
 
-test('seal/open: round trip, random IV, and null for wrong AAD, tampering, other keys or junk', async () => {
+test('sealJson/openJson: round trip, random IV, and null for wrong AAD, tampering, other keys or junk', async () => {
   const key = await stateKey(SECRET);
   const otherKey = await stateKey(OTHER);
   const a = await sealJson(key, { v: 1, p: 'github', s: 'x' }, 'sl_oauth|github');
@@ -77,8 +79,13 @@ test('seal/open: round trip, random IV, and null for wrong AAD, tampering, other
   raw[3] ^= 1;
   assert.equal(await openJson(key, b64urlEncode(raw), 'sl_oauth|github'), null);
   for (const junk of ['', 'abc', 'not base64!', b64urlEncode(new Uint8Array(20)), undefined]) {
-    assert.equal(await open(key, junk, 'sl_oauth|github'), null);
+    assert.equal(await openJson(key, junk, 'sl_oauth|github'), null);
   }
-  const bytes = await open(key, await seal(key, 'plain', 'aad'), 'aad');
-  assert.equal(new TextDecoder().decode(bytes), 'plain');
+  // Authentic ciphertext that is not JSON is null too, not a throw.
+  const iv = new Uint8Array(12);
+  const ct = new Uint8Array(await webcrypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: new TextEncoder().encode('aad') },
+    await webcrypto.subtle.importKey('raw', b64urlDecode(SECRET), 'AES-GCM', false, ['encrypt']), new TextEncoder().encode('{not json')));
+  const sealed = new Uint8Array(12 + ct.length);
+  sealed.set(ct, 12);
+  assert.equal(await openJson(key, b64urlEncode(sealed), 'aad'), null);
 });

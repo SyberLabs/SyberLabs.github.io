@@ -1,8 +1,9 @@
-// Google OpenID Connect, authorization code + PKCE S256 + nonce, confidential client. The identity is
-// `sub`; the email is stored for display only and decides nothing (RFC-0002 2.2).
-// RFC-0002 2.2 / section 0: the id_token comes only from our own TLS POST to Google's token endpoint,
-// authenticated with the client secret, so TLS stands in for the signature (OIDC Core 3.1.3.7 step 6).
-// Its claims are checked and no JWKS is fetched: one Google call, and no RSA work in the CPU budget (T31).
+// Google OpenID Connect, authorization code + PKCE S256 + nonce, confidential client (RFC-0002 Packet 5). The
+// identity is `sub`, "unique among all Google Accounts and never reused"; the email is display only and decides
+// nothing (RFC-0002 2.2).
+// The id_token comes only from our own TLS POST to Google's token endpoint, authenticated with the client secret,
+// so TLS stands in for the signature (OIDC Core 3.1.3.7 step 6). Its claims are checked and no JWKS is fetched:
+// one Google call per callback, and no RSA work in the CPU budget.
 import { AuthError } from './http.js';
 import { b64urlDecode, timingSafeEqual } from './crypto.js';
 
@@ -10,11 +11,13 @@ const AUTHORIZE = 'https://accounts.google.com/o/oauth2/v2/auth';
 const TOKEN = 'https://oauth2.googleapis.com/token';
 const ISSUERS = new Set(['https://accounts.google.com', 'accounts.google.com']);
 const SKEW_MS = 30 * 1000;
+const MAX_AGE_MS = 10 * 60 * 1000; // iat: the code was issued inside the state cookie's 600 s
 const TIMEOUT_MS = 8000;
 
 export const redirectUri = env => `${env.ORIGIN}/auth/callback/google`;
 
-// Never access_type=offline, so Google issues no refresh token.
+// Never access_type=offline, so Google issues no refresh token. Add Google always asks for the chooser; sign-in
+// only on a switch (RFC-0002 2.2).
 export function authorizeUrl(env, { state, challenge, nonce, selectAccount = false }) {
   const q = new URLSearchParams({
     client_id: env.GOOGLE_CLIENT_ID,
@@ -30,7 +33,8 @@ export function authorizeUrl(env, { state, challenge, nonce, selectAccount = fal
   return `${AUTHORIZE}?${q}`;
 }
 
-// Returns {subject, email, emailVerified}. Token failure: e=provider; any claim failure: e=expired.
+// Returns {subject, email}. email is null unless Google marks it verified. Token failure: e=provider; any claim
+// failure: e=expired (RFC-0002 3.4).
 export async function fetchIdentity(env, { code, verifier, nonce, now }) {
   let res;
   try {
@@ -55,20 +59,17 @@ export async function fetchIdentity(env, { code, verifier, nonce, now }) {
   try { body = await res.json(); } catch { throw new AuthError('provider'); }
   if (!body || typeof body.id_token !== 'string') throw new AuthError('provider');
 
-  const claims = verifyIdToken(env, body.id_token, { nonce, now });
-  return {
-    subject: claims.sub,
-    email: typeof claims.email === 'string' ? claims.email : null,
-    emailVerified: claims.email_verified === true,
-  };
+  const c = verifyIdToken(env, body.id_token, { nonce, now });
+  const email = c.email_verified === true && typeof c.email === 'string' && c.email.length <= 320 ? c.email : null;
+  return { subject: c.sub, email };
 }
 
 const expired = () => new AuthError('expired');
 
-// Claims only (see header). Kept synchronous; returns the payload or throws AuthError('expired').
+// Claims only (see the header). Synchronous; returns the payload or throws AuthError('expired').
 export function verifyIdToken(env, jwt, { nonce, now }) {
   const parts = typeof jwt === 'string' ? jwt.split('.') : [];
-  if (parts.length !== 3) throw expired();
+  if (parts.length !== 3 || jwt.length > 16384) throw expired();
   let c;
   try {
     c = JSON.parse(new TextDecoder().decode(b64urlDecode(parts[1])));
@@ -77,8 +78,10 @@ export function verifyIdToken(env, jwt, { nonce, now }) {
   }
   if (!c || typeof c !== 'object' || Array.isArray(c)) throw expired();
   if (!ISSUERS.has(c.iss)) throw expired();
-  if (c.aud !== env.GOOGLE_CLIENT_ID) throw expired();
-  if (typeof c.exp !== 'number' || !(c.exp * 1000 > now - SKEW_MS)) throw expired();
+  // Strict: in JS ['x'] == 'x' is true, so an array aud must not pass.
+  if (typeof c.aud !== 'string' || c.aud !== env.GOOGLE_CLIENT_ID) throw expired();
+  if (!Number.isFinite(c.exp) || !(c.exp * 1000 > now - SKEW_MS)) throw expired();
+  if (!Number.isFinite(c.iat) || c.iat * 1000 > now + SKEW_MS || c.iat * 1000 < now - MAX_AGE_MS) throw expired();
   if (typeof nonce !== 'string' || !nonce || !timingSafeEqual(c.nonce, nonce)) throw expired();
   if (typeof c.sub !== 'string' || !c.sub || c.sub.length > 255) throw expired();
   return c;

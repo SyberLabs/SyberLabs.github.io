@@ -24,19 +24,23 @@ async function loadRoles(db) {
   }));
 }
 
-// Non-privileged keys, grouped by namespace ("site", "id").
-function keyBoxes(selected, errors) {
+// Non-privileged keys, one <fieldset><legend> per namespace ("site", "id"), as RFC-0002 2.6 asks.
+const NAMESPACES = { site: 'Site', id: 'People and access' };
+
+function keyBoxes(selected) {
   const groups = {};
   for (const [key, meta] of Object.entries(CATALOGUE)) {
     if (meta.privileged) continue;
     (groups[key.split(':')[0]] ||= []).push([key, meta.label]);
   }
-  return `<fieldset class="staff-field${errors.perms ? ' is-invalid' : ''}" id="f-perms"><legend class="sy-field__label">${LABELS.perms}</legend>
-    ${Object.entries(groups).map(([ns, keys]) => `<p class="sy-eyebrow">${esc(ns)}</p>${keys.map(([key, label]) => `
-      <label class="staff-check"><input type="checkbox" name="perm" value="${esc(key)}"${selected.has(key) ? ' checked' : ''}> ${esc(label)} <code>${esc(key)}</code></label>`).join('')}`).join('')}
-    ${errors.perms ? `<p class="sy-field__error" id="f-perms-err">${esc(errors.perms)}</p>` : ''}
-  </fieldset>`;
+  return `<div class="staff-keys" id="f-perms">${Object.entries(groups).map(([ns, keys]) => `
+      <fieldset class="staff-fieldset"><legend class="sy-field__label">${esc(NAMESPACES[ns] || ns)}</legend>${keys.map(([key, label]) => `
+        <label class="staff-check"><input type="checkbox" name="perm" value="${esc(key)}"${selected.has(key) ? ' checked' : ''}> <span>${esc(label)} <code>${esc(key)}</code></span></label>`).join('')}
+      </fieldset>`).join('')}
+    </div>`;
 }
+
+export const NAME_COPY = 'Role names are 2 to 40 lowercase letters, digits or hyphens, starting with a letter, like editor.';
 
 function roleForm(editing, values, errors) {
   const selected = new Set(values.perms || (editing ? editing.keys : []));
@@ -44,32 +48,36 @@ function roleForm(editing, values, errors) {
     <h2 id="role-h" class="sy-h3">${editing ? `Edit ${esc(editing.name)}` : 'Create a role'}</h2>
     <form method="post" action="/admin/roles" class="staff-form" novalidate>
       ${editing ? `<input type="hidden" name="id" value="${esc(editing.id)}">` : ''}
-      ${field({ name: 'name', label: LABELS.name, value: values.name ?? (editing ? editing.name : ''), error: errors.name, hint: '2 to 40 characters: a-z, 0-9 and -, starting with a letter.' })}
-      ${field({ name: 'description', label: LABELS.description, value: values.description ?? (editing ? editing.description : ''), error: errors.description })}
-      ${keyBoxes(selected, errors)}
-      <button class="sy-btn sy-btn--primary" type="submit">${editing ? 'Save role' : 'Create role'}</button>
-      ${editing ? '<a class="sy-btn sy-btn--ghost" href="/admin/roles">Cancel</a>' : ''}
+      ${field({ name: 'name', label: LABELS.name, value: values.name ?? (editing ? editing.name : ''), error: errors.name, hint: NAME_COPY,
+        attrs: ' required maxlength="40" autocomplete="off" spellcheck="false"' })}
+      ${field({ name: 'description', label: LABELS.description, value: values.description ?? (editing ? editing.description : ''), error: errors.description, attrs: ' maxlength="200"' })}
+      ${keyBoxes(selected)}
+      <div class="staff-actions">
+        <button class="sy-btn sy-btn--solid" type="submit">${editing ? 'Save role' : 'Create role'}</button>
+        ${editing ? '<a class="sy-btn sy-btn--ghost" href="/admin/roles">Cancel</a>' : ''}
+      </div>
     </form>
   </section>`;
 }
 
+// A list of roles, each with its description, keys and holders (RFC-0002 2.6; no tables on staff pages).
 export async function renderRoles(ctx, { status = 200, notice = '', values = {}, errors = {}, editId } = {}) {
   const roles = await loadRoles(ctx.env.DB);
   const manage = can(ctx, 'id:roles.manage');
   const editing = manage ? roles.find(r => r.id === (editId ?? ctx.url.searchParams.get('edit')) && r.is_system !== 1) : null;
   const ok = ctx.url.searchParams.get('ok') === 'saved' ? alert('success', 'Role saved.') : '';
-  const body = `${head('Admin', 'Roles.')}
+  const body = `${head('Staff', 'Roles.')}
   ${notice || ok}
   ${errorSummary(errors, LABELS)}
-  <div class="table-wrap"><table class="staff-table">
-    <thead><tr><th scope="col">Role</th><th scope="col">Permissions</th><th scope="col">Holders</th>${manage ? '<th scope="col"></th>' : ''}</tr></thead>
-    <tbody>${roles.map(r => `<tr>
-      <th scope="row">${esc(r.name)}${r.is_system === 1 ? ' <span class="sy-badge">System role</span>' : ''}<br><span class="sy-small">${esc(r.description)}</span></th>
-      <td><ul class="staff-list">${r.keys.map(k => `<li>${esc(CATALOGUE[k] ? CATALOGUE[k].label : k)}</li>`).join('')}</ul></td>
-      <td>${r.holders.length ? esc(r.holders.join(', ')) : '<span class="sy-small">nobody</span>'}</td>
-      ${manage ? `<td>${r.is_system === 1 ? '' : `<a class="sy-btn sy-btn--ghost staff-btn--small" href="/admin/roles?edit=${esc(r.id)}">Edit</a>`}</td>` : ''}
-    </tr>`).join('')}</tbody>
-  </table></div>
+  <ul class="staff-roles">${roles.map(r => `<li class="staff-role">
+      <h3 class="sy-h3 staff-role__name">${esc(r.name)}${r.is_system === 1 ? ' <span class="sy-badge">System role</span>' : ''}</h3>
+      ${r.description ? `<p class="sy-small">${esc(r.description)}</p>` : ''}
+      <dl class="staff-dl">
+        <div><dt>Permissions</dt><dd>${r.keys.map(k => esc(CATALOGUE[k] ? CATALOGUE[k].label : k)).join('; ') || 'none'}</dd></div>
+        <div><dt>Holders</dt><dd>${r.holders.length ? esc(r.holders.join(', ')) : 'nobody'}</dd></div>
+      </dl>
+      ${manage && r.is_system !== 1 ? `<a class="sy-btn sy-btn--line staff-person__btn" href="/admin/roles?edit=${esc(r.id)}#role-h">Edit ${esc(r.name)}</a>` : ''}
+    </li>`).join('')}</ul>
   ${manage ? roleForm(editing, values, errors) : ''}`;
   return html(page(ctx, { title: `${fixPrefix(errors)}Roles`, body, section: 'roles' }), { status });
 }
@@ -94,11 +102,11 @@ export async function saveRole(ctx) {
   if (wanted.some(k => CATALOGUE[k].privileged)) return refuse(ctx, GUARD_COPY.privileged); // RFC-0002 2.4
 
   const errors = {};
-  if (!NAME.test(name)) errors.name = '2 to 40 characters: a-z, 0-9 and -, starting with a letter.';
+  if (!NAME.test(name)) errors.name = NAME_COPY;
   if (description.length > 200) errors.description = 'Descriptions are up to 200 characters.';
   if (!errors.name) {
     const clash = await db.prepare('SELECT id FROM roles WHERE name = ? AND id <> ?').bind(name, id).first();
-    if (clash) errors.name = 'Another role already has that name.';
+    if (clash) errors.name = `There is already a role called ${name}.`;
   }
   if (Object.keys(errors).length) return renderRoles(ctx, { status: 422, values, errors, editId: id || undefined });
 
@@ -118,6 +126,13 @@ export async function saveRole(ctx) {
     at: now, actor: user.id, action: existing ? 'role.perms' : 'role.create', targetType: 'role', targetId: roleId,
     request: ctx.request, detail: { name, added, removed },
   }));
-  await db.batch(stmts);
+  try {
+    await db.batch(stmts);
+  } catch (err) {
+    // A name taken between the check above and this write: the same 422, never the 503 (RFC-0002 3.4).
+    if (!/UNIQUE/.test(String(err && err.message))) throw err;
+    errors.name = `There is already a role called ${name}.`;
+    return renderRoles(ctx, { status: 422, values, errors, editId: id || undefined });
+  }
   return redirect('/admin/roles?ok=saved');
 }

@@ -89,6 +89,7 @@ jobs:
           test ! -e dist/projects/latest.js
           if grep -rqF 'home-latest__row' dist --include='*.html' --include='*.js'; then echo 'What changed leaked: row markup in dist/'; exit 1; fi
           if grep -rqF 'Each line links to its evidence' dist --include='*.html' --include='*.js'; then echo 'What changed leaked: section copy in dist/'; exit 1; fi
+          if grep -rqF 'Capability engine security close' dist; then echo 'What changed leaked: canary entry'; exit 1; fi
           test -s dist/approach/index.html
           test -s dist/jev/index.html
           test -s dist/research/index.html
@@ -124,6 +125,9 @@ jobs:
           test ! -e dist/auth
           test ! -e dist/api
           test -s dist/staff.css
+          test -s dist/staff/google-signin-dark-360.png
+          test -s dist/staff/google-signin-dark-540.png
+          test -s dist/staff/google-signin-dark-720.png
       - name: Build and check the staff Function
         # Negative guards use `if ...; then exit 1; fi`: bash -e ignores a failing `! cmd` (RFC-0002 8.3).
         # The Function is built here, by the lockfile-pinned wrangler the deploy job also uses (RFC-0002 D12),

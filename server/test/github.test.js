@@ -40,7 +40,7 @@ test('fetchIdentity makes exactly two calls: the token exchange and GET /user', 
   const stub = github();
   try {
     const id = await fetchIdentity(env, { code: 'code-1', verifier: 'ver-1' });
-    assert.deepEqual(id, { subject: '1001', login: 'octo-test', email: null });
+    assert.deepEqual(id, { subject: '1001', login: 'octo-test' });
   } finally { stub.restore(); }
   assert.equal(stub.calls.length, 2);
 
@@ -96,21 +96,21 @@ test('the token never appears in the error thrown', async () => {
   } finally { stub.restore(); }
 });
 
-test('lookupLogin returns the numeric id as text, or null', async () => {
+test('lookupLogin: the numeric id as text, missing on a 404, null when GitHub did not answer', async () => {
   const stub = stubFetch(req => {
     const u = new URL(req.url);
     if (u.pathname === '/users/octo-test') return { id: 132, login: 'Octo-Test' };
     if (u.pathname === '/users/missing') return new Response('{}', { status: 404 });
+    if (u.pathname === '/users/limited') return new Response('{}', { status: 403 });
     return undefined;
   });
   try {
-    assert.deepEqual(await lookupLogin('@octo-test'), { id: '132', login: 'Octo-Test' });
-    assert.equal(await lookupLogin('missing'), null);
-    assert.equal(await lookupLogin('../etc'), null);
-    assert.equal(await lookupLogin('-bad'), null);
-    assert.equal(await lookupLogin(''), null);
+    assert.deepEqual(await lookupLogin('octo-test'), { id: '132', login: 'Octo-Test' });
+    assert.equal(await lookupLogin('missing'), 'missing');
+    assert.equal(await lookupLogin('limited'), null);
+    for (const bad of ['../etc', '@octo-test', 'x'.repeat(40), '', null]) assert.equal(await lookupLogin(bad), null, String(bad));
   } finally { stub.restore(); }
-  assert.equal(stub.calls.length, 2, 'invalid logins never reach GitHub');
+  assert.equal(stub.calls.length, 3, 'invalid logins never reach GitHub');
   assert.equal(stub.calls[0].headers.get('Authorization'), null, 'the lookup is unauthenticated');
   assert.equal(stub.calls[0].headers.get('User-Agent'), 'syberlabs-accounts');
 });

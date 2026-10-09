@@ -56,12 +56,12 @@ test('mintSession stores only sha256(token), for exactly 12 hours, with the requ
   assert.equal(row.user_agent.length, 200);
   const dump = JSON.stringify(env.DB.sqlite.prepare('SELECT * FROM sessions').all());
   assert.ok(!dump.includes(s.token), 'the raw token is never stored');
-  assertHostCookie(s.cookie, SESSION_COOKIE, 43200);
+  assertHostCookie(s.cookie, SESSION_COOKIE, 46800);
   assert.ok(s.cookie.startsWith(`${SESSION_COOKIE}=${s.token};`));
 });
 
 test('session cookie and its clearing carry exactly the __Host- attributes', () => {
-  assertHostCookie(sessionCookie('abc'), SESSION_COOKIE, 43200);
+  assertHostCookie(sessionCookie('abc'), SESSION_COOKIE, 46800);
   assertHostCookie(clearSessionCookie(), SESSION_COOKIE, 0);
   assert.equal(SESSION_COOKIE, '__Host-sl_session');
 });
@@ -173,7 +173,7 @@ test('Sign out everywhere deletes every session of the user, this one included, 
 
   const res = await revokeOwnSessions(await ctxFor(env, u.cookie));
   assert.equal(res.status, 303);
-  assert.equal(res.headers.get('Location'), '/auth/signin?e=signed_out');
+  assert.equal(res.headers.get('Location'), '/auth/signin?e=signed_out_all');
   assertHostCookie(res.headers.getSetCookie()[0], SESSION_COOKIE, 0);
   assert.equal(res.headers.get('Clear-Site-Data'), null);
   assert.equal(env.DB.sqlite.prepare('SELECT count(*) AS n FROM sessions WHERE user_id = ?').get(u.userId).n, 0);

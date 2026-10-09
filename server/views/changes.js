@@ -33,9 +33,9 @@ export const LABELS = { date: 'Date', project: 'Project', state: 'State', title:
 export const MESSAGES = {
   date: 'Use a date like 2026-10-09.',
   project: 'Projects are 1 to 60 characters.',
-  state: `Choose one of: ${STATES.join(', ')}.`,
+  state: 'Choose a state.',
   title: 'Titles are 1 to 160 characters.',
-  text: 'Text is at most 1,200 characters.',
+  text: n => `Text is at most 1,200 characters (you have ${n.toLocaleString('en-US')}).`,
   href: 'Links must start with https:// or a single /.',
 };
 
@@ -48,7 +48,7 @@ export function validateEntry(input) {
   if (entry.project.length < 1 || entry.project.length > 60) errors.project = MESSAGES.project;
   if (!STATES.includes(entry.state)) errors.state = MESSAGES.state;
   if (entry.title.length < 1 || entry.title.length > 160) errors.title = MESSAGES.title;
-  if (entry.text.length > 1200) errors.text = MESSAGES.text;
+  if (entry.text.length > 1200) errors.text = MESSAGES.text(entry.text.length);
   const href = validHref(entry.href);
   if (href === null) errors.href = MESSAGES.href;
   else entry.href = href;
@@ -61,7 +61,7 @@ const fmtDate = d => new Date(`${d}T00:00:00Z`).toLocaleDateString('en-GB', { da
 export function changeRow(e, { write = false } = {}) {
   const actions = write ? `
         <div class="staff-change__actions">
-          <a class="sy-btn sy-btn--ghost staff-btn--small" href="/admin/changes?edit=${encodeURIComponent(e.id)}#entry-form">Edit</a>
+          <a class="sy-btn sy-btn--ghost staff-btn--small" href="/admin/changes?edit=${encodeURIComponent(e.id)}#f-entry">Edit</a>
           ${postButton('/admin/changes/delete', 'Delete', { id: e.id }, 'sy-btn sy-btn--ghost staff-btn--small')}
         </div>` : '';
   return `<li class="staff-change">
@@ -77,22 +77,23 @@ export function changeRow(e, { write = false } = {}) {
 
 function entryForm(values = {}, errors = {}, editing = null) {
   const v = k => values[k] ?? '';
-  return `<section class="staff-section" id="entry-form" aria-labelledby="entry-h">
+  // The top form, at id="f-entry", which every Edit link targets (RFC-0002 2.6).
+  return `<section class="staff-section" id="f-entry" aria-labelledby="entry-h">
     <h2 class="sy-heading" id="entry-h">${editing ? 'Edit entry' : 'Add entry'}</h2>
     ${errorSummary(errors, LABELS)}
     <form method="post" action="/admin/changes" class="staff-form" novalidate>
       ${editing ? `<input type="hidden" name="id" value="${esc(editing)}">` : ''}
       <div class="staff-form__row">
-        ${field({ name: 'date', label: LABELS.date, value: v('date'), error: errors.date, hint: 'YYYY-MM-DD', attrs: ' inputmode="numeric" autocomplete="off"' })}
-        ${field({ name: 'project', label: LABELS.project, value: v('project'), error: errors.project, attrs: ' maxlength="60"' })}
-        ${field({ name: 'state', label: LABELS.state, value: v('state') || 'merged', error: errors.state, kind: 'select', options: STATES.map(s => [s, s]) })}
+        ${field({ name: 'date', label: LABELS.date, value: v('date'), error: errors.date, type: 'date', attrs: ' required' })}
+        ${field({ name: 'project', label: LABELS.project, value: v('project'), error: errors.project, attrs: ' required maxlength="60"' })}
+        ${field({ name: 'state', label: LABELS.state, value: v('state') || 'merged', error: errors.state, kind: 'select', options: STATES.map(s => [s, s]), attrs: ' required' })}
       </div>
-      ${field({ name: 'title', label: LABELS.title, value: v('title'), error: errors.title, attrs: ' maxlength="160"' })}
+      ${field({ name: 'title', label: LABELS.title, value: v('title'), error: errors.title, attrs: ' required maxlength="160"' })}
       ${field({ name: 'text', label: LABELS.text, value: v('text'), error: errors.text, kind: 'textarea', attrs: ' maxlength="1200" rows="4"' })}
-      ${field({ name: 'href', label: LABELS.href, value: v('href'), error: errors.href, hint: 'https://… or a path like /plus/', attrs: ' inputmode="url" autocomplete="off"' })}
+      ${field({ name: 'href', label: LABELS.href, value: v('href'), error: errors.href, hint: 'https://… or a path like /plus/', attrs: ' required maxlength="500" inputmode="url" autocomplete="off"' })}
       <div class="staff-actions">
         <button class="sy-btn sy-btn--solid" type="submit">${editing ? 'Save changes' : 'Add entry'}</button>
-        ${editing ? '<a class="sy-btn sy-btn--ghost" href="/admin/changes">Cancel</a>' : ''}
+        ${editing ? '<a class="staff-link" href="/admin/changes">Cancel edit</a>' : ''}
       </div>
     </form>
   </section>`;
@@ -114,7 +115,7 @@ async function render(ctx, { values, errors = {}, editing = null, status = 200 }
   const list = entries.length
     ? `<ol class="staff-changes">${entries.map(e => changeRow(e, { write })).join('')}</ol>`
     : `<div class="sy-empty staff-empty"><p>${write ? 'No entries yet. Add the first one above.' : 'No entries yet.'}</p></div>`;
-  const body = `${head('Admin / What changed', 'What changed.')}
+  const body = `${head('Staff', 'What changed.')}
   ${notice}
   ${write ? entryForm(values, errors, editing) : ''}
   <section class="staff-section" aria-label="Entries">
@@ -144,7 +145,7 @@ export async function saveChange(ctx) {
   if (Object.keys(errors).length) return render(ctx, { values: input, errors, editing: id, status: 422 });
 
   const audit = (action, targetId, detail) => auditStmt(db, {
-    at: ctx.now, actor: ctx.user.id, action, targetType: 'change_entry', targetId, detail, request: ctx.request,
+    at: ctx.now, actor: ctx.user.id, action, targetType: 'change_entry', targetId, detail, request: ctx.request, when: ['changes() = 1'],
   });
   if (id) {
     const before = await db.prepare(`SELECT ${COLUMNS} FROM change_entries WHERE id = ?`).bind(id).first();
@@ -185,7 +186,7 @@ export async function deleteChange(ctx) {
   }
   await db.batch([
     db.prepare('DELETE FROM change_entries WHERE id = ?').bind(id),
-    auditStmt(db, { at: ctx.now, actor: ctx.user.id, action: 'changes.delete', targetType: 'change_entry', targetId: id, detail: { before }, request: ctx.request }),
+    auditStmt(db, { at: ctx.now, actor: ctx.user.id, action: 'changes.delete', targetType: 'change_entry', targetId: id, detail: { before }, request: ctx.request, when: ['changes() = 1'] }),
   ]);
   return redirect('/admin/changes?done=deleted');
 }

@@ -42,7 +42,7 @@ async function getJson(url, init) {
   try { return await res.json(); } catch { throw new AuthError('provider'); }
 }
 
-// Returns {subject, login, email}. email is always null: with no scope GitHub vouches for no address.
+// Returns {subject, login}. With no scope GitHub vouches for no email address.
 export async function fetchIdentity(env, { code, verifier }) {
   const tok = await getJson(TOKEN, {
     method: 'POST',
@@ -68,19 +68,22 @@ export async function fetchIdentity(env, { code, verifier }) {
   if (!user || !Number.isSafeInteger(user.id) || user.id <= 0 || typeof user.login !== 'string') {
     throw new AuthError('provider');
   }
-  return { subject: String(user.id), login: user.login, email: null };
+  return { subject: String(user.id), login: user.login };
 }
 
-// Packet 4 invite form: one unauthenticated GET /users/{login}. null when GitHub says no or refuses
-// (rate limit), and the form then asks for the numeric id instead.
-const LOGIN_RE = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/;
+// Add person (RFC-0002 2.5): a username is 1 to 39 letters, digits or hyphens; anything else is never
+// sent to GitHub.
+export const LOGIN_RE = /^[A-Za-z0-9-]{1,39}$/;
+
+// One unauthenticated GET /users/{login}: {id, login}, 'missing' on a 404, or null when GitHub did not
+// answer (unauthenticated lookups allow 60 an hour per IP, then 403 or 429; RFC-0002 2.5, 3.4).
 export async function lookupLogin(login) {
-  const name = typeof login === 'string' ? login.trim().replace(/^@/, '') : '';
-  if (!LOGIN_RE.test(name)) return null;
+  if (typeof login !== 'string' || !LOGIN_RE.test(login)) return null;
   try {
-    const res = await fetch(`${API}/users/${encodeURIComponent(name)}`, {
+    const res = await fetch(`${API}/users/${encodeURIComponent(login)}`, {
       headers: API_HEADERS, signal: AbortSignal.timeout(TIMEOUT_MS),
     });
+    if (res.status === 404) return 'missing';
     if (!res.ok) return null;
     const u = await res.json();
     if (!u || !Number.isSafeInteger(u.id) || u.id <= 0 || typeof u.login !== 'string') return null;
