@@ -16,43 +16,58 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 .is-live .home-still { display: none; }
 .home-hero__in { flex: 1; display: grid; grid-template-columns: minmax(0, 640px) 1fr; align-items: center; width: 100%; padding-top: 104px; padding-bottom: 40px; }
 .home-hero__title { margin-top: 26px; }
-/* Read. lands, then Think. forms, then Build. lands (each split word's --i is its order) */
 /* ---------- hero: four slot reels (src/site/slot.js) ----------
    Without JavaScript or under reduced motion each reel shows only its final word, as plain text (the nouns in the
-   kit's spectrum). Live, each reel is a 1em window onto a vertical strip of 1em words, soft-masked at top and
-   bottom; slot.js slides the strip (a compositor transform) and eases the window to its final word's width. */
+   kit's spectrum). Live, each reel is a window one word tall onto a vertical strip of spaced 1em words, soft-masked at top
+   and bottom. slot.js moves only transforms and opacities (compositor work) while the reels spin. */
 .home-slot__lines, .home-slot__line { display: block; }
-.home-slot__w:not(.is-final) { display: none; }
+.home-slot__w:not(.is-final), .home-slot__ghost { display: none; }
 @media (prefers-reduced-motion: no-preference) {
   /* JavaScript is on (index.html marks it before first paint): hold the headline until the reels take over, so the
      final words never flash first; reveal it anyway if the script never arrives */
   html.js .home-slot:not(.is-live):not(.is-static) .home-slot__lines { opacity: 0; animation: home-slot-failsafe 0s linear 2.5s forwards; }
 }
 @keyframes home-slot-failsafe { to { opacity: 1; } }
-.home-slot.is-live { line-height: 1; }
-/* sized so each line ("Creative systems.", "Reliable agents.") fits the 640 px copy column on one line; while the reels
-   spin past wider words the line may run long for a moment, but never wraps */
+/* sized so each line ("Creative systems.", "Reliable agents.") fits the 640 px copy column on one line */
 .home-hero__title.home-slot { font-size: clamp(40px, 6.15vw, 90px); }
 .home-slot__line { white-space: nowrap; }
-/* once a reel stops only its final word exists, so neighbouring words' ascenders and descenders never peek through the window */
-.home-slot.is-live .home-slot__reel.is-stopped .home-slot__w:not(.is-final) { visibility: hidden; }
+.home-slot.is-live { line-height: 1; }
 .home-slot.is-live .home-slot__line + .home-slot__line { margin-top: -.04em; }
-.home-slot.is-live .home-slot__reel { display: inline-block; vertical-align: top; overflow: hidden; height: 1em; padding: .2em .14em; margin: -.2em -.14em; box-sizing: content-box;
-  -webkit-mask-image: linear-gradient(transparent, #000 .2em, #000 calc(100% - .2em), transparent); mask-image: linear-gradient(transparent, #000 .2em, #000 calc(100% - .2em), transparent); }
+/* the window: the type's glyphs run from .1em (ascenders) to 1.06em (the g and y descenders) of each 1em word, so
+   the window is opaque from .06em to 1.08em and fades just outside; padding and negative margin cancel, so the line
+   box stays 1em. It is no taller than that, so mid-spin the two lines' reels barely touch */
+.home-slot.is-live .home-slot__reel { display: inline-block; vertical-align: top; overflow: hidden; height: 1em; box-sizing: content-box;
+  padding: .03em .14em .17em; margin: -.03em calc(var(--trim, 0px) - .14em) -.17em -.14em;
+  --fade: linear-gradient(transparent, #000 .09em, #000 calc(100% - .09em), transparent);
+  -webkit-mask-image: var(--fade); mask-image: var(--fade); }
 /* the window's side padding is for the italic overhang; keep it out of the word space between the two reels */
-.home-slot.is-live .home-slot__reel:not(.home-slot__reel--noun) { margin-right: -.1em; }
+.home-slot.is-live .home-slot__reel:not(.home-slot__reel--noun) { margin-right: calc(var(--trim, 0px) - .1em); }
 .home-slot.is-live .home-slot__reel--noun { padding-left: .03em; margin-left: -.03em; }
-.home-slot.is-live .home-slot__strip { display: block; will-change: transform; }
+.home-slot.is-live .home-slot__strip { display: block; position: relative; will-change: transform; }
+.home-slot.is-live .home-slot__face { display: block; will-change: opacity; }
 .home-slot.is-live .home-slot__w { display: block; width: max-content; height: 1em; line-height: 1; white-space: nowrap; }
-.home-slot.is-spinning .home-slot__strip { animation: home-slot-blur var(--spin, 1.2s) ease-out both; }
-@keyframes home-slot-blur { 0%, 55% { filter: blur(.03em); } 100% { filter: none; } }
-/* the nouns: each word paints its own spectrum (a spark layer over a mirrored, seamless gradient) */
+/* each word's box reaches .14em below its 1em line, past the g and y descenders: the nouns' spectrum is a background
+   clipped to the text, and a background only paints inside the box, so without this their descenders would be cut */
+.home-slot.is-live .home-slot__w { height: 1.14em; padding-bottom: .14em; } /* border-box: 1em of line + .14em below */
+/* words sit 1.3em apart on the strip (1.14em box + .16em), so at rest the window holds one word and none of its neighbours */
+.home-slot.is-live .home-slot__w + .home-slot__w { margin-top: .16em; }
+/* once a reel stops only its final word exists, so neighbouring words' ascenders and descenders never peek in */
+.home-slot.is-live .home-slot__reel.is-stopped .home-slot__face .home-slot__w:not(.is-final) { visibility: hidden; }
+/* the motion blur: the same words painted once as a vertical streak (stacked soft shadows of transparent glyphs);
+   it moves with the strip and only its opacity changes */
+.home-slot.is-live .home-slot__ghost { display: block; position: absolute; left: 0; top: 0; opacity: 0; will-change: opacity; pointer-events: none; --g: 238 236 255; }
+.home-slot.is-live .home-slot__reel--noun .home-slot__ghost { --g: 168 146 255; }
+.home-slot.is-live .home-slot__ghost .home-slot__w { color: transparent;
+  text-shadow: 0 -.15em .06em rgb(var(--g) / .1), 0 -.1em .05em rgb(var(--g) / .2), 0 -.05em .04em rgb(var(--g) / .32), 0 0 .03em rgb(var(--g) / .4),
+    0 .05em .04em rgb(var(--g) / .32), 0 .1em .05em rgb(var(--g) / .2), 0 .15em .06em rgb(var(--g) / .1); }
+.home-slot.is-rest .home-slot__ghost { display: none; }
+/* the nouns: each word paints its own spectrum, with a spark layer slot.js sweeps across every few seconds */
 .home-slot.is-live .home-slot__reel--noun { background: none; animation: none; }
-.home-slot.is-live .home-slot__reel--noun .home-slot__w { width: max-content; padding-right: .08em; color: transparent;
+.home-slot.is-live .home-slot__reel--noun .home-slot__face .home-slot__w { padding-right: .08em; color: transparent;
   background-image:
     linear-gradient(105deg, transparent calc(50% - 1.9em), rgb(255 255 255 / .06) calc(50% - 1.1em), rgb(255 255 255 / .92) 50%, rgb(255 255 255 / .06) calc(50% + 1.1em), transparent calc(50% + 1.9em)),
-    linear-gradient(90deg, #90d8f0, #4890f0 12%, #9a6bff 25%, #ff58d6 37.5%, #ffb54a 50%, #ff58d6 62.5%, #9a6bff 75%, #4890f0 88%, #90d8f0);
-  background-size: var(--ww, 4em) 100%, calc(var(--ww, 4em) * 2) 100%; background-repeat: no-repeat, repeat-x;
+    linear-gradient(90deg, #90d8f0, #4890f0 18%, #9a6bff 42%, #ff58d6 72%, #ffb54a);
+  background-size: var(--ww, 4em) 100%, 100% 100%; background-repeat: no-repeat;
   background-position: -9999px 0, 0 0;
   -webkit-background-clip: text; background-clip: text; }
 
@@ -133,7 +148,7 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 .home-show__link-icon { position: relative; flex: none; display: inline-flex; align-items: center; gap: 9px; }
 .home-show__link-icon::before { content: ""; position: absolute; left: 3px; right: 3px; top: 50%; height: 1px; margin-top: -.5px; background: repeating-linear-gradient(90deg, var(--sy-accent) 0 3px, transparent 3px 6px) 0 0/12px 1px; }
 .home-show__link-icon i { position: relative; width: 7px; height: 7px; border-radius: 50%; background: var(--sy-accent); box-shadow: 0 0 8px var(--sy-accent); }
-@media (prefers-reduced-motion: no-preference) { .home-show__link-icon::before { animation: home-link-flow 1.4s linear infinite; } }
+@media (prefers-reduced-motion: no-preference) { .home-show__link-icon::before { animation: home-link-flow 1.4s steps(12) infinite; } }
 @keyframes home-link-flow { to { background-position: 12px 0; } }
 .home-suite { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; list-style: none; margin: 0; padding: 0; }
 .home-suite > li { display: flex; min-width: 0; }

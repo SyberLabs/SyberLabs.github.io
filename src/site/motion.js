@@ -6,6 +6,7 @@
    - spy(): marks the header nav link whose section is on screen (aria-current="location").
    - header(): adds .is-scrolled to .sy-header after the first 24px.
    - magnetic(root): .sy-btn--solid buttons drift a few px toward the pointer.
+   - hue(root): spectrum text pauses its colour drift while off screen (it repaints its layer on every update).
    Everything is off under prefers-reduced-motion, and nothing here is needed to read the page. */
 
 export const reducedMotion = () => !!(typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -123,6 +124,14 @@ export function headerScroll() {
     lastY = y;
   };
   addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(paint); }, { passive: true });
+}
+
+/* Spectrum text (syberlabs.css sy-hue) moves its gradient with a background-position animation, which the browser
+   repaints rather than composites; pausing it off screen leaves only the words in view doing that work. */
+export function hue(root = document) {
+  if (reducedMotion() || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver(entries => { for (const e of entries) e.target.classList.toggle('sy-hue-idle', !e.isIntersecting); });
+  root.querySelectorAll('.sy-display-xl em, .sy-display em, .sy-spectrum-text').forEach(el => { el.classList.add('sy-hue-idle'); io.observe(el); });
 }
 
 /* "Back to top" affordance that appears after the first screen. */

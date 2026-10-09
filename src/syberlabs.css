@@ -324,7 +324,10 @@ html.sy-atlas-open, html.sy-atlas-open body { overflow: hidden; }
 /* ---------- spectrum text + glow helpers ---------- */
 .sy-glow { text-shadow: 0 0 40px color-mix(in srgb, var(--sy-accent) 40%, transparent); }
 @media (prefers-reduced-motion: no-preference) {
-  .sy-display-xl em, .sy-display em, .sy-spectrum-text { background-size: 220% 100%; animation: sy-hue 9s linear infinite; }
+  /* stepped at 24 updates a second (each step moves the gradient a few px, below what the eye resolves on a soft
+     gradient) and paused off screen by motion.js hue(): it repaints, so it should not run every frame */
+  .sy-display-xl em, .sy-display em, .sy-spectrum-text { background-size: 220% 100%; animation: sy-hue 9s steps(216) infinite; }
+  .sy-hue-idle { animation-play-state: paused !important; }
   @keyframes sy-hue { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
 }
 
