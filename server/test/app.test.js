@@ -133,7 +133,7 @@ test('/admin/ renders a portal whose tool cards follow the current permissions',
     assert.equal(res.headers.get('Location'), null);
     assertHeaders(res, 'portal');
     const body = await res.text();
-    assert.match(body, /<title>Portal · SyberLabs staff<\/title>/);
+    assert.match(body, /<title>Launchpad · SyberLabs staff<\/title>/);
     assert.equal(body.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim(), 'Your launchpad.');
     const main = body.match(/<main[^>]*>([\s\S]*?)<\/main>/)[1];
     const cards = [...main.matchAll(/<a\b[^>]*>/g)].map(m => m[0]).filter(tag => /class="[^"]*\bportal-card\b/.test(tag)).map(tag => tag.match(/href="\/admin\/([^"/]+)"/)[1]);

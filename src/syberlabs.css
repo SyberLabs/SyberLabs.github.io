@@ -166,25 +166,63 @@ html.sy-js .sy-split.is-pending .sy-word > span { transform: translateY(110%); }
 .sy-nav ul a:hover::after, .sy-nav ul a[aria-current]::after { transform: scaleX(1); }
 .sy-nav ul a[aria-current="location"] { color: var(--sy-vellum); }
 .sy-nav { margin-left: auto; }
-.sy-account { flex-shrink: 0; }
-.sy-account-member { display: flex; align-items: center; gap: 8px; }
+/* One calm surface holds two direct destinations; the orbit identifies the profile. */
+.sy-account { flex: 0 0 168px; width: 168px; min-height: 44px; }
 .sy-account [hidden] { display: none !important; }
-.sy-account-launchpad { min-height: 44px; padding: 0 12px; gap: 8px; white-space: nowrap; }
-.sy-account-avatar { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; color: var(--sy-vellum); border: 1px solid transparent; background: linear-gradient(#171132, #171132) padding-box, var(--sy-spectrum) border-box; box-shadow: 0 0 22px rgba(166, 118, 255, .12); text-decoration: none; }
-.sy-account-initial { font-size: 16px; font-weight: 600; line-height: 1; }
-.sy-account-avatar:hover { background: linear-gradient(#292047, #292047) padding-box, var(--sy-spectrum) border-box; text-decoration: none; }
-.sy-account-link { flex-shrink: 0; min-height: 44px; padding: 0 16px; gap: 8px; color: var(--sy-vellum); border: 1px solid transparent; background: linear-gradient(#171132, #171132) padding-box, var(--sy-spectrum) border-box; box-shadow: 0 0 22px rgba(166, 118, 255, .12); white-space: nowrap; }
-.sy-account-link:hover { background: linear-gradient(#292047, #292047) padding-box, var(--sy-spectrum) border-box; box-shadow: 0 0 28px rgba(166, 118, 255, .25); text-decoration: none; }
+.sy-account-member, .sy-account-link {
+  width: 100%; min-height: 44px; border: 0; border-radius: 999px;
+  background: linear-gradient(120deg, rgba(25, 20, 56, .94), rgba(12, 10, 34, .96));
+  box-shadow: inset 0 0 0 1px rgba(180, 187, 226, .24), 0 4px 18px rgba(0, 0, 0, .12);
+  transition: box-shadow var(--sy-t-hover), background var(--sy-t-hover);
+}
+.sy-account-member { display: flex; align-items: center; gap: 0; }
+.sy-account-launchpad {
+  flex: 1; min-width: 0; min-height: 44px; padding: 0 10px 0 16px; gap: 6px;
+  font-size: 14px; white-space: nowrap; border-radius: 999px 0 0 999px;
+}
+.sy-account-launchpad .sy-icon { width: 15px; height: 15px; color: var(--sy-mist); }
+.sy-account-avatar {
+  position: relative; isolation: isolate; display: inline-flex; flex: 0 0 44px;
+  align-items: center; justify-content: center; width: 44px; height: 44px;
+  border: 0; border-radius: 50%; color: var(--sy-vellum); text-decoration: none;
+}
+.sy-account-avatar::before {
+  content: ""; position: absolute; inset: 5px; z-index: -1; border-radius: inherit;
+  background: conic-gradient(from 35deg, #90d8f0, #9a6bff 34%, #ff58d6 60%, #9a6bff 82%, #90d8f0);
+  box-shadow: 0 0 12px rgba(154, 107, 255, .12);
+  transition: box-shadow var(--sy-t-hover);
+}
+.sy-account-avatar::after {
+  content: ""; position: absolute; inset: 6px; z-index: -1; border-radius: inherit;
+  background: #14102e; transition: background var(--sy-t-hover);
+}
+.sy-account-initial { font-size: 14px; font-weight: 600; line-height: 1; }
+.sy-account-link { display: inline-flex; justify-content: space-between; padding: 0 16px; gap: 8px; color: var(--sy-vellum); font-size: 14px; white-space: nowrap; }
+.sy-account-link .sy-icon { color: var(--sy-mist); }
+.sy-account-member:focus-within, .sy-account-link:hover {
+  box-shadow: inset 0 0 0 1px rgba(144, 216, 240, .42), 0 0 22px rgba(154, 107, 255, .12);
+}
+.sy-account-launchpad:hover, .sy-account-link:hover { color: #fff; text-decoration: none; }
+.sy-account-avatar:hover { text-decoration: none; }
+.sy-account-avatar:hover::before { box-shadow: 0 0 16px rgba(154, 107, 255, .34); }
+.sy-account-avatar:hover::after { background: #241a43; }
+.sy-account a:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
+.sy-account[data-account-state="checking"] .sy-account-link { color: var(--sy-mist); }
+@media (hover: hover) {
+  .sy-account-member:hover { box-shadow: inset 0 0 0 1px rgba(180, 187, 226, .36), 0 0 22px rgba(154, 107, 255, .10); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sy-account *, .sy-account *::before, .sy-account *::after { transition: none; }
+}
 @media (max-width: 1050px) { .sy-nav { display: none; } .sy-menu { margin-left: auto; } }
 @media (max-width: 480px) {
   .sy-header__in { gap: 8px; }
   .sy-header .sy-lockup { font-size: 12px; letter-spacing: .14em; }
   .sy-menu summary { padding: 0 12px; }
   .sy-menu summary > span { display: none; }
-  .sy-account-link { padding: 0 12px; }
-  .sy-account-link .sy-icon { display: none; }
-  .sy-account-member { gap: 4px; }
-  .sy-account-launchpad { padding: 0 8px; font-size: 12px; }
+  .sy-account { flex-basis: 136px; width: 136px; }
+  .sy-account-link { padding: 0 14px; }
+  .sy-account-launchpad { padding: 0 8px 0 12px; font-size: 12px; }
   .sy-account-launchpad .sy-icon { display: none; }
 }
 @media (max-width: 360px) {

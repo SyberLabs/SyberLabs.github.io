@@ -16,7 +16,7 @@ export const signedInAs = user => `${identityName(user)} (${providerLabel(user.p
 
 // The section nav (RFC-0002 3.3), in this order. Account is open to every session, the rest need their key.
 export const NAV = [
-  { id: 'portal', label: 'Portal', href: '/admin/', key: null },
+  { id: 'portal', label: 'Launchpad', href: '/admin/', key: null },
   { id: 'changes', label: 'What changed', href: '/admin/changes', key: 'site:changes.read' },
   { id: 'people', label: 'People', href: '/admin/people', key: 'id:users.read' },
   { id: 'roles', label: 'Roles', href: '/admin/roles', key: 'id:users.read' },
@@ -59,7 +59,7 @@ export function staffHeader(ctx, { section = '', user = ctx && ctx.user, signOut
   if (user) {
     rows.push(`<div class="staff-header__row">
       <a class="sy-eyebrow staff-header__home" href="/admin/">Staff</a>
-      <p class="staff-header__account">Signed in as ${esc(signedInAs(user))}</p>
+      <p class="staff-header__account"><a class="staff-profile" href="/admin/account" aria-label="Profile: ${esc(identityName(user))}"><span class="staff-profile__avatar" aria-hidden="true">${esc(Array.from(identityName(user).replace(/^@/, ''))[0]?.toLocaleUpperCase() || '•')}</span><span>Signed in as ${esc(signedInAs(user))}</span></a></p>
     </div>`, `<div class="staff-header__row">
       ${staffNav(ctx, section)}
     </div>`);

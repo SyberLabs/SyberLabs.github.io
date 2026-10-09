@@ -37,7 +37,7 @@ function assertShell(body) {
   assert.match(body, /<html lang="en" data-field="calm">/);
   assert.match(body, /<meta name="robots" content="noindex, nofollow">/);
   assert.match(body, /<link rel="stylesheet" href="\/syberlabs\.css\?v=4">/);
-  assert.match(body, /<link rel="stylesheet" href="\/staff\.css\?v=6">/);
+  assert.match(body, /<link rel="stylesheet" href="\/staff\.css\?v=7">/);
   assert.match(body, /<!--email_off-->[\s\S]*<main id="main" class="staff sy-container">[\s\S]*<\/main>[\s\S]*<!--\/email_off-->/);
   // RFC-0002 2.6 and test 10: the staff header, never the public one, its Atlas or remote fonts.
   assert.match(body, /<a class="sy-skip" href="#main">Skip to content<\/a>\n<div class="sy-field-host" aria-hidden="true"><\/div>\n<header class="staff-header">/);
@@ -57,14 +57,14 @@ const noRawXss = body => {
 
 // ---- layout and nav ------------------------------------------------------------------------------
 
-test('nav is filtered by permissions and always includes Portal, Saved things and Account (RFC-0002 3.3, test 10)', () => {
+test('nav is filtered by permissions and always includes Launchpad, Saved things and Account (RFC-0002 3.3, test 10)', () => {
   assert.deepEqual(navItems(ctxFor()).map(i => i.id), ['portal', 'saves', 'account']);
   assert.deepEqual(navItems(ctxFor({ perms: ['site:changes.read'] })).map(i => i.id), ['portal', 'changes', 'saves', 'account']);
   assert.deepEqual(navItems(ctxFor({ perms: ['id:users.read', 'id:audit.read'] })).map(i => i.id), ['portal', 'people', 'roles', 'audit', 'saves', 'account']);
 
   const none = page(ctxFor(), { title: 'X', body: '', section: 'account' });
   assertShell(none);
-  assert.match(none, /<nav class="staff-nav" aria-label="Staff"><ul><li><a href="\/admin\/">Portal<\/a><\/li><li><a href="\/admin\/saves">Saved things<\/a><\/li><li><a href="\/admin\/account" aria-current="page">Account<\/a><\/li><\/ul><\/nav>/);
+  assert.match(none, /<nav class="staff-nav" aria-label="Staff"><ul><li><a href="\/admin\/">Launchpad<\/a><\/li><li><a href="\/admin\/saves">Saved things<\/a><\/li><li><a href="\/admin\/account" aria-current="page">Account<\/a><\/li><\/ul><\/nav>/);
   const reader = page(ctxFor({ perms: ['site:changes.read'] }), { title: 'X', body: '', section: 'changes' });
   assert.match(reader, /<a href="\/admin\/changes" aria-current="page">What changed<\/a>/);
   assert.match(reader, /<a href="\/admin\/account">Account<\/a>/);
@@ -82,7 +82,8 @@ test('the staff header: lockup and Sign out, then Staff and the account line, th
   assert.equal(rows.length, 3);
   assert.match(rows[0], /class="sy-lockup"[\s\S]*<form method="post" action="\/auth\/signout" class="staff-inline"><button class="sy-btn sy-btn--ghost staff-btn--small" type="submit">Sign out<\/button><\/form>/);
   assert.match(rows[1], /<a class="sy-eyebrow staff-header__home" href="\/admin\/">Staff<\/a>/);
-  assert.match(rows[1], /<p class="staff-header__account">Signed in as @sdcarlson \(GitHub\)<\/p>/);
+  assert.match(rows[1], /<p class="staff-header__account"><a class="staff-profile" href="\/admin\/account" aria-label="Profile: @sdcarlson">/);
+  assert.match(rows[1], /<span>Signed in as @sdcarlson \(GitHub\)<\/span>/);
   assert.match(rows[2], /<nav class="staff-nav" aria-label="Staff">/);
   // A person added by id who has not signed in yet has no login: the line names the id.
   const byId = page(ctxFor({ user: { login: null, subject: '4242' } }), { title: 'X', body: '' });

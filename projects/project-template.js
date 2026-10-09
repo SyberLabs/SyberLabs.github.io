@@ -51,8 +51,8 @@ export const header = (current = '', { sticky = true, script = true } = {}) => {
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
   <nav class="sy-nav" aria-label="Primary"><ul>${links}</ul><a class="sy-btn sy-btn--line" href="${workWithUs.href}">${workWithUs.label}</a></nav>
   <details class="sy-menu"><summary aria-label="Menu" aria-expanded="false" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas()}</details>
-  <div class="sy-account">
-    <a class="sy-btn sy-account-link" href="/admin/">Sign in${icon('arrow', 16)}</a>
+  <div class="sy-account" data-account-state="checking">
+    <a class="sy-btn sy-account-link" href="/admin/"><span class="sy-account-label">Account</span>${icon('arrow', 16)}</a>
     <div class="sy-account-member" hidden>
       <a class="sy-btn sy-account-launchpad" href="/admin/">Launchpad${icon('arrow', 16)}</a>
       <a class="sy-account-avatar" href="/admin/account" aria-label="Your profile" title="Your profile"><span class="sy-account-initial" aria-hidden="true">${icon('user', 20)}</span></a>
