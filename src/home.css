@@ -17,44 +17,44 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 .home-hero__in { flex: 1; display: grid; grid-template-columns: minmax(0, 640px) 1fr; align-items: center; width: 100%; padding-top: 104px; padding-bottom: 40px; }
 .home-hero__title { margin-top: 26px; }
 /* Read. lands, then Think. forms, then Build. lands (each split word's --i is its order) */
-html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0) * 880ms); }
-
-/* ---------- hero: "Think." (src/site/think.js) ----------
-   Without .is-live (no JS, reduced motion) the em keeps the kit's spectrum and
-   the letters are plain inline text. Live, every letter paints its own slice of one spectrum (--think-x is its
-   offset in the word, --think-w the word's width), so transforms and filters on a letter never blank the word. */
-.home-think { position: relative; display: inline-block; white-space: nowrap; isolation: isolate; }
-.home-think.is-live { background: none; animation: none; }
-.home-think.is-live .home-think__l {
-  display: inline-block; padding: .16em .12em; margin: -.16em -.12em; /* room for italic overhang and ascenders, no layout change */
-  color: transparent;
+/* ---------- hero: the morphing line (src/site/morph.js) ----------
+   Without JavaScript or under reduced motion only the resting words show, as plain text (the noun in the kit's
+   spectrum). Live, each slot stacks its two words in one grid cell; a word is scattered light until .is-in
+   condenses it, and .is-out scatters it again. The noun's letters each paint a slice of one mirrored spectrum
+   with a spark layer over it; morph.js moves both. */
+.home-morph__line, .home-morph__slot { display: block; }
+.home-morph__w:not(.is-rest) { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  /* JavaScript is on (index.html marks it before first paint): hide the resting line until the morph takes over,
+     so it never flashes "Creative humans." and then restarts; reveal it anyway if the script never arrives */
+  html.js .home-morph:not(.is-live):not(.is-static) .home-morph__line { opacity: 0; animation: home-morph-failsafe 0s linear 2.5s forwards; }
+}
+@keyframes home-morph-failsafe { to { opacity: 1; } }
+.home-morph.is-live .home-morph__slot { display: grid; justify-items: start; }
+.home-morph.is-live .home-morph__w { display: block; grid-area: 1 / 1; white-space: nowrap; }
+.home-morph.is-live .home-morph__l { display: inline-block; opacity: 0; filter: blur(.16em); transform: translate3d(var(--dx), var(--dy), 0) rotate(var(--r)) scale(1.3); }
+.home-morph.is-live .is-in .home-morph__l { opacity: 1; filter: none; transform: none;
+  transition: opacity 800ms var(--sy-ease) calc(var(--i) * 70ms), transform 1200ms cubic-bezier(.16, 1, .3, 1) calc(var(--i) * 70ms), filter 950ms var(--sy-ease) calc(var(--i) * 70ms); }
+.home-morph.is-live .is-out .home-morph__l {
+  transition: opacity 520ms ease-in calc(var(--i) * 32ms), transform 720ms cubic-bezier(.5, 0, .75, 0) calc(var(--i) * 32ms), filter 600ms ease-in calc(var(--i) * 32ms); }
+.home-morph.is-live .home-morph__slot--b { background: none; animation: none; }
+.home-morph.is-live .home-morph__slot--b .home-morph__l {
+  padding: .16em .12em; margin: -.16em -.12em; color: transparent; /* room for the italic overhang and ascenders, no layout change */
   background-image:
-    /* the spark: a soft white band that sweeps the word */
     linear-gradient(105deg, transparent calc(50% - 1.9em), rgb(255 255 255 / .06) calc(50% - 1.1em), rgb(255 255 255 / .92) 50%, rgb(255 255 255 / .06) calc(50% + 1.1em), transparent calc(50% + 1.9em)),
-    /* the spotlight under a fine pointer */
-    radial-gradient(circle 1.05em at calc(var(--think-px, -9999px) - var(--think-x)) 58%, rgb(255 255 255 / calc(.42 * var(--think-spot, 0))), transparent 72%),
-    /* the spectrum, mirrored so it loops without a seam */
     linear-gradient(90deg, #90d8f0, #4890f0 12%, #9a6bff 25%, #ff58d6 37.5%, #ffb54a 50%, #ff58d6 62.5%, #9a6bff 75%, #4890f0 88%, #90d8f0);
-  background-size: var(--think-w) 100%, 100% 100%, calc(var(--think-w) * 2) 100%;
-  background-repeat: no-repeat, no-repeat, repeat-x;
-  background-position: -9999px 0, 0 0, calc(0px - var(--think-x)) 0; /* src/site/think.js moves the spark and the spectrum */
-  -webkit-background-clip: text; background-clip: text;
-  /* entrance: from scattered, defocused light (set instantly; only the arrival is transitioned) */
-  opacity: 0; filter: blur(.16em); transform: translate3d(var(--dx), var(--dy), 0) rotate(var(--r)) scale(1.3);
-}
-.home-hero__title.is-in .home-think.is-live .home-think__l { opacity: 1; filter: none; transform: none;
-  transition: opacity 900ms var(--sy-ease) calc(260ms + var(--i) * 85ms), transform 1400ms cubic-bezier(.16, 1, .3, 1) calc(260ms + var(--i) * 85ms), filter 1100ms var(--sy-ease) calc(260ms + var(--i) * 85ms); }
-/* thinking: think.js flows the spectrum and sweeps a spark every 7 s on this animation's clock; the stop fires as it passes */
-.home-hero__title.is-in .home-think.is-live .home-think__dot { transform-origin: 50% 80%; animation: think-fire 7s linear 1.95s infinite; }
-/* a soft glow that breathes under the word */
-.home-think.is-live::after { content: attr(data-text); position: absolute; inset: 0; z-index: -1; pointer-events: none; color: color-mix(in srgb, #9a6bff 70%, #ff58d6); filter: blur(.24em); opacity: 0; }
-.home-hero__title.is-in .home-think.is-live::after { opacity: .38; transition: opacity 1600ms var(--sy-ease) 900ms; animation: think-breathe 7s ease-in-out 2.6s infinite; }
-.home-think.is-paused, .home-think.is-paused .home-think__dot, .home-think.is-paused::after { animation-play-state: paused !important; }
-@keyframes think-fire {
-  0%, 16%, 100% { transform: none; filter: drop-shadow(0 0 0 rgb(255 255 255 / 0)) drop-shadow(0 0 0 rgb(255 88 214 / 0)); }
-  3% { transform: scale(1.32); filter: drop-shadow(0 0 .05em rgb(255 255 255 / .95)) drop-shadow(0 0 .26em rgb(255 88 214 / .85)); }
-}
-@keyframes think-breathe { 0%, 100% { opacity: .38; } 50% { opacity: .6; } }
+  background-size: var(--mw) 100%, calc(var(--mw) * 2) 100%; background-repeat: no-repeat, repeat-x;
+  background-position: -9999px 0, calc(0px - var(--mx)) 0;
+  -webkit-background-clip: text; background-clip: text; }
+
+/* ---------- parts: 01 Creative humans, 02 Reliable agents, 03 About ---------- */
+.home-part { padding-top: clamp(128px, 14vw, 208px); scroll-margin-top: 72px; }
+.home-part__n { display: flex; align-items: center; gap: 14px; margin: 0 0 20px; font: 500 13px/1 var(--sy-mono); letter-spacing: .2em; color: var(--sy-dim); }
+.home-part__n::after { content: ""; flex: 0 0 72px; height: 1px; background: var(--sy-spectrum); opacity: .7; }
+.home-part .home-part__title { margin: 0; font-size: clamp(56px, 7.4vw, 112px); line-height: .92; letter-spacing: -.02em; }
+.home-part__note { max-width: 36em; margin: 24px 0 0; font-size: clamp(17px, 1.4vw, 19px); line-height: 1.55; color: var(--sy-body); }
+.home-part + .home-sec { padding-top: clamp(48px, 5vw, 72px); }  /* a part's first section sits close to its opening */
+.home-sec.home-products { padding-top: 18px; }                   /* the product cards continue the section above them */
 .home-hero__intro { max-width: 30em; margin-top: 28px; }
 .home-hero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
 .home-hero__note { margin: 14px 0 0; font-size: 14px; color: var(--sy-mist); }
@@ -90,7 +90,8 @@ html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0
 
 /* ---------- work: three products, at a glance (what it does, who it is for, where it stands) ---------- */
 .home-work__title { max-width: 14ch; }
-.home-show { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; list-style: none; margin: 40px 0 0; padding: 0; }
+.home-show { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; list-style: none; margin: 0; padding: 0; }
+.home-show__item:not(.home-show__item--rise) .home-show__info { max-width: 780px; }
 .home-show__item { display: flex; min-width: 0; }
 .home-show__item--rise { grid-column: 1 / -1; }
 .home-show__card { flex: 1; display: grid; gap: 28px; padding: 28px 28px 24px; color: var(--sy-vellum); }
