@@ -50,15 +50,20 @@ const Footer = () => <div className="home-chrome home-footer" dangerouslySetInne
 // Creative systems. (part 01) / Reliable agents. (part 02). Each strip passes real combinations of the same
 // vocabulary on its way; the last word is where it stops. Search engines and screen readers get the .sy-sr text.
 const REELS = [
-  ['Reliable', 'Generative', 'Creative', 'Reliable', 'Generative', 'Creative'],
-  ['agents.', 'humans.', 'systems.', 'agents.', 'humans.', 'agents.', 'systems.'],
-  ['Creative', 'Generative', 'Reliable', 'Creative', 'Generative', 'Creative', 'Generative', 'Reliable'],
-  ['systems.', 'humans.', 'agents.', 'systems.', 'humans.', 'agents.', 'systems.', 'humans.', 'agents.'],
+  ['Reliable', 'Generative', 'Reliable', 'Creative'],
+  ['agents.', 'humans.', 'agents.', 'humans.', 'systems.'],
+  ['Creative', 'Generative', 'Creative', 'Generative', 'Reliable'],
+  ['systems.', 'humans.', 'systems.', 'humans.', 'systems.', 'agents.'],
 ];
+// a reel: the words as type (.home-slot__face) and the same words pre-streaked (.home-slot__ghost), the motion blur
+// slot.js fades in with the reel's speed
 const Reel = ({ words, noun }) => {
   const Tag = noun ? 'em' : 'span';
   return <Tag className={`home-slot__reel${noun ? ' home-slot__reel--noun' : ''}`}>
-    <span className="home-slot__strip">{words.map((w, i) => <span key={i} className={`home-slot__w${i === words.length - 1 ? ' is-final' : ''}`}>{w}</span>)}</span>
+    <span className="home-slot__strip">
+      <span className="home-slot__face">{words.map((w, i) => <span key={i} className={`home-slot__w${i === words.length - 1 ? ' is-final' : ''}`}>{w}</span>)}</span>
+      <span className="home-slot__ghost">{words.map((w, i) => <span key={i} className="home-slot__w">{w}</span>)}</span>
+    </span>
   </Tag>;
 };
 const Slot = React.forwardRef((_, ref) => <h1 ref={ref} id="hero-title" className="sy-display-xl home-hero__title home-slot">
