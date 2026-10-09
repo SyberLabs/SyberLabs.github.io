@@ -9,9 +9,8 @@ compatibility_date = "2026-10-01"
 [vars]
 ORIGIN = "https://syberlabs.io"
 GITHUB_CLIENT_ID = "Ov23liDB7rg6Fi8aNRS5"
-# Google stays off until both its id (here) and GOOGLE_CLIENT_SECRET (a Pages secret) are set (RFC-0002 2.1,
-# Packet 5; Seth's steps 8.4.4). Uncomment with the real id from Google Cloud; either may be set first.
-# GOOGLE_CLIENT_ID = "REPLACE_ME_prod.apps.googleusercontent.com"
+# Google sign-in and self-linking are enabled with this public client id and the encrypted Pages secret.
+GOOGLE_CLIENT_ID = "862996068338-a1mimcig2rpudreop9gqaj2td28m4sso.apps.googleusercontent.com"
 
 [[d1_databases]]
 binding = "DB"
