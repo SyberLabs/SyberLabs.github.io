@@ -38,12 +38,11 @@ async function getJson(url, init) {
   } catch {
     throw new AuthError('provider');
   }
-  if (!res.ok) throw new AuthError('provider', `http ${res.status}`);
+  if (!res.ok) throw new AuthError('provider');
   try { return await res.json(); } catch { throw new AuthError('provider'); }
 }
 
 // Returns {subject, login, email}. email is always null: with no scope GitHub vouches for no address.
-// waitUntil is accepted for the contract's signature; nothing is scheduled (no revoke, see header).
 export async function fetchIdentity(env, { code, verifier }) {
   const tok = await getJson(TOKEN, {
     method: 'POST',
@@ -61,13 +60,13 @@ export async function fetchIdentity(env, { code, verifier }) {
     }).toString(),
   });
   // GitHub answers 200 with {error: 'bad_verification_code'} for a used or junk code.
-  if (!tok || typeof tok.access_token !== 'string' || !tok.access_token) throw new AuthError('provider', 'no token');
+  if (!tok || typeof tok.access_token !== 'string' || !tok.access_token) throw new AuthError('provider');
 
   const user = await getJson(`${API}/user`, {
     headers: { ...API_HEADERS, Authorization: `Bearer ${tok.access_token}` },
   });
   if (!user || !Number.isSafeInteger(user.id) || user.id <= 0 || typeof user.login !== 'string') {
-    throw new AuthError('provider', 'bad /user');
+    throw new AuthError('provider');
   }
   return { subject: String(user.id), login: user.login, email: null };
 }

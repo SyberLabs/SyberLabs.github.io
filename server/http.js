@@ -82,10 +82,9 @@ export class HttpError extends Error {
 // Thrown inside the OAuth flow; oauth.js answers with 303 /auth/signin?e=<code>.
 // Codes: cancelled, expired, provider, disabled.
 export class AuthError extends Error {
-  constructor(code, detail) {
+  constructor(code) {
     super(code);
     this.code = code;
-    this.detail = detail;
   }
 }
 

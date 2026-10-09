@@ -95,11 +95,32 @@ test('case 13: turning a user off (confirmed) deletes their sessions and revokes
   res = await call(env, '/admin/', { cookie: other.cookie });
   assert.equal(res.status, 303);
 
-  // Turn back on: no confirm (RFC-0002 8.2), sessions stay gone.
+  // Turn back on: other holds admin, so it confirms first (RFC-0002 2.4, 8.5 case 19). Sessions stay gone.
+  const offAt = q(env.DB, 'SELECT disabled_at FROM users WHERE id = ?', other.userId).disabled_at;
+  const beforeOn = env.DB.totalChanges();
   res = await call(env, '/admin/people/enable', { cookie: admin.cookie, form: { user: other.userId } });
+  assert.equal(res.status, 200);
+  const askOn = await res.text();
+  assert.match(askOn, /You, boss via GitHub, are turning on other, who holds admin\./);
+  assert.match(askOn, /name="confirm" value="1"/);
+  assert.equal(env.DB.totalChanges(), beforeOn);
+  assert.equal(q(env.DB, 'SELECT disabled_at FROM users WHERE id = ?', other.userId).disabled_at, offAt);
+  res = await call(env, '/admin/people/enable', { cookie: admin.cookie, form: { user: other.userId, confirm: '1' } });
   assert.equal(res.status, 303);
   assert.equal(q(env.DB, 'SELECT disabled_at FROM users WHERE id = ?', other.userId).disabled_at, null);
   assert.equal((await call(env, '/admin/', { cookie: other.cookie })).status, 303);
+  assert.equal(q(env.DB, "SELECT count(*) AS n FROM audit_events WHERE action = 'user.enable'").n, 1);
+});
+
+test('case 19: turning on an account without admin acts at once', async () => {
+  const env = makeEnv();
+  const admin = await signIn(env.DB, { roles: ['role_admin'] });
+  const other = await signIn(env.DB, { roles: ['role_viewer'], login: 'reader' });
+  env.DB.sqlite.prepare('UPDATE users SET disabled_at = 1 WHERE id = ?').run(other.userId);
+  const res = await call(env, '/admin/people/enable', { cookie: admin.cookie, form: { user: other.userId } });
+  assert.equal(res.status, 303);
+  assert.equal(res.headers.get('Location'), '/admin/people?ok=enabled');
+  assert.equal(q(env.DB, 'SELECT disabled_at FROM users WHERE id = ?', other.userId).disabled_at, null);
   assert.equal(q(env.DB, "SELECT count(*) AS n FROM audit_events WHERE action = 'user.enable'").n, 1);
 });
 

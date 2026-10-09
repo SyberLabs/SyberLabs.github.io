@@ -14,7 +14,7 @@ function ctxOf(env, { method = 'GET', path, cookie, form = {}, provider = 'githu
   const url = new URL(path, ORIGIN);
   const headers = new Headers();
   if (cookie) headers.set('Cookie', cookie);
-  return { request: new Request(url, { method, headers }), env, url, now, waitUntil: () => {},
+  return { request: new Request(url, { method, headers }), env, url, now,
     params: { provider }, form: new URLSearchParams(form), user: null, perms: new Set() };
 }
 
@@ -141,10 +141,10 @@ test('an unknown provider is 404 at start and callback', async () => {
     err => err instanceof HttpError && err.status === 404);
 });
 
-test('switch=1 (or prompt=select_account) asks GitHub for the account picker; otherwise none', async () => {
+test('switch=1 asks GitHub for the account picker; otherwise none', async () => {
   const env = makeEnv();
   assert.equal((await start(env, { switch: '1' })).loc.searchParams.get('prompt'), 'select_account');
-  assert.equal((await start(env, { prompt: 'select_account' })).loc.searchParams.get('prompt'), 'select_account');
+  assert.equal((await start(env, { prompt: 'select_account' })).loc.searchParams.has('prompt'), false, 'one name: switch=1');
   assert.equal((await start(env, { switch: '0' })).loc.searchParams.has('prompt'), false);
 });
 
@@ -201,7 +201,7 @@ test('a junk code makes one failing call, writes nothing, and keeps next', async
   assert.equal(env.DB.totalChanges(), before);
   const l = loc(res);
   assert.equal(l.pathname, '/auth/signin');
-  assert.deepEqual(Object.fromEntries(l.searchParams), { next: '/admin/people', e: 'provider' });
+  assert.deepEqual(Object.fromEntries(l.searchParams), { next: '/admin/people', p: 'github', e: 'provider' });
 });
 
 test('error=access_denied is e=cancelled with no provider call; any other error is e=provider', async () => {
@@ -212,6 +212,7 @@ test('error=access_denied is e=cancelled with no provider call; any other error 
   assert.deepEqual(Object.fromEntries(loc(c.res).searchParams), { next: '/admin/changes', e: 'cancelled' });
   const o = await cb(env, { cookie: s.cookie, query: `error=server_error&state=${s.state}` });
   assert.equal(loc(o.res).searchParams.get('e'), 'provider');
+  assert.equal(loc(o.res).searchParams.get('p'), 'github');
   const none = await cb(env, { cookie: s.cookie, query: `state=${s.state}` });
   assert.equal(loc(none.res).searchParams.get('e'), 'provider');
 });

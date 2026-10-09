@@ -6,7 +6,7 @@ import { esc, html, redirect } from '../http.js';
 import { newId } from '../crypto.js';
 import { GUARD_COPY, auditStmt, can, disableUserStmts, removeIdentityStmt, revokeRoleStmt } from '../authz.js';
 import { lookupLogin } from '../github.js';
-import { confirmHtml } from './confirm.js';
+import { confirmHtml, confirmed, actingAs } from './confirm.js';
 import {
   alert, errorSummary, field, fixPrefix, head, hidden, page, postButton, providerLabel, time,
 } from './layout.js';
@@ -130,9 +130,6 @@ export const peoplePage = ctx => renderPeople(ctx);
 
 const refuse = (ctx, copy) => renderPeople(ctx, { status: 403, notice: alert('danger', esc(copy)) });
 const done = code => redirect(`/admin/people?ok=${code}`);
-// "You, Seth via GitHub," names the acting identity. Confirm routes act only on the second POST.
-const acting = ctx => `You, ${esc(ctx.user.displayName)} via ${esc(providerLabel(ctx.user.provider))},`;
-const confirmed = ctx => ctx.form.get('confirm') === '1';
 const confirmPage = (ctx, opts) => html(confirmHtml(ctx, { cancel: '/admin/people', section: 'people', ...opts }));
 
 const ADMIN_LINE = 'Admin can invite people, grant and revoke roles, turn accounts off and on, and create roles.';
@@ -186,7 +183,7 @@ export async function createInvite(ctx) {
   if (!confirmed(ctx)) {
     return confirmPage(ctx, {
       title: 'Create invite',
-      lines: [`<strong>Confirm.</strong> ${acting(ctx)} are inviting ${esc(`@${login || '?'}, GitHub id ${subject}`)} as <strong>${esc(role.name)}</strong>.`,
+      lines: [`<strong>Confirm.</strong> ${actingAs(ctx.user)} are inviting ${esc(`@${login || '?'}, GitHub id ${subject}`)} as <strong>${esc(role.name)}</strong>.`,
         ...(privileged ? [esc(ADMIN_LINE)] : [])],
       action: '/admin/people/invite',
       fields: { role: role.id, subject, login },
@@ -236,7 +233,7 @@ export async function grantRole(ctx) {
   if (role.is_system === 1 && !confirmed(ctx)) {
     return confirmPage(ctx, {
       title: `Grant ${role.name}`,
-      lines: [`<strong>Confirm.</strong> ${acting(ctx)} are granting <strong>${esc(role.name)}</strong> to ${esc(target.display_name)}.`, esc(ADMIN_LINE)],
+      lines: [`<strong>Confirm.</strong> ${actingAs(ctx.user)} are granting <strong>${esc(role.name)}</strong> to ${esc(target.display_name)}.`, esc(ADMIN_LINE)],
       action: '/admin/people/roles/grant',
       fields: { user: target.id, role: role.id },
       submitLabel: `Grant ${role.name} to ${target.display_name}`,
@@ -262,7 +259,7 @@ export async function revokeRole(ctx) {
   if (role.is_system === 1 && !confirmed(ctx)) {
     return confirmPage(ctx, {
       title: `Revoke ${role.name}`,
-      lines: [`<strong>Confirm.</strong> ${acting(ctx)} are revoking <strong>${esc(role.name)}</strong> from ${esc(target.display_name)}.`],
+      lines: [`<strong>Confirm.</strong> ${actingAs(ctx.user)} are revoking <strong>${esc(role.name)}</strong> from ${esc(target.display_name)}.`],
       action: '/admin/people/roles/revoke',
       fields: { user: target.id, role: role.id },
       submitLabel: `Revoke ${role.name} from ${target.display_name}`,
@@ -289,7 +286,7 @@ export async function disableUser(ctx) {
   if (!confirmed(ctx)) {
     return confirmPage(ctx, {
       title: `Turn off ${target.display_name}`,
-      lines: [`<strong>Confirm.</strong> ${acting(ctx)} are turning off ${esc(target.display_name)}'s account. Their sessions end now and their open invites are revoked.`],
+      lines: [`<strong>Confirm.</strong> ${actingAs(ctx.user)} are turning off ${esc(target.display_name)}'s account. Their sessions end now and their open invites are revoked.`],
       action: '/admin/people/disable',
       fields: { user: target.id },
       submitLabel: `Turn off ${target.display_name}`,
@@ -306,6 +303,17 @@ export async function enableUser(ctx) {
   const target = await userById(db, ctx.form.get('user'));
   if (!target) return renderPeople(ctx, { status: 404, notice: alert('warning', 'That person no longer exists.') });
   if (!target.disabled_at) return done('enabled');
+  // Turning admin back on restores full authority, so it confirms first (RFC-0002 2.4, 8.2 round 3).
+  const admin = await db.prepare("SELECT 1 AS x FROM user_roles WHERE user_id = ? AND role_id = 'role_admin'").bind(target.id).first();
+  if (admin && !confirmed(ctx)) {
+    return confirmPage(ctx, {
+      title: `Turn on ${target.display_name}`,
+      lines: [`<strong>Confirm.</strong> ${actingAs(ctx.user)} are turning on ${esc(target.display_name)}, who holds admin.`, esc(ADMIN_LINE)],
+      action: '/admin/people/enable',
+      fields: { user: target.id },
+      submitLabel: `Turn on ${target.display_name}`,
+    });
+  }
   await db.batch([
     db.prepare('UPDATE users SET disabled_at = NULL WHERE id = ? AND disabled_at = ?').bind(target.id, target.disabled_at),
     auditStmt(db, { at: now, actor: user.id, action: 'user.enable', targetType: 'user', targetId: target.id, request: ctx.request,
@@ -335,7 +343,7 @@ export async function removeIdentity(ctx) {
   if (!confirmed(ctx)) {
     return confirmPage(ctx, {
       title: 'Remove sign-in method',
-      lines: [`<strong>Confirm.</strong> ${acting(ctx)} are removing ${esc(methodLabel(ident))} from ${esc(ident.display_name)}'s account. Sessions started with it end now.`],
+      lines: [`<strong>Confirm.</strong> ${actingAs(ctx.user)} are removing ${esc(methodLabel(ident))} from ${esc(ident.display_name)}'s account. Sessions started with it end now.`],
       action: '/admin/people/identity/remove',
       fields: { identity: ident.id },
       submitLabel: `Remove ${providerLabel(ident.provider)} from ${ident.display_name}`,

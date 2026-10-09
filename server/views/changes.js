@@ -5,6 +5,7 @@ import { esc, html, redirect, HttpError } from '../http.js';
 import { newId } from '../crypto.js';
 import { auditStmt } from '../authz.js';
 import { page, head, alert, field, errorSummary, fixPrefix, postButton } from './layout.js';
+import { confirmHtml, confirmed } from './confirm.js';
 
 export const STATES = ['deployed', 'merged', 'decided', 'recorded', 'in progress'];
 const LIMIT = 100;
@@ -165,11 +166,23 @@ export async function saveChange(ctx) {
 }
 
 // POST /admin/changes/delete. A hard delete (RFC-0002 5.1): the audit row keeps the whole entry.
+// Confirm first (RFC-0002 2.4, 3.5): only the second POST, with confirm=1, deletes.
 export async function deleteChange(ctx) {
   const db = ctx.env.DB;
   const id = ctx.form.get('id') || '';
   const before = await db.prepare(`SELECT ${COLUMNS} FROM change_entries WHERE id = ?`).bind(id).first();
   if (!before) throw new HttpError('not_found');
+  if (!confirmed(ctx)) {
+    return html(confirmHtml(ctx, {
+      title: 'Delete entry',
+      lines: [`Delete "${esc(before.title)}"? The audit log keeps a copy.`],
+      action: '/admin/changes/delete',
+      fields: { id },
+      submitLabel: 'Delete entry',
+      cancel: '/admin/changes',
+      section: 'changes',
+    }));
+  }
   await db.batch([
     db.prepare('DELETE FROM change_entries WHERE id = ?').bind(id),
     auditStmt(db, { at: ctx.now, actor: ctx.user.id, action: 'changes.delete', targetType: 'change_entry', targetId: id, detail: { before }, request: ctx.request }),

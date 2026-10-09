@@ -32,7 +32,7 @@ dependencies: Web Crypto, `fetch`, `URL` and D1 `prepare/bind/first/all/run/batc
 ## ctx (built by app.js, passed to every handler)
 
 ```js
-{ request, env, url /* URL */, now /* ms */, waitUntil /* (promise) => void */,
+{ request, env, url /* URL */, now /* ms */,
   params /* {provider} from :segments, decoded */, form /* URLSearchParams; empty unless POST */,
   user /* null or {id, identityId, sessionHash, displayName, provider, login, email, expiresAt} */,
   perms /* Set<string>, empty when signed out */ }
@@ -60,7 +60,7 @@ every header set and `Access-Control-Allow-Origin` removed), `html(body, init?)`
 CF-Connecting-IP, or null), `userAgent(request)` (<=200 chars or null; sessions only),
 `readForm(request)` -> URLSearchParams (urlencoded only; >16 KiB throws `HttpError('too_large')`).
 
-**app.js**: `handle(request, env, waitUntil = () => {}, now = Date.now())` -> Response. Order: ORIGIN present
+**app.js**: `handle(request, env, now = Date.now())` -> Response. Order: ORIGIN present
 (else 503) -> host 308 -> rest of config (else 503) -> method rules -> `/admin` 308 -> CSRF on POST ->
 `loadSession` -> `match` -> access -> `readForm` -> handler -> `secure()`; HEAD gets GET's headers, no body.
 
@@ -83,15 +83,15 @@ form has `next`), `revokeOwnSessions` (deletes the user's *other* sessions, RFC 
 **oauth.js**: `OAUTH_COOKIE = '__Host-sl_oauth'`, `STATE_TTL_MS = 600000`, `PROVIDERS = ['github','google']`,
 `sealState(env, provider, payload)` / `openState(env, provider, sealed, now)` -> payload|null (AAD
 `sl_oauth|<provider>`; payload `{v:1, p, s, cv, n?, r, t}`; null if undecryptable, `p` mismatch,
-`v !== 1`, or `now - t >= 600000`). Handlers: `startLogin` (form: `next`, `switch=1` or `prompt=select_account`;
+`v !== 1`, or `now - t >= 600000`). Handlers: `startLogin` (form: `next`, `switch=1`;
 unknown provider 404; no D1 access; 303 to the provider + state cookie Max-Age=600) and `callback` (RFC 2.2:
 always clears the state cookie; every state check before any fetch; `error=access_denied` -> `e=cancelled`;
 outcomes a-c; 303 to the sealed `r`, or `/admin/?welcome=1` after an invite redemption).
 
-**github.js**: `authorizeUrl(env, {state, challenge, selectAccount})`, `fetchIdentity(env, {code, verifier,
-waitUntil})` -> `{subject /* numeric id as text */, login, email /* primary && verified, or null */}`;
-throws `AuthError('provider')`; schedules the token revoke (Basic auth) exactly once whenever a token was
-issued. `lookupLogin(login)` -> `{id, login}` | null (Packet 4 invite form).
+**github.js**: `authorizeUrl(env, {state, challenge, selectAccount})`, `fetchIdentity(env, {code, verifier})`
+-> `{subject /* numeric id as text */, login, email /* primary && verified, or null */}`;
+throws `AuthError('provider')`; no token revoke (RFC 2.2, T28).
+`lookupLogin(login)` -> `{id, login}` | null (Packet 4 invite form).
 
 **google.js**: `authorizeUrl(env, {state, challenge, nonce, selectAccount})`,
 `fetchIdentity(env, {code, verifier, nonce, now})` -> `{subject, email, emailVerified}` (token failure:
@@ -150,7 +150,7 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
   - `signout` always lands on `/auth/signin?e=signed_out`, plus a sanitized `next` and `switch=1` when the form sent them (RFC 2.2).
   - `revokeOwnSessions` deletes every session of the user, this one included, audits `session.revoke_all`, clears the
     cookie and 303s to `/auth/signin?e=signed_out` (RFC 2.3, test 9). It never redirects to `/admin/account?ended=`.
-  - `startLogin` reads `switch=1` (RFC) or `prompt=select_account`, and for Google a hidden `login_hint` form field, used
+  - `startLogin` reads `switch=1` only, and for Google a hidden `login_hint` form field, used
     only with a well-formed `invite`. Start does no D1 read, so **signin.js should render `login_hint=<invite.email_normalized>`
     on a Google invite's form** (RFC 2.2 login_hint).
   - `callback` errors keep the sealed invite and return path: `/auth/signin?invite=<t>&next=<r>&e=<code>` (RFC 2.2);
@@ -160,7 +160,7 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
     called (RFC section 0, test 5). `deniedHtml` gets `{provider, name (GitHub login without @, or the Google email),
     emailMatch, invite, next}`.
   - GitHub: no `scope`, exactly two calls (token, `/user`), no `/user/emails`, no revoke (RFC 2.2, T28). `fetchIdentity`
-    returns `email: null`; `waitUntil` is accepted and unused. `lookupLogin` returns `{id: '<digits>', login}`.
+    returns `email: null`. `lookupLogin` returns `{id: '<digits>', login}`.
   - Google: the id_token's claims are checked (`iss`, `aud`, `exp > now − 30 s`, `nonce`, non-empty `sub`) and no JWKS is
     fetched (RFC section 0, 2.2, T31). `verifyIdToken` is synchronous; there is no `resetJwksCache`.
   - `PROVIDERS` is still `['github', 'google']`. RFC 2.1 enables Google only in Packet 5 (`/auth/start/google` 404 until
@@ -174,8 +174,8 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
   - `forbidden.js` re-exports `notFoundHtml`, `errorHtml`, `unavailableHtml`, `CSRF_COPY` from `views/error.js`.
   - `confirm.js` exports `confirmed(ctx)`, `actingAs(user)` ("You, Seth via GitHub," escaped, trailing comma) and
     `confirmHtml(ctx, {title, lines, action, fields, submitLabel, cancel = '/admin/', section})` -> string.
-  - Sign-in page: `?p=<provider>` (optional) names the provider in the `e=provider` copy, which is generic without it.
-    Its forms send both `switch=1` and `prompt=select_account`, and `login_hint` on a Google invite. Copy follows RFC 3.4;
+  - Sign-in page: `?p=<provider>` (set by oauth.js on `e=provider`) names the provider in that copy, which is generic
+    without it. Its forms send `switch=1` (no `prompt` field), and `login_hint` on a Google invite. Copy follows RFC 3.4;
     the no-keys empty state says "Ask an admin" (no names in the repo).
   - `changes.js` hard-deletes (RFC 5.1; the audit row keeps the old row) and writes only the RFC 8.1 columns, so it works
     on either migration; `deleted_at`, `created_by`, `updated_*` stay unused. Rows use `staff-change__*` (RFC 2.6), not
@@ -188,7 +188,7 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
     `PROVIDERS = ['github']`, drop Google from the staff entry. "About 400 days" needs the retention delete (RFC 5.1).
 - **core (authz.js, routes.js, app.js, views/people.js, views/roles.js)**:
   - `ROUTES` is RFC 8.2 (Packets 2-4, plus `POST /admin/people/identity/remove`) and `POST /admin/people/sessions/revoke`.
-    `enableUser` and `saveRole` have no confirm (RFC 8.2).
+    `saveRole` has no confirm; `enableUser` confirms when the target holds `role_admin` (RFC e4f92b8 8.2).
   - The on-disk migration has `full_admins` and no privileged-key triggers, so authz keeps the up rule, the target rule
     and the `full_admins` lockout, and `saveRole` also refuses any privileged key on a custom role (RFC 2.4, 403).
   - `auditStmt(db, {..., when: [sqlCondition, ...params]})` writes `INSERT … SELECT … WHERE <cond>`, so batch rows
@@ -232,3 +232,13 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
   - `/api/me`, `/api/admin/changes` and `/api/*` in `_routes.json` are gone (RFC R1-8); every error is HTML.
   - Bootstrap writes users, identities and grants directly from Seth's terminal (RFC 8.4.8); its audit action is
     `bootstrap`.
+- **review round 2:**
+  - **Spec target.** This branch implements RFC-0002 as of `88e25a9` (red-team round 2). Round 3 (`e4f92b8`) deletes
+    invites (`invites` table, `login_hint`, case b, redemption batch, invite revoke, open-invites list, `welcome=1`) for
+    `POST /admin/people/add`, drops `users.display_name` and the seeded `viewer`, makes `/auth/signin` never redirect,
+    makes `POST /auth/signout` PUBLIC and splits a CI function job. Those are not adopted here: whether this branch
+    tracks round 3 is Seth's call. Reviews should not flag that drift until he decides. Round 3 items adopted one by one
+    are cited in code (`enableUser` confirm).
+  - Confirm pages also cover deleting a What changed entry (RFC 2.4, 3.5, test 15) and turning on an account that holds
+    `role_admin` (RFC `e4f92b8` 2.4, 8.2, test 19).
+  - `ctx.waitUntil` is gone: nothing schedules work (no token revoke, RFC 2.2/T28). `AuthError` carries only `code`.

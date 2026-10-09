@@ -39,7 +39,7 @@ function ctxOf(env, { method = 'GET', path, cookie, form = {}, provider = 'googl
   const url = new URL(path, ORIGIN);
   const headers = new Headers();
   if (cookie) headers.set('Cookie', cookie);
-  return { request: new Request(url, { method, headers }), env, url, now, waitUntil: () => {},
+  return { request: new Request(url, { method, headers }), env, url, now,
     params: { provider }, form: new URLSearchParams(form), user: null, perms: new Set() };
 }
 

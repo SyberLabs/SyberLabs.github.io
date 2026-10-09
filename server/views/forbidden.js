@@ -23,12 +23,12 @@ export function forbiddenHtml(ctx, key) {
 }
 
 // Case c of the callback. next comes from the state cookie so "Try another account" keeps it; switch=1
-// (and the contract's prompt=select_account) makes the provider show its picker. Google is never invited,
+// makes the provider show its picker. Google is never invited,
 // so an unknown Google account is told how to add it (RFC-0002 3.4).
 export function deniedHtml(ctx, { provider, name, next = '' } = {}) {
   const p = providerLabel(provider);
   const who = provider === 'github' ? `@${name}` : name;
-  const fields = hidden([['next', next], ['switch', '1'], ['prompt', 'select_account']]);
+  const fields = hidden([['next', next], ['switch', '1']]);
   const line = provider === 'google'
     ? `<p class="sy-body-lg staff-lede"><strong>This Google account${name ? ` (${esc(who)})` : ''} isn't on a SyberLabs account.</strong></p>
   <p class="sy-body">Sign in with GitHub, then add Google from your account page.</p>`

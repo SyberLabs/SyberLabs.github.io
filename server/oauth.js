@@ -43,25 +43,23 @@ export async function openState(env, provider, sealed, now) {
 export async function startLogin(ctx) {
   const { env, form, now } = ctx;
   const provider = providerOf(ctx);
-  const selectAccount = form.get('switch') === '1' || form.get('prompt') === 'select_account';
+  const selectAccount = form.get('switch') === '1';
   const st = { v: 1, p: provider, s: randomToken(), cv: randomToken(), r: safeReturnTo(form.get('next'), env.ORIGIN), t: now };
   if (provider === 'google') st.n = randomToken();
 
   const challenge = await sha256B64url(st.cv);
-  let location;
-  if (provider === 'github') {
-    location = github.authorizeUrl(env, { state: st.s, challenge, selectAccount });
-  } else {
-    location = google.authorizeUrl(env, { state: st.s, challenge, nonce: st.n, selectAccount });
-  }
+  // github ignores nonce.
+  const location = CLIENTS[provider].authorizeUrl(env, { state: st.s, challenge, nonce: st.n, selectAccount });
   const sealed = await sealState(env, provider, st);
   return redirect(location, { cookies: [cookie(OAUTH_COOKIE, sealed, STATE_TTL_MS / 1000)] });
 }
 
-// Back to the sign-in page. When the cookie decrypted, keep its return path (RFC-0002 2.2).
+// Back to the sign-in page. When the cookie decrypted, keep its return path (RFC-0002 2.2), and name
+// the provider for e=provider so the copy can say "GitHub didn't answer" (RFC-0002 3.4).
 function signinUrl(code, st) {
   const q = new URLSearchParams();
   if (st && st.r) q.set('next', st.r);
+  if (st && code === 'provider') q.set('p', st.p);
   q.set('e', code);
   return `/auth/signin?${q}`;
 }
@@ -86,9 +84,7 @@ export async function callback(ctx) {
 
   let id;
   try {
-    id = await CLIENTS[provider].fetchIdentity(env, {
-      code, verifier: st.cv, nonce: st.n, now, waitUntil: ctx.waitUntil,
-    });
+    id = await CLIENTS[provider].fetchIdentity(env, { code, verifier: st.cv, nonce: st.n, now });
   } catch (err) {
     if (err instanceof AuthError) return back(err.code, st);
     throw err;

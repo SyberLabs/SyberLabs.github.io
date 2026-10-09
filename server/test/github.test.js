@@ -38,13 +38,11 @@ test('authorize URL: exact callback, S256, allow_signup=false, no scope, prompt 
 test('fetchIdentity makes exactly two calls: the token exchange and GET /user', async () => {
   const env = makeEnv();
   const stub = github();
-  const scheduled = [];
   try {
-    const id = await fetchIdentity(env, { code: 'code-1', verifier: 'ver-1', waitUntil: p => scheduled.push(p) });
+    const id = await fetchIdentity(env, { code: 'code-1', verifier: 'ver-1' });
     assert.deepEqual(id, { subject: '1001', login: 'octo-test', email: null });
   } finally { stub.restore(); }
   assert.equal(stub.calls.length, 2);
-  assert.equal(scheduled.length, 0, 'no revoke is scheduled');
 
   const [tok, user] = stub.calls;
   assert.equal(tok.headers.get('Accept'), 'application/json');
@@ -92,7 +90,7 @@ test('the token never appears in the error thrown', async () => {
   const stub = github({ userStatus: 401 });
   try {
     await assert.rejects(fetchIdentity(env, { code: 'c', verifier: 'v' }), err => {
-      assert.ok(!String(err.message).includes(TOKEN) && !String(err.detail).includes(TOKEN));
+      assert.ok(!String(err.message).includes(TOKEN));
       return true;
     });
   } finally { stub.restore(); }

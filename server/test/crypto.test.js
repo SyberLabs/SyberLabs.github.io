@@ -43,7 +43,7 @@ test('timingSafeEqual', () => {
   assert.equal(timingSafeEqual('a', null), false);
 });
 
-test('stateKey: APP_SECRET is the AES-GCM key itself (RFC-0002 R1-14), cached, and refused unless 32 bytes', async () => {
+test('stateKey: APP_SECRET is the AES-GCM key itself (RFC-0002 R1-14), and refused unless 32 bytes', async () => {
   for (const bad of [undefined, 'short', 'x'.repeat(31), 'x'.repeat(40), 'not base64url but 43 chars long, honestly!!']) {
     assert.equal(secretKeyBytes(bad), null, String(bad));
     await assert.rejects(stateKey(bad));
@@ -51,7 +51,6 @@ test('stateKey: APP_SECRET is the AES-GCM key itself (RFC-0002 R1-14), cached, a
   assert.equal(secretKeyBytes(SECRET).length, 32);
   assert.deepEqual(secretKeyBytes(SECRET), b64urlDecode(SECRET));
   assert.equal(secretKeyBytes('y'.repeat(32)).length, 32); // exactly 32 UTF-8 bytes also works
-  assert.equal(stateKey(SECRET), stateKey(SECRET));
   const key = await stateKey(SECRET);
   assert.equal(key.algorithm.name, 'AES-GCM');
   assert.equal(key.algorithm.length, 256);

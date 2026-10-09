@@ -1,5 +1,5 @@
 // Shared test fixtures: a full env on a fresh database, people seeded straight into D1, a session cookie,
-// a request runner that awaits waitUntil work, and a fetch stub that refuses anything not stubbed.
+// a request runner, and a fetch stub that refuses anything not stubbed.
 // Ids are obviously fake (gh-test-1); no real people or emails.
 import { freshDb } from './d1-shim.js';
 import { newId, randomToken, sha256Hex } from '../crypto.js';
@@ -64,7 +64,7 @@ export async function signIn(db, opts = {}) {
   return { ...user, token, cookie: `${SESSION_COOKIE}=${token}` };
 }
 
-// Runs one request through handle() and waits for its waitUntil work.
+// Runs one request through handle().
 // opts: { method='GET', cookie, form (object or URLSearchParams), headers, origin (true = env.ORIGIN,
 //         a string, or false for none), host (overrides the URL origin), now }
 export async function call(env, path, opts = {}) {
@@ -80,11 +80,7 @@ export async function call(env, path, opts = {}) {
     body = new URLSearchParams(opts.form).toString();
   }
   const url = new URL(path, opts.host || env.ORIGIN || ORIGIN);
-  const pending = [];
-  const res = await handle(new Request(url, { method, headers, body, redirect: 'manual' }), env,
-    p => pending.push(p), opts.now);
-  await Promise.allSettled(pending);
-  return res;
+  return handle(new Request(url, { method, headers, body, redirect: 'manual' }), env, opts.now);
 }
 
 // Every Set-Cookie value on a response.

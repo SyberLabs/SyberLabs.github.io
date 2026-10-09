@@ -149,11 +149,20 @@ test('every ?e= code renders its copy first after the h1, and unknown codes are 
   assert.doesNotMatch(unknown, /nope/);
 });
 
+test('e=provider names the provider from p, and only an enabled one', async () => {
+  const env = makeEnv();
+  assert.ok((await (await call(env, '/auth/signin?e=provider&p=github')).text()).includes("GitHub didn't answer. Try again in a minute."));
+  for (const p of ['', '&p=gitlab', '&p=%3Cb%3E']) {
+    const body = await (await call(env, `/auth/signin?e=provider${p}`)).text();
+    assert.ok(body.includes("The sign-in provider didn't answer. Try again in a minute."), p);
+  }
+});
+
 test('signed out with switch=1: the copy changes and every button asks for the account picker', async () => {
   const body = await (await call(makeEnv(), '/auth/signin?e=signed_out&switch=1')).text();
   assert.ok(body.includes("You're signed out. Choose the account to use."));
   assert.equal(body.match(/name="switch" value="1"/g).length, 2);
-  assert.equal(body.match(/name="prompt" value="select_account"/g).length, 2);
+  assert.doesNotMatch(body, /name="prompt"/);
 });
 
 test('signed in: 303 to the sanitized next', async () => {
@@ -327,7 +336,21 @@ test('What changed: reader sees rows escaped, no form; writer gets the form; 422
   assert.match(edit, new RegExp(`name="id" value="${id}"`));
   assert.equal((await call(env, '/admin/changes', { cookie: writer.cookie, form: { ...form, id, title: 'New title' } })).status, 303);
   assert.equal(db.sqlite.prepare('SELECT title FROM change_entries WHERE id = ?').get(id).title, 'New title');
-  assert.equal((await call(env, '/admin/changes/delete', { cookie: writer.cookie, form: { id } })).status, 303);
+  // RFC-0002 8.5 case 15: delete without confirm=1 renders the confirm page and changes nothing.
+  const changesBefore = db.totalChanges();
+  const ask = await call(env, '/admin/changes/delete', { cookie: writer.cookie, form: { id } });
+  assert.equal(ask.status, 200);
+  const askBody = await ask.text();
+  assertShell(askBody);
+  assert.match(askBody, /Delete "New title"\? The audit log keeps a copy\./);
+  assert.match(askBody, /name="confirm" value="1"/);
+  assert.match(askBody, new RegExp(`name="id" value="${id}"`));
+  assert.match(askBody, /href="\/admin\/changes">Cancel</);
+  assert.equal(db.totalChanges(), changesBefore);
+  assert.equal(db.count('change_entries'), 1);
+  const del = await call(env, '/admin/changes/delete', { cookie: writer.cookie, form: { id, confirm: '1' } });
+  assert.equal(del.status, 303);
+  assert.equal(del.headers.get('Location'), '/admin/changes?done=deleted');
   assert.equal(db.count('change_entries'), 0);
   const audit = db.sqlite.prepare("SELECT action, detail_json FROM audit_events WHERE action LIKE 'changes.%' ORDER BY id").all();
   assert.deepEqual(audit.map(a => a.action), ['changes.create', 'changes.update', 'changes.delete']);

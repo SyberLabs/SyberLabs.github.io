@@ -50,10 +50,10 @@ export async function fetchIdentity(env, { code, verifier, nonce, now }) {
   } catch {
     throw new AuthError('provider');
   }
-  if (!res.ok) throw new AuthError('provider', `http ${res.status}`);
+  if (!res.ok) throw new AuthError('provider');
   let body;
   try { body = await res.json(); } catch { throw new AuthError('provider'); }
-  if (!body || typeof body.id_token !== 'string') throw new AuthError('provider', 'no id_token');
+  if (!body || typeof body.id_token !== 'string') throw new AuthError('provider');
 
   const claims = verifyIdToken(env, body.id_token, { nonce, now });
   return {
@@ -63,23 +63,23 @@ export async function fetchIdentity(env, { code, verifier, nonce, now }) {
   };
 }
 
-const expired = detail => new AuthError('expired', detail);
+const expired = () => new AuthError('expired');
 
 // Claims only (see header). Kept synchronous; returns the payload or throws AuthError('expired').
 export function verifyIdToken(env, jwt, { nonce, now }) {
   const parts = typeof jwt === 'string' ? jwt.split('.') : [];
-  if (parts.length !== 3) throw expired('shape');
+  if (parts.length !== 3) throw expired();
   let c;
   try {
     c = JSON.parse(new TextDecoder().decode(b64urlDecode(parts[1])));
   } catch {
-    throw expired('payload');
+    throw expired();
   }
-  if (!c || typeof c !== 'object' || Array.isArray(c)) throw expired('payload');
-  if (!ISSUERS.has(c.iss)) throw expired('iss');
-  if (c.aud !== env.GOOGLE_CLIENT_ID) throw expired('aud');
-  if (typeof c.exp !== 'number' || !(c.exp * 1000 > now - SKEW_MS)) throw expired('exp');
-  if (typeof nonce !== 'string' || !nonce || !timingSafeEqual(c.nonce, nonce)) throw expired('nonce');
-  if (typeof c.sub !== 'string' || !c.sub || c.sub.length > 255) throw expired('sub');
+  if (!c || typeof c !== 'object' || Array.isArray(c)) throw expired();
+  if (!ISSUERS.has(c.iss)) throw expired();
+  if (c.aud !== env.GOOGLE_CLIENT_ID) throw expired();
+  if (typeof c.exp !== 'number' || !(c.exp * 1000 > now - SKEW_MS)) throw expired();
+  if (typeof nonce !== 'string' || !nonce || !timingSafeEqual(c.nonce, nonce)) throw expired();
+  if (typeof c.sub !== 'string' || !c.sub || c.sub.length > 255) throw expired();
   return c;
 }

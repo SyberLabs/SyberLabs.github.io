@@ -20,7 +20,7 @@ function req(path = '/admin/', { cookie, headers = {}, method = 'GET' } = {}) {
 async function ctxFor(env, cookieHeader, { form = {}, now = NOW } = {}) {
   const request = req('/auth/signout', { cookie: cookieHeader, method: 'POST' });
   const { user, perms } = await loadSession(env, request, now);
-  return { request, env, url: new URL(request.url), now, waitUntil: () => {}, params: {},
+  return { request, env, url: new URL(request.url), now, params: {},
     form: new URLSearchParams(form), user, perms };
 }
 

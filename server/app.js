@@ -40,10 +40,10 @@ function signinRequired(ctx, stale) {
   return redirect(`/auth/signin?next=${encodeURIComponent(next)}${stale ? '&e=expired_session' : ''}`, { cookies });
 }
 
-async function route(request, env, waitUntil, now) {
+async function route(request, env, now) {
   const url = new URL(request.url);
   const ctx = {
-    request, env, url, now, waitUntil, params: {}, form: new URLSearchParams(), user: null, perms: new Set(),
+    request, env, url, now, params: {}, form: new URLSearchParams(), user: null, perms: new Set(),
   };
   const { pathname } = url;
   if (!configured(env)) return unavailable();
@@ -81,7 +81,7 @@ async function route(request, env, waitUntil, now) {
   }
 }
 
-export async function handle(request, env, waitUntil = () => {}, now = Date.now()) {
+export async function handle(request, env, now = Date.now()) {
   const url = new URL(request.url);
   let res;
   if (!env || typeof env.ORIGIN !== 'string' || !env.ORIGIN) {
@@ -91,7 +91,7 @@ export async function handle(request, env, waitUntil = () => {}, now = Date.now(
     res = redirect(env.ORIGIN + url.pathname + url.search, { status: 308 });
   } else {
     try {
-      res = await route(request, env, waitUntil, now);
+      res = await route(request, env, now);
     } catch (err) {
       // Fail closed (D1 down, a bug). The message may hold data, so only its class is logged.
       console.error(`staff: unhandled ${err && err.name ? err.name : 'error'}`);

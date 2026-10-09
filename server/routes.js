@@ -39,7 +39,7 @@ export const ROUTES = [
   ['POST /admin/people/roles/revoke',          'id:users.manage',    revokeRole],
   ['POST /admin/people/identity/remove',       'id:users.manage',    removeIdentity],
   ['POST /admin/people/disable',               'id:users.manage',    disableUser],
-  ['POST /admin/people/enable',                'id:users.manage',    enableUser],       // RFC-0002 8.2: no confirm
+  ['POST /admin/people/enable',                'id:users.manage',    enableUser],
   ['POST /admin/people/sessions/revoke',       'id:users.manage',    revokeUserSessions],
   ['GET  /admin/roles',                        'id:users.read',      rolesPage],
   ['POST /admin/roles',                        'id:roles.manage',    saveRole],         // RFC-0002 8.2: non-privileged keys only

@@ -72,17 +72,11 @@ export function secretKeyBytes(appSecret) {
   return bytes.length === 32 ? bytes : null;
 }
 
-// RFC-0002 R1-14: APP_SECRET is imported directly as the AES-GCM key, with no HKDF. Cached per secret.
-const keyCache = new Map();
+// RFC-0002 R1-14: APP_SECRET is imported directly as the AES-GCM key, with no HKDF.
 export function stateKey(appSecret) {
   const bytes = secretKeyBytes(appSecret);
-  if (!bytes) return Promise.reject(new Error('APP_SECRET must be 32 bytes'));
-  if (!keyCache.has(appSecret)) {
-    const p = crypto.subtle.importKey('raw', bytes, 'AES-GCM', false, ['encrypt', 'decrypt']);
-    p.catch(() => keyCache.delete(appSecret));
-    keyCache.set(appSecret, p);
-  }
-  return keyCache.get(appSecret);
+  return bytes ? crypto.subtle.importKey('raw', bytes, 'AES-GCM', false, ['encrypt', 'decrypt'])
+    : Promise.reject(new Error('APP_SECRET must be 32 bytes'));
 }
 
 // AES-GCM with a random 96-bit IV. Output: base64url(iv || ciphertext+tag). AAD binds the purpose.
