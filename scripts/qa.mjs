@@ -54,6 +54,11 @@ const redirects = existsSync(join(root, '_redirects'))
   : [];
 const redirected = path => redirects.some(rule => rule.endsWith('/*') ? path.startsWith(rule.slice(0, -1)) || path === rule.slice(0, -2) : rule === path);
 
+// Functions are valid navigation targets even though no static HTML is emitted.
+const functionRoutes = existsSync(join(root, '_routes.json')) ? JSON.parse(await readFile(join(root, '_routes.json'), 'utf8')) : { include: [], exclude: [] };
+const routeMatches = (rule, path) => rule.endsWith('*') ? path.startsWith(rule.slice(0, -1)) : path === rule;
+const dynamicRoute = path => functionRoutes.include.some(rule => routeMatches(rule, path)) && !functionRoutes.exclude.some(rule => routeMatches(rule, path));
+
 function resolves(target, fromFile) {
   // target is a path already stripped of query and hash
   let fsPath;
@@ -138,7 +143,7 @@ for (const [rel, { html, list }] of parsed) {
       if (value.startsWith(ORIGIN + '/')) {
         // Absolute self-links behave like internal ones
         const path = value.slice(ORIGIN.length).split('#')[0].split('?')[0];
-        if (!resolves(path, file) && !redirected(path)) report(rel, `broken internal link (${key}): ${value}`, true);
+        if (!resolves(path, file) && !redirected(path) && !dynamicRoute(path)) report(rel, `broken internal link (${key}): ${value}`, true);
       }
       continue;
     }
