@@ -8,7 +8,7 @@ compatibility_date = "2026-10-01"
 
 [vars]
 ORIGIN = "https://syberlabs.io"
-GITHUB_CLIENT_ID = "REPLACE_ME_prod_github_oauth_app_client_id"
+GITHUB_CLIENT_ID = "Ov23liDB7rg6Fi8aNRS5"
 # Google stays off until both its id and secret are set (RFC-0002 2.1: Packet 5).
 # GOOGLE_CLIENT_ID = "REPLACE_ME_prod.apps.googleusercontent.com"
 
