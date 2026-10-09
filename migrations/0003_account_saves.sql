@@ -14,8 +14,6 @@ CREATE INDEX account_saves_owner ON account_saves(user_id, created_at DESC);
 -- SQL limits are atomic even when concurrent requests passed their own preflight.
 CREATE TRIGGER account_saves_quota BEFORE INSERT ON account_saves
 WHEN NOT EXISTS (SELECT 1 FROM account_saves WHERE user_id = NEW.user_id AND request_id = NEW.request_id)
-BEGIN
-  SELECT CASE WHEN (SELECT count(*) FROM account_saves WHERE user_id = NEW.user_id) >= 50
-    OR (SELECT coalesce(sum(bytes), 0) FROM account_saves WHERE user_id = NEW.user_id) + NEW.bytes > (10 * 1024 * 1024)
-    THEN RAISE(ABORT, 'account_save_quota') END;
-END;
+ AND ((SELECT count(*) FROM account_saves WHERE user_id = NEW.user_id) >= 50
+   OR (SELECT coalesce(sum(bytes), 0) FROM account_saves WHERE user_id = NEW.user_id) + NEW.bytes > (10 * 1024 * 1024))
+BEGIN SELECT RAISE(ABORT, 'account_save_quota'); END;
