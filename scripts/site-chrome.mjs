@@ -9,6 +9,7 @@ import { header, footer } from '../projects/project-template.js';
 
 const pages = ['404.html', 'approach/index.html', 'stack/index.html', 'jev/index.html', 'kev/index.html', 'privacy/index.html',
   'rise-demo/index.html', 'services/index.html', 'plus/index.html', 'review/index.html', 'review/2026-10-08/index.html', 'research/index.html', 'research/jev-execution/index.html', 'research/sybershoke/index.html',
+  'research/decision-arena/index.html',
   'projects/rise/index.html'];
 
 const HEADER = /<a class="sy-skip" href="#(\w+)">Skip to content<\/a>\s*(?:<div class="sy-field-host"[\s\S]*?<\/div>\s*)?<header class="sy-header[\s\S]*?<\/header>(?:\s*<script type="module" src="\/syberlabs\.js"><\/script>)?/;

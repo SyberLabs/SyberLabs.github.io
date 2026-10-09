@@ -1,0 +1,80 @@
+{
+  "riseCommit": "ee72038dac6e958066302c1ca04bc5c97c67b9f0",
+  "runFile": "run-1c8b7b636f83.json",
+  "runSha256": "1c8b7b636f83ce01022c8ed079863f8b6cbde914505f4a892b3b64941f896f16",
+  "files": {
+    "report.json": "3b03594161be66295a6975afd6036487a7069ef6ed7c74b34e0a6e5c5351762d",
+    "replay.json": "dee43cebc12edad2a26258d9df2187cff10a3fec1f5750ed59fdde6fdee2ad2c"
+  },
+  "run": {
+    "runId": "arena-20261008T194257-ee72038",
+    "createdAt": "2026-10-08T19:42:57.863Z",
+    "harness": {
+      "repo": "SyberLabs/RISE",
+      "commit": "ee72038dac6e958066302c1ca04bc5c97c67b9f0",
+      "dirty": false,
+      "node": "v22.23.3",
+      "mock": false
+    },
+    "partial": false,
+    "cases": 39,
+    "controls": 50,
+    "notes": [
+      "openai: not run: no key.",
+      "jev: not run: no key.",
+      "kev: not run: hardware/setup."
+    ],
+    "providers": [
+      {
+        "id": "rules",
+        "requestedModel": null,
+        "servedModels": [],
+        "revision": null,
+        "ranFrom": "2026-10-08T19:42:57.798Z",
+        "ranTo": "2026-10-08T19:42:57.863Z",
+        "pricingSource": "none: no model",
+        "status": "ran"
+      },
+      {
+        "id": "rules-floor",
+        "requestedModel": null,
+        "servedModels": [],
+        "revision": null,
+        "ranFrom": "2026-10-08T19:42:57.801Z",
+        "ranTo": "2026-10-08T19:42:57.863Z",
+        "pricingSource": "none: no model",
+        "status": "ran"
+      },
+      {
+        "id": "openai",
+        "requestedModel": null,
+        "servedModels": [],
+        "revision": null,
+        "ranFrom": null,
+        "ranTo": null,
+        "pricingSource": "none: not run",
+        "status": "not run: no key"
+      },
+      {
+        "id": "jev",
+        "requestedModel": null,
+        "servedModels": [],
+        "revision": null,
+        "ranFrom": null,
+        "ranTo": null,
+        "pricingSource": "none: not run",
+        "status": "not run: no key"
+      },
+      {
+        "id": "kev",
+        "requestedModel": null,
+        "servedModels": [],
+        "revision": null,
+        "ranFrom": null,
+        "ranTo": null,
+        "pricingSource": "none: not run",
+        "status": "not run: hardware/setup"
+      }
+    ]
+  }
+}
