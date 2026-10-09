@@ -112,28 +112,57 @@ test('case 11: a signed-in GET writes zero rows and reads with permissions fresh
   const before = env.DB.totalChanges();
   for (const p of ['/admin/', '/admin/changes', '/admin/people', '/admin/roles', '/admin/audit', '/admin/account']) {
     const res = await call(env, p, { cookie });
-    assert.equal(res.status, p === '/admin/' ? 303 : 200, p);
+    assert.equal(res.status, 200, p);
   }
   assert.equal(env.DB.totalChanges(), before);
 });
 
-// RFC-0002 2.6: /admin/ has no body. It sends you to the first page your keys open, in nav order, else
-// to /admin/account, so the Staff eyebrow and "Back to staff home" never land on an empty page.
-test('/admin/ is a 303 to the first page in nav order the keys open, else /admin/account', async () => {
+// Every signed-in staff member lands on the portal, with links matching their current keys.
+test('/admin/ renders a portal whose tool cards follow the current permissions', async () => {
   const env = makeEnv();
   const cases = [
-    [['role_admin'], undefined, '/admin/changes'],
-    [[], ['id:users.read', 'id:audit.read'], '/admin/people'],
-    [[], ['id:audit.read'], '/admin/audit'],
-    [[], [], '/admin/account'],
+    [['role_admin'], undefined, ['changes', 'people', 'roles', 'audit', 'account']],
+    [[], ['id:users.read', 'id:audit.read'], ['people', 'roles', 'audit', 'account']],
+    [[], ['id:audit.read'], ['audit', 'account']],
+    [[], [], ['account']],
   ];
-  for (const [roles, perms, where] of cases) {
+  for (const [roles, perms, tools] of cases) {
     const { cookie } = await signIn(env.DB, { roles, perms });
     const res = await call(env, '/admin/', { cookie });
-    assert.equal(res.status, 303, where);
-    assert.equal(res.headers.get('Location'), where);
-    assert.equal(await res.text(), '');
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get('Location'), null);
+    assertHeaders(res, 'portal');
+    const body = await res.text();
+    assert.match(body, /<title>Portal · SyberLabs staff<\/title>/);
+    assert.equal(body.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim(), 'Your launchpad.');
+    const main = body.match(/<main[^>]*>([\s\S]*?)<\/main>/)[1];
+    const cards = [...main.matchAll(/<a\b[^>]*>/g)].map(m => m[0]).filter(tag => /class="[^"]*\bportal-card\b/.test(tag)).map(tag => tag.match(/href="\/admin\/([^"/]+)"/)[1]);
+    assert.deepEqual(cards, tools);
+    assert.doesNotMatch(body, /<script/i);
   }
+});
+
+test('portal access requires a live staff session and follows revoked permissions immediately', async () => {
+  const env = makeEnv();
+  const unsigned = await call(env, '/admin/');
+  assert.equal(unsigned.status, 303);
+  assert.match(unsigned.headers.get('Location'), /^\/auth\/signin\?next=/);
+  assert.doesNotMatch(await unsigned.text(), /Your launchpad/);
+
+  const founder = await signIn(env.DB, { roles: ['role_admin'] });
+  const head = await call(env, '/admin/', { method: 'HEAD', cookie: founder.cookie });
+  assert.equal(head.status, 200);
+  assert.equal(await head.text(), '');
+  assertHeaders(head, 'portal HEAD');
+
+  const user = await signIn(env.DB, { perms: ['id:audit.read'] });
+  const initial = await call(env, '/admin/', { cookie: user.cookie });
+  assert.match(await initial.text(), /<a\b(?=[^>]*class="[^"]*\bportal-card\b)(?=[^>]*href="\/admin\/audit")[^>]*>/);
+  env.DB.sqlite.prepare('DELETE FROM user_roles WHERE user_id = ?').run(user.userId);
+  const refreshed = await call(env, '/admin/', { cookie: user.cookie });
+  assert.equal(refreshed.status, 200);
+  assert.doesNotMatch(await refreshed.text(), /href="\/admin\/audit"/);
+  assert.equal((await call(env, '/admin/audit', { cookie: user.cookie })).status, 403);
 });
 
 // RFC-0002 2.3, test 3: a session cookie that is not 43 base64url characters counts as absent and costs no

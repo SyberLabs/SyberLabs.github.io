@@ -26,7 +26,7 @@ export function alert(kind, html) {
 // A full document. `title` is the page's own part; " · SyberLabs staff" is added here.
 // admin: false renders the bare header (sign-in, denied, the sign-in 503); otherwise the header shows
 // ctx.user's account line and nav. signOut: true keeps Sign out on a bare header (the gated 503).
-export function page(ctx, { title, body, section = '', admin = true, signOut }) {
+export function page(ctx, { title, body, section = '', admin = true, signOut, compactFooter = false }) {
   const user = admin && ctx && ctx.user ? ctx.user : null;
   return `<!doctype html>
 <html lang="en" data-field="calm">
@@ -38,7 +38,7 @@ export function page(ctx, { title, body, section = '', admin = true, signOut }) 
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <title>${esc(title)} · SyberLabs staff</title>
   <link rel="stylesheet" href="/syberlabs.css?v=4">
-  <link rel="stylesheet" href="/staff.css?v=3">
+  <link rel="stylesheet" href="/staff.css?v=4">
 </head>
 <body>
 <!--email_off-->
@@ -46,7 +46,7 @@ ${staffHeader(ctx, { section, user, signOut: signOut ?? Boolean(user) })}
   <main id="main" class="staff sy-container">
   ${body}
   </main>
-${footer()}
+${compactFooter ? '<footer class="portal-footer sy-container"><span>SYBERLABS / STAFF</span><a href="/">Public site ↗</a><a href="/privacy/#staff">Privacy</a></footer>' : footer()}
 <!--/email_off-->
 </body>
 </html>

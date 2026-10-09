@@ -16,6 +16,7 @@ export const signedInAs = user => `${identityName(user)} (${providerLabel(user.p
 
 // The section nav (RFC-0002 3.3), in this order. Account is open to every session, the rest need their key.
 export const NAV = [
+  { id: 'portal', label: 'Portal', href: '/admin/', key: null },
   { id: 'changes', label: 'What changed', href: '/admin/changes', key: 'site:changes.read' },
   { id: 'people', label: 'People', href: '/admin/people', key: 'id:users.read' },
   { id: 'roles', label: 'Roles', href: '/admin/roles', key: 'id:users.read' },
