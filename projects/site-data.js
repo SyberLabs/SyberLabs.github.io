@@ -7,8 +7,8 @@
 // under stated conditions), deployed (it runs somewhere people can reach). Nothing is promoted
 // from one state to the next by wording.
 
-export const CONTACT = 'mailto:hello.mateorobles@gmail.com';
-export const EMAIL = 'hello.mateorobles@gmail.com';
+export const CONTACT = 'mailto:syberlabs.software@gmail.com';
+export const EMAIL = 'syberlabs.software@gmail.com';
 export const RESUME = '/mateo_robles_resume.pdf';
 export const LINKEDIN = 'https://www.linkedin.com/in/automateon/';
 export const GITHUB = 'https://github.com/SyberLabs';            // the lab's organisation
