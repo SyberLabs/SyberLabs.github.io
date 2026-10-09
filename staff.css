@@ -251,9 +251,46 @@
 .saved-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 12px; color: var(--sy-mist); }
 .saved-item__actions { display: grid; gap: 8px; flex: none; }
 .saved-download { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-size: 13px; }
-.saved-guide { margin-top: 32px; padding: 28px; border-left: 2px solid #c5a6ff; background: #c5a6ff0a; border-radius: 0 16px 16px 0; }
-.saved-guide h2, .saved-empty h2 { color: var(--sy-vellum); font-size: 24px; margin-top: 12px; }
-.saved-guide p { max-width: 680px; line-height: 1.7; }
-.saved-empty { margin-block: 24px; }
-@media (max-width: 600px) { .saved-item { align-items: stretch; flex-direction: column; gap: 12px; padding: 20px; } .saved-item__actions { grid-template-columns: 1fr 1fr; align-items: center; } .saved-item__actions .sy-btn { padding-inline: 12px; } .saved-guide { padding: 20px; } }
+.saved-guide { margin-top: 24px; border: 1px solid var(--sy-rule); border-radius: 12px; background: #0e0c24; }
+.saved-guide summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 48px; padding: 10px 20px; color: var(--sy-vellum); font-size: 14px; font-weight: 500; cursor: pointer; list-style: none; }
+.saved-guide summary::-webkit-details-marker { display: none; }
+.saved-guide summary::after { content: "+"; color: var(--portal-lilac, #c5a6ff); font: 400 22px/1 var(--sy-sans); }
+.saved-guide[open] summary { border-bottom: 1px solid var(--sy-rule); }
+.saved-guide[open] summary::after { content: "−"; }
+.saved-guide summary:hover { color: var(--sy-ice); }
+.saved-guide summary:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; border-radius: 10px; }
+.saved-guide p, .saved-guide ol { max-width: 680px; color: var(--sy-mist); font-size: 14px; line-height: 1.7; }
+.saved-guide ol { margin: 16px 20px; padding-left: 22px; }
+.saved-guide li + li { margin-top: 8px; }
+.saved-guide li::marker { color: var(--sy-ice); }
+.saved-guide p { margin: 16px 20px 20px; }
+.saved-empty { position: relative; justify-items: stretch; gap: 14px; margin-block: 28px; padding: 32px; text-align: left; border: 1px solid var(--sy-rule); border-radius: 16px; background: linear-gradient(135deg, #17132e, #0d0b22); }
+.saved-empty::before { content: ""; position: absolute; top: -1px; left: 24px; right: 24px; height: 1px; background: linear-gradient(90deg, #90d8f000, #90d8f080, #c5a6ff80, #f1a4db50, #f1a4db00); }
+.saved-empty h2 { color: var(--sy-vellum); font: 500 24px/1.3 var(--sy-sans); letter-spacing: -.025em; margin: 0; }
+.saved-empty p { margin: 0; max-width: 62ch; color: var(--sy-mist); font-size: 15px; line-height: 1.7; }
+.saved-empty .staff-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; margin-top: 8px; }
+.saved-empty .staff-actions a { width: 100%; min-height: 48px; padding-inline: 12px; background: #9de8ff06; }
+.saved-empty > .sy-btn { justify-self: start; }
+@media (max-width: 600px) {
+  .saved-item { align-items: stretch; flex-direction: column; gap: 12px; padding: 20px; }
+  .saved-item__actions { grid-template-columns: 1fr 1fr; align-items: center; }
+  .saved-item__actions .sy-btn { padding-inline: 12px; }
+  .saved-empty { padding: 24px 20px; }
+  .saved-empty .staff-actions { grid-template-columns: 1fr; gap: 8px; }
+  .saved-guide summary { padding-inline: 16px; }
+  .saved-guide ol, .saved-guide p { margin-inline: 16px; }
+}
+@media (max-width: 380px) { .saved-item__actions { grid-template-columns: 1fr; } }
 
+/* Account controls lead; optional team guidance stays secondary. */
+.account-panel { padding: 24px; border: 1px solid var(--sy-rule); border-radius: 16px; background: #12102a; }
+.account-panel .staff-methods { margin-bottom: 16px; }
+.account-panel .sy-body { line-height: 1.7; }
+.account-signout { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--sy-rule); }
+.account-signout > p { flex: 1 1 300px; margin: 0; max-width: 54ch; }
+.account-signout .sy-btn { color: #e9bdd0; border-color: #e9bdd044; }
+.account-signout .sy-btn:hover { border-color: #e9bdd0; }
+.account-guidance { max-width: 960px; color: var(--sy-mist); font-size: 13px; line-height: 1.7; }
+.account-guidance p { margin: 0; }
+.account-guidance a { text-decoration: underline; }
+@media (max-width: 600px) { .account-panel { padding: 20px; } }
