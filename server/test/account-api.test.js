@@ -246,3 +246,15 @@ test('owned backup download is JSON attachment with fixed safe filename and lite
   assert.deepEqual(downloaded.save.payload, input.payload);
   assert.equal(downloaded.save.name, input.name);
 });
+
+test('Sketch origin receives only its own private backup namespace', async () => {
+  const env = makeEnv(), user = await signIn(env.DB);
+  const sketchOrigin = 'https://sketch.syberlabs.io';
+  const input = { ...snapshot(), app: 'sketch' };
+  const created = await save(env, user.cookie, input, { origin: sketchOrigin });
+  const saved = (await json(created, 201)).save;
+  assert.equal(created.headers.get('Access-Control-Allow-Origin'), sketchOrigin);
+  assert.equal((await json(await request(env, `${ROOT}/saves?app=sketch`, { cookie: user.cookie, origin: sketchOrigin }), 200)).saves.length, 1);
+  await json(await request(env, `${ROOT}/saves/${saved.id}`, { cookie: user.cookie, origin: OMNI }), 404);
+  await json(await request(env, `${ROOT}/saves?app=rise`, { cookie: user.cookie, origin: sketchOrigin }), 403);
+});
