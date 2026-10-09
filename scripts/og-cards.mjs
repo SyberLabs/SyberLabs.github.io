@@ -61,7 +61,7 @@ const pages = [
   { slug: 'rise-demo', path: '/rise-demo/', eyebrow: 'Product demo · Audiovisual reader', headline: 'See RISE in motion.',
     line: 'A film edited from real RISE screen recordings, then the interactive sample to try yourself.', seed: 'rise', accent: RISE },
   { slug: 'plus', path: '/plus/', eyebrow: 'RISE Plus · Status 8 October 2026', headline: 'Your own reading, read aloud.',
-    line: 'For $8.99 a month, an ElevenLabs voice reads the text you bring to RISE, and the reading follows its timing. Built against a mocked vendor; not released, not for sale.', seed: 'plus', accent: RISE },
+    line: 'For $8.99 a month, an ElevenLabs voice reads the text you bring to RISE, and the reading follows its timing. Implementation merged; paid launch pending verification.', seed: 'plus', accent: RISE },
   { slug: 'privacy', path: '/privacy/', eyebrow: 'SyberLabs · Privacy', headline: 'What this site does with your data.',
     line: 'A static site with no accounts, forms, cookies or analytics.', seed: 'privacy', accent: ICE },
 ];

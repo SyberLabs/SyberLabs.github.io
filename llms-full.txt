@@ -136,7 +136,7 @@ Secondary link: [Run it locally](https://github.com/SyberLabs/Flyspace#run)
 
 Also: [View source](https://github.com/SyberLabs/Flyspace)
 
-Live at [omni.syberlabs.io](https://omni.syberlabs.io/): Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled in the preview.
+Live at [omni.syberlabs.io](https://omni.syberlabs.io/): The preview opens as OmniOS. Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled.
 
 ### The morning: one question, cited sources, a crystal, a second persona
 

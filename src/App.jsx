@@ -98,7 +98,7 @@ function Hero() {
       <ul className="sy-wrap">
         <li style={{ '--sy-accent': '#f2d9a6' }}><a href={RISE_APP}><span className="home-launch__meta">RISE Reader · Open beta</span><span className="home-launch__title">Read a poem<Icon name="external" /></span><span className="home-launch__note">Begin with words, light and sound.</span></a></li>
         <li style={{ '--sy-accent': '#ff91df' }}><a href={SKETCH_APP}><span className="home-launch__meta">RISE Sketch · Live</span><span className="home-launch__title">Draw with living ink<Icon name="external" /></span><span className="home-launch__note">Make a mark. Watch it grow.</span></a></li>
-        <li style={{ '--sy-accent': '#90d8f0' }}><a href={OMNI_PREVIEW}><span className="home-launch__meta">FLYSPACE · Preview</span><span className="home-launch__title">Explore a workspace<Icon name="external" /></span><span className="home-launch__note">Try the canvas. AI needs the local app.</span></a></li>
+        <li style={{ '--sy-accent': '#90d8f0' }}><a href={OMNI_PREVIEW}><span className="home-launch__meta">FLYSPACE · Preview</span><span className="home-launch__title">Explore a workspace<Icon name="external" /></span><span className="home-launch__note">Opens as OmniOS. AI needs the local app.</span></a></li>
       </ul>
     </nav>
   </section>;
@@ -216,7 +216,7 @@ function Runtime() {
       </div>
     </div>
     <div className="home-premium sy-card" style={{ '--sy-accent': '#f2d9a6' }} data-reveal>
-      <p className="home-premium__text"><b className="home-premium__name">RISE Premium</b> offers ElevenLabs integration for <b className="home-premium__price">{RISE_PLUS.price}</b> a month.{!live && <Badge status={{ kind: 'early', label: 'Coming soon' }} />}</p>
+      <p className="home-premium__text"><b className="home-premium__name">RISE Premium</b> offers ElevenLabs integration for <b className="home-premium__price">{RISE_PLUS.price}</b> a month.{!live && <Badge status={{ kind: 'early', label: 'Paid launch pending' }} />}</p>
       <a className="sy-btn sy-btn--line home-premium__go" href="/plus/">Learn more<Icon name="arrow" /></a>
     </div>
   </section>;
@@ -251,7 +251,7 @@ const SHOW = {
       ['AI blocks', 'Wire data into AI personas that answer only from what their wires carry, and cite it.'],
       ['APIs on the fly', 'Hand it an OpenAPI document or MCP tools and they become blocks. Anything that writes waits for your approval.'],
     ],
-    note: 'The public preview runs the canvas and live data blocks. AI answers run in the local app with your own keys.',
+    note: 'The public preview opens as OmniOS, with a browser-local canvas and public data blocks. AI answers need the local app and your own keys.',
     primary: { label: 'Try the preview', href: OMNI_PREVIEW },
   },
   syberwork: {

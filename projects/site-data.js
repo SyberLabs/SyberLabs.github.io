@@ -19,7 +19,7 @@ export const RISE_SAMPLE = 'https://rise.syberlabs.io/jev-scene-demo';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
 export const SKETCH_APP = 'https://sketch.syberlabs.io/';
 
-// RISE Plus voice: the homepage section (src/App.jsx, PlusVoice), a RISE evidence row and the Atlas note, switched by
+// RISE Plus voice: the homepage runtime section (src/App.jsx), a RISE evidence row and the Atlas note, switched by
 // `state` alone. 'coming' keeps purchase links closed until a paid launch is verified. The implementation
 // in RISE #542 is merged; a merge does not establish live payment availability. 'live' sends the reader
 // to RISE's Settings. After verifying a paid launch and flipping, run `node scripts/site-chrome.mjs`
@@ -146,7 +146,7 @@ export const projects = [
     primary: { label: 'Open the preview', href: OMNI_PREVIEW },
     secondary: { label: 'Run it locally', href: 'https://github.com/SyberLabs/Flyspace#run' },
     ghost: { label: 'View source', href: 'https://github.com/SyberLabs/Flyspace', icon: 'external' },
-    live: { href: OMNI_PREVIEW, label: 'omni.syberlabs.io', note: 'Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled in the preview.' },
+    live: { href: OMNI_PREVIEW, label: 'omni.syberlabs.io', note: 'The preview opens as OmniOS. Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled.' },
     video: { src: '/omni-demo/omnios-morning-20261005.mp4', poster: '/omni-demo/omnios-morning-20261005-poster.jpg', title: 'The morning: one question, cited sources, a crystal, a second persona',
       caption: 'Recorded on 2026-10-05 from a local production build of OmniOS@e95ae73, driven through the “morning” journey its own acceptance test specifies. The data in the blocks and the two persona answers are that test’s fixed fixtures, not live markets or a live model; the canvas, wires, provenance chips and lineage are the real interface. Silent, 30 seconds.' },
     why: { title: 'Why a canvas.',
