@@ -12,20 +12,34 @@
 .staff-field.sy-field { position: static; inset: auto; width: auto; height: auto; display: grid; gap: 8px; }
 .staff-field .sy-field__hint { margin: 0; }
 .staff-field .sy-field__error { margin: 0; }
+/* The kit shows an error as a flex row; a message with a link and a second line needs normal flow. */
+.staff-field.is-invalid .sy-field__error { display: block; }
+/* The error summary (RFC-0002 3.4): .sy-alert is a flex row, so stack it. */
+.staff-errors.sy-alert { flex-direction: column; gap: var(--space-2); }
+.staff-errors p, .staff-errors ul { margin: 0; }
+.staff-errors ul { padding-left: 20px; }
 
-/* Admin bar and section nav */
-.staff-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.staff-bar__title { display: flex; align-items: center; gap: var(--space-3); margin: 0; }
-.staff-bar__account { display: flex; align-items: center; gap: var(--space-2); }
-.staff-btn--small.sy-btn { min-height: 44px; padding: 0 12px; font-size: 14px; }
+/* The staff header (RFC-0002 2.6): in normal flow, never the fixed .sy-header or its single 64 px row.
+   Every row is a flex row that wraps at every width, and the account line wraps too, so nothing is pushed
+   past body { overflow-x: clip } at 375 px or at any wider width. */
+.staff-header { position: relative; background: rgba(12, 10, 42, .74); border-bottom: 1px solid var(--sy-rule); }
+.staff-header__in { display: grid; gap: var(--space-2); max-width: var(--sy-max); margin: 0 auto; padding: var(--space-2) var(--sy-gutter) var(--space-3); }
+.staff-header__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-4); min-width: 0; }
+.staff-header__row > * { min-width: 0; max-width: 100%; }
+.staff-header .sy-lockup { white-space: normal; }
+.staff-header__home { display: inline-flex; align-items: center; min-height: 44px; }
+.staff-header__account { margin: 0; color: var(--sy-mist); font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+.staff-btn--small.sy-btn { min-height: 48px; padding: 0 14px; font-size: 14px; }
+.staff-nav { width: 100%; }
 .staff-nav ul { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
 .staff-nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid var(--sy-rule); border-radius: var(--sy-r-pill); color: var(--sy-mist); }
-.staff-nav a:hover, .staff-nav a[aria-current="page"] { color: var(--sy-vellum); border-color: var(--sy-ice); }
+.staff-nav a:hover { color: var(--sy-vellum); border-color: var(--sy-rule-2); text-decoration: none; }
+/* The kit's current-item style (.sy-nav ul a[aria-current]), copied: .sy-nav is hidden below 900 px. */
+.staff-nav a[aria-current="page"] { color: var(--sy-vellum); border-color: var(--sy-ice); }
 .staff .site-head .sy-display { font-size: clamp(36px, 5vw, 64px); overflow-wrap: anywhere; }
 
 .staff-alert > div > :first-child { margin-top: 0; }
 .staff-alert > div > :last-child { margin-bottom: 0; }
-.staff-alert ul { margin: var(--space-2) 0 0; padding-left: 20px; }
 .staff-lede { margin: 0; max-width: var(--measure); }
 .staff-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
 .staff-inline { display: inline; margin: 0; }
@@ -35,34 +49,47 @@
 /* Sign-in */
 .staff-signin__providers { display: grid; gap: var(--space-3); max-width: 440px; padding: 22px 18px; }
 .staff-signin__providers form { margin: 0; }
-.staff-provider.sy-btn, .staff-google { width: 100%; }
-.staff-provider__mark { width: 20px; height: 20px; color: var(--sy-vellum); }
+.staff-provider.sy-btn { width: 100%; }
+.staff-provider__mark { width: 20px; height: 20px; flex: none; color: currentColor; } /* the solid button's dark text */
 .staff-signin__note { max-width: 440px; }
-/* Google's dark-theme button: #131314 fill, 1 px #8E918F inside stroke, #E3E3E3 text, 14/20 medium,
-   12 px before the G, 10 px after it, 12 px after the text. */
-.staff-google { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 12px;
-  background: #131314; color: #e3e3e3; border: 1px solid #8e918f; border-radius: 4px; cursor: pointer;
-  font: 500 14px/20px "Google Sans", Roboto, Arial, var(--sy-sans); letter-spacing: .25px; }
-.staff-google:hover { background: #1f1f20; }
-.staff-google__g { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #fff; flex: none; }
+/* Google's own button image (RFC-0002 3.2): 48 px tall, aspect ratio kept, centred under GitHub's. The <button> is
+   reset so the focus ring hugs the image. */
+.staff-signin__google { display: flex; justify-content: center; }
+.staff-google { display: inline-flex; padding: 0; margin: 0; border: 0; background: none; border-radius: 999px; cursor: pointer; }
+.staff-google:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
+.staff-google__img { display: block; width: 216px; height: 48px; }
+.staff-add-google { display: grid; justify-items: start; gap: var(--space-2); padding: var(--space-4) 0; }
+.staff-add-google p { margin: 0; max-width: 60ch; }
 
-/* Admin home tiles */
-.staff-tiles { display: grid; grid-template-columns: 1fr; gap: var(--space-4); margin: 0; padding: 0; list-style: none; }
-.staff-tile { display: grid; gap: var(--space-2); padding: var(--space-5); color: var(--sy-vellum); }
-.staff-tile:hover { text-decoration: none; }
-.staff-tile__value { font: 400 28px/1.1 var(--sy-serif); }
+/* Empty states */
 .staff-empty { border: 1px dashed var(--sy-rule-2); border-radius: var(--sy-r-panel); }
+.staff .sy-empty p { max-width: 52ch; }
 
-/* Lists: sign-in methods, people's details */
-.staff-methods, .staff-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--sy-rule); }
-.staff-method, .staff-list > li { display: grid; gap: var(--space-1); padding: var(--space-3) 0; border-bottom: 1px solid var(--sy-rule); }
+/* Lists: sign-in methods (account), people, roles, audit. No tables on staff pages (RFC-0002 2.6): lists wrap. */
+.staff-methods { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--sy-rule); }
+.staff-method { display: grid; gap: var(--space-1); padding: var(--space-3) 0; border-bottom: 1px solid var(--sy-rule); }
+.staff-people, .staff-roles { display: grid; gap: var(--space-4); margin: 0; padding: 0; list-style: none; max-width: 720px; }
+.staff-person, .staff-role { display: grid; gap: var(--space-3); padding: var(--space-5) var(--space-4); border: 1px solid var(--sy-rule); border-radius: var(--sy-r-panel); min-width: 0; }
+.staff .staff-person__name, .staff .staff-role__name { margin: 0; overflow-wrap: anywhere; }
+.staff-dl { display: grid; gap: var(--space-2); margin: 0; }
+.staff-dl > div { display: grid; gap: 2px; min-width: 0; }
+.staff-dl dt { font: 500 12px/1.4 var(--sy-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--sy-mist); }
+.staff-dl dd { margin: 0; color: var(--sy-body); overflow-wrap: anywhere; }
+/* Each person action is its own full-width 48 px button (RFC-0002 2.6). */
+.staff-person__actions { display: grid; gap: var(--space-2); }
+.staff-person__actions form { margin: 0; }
+.staff-person__btn.sy-btn { width: 100%; min-height: 48px; justify-content: center; }
+.staff-person__grant { display: grid; gap: var(--space-2); }
+.staff-audit { display: grid; gap: var(--space-2); margin: 0; padding: 0 0 0 var(--space-5); max-width: var(--measure); color: var(--sy-body); }
+.staff-audit li { overflow-wrap: anywhere; }
+.staff-audit time { font-family: var(--sy-mono); font-size: 13px; color: var(--sy-mist); }
 .staff-method__provider { font: 500 12px/1.4 var(--sy-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--sy-mist); }
 
 /* What changed rows */
 .staff-changes { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--sy-rule); }
 .staff-change { display: grid; grid-template-columns: auto 1fr; gap: var(--space-2) var(--space-3); padding: var(--space-5) 0; border-bottom: 1px solid var(--sy-rule); }
 .staff-change__date { font: 400 13px/22px var(--sy-mono); color: var(--sy-mist); }
-.staff-change__state { justify-self: start; font: 500 11px/22px var(--sy-mono); letter-spacing: .1em; text-transform: uppercase; padding: 0 8px; border-radius: var(--sy-r-pill); border: 1px solid var(--sy-rule-2); color: var(--sy-mist); }
+.staff-change__state { justify-self: start; align-self: start; font: 500 11px/22px var(--sy-mono); letter-spacing: .1em; text-transform: uppercase; padding: 0 8px; border-radius: var(--sy-r-pill); border: 1px solid var(--sy-rule-2); color: var(--sy-mist); }
 .staff-change__state.is-deployed { color: var(--sy-live); border-color: color-mix(in srgb, var(--sy-live) 50%, transparent); }
 .staff-change__state.is-merged { color: var(--sy-ice); border-color: color-mix(in srgb, var(--sy-ice) 50%, transparent); }
 .staff-change__state.is-decided { color: var(--sy-research); border-color: color-mix(in srgb, var(--sy-research) 50%, transparent); }
@@ -78,24 +105,22 @@
 .staff-form { display: grid; gap: var(--space-4); max-width: 720px; }
 .staff-form__row { display: grid; gap: var(--space-4); }
 .staff-filter { display: flex; flex-wrap: wrap; align-items: end; gap: var(--space-3); }
-.staff-check { display: flex; align-items: center; gap: var(--space-2); min-height: 44px; }
-.staff-check input { width: 20px; height: 20px; accent-color: var(--sy-ice); }
-.staff input.sy-input[readonly] { font-family: var(--sy-mono); font-size: 14px; }
-
-/* Tables scroll inside themselves, never the page */
-.staff .table-wrap { overflow-x: auto; border: 1px solid var(--sy-rule); border-radius: var(--sy-r-panel); }
-.staff-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-.staff-table th, .staff-table td { padding: 10px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--sy-rule); }
-.staff-table th { font: 500 11px/1.4 var(--sy-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--sy-mist); white-space: nowrap; }
-.staff-table td { color: var(--sy-body); }
-.staff-table time { white-space: nowrap; }
-.staff-table__detail { max-width: 36ch; font-family: var(--sy-mono); font-size: 12px; overflow-wrap: anywhere; }
+.staff-keys { display: grid; gap: var(--space-4); }
+.staff-fieldset { display: grid; gap: var(--space-1); margin: 0; padding: var(--space-3) var(--space-4); border: 1px solid var(--sy-rule); border-radius: var(--sy-r-panel); min-width: 0; }
+.staff-fieldset legend { padding: 0 var(--space-2); }
+.staff-check { display: flex; align-items: flex-start; gap: var(--space-3); min-height: 48px; padding: 12px 0; }
+.staff-check input { flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--sy-ice); }
+.staff-check input:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
+.staff-check span { overflow-wrap: anywhere; }
+/* The kit styles neither <select> height nor its focus ring (RFC-0002 2.6). */
+.staff-select.sy-input { min-height: 48px; }
+.staff-select.sy-input:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
+.staff-link { display: inline-flex; align-items: center; min-height: 48px; text-decoration: underline; }
 
 .staff-confirm { display: grid; gap: var(--space-4); max-width: 640px; padding: 24px 20px; }
 .staff-confirm p { margin: 0; }
 
 @media (min-width: 720px) {
-  .staff-tiles { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
   .staff-form__row { grid-template-columns: 180px 1fr 200px; }
   .staff-change { grid-template-columns: 140px 1fr; column-gap: var(--space-6); }
   .staff-change__state { grid-column: 1; grid-row: 2; }

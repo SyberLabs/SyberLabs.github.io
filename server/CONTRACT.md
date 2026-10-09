@@ -8,9 +8,9 @@ dependencies: Web Crypto, `fetch`, `URL` and D1 `prepare/bind/first/all/run/batc
 ## Conventions
 
 - **Times** are unix milliseconds (`ctx.now`). **Ids** are `newId()` (32 hex). **Tokens** are `randomToken()`.
-- **env:** `ORIGIN` (`https://syberlabs.io`, no trailing slash), `GOOGLE_CLIENT_ID`, `GITHUB_CLIENT_ID`,
-  `GOOGLE_CLIENT_SECRET`, `GITHUB_CLIENT_SECRET`, `APP_SECRET` (32 bytes: base64url, or exactly 32 UTF-8 bytes),
-  `DB`. Any missing or malformed: 503. Google is optional (on only when both of its values are set).
+- **env:** `ORIGIN` (`https://syberlabs.io`, no trailing slash), `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`,
+  `APP_SECRET` (32 bytes as unpadded base64url), `DB`. Any missing or malformed: 503. Google (`GOOGLE_CLIENT_*`)
+  arrives in Packet 5.
 - **Handler:** `async (ctx) => Response`. Build responses only with `http.js` helpers (`html`, `redirect`);
   `app.js` re-applies `secure()` to whatever comes back. To fail, either return a response or
   `throw new HttpError(code, message?)`; app.js renders it as an HTML page. There is no `/api/*` (RFC-0002 R1-8).
@@ -26,15 +26,18 @@ dependencies: Web Crypto, `fetch`, `URL` and D1 `prepare/bind/first/all/run/batc
     signed in, or under `/auth/`. 405 `method_not_allowed`: a method other than GET/HEAD/POST, a known path
     with the wrong method, or HEAD under `/auth/start/*` and `/auth/callback/*`.
   - 308: non-canonical host -> `env.ORIGIN` + path + search; `GET /admin` -> `/admin/`.
-  - 503 `unconfigured`: missing env, or any uncaught non-HttpError throw (D1 down). HTML: `unavailableHtml()`.
-  - OAuth failures (handlers in oauth.js): 303 `/auth/signin?e=<code>`; uninvited identity: 403 `deniedHtml`.
+  - 503: missing env, or any uncaught non-HttpError throw (D1 down), rendered in place on the path that failed
+    (`unavailableHtml(pathname)`: "Staff pages are unavailable" under `/admin`, else the sign-in page with
+    "Sign-in is unavailable" and no buttons). Never a redirect and never a `?e=` code (RFC-0002 2.1, 3.4).
+  - OAuth failures (handlers in oauth.js): 303 `/auth/signin?next=<r>&e=<code>&p=<provider>` (`next` and `p` only
+    when the state cookie decrypted); an identity nobody added: 403 `deniedHtml`.
 
 ## ctx (built by app.js, passed to every handler)
 
 ```js
 { request, env, url /* URL */, now /* ms */,
   params /* {provider} from :segments, decoded */, form /* URLSearchParams; empty unless POST */,
-  user /* null or {id, identityId, sessionHash, displayName, provider, login, email, expiresAt} */,
+  user /* null or {id, identityId, sessionHash, displayName, provider, subject, login, email, createdAt, expiresAt} */,
   perms /* Set<string>, empty when signed out */ }
 ```
 
@@ -43,12 +46,11 @@ dependencies: Web Crypto, `fetch`, `URL` and D1 `prepare/bind/first/all/run/batc
 **permissions.js** (foundation): `CATALOGUE` `{key: {privileged, label}}` (must equal the migration rows),
 `PUBLIC`, `SIGNED_IN` (Symbols).
 
-**crypto.js** (foundation): `utf8(s)`, `hex(bytes)`, `b64urlEncode(bytes|string)`, `b64urlDecode(s)` (throws),
-`randomBytes(n)`, `newId()`, `randomToken(n=32)`, `sha256(x)` -> Uint8Array, `sha256Hex(x)`, `sha256B64url(x)`
+**crypto.js** (foundation): `hex(bytes)`, `b64urlEncode(bytes|string)`, `b64urlDecode(s)` (throws),
+`randomBytes(n)`, `newId()`, `randomToken()` (32 bytes), `sha256(x)` -> Uint8Array, `sha256Hex(x)`, `sha256B64url(x)`
 (PKCE S256), `timingSafeEqual(a, b)` (strings), `secretKeyBytes(APP_SECRET)` -> 32 bytes | null,
 `stateKey(APP_SECRET)` -> `Promise<CryptoKey>` (APP_SECRET imported directly as the AES-GCM key, no HKDF, RFC-0002
-R1-14; cached; rejects unless 32 bytes), `seal(key, bytes|string, aad)` / `open(key, sealed, aad)` -> Uint8Array|null,
-`sealJson` / `openJson` -> value|null (AES-GCM, random 96-bit IV, `b64url(iv||ct)`; open never throws).
+R1-14; cached; rejects unless 32 bytes), `sealJson(key, value, aad)` / `openJson(key, sealed, aad)` -> value|null (AES-GCM, random 96-bit IV, `b64url(iv||ct)`; open never throws).
 
 **http.js** (foundation): `esc(v)` (& < > " ', null -> ''), `CSP`, `SECURITY_HEADERS`, `secure(res)` (copy with
 every header set and `Access-Control-Allow-Origin` removed), `html(body, init?)`, `text(body, init?)`,
@@ -71,61 +73,61 @@ a `CATALOGUE` key, the handler is not a function, or PUBLIC sits outside `/auth/
 `match(table, method, pathname)` -> `{route, params}` | `{methods: [...]}` (path known, method not) | `null`.
 `:name` matches one non-empty segment. HEAD matches GET rows.
 
-**session.js**: `SESSION_COOKIE = '__Host-sl_session'`, `SESSION_TTL_MS = 12 h`,
+**session.js**: `SESSION_COOKIE = '__Host-sl_session'`, `SESSION_TTL_MS = 12 h`, `SESSION_COOKIE_MAX_AGE = 46800` (13 h, RFC-0002 R4-8),
 `loadSession(env, request, now)` -> `{user, perms, stale}` (the RFC 8.1 query, one read, no writes; `stale` =
 cookie sent but no live row), `mintSession(env, {userId, identityId, request, now})` -> `{token, cookie,
 stmt}` (stmt is the unexecuted `INSERT INTO sessions` with sha256Hex(token), ip_prefix, user_agent; the
 caller batches it), `sessionCookie(token)`, `clearSessionCookie()`, `deleteUserSessionsStmt(db, userId)`.
-Handlers: `signout` (delete own row, clear cookie, 303 `/`, or `/auth/signin?e=signed_out&next=<safe>` when the
-form has `next`), `revokeOwnSessions` (deletes the user's *other* sessions, RFC 3.5; 303
-`/admin/account?ended=<n>`). Never sends `Clear-Site-Data`.
+`TOKEN_RE` (43 base64url chars). Handlers: `signout` (PUBLIC; deletes the row its own cookie names, expires the cookie,
+303 `/auth/signin?e=signed_out` plus a sanitized `next` and `switch=1` when sent), `revokeOwnSessions` (every session of
+the user, this one included; 303 `/auth/signin?e=signed_out_all`). Never sends `Clear-Site-Data`.
 
-**oauth.js**: `OAUTH_COOKIE = '__Host-sl_oauth'`, `STATE_TTL_MS = 600000`, `PROVIDERS = ['github','google']`,
+**oauth.js**: `OAUTH_COOKIE = '__Host-sl_oauth'`, `STATE_TTL_MS = 600000` (GitHub only until Packet 5: any other `:provider` is 404),
 `sealState(env, provider, payload)` / `openState(env, provider, sealed, now)` -> payload|null (AAD
 `sl_oauth|<provider>`; payload `{v:1, p, s, cv, n?, r, t}`; null if undecryptable, `p` mismatch,
 `v !== 1`, or `now - t >= 600000`). Handlers: `startLogin` (form: `next`, `switch=1`;
 unknown provider 404; no D1 access; 303 to the provider + state cookie Max-Age=600) and `callback` (RFC 2.2:
 always clears the state cookie; every state check before any fetch; `error=access_denied` -> `e=cancelled`;
-outcomes a-c; 303 to the sealed `r`, or `/admin/?welcome=1` after an invite redemption).
+outcomes a and b; case a's batch also deletes the session the browser's previous cookie named and every expired
+session (RFC 2.2, 3.2); 303 to the sealed `r`).
 
 **github.js**: `authorizeUrl(env, {state, challenge, selectAccount})`, `fetchIdentity(env, {code, verifier})`
--> `{subject /* numeric id as text */, login, email /* primary && verified, or null */}`;
-throws `AuthError('provider')`; no token revoke (RFC 2.2, T28).
-`lookupLogin(login)` -> `{id, login}` | null (Packet 4 invite form).
+-> `{subject /* numeric id as text */, login}`; throws `AuthError('provider')`; no token revoke (RFC 2.2, T28).
+`LOGIN_RE`, `lookupLogin(login)` -> `{id, login}` | `'missing'` (404) | null (GitHub did not answer) (Add person).
 
-**google.js**: `authorizeUrl(env, {state, challenge, nonce, selectAccount})`,
-`fetchIdentity(env, {code, verifier, nonce, now})` -> `{subject, email, emailVerified}` (token failure:
-`AuthError('provider')`; any id_token check: `AuthError('expired')`), `verifyIdToken(env, jwt, {nonce, now})`
--> claims.
+**google.js**: Packet 5 is implemented. Google is enabled only when both GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET exist; claims are validated through the trusted TLS token endpoint and Google links require a recent existing staff session.
 
-**authz.js** (Packet 2 part): `can(ctx, key)`, `displayNames(db, ids)` -> `Map<id, name>`,
+**authz.js** (Packet 2 part): `can(ctx, key)`, `identityName({login, subject})` -> `@login` | `GitHub id N` |
+`a removed account`, `displayNames(db, ids)` -> `Map<id, identityName of the user's first identity>`,
 `auditStmt(db, {at, actor, action, targetType, targetId, detail, request})` -> unexecuted stmt,
 `findIdentity(db, provider, subject)` -> `{identityId, userId, displayName, disabledAt}` | null,
-`findOpenInvite(db, subject, now)` -> `{id, role_id, invited_by}` | null (GitHub, by pinned numeric id),
-`redeemInvite(env, {invite, subject, login, request, now})` -> `{userId, identityId}` | null
-(one guarded batch, RFC 8.1: the inviter must still be in `admins`). (`recordDenied` was removed in integration: RFC
-section 0 records nothing for refusals.)
-(Packet 4 part, below a `// --- Packet 4: guards` line): `GUARD_COPY` `{lockout, system, self, privileged, lastMethod}`
-(RFC 3.5 strings), `revokeRoleStmt`, `disableUserStmts`, `removeRolePermStmt`, `removeIdentityStmt` (lockout-safe
-statement builders over the `admins` view).
+(Packet 4 part, below a `// --- Packet 4: guards` line): `GUARD_COPY` `{lockout, system, self, privileged}`
+(RFC 3.5 strings), `revokeRoleStmt`, `disableUserStmts`, `removeRolePermStmt` (lockout-safe statement builders over
+the `admins` view).
 
 **views/** — each returns HTML strings; handlers return Responses.
-- `layout.js`: `page(ctx, {title, body, section, admin = true})` -> full document (privacy-page shell, `noindex`,
-  `<!--email_off-->`, header()/footer(); admin chrome with "Staff only" badge, account line, Sign out form, nav
-  filtered by `ctx.perms`); `alert(kind, html)`.
-- `signin.js`: handler `signinPage` (no D1 access); `ERROR_COPY` (RFC 3.4 codes). `admin-home.js`: `adminHome`.
-  `account.js`: `accountPage`.
+- `chrome.js`: `staffHeader(ctx, {section, user, signOut})` (RFC 2.6: skip link, `.sy-field-host`, then
+  `<header class="staff-header">` with wrapping rows: lockup + Sign out; `Staff` eyebrow + "Signed in as @login
+  (GitHub)"; `<nav class="staff-nav" aria-label="Staff">`, always shown), `NAV`, `navItems(ctx)`, `PROVIDER_LABEL`,
+  `providerLabel(p)`, `signedInAs(user)`, `GITHUB_MARK`. Never the public `header()`.
+- `layout.js`: `page(ctx, {title, body, section, admin = true, signOut})` -> full document (privacy-page shell without
+  its Google Fonts links, `noindex`, `<!--email_off-->`, `staffHeader()`, public `footer()`); `alert(kind, html)`.
+- `signin.js`: handler `signinPage` (no D1 access); `ERROR_COPY` (RFC 3.4 codes: cancelled, expired, provider,
+  disabled, expired_session, signed_out, signed_out_all; `p` names the provider), `contact(text)`.
+  `admin-home.js`: `adminHome` (303 to the first page the keys open, else `/admin/account`). `account.js`: `accountPage`
+  (the no-keys empty state lives here).
 - `forbidden.js`: `forbiddenHtml(ctx, key)`, `deniedHtml(ctx, {provider, name, next})`,
-  `notFoundHtml(ctx)`, `errorHtml(ctx, httpError)` (CSRF copy per RFC 3.4), `unavailableHtml()` (no ctx).
+  `notFoundHtml(ctx)`, `errorHtml(ctx, httpError)` (CSRF copy per RFC 3.4), `unavailableHtml(pathname)` (no ctx).
 - Packet 3 `changes.js`: `changesPage`, `saveChange`, `deleteChange`, `validHref(raw)` -> string|null.
-- Packet 4 `people.js`: `peoplePage`, `createInvite`, `revokeInvite`, `grantRole`, `revokeRole`,
-  `removeIdentity`, `disableUser`, `enableUser`, `revokeUserSessions`; `roles.js`: `rolesPage`, `saveRole`;
+- Packet 4 `people.js`: `peoplePage`, `addPerson`, `grantRole`, `revokeRole`, `disableUser`, `enableUser` (each
+  confirms first); `roles.js`: `rolesPage`, `saveRole`;
   `audit.js`: `auditPage`; `confirm.js`: `confirmHtml(ctx, {title, lines, action, fields, submitLabel})`
   (re-posts every field plus `confirm=1`). A handler that needs a confirm acts only when `ctx.form.get('confirm') === '1'`.
 
 ## Tests (`node --test 'server/test/**/*.test.js'`; RFC 8.5 case numbers)
 
-Shared, foundation-owned: `d1-shim.js` (`freshDb()`, `brokenDb()`, `D1Shim#totalChanges()/count(t)/sqlite`)
+Shared, foundation-owned: `d1-shim.js` (`MIGRATION_FILES` in apply order, `migrate(db, files)`, `freshDb({upTo})`
+applying 0001 then 0002 and on, `brokenDb()`, `D1Shim#totalChanges()/count(t)/sqlite`)
 and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `call(env, path, opts)`,
 `setCookies`, `stubFetch`). Others may add fixtures in their own files only.
 
@@ -135,9 +137,8 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
 | routes.test.js | app.js + routes.js | 1, 2, 10 (through handle), 17 |
 | session.test.js | session.js | 11, 16, 24 |
 | oauth.test.js | oauth.js | 4, 9 (callback ignores `next`) |
-| google.test.js + google-fixtures.js | google.js | 5 |
 | github.test.js | github.js | 6 |
-| invites.test.js | authz.js (Packet 2) | 7, 8 |
+| authz.test.js | authz.js (Packet 2) | 7, 8 |
 | views.test.js | views (Packet 2) | 22, escaping of names, nav filtered by perms |
 | changes.test.js | Packet 3 | 3, 12 (code + escaping) |
 | people.test.js, roles.test.js, guards.test.js | Packet 4 | 13, 14, 19, 20, 21, 23 |
@@ -174,8 +175,7 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
   - `forbidden.js` re-exports `notFoundHtml`, `errorHtml`, `unavailableHtml`, `CSRF_COPY` from `views/error.js`.
   - `confirm.js` exports `confirmed(ctx)`, `actingAs(user)` ("You, Seth via GitHub," escaped, trailing comma) and
     `confirmHtml(ctx, {title, lines, action, fields, submitLabel, cancel = '/admin/', section})` -> string.
-  - Sign-in page: `?p=<provider>` (set by oauth.js on `e=provider`) names the provider in that copy, which is generic
-    without it. Its forms send `switch=1` (no `prompt` field), and `login_hint` on a Google invite. Copy follows RFC 3.4;
+  - Sign-in page: one GitHub form, and the `e=` copy names GitHub (no `?p=` until Packet 5 adds a second provider). Its forms send `switch=1` (no `prompt` field), and `login_hint` on a Google invite. Copy follows RFC 3.4;
     the no-keys empty state says "Ask an admin" (no names in the repo).
   - `changes.js` hard-deletes (RFC 5.1; the audit row keeps the old row) and writes only the RFC 8.1 columns, so it works
     on either migration; `deleted_at`, `created_by`, `updated_*` stay unused. Rows use `staff-change__*` (RFC 2.6), not
@@ -242,3 +242,75 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
   - Confirm pages also cover deleting a What changed entry (RFC 2.4, 3.5, test 15) and turning on an account that holds
     `role_admin` (RFC `e4f92b8` 2.4, 8.2, test 19).
   - `ctx.waitUntil` is gone: nothing schedules work (no token revoke, RFC 2.2/T28). `AuthError` carries only `code`.
+- **review round 3 (RFC-0002 rev 4/5, R3-1 and R3-4), superseding the bullets above where they differ:**
+  - No invites (R3-4). `POST /admin/people/add` (`addPerson`, `id:users.manage`, confirm page first) takes one
+    `account` field: digits must be a GitHub id (`^[1-9][0-9]{0,19}$`, never looked up, "username not checked");
+    anything else must match `github.LOGIN_RE` and is looked up once (`lookupLogin` -> `{id, login}` | `'missing'` |
+    `null`). Confirming runs the RFC 8.1 batch (users, identities, user_roles, `user.add` audit); `UNIQUE (provider,
+    subject)` refuses an id that already has an account (422). Gone: the `invites` table, `findOpenInvite`,
+    `redeemInvite`, callback case b, invite revoke and list, `INVITE_TTL_MS`, `welcome=1`, turn-off step 3.
+  - Callback outcomes are a (known identity; also an added person's first sign-in, which refreshes `login` and
+    `users.display_name`) and b (unknown: 403, nothing written).
+  - GitHub only until Packet 5: `PROVIDERS = ['github']`; no `google.js`, nonce, Google button, Google copy or
+    `accounts.google.com` in `form-action`; no `POST /admin/people/identity/remove` (`removeIdentity`, `lastMethod`).
+  - app.js reads the session only under `/admin` (R3-1): `GET /auth/signin` never reads D1 and never redirects.
+    `compile()` refuses a non-PUBLIC route outside `/admin/`. `POST /auth/signout` is PUBLIC: it deletes the row its
+    own cookie names (if well-formed), always expires the cookie and keeps `next` and `switch=1`.
+  - `readCookie` returns null when the name appears more than once (RFC 2.2 cookie parsing).
+  - app.js no longer catches `AuthError`; only `github.fetchIdentity` throws it, inside `oauth.callback`.
+- **follow-up after go-live (2026-10-08, RFC-0002 rev 6), superseding the bullets above where they differ:**
+  - Migrations: `0001_accounts.sql` is applied to production D1 and is never edited. `0002_add_person.sql` drops the
+    empty `invites` table, rewords the `id:users.manage` label ("Add people, grant and revoke roles, turn accounts off
+    and on") and adds the RFC 8.1 triggers `roles_admin_fixed` and `role_perms_no_update`. Later changes are new files.
+  - Staff pages use `staffHeader()` (chrome.js), never the public header or its Atlas. No Google Fonts: the CSP has
+    no font source and `style-src` is `'self' 'unsafe-inline'`. `staff.css` is linked as `/staff.css?v=2`.
+  - No tables on staff pages: People and Roles are `<ul>`s of items with a `<dl>`; Audit is an `<ol>` of sentences
+    with names from identities (no hex ids, no IP prefixes, no filter). Every People action confirms first, and
+    `POST /admin/people/sessions/revoke` is gone (RFC 8.2 has no such route; turning off ends sessions).
+  - Names everywhere come from identities (`identityName`): `@login`, else `GitHub id N`. Confirm pages name the
+    target as "@login (GitHub id N)"; revoking admin or turning off an admin adds "Admins left after this: …".
+  - Error summary markup is `.sy-alert.sy-alert--danger.staff-errors` with a `<p>` and `<ul>` (RFC 3.4); `field()`
+    takes `errorHtml` for the Add person lookup message, which carries a link.
+  - `projects/latest.js`, the homepage `Latest()` section and its `.home-latest*` CSS are deleted;
+    `scripts/assemble-dist.sh` no longer removes `dist/projects/latest.js`, so the CI `test ! -e` guard can fail, and
+    CI greps `dist/` for the canary title. `scripts/changes-import.mjs <commit>` still reads the file from git history.
+
+## Deviations from RFC
+
+RFC-0002 rev 6 (MasterMind `docs/rfc/RFC-0002-staff-accounts.md`, read 2026-10-08) assumes #89 is reverted and
+rebuilt on a fresh database. #89 is live instead, with sign-in on, so live reality wins for data. Deliberately not
+implemented, with the reason:
+
+- **Packet 1c and the RFC's own 0001 (sections 6, 8.1, 8.4.0).** Nothing is reverted and no database is replaced:
+  production holds 2 users, 2 identities, 2 admin grants and 11 entries. The schema is #89's 0001 plus 0002, so these
+  stay: `users.display_name` and `primary_email` (written, never used to name anyone), `roles.is_system`,
+  `user_roles.granted_by`/`granted_at`, `sessions.ip_prefix`/`user_agent`, `audit_events.ip_prefix`, the `ON DELETE
+  CASCADE`s on role foreign keys (no route deletes a role), and the seeded `viewer` role (test 11 "admin is the only
+  seeded role" does not hold). Dropping live columns or a seeded role is a contract change, not an additive migration.
+- **Audit retention (8.1 `audit_no_delete`, test 12).** The live trigger `audit_retention_only` allows deleting rows
+  older than 400 days, and the privacy page promises "about 400 days". UPDATE always raises, and DELETE raises for any
+  row inside 400 days; replacing the trigger would change a published retention promise.
+- **File layout of tests (8.5 `server/test/<nn>-<name>.test.js`).** The existing files are kept; the table above maps
+  them to RFC cases. Renaming them would churn history without changing what is tested.
+- **`opts.back` and `opts.confirm` in `ROUTES` (8.2).** `ownerPage()` derives a POST's owning page from the table, and
+  each handler runs its own confirm step; the tests check both. `PROVIDERS` is `requireGithub()` in oauth.js until
+  Packet 5 makes it a list.
+- **`staff/staff.css` (2.6, 8.3).** The stylesheet stays at the repo root and is served as `/staff.css`, the live
+  path, which CI checks with `test -s dist/staff.css`. Moving it is a path change for no behaviour.
+- **CI shape (8.3: a separate function job, the deploy job building from its own checkout, G8).** Not changed here:
+  this task keeps the CI guards and their `if` form. Packet 1b's canary guard and the removal of #84's `rm -f` are done.
+- **Headers (8.2).** `X-Frame-Options`, `Permissions-Policy` and `Cross-Origin-Opener-Policy` stay: the RFC says they
+  add nothing, not that they harm. `form-action` names only GitHub until Packet 5 adds Google.
+- **Names in copy (3.3, 3.4: "Ask Seth or Mateo").** The copy says "Ask an admin": no names in the repo.
+- **`id:users.manage` label (2.4).** The permission now includes removing sign-in methods; the existing live schema already supports Packet 5 without new identity columns.
+- **Two RFC conflicts, settled for the copy table in 3.4.** Test 4 expects `e=refused` for `error=server_error`, but
+  3.4 has no such code and maps every non-`access_denied` error to `provider`; the code uses `e=provider&p=github`.
+  Test 20 expects "Enter the account's numeric id instead", but 3.4's message for a failed lookup is "Open
+  https://api.github.com/users/name and enter the "id" it shows instead." plus the `gh` line; the code uses 3.4.
+- **Add person accepts a leading `@` (2.5).** It is dropped before the two patterns are checked, because people paste
+  `@login`. Anything else that matches neither pattern is still refused without a fetch.
+- **"Person added." (3.5).** The confirm POST 303s to `/admin/people?ok=added`, which shows that one-line notice like
+  every other People action, as well as the "never signed in" row.
+- **`novalidate` on staff forms (3.4).** Fields carry `required` and `maxlength`, but the forms keep `novalidate`, so
+  the server's 422 messages (the RFC's own copy) show instead of the browser's.
+- **Packet 5.** Google sign-in, Add Google, Remove on People, `google_taken` and the Google button are implemented. They remain unavailable until both Google credentials are configured. Linking requires a staff session younger than ten minutes; it cannot create a new staff account. Concurrent links cannot add a second Google identity or report success after session revocation.

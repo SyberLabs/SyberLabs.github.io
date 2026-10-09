@@ -100,20 +100,18 @@ test('case 20: nobody can turn themselves off', async () => {
   await signIn(env.DB, { roles: ['role_admin'] });
   await refused(env, GUARD_COPY.self, () => call(env, '/admin/people/disable', { cookie: a.cookie, form: { user: a.userId, confirm: '1' } }));
   // The statement refuses it too, whatever the caller checked.
-  const [r, , , audit] = await env.DB.batch(disableUserStmts(env.DB, { userId: a.userId, actorId: a.userId, now: Date.now() }));
+  const [r, , audit] = await env.DB.batch(disableUserStmts(env.DB, { userId: a.userId, actorId: a.userId, now: Date.now() }));
   assert.equal(r.meta.changes, 0);
   assert.equal(audit.meta.changes, 0);
   assert.equal(env.DB.count('sessions'), 2);
 });
 
-test('case 20: a refused turn-off changes no row in any table (sessions, invites, audit)', async () => {
+test('case 20: a refused turn-off changes no row in any table (sessions, audit)', async () => {
   const env = makeEnv();
   const a = await signIn(env.DB, { roles: ['role_admin'] });
-  env.DB.sqlite.prepare(`INSERT INTO invites (id, role_id, subject, invited_by, created_at, expires_at)
-    VALUES ('inv2', 'role_viewer', '9090', ?, 1, ?)`).run(a.userId, Date.now() + 1e9);
   const before = env.DB.totalChanges();
   // a is the only admin; another actor id (not a) asks, so only the lockout clause can refuse.
   const results = await env.DB.batch(disableUserStmts(env.DB, { userId: a.userId, actorId: 'someone-else', now: Date.now() }));
-  assert.deepEqual(results.map(r => r.meta.changes), [0, 0, 0, 0]);
+  assert.deepEqual(results.map(r => r.meta.changes), [0, 0, 0]);
   assert.equal(env.DB.totalChanges(), before);
 });

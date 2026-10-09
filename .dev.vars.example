@@ -5,6 +5,6 @@ ORIGIN=http://localhost:8788
 APP_SECRET=
 GITHUB_CLIENT_ID=
 GITHUB_CLIENT_SECRET=
-# Optional: Google sign-in is on only when both are set.
+# Google (RFC-0002 Packet 5) stays off, with no button and 404 routes, unless both are set.
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=

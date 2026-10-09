@@ -1,19 +1,25 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { freshDb, brokenDb } from './d1-shim.js';
+import { freshDb, brokenDb, migrate, MIGRATION_FILES } from './d1-shim.js';
 import { seedUser } from './helpers.js';
 import { CATALOGUE } from '../permissions.js';
 
 const DAY = 86400 * 1000;
 const raw = db => db.sqlite;
 
-test('the schema applies with foreign keys on, and every table and view exists', async () => {
+// 0001 is applied to production D1 and is never edited; every change after it is a new numbered file.
+test('migrations apply in order: 0001_accounts, then 0002_add_person', () => {
+  assert.deepEqual(MIGRATION_FILES, ['0001_accounts.sql', '0002_add_person.sql']);
+});
+
+test('the schema applies (0001 then 0002) with foreign keys on, and every table and view exists', async () => {
   const db = freshDb();
   assert.equal(await db.prepare('PRAGMA foreign_keys').first('foreign_keys'), 1);
   const names = (await db.prepare("SELECT name FROM sqlite_master WHERE type IN ('table','view') AND name NOT LIKE 'sqlite_%' ORDER BY name").all())
     .results.map(r => r.name);
-  assert.deepEqual(names, ['admins', 'audit_events', 'change_entries', 'identities', 'invites', 'permissions',
+  // No invites table: RFC-0002 R3-4.
+  assert.deepEqual(names, ['admins', 'audit_events', 'change_entries', 'identities', 'permissions',
     'role_permissions', 'roles', 'sessions', 'user_roles', 'users']);
   await assert.rejects(db.prepare("INSERT INTO identities (id, user_id, provider, subject, created_at) VALUES ('i','nope','github','1',1)").run(),
     /FOREIGN KEY/);
@@ -36,7 +42,7 @@ test('migrations hold no people, emails, provider ids or content (the CI greps, 
   assert.match("VALUES ('gh', '132870419')", G6);
 });
 
-test('catalogue (case 18): CATALOGUE matches the permissions rows exactly', async () => {
+test('catalogue (case 18): after 0001 and 0002, CATALOGUE matches the permissions rows exactly', async () => {
   const rows = (await freshDb().prepare('SELECT key, description, privileged FROM permissions ORDER BY key').all()).results;
   assert.deepEqual(rows.map(r => r.key), Object.keys(CATALOGUE).sort());
   for (const r of rows) {
@@ -56,6 +62,50 @@ test('catalogue (case 18): admin holds every key; viewer holds only site:changes
   assert.equal(await db.prepare("SELECT is_system FROM roles WHERE id = 'role_viewer'").first('is_system'), 0);
 });
 
+// The live database when 0002 was written: 0001 applied, 2 users with 2 GitHub identities and 2 admin grants,
+// 11 change entries, the seeded catalogue and roles, an empty invites table. Fake ids, as everywhere here.
+test('0002 on a database shaped like production: drops the empty invites table, rewords one label, keeps every row', async () => {
+  const db = freshDb({ upTo: 1 });
+  const now = Date.now();
+  const founders = [seedUser(db, { roles: ['role_admin'], login: 'founder-a' }), seedUser(db, { roles: ['role_admin'], login: 'founder-b' })];
+  for (let i = 0; i < 11; i++) {
+    raw(db).prepare(`INSERT INTO change_entries (id, date, project, state, title, text, href, created_at)
+      VALUES (?, '2026-10-08', 'RISE', 'merged', ?, '', '/', ?)`).run(`c${i}`, `Entry ${i}`, now + i);
+  }
+  raw(db).prepare("INSERT INTO audit_events (at, actor_user_id, action) VALUES (?, ?, 'signin.ok')").run(now, founders[0].userId);
+  assert.equal(db.count('invites'), 0);
+  assert.equal(await db.prepare("SELECT description FROM permissions WHERE key = 'id:users.manage'").first('description'),
+    'Invite people, grant and revoke roles, disable accounts, end sessions');
+  const snapshot = () => Object.fromEntries(['users', 'identities', 'user_roles', 'roles', 'role_permissions', 'permissions',
+    'change_entries', 'audit_events', 'sessions'].map(t => [t, raw(db).prepare(`SELECT * FROM ${t} ORDER BY 1, 2`).all().map(r => ({ ...r }))]));
+  const before = snapshot();
+
+  migrate(db, ['0002_add_person.sql']);
+  const after = snapshot();
+  assert.equal(await db.prepare("SELECT count(*) AS n FROM sqlite_master WHERE name = 'invites'").first('n'), 0);
+  assert.equal(await db.prepare("SELECT description FROM permissions WHERE key = 'id:users.manage'").first('description'),
+    CATALOGUE['id:users.manage'].label);
+  // Only that one description changed.
+  before.permissions = before.permissions.map(p => (p.key === 'id:users.manage' ? { ...p, description: CATALOGUE[p.key].label } : p));
+  assert.deepEqual(after, before);
+  assert.equal(await db.prepare('SELECT count(*) AS n FROM admins').first('n'), 2);
+  // Re-running it is harmless (IF EXISTS, IF NOT EXISTS, an idempotent UPDATE).
+  migrate(db, ['0002_add_person.sql']);
+  assert.deepEqual(snapshot(), after);
+});
+
+test('0002 triggers: the admin role row is fixed, and grants change by delete and insert only', async () => {
+  const db = freshDb();
+  await assert.rejects(db.prepare("UPDATE roles SET name = 'root' WHERE id = 'role_admin'").run(), /system role/);
+  await assert.rejects(db.prepare("UPDATE roles SET description = 'x' WHERE id = 'role_admin'").run(), /system role/);
+  assert.equal((await db.prepare("UPDATE roles SET description = 'x' WHERE id = 'role_viewer'").run()).meta.changes, 1);
+  await assert.rejects(db.prepare("UPDATE role_permissions SET permission_key = 'id:audit.read' WHERE role_id = 'role_viewer'").run(),
+    /delete and insert/);
+  // The role editor's own UPDATE skips the system row, so it never fires the trigger.
+  assert.equal((await db.prepare("UPDATE roles SET name = ?, description = ? WHERE id = ? AND is_system = 0")
+    .bind('admin2', '', 'role_admin').run()).meta.changes, 0);
+});
+
 test('permission keys and role names are constrained', async () => {
   const db = freshDb();
   await assert.rejects(db.prepare("INSERT INTO permissions (key, description) VALUES ('Bad', 'x')").run(), /CHECK/);
@@ -64,21 +114,6 @@ test('permission keys and role names are constrained', async () => {
     await assert.rejects(db.prepare("INSERT INTO roles (id, name, created_at) VALUES (?, ?, 1)").bind('r-' + bad, bad).run(), /CHECK/, bad);
   }
   await db.prepare("INSERT INTO roles (id, name, created_at) VALUES ('r1', 'ops-2', 1)").run();
-});
-
-test('invites are GitHub-only: a numeric subject, a role and an inviter are required', async () => {
-  const db = freshDb();
-  const { userId } = seedUser(db);
-  const ins = (id, role, subject, by) => db.prepare(`INSERT INTO invites (id, role_id, subject, invited_by, created_at, expires_at)
-    VALUES (?, ?, ?, ?, 1, 2)`).bind(id, role, subject, by).run();
-  await ins('i1', 'role_viewer', '4242', userId);
-  for (const bad of ['gh-test-1', '0123', '12a', '', '-1']) await assert.rejects(ins(`b-${bad}`, 'role_viewer', bad, userId), /CHECK/, bad);
-  await assert.rejects(ins('i2', null, '4242', userId), /NOT NULL/);
-  await assert.rejects(ins('i3', 'role_viewer', null, userId), /NOT NULL/);
-  await assert.rejects(ins('i4', 'role_viewer', '4242', null), /NOT NULL/);
-  await assert.rejects(ins('i5', 'role_viewer', '4242', 'nobody'), /FOREIGN KEY/);
-  const cols = (await db.prepare('PRAGMA table_info(invites)').all()).results.map(c => c.name);
-  for (const gone of ['token_hash', 'provider', 'email_normalized', 'user_id', 'note']) assert.ok(!cols.includes(gone), gone);
 });
 
 test('privileged keys sit only on admin, and admin keeps every key (RFC-0002 2.4 triggers)', async () => {
@@ -230,4 +265,17 @@ test('d1 shim: D1 result shapes, binding rules, atomic batch, broken binding', a
   const broken = brokenDb();
   await assert.rejects(broken.prepare('SELECT 1').bind(1).first(), /D1_ERROR/);
   await assert.rejects(broken.batch([]), /D1_ERROR/);
+});
+
+test('0002 refuses populated invites and rolls back without losing any row', async () => {
+  const db = freshDb({ upTo: 1 });
+  const admin = seedUser(db, { roles: ['role_admin'] });
+  db.sqlite.prepare(`INSERT INTO invites (id, role_id, subject, invited_by, created_at, expires_at)
+    VALUES ('test-invite', 'role_viewer', '4242', ?, 1, 2)`).run(admin.userId);
+  const before = { ...db.sqlite.prepare('SELECT * FROM invites').get() };
+  assert.throws(() => migrate(db, ['0002_add_person.sql']), /invites must be empty/);
+  assert.deepEqual({ ...db.sqlite.prepare('SELECT * FROM invites').get() }, before);
+  assert.equal(await db.prepare("SELECT count(*) AS n FROM sqlite_master WHERE name = 'invites_must_be_empty'").first('n'), 0);
+  assert.equal(await db.prepare("SELECT description FROM permissions WHERE key = 'id:users.manage'").first('description'),
+    'Invite people, grant and revoke roles, disable accounts, end sessions');
 });

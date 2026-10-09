@@ -1,11 +1,11 @@
 // oauth.js: the sealed state cookie, state attacks, and the GitHub callback outcomes (RFC-0002 8.5
-// tests 3-7, 10, 15). Handlers are called directly with a ctx shaped like app.js builds; fetch is stubbed.
+// tests 3-5, 9, 14; 20 for an added person's first sign-in). Handlers are called directly with a ctx shaped like app.js builds; fetch is stubbed.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { makeEnv, seedUser, stubFetch, ORIGIN, HOUR } from './helpers.js';
+import { makeEnv, seedUser, seedSession, stubFetch, ORIGIN, HOUR } from './helpers.js';
 import { b64urlDecode, b64urlEncode, stateKey, openJson, randomToken, sha256Hex, newId } from '../crypto.js';
 import { HttpError } from '../http.js';
-import { OAUTH_COOKIE, STATE_TTL_MS, PROVIDERS, sealState, openState, startLogin, callback } from '../oauth.js';
+import { OAUTH_COOKIE, STATE_TTL_MS, sealState, openState, startLogin, callback } from '../oauth.js';
 
 const NOW = Date.UTC(2026, 9, 9, 14, 2);
 const GH_TOKEN = 'gho_test_token_do_not_leak';
@@ -59,17 +59,8 @@ async function cb(env, { cookie, state, query = '', now = NOW, user = {} } = {})
 }
 
 const loc = res => new URL(res.headers.get('Location'), ORIGIN);
-const tables = env => Object.fromEntries(['users', 'identities', 'sessions', 'invites', 'user_roles', 'audit_events']
+const tables = env => Object.fromEntries(['users', 'identities', 'sessions', 'user_roles', 'audit_events']
   .map(t => [t, env.DB.sqlite.prepare(`SELECT * FROM ${t}`).all()]));
-
-// A GitHub invite pinned to `subject`, from an enabled admin unless `invitedBy` says otherwise.
-function seedGithubInvite(env, { subject = '1001', roleId = 'role_viewer', invitedBy, now = NOW } = {}) {
-  const by = invitedBy || seedUser(env.DB, { subject: 'gh-test-inviter', login: 'inviter', roles: ['role_admin'] }).userId;
-  const id = newId();
-  env.DB.sqlite.prepare(`INSERT INTO invites (id, role_id, subject, login_hint, invited_by, created_at, expires_at)
-    VALUES (?, ?, ?, 'octo-test', ?, ?, ?)`).run(id, roleId, subject, by, now, now + 7 * 24 * HOUR);
-  return { id, invitedBy: by };
-}
 
 // --- the state cookie ------------------------------------------------------------------------------
 
@@ -87,7 +78,6 @@ test('sealState/openState: AAD binds the provider, v must be 1, and the cookie l
   assert.equal(await openState(env, 'github', null, NOW), null);
   assert.equal(await openState(env, 'github', 'garbage!', NOW), null);
   assert.equal(await openState({ ...env, APP_SECRET: 'another-app-secret-0123456789abcdefghijklmn' }, 'github', sealed, NOW), null);
-  assert.deepEqual(PROVIDERS, ['github', 'google']);
 });
 
 test('POST /auth/start/github: 303 to GitHub, sealed cookie for 600 s, no D1 access, no fetch', async () => {
@@ -158,14 +148,21 @@ test('state attacks all fail with e=expired before any provider call', async () 
     raw[raw.length - 1] ^= 1;
     return `${OAUTH_COOKIE}=${b64urlEncode(raw)}`;
   })();
-  const g = await start(env, {}, { provider: 'google' });
+  const gState = randomToken();
+  const g = await sealState(env, 'google', { v: 1, p: 'github', s: gState, cv: randomToken(), r: '/admin/', t: NOW });
   const cases = {
     'missing cookie': { state: s.state },
+    // Review round 3, finding 4: a tossed duplicate makes the cookie absent, whichever copy comes first.
+    'cookie sent twice': { cookie: `${s.cookie}; ${s.cookie}`, state: s.state },
+    'a planted cookie before the real one': { cookie: `${OAUTH_COOKIE}=${g}; ${s.cookie}`, state: s.state },
     'tampered ciphertext': { cookie: tampered, state: s.state },
-    'cookie sealed for google sent to the github callback': { cookie: g.cookie, state: g.state },
+    'cookie sealed for google sent to the github callback': { cookie: `${OAUTH_COOKIE}=${g}`, state: gState },
     'state mismatch': { cookie: s.cookie, state: randomToken() },
     'state missing': { cookie: s.cookie, query: 'code=gh-code' },
     'older than 600 s': { cookie: s.cookie, state: s.state, now: NOW + STATE_TTL_MS },
+    // RFC-0002 2.2, test 3: an error= callback is read only after the state cookie validates, and its value
+    // is never shown or carried.
+    'error=redirect_uri_mismatch with no valid cookie': { query: `error=redirect_uri_mismatch&state=${s.state}` },
   };
   const before = env.DB.totalChanges();
   for (const [name, opts] of Object.entries(cases)) {
@@ -201,7 +198,9 @@ test('a junk code makes one failing call, writes nothing, and keeps next', async
   assert.equal(env.DB.totalChanges(), before);
   const l = loc(res);
   assert.equal(l.pathname, '/auth/signin');
-  assert.deepEqual(Object.fromEntries(l.searchParams), { next: '/admin/people', p: 'github', e: 'provider' });
+  assert.deepEqual(Object.fromEntries(l.searchParams), { next: '/admin/people', e: 'provider', p: 'github' });
+  // RFC-0002 2.2: next, then e, then p, as one URLSearchParams string.
+  assert.equal(res.headers.get('Location'), '/auth/signin?next=%2Fadmin%2Fpeople&e=provider&p=github');
 });
 
 test('error=access_denied is e=cancelled with no provider call; any other error is e=provider', async () => {
@@ -209,10 +208,10 @@ test('error=access_denied is e=cancelled with no provider call; any other error 
   const s = await start(env, { next: '/admin/changes' });
   const c = await cb(env, { cookie: s.cookie, query: `error=access_denied&state=${s.state}` });
   assert.equal(c.calls.length, 0);
-  assert.deepEqual(Object.fromEntries(loc(c.res).searchParams), { next: '/admin/changes', e: 'cancelled' });
+  assert.deepEqual(Object.fromEntries(loc(c.res).searchParams), { next: '/admin/changes', e: 'cancelled', p: 'github' });
   const o = await cb(env, { cookie: s.cookie, query: `error=server_error&state=${s.state}` });
   assert.equal(loc(o.res).searchParams.get('e'), 'provider');
-  assert.equal(loc(o.res).searchParams.get('p'), 'github');
+  assert.equal(loc(o.res).searchParams.get('p'), 'github', 'the sign-in page names the provider from p (RFC-0002 3.4)');
   const none = await cb(env, { cookie: s.cookie, query: `state=${s.state}` });
   assert.equal(loc(none.res).searchParams.get('e'), 'provider');
 });
@@ -231,7 +230,7 @@ test('a: a known identity gets a new session, last_login_at and login refreshed,
   assert.equal(res.headers.get('Location'), '/admin/changes');
   const cookies = res.headers.getSetCookie();
   const session = cookies.find(c => c.startsWith('__Host-sl_session='));
-  assertHostCookie(session, '__Host-sl_session', 43200);
+  assertHostCookie(session, '__Host-sl_session', 46800);
   assertHostCookie(cookies.find(c => c.startsWith(`${OAUTH_COOKIE}=`)), OAUTH_COOKIE, 0);
   const token = session.split(';')[0].split('=')[1];
 
@@ -247,6 +246,24 @@ test('a: a known identity gets a new session, last_login_at and login refreshed,
   const everything = JSON.stringify(t) + JSON.stringify([...res.headers]) + await res.text();
   assert.ok(!everything.includes(GH_TOKEN), 'the provider token is in no response and no row');
   assert.ok(!JSON.stringify(t).includes(token), 'the session token is stored only as a hash');
+});
+
+// RFC-0002 2.2 case a, 3.2: a new sign-in replaces the session this browser's old cookie named, and sweeps
+// every expired session, in the same batch. Other live sessions are left alone.
+test('a: signing in again deletes the previous cookie\'s session and every expired one, nothing else', async () => {
+  const env = makeEnv();
+  const u = seedUser(env.DB, { subject: '1001', roles: ['role_viewer'] });
+  const old = await seedSession(env.DB, { ...u, now: NOW - HOUR });
+  const otherDevice = await seedSession(env.DB, { ...u, now: NOW - HOUR });
+  const someoneElse = seedUser(env.DB, { subject: '2002' });
+  await seedSession(env.DB, { ...someoneElse, now: NOW - 13 * HOUR }); // expired
+  const s = await start(env, { next: '/admin/changes' });
+  const { res } = await cb(env, { cookie: `${s.cookie}; __Host-sl_session=${old}`, state: s.state });
+  assert.equal(res.status, 303);
+  const hashes = env.DB.sqlite.prepare('SELECT id_hash FROM sessions').all().map(r => r.id_hash);
+  assert.equal(hashes.length, 2, 'the new one and the other device');
+  assert.ok(hashes.includes(await sha256Hex(otherDevice)));
+  assert.ok(!hashes.includes(await sha256Hex(old)));
 });
 
 test('the callback ignores any next in its own query', async () => {
@@ -268,62 +285,27 @@ test('a disabled user is sent to e=disabled with no session', async () => {
   assert.ok(!res.headers.getSetCookie().some(c => c.startsWith('__Host-sl_session=')));
 });
 
-test('b: a subject-pinned GitHub invite redeems with no link', async () => {
+// RFC-0002 2.5, test 20: Add person writes the identity up front, so the first sign-in is case a. Added by
+// id, the row has no login until then.
+test('a: a person an admin added by id signs in as themselves; login and display name fill in', async () => {
   const env = makeEnv();
-  const inv = seedGithubInvite(env);
+  const db = env.DB.sqlite;
+  db.prepare("INSERT INTO users (id, display_name, created_at) VALUES ('u-added', 'GitHub id 1001', 1)").run();
+  db.prepare(`INSERT INTO identities (id, user_id, provider, subject, login, created_at)
+    VALUES ('i-added', 'u-added', 'github', '1001', NULL, 1)`).run();
+  db.prepare("INSERT INTO user_roles (user_id, role_id, granted_at) VALUES ('u-added', 'role_viewer', 1)").run();
   const s = await start(env, { next: '/admin/changes' });
-  const { res } = await cb(env, { cookie: s.cookie, state: s.state });
+  const { res } = await cb(env, { cookie: s.cookie, state: s.state, user: { login: 'new-login' } });
   assert.equal(res.status, 303);
-  assert.equal(res.headers.get('Location'), '/admin/?welcome=1');
-  assert.ok(res.headers.getSetCookie().some(c => c.startsWith('__Host-sl_session=') && c.includes('Max-Age=43200')));
+  assert.equal(res.headers.get('Location'), '/admin/changes', 'the sealed path, no welcome=1');
   const t = tables(env);
-  const ident = t.identities.find(i => i.subject === '1001');
-  assert.equal(ident.login, 'octo-test');
-  assert.deepEqual(t.user_roles.filter(r => r.user_id === ident.user_id).map(r => r.role_id), ['role_viewer']);
-  assert.equal(t.sessions.length, 1);
-  assert.ok(t.invites[0].redeemed_at);
-  assert.equal(t.invites[0].redeemed_identity_id, ident.id);
-  assert.ok(t.audit_events.some(a => a.action === 'signin.ok'));
-  assert.ok(t.audit_events.some(a => a.action === 'invite.redeem' && a.target_id === inv.id));
-  assert.ok(!JSON.stringify(t).includes(GH_TOKEN));
+  assert.equal(t.users.length, 1);
+  assert.equal(t.users[0].display_name, 'new-login');
+  assert.deepEqual([t.identities[0].login, t.identities[0].last_login_at], ['new-login', NOW]);
+  assert.equal(t.sessions[0].identity_id, 'i-added');
 });
 
-test('a GitHub invite pinned to another id does not let this account in', async () => {
-  const env = makeEnv();
-  seedGithubInvite(env, { subject: '2002' });
-  const s = await start(env);
-  const before = tables(env);
-  const { res } = await cb(env, { cookie: s.cookie, state: s.state });
-  assert.equal(res.status, 403);
-  assert.deepEqual(tables(env), before);
-});
-
-test('one invite redeems once: the next callback signs in the same user', async () => {
-  const env = makeEnv();
-  seedGithubInvite(env);
-  const a = await start(env);
-  assert.equal((await cb(env, { cookie: a.cookie, state: a.state })).res.headers.get('Location'), '/admin/?welcome=1');
-  const b = await start(env);
-  assert.equal((await cb(env, { cookie: b.cookie, state: b.state })).res.headers.get('Location'), '/admin/');
-  assert.equal(env.DB.count('users'), 2); // the inviter and the invitee
-  assert.equal(env.DB.count('identities'), 2);
-});
-
-// RFC-0002 2.2 case b: a guarded UPDATE that changes 0 rows is case c, the denied page.
-test('an invite whose inviter is no longer an admin is the denied page, and stays open', async () => {
-  const env = makeEnv();
-  const inviter = seedUser(env.DB, { subject: 'gh-test-inviter', roles: ['role_viewer'] });
-  const inv = seedGithubInvite(env, { invitedBy: inviter.userId });
-  const s = await start(env, { next: '/admin/changes' });
-  const { res } = await cb(env, { cookie: s.cookie, state: s.state });
-  assert.equal(res.status, 403);
-  const row = env.DB.sqlite.prepare('SELECT redeemed_at, revoked_at FROM invites WHERE id = ?').get(inv.id);
-  assert.deepEqual({ ...row }, { redeemed_at: null, revoked_at: null });
-  assert.equal(env.DB.count('identities'), 1);
-  assert.equal(env.DB.count('sessions'), 0);
-});
-
-test('c: an uninvited identity gets the 403 page and leaves every table unchanged, audit included', async () => {
+test('b: an identity nobody added gets the 403 page and leaves every table unchanged, audit included', async () => {
   const env = makeEnv();
   seedUser(env.DB, { subject: 'gh-test-someone-else', roles: ['role_admin'] });
   const s = await start(env, { next: '/admin/changes' });
@@ -334,7 +316,8 @@ test('c: an uninvited identity gets the 403 page and leaves every table unchange
   assert.equal(res.status, 403);
   assert.match(res.headers.get('Content-Type'), /^text\/html/);
   const body = await res.text();
-  assert.ok(body.includes('stranger-login'));
+  assert.ok(body.includes('@stranger-login'));
+  assert.match(body, /Only people SyberLabs has added can sign in/);
   assert.ok(!body.includes(GH_TOKEN));
   assert.match(body, /name="next" value="\/admin\/changes"/, 'Try another account carries the sealed next');
   const cookies = res.headers.getSetCookie();

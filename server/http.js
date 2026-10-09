@@ -6,18 +6,21 @@ const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;
 export const esc = value => (value == null ? '' : String(value)).replace(/[&<>"']/g, c => ESC[c]);
 
 // No script-src or connect-src: default-src 'none' blocks every script on staff pages (RFC-0002 8.2).
-export const CSP = [
+// Browsers apply form-action to the 303 after POST /auth/start, so each enabled provider is named; Google only
+// while it is on (oauth.js enabledProviders), so with it off no response mentions it.
+export const cspFor = ({ google = false } = {}) => [
   "default-src 'none'",
-  // 'unsafe-inline' is for styles only: the shared chrome writes style="--sy-accent:…".
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  'font-src https://fonts.gstatic.com',
+  // 'unsafe-inline' is for styles only: the shared footer writes style="--sy-accent:…". No remote style and
+  // no font source: staff pages render in the kit's fallback stacks (RFC-0002 2.6).
+  "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
-  // Browsers apply form-action to the 303 after POST /auth/start, so the providers are named.
-  "form-action 'self' https://accounts.google.com https://github.com",
+  `form-action 'self' https://github.com${google ? ' https://accounts.google.com' : ''}`,
   "frame-ancestors 'none'",
   "base-uri 'none'",
   "object-src 'none'",
 ].join('; ');
+export const CSP = cspFor();
+export const CSP_WITH_GOOGLE = cspFor({ google: true });
 
 export const SECURITY_HEADERS = {
   'Cache-Control': 'no-store',
@@ -26,7 +29,7 @@ export const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
   // same-origin, not no-referrer: under no-referrer browsers send `Origin: null` on our own form POSTs (Fetch
   // spec, "append a request Origin header"), which the CSRF check refuses. Cross-site requests still carry no
-  // Referer, so invite tokens in /auth/signin?invite= never leave the site.
+  // Referer.
   'Referrer-Policy': 'same-origin',
   'X-Robots-Tag': 'noindex, nofollow',
   'Strict-Transport-Security': 'max-age=31536000',
@@ -35,10 +38,11 @@ export const SECURITY_HEADERS = {
 };
 
 // Returns a copy of res with every security header set and no CORS header. Idempotent; app.js runs it
-// on every response it returns, including errors.
-export function secure(res) {
+// on every response it returns, including errors, with the CSP for the providers that are on.
+export function secure(res, csp = CSP) {
   const out = new Response(res.body, res);
   for (const [k, v] of Object.entries(SECURITY_HEADERS)) out.headers.set(k, v);
+  out.headers.set('Content-Security-Policy', csp);
   out.headers.delete('Access-Control-Allow-Origin');
   return out;
 }
@@ -80,7 +84,7 @@ export class HttpError extends Error {
 }
 
 // Thrown inside the OAuth flow; oauth.js answers with 303 /auth/signin?e=<code>.
-// Codes: cancelled, expired, provider, disabled.
+// github.js throws it with code 'provider'; oauth.callback catches it.
 export class AuthError extends Error {
   constructor(code) {
     super(code);
@@ -93,14 +97,21 @@ export const cookie = (name, value, maxAge) =>
   `${name}=${value}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`;
 export const clearCookie = name => cookie(name, '', 0);
 
+// Exact, case-sensitive name. A name sent twice counts as absent: a same-site host can toss a second
+// cookie with a longer Path, which the browser sends first (RFC-0002 2.2, cookie parsing).
 export function readCookie(request, name) {
   const header = request.headers.get('Cookie');
   if (!header) return null;
+  let value = null;
+  let seen = 0;
   for (const part of header.split(';')) {
     const i = part.indexOf('=');
-    if (i > 0 && part.slice(0, i).trim() === name) return part.slice(i + 1).trim() || null;
+    if (i > 0 && part.slice(0, i).trim() === name) {
+      seen += 1;
+      value = part.slice(i + 1).trim() || null;
+    }
   }
-  return null;
+  return seen === 1 ? value : null;
 }
 
 // CSRF for every unsafe method: Origin must equal env.ORIGIN exactly (missing or "null" fails), and

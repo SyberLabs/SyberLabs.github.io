@@ -12,9 +12,7 @@ export const HOUR = 3600 * 1000;
 export function makeEnv(overrides = {}) {
   return {
     ORIGIN,
-    GOOGLE_CLIENT_ID: 'google-client-test.apps.googleusercontent.com',
     GITHUB_CLIENT_ID: 'github-client-test',
-    GOOGLE_CLIENT_SECRET: 'google-secret-test',
     GITHUB_CLIENT_SECRET: 'github-secret-test',
     APP_SECRET: 'test-app-secret-0123456789abcdefghijklmnopq', // 43 base64url chars: 32 key bytes
     DB: freshDb(),

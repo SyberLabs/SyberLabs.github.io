@@ -25,6 +25,8 @@ test('case 1: every route has a valid access slot and PUBLIC sits only under /au
   assert.throws(() => compile([['GET  /admin/x', SIGNED_IN]]), /handler/);
   assert.throws(() => compile([['PUT  /admin/x', SIGNED_IN, noop]]), /method/);
   assert.doesNotThrow(() => compile([['GET  /auth/x', PUBLIC, noop]]));
+  // app.js reads the session only under /admin, so a gated /auth/ route could never be reached.
+  assert.throws(() => compile([['POST /auth/x', SIGNED_IN, noop]]), /outside \/admin\//);
 });
 
 test('match: params, HEAD as GET, known path with another method, unknown', () => {
@@ -32,7 +34,9 @@ test('match: params, HEAD as GET, known path with another method, unknown', () =
   assert.equal(cb.route.pattern, '/auth/callback/:provider');
   assert.deepEqual(cb.params, { provider: 'github' });
   assert.equal(match(TABLE, 'HEAD', '/admin/people').route.pattern, '/admin/people');
-  assert.deepEqual(match(TABLE, 'GET', '/admin/people/invite'), { methods: ['POST'] });
+  assert.deepEqual(match(TABLE, 'GET', '/admin/people/add'), { methods: ['POST'] });
+  assert.equal(match(TABLE, 'POST', '/admin/people/invite'), null, 'RFC-0002 R3-4: no invites');
+  assert.equal(match(TABLE, 'POST', '/admin/people/identity/remove'), null, 'RFC-0002 Packet 5');
   assert.deepEqual(match(TABLE, 'POST', '/admin/changes').route.method, 'POST');
   assert.equal(match(TABLE, 'GET', '/admin/nope'), null);
   assert.equal(match(TABLE, 'GET', '/auth/callback/'), null);
@@ -72,8 +76,8 @@ test('case 1: GET /admin is a 308 to /admin/, keeping the query', async () => {
   let res = await call(env, '/admin');
   assert.equal(res.status, 308);
   assert.equal(res.headers.get('Location'), '/admin/');
-  res = await call(env, '/admin?welcome=1');
-  assert.equal(res.headers.get('Location'), '/admin/?welcome=1');
+  res = await call(env, '/admin?x=1');
+  assert.equal(res.headers.get('Location'), '/admin/?x=1');
 });
 
 test('case 1: HEAD gets GET\'s status and headers with no body, except 405 under start and callback', async () => {
@@ -101,7 +105,7 @@ test('case 1: other methods, and known paths with the wrong method, are 405', as
     const res = await call(env, '/admin/changes', { method, cookie });
     assert.equal(res.status, 405, method);
   }
-  let res = await call(env, '/admin/people/invite', { cookie });
+  let res = await call(env, '/admin/people/add', { cookie });
   assert.equal(res.status, 405);
   assert.equal(res.headers.get('Allow'), 'POST');
   res = await call(env, '/auth/start/github');
@@ -154,7 +158,7 @@ test('case 10: POSTs without our exact Origin, or with Sec-Fetch-Site other than
     for (const path of ['/admin/account/signout-everywhere', '/auth/start/github', '/admin/people/disable']) {
       const res = await call(env, path, { cookie, form: { user: userId }, ...t });
       assert.equal(res.status, 403, `${path} ${JSON.stringify(t)}`);
-      assert.match(await res.text(), /another site or an old tab/);
+      assert.ok((await res.text()).includes("This form was refused because the request didn&#39;t say it came from syberlabs.io."));
     }
   }
   assert.equal(env.DB.totalChanges(), before);
@@ -168,7 +172,11 @@ test('signed in without the route key: 403 page naming the permission', async ()
   const { cookie } = await signIn(env.DB, { roles: ['role_viewer'] });
   let res = await call(env, '/admin/people', { cookie });
   assert.equal(res.status, 403);
-  assert.match(await res.text(), /See staff accounts/);
+  const body = await res.text();
+  // RFC-0002 3.4: "people who can " + the key's label, first letter lowercased, so copy and catalogue agree.
+  assert.match(body, /This page is for people who can see staff accounts, their roles and sign-ins\. Ask an admin for access: <a href="mailto:[^"]+">Email SyberLabs<\/a>\./);
+  assert.match(body, /<title>No access · SyberLabs staff<\/title>/);
   res = await call(env, '/admin/', { cookie });
-  assert.equal(res.status, 200);
+  assert.equal(res.status, 303);
+  assert.equal(res.headers.get('Location'), '/admin/changes');
 });

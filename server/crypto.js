@@ -4,10 +4,7 @@
 const enc = new TextEncoder();
 const dec = new TextDecoder();
 
-export const utf8 = s => enc.encode(s);
-
-const bytesOf = input => (typeof input === 'string' ? enc.encode(input)
-  : input instanceof Uint8Array ? input : new Uint8Array(input));
+const bytesOf = input => (typeof input === 'string' ? enc.encode(input) : input);
 
 export function hex(bytes) {
   let out = '';
@@ -39,8 +36,8 @@ export function randomBytes(n) {
 // Row ids: 32 lowercase hex chars (128 bits), as the migration header says.
 export const newId = () => hex(randomBytes(16));
 
-// Session tokens, invite tokens, OAuth state, PKCE verifiers and nonces: 32 bytes, base64url (43 chars).
-export const randomToken = (n = 32) => b64urlEncode(randomBytes(n));
+// Session tokens, OAuth state and PKCE verifiers: 32 bytes, base64url (43 chars).
+export const randomToken = () => b64urlEncode(randomBytes(32));
 
 export async function sha256(input) {
   return new Uint8Array(await crypto.subtle.digest('SHA-256', bytesOf(input)));
@@ -60,16 +57,15 @@ export function timingSafeEqual(a, b) {
   return diff === 0;
 }
 
-// The 32 key bytes: APP_SECRET as base64url (`openssl rand -base64 32`, RFC-0002 8.4), or exactly 32
-// UTF-8 bytes. null for anything else, which app.js treats as unconfigured.
+// The 32 key bytes: APP_SECRET as unpadded base64url (RFC-0002 2.1, 8.4). null for anything else, which
+// app.js treats as unconfigured.
 export function secretKeyBytes(appSecret) {
-  if (typeof appSecret !== 'string') return null;
   try {
     const raw = b64urlDecode(appSecret);
-    if (raw.length === 32) return raw;
-  } catch { /* not base64url */ }
-  const bytes = enc.encode(appSecret);
-  return bytes.length === 32 ? bytes : null;
+    return raw.length === 32 ? raw : null;
+  } catch {
+    return null;
+  }
 }
 
 // RFC-0002 R1-14: APP_SECRET is imported directly as the AES-GCM key, with no HKDF.
@@ -79,34 +75,26 @@ export function stateKey(appSecret) {
     : Promise.reject(new Error('APP_SECRET must be 32 bytes'));
 }
 
-// AES-GCM with a random 96-bit IV. Output: base64url(iv || ciphertext+tag). AAD binds the purpose.
-export async function seal(key, plaintext, aad) {
+// AES-GCM over JSON with a random 96-bit IV. Output: base64url(iv || ciphertext+tag). AAD binds the purpose.
+export async function sealJson(key, value, aad) {
   const iv = randomBytes(12);
   const ct = new Uint8Array(await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv, additionalData: enc.encode(aad) }, key, bytesOf(plaintext)));
+    { name: 'AES-GCM', iv, additionalData: enc.encode(aad) }, key, enc.encode(JSON.stringify(value))));
   const out = new Uint8Array(12 + ct.length);
   out.set(iv);
   out.set(ct, 12);
   return b64urlEncode(out);
 }
 
-// Returns the plaintext bytes, or null for anything malformed, tampered or sealed with other AAD.
-export async function open(key, sealed, aad) {
+// The value, or null for anything malformed, tampered, sealed with other AAD or not JSON. Never throws.
+export async function openJson(key, sealed, aad) {
   try {
     const raw = b64urlDecode(sealed);
     if (raw.length < 12 + 16) return null;
     const pt = await crypto.subtle.decrypt(
       { name: 'AES-GCM', iv: raw.slice(0, 12), additionalData: enc.encode(aad) }, key, raw.slice(12));
-    return new Uint8Array(pt);
+    return JSON.parse(dec.decode(pt));
   } catch {
     return null;
   }
-}
-
-export const sealJson = (key, value, aad) => seal(key, JSON.stringify(value), aad);
-
-export async function openJson(key, sealed, aad) {
-  const pt = await open(key, sealed, aad);
-  if (!pt) return null;
-  try { return JSON.parse(dec.decode(pt)); } catch { return null; }
 }

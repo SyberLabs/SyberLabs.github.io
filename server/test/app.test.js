@@ -9,7 +9,7 @@ import { ORIGIN, SESSION_COOKIE, HOUR, call, makeEnv, seedSession, seedUser, set
 const PATHS = ['/admin/', '/admin', '/admin/changes', '/admin/people', '/admin/roles', '/admin/audit', '/admin/account',
   '/admin/nope', '/auth/signin', '/auth/signin?e=expired',
   '/auth/callback/github?code=c&state=s', '/auth/nope'];
-const POSTS = ['/auth/start/github', '/auth/signout', '/admin/changes', '/admin/people/invite', '/admin/roles',
+const POSTS = ['/auth/start/github', '/auth/signout', '/admin/changes', '/admin/people/add', '/admin/roles',
   '/admin/account/signout-everywhere'];
 
 function assertHeaders(res, label) {
@@ -86,7 +86,6 @@ test('case 17: missing config is 503 on every routed path, and so is a D1 throw'
 test('case 17: canary secrets never appear in any body or header', async () => {
   const env = makeEnv({
     GITHUB_CLIENT_SECRET: 'sekret-canary-1',
-    GOOGLE_CLIENT_SECRET: 'sekret-canary-2',
     APP_SECRET: 'sekret-canary-3-0123456789abcdefghijklmnopq',
   });
   const fetchStub = stubFetch(() => new Response('nope', { status: 500 }));
@@ -113,9 +112,44 @@ test('case 11: a signed-in GET writes zero rows and reads with permissions fresh
   const before = env.DB.totalChanges();
   for (const p of ['/admin/', '/admin/changes', '/admin/people', '/admin/roles', '/admin/audit', '/admin/account']) {
     const res = await call(env, p, { cookie });
-    assert.equal(res.status, 200, p);
+    assert.equal(res.status, p === '/admin/' ? 303 : 200, p);
   }
   assert.equal(env.DB.totalChanges(), before);
+});
+
+// RFC-0002 2.6: /admin/ has no body. It sends you to the first page your keys open, in nav order, else
+// to /admin/account, so the Staff eyebrow and "Back to staff home" never land on an empty page.
+test('/admin/ is a 303 to the first page in nav order the keys open, else /admin/account', async () => {
+  const env = makeEnv();
+  const cases = [
+    [['role_admin'], undefined, '/admin/changes'],
+    [[], ['id:users.read', 'id:audit.read'], '/admin/people'],
+    [[], ['id:audit.read'], '/admin/audit'],
+    [[], [], '/admin/account'],
+  ];
+  for (const [roles, perms, where] of cases) {
+    const { cookie } = await signIn(env.DB, { roles, perms });
+    const res = await call(env, '/admin/', { cookie });
+    assert.equal(res.status, 303, where);
+    assert.equal(res.headers.get('Location'), where);
+    assert.equal(await res.text(), '');
+  }
+});
+
+// RFC-0002 2.3, test 3: a session cookie that is not 43 base64url characters counts as absent and costs no
+// D1 query; it is still expired, like any cookie that does not resolve.
+test('a malformed session cookie on /admin/ makes zero D1 queries and is expired', async () => {
+  const env = makeEnv();
+  let queries = 0;
+  const real = env.DB;
+  env.DB = { prepare: (...a) => { queries++; return real.prepare(...a); }, batch: (...a) => { queries++; return real.batch(...a); } };
+  for (const bad of ['short', 'A'.repeat(44), `${'A'.repeat(42)}!`]) {
+    const res = await call(env, '/admin/', { cookie: `${SESSION_COOKIE}=${bad}` });
+    assert.equal(res.status, 303, bad);
+    assert.equal(res.headers.get('Location'), '/auth/signin?next=%2Fadmin%2F&e=expired_session', bad);
+    assert.match(setCookies(res).find(c => c.startsWith(`${SESSION_COOKIE}=`)), /Max-Age=0/, bad);
+  }
+  assert.equal(queries, 0);
 });
 
 test('case 11: an expired session redirects with e=expired_session and clears the cookie; nothing is written', async () => {
@@ -134,6 +168,20 @@ test('case 11: an expired session redirects with e=expired_session and clears th
   res = await call(env, '/admin/', { cookie: off.cookie });
   assert.equal(res.status, 303);
   assert.match(res.headers.get('Location'), /e=expired_session/);
+  assert.equal(env.DB.totalChanges(), before);
+});
+
+// Review round 4, finding 1 (RFC-0002 R4-8, 2.3, test 9): the cookie outlives its session by an hour, so a
+// browser back 30 min after the 12 h expiry still presents it and is told why it has to sign in again.
+test('a session that ended 30 min ago, inside the 13 h cookie, gets e=expired_session', async () => {
+  const env = makeEnv();
+  const user = seedUser(env.DB, { roles: ['role_admin'] });
+  const token = await seedSession(env.DB, { ...user, now: Date.now() - 12.5 * HOUR });
+  const before = env.DB.totalChanges();
+  const res = await call(env, '/admin/changes', { cookie: `${SESSION_COOKIE}=${token}` });
+  assert.equal(res.status, 303);
+  assert.equal(res.headers.get('Location'), '/auth/signin?next=%2Fadmin%2Fchanges&e=expired_session');
+  assert.match(setCookies(res).find(c => c.startsWith(`${SESSION_COOKIE}=`)), /Max-Age=0/);
   assert.equal(env.DB.totalChanges(), before);
 });
 
@@ -168,17 +216,51 @@ test('an oversized form is 413, not a crash', async () => {
   assert.equal(res.status, 413);
 });
 
-test('Google is optional: without both of its values the button and its routes are gone, GitHub still works', async () => {
-  for (const missing of ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET']) {
-    const env = makeEnv({ [missing]: undefined });
-    const page = await call(env, '/auth/signin');
-    assert.equal(page.status, 200);
+// RFC-0002 Packet 5: Google is on only when both GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are set. Otherwise the
+// page has one button, the CSP does not name Google, and every Google route answers like an unknown path.
+test('Google is off unless both its values are set: one button, no Google in the CSP, its routes 404', async () => {
+  for (const extra of [{}, { GOOGLE_CLIENT_ID: 'x.apps.googleusercontent.com' }, { GOOGLE_CLIENT_SECRET: 'y' },
+    { GOOGLE_CLIENT_ID: '', GOOGLE_CLIENT_SECRET: 'y' }]) {
+    const env = makeEnv(extra);
+    const label = JSON.stringify(extra);
+    const page = await call(env, '/auth/signin?e=provider&p=google');
     const body = await page.text();
-    assert.match(body, /action="\/auth\/start\/github"/);
-    assert.doesNotMatch(body, /\/auth\/start\/google/);
-    const start = await handle(new Request('https://syberlabs.io/auth/start/google', { method: 'POST', headers: { Origin: 'https://syberlabs.io', 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'next=%2Fadmin%2F' }), env);
-    assert.equal(start.status, 404);
-    const cb = await call(env, '/auth/callback/google?code=x&state=y');
-    assert.equal(cb.status, 404);
+    assert.match(body, /action="\/auth\/start\/github"/, label);
+    assert.doesNotMatch(body, /google/i, label);
+    assert.match(body, /The sign-in provider didn(?:&#39;|')t finish the sign-in/, `${label}: p=google is ignored`);
+    assert.doesNotMatch(page.headers.get('Content-Security-Policy'), /google/, label);
+    assert.equal((await call(env, '/auth/start/google', { form: { next: '/admin/' } })).status, 404, label);
+    assert.equal((await call(env, '/auth/callback/google?code=x&state=y')).status, 404, label);
+    const { cookie } = await signIn(env.DB, { roles: ['role_admin'] });
+    assert.equal((await call(env, '/admin/account/add-google', { cookie, form: {} })).status, 404, label);
+    assert.equal((await call(env, '/admin/account/add-google', { cookie })).status, 404, `${label}: GET too`);
+    const account = await (await call(env, '/admin/account?added=google&e=google_taken', { cookie })).text();
+    assert.doesNotMatch(account, /google/i, label);
   }
+});
+
+// Review round 3, finding 3 (RFC-0002 2.2, 8.2): sign-out is PUBLIC, so "Sign out and switch account"
+// still reaches the account picker after the session ended, and a dead cookie is still expired.
+test('sign out with an expired or deleted session keeps next and switch=1 and expires the cookie', async () => {
+  const env = makeEnv();
+  const user = seedUser(env.DB, { roles: ['role_viewer'] });
+  const expired = await seedSession(env.DB, { ...user, now: Date.now() - 13 * HOUR });
+  const deleted = 'A'.repeat(43);
+  for (const token of [expired, deleted]) {
+    const before = env.DB.count('audit_events');
+    const res = await call(env, '/auth/signout', { cookie: `${SESSION_COOKIE}=${token}`, form: { next: '/admin/people', switch: '1' } });
+    assert.equal(res.status, 303);
+    assert.equal(res.headers.get('Location'), '/auth/signin?e=signed_out&next=%2Fadmin%2Fpeople&switch=1');
+    assert.ok(setCookies(res).some(c => c.startsWith(`${SESSION_COOKIE}=;`) && c.includes('Max-Age=0')));
+    assert.equal(env.DB.count('audit_events'), before);
+  }
+  assert.equal(env.DB.count('sessions'), 0, 'the expired row the cookie named is deleted too');
+  // No cookie at all: the same landing, still CSRF-checked.
+  const none = await call(env, '/auth/signout', { form: { switch: '1' } });
+  assert.equal(none.headers.get('Location'), '/auth/signin?e=signed_out&switch=1');
+  assert.equal((await call(env, '/auth/signout', { form: {}, origin: 'https://sketch.syberlabs.io' })).status, 403);
+  // The landing page's button asks GitHub for the account picker.
+  const page = await (await call(env, none.headers.get('Location'))).text();
+  assert.match(page, /You(&#39;|')re signed out\. Choose the account to use\./);
+  assert.match(page, /name="switch" value="1"/);
 });

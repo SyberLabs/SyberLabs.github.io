@@ -95,14 +95,30 @@ export class D1Shim {
   }
 }
 
-// A fresh in-memory database with every migration applied in file order.
-export function freshDb() {
+// migrations/*.sql in the order wrangler applies them (by file name: 0001, then 0002, ...).
+export const MIGRATION_FILES = readdirSync(MIGRATIONS).filter(f => f.endsWith('.sql')).sort();
+
+// Applies the named migration files, in the order given.
+export function migrate(db, files) {
+  for (const file of files) {
+    // Wrangler applies each migration transactionally; a failed guard must roll back its DDL too.
+    db.sqlite.exec('BEGIN');
+    try {
+      db.sqlite.exec(readFileSync(join(MIGRATIONS, file), 'utf8'));
+      db.sqlite.exec('COMMIT');
+    } catch (err) {
+      db.sqlite.exec('ROLLBACK');
+      throw err;
+    }
+  }
+  return db;
+}
+
+// A fresh in-memory database with the first `upTo` migrations applied (default: all of them, in order).
+export function freshDb({ upTo = MIGRATION_FILES.length } = {}) {
   const sqlite = new DatabaseSync(':memory:');
   sqlite.exec('PRAGMA foreign_keys = ON');
-  for (const file of readdirSync(MIGRATIONS).filter(f => f.endsWith('.sql')).sort()) {
-    sqlite.exec(readFileSync(join(MIGRATIONS, file), 'utf8'));
-  }
-  return new D1Shim(sqlite);
+  return migrate(new D1Shim(sqlite), MIGRATION_FILES.slice(0, upTo));
 }
 
 // A binding whose every query rejects, for the "D1 throw -> 503" tests.
