@@ -1,0 +1,9 @@
+# Local secrets and vars for `wrangler pages dev` (copy to .dev.vars, which git ignores). Names only here.
+# ORIGIN must be the local origin, or every request 308s to it.
+ORIGIN=http://localhost:8788
+APP_SECRET=
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+# Optional: Google sign-in is on only when both are set.
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
