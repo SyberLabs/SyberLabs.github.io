@@ -6,7 +6,7 @@ import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
 import { params as sigilParams, drawAll, draw } from '../kit/v2/syber-sigil.js';
 import { boot, reducedMotion } from './site/site.js';
-import { mountMorph } from './site/morph.js';
+import { mountSlot } from './site/slot.js';
 import { mountStrike } from './site/strike.js';
 import { gallery } from './sketch-gallery/index.js';
 import { githits } from './githits.js';
@@ -46,29 +46,33 @@ const Footer = () => <div className="home-chrome home-footer" dangerouslySetInne
 // Plate I: the one live 2D long-exposure attractor on the site. Without JS, without WebGL2 or on software GL,
 // a still exposure of the same plate (src/plate-i.webp) sits in the ring instead.
 
-// The hero line (src/site/morph.js): Reliable agents. -> Creative agents. -> Creative humans. One word changes per step
-// and the line rests on "Creative humans." Each letter carries its own scatter (--dx, --dy, --r), seeded by the word, so
-// every visit draws the same motion. Search engines and screen readers get the whole statement from the .sy-sr text.
-const scatter = (word, i) => {
-  let h = 7; for (const c of word) h = (h * 31 + c.charCodeAt(0)) % 100003;
-  const r = k => { const x = Math.sin(h * .0137 + i * 12.9898 + k * 78.233) * 43758.5453; return x - Math.floor(x); };
-  return { dx: ((r(1) - .5) * .44).toFixed(2), dy: ((r(2) - .5) * .8).toFixed(2), rot: Math.round((r(3) - .5) * 22) };
+// The hero headline as four slot reels (src/site/slot.js) that land on the page's two parts, in page order:
+// Creative systems. (part 01) / Reliable agents. (part 02). Each strip passes real combinations of the same
+// vocabulary on its way; the last word is where it stops. Search engines and screen readers get the .sy-sr text.
+const REELS = [
+  ['Reliable', 'Generative', 'Creative', 'Reliable', 'Generative', 'Creative'],
+  ['agents.', 'humans.', 'systems.', 'agents.', 'humans.', 'agents.', 'systems.'],
+  ['Creative', 'Generative', 'Reliable', 'Creative', 'Generative', 'Creative', 'Generative', 'Reliable'],
+  ['systems.', 'humans.', 'agents.', 'systems.', 'humans.', 'agents.', 'systems.', 'humans.', 'agents.'],
+];
+const Reel = ({ words, noun }) => {
+  const Tag = noun ? 'em' : 'span';
+  return <Tag className={`home-slot__reel${noun ? ' home-slot__reel--noun' : ''}`}>
+    <span className="home-slot__strip">{words.map((w, i) => <span key={i} className={`home-slot__w${i === words.length - 1 ? ' is-final' : ''}`}>{w}</span>)}</span>
+  </Tag>;
 };
-const MorphWord = ({ word, rest }) => <span className={`home-morph__w${rest ? ' is-rest' : ''}`}>
-  {[...word].map((ch, i) => { const k = scatter(word, i); return <span key={i} className="home-morph__l" style={{ '--i': i, '--dx': k.dx + 'em', '--dy': k.dy + 'em', '--r': k.rot + 'deg' }}>{ch}</span>; })}
-</span>;
-const Morph = React.forwardRef((_, ref) => <h1 ref={ref} id="hero-title" className="sy-display-xl home-hero__title home-morph">
-  <span className="sy-sr">Reliable agents. Creative agents. Creative humans.</span>
-  <span className="home-morph__line" aria-hidden="true">
-    <span className="home-morph__slot home-morph__slot--a"><MorphWord word="Reliable" /><MorphWord word="Creative" rest /></span>
-    <em className="home-morph__slot home-morph__slot--b"><MorphWord word="agents." /><MorphWord word="humans." rest /></em>
+const Slot = React.forwardRef((_, ref) => <h1 ref={ref} id="hero-title" className="sy-display-xl home-hero__title home-slot">
+  <span className="sy-sr">Creative systems. Reliable agents.</span>
+  <span className="home-slot__lines" aria-hidden="true">
+    <span className="home-slot__line"><Reel words={REELS[0]} /> <Reel words={REELS[1]} noun /></span>
+    <span className="home-slot__line"><Reel words={REELS[2]} /> <Reel words={REELS[3]} noun /></span>
   </span>
 </h1>);
 
 function Hero() {
-  const canvas = useRef(null), copy = useRef(null), morph = useRef(null);
+  const canvas = useRef(null), copy = useRef(null), slot = useRef(null);
   const [live, setLive] = useState(false);
-  useEffect(() => { const m = mountMorph(morph.current); return () => m.destroy(); }, []);
+  useEffect(() => { const m = mountSlot(slot.current); return () => m.destroy(); }, []);
   useEffect(() => {
     const plate = mount(canvas.current, { mode: 'hero', avoid: copy.current, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
     setLive(plate.supported);
@@ -86,8 +90,8 @@ function Hero() {
     <div className="home-hero__in sy-wrap">
       <div className="home-hero__copy" ref={copy}>
         <p className="sy-eyebrow" data-reveal>SyberLabs / Independent AI software lab</p>
-        <Morph ref={morph} />
-        <p className="sy-body-lg home-hero__intro" data-reveal>Creative tools for people. Dependable infrastructure for AI agents. Explore the work, try a tool, or inspect the evidence behind it.</p>
+        <Slot ref={slot} />
+        <p className="sy-body-lg home-hero__intro" data-reveal>SyberLabs builds creative systems where people and AI make together, and the infrastructure that keeps AI agents reliable.</p>
         <div className="home-hero__actions" data-reveal>
           <a className="sy-btn sy-btn--solid" href={RISE_APP}>Read today’s poem<Icon name="arrow" className="sy-icon--trail" /></a>
           <a className="sy-btn sy-btn--line" href="#reliability">For teams: reliable agents<Icon name="down" /></a>
@@ -232,7 +236,7 @@ function Runtime() {
   </section>;
 }
 
-// The page is in three parts, in the order of the hero's resting line: 01 Creative humans (RISE, FLYSPACE, Sketch),
+// The page is in three parts, in the order of the hero's resting line: 01 Creative systems (RISE, FLYSPACE, Sketch),
 // 02 Reliable agents (SyberWork, Sybershoke, GitHits), 03 About. Product names, accents, statuses and pages come from
 // projects/site-data.js; what each one is for lives here, and every claim is one the project's own page carries.
 const SHOW = {
@@ -529,7 +533,7 @@ export default function App() {
     <Header />
     <main id="main">
       <Hero />
-      <PartHead id="work" n="01" title="Creative" em="humans." note="Tools that turn words, strokes and live data into something people experience. Free in the browser." />
+      <PartHead id="work" n="01" title="Creative" em="systems." note="Across the human–machine boundary: tools people create with, and a runtime machine intelligence performs through." />
       <Runtime /><Products slugs={['rise', 'flyspace']} label="Creative tools" /><Sketch />
       <PartHead id="reliability" n="02" title="Reliable" em="agents." note="Infrastructure that keeps AI accountable: governed execution with human sign-off, tested under failure before it ships." />
       <Products slugs={['syberwork']} label="Agent infrastructure" /><Research /><GitHits />{INTERNAL_SECTIONS && <Factory />}
