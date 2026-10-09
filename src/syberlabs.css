@@ -165,6 +165,17 @@ html.sy-js .sy-split.is-pending .sy-word > span { transform: translateY(110%); }
 .sy-nav ul a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 1px; background: var(--sy-spectrum); transform: scaleX(0); transform-origin: 0 50%; transition: transform var(--sy-t-enter) var(--sy-ease); }
 .sy-nav ul a:hover::after, .sy-nav ul a[aria-current]::after { transform: scaleX(1); }
 .sy-nav ul a[aria-current="location"] { color: var(--sy-vellum); }
+.sy-nav { margin-left: auto; }
+.sy-account-link { flex-shrink: 0; min-height: 44px; padding: 0 16px; gap: 8px; color: var(--sy-vellum); border: 1px solid transparent; background: linear-gradient(#171132, #171132) padding-box, var(--sy-spectrum) border-box; box-shadow: 0 0 22px rgba(166, 118, 255, .12); white-space: nowrap; }
+.sy-account-link:hover { background: linear-gradient(#292047, #292047) padding-box, var(--sy-spectrum) border-box; box-shadow: 0 0 28px rgba(166, 118, 255, .25); text-decoration: none; }
+@media (max-width: 1050px) { .sy-nav { display: none; } .sy-menu { margin-left: auto; } }
+@media (max-width: 480px) {
+  .sy-header__in { gap: 8px; }
+  .sy-menu summary { padding: 0 12px; }
+  .sy-menu summary > span { display: none; }
+  .sy-account-link { padding: 0 12px; }
+  .sy-account-link .sy-icon { display: none; }
+}
 
 /* ---------- the Atlas: a full-screen site map, from <details class="sy-menu"> ---------- */
 .sy-menu { display: block; }
