@@ -121,10 +121,10 @@ test('case 11: a signed-in GET writes zero rows and reads with permissions fresh
 test('/admin/ renders a portal whose tool cards follow the current permissions', async () => {
   const env = makeEnv();
   const cases = [
-    [['role_admin'], undefined, ['changes', 'people', 'roles', 'audit', 'account']],
-    [[], ['id:users.read', 'id:audit.read'], ['people', 'roles', 'audit', 'account']],
-    [[], ['id:audit.read'], ['audit', 'account']],
-    [[], [], ['account']],
+    [['role_admin'], undefined, ['changes', 'people', 'roles', 'audit', 'saves', 'account']],
+    [[], ['id:users.read', 'id:audit.read'], ['people', 'roles', 'audit', 'saves', 'account']],
+    [[], ['id:audit.read'], ['audit', 'saves', 'account']],
+    [[], [], ['saves', 'account']],
   ];
   for (const [roles, perms, tools] of cases) {
     const { cookie } = await signIn(env.DB, { roles, perms });

@@ -9,8 +9,8 @@ const DAY = 86400 * 1000;
 const raw = db => db.sqlite;
 
 // 0001 is applied to production D1 and is never edited; every change after it is a new numbered file.
-test('migrations apply in order: 0001_accounts, then 0002_add_person', () => {
-  assert.deepEqual(MIGRATION_FILES, ['0001_accounts.sql', '0002_add_person.sql']);
+test('migrations apply in order: accounts, staff admission, then private saves', () => {
+  assert.deepEqual(MIGRATION_FILES, ['0001_accounts.sql', '0002_add_person.sql', '0003_account_saves.sql']);
 });
 
 test('the schema applies (0001 then 0002) with foreign keys on, and every table and view exists', async () => {
@@ -19,7 +19,7 @@ test('the schema applies (0001 then 0002) with foreign keys on, and every table 
   const names = (await db.prepare("SELECT name FROM sqlite_master WHERE type IN ('table','view') AND name NOT LIKE 'sqlite_%' ORDER BY name").all())
     .results.map(r => r.name);
   // No invites table: RFC-0002 R3-4.
-  assert.deepEqual(names, ['admins', 'audit_events', 'change_entries', 'identities', 'permissions',
+  assert.deepEqual(names, ['account_saves', 'admins', 'audit_events', 'change_entries', 'identities', 'permissions',
     'role_permissions', 'roles', 'sessions', 'user_roles', 'users']);
   await assert.rejects(db.prepare("INSERT INTO identities (id, user_id, provider, subject, created_at) VALUES ('i','nope','github','1',1)").run(),
     /FOREIGN KEY/);
