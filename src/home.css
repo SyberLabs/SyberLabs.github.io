@@ -339,48 +339,20 @@ html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0
 .home-rt__term { grid-area: term; font: 400 clamp(30px, 2.6vw, 40px)/1 var(--sy-serif); }
 .home-rt__text { grid-area: text; font-size: 14.5px; line-height: 1.5; color: var(--sy-mist); max-width: 36ch; }
 
-/* the strike (src/App.jsx RuntimeFlow): played once from .is-playing, frozen at the end; .is-still is that end state */
-.home-rt__bolts { position: absolute; left: 0; top: 0; z-index: 0; overflow: visible; pointer-events: none; }
-.home-rt__rail { stroke: var(--sy-rule-2); stroke-width: 1; }
-.home-rt__bolt path { fill: none; stroke: url(#rt-spectral); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }
-.home-rt__bolt-core { stroke-width: 2.2; }
-.home-rt__bolt-glow { stroke-width: 8; }
-.home-rt__bolt-fork { stroke-width: 1.3; }
-.home-rt__burst { position: absolute; z-index: 0; width: 0; height: 0; pointer-events: none; }
-.home-rt__burst i { position: absolute; left: 0; top: 0; display: block; opacity: 0; }
-.home-rt__bloom { width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,255,255,.55), rgba(255,88,214,.28) 35%, rgba(154,107,255,.14) 60%, transparent); }
-.home-rt__ray { width: var(--l); height: 2px; margin-top: -1px; border-radius: 2px; transform-origin: 0 50%; transform: rotate(var(--a)) scaleX(0); background: linear-gradient(90deg, #fff, var(--c) 30%, transparent); filter: drop-shadow(0 0 3px var(--c)); }
-.home-rt__spark { width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c); transform: rotate(var(--a)) translateX(0); }
+/* the strike is drawn on a canvas (src/site/strike.js) that overhangs the flow; the nodes above it keep their CSS charge */
+.home-rt__strike { position: absolute; z-index: 0; pointer-events: none; }
 
 /* the end state, shared by the frozen animation and reduced motion */
-.home-rt__flow.is-still .home-rt__bolt path { stroke-dashoffset: 0; }
-.home-rt__flow.is-still .home-rt__bolt-core { opacity: .85; } .home-rt__flow.is-still .home-rt__bolt-glow { opacity: .4; } .home-rt__flow.is-still .home-rt__bolt-fork { opacity: .55; }
 .home-rt__flow.is-still .home-rt__node i { opacity: 1; box-shadow: 0 0 14px var(--c); }
 .home-rt__flow.is-still .home-rt__stage:nth-of-type(3) .home-rt__node { border-color: #ffb54a; box-shadow: 0 0 24px rgba(255,181,74,.55); }
-.home-rt__flow.is-still .home-rt__bloom { opacity: .7; }
-.home-rt__flow.is-still .home-rt__ray { opacity: .9; transform: rotate(var(--a)) scaleX(1); }
-.home-rt__flow.is-still .home-rt__spark { opacity: .9; transform: rotate(var(--a)) translateX(var(--r)); }
 
 /* the sequence: charge 0 ms, bolt 1 at 380 ms, node 2 at 640 ms, bolt 2 at 900 ms, burst at 1160 ms */
 .home-rt__flow.is-playing .home-rt__stage:nth-of-type(1) .home-rt__node i { animation: rt-charge 520ms ease-out both; }
 .home-rt__flow.is-playing .home-rt__stage:nth-of-type(2) .home-rt__node i { animation: rt-charge 520ms ease-out 640ms both; }
 .home-rt__flow.is-playing .home-rt__stage:nth-of-type(3) .home-rt__node i { animation: rt-charge 520ms ease-out 1160ms both; }
 .home-rt__flow.is-playing .home-rt__stage:nth-of-type(3) .home-rt__node { animation: rt-hit 900ms cubic-bezier(.16,1,.3,1) 1160ms both; }
-.home-rt__flow.is-playing .home-rt__bolt--1 path { animation: rt-strike 260ms cubic-bezier(.3,.9,.3,1) 380ms both, var(--flick) 700ms linear 640ms both; }
-.home-rt__flow.is-playing .home-rt__bolt--2 path { animation: rt-strike 260ms cubic-bezier(.3,.9,.3,1) 900ms both, var(--flick) 700ms linear 1160ms both; }
-.home-rt__bolt-core { --flick: rt-flick-core; } .home-rt__bolt-glow { --flick: rt-flick-glow; } .home-rt__bolt-fork { --flick: rt-flick-fork; }
-.home-rt__flow.is-playing .home-rt__bloom { animation: rt-bloom 1100ms cubic-bezier(.16,1,.3,1) 1160ms both; }
-.home-rt__flow.is-playing .home-rt__ray { animation: rt-ray 900ms cubic-bezier(.16,1,.3,1) calc(1160ms + var(--d)) both; }
-.home-rt__flow.is-playing .home-rt__spark { animation: rt-spark 1200ms cubic-bezier(.12,.9,.25,1) calc(1180ms + var(--d)) both; }
 @keyframes rt-charge { 0% { opacity: .45; transform: scale(1); } 45% { opacity: 1; transform: scale(1.9); box-shadow: 0 0 22px var(--c), 0 0 40px var(--c); } 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 14px var(--c); } }
 @keyframes rt-hit { 0% { transform: scale(1); } 30% { transform: scale(1.35); border-color: #fff; box-shadow: 0 0 40px rgba(255,255,255,.8); } 100% { transform: scale(1); border-color: #ffb54a; box-shadow: 0 0 24px rgba(255,181,74,.55); } }
-@keyframes rt-strike { from { stroke-dashoffset: 1; opacity: 1; } to { stroke-dashoffset: 0; opacity: 1; } }
-@keyframes rt-flick-core { 0% { opacity: 1; } 12% { opacity: .25; } 22% { opacity: 1; } 34% { opacity: .5; } 100% { opacity: .85; } }
-@keyframes rt-flick-glow { 0% { opacity: 1; } 12% { opacity: .2; } 22% { opacity: .9; } 34% { opacity: .3; } 100% { opacity: .4; } }
-@keyframes rt-flick-fork { 0% { opacity: 1; } 15% { opacity: 0; } 30% { opacity: .8; } 100% { opacity: .55; } }
-@keyframes rt-bloom { 0% { opacity: 0; transform: scale(.2); } 25% { opacity: 1; transform: scale(1.15); } 100% { opacity: .7; transform: scale(1); } }
-@keyframes rt-ray { from { opacity: 1; transform: rotate(var(--a)) scaleX(0); } to { opacity: .9; transform: rotate(var(--a)) scaleX(1); } }
-@keyframes rt-spark { 0% { opacity: 0; transform: rotate(var(--a)) translateX(0) scale(1.6); } 15% { opacity: 1; } 100% { opacity: .9; transform: rotate(var(--a)) translateX(var(--r)) scale(1); } }
 
 /* RISE Premium: one line, one link, beneath the runtime */
 .home-premium { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 28px; margin-top: 14px; padding: 20px clamp(20px, 3.2vw, 52px);
