@@ -24,19 +24,18 @@ export async function adminHome(ctx) {
   const body = `<div class="portal">
     <section class="portal-hero" aria-labelledby="portal-title">
       <div class="portal-hero__copy"><p class="portal-kicker"><span></span> SYBERLABS / PRIVATE WORKSPACE</p>
-        <h1 id="portal-title">Your <br><em>launchpad.</em></h1>
-        <p class="portal-intro">Welcome back, <strong>${esc(identityName(ctx.user))}</strong>.<br>Your team. Your tools. One place to move things forward.</p>
-        <a class="sy-btn sy-btn--solid" href="#portal-tools">Explore your tools <span aria-hidden="true">↓</span></a>
+        <h1 id="portal-title">Your <em>launchpad.</em></h1>
+        <p class="portal-intro">Welcome back, <strong>${esc(identityName(ctx.user))}</strong>.<br>Pick up where you left off.</p>
       </div>
       <div class="portal-orbit" aria-hidden="true"><div class="portal-orbit__ring portal-orbit__ring--one"></div><div class="portal-orbit__ring portal-orbit__ring--two"></div><div class="portal-orbit__ring portal-orbit__ring--three"></div><div class="portal-orbit__core"><img src="/syber-logo.png" alt="" width="120" height="120"></div><span class="portal-orbit__label">CONNECTED / SYBERLABS</span><span class="portal-orbit__point"></span></div>
     </section>
-    <div class="portal-strip"><div><span class="portal-strip__label">Workspace</span><strong>Staff portal</strong></div><div><span class="portal-strip__label">Available to you</span><strong>${tools.length} ${tools.length === 1 ? 'tool' : 'tools'}</strong></div><div><span class="portal-strip__label">Session remaining</span><strong>${esc(duration(ctx.user.expiresAt - ctx.now))}</strong></div></div>
-    <section id="portal-tools" class="portal-tools" aria-labelledby="tools-title"><div class="portal-section-head"><div><p class="portal-kicker">TAKE THE NEXT STEP</p><h2 id="tools-title">Mission control</h2></div><p>Everything your account can access.</p></div>
+    <div class="portal-strip"><div><span class="portal-strip__label">Workspace</span><strong>SyberLabs</strong></div><div><span class="portal-strip__label">Available to you</span><strong>${tools.length} ${tools.length === 1 ? 'tool' : 'tools'}</strong></div><div><span class="portal-strip__label">Session remaining</span><strong>${esc(duration(ctx.user.expiresAt - ctx.now))}</strong></div></div>
+    <section id="portal-tools" class="portal-tools" aria-labelledby="tools-title"><div class="portal-section-head"><h2 id="tools-title">Your tools</h2></div>
       ${ctx.perms.size === 0 ? '<p class="portal-access-note">Your account is ready. Ask an admin for a role to unlock team tools.</p>' : ''}
       <div class="portal-grid">${cards}</div>
     </section>
     <div class="portal-apps"><a href="https://omni.syberlabs.io/"><span class="portal-kicker">SPATIAL WORKSPACE</span><strong>Open Omni ↗</strong></a><a href="https://rise.syberlabs.io/"><span class="portal-kicker">READING &amp; CREATION</span><strong>Open RISE ↗</strong></a><a href="https://sketch.syberlabs.io/"><span class="portal-kicker">LIVING INK</span><strong>Open Sketch ↗</strong></a></div>
     <aside class="portal-outpost"><div><p class="portal-kicker">BEYOND THE WORKSPACE</p><h2>See what we’re building.</h2><p>Explore the public projects, research and ideas behind SyberLabs.</p></div><a class="sy-btn sy-btn--ghost" href="/">Visit SyberLabs <span aria-hidden="true">↗</span></a></aside>
   </div>`;
-  return html(page(ctx, { title: 'Portal', body, section: 'portal', compactFooter: true }));
+  return html(page(ctx, { title: 'Launchpad', body, section: 'portal', compactFooter: true }));
 }

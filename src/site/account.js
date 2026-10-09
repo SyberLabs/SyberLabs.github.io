@@ -7,6 +7,7 @@ export function account(root = document) {
   const host = root.querySelector('.sy-account');
   if (!host || mounted.has(host)) return mounted.get(host);
   const guest = host.querySelector('.sy-account-link');
+  const guestLabel = host.querySelector('.sy-account-label');
   const member = host.querySelector('.sy-account-member');
   const avatar = host.querySelector('.sy-account-avatar');
   const initial = host.querySelector('.sy-account-initial');
@@ -15,6 +16,10 @@ export function account(root = document) {
   const win = doc.defaultView || window;
   let generation = 0;
   let pending;
+
+  // Unknown is distinct from signed out: the session check may be slow or offline.
+  host.dataset.accountState = 'checking';
+  if (guestLabel) guestLabel.textContent = 'Account';
 
   const render = user => {
     const signedIn = Boolean(user);
@@ -27,6 +32,7 @@ export function account(root = document) {
       avatar.setAttribute('aria-label', `Profile: ${label}`);
       avatar.setAttribute('title', `Profile: ${label}`);
     } else {
+      if (guestLabel) guestLabel.textContent = 'Sign in';
       initial.textContent = '';
       avatar.setAttribute('aria-label', 'Profile');
       avatar.removeAttribute('title');
