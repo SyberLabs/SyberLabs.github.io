@@ -2,7 +2,7 @@
 CREATE TABLE account_saves (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  app TEXT NOT NULL CHECK (app IN ('omni', 'rise')),
+  app TEXT NOT NULL CHECK (app IN ('omni', 'rise', 'sketch')),
   name TEXT NOT NULL CHECK (length(name) BETWEEN 1 AND 100),
   payload TEXT NOT NULL CHECK (json_valid(payload)),
   bytes INTEGER NOT NULL CHECK (bytes BETWEEN 1 AND (1024 * 1024)),

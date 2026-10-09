@@ -4,7 +4,7 @@ import { newId } from './crypto.js';
 import { identityName } from './authz.js';
 
 export const ACCOUNT_BASE = '/admin/api/v1';
-export const APP_ORIGINS = { omni: 'https://omni.syberlabs.io', rise: 'https://rise.syberlabs.io' };
+export const APP_ORIGINS = { omni: 'https://omni.syberlabs.io', rise: 'https://rise.syberlabs.io', sketch: 'https://sketch.syberlabs.io' };
 export const isAccountApi = pathname => pathname === ACCOUNT_BASE || pathname.startsWith(ACCOUNT_BASE + '/');
 const MAX_BYTES = 1048576;
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;
