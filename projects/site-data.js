@@ -395,6 +395,7 @@ export const siteMap = [
     { label: 'Services', note: 'Interactive reading pilots', href: '/services/' },
     { label: 'About', note: 'The lab and its founder', href: '/#about' },
     { label: 'Design kit', note: 'Atlas v2 tokens and components', href: '/kit/v2/' },
+    { label: 'Review', note: 'State of the lab, by date', href: '/review/' },
     { label: 'Privacy', note: 'What this site does with your data', href: '/privacy/' },
   ] },
   { title: 'Contact', items: [

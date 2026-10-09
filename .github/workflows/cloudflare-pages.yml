@@ -97,6 +97,9 @@ jobs:
           test -s dist/privacy/index.html
           test -s dist/plus/index.html
           test -s dist/plus/plus.css
+          test -s dist/review/index.html
+          test -s dist/review/review.css
+          test -s dist/review/2026-10-08/index.html
           grep -Fq 'No payment is taken on this page' dist/plus/index.html
           for project in rise flyspace syberwork relay osahr; do test -s "dist/projects/$project/index.html"; done
           test -s dist/og/flyspace.png

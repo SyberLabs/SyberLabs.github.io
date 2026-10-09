@@ -1,0 +1,45 @@
+/* Review pages (dated state of the lab). Tokens, header, buttons and footer come from /syberlabs.css. Layout follows /plus/plus.css. */
+.review-main { max-width: calc(var(--content-max) + 2 * var(--gutter)); margin: 0 auto; padding: 0 var(--gutter); }
+.eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2); }
+
+.review-hero { padding: var(--space-10) 0 var(--space-9); }
+.review-hero h1 { max-width: 1000px; margin: var(--space-6) 0 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(56px, 7vw, 104px); line-height: .95; letter-spacing: -0.02em; }
+.review-hero h1 em { font-style: italic; background: var(--sy-spectrum); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .08em; }
+.review-hero .lead { max-width: 620px; margin: var(--space-6) 0 0; font-size: 18px; line-height: 28px; color: var(--text-2); }
+.review-hero .hero-links { display: flex; flex-wrap: wrap; gap: var(--space-4); margin: var(--space-6) 0 0; }
+
+.review-section { padding: var(--space-9) 0; border-top: 1px solid var(--line); }
+.section-heading { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: baseline; margin-bottom: var(--space-7); }
+.section-heading h2 { grid-column: 2 / 4; margin: 0; padding-left: var(--space-6); font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; }
+.prose { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.prose > * { grid-column: 2 / 4; padding-left: var(--space-6); max-width: calc(var(--measure) + var(--space-6)); }
+.prose p, .prose li { margin: 0 0 var(--space-4); font-size: 16px; line-height: 26px; color: var(--text-2); }
+.prose a:not(.sy-btn) { text-decoration: underline; text-underline-offset: 3px; }
+.prose code { font-family: var(--font-mono); font-size: 14px; }
+
+.evidence { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.evidence li { display: grid; grid-template-columns: 170px minmax(0, 1fr); column-gap: var(--space-5); padding: 14px 0; border-bottom: 1px solid var(--line); }
+.evidence p { margin: 0; font-size: 16px; line-height: 24px; color: var(--text-2); }
+.evidence .state { --d: var(--sy-mist); display: inline-flex; align-items: center; gap: 8px; line-height: 24px; font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--text); }
+.evidence .state i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--d); box-shadow: 0 0 10px var(--d); }
+.evidence .is-decided .state { --d: var(--sy-amber); }
+.evidence .is-built .state { --d: var(--sy-ice); }
+.evidence .is-live .state { --d: var(--sy-live); }
+.evidence .is-not-yet .state { color: var(--text-3); }
+.evidence .is-not-yet .state i { background: none; box-shadow: none; border: 1.5px solid var(--text-3); width: 7px; height: 7px; }
+.review-colophon { margin: 0; padding: var(--space-7) 0 var(--space-9); border-top: 1px solid var(--line); font-size: 14px; line-height: 20px; color: var(--text-3); max-width: 72ch; }
+
+@media (max-width: 860px) {
+  .section-heading, .prose { grid-template-columns: 1fr; }
+  .section-heading { row-gap: var(--space-4); }
+  .section-heading h2, .prose > * { grid-column: 1; padding-left: 0; }
+  .evidence li { grid-template-columns: 1fr; row-gap: var(--space-1); }
+}
+@media (max-width: 640px) {
+  .review-hero { padding: var(--space-8) 0; }
+  .review-hero h1 { margin-top: var(--space-5); font-size: 48px; line-height: 50px; }
+  .review-hero .hero-links .sy-btn { width: 100%; }
+  .review-section { padding: var(--space-8) 0; }
+  .section-heading { margin-bottom: var(--space-6); }
+  .section-heading h2 { font-size: 32px; line-height: 36px; }
+}
