@@ -185,6 +185,13 @@ html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0
 .home-study__body > .sy-eyebrow { margin: 0; }
 .home-study__title { margin: 0; max-width: 24em; font: 400 clamp(28px, 2.8vw, 42px)/1.08 var(--sy-serif); letter-spacing: -.01em; text-wrap: balance; }
 .home-study .sy-body { margin: 0; max-width: 70ch; color: var(--sy-mist); }
+/* three properties of the method, then its field result */
+.home-study__pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 8px 0 4px; border-top: 1px solid var(--sy-rule); }
+.home-study__pillars > div { padding: 18px 20px 4px 0; }
+.home-study__pillars > div + div { padding-left: 20px; border-left: 1px solid var(--sy-rule); }
+.home-study__pillars dt { font: 400 clamp(22px, 1.8vw, 26px)/1.1 var(--sy-serif); color: var(--sy-vellum); }
+.home-study__pillars dd { margin: 8px 0 0; font-size: 14px; line-height: 1.5; color: var(--sy-mist); }
+.home-study__body > .home-study__label { margin: 14px 0 -6px; color: var(--sy-accent); }
 .home-study__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 6px 0 0; border-block: 1px solid var(--sy-rule); }
 .home-study__stats > div { padding: 18px 18px 16px 0; }
 .home-study__stats > div + div { padding-left: 20px; border-left: 1px solid var(--sy-rule); }
@@ -206,7 +213,9 @@ html.sy-js .home-hero__title .sy-word > span { transition-delay: calc(var(--i, 0
   .home-study__fig figcaption { margin: 0; }
 }
 @media (max-width: 640px) {
-  .home-study__stats { grid-template-columns: 1fr; }
+  .home-study__stats, .home-study__pillars { grid-template-columns: 1fr; }
+  .home-study__pillars > div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--sy-rule); }
+  .home-study__pillars > div { padding-bottom: 14px; }
   .home-study__stats > div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--sy-rule); }
   .home-study__method { grid-template-columns: 1fr; gap: 4px; }
   .home-research-more { grid-template-columns: 1fr; gap: 10px; padding: 20px 0 0; }

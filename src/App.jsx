@@ -365,14 +365,21 @@ function SketchGallery() {
   </div>;
 }
 
-// Research: one featured study, chosen because it ran against a real system's source and changed it. Every number
-// and limit here is quoted from research/sybershoke/ (revision 2), which cites SyberLabs/sybershoke@45956fe.
+// Research: Sybershoke, framed as what it is (a method for testing service-oriented agent systems under fault), with
+// the RISE run as its field result. Every claim is in research/sybershoke/ (revision 2, SyberLabs/sybershoke@45956fe):
+// the faults it injects, the seed -> fault plan -> history -> invariants abstraction, delta-debugging shrinking, the
+// 39 recorded answers, the two seed-replayable defects and the merged fix (SyberLabs/RISE#306), and its stated scope.
 const SHOKE = 'https://github.com/SyberLabs/sybershoke', SHOKE_FIX = 'https://github.com/SyberLabs/RISE/pull/306';
+const SHOKE_PILLARS = [
+  ['Deterministic', 'One seed, one fault schedule, one history, on any machine. A failure is a seed you can rerun.'],
+  ['Invariant-driven', 'The system under test never grades itself. Correctness is read from the history: no task lost, none accepted twice.'],
+  ['Minimal', 'Delta debugging strips a failing schedule to the faults that matter, so a report reads as a cause, not a log.'],
+];
 function Research() {
   return <section id="research" className="home-sec sy-wrap" aria-labelledby="research-title">
     <div className="site-head home-head" data-reveal>
-      <div><p className="sy-eyebrow">Research / Reliable agents</p><h2 id="research-title" className="sy-display">Break it <em>on purpose.</em></h2></div>
-      <p className="home-head__note sy-small">We test agent systems by injecting the faults production will, and publish what each study does and does not establish.</p>
+      <div><p className="sy-eyebrow">Research / Reliability engineering</p><h2 id="research-title" className="sy-display">Reliability you can <em>replay.</em></h2></div>
+      <p className="home-head__note sy-small">Agentic systems fail between services: a worker dies mid-task, a message lands twice, a model provider stalls. We make those failures deterministic, so every one can be reproduced, reduced and fixed.</p>
     </div>
     <article className="home-study sy-card" style={{ '--sy-accent': 'var(--sy-magenta)' }} aria-labelledby="study-title" data-reveal data-tilt="2">
       <figure className="sy-plate-figure home-study__fig" aria-hidden="true">
@@ -380,16 +387,20 @@ function Research() {
         <figcaption><b>Sybershoke</b>Research note · revision 2 · 29 September 2026</figcaption>
       </figure>
       <div className="home-study__body">
-        <p className="sy-eyebrow">Fault injection · a real system</p>
-        <h3 id="study-title" className="home-study__title">We shock-tested the source of RISE’s production Worker and found two bugs, each replayable from a seed.</h3>
-        <p className="sy-body">Sybershoke turns a seed into a fault plan (killed workers, duplicated and dropped messages), records the run as a plain-text history, judges that history against invariants, and shrinks a failing plan to the faults that matter. Run against the Worker’s source on recorded production AI answers, it found a keyword override that sent “drift off to sleep” to 300 words per minute, and a missing provider fallback.</p>
-        <dl className="home-study__stats">
-          <div><dt><b data-count="39">39</b></dt><dd>recorded production AI answers replayed</dd></div>
-          <div><dt><b data-count="2">2</b></dt><dd>bugs found, each reproducible from its seed</dd></div>
-          <div><dt><b>#306</b></dt><dd>the override fix, <a href={SHOKE_FIX}>merged in RISE</a></dd></div>
+        <p className="sy-eyebrow">Sybershoke · Deterministic fault injection</p>
+        <h3 id="study-title" className="home-study__title">Turn distributed failure into a reproducible test case.</h3>
+        <p className="sy-body">Sybershoke compiles a seed into a fault schedule (crashed workers, dropped and duplicated messages, slow or failing model providers), runs the system under it, and records an event history. Pass or fail is decided by invariants over that history alone. A failing schedule shrinks to the smallest set of faults that still breaks it.</p>
+        <dl className="home-study__pillars">
+          {SHOKE_PILLARS.map(([term, text]) => <div key={term}><dt>{term}</dt><dd>{text}</dd></div>)}
         </dl>
-        <p className="home-study__method"><span className="sy-label">Method</span><span>Fault injection in the tradition of <a href="https://jepsen.io/">Jepsen</a>; failing plans minimized by delta debugging (Zeller and Hildebrandt, <a href="https://doi.org/10.1109/32.988498">IEEE Transactions on Software Engineering, 2002</a>).</span></p>
-        <p className="home-study__method"><span className="sy-label">Limits</span><span>The Worker’s source ran with stand-ins for Redis and Neon and with virtual time, so the study reports caught versus not caught, not live failure rates.</span></p>
+        <p className="sy-label home-study__label">Field result · RISE production worker</p>
+        <dl className="home-study__stats">
+          <div><dt><b data-count="39">39</b></dt><dd>recorded production model responses, replayed under fault</dd></div>
+          <div><dt><b data-count="2">2</b></dt><dd>latent defects surfaced, each reproducible from its seed</dd></div>
+          <div><dt><b>#306</b></dt><dd>remediation <a href={SHOKE_FIX}>merged upstream</a></dd></div>
+        </dl>
+        <p className="home-study__method"><span className="sy-label">Lineage</span><span>Fault injection after <a href="https://jepsen.io/">Jepsen</a>; minimization by delta debugging (Zeller and Hildebrandt, <a href="https://doi.org/10.1109/32.988498">IEEE Transactions on Software Engineering, 2002</a>).</span></p>
+        <p className="home-study__method"><span className="sy-label">Scope</span><span>Run against the worker’s source, with stand-ins for Redis and Neon and virtual time. Results are defects found, not production failure rates.</span></p>
         <p className="home-study__foot">
           <a className="sy-btn sy-btn--solid" href="/research/sybershoke/">Read the research note<Icon name="arrow" className="sy-icon--trail" /></a>
           <a className="sy-btn sy-btn--line" href={SHOKE}>Source<Icon name="external" /></a>
