@@ -3,11 +3,12 @@
    Order: mark JS present -> chrome behaviours -> reveal/tilt -> the 3D field (lazy, so first paint never waits). */
 import { reveal, tilt, magnetic, progress, spy, splitWords, toTop, reducedMotion } from './motion.js';
 import { atlas } from './nav.js';
+import { account as accountNav } from './account.js';
 import { params as sigilParams } from '../../kit/v2/syber-sigil.js';
 
 export function boot(root = document, fieldOpts) {
   document.documentElement.classList.add('sy-js');
-  atlas(); progress(); spy(); toTop(); counters(root);
+  accountNav(root); atlas(); progress(); spy(); toTop(); counters(root);
   root.querySelectorAll('[data-split]').forEach(el => { splitWords(el); el.setAttribute('data-reveal', ''); });
   reveal(root); tilt(root); magnetic(root);
   mountFieldLazy(fieldOpts);

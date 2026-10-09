@@ -30,6 +30,8 @@ jobs:
           node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Public account navigation tests
+        run: node --test scripts/account-nav.test.mjs
       - name: Staff sign-in tests
         # Quoted glob: `node --test server/` does not find them. The PR pastes the reported pass count.
         run: node --test 'server/test/**/*.test.js'

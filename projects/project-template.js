@@ -20,6 +20,7 @@ const ICONS = {
   conditions: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
   close: '<path d="M6 6l12 12M18 6L6 18"/>',
   menu: '<path d="M4 7h16M4 12h16M4 17h10"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
 };
 export const icon = (name, size = 20, cls = '') =>
   `<svg class="sy-icon ${cls}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
@@ -50,7 +51,13 @@ export const header = (current = '', { sticky = true, script = true } = {}) => {
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
   <nav class="sy-nav" aria-label="Primary"><ul>${links}</ul><a class="sy-btn sy-btn--line" href="${workWithUs.href}">${workWithUs.label}</a></nav>
   <details class="sy-menu"><summary aria-label="Menu" aria-expanded="false" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas()}</details>
-  <a class="sy-btn sy-account-link" href="/admin/">Sign in${icon('arrow', 16)}</a>
+  <div class="sy-account">
+    <a class="sy-btn sy-account-link" href="/admin/">Sign in${icon('arrow', 16)}</a>
+    <div class="sy-account-member" hidden>
+      <a class="sy-btn sy-account-launchpad" href="/admin/">Launchpad${icon('arrow', 16)}</a>
+      <a class="sy-account-avatar" href="/admin/account" aria-label="Your profile" title="Your profile"><span class="sy-account-initial" aria-hidden="true">${icon('user', 20)}</span></a>
+    </div>
+  </div>
 </div></header>${script ? '\n<script type="module" src="/syberlabs.js"></script>' : ''}`;
 };
 
