@@ -22,7 +22,7 @@ export function accountCors(res, request, env) {
     out.headers.set('Access-Control-Allow-Credentials', 'true');
     if (request.method === 'OPTIONS') {
       out.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-      out.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-SyberLabs-Account');
+      out.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-SyberLabs-Account, X-SyberLabs-Expected-User');
       out.headers.set('Access-Control-Max-Age', '600');
     }
   }
@@ -58,7 +58,7 @@ export async function accountApi(request, env, now) {
     if (!allowedOrigin) return failure('origin_not_allowed', 403);
     if (!['GET', 'POST'].includes(request.headers.get('Access-Control-Request-Method'))) return failure('method_not_allowed', 405);
     const headers = (request.headers.get('Access-Control-Request-Headers') || '').toLowerCase().split(',').map(x => x.trim()).filter(Boolean);
-    if (headers.some(h => !['content-type', 'x-syberlabs-account'].includes(h))) return failure('headers_not_allowed', 403);
+    if (headers.some(h => !['content-type', 'x-syberlabs-account', 'x-syberlabs-expected-user'].includes(h))) return failure('headers_not_allowed', 403);
     return new Response(null, { status: 204 });
   }
   if (!['GET', 'HEAD', 'POST'].includes(request.method)) return failure('method_not_allowed', 405);
@@ -70,6 +70,14 @@ export async function accountApi(request, env, now) {
   const pathname = url.pathname;
   if (pathname === ACCOUNT_BASE + '/account' && request.method !== 'POST') return json({ user: { id: user.id, label: identityName(user) }, portalUrl: env.ORIGIN + '/admin/' });
   const listPath = ACCOUNT_BASE + '/saves';
+  // Bind each operation to the account the consumer displayed when it began.
+  // The host-only cookie can change in another tab after an account preflight.
+  // This is an equality precondition, never an alternate source of ownership.
+  if (pathname === listPath || pathname.startsWith(listPath + '/')) {
+    const expectedUser = request.headers.get('X-SyberLabs-Expected-User');
+    if (!expectedUser) return failure('expected_user_required', 400);
+    if (expectedUser !== user.id) return failure('account_changed', 409);
+  }
   if (pathname === listPath && request.method !== 'POST') {
     const app = url.searchParams.get('app');
     if (!Object.hasOwn(APP_ORIGINS, app)) return failure('invalid_app', 400);

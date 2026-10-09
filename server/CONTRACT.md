@@ -325,9 +325,19 @@ application/json and X-SyberLabs-Account:v1. Names, request UUID, byte size, own
 validated server-side; SQL enforces aggregate quota atomically. The payload is private backup data,
 never executable content. Duplicate request IDs are idempotent only for identical snapshots.
 
+Every authenticated API save operation (list, detail/download and create) additionally requires
+`X-SyberLabs-Expected-User` containing the account ID displayed when that operation began. It is
+an equality precondition against the authoritative live session, never a source of ownership.
+A missing header returns 400 `expected_user_required`; a changed account returns 409
+`account_changed` before payload parsing, reads or writes. Credentialed CORS preflight allows
+this header. Consumers retain the captured account ID together with a pending request UUID,
+preserve local work on refusal and refresh the account before a new explicit operation.
+GET account remains available without the precondition so a consumer can refresh identity.
+
 Migration0003 adds account_saves without modifying existing staff rows. `/admin/saves` lists only
 the signed-in user's backups; owned download responses are JSON attachments. `/admin/return?app=`
-returns only to Omni or RISE's canonical root. No public enrollment or staff permission grant is
+returns only to Omni, RISE or Sketch's canonical root. No public enrollment or staff permission grant is
 introduced by this seam. App local stores remain authoritative; uploads and validated restores are
 explicit user actions. Tests: account-api.test.js includes owner isolation, CORS/CSRF, quotas,
-retries, input bounds, disabled/expired sessions and fail-closed storage errors.
+retries, input bounds, disabled/expired sessions, account-switch races in both directions and
+fail-closed storage errors.

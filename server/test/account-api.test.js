@@ -2,16 +2,23 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { handle } from '../app.js';
-import { makeEnv, signIn, ORIGIN, HOUR } from './helpers.js';
+import { makeEnv, signIn as seedSignIn, ORIGIN, HOUR } from './helpers.js';
 import { brokenDb } from './d1-shim.js';
 
 const ROOT = '/admin/api/v1';
 const OMNI = 'https://omni.syberlabs.io';
 const RISE = 'https://rise.syberlabs.io';
+const accountForCookie = new Map();
+async function signIn(...args) {
+  const user = await seedSignIn(...args);
+  accountForCookie.set(user.cookie, user.userId);
+  return user;
+}
 const snapshot = (overrides = {}) => ({ app: 'omni', name: 'Private workspace', payload: { documents: ['hello'] }, requestId: randomUUID(), ...overrides });
-function request(env, path, { method = 'GET', cookie, origin, body, headers = {}, now } = {}) {
+function request(env, path, { method = 'GET', cookie, origin, body, headers = {}, now, expectedUserId = accountForCookie.get(cookie) } = {}) {
   const h = new Headers(headers);
   if (cookie) h.set('Cookie', cookie);
+  if (path.startsWith(`${ROOT}/saves`) && expectedUserId) h.set('X-SyberLabs-Expected-User', expectedUserId);
   if (origin !== undefined) h.set('Origin', origin);
   return handle(new Request(new URL(path, ORIGIN), { method, headers: h, body }), env, now);
 }
@@ -68,12 +75,13 @@ test('preflight permits named app origins without a session and refuses unsafe o
   const env = makeEnv();
   for (const origin of [OMNI, RISE]) {
     const res = await request(env, `${ROOT}/saves`, { method: 'OPTIONS', origin, headers: {
-      'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'content-type, x-syberlabs-account',
+      'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'content-type, x-syberlabs-account, x-syberlabs-expected-user',
     } });
     assert.equal(res.status, 204);
     assert.equal(res.headers.get('Access-Control-Allow-Origin'), origin);
     assert.equal(res.headers.get('Access-Control-Allow-Credentials'), 'true');
     assert.match(res.headers.get('Access-Control-Allow-Headers'), /x-syberlabs-account/i);
+    assert.match(res.headers.get('Access-Control-Allow-Headers'), /x-syberlabs-expected-user/i);
   }
   await json(await request(env, `${ROOT}/saves`, { method: 'OPTIONS', origin: 'https://evil.example', headers: { 'Access-Control-Request-Method': 'POST' } }), 403);
   await json(await request(env, `${ROOT}/saves`, { method: 'OPTIONS', origin: OMNI, headers: {
@@ -257,4 +265,43 @@ test('Sketch origin receives only its own private backup namespace', async () =>
   assert.equal((await json(await request(env, `${ROOT}/saves?app=sketch`, { cookie: user.cookie, origin: sketchOrigin }), 200)).saves.length, 1);
   await json(await request(env, `${ROOT}/saves/${saved.id}`, { cookie: user.cookie, origin: OMNI }), 404);
   await json(await request(env, `${ROOT}/saves?app=rise`, { cookie: user.cookie, origin: sketchOrigin }), 403);
+});
+
+test('save operations require a captured account identity; account refresh remains available', async () => {
+  const env = makeEnv(), user = await signIn(env.DB);
+  const saved = (await json(await save(env, user.cookie), 201)).save;
+  for (const path of [`${ROOT}/saves?app=omni`, `${ROOT}/saves/${saved.id}`]) {
+    assert.equal((await json(await request(env, path, { cookie: user.cookie, expectedUserId: null }), 400)).error, 'expected_user_required');
+  }
+  assert.equal((await json(await save(env, user.cookie, snapshot(), { expectedUserId: null }), 400)).error, 'expected_user_required');
+  assert.equal((await json(await request(env, `${ROOT}/account`, { cookie: user.cookie }), 200)).user.id, user.userId);
+  assert.equal(env.DB.count('account_saves'), 1);
+});
+
+test('A-to-B and B-to-A cookie switches refuse stale-account uploads, lists and downloads', async () => {
+  const env = makeEnv(), a = await signIn(env.DB), b = await signIn(env.DB);
+  const saved = new Map();
+  for (const user of [a, b]) saved.set(user.userId, (await json(await save(env, user.cookie, snapshot({ payload: { private: `owner-${user.userId}` } })), 201)).save);
+  for (const [displayed, switched] of [[a, b], [b, a]]) {
+    const before = await json(await request(env, `${ROOT}/account`, { cookie: displayed.cookie }), 200);
+    assert.equal(before.user.id, displayed.userId);
+    const stale = { cookie: switched.cookie, expectedUserId: before.user.id, origin: OMNI };
+    // Refuse before parsing even malformed private upload content.
+    assert.equal((await json(await save(env, switched.cookie, snapshot(), { ...stale, body: '{' }), 409)).error, 'account_changed');
+    for (const path of [`${ROOT}/saves?app=omni`, `${ROOT}/saves/${saved.get(switched.userId).id}`]) {
+      const denied = await json(await request(env, path, stale), 409);
+      assert.equal(denied.error, 'account_changed');
+      assert.equal(Object.hasOwn(denied, 'save'), false);
+      assert.equal(Object.hasOwn(denied, 'saves'), false);
+    }
+  }
+  assert.equal(env.DB.count('account_saves'), 2);
+});
+
+test('idempotent retry cannot cross account identity even when request UUID is unchanged', async () => {
+  const env = makeEnv(), a = await signIn(env.DB), b = await signIn(env.DB), input = snapshot();
+  const first = (await json(await save(env, a.cookie, input), 201)).save;
+  assert.equal((await json(await save(env, b.cookie, input, { expectedUserId: a.userId }), 409)).error, 'account_changed');
+  assert.equal((await json(await save(env, a.cookie, input, { expectedUserId: a.userId }), 200)).save.id, first.id);
+  assert.equal(env.DB.count('account_saves'), 1);
 });
