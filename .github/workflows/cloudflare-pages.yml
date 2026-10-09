@@ -60,6 +60,9 @@ jobs:
           for pair in rise:rise flyspace:omnios relay:relay osahr:osahr; do grep -Fq "data-system-map=\"${pair##*:}\"" "dist/projects/${pair%%:*}/index.html"; done
           grep -Fq 'pj-run__out' dist/projects/syberwork/index.html
           grep -Fq 'sy-atlas' dist/index.html
+          grep -Fq 'https://rise.syberlabs.io/try/' dist/index.html
+          grep -Fq 'id="dependencies"' dist/stack/index.html
+          grep -Fq 'rise.syberlabs.io<wbr>/api/mcp' dist/projects/rise/index.html
           grep -Fq 'syberlabs.js' dist/services/index.html
           test -s dist/404.html
           test -s dist/rise-demo/index.html

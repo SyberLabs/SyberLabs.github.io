@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="/syberlabs.css?v=4">
-  <link rel="stylesheet" href="/stack/stack.css?v=1">
+  <link rel="stylesheet" href="/stack/stack.css?v=2">
   <title>How We Build | SyberLabs</title>
 </head>
 <body class="syber-stack">
@@ -76,6 +76,9 @@
         <article><span class="number">02 / THIS SITE</span><h3>Dependency panels at build time</h3><p>Each project page carries a dependency panel generated from GitHits’ package API (<code>api.githits.dev/v1</code>) when the site is built: license, latest version and known vulnerabilities for the packages the project declares. Only fields GitHits returned are shown. Where no snapshot has been fetched yet, the panel says so.</p></article>
       </div>
     </section>
+
+    <!-- stack:githits -->
+    <!-- Filled at build time by scripts/prerender.mjs from src/githits-panel.jsx: the GitHits dependency totals across the project pages. -->
 
     <section class="stack-section" id="setup" aria-labelledby="setup-title">
       <div class="section-heading">
