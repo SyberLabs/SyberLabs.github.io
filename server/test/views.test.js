@@ -37,12 +37,12 @@ function assertShell(body) {
   assert.match(body, /<html lang="en" data-field="calm">/);
   assert.match(body, /<meta name="robots" content="noindex, nofollow">/);
   assert.match(body, /<link rel="stylesheet" href="\/syberlabs\.css\?v=4">/);
-  assert.match(body, /<link rel="stylesheet" href="\/staff\.css\?v=5">/);
+  assert.match(body, /<link rel="stylesheet" href="\/staff\.css\?v=6">/);
   assert.match(body, /<!--email_off-->[\s\S]*<main id="main" class="staff sy-container">[\s\S]*<\/main>[\s\S]*<!--\/email_off-->/);
   // RFC-0002 2.6 and test 10: the staff header, never the public one, its Atlas or remote fonts.
   assert.match(body, /<a class="sy-skip" href="#main">Skip to content<\/a>\n<div class="sy-field-host" aria-hidden="true"><\/div>\n<header class="staff-header">/);
   assert.match(body, /<a class="sy-lockup" href="\/"/);
-  assert.match(body, /<footer class="sy-footer">/);
+  assert.match(body, /<footer class="(?:sy-footer|portal-footer sy-container)">/);
   assert.doesNotMatch(body, /<script/i, 'staff pages load no script');
   for (const banned of ['<details', 'sy-atlas', 'sy-nav', 'sy-header', 'sy-menu', 'fonts.googleapis.com', 'fonts.gstatic.com']) {
     assert.ok(!body.includes(banned), banned);

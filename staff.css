@@ -47,11 +47,34 @@
 .staff-section > .sy-alert { margin-bottom: var(--space-4); }
 
 /* Sign-in */
-.staff-signin__providers { display: grid; gap: var(--space-3); max-width: 440px; padding: 22px 18px; }
+.staff:has(> .staff-signin) { padding-block: 40px; }
+.staff-signin { display: grid; justify-items: center; align-content: center; gap: 24px; min-height: min(640px, calc(100svh - 240px)); }
+.staff-signin__card { position: relative; width: 100%; max-width: 480px; padding: 40px; border: 1px solid var(--sy-rule-2); border-radius: 20px; background: linear-gradient(145deg, #14122e, #0c0b20); box-shadow: 0 24px 80px -40px #000; }
+.staff-signin__card::before { content: ''; position: absolute; top: -1px; left: 40px; right: 40px; height: 2px; background: linear-gradient(90deg, #90d8f000, #90d8f0, #c7a4ff, #c7a4ff00); }
+.staff-signin .site-head { padding: 0; border: 0; }
+.staff-signin .site-head::after { content: none; }
+.staff-signin .sy-eyebrow { margin: 0; color: var(--sy-ice); font-size: 11px; letter-spacing: .14em; }
+.staff .staff-signin .sy-display { margin-top: 12px; font: 600 clamp(30px, 4vw, 36px)/1.15 var(--sy-sans); letter-spacing: -.035em; }
+.staff-signin .staff-alert { margin-top: 24px; }
+.staff-signin__intro { margin: 12px 0 28px; color: var(--sy-mist); font-size: 15px; line-height: 1.6; }
+.staff-signin__providers { display: grid; gap: 16px; }
 .staff-signin__providers form { margin: 0; }
+.staff-signin .staff-provider { min-height: 52px; border-radius: 10px; background: var(--sy-vellum); box-shadow: none; transition: background 120ms; touch-action: manipulation; }
+.staff-signin .staff-provider:hover { background: #d7eaff; transform: none; box-shadow: none; }
+.staff-signin .staff-provider:active { background: #c6dfff; }
 .staff-provider.sy-btn { width: 100%; }
 .staff-provider__mark { width: 20px; height: 20px; flex: none; color: currentColor; } /* the solid button's dark text */
-.staff-signin__note { max-width: 440px; }
+.staff-signin__access { margin: 28px 0 0; color: var(--sy-body); }
+.staff-signin__note { margin: 16px 0 0; padding-top: 16px; border-top: 1px solid var(--sy-rule); font-size: 12px; line-height: 1.7; }
+.staff-signin__help { margin: 0; color: var(--sy-mist); font-size: 13px; text-align: center; }
+.staff-signin__help a { display: inline-block; padding-block: 8px; }
+@media (max-width: 540px) {
+  .staff:has(> .staff-signin) { padding-block: 32px; }
+  .staff-signin { min-height: 0; }
+  .staff-signin__card { padding: 28px 24px; border-radius: 16px; }
+  .staff-signin__card::before { left: 24px; right: 24px; }
+}
+@media (prefers-reduced-motion: reduce) { .staff-signin .staff-provider { transition: none; } }
 /* Google's own button image (RFC-0002 3.2): 48 px tall, aspect ratio kept, centred under GitHub's. The <button> is
    reset so the focus ring hugs the image. */
 .staff-signin__google { display: flex; justify-content: center; }

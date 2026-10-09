@@ -43,5 +43,5 @@ export function unavailableHtml(pathname = '/auth/signin') {
     return page(null, { title: 'Staff pages are unavailable', body, admin: false, signOut: true });
   }
   const body = signinBody({ next: '/admin/', unavailable: true });
-  return page(null, { title: 'Sign-in is unavailable · Sign in', body, admin: false });
+  return page(null, { title: 'Sign-in is unavailable · Sign in', body, admin: false, compactFooter: true });
 }
