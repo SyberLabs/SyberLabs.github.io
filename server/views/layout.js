@@ -1,11 +1,8 @@
-// The shell every Function page shares (RFC-0002 2.6): the privacy page's <head> without its Google Fonts
-// links (the staff CSP allows no remote style or font, so staff pages use the kit's fallback stacks), the
-// staff header from chrome.js (never the public header(): its Atlas cannot be closed without script) and
-// the public footer(). No page loads script.
-// Every helper here takes raw values and escapes them; only arguments named *Html are trusted markup.
+// Script-free Function page shell. Authenticated pages share a workspace rail and compact footer.
+// Raw values are escaped; only arguments named *Html are trusted markup.
 import { footer } from '../../projects/project-template.js';
 import { esc } from '../http.js';
-import { staffHeader } from './chrome.js';
+import { staffHeader, workspaceNavigation } from './chrome.js';
 
 export { PROVIDER_LABEL, providerLabel, identityName, signedInAs, navItems } from './chrome.js';
 
@@ -38,15 +35,17 @@ export function page(ctx, { title, body, section = '', admin = true, signOut, co
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <title>${esc(title)} · SyberLabs staff</title>
   <link rel="stylesheet" href="/syberlabs.css?v=4">
-  <link rel="stylesheet" href="/staff.css?v=9">
+  <link rel="stylesheet" href="/staff.css?v=10">
 </head>
-<body>
+<body${user ? ' class="workspace-app"' : ''}>
 <!--email_off-->
 ${staffHeader(ctx, { section, user, signOut: signOut ?? Boolean(user) })}
-  <main id="main" class="staff sy-container">
+${user ? `<div class="workspace-shell"><aside class="workspace-sidebar" aria-label="Workspace navigation">${workspaceNavigation(ctx, section)}</aside><div class="workspace-content">` : ''}
+  <main id="main" class="staff sy-container" tabindex="-1">
   ${body}
   </main>
-${compactFooter ? '<footer class="portal-footer sy-container"><span>SYBERLABS / STAFF</span><a href="/">Public site ↗</a><a href="/privacy/#staff">Privacy</a></footer>' : footer()}
+${user || compactFooter ? '<footer class="portal-footer sy-container"><span>SYBERLABS / WORKSPACE</span><a href="/">Public site ↗</a><a href="/privacy/#staff">Privacy</a></footer>' : footer()}
+${user ? '</div></div>' : ''}
 <!--/email_off-->
 </body>
 </html>

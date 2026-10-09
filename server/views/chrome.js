@@ -1,8 +1,4 @@
-// The staff header (RFC-0002 2.6, 3.3). Staff pages never use the public header(): its single 64 px row
-// and its Atlas menu (a <details> that only script can close) cut the account line and Sign out off the
-// right edge, and the Atlas lists only public pages. This one is in normal flow, needs no script, and
-// every row is a flex row that wraps at every width, so at 375 px nothing is pushed past the site
-// layer's `body { overflow-x: clip }`.
+// Shared script-free application navigation, filtered by the resolved session permissions.
 import { esc } from '../http.js';
 import { identityName } from '../authz.js';
 
@@ -38,35 +34,27 @@ export const GOOGLE_BUTTON = '<img class="staff-google__img" src="/staff/google-
 
 const SIGN_OUT = '<form method="post" action="/auth/signout" class="staff-inline"><button class="sy-btn sy-btn--ghost staff-btn--small" type="submit">Sign out</button></form>';
 
-function staffNav(ctx, section) {
-  // Always shown, also when it holds only Account (RFC-0002 3.3): it says where you are.
-  return `<nav class="staff-nav" aria-label="Staff"><ul>${navItems(ctx).map(item =>
-    `<li><a href="${item.href}"${item.id === section ? ' aria-current="page"' : ''}>${esc(item.label)}</a></li>`).join('')}</ul></nav>`;
+const NAV_ICONS = {
+  portal: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+  saves: '<path d="M5 3h14v18l-7-4-7 4V3Z"/>',
+  account: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  changes: '<path d="M5 6h14M5 12h14M5 18h9"/>',
+  people: '<circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6M21 21v-3a6 6 0 0 0-4-5"/>',
+  roles: '<path d="m12 3 8 4v5c0 5-8 9-8 9s-8-4-8-9V7l8-4Z"/><path d="m8 12 3 3 5-6"/>',
+  audit: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+};
+
+export function workspaceNavigation(ctx, section) {
+  const items = navItems(ctx);
+  const group = (label, entries) => entries.length ? `<div class="workspace-nav-block"><p class="workspace-nav-label">${label}</p><nav class="staff-nav" aria-label="${label}"><ul>${entries.map(item => `<li><a href="${item.href}"${item.id === section ? ' aria-current="page"' : ''}><svg class="workspace-nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${NAV_ICONS[item.id]}</svg><span>${esc(item.label)}</span></a></li>`).join('')}</ul></nav></div>` : '';
+  return `${group('Workspace', items.filter(item => item.key === null))}${group('Team', items.filter(item => item.key !== null))}<div class="workspace-nav-footer"><a href="/">Public site ↗</a><a href="/privacy/#staff">Privacy</a>${SIGN_OUT}</div>`;
 }
 
-// The skip link, the decorative star-field host (its CSS gradient shows with no script; there is no
-// canvas, because nothing would draw on it), then the header:
-//   row 1: the SYBERLABS lockup, and Sign out when `signOut`;
-//   row 2 (signed in): the Staff eyebrow, linking to /admin/, and the account line;
-//   row 3 (signed in): the section nav.
-// /auth/signin passes no user and no signOut (lockup only). The gated 503 passes signOut alone, because the
-// session could not be resolved (RFC-0002 3.4).
+// Native disclosure keeps mobile navigation usable under the script-free staff CSP.
 export function staffHeader(ctx, { section = '', user = ctx && ctx.user, signOut = Boolean(user) } = {}) {
-  const rows = [`<div class="staff-header__row">
-      <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>${signOut ? `
-      ${SIGN_OUT}` : ''}
-    </div>`];
-  if (user) {
-    rows.push(`<div class="staff-header__row">
-      <a class="sy-eyebrow staff-header__home" href="/admin/">Staff</a>
-      <p class="staff-header__account"><a class="staff-profile" href="/admin/account" aria-label="Profile: ${esc(identityName(user))}"><span class="staff-profile__avatar" aria-hidden="true">${esc(Array.from(identityName(user).replace(/^@/, ''))[0]?.toLocaleUpperCase() || '•')}</span><span>Signed in as ${esc(signedInAs(user))}</span></a></p>
-    </div>`, `<div class="staff-header__row">
-      ${staffNav(ctx, section)}
-    </div>`);
-  }
+  const name = user ? identityName(user) : '';
+  const controls = user ? `<span class="workspace-page-name">${esc(NAV.find(item => item.id === section)?.label || 'Workspace')}</span><div class="staff-header__controls"><a class="staff-profile" href="/admin/account" aria-label="Profile: ${esc(name)} (${esc(providerLabel(user.provider))})"><span class="staff-profile__avatar" aria-hidden="true">${esc(Array.from(name.replace(/^@/, ''))[0]?.toLocaleUpperCase() || '•')}</span><span class="staff-profile__label">${esc(name)}<small>${esc(providerLabel(user.provider))}</small></span></a><details class="workspace-mobile-nav"><summary>Navigate</summary><div class="workspace-mobile-nav__panel">${workspaceNavigation(ctx, section)}</div></details></div>` : signOut ? SIGN_OUT : '';
   return `<a class="sy-skip" href="#main">Skip to content</a>
 <div class="sy-field-host" aria-hidden="true"></div>
-<header class="staff-header"><div class="staff-header__in">
-    ${rows.join('\n    ')}
-  </div></header>`;
+<header class="staff-header"><div class="staff-header__in"><div class="staff-header__row"><a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>${controls}</div></div></header>`;
 }

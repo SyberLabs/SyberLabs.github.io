@@ -233,7 +233,9 @@ test('app return accepts only canonical app roots and requires authentication', 
     assert.equal(res.headers.get('Location'), `${origin}/`);
   }
   for (const app of ['unknown', 'https://evil.example', '//evil.example', 'omni/../evil']) {
-    assert.equal((await request(env, `/admin/return?app=${encodeURIComponent(app)}`, { cookie: user.cookie })).status, 400);
+    const invalid = await request(env, `/admin/return?app=${encodeURIComponent(app)}`, { cookie: user.cookie });
+    assert.equal(invalid.status, 400);
+    assert.match(await invalid.text(), /Choose FLYSPACE, RISE Reader or RISE Sketch from your <a href="\/admin\/">launchpad<\/a>/);
   }
   const res = await request(env, '/admin/return?app=omni');
   assert.equal(res.status, 303);
@@ -323,13 +325,20 @@ test('saved-things app filters and name search show only owned matching backups 
   assert.match(body, /href="\/admin\/saves\?app=rise&amp;q=morning"/);
   assert.match(body, /href="\/admin\/saves\?app=omni">Clear search/);
   assert.match(body, /href="\/admin\/return\?app=omni"/);
+  assert.match(body, /FLYSPACE \/ PRIVATE BACKUP/);
+  assert.match(body, />Open FLYSPACE ↗<\/a>/);
+  assert.match(body, /FLYSPACE backups<\/h2>/);
+  assert.match(body, /FLYSPACE \(1\)<\/a>/);
   assert.match(body, new RegExp(omni.id));
   assert.doesNotMatch(body, new RegExp(outsider.id));
-  for (const [app, name] of [['rise', 'Morning pages'], ['sketch', 'Evening ink']]) {
+  for (const [app, name, label] of [['rise', 'Morning pages', 'RISE Reader'], ['sketch', 'Evening ink', 'RISE Sketch']]) {
     const html = await (await request(env, `/admin/saves?app=${app}`, { cookie: owner.cookie })).text();
     assert.match(html, new RegExp(name));
     assert.equal((html.match(/class="saved-item"/g) || []).length, 1);
     assert.match(html, new RegExp(`href="/admin/return\\?app=${app}"`));
+    assert.match(html, new RegExp(`${label} / PRIVATE BACKUP`));
+    assert.match(html, new RegExp(`>Open ${label} ↗</a>`));
+    assert.match(html, new RegExp(`${label} backups</h2>`));
   }
 });
 
@@ -350,7 +359,8 @@ test('saved-things distinguishes a new library from filtered no-results and expl
   assert.match(empty, /No account backups yet/);
   assert.match(empty, /Save to account/);
   assert.match(empty, /Open an app, open Account/);
-  assert.match(empty, /RISE account backups contain imported text/);
+  assert.match(empty, /RISE Reader account backups contain imported text/);
+  for (const label of ['FLYSPACE', 'RISE Reader', 'RISE Sketch']) assert.match(empty, new RegExp(`>Open ${label} ↗</a>`));
   for (const app of ['omni', 'rise', 'sketch']) assert.match(empty, new RegExp(`href="/admin/return\\?app=${app}"`));
   assert.doesNotMatch(empty, /class="saved-(?:overview|apps|search|results|guide)"/);
   assert.doesNotMatch(empty, /Clear all filters|No matching backups/);
@@ -367,6 +377,6 @@ test('saved-things distinguishes a new library from filtered no-results and expl
   assert.match(filtered, /<details class="saved-guide"><summary>How to restore a backup<\/summary><ol>/);
   assert.doesNotMatch(filtered, /<details class="saved-guide"[^>]*\bopen\b/);
   assert.match(filtered, /Opening the app alone does not restore your backup/);
-  assert.match(filtered, /RISE restores imported text/);
+  assert.match(filtered, /RISE Reader restores imported text/);
   assert.match(filtered, /separate from the app’s own project download/);
 });

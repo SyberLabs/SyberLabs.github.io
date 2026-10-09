@@ -67,7 +67,7 @@ export async function accountPage(ctx) {
     ? `<aside class="account-guidance"><p>Your account is ready. Open your <a href="/admin/">launchpad</a> or view your <a href="/admin/saves">saved things</a>. If you need team tools, ask an admin for a role: ${contact('Email SyberLabs')}.</p></aside>`
     : '';
 
-  const body = `${head('Staff', 'Account.')}
+  const body = `${head('Your workspace', 'Your account.')}
   ${google ? addGoogleNotice(ctx.url.searchParams, hasGoogle) : ''}
   <section class="staff-section account-panel" aria-labelledby="methods-h">
     <h2 class="sy-heading" id="methods-h">Sign-in methods</h2>
