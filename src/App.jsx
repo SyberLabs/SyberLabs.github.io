@@ -451,6 +451,8 @@ function Research() {
 // Latest: what merged, deployed or was decided, newest first, each with its link (projects/latest.js).
 // Internal sections (What changed, The factory) are hidden from the public homepage while they move to the internal
 // dashboard. They still compile; set INTERNAL_SECTIONS to true to show them again (and restore the Atlas link in projects/site-data.js).
+// What changed is staff-only (MasterMind RFC 0002): with this true, CI's absence guards fail the build; the staff page
+// /admin/changes replaces it.
 const INTERNAL_SECTIONS = false;
 
 function Latest() {

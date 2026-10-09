@@ -18,6 +18,9 @@ cp -r og dist/
 for dir in rise-demo omni-demo relay-demo projects approach jev kev research services privacy stack plus; do
   cp -r "$dir" dist/
 done
+# projects/latest.js ("What changed") is staff-only (MasterMind RFC 0002): the homepage imports it at build time,
+# but the raw file is never published. The workflow's absence guards fail the build if it reaches dist/.
+rm -f dist/projects/latest.js
 # GitHits dependency snapshots (regenerate with `node scripts/githits-snapshot.mjs`)
 mkdir -p dist/githits
 cp data/githits/*.json dist/githits/
