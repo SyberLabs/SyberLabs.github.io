@@ -93,7 +93,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 ## Contact
 
-- [Email](mailto:syberlabs.software@gmail.com): syberlabs.software@gmail.com
+- [Email](mailto:hello.mateorobles@gmail.com): hello.mateorobles@gmail.com
 - [GitHub](https://github.com/SyberLabs): github.com/SyberLabs
 - [LinkedIn](https://www.linkedin.com/in/mateo-robles-71260b189): Mateo Robles
 - [Résumé](https://syberlabs.io/mateo_robles_resume.pdf): PDF

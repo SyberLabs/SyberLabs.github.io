@@ -54,11 +54,16 @@ export const header = (current = '', { sticky = true, script = true } = {}) => {
 };
 
 // The footer carries the whole map too, so every page is reachable without opening the menu (and without JS).
+// The footer: one piece of art (the orb from mateo.syberlabs.space) and one hairline bar. Radical simplicity on purpose:
+// every page stays one tap away through the header's Menu (the Atlas), so the footer does not repeat the site map.
 export const footer = (current = '') => `<footer class="sy-footer">
-<div class="sy-footer__map"><div class="sy-footer__map-in">${siteMap.map(group => `<section aria-labelledby="foot-${group.title.toLowerCase()}"><h2 id="foot-${group.title.toLowerCase()}" class="sy-eyebrow">${esc(group.title)}</h2><ul>${group.items.map(item => `<li><a href="${item.href}"${item.external ? ' rel="noopener"' : ''}${item.href === current ? ' aria-current="page"' : ''}${item.accent ? ` style="--sy-accent:${item.accent}"` : ''}>${item.accent ? '<span class="sy-footer__dot" aria-hidden="true"></span>' : ''}${esc(item.label)}${item.external ? ' ' + icon('external', 14) : ''}</a></li>`).join('')}</ul></section>`).join('')}</div></div>
 <div class="sy-footer__in">
-  <a class="sy-lockup" href="/"><img src="/syber-logo-96.png" alt="" width="18" height="20">© 2026 SyberLabs</a>
-  <nav aria-label="Footer">${footerLinks.map(link => `<a href="${link.href}"${link.href === current ? ' aria-current="page"' : ''}>${link.label}${link.external ? ' ' + icon('external', 16) : ''}</a>`).join('')}</nav>
+  <a class="sy-footer__art" href="/" aria-label="SyberLabs home"><img src="/footer-orb.webp" alt="" width="960" height="523" loading="lazy" decoding="async"></a>
+  <div class="sy-footer__bar">
+    <a class="sy-lockup" href="/"><img src="/syber-logo-96.png" alt="" width="18" height="20">SyberLabs</a>
+    <nav aria-label="Footer">${footerLinks.map(link => `<a href="${link.href}"${link.href === current ? ' aria-current="page"' : ''}>${link.label}${link.external ? ' ' + icon('external', 14) : ''}</a>`).join('')}</nav>
+    <span class="sy-footer__copy">© 2026</span>
+  </div>
 </div></footer>`;
 
 // Breadcrumb for every page below the homepage.
