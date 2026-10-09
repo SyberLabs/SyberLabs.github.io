@@ -57,12 +57,19 @@ export function signinBody(opts) {
   const alertHtml = unavailable ? alert('danger', UNAVAILABLE_HTML)
     : copy ? alert(copy.kind, copy.html({ switching, provider })) : '';
   const buttons = unavailable ? ''
-    : `<div class="sy-plate sy-plate--card staff-signin__providers">${githubForm({ next, switching })}${
+    : `<div class="staff-signin__providers">${githubForm({ next, switching })}${
       providers.includes('google') ? googleForm({ next, switching }) : ''}</div>`;
-  return `${head('Staff', 'Sign in.')}
+  return `<section class="staff-signin" aria-label="Staff sign-in">
+  <div class="staff-signin__card">
+  ${head('Staff', 'Sign in.')}
   ${alertHtml}
+  <p class="staff-signin__intro">Access your SyberLabs workspace.</p>
   ${buttons}
-  <p class="sy-small staff-signin__note">Only people SyberLabs has added can sign in. Signing in sets a cookie on syberlabs.io and nothing on our other sites. <a href="/privacy/#staff">Privacy</a></p>`;
+  <p class="sy-small staff-signin__access">Only people SyberLabs has added can sign in.</p>
+  <p class="sy-small staff-signin__note">Signing in sets a cookie on syberlabs.io and nothing on our other sites. <a href="/privacy/#staff">Privacy</a></p>
+  </div>
+  <p class="staff-signin__help">Need help with access? ${contact('Contact SyberLabs')}</p>
+  </section>`;
 }
 
 // "Sign-in was cancelled · Sign in", so a screen reader announces the alert on load.
@@ -80,5 +87,5 @@ export async function signinPage(ctx) {
   const providers = enabledProviders(ctx.env);
   const provider = providers.includes(q.get('p')) ? q.get('p') : null;
   const body = signinBody({ code, next, switching: q.get('switch') === '1', provider, providers });
-  return html(page(ctx, { title: signinTitle(code, provider), body, admin: false }));
+  return html(page(ctx, { title: signinTitle(code, provider), body, admin: false, compactFooter: true }));
 }
