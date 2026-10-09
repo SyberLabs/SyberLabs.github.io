@@ -10,8 +10,11 @@
 export const CONTACT = 'mailto:hello.mateorobles@gmail.com';
 export const EMAIL = 'hello.mateorobles@gmail.com';
 export const RESUME = '/mateo_robles_resume.pdf';
-export const LINKEDIN = 'https://www.linkedin.com/in/mateo-robles-71260b189';
-export const GITHUB = 'https://github.com/SyberLabs';
+export const LINKEDIN = 'https://www.linkedin.com/in/automateon/';
+export const GITHUB = 'https://github.com/SyberLabs';            // the lab's organisation
+// Mateo's own profiles, wherever he appears as a person (the hero's founder line, the founder card, structured data)
+export const MATEO_GITHUB = 'https://github.com/sykosyber';
+export const MATEO_SITE = 'https://mateo.syberlabs.space/';
 
 // Public tools and previews. Linked from the hero, the Atlas, the footer and each project page.
 export const RISE_APP = 'https://rise.syberlabs.io/';
@@ -379,7 +382,6 @@ export const siteMap = [
     // { label: 'The factory', note: 'Agents build and review; humans look at the product', href: '/#factory' }, // hidden with the factory section (src/App.jsx INTERNAL_SECTIONS)
     { label: 'Services', note: 'Interactive reading pilots', href: '/services/' },
     { label: 'About', note: 'The lab and its founder', href: '/#about' },
-    { label: 'Design kit', note: 'Atlas v2 tokens and components', href: '/kit/v2/' },
     { label: 'Review', note: 'State of the lab, by date', href: '/review/' },
     { label: 'Privacy', note: 'What this site does with your data', href: '/privacy/' },
   ] },

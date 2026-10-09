@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { projects, skills, EMAIL, CONTACT, RESUME, LINKEDIN, GITHUB, RISE_APP, OMNI_PREVIEW, SKETCH_APP, RISE_PLUS } from '../projects/site-data.js';
+import { projects, skills, EMAIL, CONTACT, RESUME, LINKEDIN, MATEO_GITHUB, MATEO_SITE, RISE_APP, OMNI_PREVIEW, SKETCH_APP, RISE_PLUS } from '../projects/site-data.js';
 import { latest } from '../projects/latest.js';
 import { header as chromeHeader, footer as chromeFooter } from '../projects/project-template.js';
 import { mount, RING_SVG } from '../kit/v2/syber-atmosphere.js';
@@ -88,7 +88,7 @@ function Hero() {
           <ul>
             <li><a href={RESUME}>Résumé (PDF)</a></li>
             <li><a href={LINKEDIN}>LinkedIn</a></li>
-            <li><a href={GITHUB}>GitHub</a></li>
+            <li><a href={MATEO_GITHUB}>GitHub</a></li>
             <li><a href={CONTACT}>Email</a></li>
           </ul>
         </div>
@@ -367,9 +367,9 @@ function SketchGallery() {
 
 // Research: Sybershoke, framed as what it is (a method for testing service-oriented agent systems under fault), with
 // the RISE run as its field result. Every claim is in research/sybershoke/ (revision 2, SyberLabs/sybershoke@45956fe):
-// the faults it injects, the seed -> fault plan -> history -> invariants abstraction, delta-debugging shrinking, the
-// 39 recorded answers, the two seed-replayable defects and the merged fix (SyberLabs/RISE#306), and its stated scope.
-const SHOKE = 'https://github.com/SyberLabs/sybershoke', SHOKE_FIX = 'https://github.com/SyberLabs/RISE/pull/306';
+// the faults it injects, the seed -> fault plan -> history -> invariants abstraction, delta-debugging shrinking, and
+// its stated scope.
+const SHOKE = 'https://github.com/SyberLabs/sybershoke';
 const SHOKE_PILLARS = [
   ['Deterministic', 'One seed, one fault schedule, one history, on any machine. A failure is a seed you can rerun.'],
   ['Invariant-driven', 'The system under test never grades itself. Correctness is read from the history: no task lost, none accepted twice.'],
@@ -393,12 +393,6 @@ function Research() {
         <dl className="home-study__pillars">
           {SHOKE_PILLARS.map(([term, text]) => <div key={term}><dt>{term}</dt><dd>{text}</dd></div>)}
         </dl>
-        <p className="sy-label home-study__label">Field result · RISE production worker</p>
-        <dl className="home-study__stats">
-          <div><dt><b data-count="39">39</b></dt><dd>recorded production model responses, replayed under fault</dd></div>
-          <div><dt><b data-count="2">2</b></dt><dd>latent defects surfaced, each reproducible from its seed</dd></div>
-          <div><dt><b>#306</b></dt><dd>remediation <a href={SHOKE_FIX}>merged upstream</a></dd></div>
-        </dl>
         <p className="home-study__method"><span className="sy-label">Lineage</span><span>Fault injection after <a href="https://jepsen.io/">Jepsen</a>; minimization by delta debugging (Zeller and Hildebrandt, <a href="https://doi.org/10.1109/32.988498">IEEE Transactions on Software Engineering, 2002</a>).</span></p>
         <p className="home-study__method"><span className="sy-label">Scope</span><span>Run against the worker’s source, with stand-ins for Redis and Neon and virtual time. Results are defects found, not production failure rates.</span></p>
         <p className="home-study__foot">
@@ -415,7 +409,6 @@ function Research() {
         <li><a href="/kev/">RISE, Jev and Kev: reader-owned AI<Icon name="arrow" size={16} /></a></li>
         <li><a href="https://github.com/SyberLabs/papers">Papers: working papers and studies<Icon name="external" size={16} /></a></li>
         <li><a href="https://github.com/SyberLabs/cross-platform">Instrument panel: run and inspect five systems<Icon name="external" size={16} /></a></li>
-        <li><a href="/kit/v2/">Design system v2 “Atlas”: the kit<Icon name="arrow" size={16} /></a></li>
       </ul>
     </div>
   </section>;
@@ -507,7 +500,8 @@ function About() {
         <ul className="home-about__links">
           <li><a href={RESUME}>Résumé (PDF)<Icon name="arrow" /></a></li>
           <li><a href={LINKEDIN}>LinkedIn<Icon name="external" /></a></li>
-          <li><a href={GITHUB}>GitHub<Icon name="external" /></a></li>
+          <li><a href={MATEO_GITHUB}>GitHub<Icon name="external" /></a></li>
+          <li><a href={MATEO_SITE}>Personal site<Icon name="external" /></a></li>
           <li><a href={CONTACT}>{EMAIL}</a></li>
         </ul>
       </aside>
