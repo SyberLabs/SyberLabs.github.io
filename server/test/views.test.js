@@ -37,14 +37,14 @@ function assertShell(body) {
   assert.match(body, /<html lang="en" data-field="calm">/);
   assert.match(body, /<meta name="robots" content="noindex, nofollow">/);
   assert.match(body, /<link rel="stylesheet" href="\/syberlabs\.css\?v=4">/);
-  assert.match(body, /<link rel="stylesheet" href="\/staff\.css\?v=9">/);
-  assert.match(body, /<!--email_off-->[\s\S]*<main id="main" class="staff sy-container">[\s\S]*<\/main>[\s\S]*<!--\/email_off-->/);
+  assert.match(body, /<link rel="stylesheet" href="\/staff\.css\?v=10">/);
+  assert.match(body, /<!--email_off-->[\s\S]*<main id="main" class="staff sy-container" tabindex="-1">[\s\S]*<\/main>[\s\S]*<!--\/email_off-->/);
   // RFC-0002 2.6 and test 10: the staff header, never the public one, its Atlas or remote fonts.
   assert.match(body, /<a class="sy-skip" href="#main">Skip to content<\/a>\n<div class="sy-field-host" aria-hidden="true"><\/div>\n<header class="staff-header">/);
   assert.match(body, /<a class="sy-lockup" href="\/"/);
   assert.match(body, /<footer class="(?:sy-footer|portal-footer sy-container)">/);
   assert.doesNotMatch(body, /<script/i, 'staff pages load no script');
-  for (const banned of ['<details', 'sy-atlas', 'sy-nav', 'sy-header', 'sy-menu', 'fonts.googleapis.com', 'fonts.gstatic.com']) {
+  for (const banned of ['sy-atlas', 'sy-nav', 'sy-header', 'sy-menu', 'fonts.googleapis.com', 'fonts.gstatic.com']) {
     assert.ok(!body.includes(banned), banned);
   }
 }
@@ -64,37 +64,32 @@ test('nav is filtered by permissions and always includes Launchpad, Saved things
 
   const none = page(ctxFor(), { title: 'X', body: '', section: 'account' });
   assertShell(none);
-  assert.match(none, /<nav class="staff-nav" aria-label="Staff"><ul><li><a href="\/admin\/">Launchpad<\/a><\/li><li><a href="\/admin\/saves">Saved things<\/a><\/li><li><a href="\/admin\/account" aria-current="page">Account<\/a><\/li><\/ul><\/nav>/);
+  assert.match(none, /aria-label="Workspace"/);
+  assert.match(none, /href="\/admin\/account" aria-current="page"/);
+  assert.doesNotMatch(none, /aria-label="Team"/);
   const reader = page(ctxFor({ perms: ['site:changes.read'] }), { title: 'X', body: '', section: 'changes' });
-  assert.match(reader, /<a href="\/admin\/changes" aria-current="page">What changed<\/a>/);
-  assert.match(reader, /<a href="\/admin\/account">Account<\/a>/);
+  assert.match(reader, /<a href="\/admin\/changes" aria-current="page">[\s\S]*?<span>What changed<\/span><\/a>/);
+  assert.match(reader, /<a href="\/admin\/account">[\s\S]*?<span>Account<\/span><\/a>/);
   assert.doesNotMatch(reader, /\/admin\/people|\/admin\/audit|\/admin\/roles/);
   assertShell(reader);
   assert.doesNotMatch(reader, /sy-badge--private|Staff only/, 'no Private badge (RFC-0002 2.6)');
 });
 
-// RFC-0002 2.6: three rows, each a wrapping flex row, in this order. The live bug this replaces: the public
-// header's single 64 px row pushed "sdcarlson · GitHub" and Sign out past the right edge at 1000 px.
-test('the staff header: lockup and Sign out, then Staff and the account line, then the nav', () => {
+test('workspace shell keeps profile and permission-filtered desktop and mobile navigation available without scripts', () => {
   const html = page(ctxFor({ perms: ['site:changes.read'], user: { login: 'sdcarlson' } }), { title: 'X', body: '', section: 'changes' });
-  const header = html.slice(html.indexOf('<header class="staff-header">'), html.indexOf('</header>'));
-  const rows = header.split('<div class="staff-header__row">').slice(1);
-  assert.equal(rows.length, 3);
-  assert.match(rows[0], /class="sy-lockup"[\s\S]*<form method="post" action="\/auth\/signout" class="staff-inline"><button class="sy-btn sy-btn--ghost staff-btn--small" type="submit">Sign out<\/button><\/form>/);
-  assert.match(rows[1], /<a class="sy-eyebrow staff-header__home" href="\/admin\/">Staff<\/a>/);
-  assert.match(rows[1], /<p class="staff-header__account"><a class="staff-profile" href="\/admin\/account" aria-label="Profile: @sdcarlson">/);
-  assert.match(rows[1], /<span>Signed in as @sdcarlson \(GitHub\)<\/span>/);
-  assert.match(rows[2], /<nav class="staff-nav" aria-label="Staff">/);
-  // A person added by id who has not signed in yet has no login: the line names the id.
+  assert.match(html, /<body class="workspace-app">/);
+  assert.match(html, /class="workspace-sidebar"/);
+  assert.match(html, /<details class="workspace-mobile-nav"><summary>Navigate<\/summary>/);
+  assert.equal((html.match(/aria-label="Workspace"/g) || []).length, 2);
+  assert.equal((html.match(/aria-label="Team"/g) || []).length, 2);
+  assert.equal((html.match(/href="\/admin\/changes" aria-current="page"/g) || []).length, 2);
+  assert.equal((html.match(/action="\/auth\/signout"/g) || []).length, 2);
+  assert.match(html, /aria-label="Profile: @sdcarlson \(GitHub\)"/);
+  assert.match(html, /staff-profile__label">@sdcarlson<small>GitHub<\/small>/);
+  assert.doesNotMatch(html, /\/admin\/people|\/admin\/roles|\/admin\/audit/);
   const byId = page(ctxFor({ user: { login: null, subject: '4242' } }), { title: 'X', body: '' });
-  assert.match(byId, /Signed in as GitHub id 4242 \(GitHub\)/);
-
-  // The CSS that keeps it on screen: every row wraps, and nothing in the header uses the fixed 64 px row.
-  const css = readFileSync(join(ROOT, 'staff.css'), 'utf8');
-  assert.match(css, /\.staff-header__row \{ display: flex; flex-wrap: wrap;/);
-  assert.match(css, /\.staff-header__account \{[^}]*overflow-wrap: anywhere/);
-  assert.match(css, /\.staff-nav ul \{ display: flex; flex-wrap: wrap;/);
-  assert.doesNotMatch(css, /--sy-header-h|sy-header__in/);
+  assert.match(byId, /Profile: GitHub id 4242 \(GitHub\)/);
+  assertShell(html);
 });
 
 test('bare pages (admin: false): the lockup only, no Sign out, account line or nav; signOut: true keeps Sign out', () => {
@@ -352,7 +347,7 @@ test('404 and CSRF pages render in the chrome', async () => {
   assert.match(nfBody, /<title>Not found · SyberLabs staff<\/title>/);
   assert.match(nfBody, /There's no staff page here\./);
   assert.match(nfBody, /href="\/admin\/">Back to staff home</);
-  assert.match(nfBody, /<nav class="staff-nav" aria-label="Staff">/);
+  assert.match(nfBody, /<nav class="staff-nav" aria-label="Workspace">/);
   const csrf = await call(env, '/admin/changes', { cookie: u.cookie, form: { a: 1 }, origin: 'https://sketch.syberlabs.io' });
   assert.equal(csrf.status, 403);
   assert.ok((await csrf.text()).includes(CSRF_COPY.replace(/'/g, '&#39;')));
