@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { skills, EMAIL, CONTACT, RESUME, LINKEDIN, MATEO_GITHUB, MATEO_SITE, OMNI_PREVIEW, SKETCH_APP, RISE_PLUS } from '../projects/site-data.js';
+import { skills, EMAIL, CONTACT, RESUME, LINKEDIN, MATEO_GITHUB, MATEO_SITE, OMNI_PREVIEW, SKETCH_APP, RISE_PLUS, RISE_APP } from '../projects/site-data.js';
 import { header as chromeHeader, footer as chromeFooter } from '../projects/project-template.js';
 import { mount, RING_SVG } from '../kit/v2/syber-atmosphere.js';
 import plateStill from './plate-i.webp';
@@ -54,7 +54,8 @@ const Footer = () => <div className="home-chrome home-footer" dangerouslySetInne
 // RISE Plus voice is labelled with its current availability (RISE_PLUS.state; /plus/ carries the full wording).
 const plusLive = RISE_PLUS.state === 'live';
 
-// The chamber (src/site/chamber.js): a reading about SyberLabs, line by line, in RISE's Stream presentation. Screen
+// The chamber (src/site/chamber.js): a reading about SyberLabs, line by line, in RISE's Stream presentation. It needs
+// no controls or clock: it plays, pauses off screen, and loops. Screen
 // readers and search engines get the whole text from the .sy-sr paragraph; without JS or under reduced motion the
 // stage holds one line, still.
 const CHAMBER = [
@@ -69,14 +70,9 @@ const CHAMBER = [
 function Chamber() {
   const fig = useRef(null);
   useEffect(() => { const c = mountChamber(fig.current, CHAMBER); return () => c.destroy(); }, []);
-  return <figure ref={fig} className="home-chamber">
+  return <figure ref={fig} className="home-chamber" aria-label="A short reading about SyberLabs, performed the way RISE reads">
     <p className="sy-sr">{CHAMBER.join(' ')}</p>
     <div className="home-chamber__stage" aria-hidden="true"><p className="home-chamber__line is-still">We build software you step inside.</p></div>
-    <figcaption className="home-chamber__bar" aria-hidden="true">
-      <span className="home-chamber__tag">A RISE-style reading</span>
-      <span className="home-chamber__rail"><i /></span>
-      <span className="home-chamber__clock" />
-    </figcaption>
   </figure>;
 }
 
@@ -124,11 +120,11 @@ function Hero() {
 const RISE_MCP = 'https://rise.syberlabs.io/api/mcp';
 const CLAUDE_CONNECTORS = 'https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp';
 
-// RISE Composer, right under the hero: free and live in Claude as a custom connector. What it claims is what runs:
-// Claude composes a reading over the connector (rise_present with a Current), RISE checks it before anything plays,
-// and the reader steps into it. The same instructions are on /projects/rise/#composer.
+// RISE Composer: free and live in Claude as a custom connector. What it claims is what runs: Claude composes a reading
+// over the connector (rise_present with a Current), RISE checks it before anything plays, and the reader steps into
+// it. The same instructions are on /projects/rise/#composer.
 const RUNTIME = [
-  ['01', 'Compose', 'A model writes the reading: the words, how they arrive, and the scene around them.'],
+  ['01', 'Compose', 'A model writes the reading: the words, how they arrive, and custom visuals for the scene.'],
   ['02', 'Admit', 'RISE checks every choice against what it can perform. Nothing plays that it did not admit.'],
   ['03', 'Experience', 'Words arrive in time, with image, sound and procedural motion. You step inside the answer.'],
 ];
@@ -143,7 +139,7 @@ function RuntimeFlow() {
     const measure = () => {
       const box = el.getBoundingClientRect();
       const pts = [...el.querySelectorAll('.home-rt__node')].map(n => { const b = n.getBoundingClientRect(); return [b.left - box.left + b.width / 2, b.top - box.top + b.height / 2, b.height / 2]; });
-      if (pts.length === 3) strike.layout(pts, box.width, box.height);
+      if (pts.length === 3) strike.layout(pts, box.width, box.height, { burst: box.width < 440 ? .52 : box.width < 560 ? .78 : 1 });
     };
     measure();
     const ro = 'ResizeObserver' in window ? new ResizeObserver(measure) : null;
@@ -169,32 +165,64 @@ function RuntimeFlow() {
   </div>;
 }
 
-function Composer() {
+// The RISE line: two products, one promise. RISE performs a text; the products differ in who writes what: with Reader
+// you bring the words and RISE stages them; with Composer the model writes the words and the stage (custom visuals). Both
+// cards share one skeleton (lockup and status, the promise, what it is, three stages, the way in), so they read as
+// siblings; the accent and the promise tell them apart. RISE Plus, the ElevenLabs voice, belongs to Reader.
+const READER_POINTS = [
+  ['Paced, not scrolled', 'Words arrive at a pace you set, or sit on a page you can turn.'],
+  ['Pictures and sound', 'Procedural visuals and sound give a poem or a chapter a room.'],
+  ['Nothing to set up', 'Any modern browser. No account, no key, no install.'],
+];
+function RiseLine() {
   return <section id="rise" className="home-sec sy-wrap" aria-labelledby="rise-title">
-    <div className="home-rt sy-card" style={{ '--sy-accent': '#f2d9a6' }} data-reveal>
-      <div className="home-rt__main">
-        <div className="home-rt__copy">
-          <p className="home-rt__top"><span className="sy-eyebrow">RISE Composer</span><Badge status={{ kind: 'live', label: 'Free · live in Claude' }} /></p>
-          <h2 id="rise-title" className="sy-display home-rt__title">The experiential runtime <em>for machine intelligence.</em></h2>
-          <p className="sy-body-lg home-rt__lede">Models think in text. RISE gives their answers time, image, sound and motion: a reading you step inside, not a block you scroll past.</p>
-          <div className="home-rt__connect">
-            <p className="sy-label">Add it to Claude as a custom connector</p>
-            <span className="home-conn"><span className="sy-label">Name</span><code>RISE</code><CopyButton text="RISE" label="the connector name" /></span>
-            <span className="home-conn"><span className="sy-label">URL</span><code>{RISE_MCP.split(/(?=\/api\/)/).flatMap((part, i) => i ? [<wbr key={i} />, part] : [part])}</code><CopyButton text={RISE_MCP} label="the connector URL" /></span>
-          </div>
-          <div className="sy-actions home-rt__actions">
-            <a className="sy-btn sy-btn--solid" href={CLAUDE_CONNECTORS}>How to add a connector<Icon name="external" /></a>
-            <a className="sy-btn sy-btn--line" href="/projects/rise/">How RISE works<Icon name="arrow" /></a>
-          </div>
-        </div>
-        <RuntimeFlow />
+    <div className="site-head home-head" data-reveal>
+      <div>
+        <p className="sy-eyebrow">The RISE line</p>
+        <h2 id="rise-title" className="sy-display">Whoever writes it, <em>RISE performs it.</em></h2>
       </div>
+      <p className="home-head__note sy-small">One stage, two authors: you, or your AI.</p>
     </div>
-    <div className="home-premium sy-card" style={{ '--sy-accent': '#f2d9a6' }} data-reveal>
-      <p className="home-premium__text"><b className="home-premium__name">RISE Plus</b> {plusLive
-        ? <>adds an ElevenLabs voice that reads the text you bring, <b className="home-premium__price">{RISE_PLUS.price}</b> a month.</>
-        : <>adds an ElevenLabs voice that reads the text you bring.<Badge status={{ kind: 'early', label: 'Coming soon' }} /></>}</p>
-      <a className="sy-btn sy-btn--line home-premium__go" href="/plus/">About RISE Plus<Icon name="arrow" /></a>
+    <div className="home-line">
+      <article className="home-line__card home-line__card--reader sy-card" aria-labelledby="reader-title" data-reveal>
+        <p className="home-line__top"><span className="home-line__lockup" id="reader-title"><span>RISE</span> <b>Reader</b></span><Badge status={{ kind: 'live', label: 'Free · open beta' }} /></p>
+        <p className="home-line__promise">You bring the words. <em>RISE stages them.</em></p>
+        <p className="home-line__what">A reading experience for people. Paste a passage or open today’s poem; RISE paces it and builds the visuals and sound around it.</p>
+        <div className="home-rt__flow is-still home-line__steps">
+          <ol className="home-rt__stages" aria-label="What RISE Reader does">
+            {READER_POINTS.map(([t, d], i) => <li key={t} className="home-rt__stage">
+              <span className="home-rt__node" aria-hidden="true"><i /></span>
+              <span className="home-rt__n">{String(i + 1).padStart(2, '0')}</span>
+              <span className="home-rt__term">{t}</span>
+              <span className="home-rt__text">{d}</span>
+            </li>)}
+          </ol>
+        </div>
+        <div className="home-line__plus">
+          <p><b className="home-premium__name">RISE Plus</b> {plusLive
+            ? <>adds an ElevenLabs voice that reads the text you bring, <b className="home-premium__price">{RISE_PLUS.price}</b> a month.</>
+            : <>adds an ElevenLabs voice that reads the text you bring.</>}</p>
+          <p className="home-line__plus-go">{!plusLive && <Badge status={{ kind: 'early', label: 'Coming soon' }} />}<a href="/plus/">About RISE Plus<Icon name="arrow" size={16} /></a></p>
+        </div>
+        <div className="sy-actions home-line__actions">
+          <a className="sy-btn sy-btn--solid" href={RISE_APP}>Open RISE Reader<Icon name="external" /></a>
+          <a className="sy-btn sy-btn--line" href="/projects/rise/">How RISE works<Icon name="arrow" /></a>
+        </div>
+      </article>
+      <article className="home-line__card home-line__card--composer home-rt sy-card" aria-labelledby="composer-title" data-reveal>
+        <p className="home-line__top"><span className="home-line__lockup" id="composer-title"><span>RISE</span> <b>Composer</b></span><Badge status={{ kind: 'live', label: 'Free · live in Claude' }} /></p>
+        <p className="home-line__promise">Your AI writes the words <em>and the stage.</em></p>
+        <p className="home-line__what">The experiential runtime for machine intelligence. Over a connector, Claude composes the whole reading, custom visuals included, and you step inside the answer.</p>
+        <RuntimeFlow />
+        <div className="home-rt__connect">
+          <p className="sy-label">Add it to Claude</p>
+          <span className="home-conn"><span className="sy-label">Name</span><code>RISE</code><CopyButton text="RISE" label="the connector name" /></span>
+          <span className="home-conn"><span className="sy-label">URL</span><code>{RISE_MCP.split(/(?=\/api\/)/).flatMap((part, i) => i ? [<wbr key={i} />, part] : [part])}</code><CopyButton text={RISE_MCP} label="the connector URL" /></span>
+        </div>
+        <div className="sy-actions home-line__actions">
+          <a className="sy-btn sy-btn--solid" href={CLAUDE_CONNECTORS}>How to add a connector<Icon name="external" /></a>
+        </div>
+      </article>
     </div>
   </section>;
 }
@@ -355,7 +383,7 @@ export default function App() {
     <Header />
     <main id="main">
       <Hero />
-      <Composer />
+      <RiseLine />
       <Publishers />
       <Lab />
       <Research />

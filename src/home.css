@@ -36,13 +36,6 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 .home-chamber__line.is-in { opacity: 1; transform: none; }
 .home-chamber__line.is-in span { opacity: 1; transform: none; }
 .home-chamber__line.is-out { opacity: 0; transform: translateY(-.5em); transition: opacity 520ms ease-in, transform 520ms cubic-bezier(.5, 0, .75, 0); }
-.home-chamber__bar { display: flex; align-items: center; gap: 12px; margin: 14px auto 0; width: min(100%, 360px); padding: 6px 14px; border-radius: 999px; background: rgb(8 6 26 / .7); box-shadow: 0 0 0 1px rgb(255 255 255 / .05); font: 400 11.5px/1.4 var(--sy-mono); letter-spacing: .04em; color: var(--sy-mist); }
-.home-chamber__tag { flex: none; }
-.home-chamber__rail { flex: 1; height: 1px; background: var(--sy-rule-2); overflow: hidden; }
-.home-chamber__rail i { display: block; height: 100%; background: var(--sy-spectrum); transform: scaleX(0); transform-origin: 0 50%; }
-.home-chamber__clock { flex: none; font-variant-numeric: tabular-nums; }
-.home-chamber:not(.is-js) .home-chamber__rail, .home-chamber:not(.is-js) .home-chamber__clock { display: none; }
-.home-chamber:not(.is-js) .home-chamber__bar { justify-content: center; }
 .home-hero a:focus-visible, .home-sec a:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
 
 /* ---------- sections ---------- */
@@ -50,20 +43,45 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 .home-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
 .home-head__note { margin: 0 0 4px; max-width: 24em; text-align: right; }
 
-/* ---------- RISE Composer: the connector, the strike from Compose to Experience, RISE Plus beneath ---------- */
+/* ---------- the RISE line: Reader and Composer, sibling cards; RISE Plus beneath ---------- */
+/* One skeleton for both cards (lockup and status, the promise, what it is, three points, the way in), so they read as
+   one line; the accent tells them apart: Reader takes the warm end of the spectrum, Composer the cool end. */
+.home-line { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 40px; align-items: stretch; }
+.home-line__card.sy-card { display: flex; flex-direction: column; align-items: stretch; padding: clamp(26px, 3.2vw, 46px); }
+.home-line__card > * { margin: 0; }
+.home-line__card--reader { --sy-accent: #f2d9a6; --line: linear-gradient(90deg, #ffb54a, #ff58d6);
+  background: radial-gradient(70% 80% at 0% 0%, rgba(255,181,74,.11), transparent 60%), radial-gradient(60% 70% at 100% 100%, rgba(255,88,214,.08), transparent 60%), linear-gradient(160deg, rgba(20,18,56,.6), rgba(8,7,31,.7)); }
+.home-line__card--composer { --sy-accent: #b79bff; --line: linear-gradient(90deg, #90d8f0, #9a6bff); }
+.home-line__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin-bottom: 30px; }
+.home-line__lockup { display: inline-flex; align-items: baseline; gap: .45em; }
+.home-line__lockup > span { font: 500 13px/1 var(--sy-mono); letter-spacing: .24em; color: var(--sy-vellum); }
+.home-line__lockup > b { font: italic 400 30px/1 var(--sy-serif); color: var(--sy-accent); }
+.home-line__promise { font: 400 clamp(38px, 3.5vw, 54px)/1 var(--sy-serif); letter-spacing: -.012em; color: var(--sy-vellum); text-wrap: balance; }
+.home-line__promise em { font-style: italic; background: var(--line); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; }
+.home-line__card > .home-line__what { margin-top: 18px; max-width: 34em; font-size: clamp(16px, 1.2vw, 17.5px); line-height: 1.55; color: var(--sy-body); }
+.home-line__card > .home-line__actions { margin-top: auto; padding-top: 30px; }
+.home-line__card > .home-rt__flow { margin-top: 30px; }
+.home-line__card > .home-rt__connect { display: grid; gap: 10px; margin-top: 30px; }
+/* Reader's three points share the Composer flow's form (nodes on a rail), lit and still, in the warm end */
+.home-line__steps .home-rt__stage:nth-of-type(1) .home-rt__node { --c: #ffd27a; }
+.home-line__steps .home-rt__stage:nth-of-type(2) .home-rt__node { --c: #ff9a6b; }
+.home-line__steps .home-rt__stage:nth-of-type(3) .home-rt__node { --c: #ff58d6; }
+.home-line__steps .home-rt__stages::before { content: ""; position: absolute; left: 19px; top: 19px; bottom: 19px; width: 1px; background: linear-gradient(#ffd27a, #ff58d6); opacity: .35; }
+.home-rt__flow.is-still.home-line__steps .home-rt__stage:nth-of-type(3) .home-rt__node { border-color: var(--sy-rule-2); box-shadow: none; }
+/* RISE Plus, Reader's voice: a quiet panel inside the card */
+.home-line__plus { display: grid; gap: 10px; margin-top: 30px; padding: 18px 20px; border: 1px solid var(--sy-rule-2); border-radius: 12px; background: rgba(6,5,26,.5); }
+.home-line__plus p { margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--sy-body); }
+.home-premium__name { font: 400 1.4em/1 var(--sy-serif); color: var(--sy-vellum); margin-right: .2em; }
+.home-premium__price { color: var(--sy-accent); font-weight: 600; }
+.home-line__plus-go { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.home-line__plus-go a { display: inline-flex; align-items: center; gap: 6px; color: var(--sy-vellum); font-weight: 500; background: linear-gradient(var(--sy-accent), var(--sy-accent)) 0 100%/100% 1px no-repeat; }
+.home-line__plus-go a:hover { color: var(--sy-accent); text-decoration: none; }
+.home-rt__connect > .sy-label { color: var(--sy-mist); margin: 0 0 2px; }
+
+/* ---------- RISE Composer: the connector, the strike from Compose to Experience ---------- */
 .home-rt { padding: 0; overflow: hidden;
   background: radial-gradient(70% 90% at 0% 0%, color-mix(in srgb, var(--sy-accent) 12%, transparent), transparent 60%),
     radial-gradient(60% 80% at 100% 100%, rgba(154,107,255,.14), transparent 60%), linear-gradient(160deg, rgba(20,18,56,.6), rgba(8,7,31,.7)); }
-/* one scale for both columns: the card's padding and the gutter between the columns come from the same step */
-.home-rt { --rt-pad: clamp(28px, 4.6vw, 72px); }
-.home-rt__main { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: calc(var(--rt-pad) * 1.35); padding: var(--rt-pad); align-items: stretch; }
-.home-rt__copy { display: flex; flex-direction: column; align-items: flex-start; }
-.home-rt__copy > * { margin: 0; }
-.home-rt__copy > .home-rt__top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 28px; }
-.home-rt__copy > .home-rt__title { max-width: 14ch; font-size: clamp(46px, 5.4vw, 86px); line-height: .94; text-wrap: balance; margin-bottom: 30px; }
-.home-rt__copy > .home-rt__lede { max-width: 32em; color: var(--sy-body); margin-bottom: 44px; }
-.home-rt__copy > .home-rt__connect { display: grid; gap: 10px; width: 100%; max-width: 480px; margin-bottom: 30px; }
-.home-rt__connect > .sy-label { color: var(--sy-mist); margin: 0 0 2px; }
 .home-conn { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label copy" "value value"; align-items: center; gap: 4px 8px; padding: 7px 7px 9px 11px; border: 1px solid var(--sy-rule-2); border-radius: 10px; background: rgba(6,5,26,.7); }
 .home-conn .sy-label { grid-area: label; font-size: 10px; color: var(--sy-dim); } .home-conn .home-copy { grid-area: copy; }
 .home-conn code { grid-area: value; min-width: 0; overflow-wrap: anywhere; font: 500 12.5px/1.4 var(--sy-mono); color: var(--sy-vellum); user-select: all; } /* the URL breaks before /api/ */
@@ -73,8 +91,8 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 .home-copy.is-done { border-color: var(--sy-live); color: var(--sy-live); }
 
 /* the flow: three stages on a faint rail */
-.home-rt__flow { position: relative; align-self: center; padding-left: clamp(0px, 3vw, 48px); }
-.home-rt__stages { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(52px, 6.4vw, 96px); }
+.home-rt__flow { position: relative; padding-left: 8px; }
+.home-rt__stages { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(30px, 3vw, 44px); }
 .home-rt__stage { position: relative; z-index: 1; display: grid; grid-template-columns: 38px auto 1fr; grid-template-areas: "node n term" ". text text"; align-items: baseline; gap: 10px 16px; }
 .home-rt__node { grid-area: node; position: relative; z-index: 2; align-self: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--sy-rule-2); background: #07061c; display: grid; place-items: center; }
 .home-rt__node i { width: 12px; height: 12px; border-radius: 50%; background: var(--c, var(--sy-accent)); opacity: .45; }
@@ -82,8 +100,8 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 .home-rt__stage:nth-of-type(2) .home-rt__node { --c: #9a6bff; }
 .home-rt__stage:nth-of-type(3) .home-rt__node { --c: #ffb54a; }
 .home-rt__n { grid-area: n; font: 500 13px/1 var(--sy-mono); letter-spacing: .14em; color: var(--sy-dim); }
-.home-rt__term { grid-area: term; font: 400 clamp(38px, 3.6vw, 56px)/.95 var(--sy-serif); letter-spacing: -.01em; }
-.home-rt__text { grid-area: text; font-size: clamp(16px, 1.15vw, 17.5px); line-height: 1.55; color: var(--sy-mist); max-width: 34ch; }
+.home-rt__term { grid-area: term; font: 400 clamp(30px, 2.6vw, 40px)/.95 var(--sy-serif); letter-spacing: -.01em; }
+.home-rt__text { grid-area: text; font-size: 15px; line-height: 1.5; color: var(--sy-mist); max-width: 36ch; }
 /* the strike is drawn on a canvas (src/site/strike.js) that overhangs the flow; the nodes above it keep their CSS charge */
 .home-rt__strike { position: absolute; z-index: 0; pointer-events: none; }
 /* the end state, shared by the frozen animation and reduced motion */
@@ -99,16 +117,6 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 @keyframes rt-charge { 0% { opacity: .45; transform: scale(1); } 45% { opacity: 1; transform: scale(1.9); box-shadow: 0 0 22px var(--c), 0 0 40px var(--c); } 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 14px var(--c); } }
 @keyframes rt-hit { 0% { transform: scale(1); } 30% { transform: scale(1.35); border-color: #fff; box-shadow: 0 0 40px rgba(255,255,255,.8); } 100% { transform: scale(1); border-color: #ffb54a; box-shadow: 0 0 24px rgba(255,181,74,.55); } }
 
-/* RISE Plus: one line, one link, beneath the Composer card */
-.home-premium { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 28px; margin-top: 14px; padding: 20px clamp(20px, 3.2vw, 52px);
-  background: linear-gradient(110deg, color-mix(in srgb, var(--sy-accent) 9%, rgba(20,18,56,.55)), rgba(8,7,31,.6)); }
-.home-premium__text { margin: 0; font-size: clamp(17px, 1.5vw, 20px); line-height: 1.6; color: var(--sy-body); }
-.home-premium__text .sy-badge { margin-left: 12px; vertical-align: .15em; }
-.home-premium__name { font: 400 1.35em/1 var(--sy-serif); color: var(--sy-vellum); margin-right: .2em; }
-.home-premium__price { color: var(--sy-accent); font-weight: 600; }
-@media (max-width: 900px) { .home-rt__main { grid-template-columns: 1fr; gap: 64px; } .home-rt__flow { padding-left: 0; } .home-rt__stages { gap: 56px; padding-bottom: 50px; } .home-rt__copy > .home-rt__lede { margin-bottom: 36px; } }
-@media (max-width: 640px) { .home-rt__stage { grid-template-columns: 34px auto 1fr; gap: 8px 14px; } .home-rt__node { width: 34px; height: 34px; } .home-rt__term { font-size: 36px; } .home-rt__copy > .home-rt__title { margin-bottom: 24px; }
-  .home-rt__actions .sy-btn, .home-premium__go { flex: 1 1 auto; } .home-premium { padding: 18px; } }
 
 /* ---------- for publishers and creators: one pilot ---------- */
 .home-pilot { --sy-accent: var(--sy-amber); display: flex; align-items: center; justify-content: space-between; gap: 32px; padding: 34px 36px; background: linear-gradient(120deg, rgba(255,181,74,.10), rgba(255,88,214,.06) 50%, rgba(8,7,31,.6)); }
@@ -189,7 +197,6 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
   .home-hero__art .sy-atmosphere { -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
   .home-chamber { width: min(calc(100vw - 2 * var(--sy-gutter)), 380px); }
   .home-chamber__stage { min-height: 4.6em; font-size: 17px; }
-  .home-chamber__bar { margin-top: 6px; width: min(100%, 300px); font-size: 10.5px; padding: 5px 12px; }
   .home-about { grid-template-columns: 1fr; gap: 40px; }
   .home-head { flex-direction: column; align-items: flex-start; } .home-head__note { text-align: left; }
 }
@@ -234,4 +241,27 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
   .home-why { grid-template-columns: 1fr; gap: 20px; padding: 20px 0 0; }
   .home-why__fig { max-width: none; display: grid; grid-template-columns: 112px 1fr; gap: 22px; align-items: center; }
   .home-why__fig figcaption { margin: 0; }
+}
+
+/* the RISE line on narrow screens: the cards stack; on phones they tighten, and the strike's flow moves in from the
+   card's edge so the (smaller) burst has room to its left */
+@media (max-width: 960px) { .home-line { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) {
+  .home-line { margin-top: 28px; gap: 14px; }
+  .home-line__card.sy-card { padding: 22px 20px 20px; }
+  .home-line__top { margin-bottom: 22px; }
+  .home-line__lockup > b { font-size: 26px; }
+  .home-line__promise { font-size: 34px; }
+  .home-line__card > .home-line__what { margin-top: 12px; font-size: 16px; }
+  .home-line__card > .home-line__actions { padding-top: 22px; }
+  .home-line__actions .sy-btn { flex: 1 1 auto; }
+  .home-line__card > .home-rt__flow { margin-top: 24px; padding-left: 40px; }
+  .home-line__card > .home-line__steps { padding-left: 8px; }
+  .home-line__steps .home-rt__stages::before { left: 15px; top: 15px; bottom: 15px; }
+  .home-line__plus { margin-top: 22px; padding: 16px; }
+  .home-rt__stages { gap: 24px; }
+  .home-rt__stage { grid-template-columns: 30px auto 1fr; gap: 6px 12px; }
+  .home-rt__node { width: 30px; height: 30px; } .home-rt__node i { width: 10px; height: 10px; }
+  .home-rt__term { font-size: 28px; }
+  .home-rt__text { font-size: 14.5px; }
 }

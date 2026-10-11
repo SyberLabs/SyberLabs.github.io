@@ -10,8 +10,9 @@
    magenta and amber, as in dispersion) and freezes mid-flight as fine streaks. The splash leans left, away from the
    stage text; anything aimed right stays short.
 
-   mountStrike(canvas) -> { layout(pts, w, h), play(), still(), destroy() }
-     pts: the three node centres [x, y, radius] in the flow's own coordinates; w, h: the flow's size. */
+   mountStrike(canvas) -> { layout(pts, w, h, { burst }), play(), still(), destroy() }
+     pts: the three node centres [x, y, radius] in the flow's own coordinates; w, h: the flow's size;
+     burst: the splash's scale (1 by default; smaller on narrow layouts, so it stays inside its card). */
 
 const PAD_X = 190, PAD_Y = 150;                  // the canvas overhangs the flow so the splash has room
 // The rhythm: (beat) 1 -> 2 (beat) 2 -> 3 (tiny beat) splash.
@@ -224,7 +225,7 @@ function drawBurst(ctx, x, y, tau, m) {
 export function mountStrike(canvas) {
   const ctx = canvas.getContext && canvas.getContext('2d');
   if (!ctx) return { layout() {}, play() {}, still() {}, destroy() {} };
-  let pts = null, W = 0, H = 0, dpr = 1, bolts = [], coronas = [], model = burstModel(20261008), t = -1, raf = 0, t0 = 0, dead = false;
+  let pts = null, W = 0, H = 0, dpr = 1, bs = 1, bolts = [], coronas = [], model = burstModel(20261008), t = -1, raf = 0, t0 = 0, dead = false;
   const colorAt = y => { const y0 = pts[0][1], y1 = pts[2][1]; return spectral((y - y0) / ((y1 - y0) || 1)); };
 
   function scene(time) {
@@ -245,7 +246,7 @@ export function mountStrike(canvas) {
     if (b2) drawBolt(ctx, bolts[1], b2, colorAt);
     // the tiny beat: node 3 swells with the arrived charge, then bursts
     if (land2 > 0 && time < T.burst + 160) { const k = clamp01(land2 / (T.burst - T.bolt2 - LEADER)); glow(ctx, n3[0], n3[1], 18 + 22 * k, [255, 181, 74], (.25 + .55 * k) * (.85 + .15 * Math.sin(time / 19))); }
-    if (time >= T.burst - 16) drawBurst(ctx, n3[0], n3[1], time - T.burst, model);
+    if (time >= T.burst - 16) { ctx.save(); ctx.translate(n3[0], n3[1]); ctx.scale(bs, bs); drawBurst(ctx, 0, 0, time - T.burst, model); ctx.restore(); }
     ctx.globalCompositeOperation = 'source-over';
   }
 
@@ -257,8 +258,8 @@ export function mountStrike(canvas) {
   }
 
   return {
-    layout(p, w, h) {
-      pts = p; W = w; H = h; dpr = Math.min(window.devicePixelRatio || 1, 2);
+    layout(p, w, h, o = {}) {
+      pts = p; W = w; H = h; bs = o.burst || 1; dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.style.left = -PAD_X + 'px'; canvas.style.top = -PAD_Y + 'px';
       canvas.style.width = W + 2 * PAD_X + 'px'; canvas.style.height = H + 2 * PAD_Y + 'px';
       canvas.width = Math.round((W + 2 * PAD_X) * dpr); canvas.height = Math.round((H + 2 * PAD_Y) * dpr);
