@@ -114,3 +114,12 @@ test('transient server failures, malformed replies and timeout preserve validate
   f.requests.at(-1).resolve(response(401)); await pending;
   assert.equal(f.nodes['sy-account-member'].hidden, false);
 });
+
+// Public visitors must never mistake the restricted staff login for their subscription account.
+test('public navigation routes subscribers to RISE and labels staff access separately', async () => {
+  const { header, footer } = await import('../projects/project-template.js');
+  const publicHeader = header();
+  assert.match(publicHeader, /href="https:\/\/rise\.syberlabs\.io\/plus\/">My RISE Plus<\/a>/);
+  assert.doesNotMatch(publicHeader, /href="\/admin(?:\/|"|\?)/);
+  assert.match(footer(), /href="\/admin\/">Staff sign in<\/a>/);
+});

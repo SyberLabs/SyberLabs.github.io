@@ -60,8 +60,10 @@ const pages = [
     line: 'Scoped, paid interactive reading pilots for publishers and authors, built on RISE.', seed: 'services', accent: ICE },
   { slug: 'rise-demo', path: '/rise-demo/', eyebrow: 'Product demo · Audiovisual reader', headline: 'See RISE in motion.',
     line: 'A film edited from real RISE screen recordings, then the interactive sample to try yourself.', seed: 'rise', accent: RISE },
-  { slug: 'plus', path: '/plus/', eyebrow: 'RISE Plus · Status 8 October 2026', headline: 'Your own reading, read aloud.',
-    line: 'For $8.99 a month, an ElevenLabs voice reads the text you bring to RISE, and the reading follows its timing. Implementation merged; paid launch pending verification.', seed: 'plus', accent: RISE },
+  { slug: 'plus', path: '/plus/', eyebrow: 'RISE Plus · Coming soon', headline: 'Your own reading, read aloud.',
+    line: 'Give your short writing a voice. Planned: $8.99 a month for 60,000 characters of ElevenLabs narration. Free reading stays free.', seed: 'plus', accent: RISE },
+  { slug: 'mateo', path: '/mateo/', eyebrow: 'Mateo Robles · Engineering portfolio', headline: 'Creative software. Inspect the engineering.',
+    line: 'Engines and RISE: selected work, source code, engineering decisions, and a résumé.', seed: 'mateo', accent: ICE },
   { slug: 'privacy', path: '/privacy/', eyebrow: 'SyberLabs · Privacy', headline: 'What this site does with your data.',
     line: 'A static site with no accounts, forms, cookies or analytics.', seed: 'privacy', accent: ICE },
 ];

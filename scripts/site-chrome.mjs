@@ -8,7 +8,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { header, footer } from '../projects/project-template.js';
 import { nav } from '../projects/site-data.js';
 
-const pages = ['404.html', 'approach/index.html', 'stack/index.html', 'jev/index.html', 'kev/index.html', 'privacy/index.html',
+const pages = ['mateo/index.html', '404.html', 'approach/index.html', 'stack/index.html', 'jev/index.html', 'kev/index.html', 'privacy/index.html',
   'rise-demo/index.html', 'services/index.html', 'plus/index.html', 'review/index.html', 'review/2026-10-08/index.html', 'research/index.html', 'research/jev-execution/index.html', 'research/sybershoke/index.html',
   'research/decision-arena/index.html',
   'projects/rise/index.html'];

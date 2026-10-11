@@ -26,29 +26,24 @@ export const RISE_TRY = 'https://rise.syberlabs.io/try/';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
 export const SKETCH_APP = 'https://sketch.syberlabs.io/';
 
-// RISE Plus voice: the homepage runtime section (src/App.jsx), a RISE evidence row and the Atlas note, switched by
-// `state` alone. 'coming' keeps purchase links closed until a paid launch is verified. The implementation
-// in RISE #542 is merged; a merge does not establish live payment availability. 'live' sends the reader
-// to RISE's Settings. After verifying a paid launch and flipping, run `node scripts/site-chrome.mjs`
-// (Atlas note) and `node scripts/llms.mjs`. /plus/ is static and has its own status labels and full details.
+// Customer entry point stays stable before and after sales open. The app owns checkout readiness.
+// Keep the marketing offer aligned with RISE's server-enforced plan; never infer paid availability from a merge.
 export const RISE_PLUS = {
-  state: 'coming', // 'coming' | 'live'
+  state: 'coming', // 'coming' | 'live'; change only after paid launch verification
   price: '$8.99',
-  // RISE's Plus entry point: the Plus voice row in Settings (route `settings`, src/core/route-url.js), which links to
-  // the Stripe payment link (PLUS_PAYMENT_LINK in RISE src/app/plus.js). The reader starts inside RISE, not at Stripe.
-  href: 'https://rise.syberlabs.io/settings',
+  characters: 60000,
+  href: 'https://rise.syberlabs.io/plus/',
   source: 'https://github.com/SyberLabs/RISE/pull/542',
 };
+export const MATEO_PORTFOLIO = '/mateo/';
 
-// The primary nav, the same on every page (projects/project-template.js `header()`; the homepage renders the same
-// markup). Exactly five items, in this order. `id` is what a page passes as `current`; scripts/site-chrome.mjs finds it
-// again from the label a page marks with aria-current. Sign in stays in the header's account control, set quieter than these.
+// Customer and hiring paths. Research and the complete archive remain in Menu.
 export const nav = [
   { id: 'try', label: 'Try RISE', href: RISE_TRY, external: true },
+  { id: 'plus', label: 'RISE Plus', href: '/plus/' },
   { id: 'projects', label: 'Projects', href: '/#work' },
-  { id: 'research', label: 'Research', href: '/research/' },
   { id: 'services', label: 'Work with us', href: '/services/' },
-  { id: 'about', label: 'About', href: '/#about' },
+  { id: 'mateo', label: 'Meet Mateo', href: MATEO_PORTFOLIO },
 ];
 
 export const workWithUs = { label: 'Work with us', href: '/services/' };
@@ -56,11 +51,13 @@ export const workWithUs = { label: 'Work with us', href: '/services/' };
 // The footer carries a few essentials, then "All pages": the full site map (siteMap below) as a secondary directory
 // that works without JavaScript. The same map opens full-screen from the header's Menu (the Atlas).
 export const footerLinks = [
+  { label: 'Meet Mateo', href: MATEO_PORTFOLIO },
   { label: 'Research', href: '/research/' },
   { label: 'Work with us', href: '/services/' },
   { label: 'GitHub', href: GITHUB, external: true },
   { label: 'Email', href: CONTACT },
   { label: 'Privacy', href: '/privacy/' },
+  { label: 'Staff sign in', href: '/admin/' },
 ];
 
 export const projects = [
@@ -391,6 +388,7 @@ export const siteMap = [
     { label: 'How we build', note: 'Dependencies read through GitHits', href: '/stack/' },
     // { label: 'The factory', note: 'Agents build and review; humans look at the product', href: '/#factory' }, // hidden with the factory section (src/App.jsx INTERNAL_SECTIONS)
     { label: 'Work with us', note: 'Reading pilots for publishers and creators', href: '/services/' },
+    { label: 'Meet Mateo', note: 'Engineering portfolio, selected work and résumé', href: MATEO_PORTFOLIO },
     { label: 'About', note: 'The lab and its founder', href: '/#about' },
     { label: 'Review', note: 'State of the lab, by date', href: '/review/' },
     { label: 'Privacy', note: 'What this site does with your data', href: '/privacy/' },

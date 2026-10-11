@@ -78,3 +78,32 @@ html:not(.sy-js) .hear-line__who::after { content: ""; }
   .compare tbody th { width: 40%; }
   .hear .hear-stage { font-size: 26px; }
 }
+
+.plus-offer { display: grid; gap: 8px; margin: var(--space-6) 0; color: var(--text-2); font-size: 16px; line-height: 1.5; }
+.plus-offer strong { color: var(--text); font-size: 24px; }
+.plus-notice { max-width: 62ch; color: var(--text-2); font-size: 14px; line-height: 1.6; margin-top: var(--space-5); }
+.compare { overflow-wrap: anywhere; }
+
+.plus-preview { margin: 0 0 var(--space-8); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; background: rgba(8, 7, 26, .8); box-shadow: 0 24px 100px -40px #604ac088; }
+.plus-preview__bar { display:flex; justify-content:space-between; gap: 20px; padding: 18px 24px; color:var(--text-2); font-size:14px; }
+.plus-preview__bar span { font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.1em; font-size:12px; }
+.plus-preview img { display:block; width:100%; height:auto; }
+.plus-preview figcaption { padding: 16px 24px; font-size:12px; line-height:1.6; color:var(--text-2); }
+.plus-steps { list-style:none; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; padding:0; margin:0 0 var(--space-9); }
+.plus-steps li { padding:24px; border:1px solid var(--line); border-radius:16px; background:rgba(12,10,35,.6); }
+.plus-steps span { color:var(--sy-amber); font-family:var(--font-mono); font-size:12px; }
+.plus-steps h2 { font:400 28px/1.1 var(--font-display); margin:20px 0 12px; }
+.plus-steps p { color:var(--text-2); font-size:15px; line-height:1.6; margin:0; }
+@media(max-width:640px) { .plus-steps { grid-template-columns:1fr; gap:12px; } .plus-steps li { padding:20px; } .plus-steps h2 { margin-top:12px; } .plus-preview__bar { padding:14px; flex-wrap:wrap; } }
+
+/* Keep the product and offer together in the first view, then explain the journey. */
+.plus-intro { display:grid; grid-template-columns:1.05fr 1fr; align-items:center; gap:56px; padding:72px 0 56px; }
+.plus-intro .plus-hero { padding:0; }
+.plus-intro .plus-hero h1 { font-size:clamp(48px,5.2vw,78px); line-height:1.02; }
+.plus-intro .plus-preview { margin:0; transform:rotate(1deg); }
+.plus-intro .plus-preview img { aspect-ratio:1.5; object-fit:cover; }
+.plus-intro .plus-preview figcaption { font-size:11px; }
+.plus-intro .hero-links { gap:12px; }
+.plus-intro .hero-links .sy-btn { font-size:14px; padding-inline:18px; }
+.plus-main > .plus-section { padding:64px 0; }
+@media(max-width:960px) { .plus-intro { grid-template-columns:1fr; padding:56px 0 40px; gap:32px; } .plus-intro .plus-preview { transform:none; } .plus-intro .plus-hero h1 { font-size:clamp(48px,7vw,76px); } }

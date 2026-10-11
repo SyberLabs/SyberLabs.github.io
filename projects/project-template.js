@@ -4,7 +4,7 @@
 // and footer into the static pages.
 // Each project carries its sigil (a de Jong attractor seeded by its slug) large in a plate frame, drawn flat
 // by kit/v2/syber-sigil.js and, when WebGL is fast, spun in 3D over it by src/site/field.js.
-import { projects, nav, footerLinks, siteMap, EMAIL } from './site-data.js';
+import { projects, nav, footerLinks, siteMap, EMAIL, RISE_PLUS } from './site-data.js';
 import { params as sigilParams } from '../kit/v2/syber-sigil.js';
 export { projects };
 
@@ -47,7 +47,7 @@ const navLinks = (current = '') => nav.map(item => `<li><a href="${item.href}"${
 // Site chrome: identical markup on every static page (see scripts/site-chrome.mjs) and the project pages.
 // `current` marks the page: a nav id for the header, a link href for the footer.
 // `sticky` (default) keeps the header in flow; the homepage passes false so it floats over the hero.
-// Sign in (the account control) sits after the Menu, set as a quiet text link (src/syberlabs.css `.sy-account`).
+// The customer subscription route is separate from staff sign-in in the footer.
 export const header = (current = '', { sticky = true, script = true } = {}) => {
   return `<a class="sy-skip" href="#main">Skip to content</a>
 <div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
@@ -55,13 +55,7 @@ export const header = (current = '', { sticky = true, script = true } = {}) => {
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
   <nav class="sy-nav" aria-label="Primary"><ul>${navLinks(current)}</ul></nav>
   <details class="sy-menu"><summary aria-label="Menu" aria-expanded="false" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas()}</details>
-  <div class="sy-account" data-account-state="checking">
-    <a class="sy-account-link" href="/admin/"><span class="sy-account-label">Account</span></a>
-    <div class="sy-account-member" hidden>
-      <a class="sy-btn sy-account-launchpad" href="/admin/">Launchpad${icon('arrow', 16)}</a>
-      <a class="sy-account-avatar" href="/admin/account" aria-label="Your profile" title="Your profile"><span class="sy-account-initial" aria-hidden="true">${icon('user', 20)}</span></a>
-    </div>
-  </div>
+  <a class="sy-customer-account" href="${RISE_PLUS.href}">My RISE Plus</a>
 </div></header>${script ? '\n<script type="module" src="/syberlabs.js"></script>' : ''}`;
 };
 
