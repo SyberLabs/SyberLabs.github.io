@@ -4,10 +4,12 @@
    Dependency-free ES module, raw WebGL2, 1 texel per CSS px, at most 60 frames a second (the decay is per
    frame, so 120/144 Hz screens see the same exposure for half the work), pauses off-screen and when hidden.
 
-   mount(canvas, { mode, avoid, caption, reduced, allowSoftware }) -> { supported, pause(), resume(), destroy() }
+   mount(canvas, { mode, avoid, narrow, caption, reduced, allowSoftware }) -> { supported, pause(), resume(), destroy() }
      mode     'hero' (default): 160k particles; plate beside `avoid` on wide screens, above copy on phones.
               'ambient': 40k particles, slower, 35% intensity, full-bleed (put a heavy scrim over it).
      avoid    Element whose right edge the plate stays clear of (the copy column). Hero only.
+     narrow   { scale, max, top, media }: on narrow screens the plate is min(width * scale, max) px, its top `top` px
+              down; `media` (a media query) forces that layout whatever the canvas's proportions.
      caption  Element that receives the live "a … · b … · c … · d …" parameter line.
      reduced  true = one still exposure. Defaults to prefers-reduced-motion.
      allowSoftware  true = also run on software WebGL. For screenshot tooling only.
@@ -44,6 +46,7 @@ function lose(gl) { const x = gl.getExtension('WEBGL_lose_context'); if (x) x.lo
 function run(cv, gl, ambient, RM, opts) {
   const F = !!gl.getExtension('EXT_color_buffer_float'), N = ambient ? 40000 : 160000, DECAY = 0.9;
   const SPEED = ambient ? 0.45 : 1, GAIN = ambient ? 0.35 : 1, host = cv.parentElement, out = opts.caption, avoid = opts.avoid;
+  const narrow = { scale: 0.88, max: 340, top: 64, ...opts.narrow }; // hero on a narrow screen: plate size and top offset (px)
   const sh = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, '#version 300 es\nprecision highp float;\n' + s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
   const prog = (v, f) => { const p = gl.createProgram(), u = {}; gl.attachShader(p, sh(gl.VERTEX_SHADER, v)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, f)); gl.bindAttribLocation(p, 0, 'a'); gl.linkProgram(p); if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p)); for (let i = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS); i--;) { const n = gl.getActiveUniform(p, i).name; u[n] = gl.getUniformLocation(p, n); } return { p, u }; };
   // hue by speed along the orbit, cycling in time: deep > electric > ice > amber > magenta > violet
@@ -71,9 +74,9 @@ vec3 c=pow(1.-exp(-a*E),vec3(.9));float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.
     if (ambient) L = { s: Math.max(W, H) * 1.05, x: W / 2, y: H / 2 };
     else {
       // wide: the plate lives right of the copy column, so the trace never runs under the words
-      const wide = W / H > 1.1, tr = avoid ? avoid.getBoundingClientRect().right - cv.getBoundingClientRect().left : W * 0.45;
-      const s = wide ? Math.min(H * 0.9, (W - tr) * 1.02) : Math.min(W * 0.88, 340);
-      L = { s, x: wide ? tr + s * 0.5 : W / 2, y: wide ? H * 0.47 : 64 + s / 2 };
+      const wide = W / H > 1.1 && !(narrow.media && matchMedia(narrow.media).matches), tr = avoid ? avoid.getBoundingClientRect().right - cv.getBoundingClientRect().left : W * 0.45;
+      const s = wide ? Math.min(H * 0.9, (W - tr) * 1.02) : Math.min(W * narrow.scale, narrow.max);
+      L = { s, x: wide ? tr + s * 0.5 : W / 2, y: wide ? H * 0.47 : narrow.top + s / 2 };
       if (host) { host.style.setProperty('--cx', L.x + 'px'); host.style.setProperty('--cy', L.y + 'px'); host.style.setProperty('--s', s + 'px'); }
     }
     gl.bindTexture(gl.TEXTURE_2D, tex);

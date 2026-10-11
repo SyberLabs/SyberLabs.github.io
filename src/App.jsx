@@ -4,19 +4,21 @@ import { header as chromeHeader, footer as chromeFooter } from '../projects/proj
 import { mount, RING_SVG } from '../kit/v2/syber-atmosphere.js';
 import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
-import risePreview from './rise-preview-720.webp';
-import risePreviewSm from './rise-preview-480.webp';
-import riseHome from './rise-home-720.webp';
 import { params as sigilParams, drawAll } from '../kit/v2/syber-sigil.js';
-import { boot } from './site/site.js';
+import { boot, reducedMotion } from './site/site.js';
+import { mountChamber } from './site/chamber.js';
+import { mountStrike } from './site/strike.js';
 import '../kit/v2/syber-atlas.css';
 import './syberlabs.css';
 import './home.css';
 
-// The homepage leads with one product, RISE, and one action: a one-minute reading at rise.syberlabs.io/try/.
-// Order below the hero: RISE, the publisher pilot, more from the lab (#work, the header's Projects link), research and
-// approach, about and contact (#about). The header and footer (nav, Sign in, All pages) are the shared chrome. The Claude connector instructions now live on /projects/rise/#composer and the
-// GitHits dependency totals on /stack/#dependencies (src/githits-panel.jsx).
+// The homepage leads with one product, RISE, and one action: a one-minute reading at rise.syberlabs.io/try/. The hero
+// shows rather than tells: a short reading about SyberLabs plays in the middle of Plate I, paced the way RISE streams.
+// Order below the hero: RISE Composer in Claude (the connector, with the Compose -> Admit -> Experience strike and
+// RISE Plus beneath), the publisher pilot, more from the lab (#work, the header's Projects link), research and
+// approach, about and contact (#about). The header and footer (nav, Sign in, All pages) are the shared chrome. The
+// connector instructions are also on /projects/rise/#composer; the GitHits dependency totals live on
+// /stack/#dependencies (src/githits-panel.jsx).
 const RISE_TRY = 'https://rise.syberlabs.io/try/';
 const RISE_VOICE_DEMO = 'https://rise.syberlabs.io/voice-demo';
 
@@ -29,25 +31,63 @@ function Icon({ name, size = 18, className = '' }) {
   return <svg className={`sy-icon ${className}`} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>;
 }
 
+function CopyButton({ text, label }) {
+  const [done, setDone] = useState(false);
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(text); }
+    catch (e) {
+      const t = document.createElement('textarea'); t.value = text; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;opacity:0';
+      document.body.append(t); t.select(); try { document.execCommand('copy'); } catch (e2) {} t.remove();
+    }
+    setDone(true); setTimeout(() => setDone(false), 1600);
+  };
+  return <button type="button" className={`home-copy${done ? ' is-done' : ''}`} onClick={copy} aria-label={`Copy ${label}`}><span aria-live="polite">{done ? 'Copied' : 'Copy'}</span></button>;
+}
+
+const Badge = ({ status }) => <span className={`sy-badge sy-badge--${status.kind}`}>{status.label}</span>;
+
 // The header, the field canvas and the footer are the same markup every page gets (projects/project-template.js);
 // the homepage bundle boots the behaviours itself, so the shared /syberlabs.js is not loaded here.
 const Header = () => <div className="home-chrome" dangerouslySetInnerHTML={{ __html: chromeHeader('', { sticky: false, script: false }) }} />;
 const Footer = () => <div className="home-chrome home-footer" dangerouslySetInnerHTML={{ __html: chromeFooter('/') }} />;
 
-// RISE Plus voice, labelled with its current availability (RISE_PLUS.state; /plus/ carries the full wording).
+// RISE Plus voice is labelled with its current availability (RISE_PLUS.state; /plus/ carries the full wording).
 const plusLive = RISE_PLUS.state === 'live';
-const PLUS_NOTE = plusLive
-  ? `Optional premium voice (RISE Plus): an ElevenLabs voice reads the text you bring, ${RISE_PLUS.price} a month.`
-  : 'Optional premium voice (RISE Plus): an ElevenLabs voice reads the text you bring. Not yet available; paid launch pending verification.';
 
-// Plate I: the one live 2D long-exposure attractor on the site, now the field behind a RISE preview. Without JS,
+// The chamber (src/site/chamber.js): a reading about SyberLabs, line by line, in RISE's Stream presentation. Screen
+// readers and search engines get the whole text from the .sy-sr paragraph; without JS or under reduced motion the
+// stage holds one line, still.
+const CHAMBER = [
+  'SyberLabs is an independent AI lab.',
+  'We build software you step inside.',
+  'This line is not displayed.',
+  'It is performed.',
+  'Paced, lit, and given a room.',
+  'That is RISE.',
+  'Bring any text. Watch it become a reading.',
+];
+function Chamber() {
+  const fig = useRef(null);
+  useEffect(() => { const c = mountChamber(fig.current, CHAMBER); return () => c.destroy(); }, []);
+  return <figure ref={fig} className="home-chamber">
+    <p className="sy-sr">{CHAMBER.join(' ')}</p>
+    <div className="home-chamber__stage" aria-hidden="true"><p className="home-chamber__line is-still">We build software you step inside.</p></div>
+    <figcaption className="home-chamber__bar" aria-hidden="true">
+      <span className="home-chamber__tag">A RISE-style reading</span>
+      <span className="home-chamber__rail"><i /></span>
+      <span className="home-chamber__clock" />
+    </figcaption>
+  </figure>;
+}
+
+// Plate I: the one live 2D long-exposure attractor on the site, the room the chamber's reading plays in. Without JS,
 // without WebGL2 or on software GL, a still exposure of the same plate (src/plate-i.webp) sits in the ring instead.
-// On phones the copy and the call to action come first and the plate sits below them.
+// On phones the plate and its reading come first, smaller, with the copy and the call to action right beneath.
 function Hero() {
   const canvas = useRef(null), copy = useRef(null);
   const [live, setLive] = useState(false);
   useEffect(() => {
-    const plate = mount(canvas.current, { mode: 'hero', avoid: copy.current, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
+    const plate = mount(canvas.current, { mode: 'hero', avoid: copy.current, narrow: { scale: 0.62, max: 260, top: 66, media: '(max-width: 900px)' }, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
     setLive(plate.supported);
     // the Atlas covers the page with a blurred backdrop: hold the plate instead of re-blurring a moving one
     const html = document.documentElement;
@@ -76,38 +116,86 @@ function Hero() {
       <canvas ref={canvas} className="sy-atmosphere" aria-hidden="true" />
       <img className="home-still" src={plateStill} srcSet={`${plateStillSm} 560w, ${plateStill} 1000w`} sizes="(max-width: 900px) 400px, 60vw" width="1000" height="1000" alt="" aria-hidden="true" decoding="async" />
       <span className="home-ring" aria-hidden="true" dangerouslySetInnerHTML={{ __html: RING_SVG }} />
-      <figure className="home-preview">
-        <img src={risePreview} srcSet={`${risePreviewSm} 480w, ${risePreview} 720w`} sizes="(max-width: 900px) 78vw, 440px" width="720" height="450" alt="RISE mid-reading: one line of a poem, large, over a violet procedural visual field, with the reading's controls below." decoding="async" />
-        <figcaption>RISE · Stream, ten seconds in</figcaption>
-      </figure>
+      <Chamber />
     </div>
   </section>;
 }
 
-// RISE, once: what it is, three benefits, the same one-minute reading. Every claim is on /projects/rise/.
-const BENEFITS = [
-  ['Paced, not scrolled', 'Words arrive at a pace you set, or sit on a page you can navigate. Switch at any point and keep your place.'],
-  ['Pictures and sound', 'Procedural visuals and sound surround the words, so a poem or a chapter has a room around it.'],
-  ['Nothing to set up', 'It runs in any modern browser at rise.syberlabs.io. No account, no key and no install.'],
+const RISE_MCP = 'https://rise.syberlabs.io/api/mcp';
+const CLAUDE_CONNECTORS = 'https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp';
+
+// RISE Composer, right under the hero: free and live in Claude as a custom connector. What it claims is what runs:
+// Claude composes a reading over the connector (rise_present with a Current), RISE checks it before anything plays,
+// and the reader steps into it. The same instructions are on /projects/rise/#composer.
+const RUNTIME = [
+  ['01', 'Compose', 'A model writes the reading: the words, how they arrive, and the scene around them.'],
+  ['02', 'Admit', 'RISE checks every choice against what it can perform. Nothing plays that it did not admit.'],
+  ['03', 'Experience', 'Words arrive in time, with image, sound and procedural motion. You step inside the answer.'],
 ];
-function Rise() {
-  return <section id="rise" className="home-sec sy-wrap home-rise" aria-labelledby="rise-title" style={{ '--sy-accent': '#f2d9a6' }}>
-    <div className="home-rise__copy" data-reveal>
-      <p className="sy-eyebrow">RISE / Live · open beta</p>
-      <h2 id="rise-title" className="sy-display">A reader that <em>performs the text.</em></h2>
-      <ul className="home-benefits">
-        {BENEFITS.map(([t, d]) => <li key={t}><h3>{t}</h3><p>{d}</p></li>)}
-      </ul>
-      <div className="sy-actions home-rise__actions">
-        <a className="sy-btn sy-btn--solid" href={RISE_TRY}>Try a one-minute reading<Icon name="arrow" className="sy-icon--trail" /></a>
-        <a className="sy-btn sy-btn--line" href="/projects/rise/">How RISE works<Icon name="arrow" /></a>
+
+// The strike (src/site/strike.js), played once when the flow comes into view and frozen on its last frame: node 1
+// charges, a fractal bolt strikes node 2, a second strikes node 3, and node 3 bursts. Reduced motion shows that frame.
+function RuntimeFlow() {
+  const wrap = useRef(null), canvas = useRef(null);
+  const [state, setState] = useState('idle'); // idle -> playing (once) | still (reduced motion)
+  useEffect(() => {
+    const el = wrap.current, strike = mountStrike(canvas.current);
+    const measure = () => {
+      const box = el.getBoundingClientRect();
+      const pts = [...el.querySelectorAll('.home-rt__node')].map(n => { const b = n.getBoundingClientRect(); return [b.left - box.left + b.width / 2, b.top - box.top + b.height / 2, b.height / 2]; });
+      if (pts.length === 3) strike.layout(pts, box.width, box.height);
+    };
+    measure();
+    const ro = 'ResizeObserver' in window ? new ResizeObserver(measure) : null;
+    ro?.observe(el);
+    let io = null;
+    if (reducedMotion() || !('IntersectionObserver' in window)) { strike.still(); setState('still'); }
+    else {
+      io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { strike.play(); setState('playing'); io.disconnect(); } }, { threshold: 0.55 });
+      io.observe(el);
+    }
+    return () => { ro?.disconnect(); io?.disconnect(); strike.destroy(); };
+  }, []);
+  return <div ref={wrap} className={`home-rt__flow is-${state}`}>
+    <canvas ref={canvas} className="home-rt__strike" aria-hidden="true" />
+    <ol className="home-rt__stages" aria-label="How a reading is made">
+      {RUNTIME.map(([n, term, text]) => <li key={n} className="home-rt__stage">
+        <span className="home-rt__node" aria-hidden="true"><i /></span>
+        <span className="home-rt__n">{n}</span>
+        <span className="home-rt__term">{term}</span>
+        <span className="home-rt__text">{text}</span>
+      </li>)}
+    </ol>
+  </div>;
+}
+
+function Composer() {
+  return <section id="rise" className="home-sec sy-wrap" aria-labelledby="rise-title">
+    <div className="home-rt sy-card" style={{ '--sy-accent': '#f2d9a6' }} data-reveal>
+      <div className="home-rt__main">
+        <div className="home-rt__copy">
+          <p className="home-rt__top"><span className="sy-eyebrow">RISE Composer</span><Badge status={{ kind: 'live', label: 'Free · live in Claude' }} /></p>
+          <h2 id="rise-title" className="sy-display home-rt__title">The experiential runtime <em>for machine intelligence.</em></h2>
+          <p className="sy-body-lg home-rt__lede">Models think in text. RISE gives their answers time, image, sound and motion: a reading you step inside, not a block you scroll past.</p>
+          <div className="home-rt__connect">
+            <p className="sy-label">Add it to Claude as a custom connector</p>
+            <span className="home-conn"><span className="sy-label">Name</span><code>RISE</code><CopyButton text="RISE" label="the connector name" /></span>
+            <span className="home-conn"><span className="sy-label">URL</span><code>{RISE_MCP.split(/(?=\/api\/)/).flatMap((part, i) => i ? [<wbr key={i} />, part] : [part])}</code><CopyButton text={RISE_MCP} label="the connector URL" /></span>
+          </div>
+          <div className="sy-actions home-rt__actions">
+            <a className="sy-btn sy-btn--solid" href={CLAUDE_CONNECTORS}>How to add a connector<Icon name="external" /></a>
+            <a className="sy-btn sy-btn--line" href="/projects/rise/">How RISE works<Icon name="arrow" /></a>
+          </div>
+        </div>
+        <RuntimeFlow />
       </div>
-      <p className="home-plus">{PLUS_NOTE} <a href="/plus/">About RISE Plus</a></p>
     </div>
-    <figure className="home-rise__fig" data-reveal>
-      <img src={riseHome} width="720" height="450" loading="lazy" decoding="async" alt="RISE Home: today's poem streaming over a magenta visual field, with the buttons Read it with sound, Another reading and Library." />
-      <figcaption className="sy-small">RISE Home, with the day’s poem. Screenshot of a local build, 5 October 2026.</figcaption>
-    </figure>
+    <div className="home-premium sy-card" style={{ '--sy-accent': '#f2d9a6' }} data-reveal>
+      <p className="home-premium__text"><b className="home-premium__name">RISE Plus</b> {plusLive
+        ? <>adds an ElevenLabs voice that reads the text you bring, <b className="home-premium__price">{RISE_PLUS.price}</b> a month.</>
+        : <>adds an ElevenLabs voice that reads the text you bring.<Badge status={{ kind: 'early', label: 'Coming soon' }} /></>}</p>
+      <a className="sy-btn sy-btn--line home-premium__go" href="/plus/">About RISE Plus<Icon name="arrow" /></a>
+    </div>
   </section>;
 }
 
@@ -267,7 +355,7 @@ export default function App() {
     <Header />
     <main id="main">
       <Hero />
-      <Rise />
+      <Composer />
       <Publishers />
       <Lab />
       <Research />
