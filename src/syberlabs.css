@@ -314,6 +314,7 @@ html.sy-atlas-open, html.sy-atlas-open body { overflow: hidden; }
 .sy-totop { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 40; display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--sy-rule-2); background: rgba(8,7,31,.78); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); color: var(--sy-vellum); opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; transition: opacity var(--sy-t-enter), transform var(--sy-t-enter) var(--sy-ease), border-color var(--sy-t-hover); }
 .sy-totop.is-on { opacity: 1; transform: none; pointer-events: auto; }
 .sy-totop:hover { border-color: var(--sy-ice); text-decoration: none; }
+@media (max-width: 640px) { .sy-totop { width: 40px; height: 40px; background: rgb(8 6 26 / .72); } } /* smaller over text on phones */
 
 /* ---------- 3D sigil over the flat one ---------- */
 .sy-plate--sigil { overflow: hidden; }
@@ -339,9 +340,9 @@ html.sy-atlas-open, html.sy-atlas-open body { overflow: hidden; }
 /* ---------- footer map ---------- */
 /* the footer: the orb, then one hairline bar (mark / a few links / year) */
 .sy-footer__in { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: clamp(32px, 4vw, 44px); width: 100%; max-width: none; margin: 0; padding: clamp(32px, 3.6vw, 44px) var(--sy-gutter) 24px; }
-.sy-footer__art { display: block; width: min(100%, 300px); border-radius: 11px; overflow: hidden; box-shadow: 0 18px 50px -24px rgba(72,144,240,.5); transition: transform var(--sy-t-enter) var(--sy-ease), box-shadow var(--sy-t-enter); }
-.sy-footer__art img { display: block; width: 100%; height: auto; } /* cropped to its own white frame, so the frame is the edge */
-.sy-footer__art:hover { transform: translateY(-3px); box-shadow: 0 30px 80px -26px rgba(72,144,240,.7); }
+.sy-footer__art { display: block; width: min(100%, 300px); transition: transform var(--sy-t-enter) var(--sy-ease); }
+.sy-footer__art img { display: block; width: 100%; height: auto; -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%); } /* feathered: the orb lifts out of the page instead of sitting in a framed print */
+.sy-footer__art:hover { transform: translateY(-3px); }
 .sy-footer__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 28px; width: 100%; max-width: calc(var(--sy-max) - 2 * var(--sy-gutter)); padding-top: 20px; border-top: 1px solid var(--sy-rule); }
 .sy-footer__bar nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 22px; }
 .sy-footer__bar nav a { font-size: 13.5px; }
