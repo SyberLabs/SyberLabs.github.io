@@ -123,3 +123,24 @@ test('public navigation routes subscribers to RISE and labels staff access separ
   assert.doesNotMatch(publicHeader, /href="\/admin(?:\/|"|\?)/);
   assert.match(footer(), /href="\/admin\/">Staff sign in<\/a>/);
 });
+
+
+test('static chrome derives current navigation from routes, repairing missing and stale labels', async () => {
+  const { applyChrome } = await import('./site-chrome.mjs');
+  const { header, footer } = await import('../projects/project-template.js');
+  for (const [file, expected] of [
+    ['mateo/index.html', '/mateo/'], ['plus/index.html', '/plus/'],
+    ['services/index.html', '/services/'], ['projects/rise/index.html', '/#work'],
+    ['research/index.html', null], ['404.html', null],
+  ]) {
+    for (const prior of ['', 'services', 'mateo', 'plus', 'projects']) {
+      const html = header(prior).replace('href="#main"', 'href="#content"') + '<main id="content"></main>' + footer();
+      const generated = applyChrome(html, file);
+      const primary = generated.match(/<header[\s\S]*?<\/header>/)[0];
+      const current = [...primary.matchAll(/<a href="([^"]+)" aria-current="page"/g)].map(match => match[1]);
+      assert.deepEqual(current, expected ? [expected] : [], `${file} previously ${prior}`);
+      assert.match(generated, /href="#content">Skip to content/);
+      assert.equal(applyChrome(generated, file), generated, 'regeneration is idempotent');
+    }
+  }
+});
