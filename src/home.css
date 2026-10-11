@@ -129,9 +129,9 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 /* ---------- more from the lab: three compact cards ---------- */
 .home-lab { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; list-style: none; margin: 36px 0 0; padding: 0; }
 .home-lab__card { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 24px 24px 18px; color: var(--sy-vellum); overflow: hidden; }
-.home-lab__sigil { position: absolute; right: -14px; top: -10px; width: 120px; height: 120px; opacity: .8; pointer-events: none; }
+.home-lab__sigil { position: absolute; right: 16px; top: 16px; width: 92px; height: 92px; opacity: .8; pointer-events: none; } /* inside the card: never cut by its edge */
 .home-lab__kicker { margin: 0; font: 500 12px/1.4 var(--sy-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--sy-accent); max-width: 70%; }
-.home-lab__name { margin: 0; font: 400 clamp(32px, 2.8vw, 42px)/1 var(--sy-serif); letter-spacing: -.01em; }
+.home-lab__name { margin: 0; max-width: calc(100% - 92px); font: 400 clamp(32px, 2.8vw, 42px)/1 var(--sy-serif); letter-spacing: -.01em; text-wrap: balance; } /* clear of the sigil */
 .home-lab__what { margin: 0; font-size: 15px; line-height: 1.55; color: var(--sy-mist); }
 .home-lab__links { display: flex; flex-wrap: wrap; gap: 4px 22px; margin: auto 0 0; padding-top: 6px; }
 .home-lab__links a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--sy-vellum); font-weight: 500; }
@@ -157,14 +157,17 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 }
 
 /* ---------- about and contact ---------- */
-.home-about { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr); gap: 72px; padding-top: 56px; scroll-margin-top: 64px; }
+.home-about { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr); grid-template-areas: "copy founder" "cta founder"; grid-template-rows: auto 1fr; gap: 40px 72px; padding-top: 56px; scroll-margin-top: 64px; }
+.home-about__copy { grid-area: copy; } .home-about__founder { grid-area: founder; }
+/* the contact card sits under the lab's story, beside the founder, rather than alone at the end */
+.home-about > .home-cta { grid-area: cta; align-self: start; margin-top: 0; flex-direction: column; align-items: flex-start; gap: 24px; }
 .home-about__lead { margin: 0 0 22px; color: var(--sy-body); }
 .home-about__copy > p:not(.home-about__lead) { margin: 0 0 20px; max-width: 62ch; color: var(--sy-mist); }
 .home-about__label { margin-top: 34px; }
 .home-about__skills { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 14px 0 0; padding: 0; }
 .home-about__skills li { padding: 9px 12px; border: 1px solid var(--sy-rule); border-radius: 999px; font: 400 12.5px/1 var(--sy-mono); color: var(--sy-mist); background: rgba(8,7,31,.4); transition: border-color var(--sy-t-hover), color var(--sy-t-hover), transform var(--sy-t-enter) var(--sy-ease); }
 .home-about__skills li:hover { border-color: var(--sy-ice); color: var(--sy-vellum); transform: translateY(-2px); }
-.home-about__founder { align-self: start; }
+.home-about__founder { align-self: start; margin: 0; }
 .home-about__name { margin: 12px 0 6px; font: 400 44px/1 var(--sy-serif); color: var(--sy-vellum); }
 .home-about__role { margin: 0 0 14px; color: var(--sy-vellum); font-weight: 500; }
 .home-about__founder > p:not(.sy-eyebrow):not(.home-about__role) { margin: 0; color: var(--sy-mist); font-size: 15.5px; }
@@ -197,7 +200,8 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
   .home-hero__art .sy-atmosphere { -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
   .home-chamber { width: min(calc(100vw - 2 * var(--sy-gutter)), 380px); }
   .home-chamber__stage { min-height: 4.6em; font-size: 17px; }
-  .home-about { grid-template-columns: 1fr; gap: 40px; }
+  .home-about { grid-template-columns: 1fr; grid-template-areas: "copy" "founder" "cta"; gap: 40px; }
+  .home-about > .home-cta { align-items: stretch; }
   .home-head { flex-direction: column; align-items: flex-start; } .home-head__note { text-align: left; }
 }
 @media (max-width: 640px) {
@@ -265,3 +269,20 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
   .home-rt__term { font-size: 28px; }
   .home-rt__text { font-size: 14.5px; }
 }
+
+/* Plain headings: the spectrum italic is kept for the hero and the RISE line; elsewhere the italic is set in plain
+   type, so the device keeps its force where it is used */
+.home-plain em, .home-pilot__title.home-plain em { font-style: italic; background: none; -webkit-background-clip: border-box; background-clip: border-box; color: var(--sy-vellum); animation: none; padding-right: .04em; }
+
+/* the RISE line's footnote: the third product, which lives in Projects */
+.home-line__also { margin: 18px 0 0; font-size: 15px; color: var(--sy-mist); }
+.home-line__also a { color: var(--sy-vellum); background: linear-gradient(var(--sy-ice), var(--sy-ice)) 0 100%/100% 1px no-repeat; }
+.home-line__also a:hover { color: var(--sy-ice); text-decoration: none; }
+.home-about__copy a { color: var(--sy-vellum); text-decoration: underline; text-underline-offset: 3px; }
+.home-about__copy a:hover { color: var(--sy-ice); }
+
+/* the last card on the page keeps clear of the footer's rule */
+#about { padding-bottom: clamp(72px, 8vw, 112px); }
+
+/* desktop: the hero stops short of the fold so the RISE line's heading shows and invites the scroll */
+@media (min-width: 901px) { .home-hero { min-height: min(100svh, 860px); } }

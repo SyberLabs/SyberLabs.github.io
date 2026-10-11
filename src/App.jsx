@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { skills, EMAIL, CONTACT, RESUME, LINKEDIN, MATEO_GITHUB, MATEO_SITE, OMNI_PREVIEW, SKETCH_APP, RISE_PLUS, RISE_APP } from '../projects/site-data.js';
+import { CONTACT, RESUME, LINKEDIN, MATEO_GITHUB, MATEO_SITE, MATEO_EMAIL, OMNI_PREVIEW, SKETCH_APP, RISE_PLUS, RISE_APP } from '../projects/site-data.js';
 import { header as chromeHeader, footer as chromeFooter } from '../projects/project-template.js';
 import { mount, RING_SVG } from '../kit/v2/syber-atmosphere.js';
 import plateStill from './plate-i.webp';
@@ -63,7 +63,7 @@ const CHAMBER = [
   'We build software you step inside.',
   'This line is not displayed.',
   'It is performed.',
-  'Paced, lit, and given a room.',
+  'Paced, lit, and staged.',
   'That is RISE.',
   'Bring any text. Watch it become a reading.',
 ];
@@ -103,8 +103,8 @@ function Hero() {
           <a className="home-hero__explore" href="#work">Explore the lab<Icon name="down" size={16} /></a>
         </div>
         <p className="home-hero__voice">
-          <a className="home-hero__explore" href={RISE_VOICE_DEMO}>Custom ElevenLabs reading<Icon name="external" size={16} /></a>
-          <span>Plus or admin access required</span>
+          <a className="home-hero__explore" href={RISE_VOICE_DEMO}>Hear it in an ElevenLabs voice<Icon name="external" size={16} /></a>
+          <span>RISE Plus early access</span>
         </p>
       </div>
     </div>
@@ -171,7 +171,7 @@ function RuntimeFlow() {
 // siblings; the accent and the promise tell them apart. RISE Plus, the ElevenLabs voice, belongs to Reader.
 const READER_POINTS = [
   ['Paced, not scrolled', 'Words arrive at a pace you set, or sit on a page you can turn.'],
-  ['Pictures and sound', 'Procedural visuals and sound give a poem or a chapter a room.'],
+  ['Pictures and sound', 'Procedural visuals and sound set the scene for a poem or a chapter.'],
   ['Nothing to set up', 'Any modern browser. No account, no key, no install.'],
 ];
 function RiseLine() {
@@ -187,7 +187,7 @@ function RiseLine() {
       <article className="home-line__card home-line__card--reader sy-card" aria-labelledby="reader-title" data-reveal>
         <p className="home-line__top"><span className="home-line__lockup" id="reader-title"><span>RISE</span> <b>Reader</b></span><Badge status={{ kind: 'live', label: 'Free · open beta' }} /></p>
         <p className="home-line__promise">You bring the words. <em>RISE stages them.</em></p>
-        <p className="home-line__what">A reading experience for people. Paste a passage or open today’s poem; RISE paces it and builds the visuals and sound around it.</p>
+        <p className="home-line__what">A reading experience for people. Bring your own text or open today’s poem; RISE paces it and builds the visuals and sound around it.</p>
         <div className="home-rt__flow is-still home-line__steps">
           <ol className="home-rt__stages" aria-label="What RISE Reader does">
             {READER_POINTS.map(([t, d], i) => <li key={t} className="home-rt__stage">
@@ -212,7 +212,7 @@ function RiseLine() {
       <article className="home-line__card home-line__card--composer home-rt sy-card" aria-labelledby="composer-title" data-reveal>
         <p className="home-line__top"><span className="home-line__lockup" id="composer-title"><span>RISE</span> <b>Composer</b></span><Badge status={{ kind: 'live', label: 'Free · live in Claude' }} /></p>
         <p className="home-line__promise">Your AI writes the words <em>and the stage.</em></p>
-        <p className="home-line__what">The experiential runtime for machine intelligence. Over a connector, Claude composes the whole reading, custom visuals included, and you step inside the answer.</p>
+        <p className="home-line__what">The experiential runtime for machine intelligence. Over a connector, Claude composes the whole reading, custom visuals included, and RISE performs it.</p>
         <RuntimeFlow />
         <div className="home-rt__connect">
           <p className="sy-label">Add it to Claude</p>
@@ -224,6 +224,7 @@ function RiseLine() {
         </div>
       </article>
     </div>
+    <p className="home-line__also" data-reveal>Also in the RISE line: <a href="#work">RISE Sketch</a>, a drawing instrument with living ink.</p>
   </section>;
 }
 
@@ -233,8 +234,8 @@ function Publishers() {
     <div className="home-pilot sy-card" data-reveal>
       <div>
         <p className="sy-eyebrow">For publishers and creators</p>
-        <h2 id="publishers-title" className="home-pilot__title">One of your pieces, <em>as a RISE reading.</em></h2>
-        <p className="sy-body">We turn one of your pieces into a RISE reading your readers can open in a browser. A pilot is one rights-cleared excerpt and one reader journey, with a fixed quote once we have reviewed the text.</p>
+        <h2 id="publishers-title" className="home-pilot__title home-plain">One of your pieces, <em>as a RISE reading.</em></h2>
+        <p className="sy-body">Send a rights-cleared excerpt; we stage it as a reading your audience opens in any browser. One piece, one reader journey, a fixed quote once we’ve read the text.</p>
       </div>
       <div className="sy-actions"><a className="sy-btn sy-btn--solid" href="/services/">About pilots<Icon name="arrow" className="sy-icon--trail" /></a></div>
     </div>
@@ -249,15 +250,14 @@ const LAB = [
   { id: 'flyspace', sigil: 'flyspace', accent: '#f59be0', kicker: 'FLYSPACE · Live preview', name: 'FLYSPACE',
     what: 'A spatial workspace for AI over live data: wire public data blocks into AI personas that answer only from what the wires carry, and cite it.',
     links: [{ label: 'Details', href: '/projects/flyspace/' }, { label: 'Try the preview', href: OMNI_PREVIEW }] },
-  { id: 'reliability', sigil: 'syberwork', accent: '#a6f08f', kicker: 'Agent reliability · In progress', name: 'Reliable agents',
+  { id: 'reliability', sigil: 'syberwork', accent: '#a6f08f', kicker: 'Agents · In progress', name: 'SyberWork + Sybershoke',
     what: 'SyberWork puts agents to work under contracts, human sign-off and a hash-chained record. Sybershoke replays distributed failures from a seed so each one can be reduced and fixed.',
     links: [{ label: 'SyberWork', href: '/projects/syberwork/' }, { label: 'Sybershoke', href: '/research/sybershoke/' }] },
 ];
 function Lab() {
   return <section id="work" className="home-sec sy-wrap" aria-labelledby="lab-title">
     <div className="site-head home-head" data-reveal>
-      <div><p className="sy-eyebrow">Projects</p><h2 id="lab-title" className="sy-display">More from <em>the lab.</em></h2></div>
-      <p className="home-head__note sy-small">Every project page states what it has shown and what it has not.</p>
+      <div><p className="sy-eyebrow">Projects</p><h2 id="lab-title" className="sy-display home-plain">More from <em>the lab.</em></h2></div>
     </div>
     <ul className="home-lab" data-reveal-children>
       {LAB.map(p => <li key={p.id} className="home-lab__card sy-card" style={{ '--sy-accent': p.accent }}>
@@ -274,7 +274,7 @@ function Lab() {
 // Research and approach: two short intros, each to its own page.
 function Research() {
   return <section id="research" className="home-sec sy-wrap" aria-labelledby="research-title">
-    <div className="site-head" data-reveal><p className="sy-eyebrow">Research and approach</p><h2 id="research-title" className="sy-display">Shown, <em>with its limits.</em></h2></div>
+    <div className="site-head" data-reveal><p className="sy-eyebrow">Research and approach</p><h2 id="research-title" className="sy-display home-plain">Claims, <em>with their evidence.</em></h2></div>
     <div className="home-ra" data-reveal-children>
       <a className="home-ra__card sy-card" href="/research/">
         <h3>Research</h3>
@@ -342,15 +342,13 @@ function Factory() {
 
 function About() {
   return <section id="about" className="home-sec sy-wrap" aria-labelledby="about-title">
-    <div className="site-head" data-reveal><p className="sy-eyebrow">About and contact</p><h2 id="about-title" className="sy-display">About <em>SyberLabs.</em></h2></div>
+    <div className="site-head" data-reveal><p className="sy-eyebrow">About</p><h2 id="about-title" className="sy-display home-plain">About <em>SyberLabs.</em></h2></div>
     <div className="home-about">
       <div className="home-about__copy" data-reveal-children>
-        <p className="sy-body-lg home-about__lead">SyberLabs is an independent software and AI research lab founded in 2026 by Mateo Robles. The lab designs, builds, and evaluates AI products and research software, with a focus on applied machine learning, LLM applications, AI agent reliability, and simulation. Seth Carlson builds the engineering infrastructure behind RISE and co-builds Relay.</p>
-        <p>Every project is published with its current status and its limits. Prototypes, measured results, and planned work are labeled separately so readers can tell what has been shown and what has not.</p>
-        <h3 className="sy-eyebrow home-about__label">Technical skills</h3>
-        <ul className="home-about__skills">{skills.map(s => <li key={s}>{s}</li>)}</ul>
+        <p className="sy-body-lg home-about__lead">SyberLabs is an independent AI lab founded in 2026 by Mateo Robles. The lab designs, builds, and evaluates AI products and research software, with a focus on applied machine learning, LLM applications, AI agent reliability, and simulation.</p>
+        <p>Seth Carlson builds the engineering infrastructure behind RISE and co-builds <a href="/projects/relay/">Relay</a>, a workspace for AI-assisted job applications.</p>
       </div>
-      <aside className="sy-plate sy-plate--card home-about__founder sy-card" aria-labelledby="founder-name" data-tilt="4" data-reveal>
+      <aside className="sy-plate--card home-about__founder sy-card" aria-labelledby="founder-name" data-tilt="4" data-reveal>
         <p className="sy-eyebrow">Founder</p>
         <h3 id="founder-name" className="home-about__name">Mateo Robles</h3>
         <p className="home-about__role">Founder and Independent Researcher, SyberLabs</p>
@@ -360,13 +358,13 @@ function About() {
           <li><a href={LINKEDIN}>LinkedIn<Icon name="external" /></a></li>
           <li><a href={MATEO_GITHUB}>GitHub<Icon name="external" /></a></li>
           <li><a href={MATEO_SITE}>Personal site<Icon name="external" /></a></li>
-          <li><a href={CONTACT}>{EMAIL}</a></li>
+          <li><a href={`mailto:${MATEO_EMAIL}`}>{MATEO_EMAIL}</a></li>
         </ul>
       </aside>
-    </div>
-    <div className="home-cta sy-card" data-reveal>
-      <div><p className="sy-eyebrow">Contact</p><h3 className="home-cta__title">Write to <em>the lab.</em></h3><p className="sy-body">Questions about RISE, a pilot, or the research: one email reaches us.</p></div>
-      <div className="sy-actions"><a className="sy-btn sy-btn--solid" href={CONTACT}>Email the lab<Icon name="arrow" className="sy-icon--trail" /></a><a className="sy-btn sy-btn--line" href="/services/">Work with us</a></div>
+      <div className="home-cta sy-card" data-reveal>
+        <div><p className="sy-eyebrow">Contact</p><h3 className="home-cta__title home-plain">Write to <em>the lab.</em></h3><p className="sy-body">Questions about RISE, a pilot, or the research: one email reaches us.</p></div>
+        <div className="sy-actions"><a className="sy-btn sy-btn--solid" href={CONTACT}>Email the lab<Icon name="arrow" className="sy-icon--trail" /></a><a className="sy-btn sy-btn--line" href="/services/">Work with us</a></div>
+      </div>
     </div>
   </section>;
 }
