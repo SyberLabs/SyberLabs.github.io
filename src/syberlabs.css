@@ -360,3 +360,9 @@ html.sy-atlas-open, html.sy-atlas-open body { overflow: hidden; }
 .sy-footer__dir a:hover, .sy-footer__dir a[aria-current="page"] { color: var(--sy-vellum); }
 @media (max-width: 900px) { .sy-footer__dir { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .sy-footer__bar { justify-content: center; text-align: center; } .sy-footer__bar .sy-lockup { width: 100%; justify-content: center; } }
+
+/* Customer subscription access is distinct from staff authentication. */
+.sy-customer-account { flex: none; color: var(--text-2); font-size: 14px; padding: 10px 0 10px 18px; text-decoration: none; white-space: nowrap; }
+.sy-customer-account:hover { color: var(--text); }
+.sy-customer-account:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 4px; }
+@media (max-width: 540px) { .sy-customer-account { font-size: 12px; padding-left: 8px; } }

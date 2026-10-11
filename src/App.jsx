@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CONTACT, RESUME, LINKEDIN, MATEO_GITHUB, MATEO_SITE, MATEO_EMAIL, OMNI_PREVIEW, SKETCH_APP, RISE_PLUS, RISE_APP } from '../projects/site-data.js';
+import { CONTACT, RESUME, LINKEDIN, MATEO_GITHUB, MATEO_PORTFOLIO, MATEO_EMAIL, OMNI_PREVIEW, SKETCH_APP, RISE_PLUS, RISE_APP } from '../projects/site-data.js';
 import { header as chromeHeader, footer as chromeFooter } from '../projects/project-template.js';
 import { mount, RING_SVG } from '../kit/v2/syber-atmosphere.js';
 import plateStill from './plate-i.webp';
@@ -20,7 +20,6 @@ import './home.css';
 // connector instructions are also on /projects/rise/#composer; the GitHits dependency totals live on
 // /stack/#dependencies (src/githits-panel.jsx).
 const RISE_TRY = 'https://rise.syberlabs.io/try/';
-const RISE_VOICE_DEMO = 'https://rise.syberlabs.io/voice-demo';
 
 function Icon({ name, size = 18, className = '' }) {
   const paths = {
@@ -97,14 +96,14 @@ function Hero() {
       <div className="home-hero__copy" ref={copy}>
         <p className="sy-eyebrow">RISE / from SyberLabs</p>
         <h1 id="hero-title" className="sy-display-xl home-hero__title">Turn text into a <em>reading experience.</em></h1>
-        <p className="sy-body-lg home-hero__intro">RISE brings words to life with pacing, visuals, and sound. Free in your browser. No account needed.</p>
+        <p className="sy-body-lg home-hero__intro">Bring a poem, a scene, or your own writing. RISE gives it pacing, visuals, and sound. Free in your browser. No account needed.</p>
         <div className="home-hero__actions">
           <a className="sy-btn sy-btn--solid home-hero__cta" href={RISE_TRY}>Try a one-minute reading<Icon name="arrow" className="sy-icon--trail" /></a>
           <a className="home-hero__explore" href="#work">Explore the lab<Icon name="down" size={16} /></a>
         </div>
         <p className="home-hero__voice">
-          <a className="home-hero__explore" href={RISE_VOICE_DEMO}>Hear it in an ElevenLabs voice<Icon name="external" size={16} /></a>
-          <span>RISE Plus early access</span>
+          <a className="home-hero__explore" href="/rise-demo/">See RISE in motion<Icon name="arrow" size={16} /></a>
+          <a href="/plus/">Explore RISE Plus · coming soon</a>
         </p>
       </div>
     </div>
@@ -357,7 +356,7 @@ function About() {
           <li><a href={RESUME}>Résumé (PDF)<Icon name="arrow" /></a></li>
           <li><a href={LINKEDIN}>LinkedIn<Icon name="external" /></a></li>
           <li><a href={MATEO_GITHUB}>GitHub<Icon name="external" /></a></li>
-          <li><a href={MATEO_SITE}>Personal site<Icon name="external" /></a></li>
+          <li><a href={MATEO_PORTFOLIO}>Engineering portfolio<Icon name="arrow" /></a></li>
           <li><a href={`mailto:${MATEO_EMAIL}`}>{MATEO_EMAIL}</a></li>
         </ul>
       </aside>
