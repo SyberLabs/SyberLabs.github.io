@@ -5,6 +5,11 @@ import './living-lab.css';
 const ATMOSPHERES = ['spectrum', 'ember', 'glacier'];
 const initialScene = makeScene(SAMPLES[0].text);
 
+function SceneIcon({ name = 'arrow' }) {
+  const path = name === 'down' ? 'M12 5v14M6 13l6 6 6-6' : name === 'replay' ? 'M20 7v5h-5M20 12a8 8 0 1 1-2.3-5.7' : 'M6 18L18 6M6 6h12v12';
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={path} /></svg>;
+}
+
 export default function LivingLab({ children }) {
   const [input, setInput] = useState(SAMPLES[0].text);
   const [scene, setScene] = useState(initialScene);
@@ -86,10 +91,10 @@ export default function LivingLab({ children }) {
         <textarea ref={field} id="lab-sentence" name="sentence" rows="2" value={input} dir="auto" autoComplete="off" disabled={!ready || !supportsGraphemes} placeholder="A quiet thought becomes a world…" aria-describedby={`lab-help lab-count${error ? ' lab-error' : ''}`} aria-invalid={!!error} onChange={event => { setInput(limitText(event.target.value)); setError(''); }} />
         <p id="lab-help" className="living-lab__hint">{supportsGraphemes ? 'Only in this browser. Your words stay here.' : 'This browser can show the samples. Open RISE to bring your own text.'}</p>
         {error && <p id="lab-error" className="living-lab__error" role="alert">{error}</p>}
-        <button className="sy-btn sy-btn--solid living-lab__play" type="submit" disabled={!ready || !supportsGraphemes}>{still ? 'Read your words' : 'Play your words'}<span aria-hidden="true">↗</span></button>
-        {started && <a className="living-lab__view" href="#lab-scene">See your scene<span aria-hidden="true">↓</span></a>}
+        <button className="sy-btn sy-btn--solid living-lab__play" type="submit" disabled={!ready || !supportsGraphemes}>{still ? 'Read your words' : 'Play your words'}<SceneIcon /></button>
+        {started && <a className="living-lab__view" href="#lab-scene">See your scene<SceneIcon name="down" /></a>}
       </form>
-      <div className="living-lab__samples"><span>Or try a sentence</span>{SAMPLES.map(sample => <button type="button" key={sample.label} disabled={!ready} onClick={() => { setInput(sample.text); setAtmosphere(sample.atmosphere); play(sample.text); }}>{sample.label}<span aria-hidden="true">↗</span></button>)}</div>
+      <div className="living-lab__samples"><span>Or try a sentence</span>{SAMPLES.map(sample => <button type="button" key={sample.label} disabled={!ready} onClick={() => { setInput(sample.text); setAtmosphere(sample.atmosphere); play(sample.text); }}>{sample.label}<SceneIcon /></button>)}</div>
       <noscript><p className="living-lab__hint">The interactive scene needs JavaScript. You can still open a full reading in RISE.</p></noscript>
     </div>
     <div className="living-lab__experience">
@@ -106,14 +111,14 @@ export default function LivingLab({ children }) {
       </figure>
       <div className="living-lab__controls">
         <div className="living-lab__transport">
-          {!still && <><button type="button" disabled={!ready} onClick={toggle}>{complete ? 'Play again' : playing ? 'Pause' : started ? 'Resume' : 'Play sample'}</button><button type="button" disabled={!ready} onClick={replay}>Replay<span aria-hidden="true">↺</span></button></>}
+          {!still && <><button type="button" disabled={!ready} onClick={toggle}>{complete ? 'Play again' : playing ? 'Pause' : started ? 'Resume' : 'Play sample'}</button><button type="button" disabled={!ready} onClick={replay}>Replay<SceneIcon name="replay" /></button></>}
           {still && <span className="living-lab__hint">Still mode respects motion and device preferences.</span>}
           <span className="living-lab__status sy-sr" role="status">{status}</span>
         </div>
         <fieldset className="living-lab__atmospheres"><legend>Atmosphere</legend>{ATMOSPHERES.map(name => <button type="button" key={name} aria-pressed={atmosphere === name} onClick={() => setAtmosphere(name)}><i aria-hidden="true" data-palette={name} />{name}</button>)}</fieldset>
         {!still && <label className="living-lab__pace" htmlFor="lab-pace"><span>Pace <output>{pace.toFixed(2)}×</output></span><input id="lab-pace" name="pace" type="range" min="0.65" max="1.5" step="0.05" value={pace} onChange={event => setPace(Number(event.target.value))} /></label>}
       </div>
-      <div className="living-lab__continue"><p>A local experiment in text and atmosphere.<br />RISE goes further, with full readings, visuals, and sound.</p><a className="sy-btn sy-btn--line" href="https://rise.syberlabs.io/try/">Continue in RISE<span aria-hidden="true">↗</span></a></div>
+      <div className="living-lab__continue"><p>A local experiment in text and atmosphere.<br />RISE goes further, with full readings, visuals, and sound.</p><a className="sy-btn sy-btn--line" href="https://rise.syberlabs.io/try/">Continue in RISE<SceneIcon /></a></div>
     </div>
   </div>;
 }
