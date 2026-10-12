@@ -1,25 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { CONTACT, RESUME, LINKEDIN, MATEO_GITHUB, MATEO_PORTFOLIO, MATEO_EMAIL, OMNI_PREVIEW, SKETCH_APP, RISE_PLUS, RISE_APP } from '../projects/site-data.js';
 import { header as chromeHeader, footer as chromeFooter } from '../projects/project-template.js';
-import { mount, RING_SVG } from '../kit/v2/syber-atmosphere.js';
-import plateStill from './plate-i.webp';
-import plateStillSm from './plate-i-sm.webp';
 import { params as sigilParams, drawAll } from '../kit/v2/syber-sigil.js';
 import { boot, reducedMotion } from './site/site.js';
-import { mountChamber } from './site/chamber.js';
+import LivingLab from './living-lab/LivingLab.jsx';
 import { mountStrike } from './site/strike.js';
 import '../kit/v2/syber-atlas.css';
 import './syberlabs.css';
 import './home.css';
 
 // The homepage leads with one product, RISE, and one action: a one-minute reading at rise.syberlabs.io/try/. The hero
-// shows rather than tells: a short reading about SyberLabs plays in the middle of Plate I, paced the way RISE streams.
+// shows rather than tells: visitors play their own sentence in a bounded, local typographic landscape.
 // Order below the hero: RISE Composer in Claude (the connector, with the Compose -> Admit -> Experience strike and
 // RISE Plus beneath), the publisher pilot, more from the lab (#work, the header's Projects link), research and
 // approach, about and contact (#about). The header and footer (nav, Sign in, All pages) are the shared chrome. The
 // connector instructions are also on /projects/rise/#composer; the GitHits dependency totals live on
 // /stack/#dependencies (src/githits-panel.jsx).
-const RISE_TRY = 'https://rise.syberlabs.io/try/';
 
 function Icon({ name, size = 18, className = '' }) {
   const paths = {
@@ -53,65 +49,20 @@ const Footer = () => <div className="home-chrome home-footer" dangerouslySetInne
 // RISE Plus voice is labelled with its current availability (RISE_PLUS.state; /plus/ carries the full wording).
 const plusLive = RISE_PLUS.state === 'live';
 
-// The chamber (src/site/chamber.js): a reading about SyberLabs, line by line, in RISE's Stream presentation. It needs
-// no controls or clock: it plays, pauses off screen, and loops. Screen
-// readers and search engines get the whole text from the .sy-sr paragraph; without JS or under reduced motion the
-// stage holds one line, still.
-const CHAMBER = [
-  'SyberLabs is an independent AI lab.',
-  'We build software you step inside.',
-  'This line is not displayed.',
-  'It is performed.',
-  'Paced, lit, and staged.',
-  'That is RISE.',
-  'Bring any text. Watch it become a reading.',
-];
-function Chamber() {
-  const fig = useRef(null);
-  useEffect(() => { const c = mountChamber(fig.current, CHAMBER); return () => c.destroy(); }, []);
-  return <figure ref={fig} className="home-chamber" aria-label="A short reading about SyberLabs, performed the way RISE reads">
-    <p className="sy-sr">{CHAMBER.join(' ')}</p>
-    <div className="home-chamber__stage" aria-hidden="true"><p className="home-chamber__line is-still">We build software you step inside.</p></div>
-  </figure>;
-}
-
-// Plate I: the one live 2D long-exposure attractor on the site, the room the chamber's reading plays in. Without JS,
-// without WebGL2 or on software GL, a still exposure of the same plate (src/plate-i.webp) sits in the ring instead.
-// On phones the plate and its reading come first, smaller, with the copy and the call to action right beneath.
+// The Living Lab performs short text locally, with no account, request, sound or model dependency.
+// The business headline stays readable; the scene and its controls use normal document flow.
 function Hero() {
-  const canvas = useRef(null), copy = useRef(null);
-  const [live, setLive] = useState(false);
-  useEffect(() => {
-    const plate = mount(canvas.current, { mode: 'hero', avoid: copy.current, narrow: { scale: 0.62, max: 260, top: 66, media: '(max-width: 900px)' }, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
-    setLive(plate.supported);
-    // the Atlas covers the page with a blurred backdrop: hold the plate instead of re-blurring a moving one
-    const html = document.documentElement;
-    const mo = new MutationObserver(() => html.classList.contains('sy-atlas-open') ? plate.pause() : plate.resume());
-    mo.observe(html, { attributes: true, attributeFilter: ['class'] });
-    return () => { mo.disconnect(); plate.destroy(); };
-  }, []);
-  return <section className={`home-hero sy-nebula${live ? ' is-live' : ''}`} aria-labelledby="hero-title">
-    <div className="sy-scrim home-hero__scrim" aria-hidden="true" />
+  return <section className="home-hero" aria-labelledby="hero-title">
     <div className="home-hero__in sy-wrap">
-      <div className="home-hero__copy" ref={copy}>
-        <p className="sy-eyebrow">RISE / from SyberLabs</p>
-        <h1 id="hero-title" className="sy-display-xl home-hero__title">Turn text into a <em>reading experience.</em></h1>
-        <p className="sy-body-lg home-hero__intro">Bring a poem, a scene, or your own writing. RISE gives it pacing, visuals, and sound. Free in your browser. No account needed.</p>
-        <div className="home-hero__actions">
-          <a className="sy-btn sy-btn--solid home-hero__cta" href={RISE_TRY}>Try a one-minute reading<Icon name="arrow" className="sy-icon--trail" /></a>
+      <LivingLab>
+        <div className="home-hero__copy">
+          <p className="sy-eyebrow">RISE / from SyberLabs</p>
+          <h1 id="hero-title" className="sy-display-xl home-hero__title">Turn text into a <em>reading experience.</em></h1>
+          <p className="sy-body-lg home-hero__intro">Bring a poem, a scene, or your own writing. See what happens when the words become the world.</p>
+          <p className="home-hero__voice">Try a sentence here. Or open RISE, free in your browser. No account needed.</p>
           <a className="home-hero__explore" href="#work">Explore the lab<Icon name="down" size={16} /></a>
         </div>
-        <p className="home-hero__voice">
-          <a className="home-hero__explore" href="/rise-demo/">See RISE in motion<Icon name="arrow" size={16} /></a>
-          <a href="/plus/">Explore RISE Plus · coming soon</a>
-        </p>
-      </div>
-    </div>
-    <div className="home-hero__art">
-      <canvas ref={canvas} className="sy-atmosphere" aria-hidden="true" />
-      <img className="home-still" src={plateStill} srcSet={`${plateStillSm} 560w, ${plateStill} 1000w`} sizes="(max-width: 900px) 400px, 60vw" width="1000" height="1000" alt="" aria-hidden="true" decoding="async" />
-      <span className="home-ring" aria-hidden="true" dangerouslySetInnerHTML={{ __html: RING_SVG }} />
-      <Chamber />
+      </LivingLab>
     </div>
   </section>;
 }
@@ -371,7 +322,7 @@ function About() {
 export default function App() {
   useEffect(() => {
     const sigils = drawAll(document);
-    // The homepage field sits low and left, behind the copy and under Plate I, and climbs as the page scrolls.
+    // The shared field stays low and left, behind the introduction and away from the local reading stage.
     boot(document, { density: 'calm', offset: [-0.34, -0.42] });
     if (INTERNAL_SECTIONS) import('./site/factory-stats.js').then(m => m.factoryStats(document));
     return () => sigils.disconnect();
