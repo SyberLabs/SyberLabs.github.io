@@ -90,7 +90,12 @@ function rasterise(text, n) {
     out[i * 2] = (ink[k] + Math.random() - 0.5 - W / 2) / sc;
     out[i * 2 + 1] = -(ink[k + 1] + Math.random() - 0.5 - H / 2) / sc;
   }
-  return { out, area: m * step * step / (sc * sc) };
+  // keep every dot, serifs and swashes included, inside the glass: the lens warp pushes a dot at radius r out to
+  // r / (1 - .16 (1 - sqrt(1 - r^2))), so r <= .76 lands at <= ~.83 on screen, clear of the soft limb
+  let far = 0; for (let i = 0; i < n; i++) far = Math.max(far, Math.hypot(out[i * 2], out[i * 2 + 1]));
+  const fit = far > 0.76 ? 0.76 / far : 1;
+  if (fit < 1) for (let i = 0; i < out.length; i++) out[i] *= fit;
+  return { out, area: m * step * step / (sc * sc) * fit * fit };
 }
 
 export function mountOrb(canvas, opts = {}) {
