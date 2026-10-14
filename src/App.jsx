@@ -3,7 +3,6 @@ import { CONTACT, RESUME, LINKEDIN, MATEO_GITHUB, MATEO_PORTFOLIO, MATEO_EMAIL, 
 import { header as chromeHeader, footer as chromeFooter } from '../projects/project-template.js';
 import { params as sigilParams, drawAll } from '../kit/v2/syber-sigil.js';
 import { boot, reducedMotion } from './site/site.js';
-import { RING_SVG } from '../kit/v2/syber-atmosphere.js';
 import { mountOrb } from './site/orb.js';
 import { cleanText } from './living-lab/scene.js';
 import plateStill from './plate-i.webp';
@@ -56,7 +55,7 @@ const plusLive = RISE_PLUS.state === 'live';
 // The Orb (src/site/orb.js): a sphere of fractal flame and spectral attractor beside the headline, with a swarm of
 // dots that spells the lab's words. One input, the typing bar: as the visitor types, the dots re-assemble into their
 // text and the light bends to it. Text never leaves the browser (cleanText, src/living-lab/scene.js, bounds it).
-// Without WebGL2 (or on a software renderer) a still exposure of Plate I sits in the ring and the bar is hidden;
+// Without WebGL2 (or on a software renderer) a still exposure of Plate I takes its place and the bar is hidden;
 // reduced motion gets one still exposure per text. The words the dots spell are also in the page as .sy-sr text.
 const ORB_WORDS = ['SyberLabs', 'RISE', 'Read', 'Anything', 'Alive', 'Type here ↓']; // who, what, the verb, the promise, what happens, then a hand-off to the bar
 function Hero() {
@@ -64,7 +63,7 @@ function Hero() {
   const [live, setLive] = useState(false);
   const [text, setText] = useState('');
   useEffect(() => {
-    const o = orb.current = mountOrb(canvas.current, { avoid: copy.current, words: ORB_WORDS, narrow: { scale: 0.66, max: 260, top: 52, media: '(max-width: 900px)' }, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
+    const o = orb.current = mountOrb(canvas.current, { avoid: copy.current, words: ORB_WORDS, narrow: { scale: 0.66, max: 260, top: 60, media: '(max-width: 900px)' }, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
     setLive(o.supported);
     // the Atlas covers the page with a blurred backdrop: hold the orb instead of re-blurring a moving one
     const html = document.documentElement;
@@ -89,7 +88,6 @@ function Hero() {
     <div className="home-hero__art">
       <canvas ref={canvas} className="sy-atmosphere" aria-hidden="true" />
       <img className="home-still" src={plateStill} srcSet={`${plateStillSm} 560w, ${plateStill} 1000w`} sizes="(max-width: 900px) 400px, 60vw" width="1000" height="1000" alt="" aria-hidden="true" decoding="async" />
-      <span className="home-ring" aria-hidden="true" dangerouslySetInnerHTML={{ __html: RING_SVG }} />
       <p className="sy-sr">SyberLabs. RISE. Read anything, alive.</p>
       <form className="home-orb__bar" onSubmit={e => e.preventDefault()}>
         <input type="text" value={text} onChange={type} maxLength={180} autoComplete="off" spellCheck={false} enterKeyHint="done" aria-label="Type anything; the orb spells it" placeholder="Type anything…" />
