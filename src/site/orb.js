@@ -6,8 +6,9 @@
      - the dots (8k): a swarm simulated on the GPU with transform feedback. Each dot has a target point sampled from
        text rasterised in the site's serif; a damped spring draws it there, a curl field carries it when released.
        The swarm assembles into a word, holds, scatters, assembles into the next, and so on.
-   The tone pass shades the buffer as a globe: a lens warp, limb darkening, a rim light and a specular, clipped to
-   the disc with the bloom allowed to leak a little past the edge.
+   The tone pass shades the buffer as a glass globe: a lens warp, a soft limb, an ice rim light and a specular,
+   clipped to the disc with the bloom allowed to leak a little past the edge. Before the additive dot pass the
+   buffer is dimmed under each dot, so an assembled word reads as ink over the brightest flame.
 
    One input: setText(str). The dots re-assemble into the text as it is typed; the text's hash chooses the
    attractor's form and the flame's maps (the parameters glide to the new values, so every keystroke bends the
@@ -17,7 +18,7 @@
      avoid    Element whose right edge the orb stays clear of on wide screens (the copy column).
      narrow   { scale, max, top, media }: on narrow screens the orb is min(width * scale, max) px, its top `top` px down.
      words    The idle cycle (default: SyberLabs, RISE, Read, Anything, Alive, Type here ↓).
-   Sets --cx, --cy, --s (px) on the canvas parent so the ring and the typing bar follow the orb. 1 texel per CSS px,
+   Sets --cx, --cy, --s (px) on the canvas parent so the still and the typing bar follow the orb. 1 texel per CSS px,
    at most 60 frames a second, pauses off screen, in hidden tabs and under the Atlas. No WebGL2 or a software
    renderer -> { supported: false } and the canvas is hidden (the still behind it shows). Reduced motion: one still
    exposure per text, dots placed on their targets. */
@@ -36,7 +37,7 @@ const ss = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
 // The forms a text calls up: a known-good attractor nudged by the characters, and four flame maps from its hash.
 function formsFor(text) {
   const h = hash(text || 'syberlabs'), r = rng32(h), base = KF[h % 6];
-  const P = base.map((v, i) => { let d = 0; for (let k = 0; k < text.length; k++) d += Math.sin(text.charCodeAt(k) * 0.37 + i * 1.3 + k) * 0.06; return v + Math.max(-0.22, Math.min(0.22, d)); });
+  const P = base.map((v, i) => { let d = 0; for (let k = 0; k < text.length; k++) d += Math.sin(text.charCodeAt(k) * 0.37 + i * 1.3 + k) * 0.06; return v + Math.max(-0.11, Math.min(0.11, d)); });
   const maps = [], vars = [], cols = [];
   for (let j = 0; j < 4; j++) {
     const s = 0.42 + r() * 0.3, a = r() * Math.PI * 2, sh = (r() - 0.5) * 0.5;
@@ -75,7 +76,7 @@ function rasterise(text, n) {
   const out = new Float32Array(n * 2);
   if (!ink.length) return out;
   // fit the block: widest line -> at most 1.44 units, the block's height -> at most 1.2
-  const blockH = lh * lines.length, sc = Math.max(Math.min(widest, W * 0.9) / 1.5, blockH / 1.26);
+  const blockH = lh * lines.length, sc = Math.max(Math.min(widest, W * 0.9) / 1.66, blockH / 1.4);
   const m = ink.length / 2, stride = m / n;
   for (let i = 0; i < n; i++) {
     const k = Math.floor((i * stride + Math.random() * stride) % m) * 2;
@@ -116,14 +117,14 @@ vec3 pal(float h){h=fract(h)*6.;int i=int(h);return mix(K[i],K[i+1],fract(h));}`
   // U: xy scale (sphere unit -> clip), zw centre in clip
   const orbit = prog(PAL + `in vec2 a;uniform vec4 P,U;uniform vec2 R;uniform float T;out vec3 c;
 void main(){vec2 p=fract(a+R)*4.-2.,q=p;for(int i=0;i<18;i++){q=p;p=vec2(sin(P.x*q.y)+P.z*cos(P.x*q.x),sin(P.y*q.x)+P.w*cos(P.y*q.y));}
-c=pal(length(p-q)*.3+T);float e=1.1+max(abs(P.z),abs(P.w));p*=1.7/e;float l=length(p);gl_Position=l<.985?vec4(p*U.xy+U.zw,0.,1.):vec4(0.,0.,0.,0.);gl_PointSize=1.;}`,
+c=pal(fract(length(p-q)*.3+T)*.62);float e=1.1+max(abs(P.z),abs(P.w));p*=2./e;float l=length(p);gl_Position=l<.985?vec4(p*U.xy+U.zw,0.,1.):vec4(0.,0.,0.,0.);gl_PointSize=1.;}`,
     `in vec3 c;uniform float W;out vec4 o;void main(){o=vec4(c*W,1.);}`, ['a']);
   const flame = prog(PAL + `in vec2 a;uniform vec4 U;uniform vec2 R;uniform float T,FIT;uniform float M[24];uniform vec4 V[4];uniform float C[4];out vec3 c;
 float hs(float x){return fract(sin(x*127.1+R.x*311.7)*43758.5453);}
 void main(){vec2 p=fract(a+R)*2.-1.;float ci=a.x,s=a.y*77.;
 for(int i=0;i<16;i++){int j=int(hs(s+float(i))*4.);vec2 q=vec2(M[j*6]*p.x+M[j*6+1]*p.y+M[j*6+4],M[j*6+2]*p.x+M[j*6+3]*p.y+M[j*6+5]);
 float r2=dot(q,q)+1e-4;vec4 v=V[j];p=v.x*q+v.y*sin(q*2.2)+v.z*q/r2*.5+v.w*vec2(q.x*sin(r2)-q.y*cos(r2),q.x*cos(r2)+q.y*sin(r2));ci=mix(ci,C[j],.5);}
-p*=FIT;float l=length(p);c=pal(ci*.8+T*.6+.15);gl_Position=l<.985?vec4(p*U.xy+U.zw,0.,1.):vec4(0.,0.,0.,0.);gl_PointSize=1.;}`,
+p*=FIT;float l=length(p);c=pal(fract(ci*.8+T*.6)*.62);gl_Position=l<.985?vec4(p*U.xy+U.zw,0.,1.):vec4(0.,0.,0.,0.);gl_PointSize=1.;}`,
     `in vec3 c;uniform float W;out vec4 o;void main(){o=vec4(c*W,1.);}`, ['a']);
   // the dots: transform feedback update (no rasterisation), then a draw pass
   const step = prog(`in vec2 p;in vec2 v;in vec2 g;in float s;uniform float DT,T,A,SW;out vec2 oP;out vec2 oV;
@@ -144,8 +145,8 @@ void main(){float sp=clamp(length(v)*1.4,0.,1.);c=mix(vec3(1.,.93,.82),vec3(.56,
 vec3 B(vec2 q,float l){vec2 s=exp2(l)/vec2(textureSize(t,0));vec3 r=vec3(0);for(int i=-1;i<2;i++)for(int j=-1;j<2;j++)r+=textureLod(t,q+vec2(i,j)*s,l).rgb*float((2-abs(i))*(2-abs(j)));return r/16.;}
 void main(){vec2 d=(u-S.xy)/S.zw;float r=length(d);vec3 col;
 if(r<1.){float z=sqrt(1.-r*r);vec2 q=S.xy+d*S.zw*(1.-.16*(1.-z));vec3 a=textureLod(t,q,0.).rgb+B(q,3.+G)*.8+B(q,5.+G)*1.1;
-col=pow(1.-exp(-a*E),vec3(.9))*(.64+.36*z);vec3 n=vec3(d,z);float rim=pow(1.-z,4.5);col+=vec3(.5,.42,.95)*rim*.42;
-float sp=pow(max(0.,dot(n,normalize(vec3(-.45,.55,.7)))),42.);col+=vec3(.9,.95,1.)*sp*.14;col+=vec3(.07,.05,.15)*(1.-z)*.3;}
+col=pow(1.-exp(-a*E),vec3(.9))*(.66+.34*z);vec3 n=vec3(d,z);float rim=pow(1.-z,5.);col+=vec3(.56,.85,.94)*rim*.2;
+float sp=pow(max(0.,dot(n,normalize(vec3(-.45,.55,.7)))),90.);col+=vec3(.9,.95,1.)*sp*.07;col+=vec3(.03,.06,.16)*(1.-z)*.1;col*=smoothstep(1.,.955,r);}
 else{vec3 a=B(u,4.+G)*.6+B(u,5.+G)*.9;col=pow(1.-exp(-a*E),vec3(.9))*smoothstep(1.16,1.,r)*.5;}
 float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.99,78.23)))*43758.5)/255.;o=vec4(vec3(.024,.02,.07)+col+n,1.);}`, ['a']);
 
@@ -229,7 +230,7 @@ float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.99,78.23)))*43758.5)/255.;o=vec4(v
     for (let i = passes; i--;) { gl.uniform2f(orbit.u.R, Math.random(), Math.random()); gl.drawArrays(gl.POINTS, 0, N_ORBIT); }
     // the flame
     gl.useProgram(flame.p); gl.bindVertexArray(vFlame);
-    gl.uniform4fv(flame.u.U, U); gl.uniform1f(flame.u.T, t * 0.011 * speed); gl.uniform1f(flame.u.FIT, 1.5);
+    gl.uniform4fv(flame.u.U, U); gl.uniform1f(flame.u.T, t * 0.011 * speed); gl.uniform1f(flame.u.FIT, 1.8);
     gl.uniform1fv(flame.u.M, now_.maps); gl.uniform4fv(flame.u.V, now_.vars); gl.uniform1fv(flame.u.C, now_.cols); gl.uniform1f(flame.u.W, unit * 0.62 * (160000 / N_FLAME));
     for (let i = passes; i--;) { gl.uniform2f(flame.u.R, Math.random(), Math.random()); gl.drawArrays(gl.POINTS, 0, N_FLAME); }
     // the dots: step on the GPU, then draw
@@ -239,8 +240,13 @@ float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.99,78.23)))*43758.5)/255.;o=vec4(v
       gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, tfs[1 - cur]); gl.beginTransformFeedback(gl.POINTS); gl.drawArrays(gl.POINTS, 0, N_DOTS); gl.endTransformFeedback();
       gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null); gl.disable(gl.RASTERIZER_DISCARD); cur = 1 - cur;
     }
-    gl.useProgram(dots.p); gl.bindVertexArray(vDots[cur]);
-    gl.uniform4fv(dots.u.U, U); gl.uniform1f(dots.u.W, unit * (RM ? 2.8 : 1.3) * (0.6 + 0.4 * assemble));
+    gl.useProgram(dots.p); gl.bindVertexArray(vDots[cur]); gl.uniform4fv(dots.u.U, U);
+    if (assemble > 0.05) { // ink first: the exposure under each dot is dimmed, so the word reads over the brightest flame
+      gl.blendColor(0, 0, 0, 1 - 0.2 * assemble); gl.blendFunc(gl.ZERO, gl.CONSTANT_ALPHA); gl.uniform1f(dots.u.W, 0);
+      gl.drawArrays(gl.POINTS, 0, N_DOTS); gl.blendFunc(gl.ONE, gl.ONE);
+    }
+    // the ink pass dims the dots' own exposure too (steady state w / (1 - DECAY * k), not w / (1 - DECAY)); the weight compensates
+    gl.uniform1f(dots.u.W, unit * (RM ? 3 : 4.2) * (0.6 + 0.4 * assemble));
     gl.drawArrays(gl.POINTS, 0, N_DOTS);
     warm++;
     // tone-map the exposure as a globe

@@ -8,14 +8,10 @@
 .home-hero { position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
 @media (min-width: 901px) { .home-hero { min-height: min(100svh, 860px); } }
 .home-hero__art { --tr: calc(max((100vw - var(--sy-max)) / 2, 0px) + var(--sy-gutter) + 640px); --s: min(78vh, (100vw - var(--tr)) * .86); --cx: calc(var(--tr) + (100vw - var(--tr)) / 2); --cy: 47%; position: absolute; inset: 0; pointer-events: none; }
-html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, #2a1a7a33, #0000 70%); }
-.home-ring .sy-ring { z-index: -2; width: calc(var(--s) * 1.12); }
-/* the ring turns on the compositor; its labels counter-turn inside the SVG, stepping once per degree */
-@media (prefers-reduced-motion: no-preference) { .home-ring .sy-ring { animation: home-spin 240s linear infinite; } .home-ring .sy-ring text { animation: home-unspin 240s steps(360) infinite; transform-box: fill-box; transform-origin: center; } }
-@keyframes home-spin { to { transform: translate(-50%, -50%) rotate(1turn); } }
-@keyframes home-unspin { to { transform: rotate(-1turn); } }
-/* without the engine: a still exposure of Plate I inside the ring */
-.home-still { position: absolute; z-index: -2; left: var(--cx); top: var(--cy); width: calc(var(--s) * 1.12); max-width: none; height: auto; aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(closest-side, #000 82%, transparent); mask-image: radial-gradient(closest-side, #000 82%, transparent); }
+/* the orb's own atmosphere: a cool glow under it, no violet cast (the kit's nebula is overridden here) */
+.home-hero.sy-nebula, html.sy-field-live .home-hero { background: radial-gradient(34% 46% at var(--cx, 76%) var(--cy, 47%), #12367a40, #0000 70%); }
+/* without the engine: a still exposure of Plate I in the orb's place */
+.home-still { position: absolute; z-index: -2; left: var(--cx); top: var(--cy); width: calc(var(--s) * 1.04); max-width: none; height: auto; aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(closest-side, #000 82%, transparent); mask-image: radial-gradient(closest-side, #000 82%, transparent); }
 .is-live .home-still { display: none; }
 .home-hero__in { flex: 1; display: grid; grid-template-columns: minmax(0, 640px) 1fr; align-items: center; width: 100%; padding-top: 104px; padding-bottom: 56px; }
 .home-hero__title { margin-top: 22px; font-size: clamp(52px, 6.4vw, 96px); line-height: .94; text-wrap: balance; }
@@ -30,19 +26,17 @@ html.sy-field-live .home-hero { background: radial-gradient(40% 55% at 68% 48%, 
 .home-orb__bar input { width: 100%; padding: 10px 6px; border: 0; border-bottom: 1px solid var(--sy-rule-2); border-radius: 0; background: none; color: var(--sy-vellum); font: 400 15px/1.3 var(--sy-mono); letter-spacing: .02em; text-align: center; caret-color: var(--sy-ice); outline: none; transition: border-color var(--sy-t-hover); }
 .home-orb__bar input::placeholder { color: var(--sy-dim); }
 .home-orb__bar input:hover { border-color: color-mix(in srgb, var(--sy-ice) 50%, var(--sy-rule-2)); }
-.home-orb__bar input:focus-visible { border-color: transparent; outline: none; background: var(--sy-spectrum) 0 100% / 100% 1px no-repeat; }
+.home-orb__bar input:focus-visible { border-color: var(--sy-ice); outline: none; }
 .home-orb__hint { font: 400 11px/1.4 var(--sy-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--sy-dim); }
 @media (max-width: 900px) {
   /* phones and narrow tablets: the orb and its bar first (smaller, under the header), then the copy and the call to
-     action, still on the first screen. The engine (narrow: scale .66, max 260, top 52) places the orb at x = W/2,
-     y = 52 + s/2 below 900px whatever the box's proportions. */
-  .home-hero { min-height: 0; background: radial-gradient(70% 34% at 50% 78%, #2a1a7a55, #0000 70%), var(--sy-ink); }
-  html.sy-field-live .home-hero { background: radial-gradient(70% 34% at 50% 78%, #2a1a7a44, #0000 70%); }
+     action, still on the first screen. The engine (narrow: scale .66, max 260, top 60) places the orb at x = W/2,
+     y = 60 + s/2 below 900px whatever the box's proportions. */
+  .home-hero.sy-nebula, html.sy-field-live .home-hero { min-height: 0; background: radial-gradient(60% 40% at 50% var(--cy, 30%), #12367a40, #0000 70%), var(--sy-ink); }
   .home-hero__in { grid-template-columns: 1fr; align-items: start; padding-top: 0; padding-bottom: 8px; }
   .home-hero__scrim { display: none; }
-  .home-hero__art { order: -1; position: relative; inset: auto; width: 100%; height: calc(52px + min(66vw, 260px) + 74px); --s: min(66vw, 260px); --cx: 50%; --cy: calc(52px + min(66vw, 260px) / 2); }
+  .home-hero__art { order: -1; position: relative; inset: auto; width: 100%; height: calc(60px + min(66vw, 260px) + 74px); --s: min(66vw, 260px); --cx: 50%; --cy: calc(60px + min(66vw, 260px) / 2); }
   .home-hero__art .sy-atmosphere { -webkit-mask-image: linear-gradient(#000 84%, transparent); mask-image: linear-gradient(#000 84%, transparent); }
-  .home-ring .sy-ring { width: calc(var(--s) * 1.06); } /* tighter, so the 0° label clears the header */
   .home-orb__bar { width: min(calc(100vw - 2 * var(--sy-gutter)), 320px); top: calc(var(--cy) + var(--s) / 2 + 8px); gap: 4px; }
   .home-orb__bar input { padding: 7px 6px; font-size: 14px; }
 }
