@@ -7,8 +7,15 @@
        text rasterised in the site's serif; a damped spring draws it there, a curl field carries it when released.
        The swarm assembles into a word, holds, scatters, assembles into the next, and so on.
    The tone pass shades the buffer as a glass globe: a lens warp, a soft limb, an ice rim light and a specular,
-   clipped to the disc with the bloom allowed to leak a little past the edge. Before the additive dot pass the
-   buffer is dimmed under each dot, so an assembled word reads as ink over the brightest flame.
+   clipped to the disc with the bloom allowed to leak a little past the edge.
+
+   Legibility: the dots are not part of the exposure. A soft shadow of each dot is pressed into the exposure (a wide,
+   faint sprite that dims the light under the word, like a text shadow), and the dots themselves are drawn after the
+   tone map, crisp, through the same lens warp. Their weight is set from the word's ink density (dots per pixel of
+   glyph), so a long sentence reads as clearly as a short word, at any orb size.
+
+   Tempo: the light never stops. While the swarm travels the forms move at full speed; once a word has formed they
+   ease into slow motion (about a fifth of the speed): the attractor breathes and the flame turns, slowly.
 
    One input: setText(str). The dots re-assemble into the text as it is typed; the text's hash chooses the
    attractor's form and the flame's maps (the parameters glide to the new values, so every keystroke bends the
@@ -24,7 +31,7 @@
    exposure per text, dots placed on their targets. */
 
 const KF = [[-1.4, 1.6, 1.0, 0.7], [1.7, 1.7, 0.6, 1.2], [-1.7, 1.3, -0.1, -1.21], [-1.8, -2.0, -0.5, -0.9], [1.5, -1.8, 1.6, 0.9], [-1.24, -1.25, -1.81, -1.91]];
-const N_ORBIT = 120000, N_FLAME = 100000, N_DOTS = 6144, DECAY = 0.9, GAP = 1000 / 60;
+const N_ORBIT = 120000, N_FLAME = 100000, N_DOTS = 10240, DECAY = 0.9, GAP = 1000 / 60;
 const HOLD = 3800, SCATTER = 1100, IDLE_AFTER = 4500; // ms: a word holds, the swarm scatters, typed text releases
 const FONT = '"Instrument Serif", Georgia, "Times New Roman", serif';
 
@@ -74,7 +81,7 @@ function rasterise(text, n) {
   const step = bw * bh > 90000 ? 2 : 1;
   for (let y = 0; y < bh; y += step) for (let x = 0; x < bw; x += step) if (d[(y * bw + x) * 4 + 3] > 110) ink.push(bx + x, by + y);
   const out = new Float32Array(n * 2);
-  if (!ink.length) return out;
+  if (!ink.length) return { out, area: 0 };
   // fit the block: widest line -> at most 1.44 units, the block's height -> at most 1.2
   const blockH = lh * lines.length, sc = Math.max(Math.min(widest, W * 0.9) / 1.66, blockH / 1.4);
   const m = ink.length / 2, stride = m / n;
@@ -83,7 +90,7 @@ function rasterise(text, n) {
     out[i * 2] = (ink[k] + Math.random() - 0.5 - W / 2) / sc;
     out[i * 2 + 1] = -(ink[k + 1] + Math.random() - 0.5 - H / 2) / sc;
   }
-  return out;
+  return { out, area: m * step * step / (sc * sc) };
 }
 
 export function mountOrb(canvas, opts = {}) {
@@ -115,16 +122,16 @@ function run(cv, gl, RM, opts) {
   const PAL = `const vec3 K[7]=vec3[](vec3(.0,.22,.94),vec3(.26,.55,.96),vec3(.56,.86,.95),vec3(1.,.66,.26),vec3(1.,.22,.78),vec3(.5,.26,1.),vec3(.0,.22,.94));
 vec3 pal(float h){h=fract(h)*6.;int i=int(h);return mix(K[i],K[i+1],fract(h));}`;
   // U: xy scale (sphere unit -> clip), zw centre in clip
-  const orbit = prog(PAL + `in vec2 a;uniform vec4 P,U;uniform vec2 R;uniform float T;out vec3 c;
+  const orbit = prog(PAL + `in vec2 a;uniform vec4 P,U;uniform vec2 R,ROT;uniform float T;out vec3 c;
 void main(){vec2 p=fract(a+R)*4.-2.,q=p;for(int i=0;i<18;i++){q=p;p=vec2(sin(P.x*q.y)+P.z*cos(P.x*q.x),sin(P.y*q.x)+P.w*cos(P.y*q.y));}
-c=pal(fract(length(p-q)*.3+T)*.62);float e=1.1+max(abs(P.z),abs(P.w));p*=2./e;float l=length(p);gl_Position=l<.985?vec4(p*U.xy+U.zw,0.,1.):vec4(0.,0.,0.,0.);gl_PointSize=1.;}`,
+c=pal(fract(length(p-q)*.3+T)*.62);float e=1.1+max(abs(P.z),abs(P.w));p*=2./e;p=vec2(ROT.x*p.x-ROT.y*p.y,ROT.y*p.x+ROT.x*p.y);float l=length(p);gl_Position=l<.985?vec4(p*U.xy+U.zw,0.,1.):vec4(0.,0.,0.,0.);gl_PointSize=1.;}`,
     `in vec3 c;uniform float W;out vec4 o;void main(){o=vec4(c*W,1.);}`, ['a']);
-  const flame = prog(PAL + `in vec2 a;uniform vec4 U;uniform vec2 R;uniform float T,FIT;uniform float M[24];uniform vec4 V[4];uniform float C[4];out vec3 c;
+  const flame = prog(PAL + `in vec2 a;uniform vec4 U;uniform vec2 R,ROT;uniform float T,FIT;uniform float M[24];uniform vec4 V[4];uniform float C[4];out vec3 c;
 float hs(float x){return fract(sin(x*127.1+R.x*311.7)*43758.5453);}
 void main(){vec2 p=fract(a+R)*2.-1.;float ci=a.x,s=a.y*77.;
 for(int i=0;i<16;i++){int j=int(hs(s+float(i))*4.);vec2 q=vec2(M[j*6]*p.x+M[j*6+1]*p.y+M[j*6+4],M[j*6+2]*p.x+M[j*6+3]*p.y+M[j*6+5]);
 float r2=dot(q,q)+1e-4;vec4 v=V[j];p=v.x*q+v.y*sin(q*2.2)+v.z*q/r2*.5+v.w*vec2(q.x*sin(r2)-q.y*cos(r2),q.x*cos(r2)+q.y*sin(r2));ci=mix(ci,C[j],.5);}
-p*=FIT;float l=length(p);c=pal(fract(ci*.8+T*.6)*.62);gl_Position=l<.985?vec4(p*U.xy+U.zw,0.,1.):vec4(0.,0.,0.,0.);gl_PointSize=1.;}`,
+p*=FIT;p=vec2(ROT.x*p.x-ROT.y*p.y,ROT.y*p.x+ROT.x*p.y);float l=length(p);c=pal(fract(ci*.8+T*.6)*.62);gl_Position=l<.985?vec4(p*U.xy+U.zw,0.,1.):vec4(0.,0.,0.,0.);gl_PointSize=1.;}`,
     `in vec3 c;uniform float W;out vec4 o;void main(){o=vec4(c*W,1.);}`, ['a']);
   // the dots: transform feedback update (no rasterisation), then a draw pass
   const step = prog(`in vec2 p;in vec2 v;in vec2 g;in float s;uniform float DT,T,A,SW;out vec2 oP;out vec2 oV;
@@ -135,9 +142,12 @@ vec2 acc=d*(22.*ai)-v*(7.+2.*ai)+fl*((1.-ai)*SW+.05)+(vec2(hs(s+T),hs(s*2.+T))-.
 vec2 nv=v+acc*DT;float sp=length(nv);if(sp>2.4)nv*=2.4/sp;vec2 np=p+nv*DT;
 float r=length(np);if(r>.95){vec2 n=np/r;np=n*.95;nv-=1.6*dot(nv,n)*n;}oP=np;oV=nv;gl_Position=vec4(0.);}`,
     `out vec4 o;void main(){o=vec4(0.);}`, ['p', 'v', 'g', 's'], ['oP', 'oV']);
-  const dots = prog(`in vec2 p;in vec2 v;uniform vec4 U;out vec3 c;
-void main(){float sp=clamp(length(v)*1.4,0.,1.);c=mix(vec3(1.,.93,.82),vec3(.56,.86,.98),sp);gl_Position=vec4(p*U.xy+U.zw,0.,1.);gl_PointSize=2.5;}`,
-    `in vec3 c;uniform float W;out vec4 o;void main(){o=vec4(c*W,1.);}`, ['p', 'v']);
+  // WARP 1: the inverse of the tone pass's lens warp, so a dot drawn on screen sits over its own shadow
+  const dots = prog(`in vec2 p;in vec2 v;uniform vec4 U;uniform float PS,WARP;out vec3 c;
+void main(){float sp=clamp(length(v)*1.4,0.,1.);c=mix(vec3(.94,.97,1.),vec3(.62,.88,1.),sp);vec2 d=p;
+if(WARP>.5)for(int i=0;i<3;i++)d=p/(1.-.16*(1.-sqrt(max(0.,1.-dot(d,d)))));
+gl_Position=vec4(d*U.xy+U.zw,0.,1.);gl_PointSize=PS;}`,
+    `in vec3 c;uniform float W,A;out vec4 o;void main(){float r=length(gl_PointCoord-.5)*2.,f=smoothstep(1.,.3,r);o=vec4(c*W*f,A*f*f);}`, ['p', 'v']);
   const QV = `in vec2 a;out vec2 u;void main(){u=a*.5+.5;gl_Position=vec4(a,0.,1.);}`;
   const fade = prog(QV, `out vec4 o;void main(){o=vec4(0.);}`, ['a']);
   // the globe: lens warp, limb darkening, rim and specular; outside the disc only the bloom's spill remains
@@ -181,10 +191,12 @@ float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.99,78.23)))*43758.5)/255.;o=vec4(v
 
   // ---- the script: what the dots spell, and the forms the light takes ----
   let typed = '', idleAt = 0, word = -1, phaseAt = 0, assembling = false, assemble = 0, pulseK = 0, cadence = 0, lastKey = 0, pending = 0, wait = 80;
+  let inkArea = 0.5, flow = 0, tempo = 1;
   let goal = formsFor(WORDS[0]), now_ = { P: goal.P.slice(), maps: goal.maps.slice(), vars: goal.vars.slice(), cols: goal.cols.slice() };
   const retarget = text => {
     if (!text) return;
-    gl.bindBuffer(gl.ARRAY_BUFFER, bG); gl.bufferSubData(gl.ARRAY_BUFFER, 0, rasterise(text, N_DOTS));
+    const r = rasterise(text, N_DOTS); inkArea = Math.max(0.02, r.area);
+    gl.bindBuffer(gl.ARRAY_BUFFER, bG); gl.bufferSubData(gl.ARRAY_BUFFER, 0, r.out);
     goal = formsFor(text);
   };
   const place = () => { // reduced motion: dots sit on their targets
@@ -215,8 +227,16 @@ float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.99,78.23)))*43758.5)/255.;o=vec4(v
     for (let i = 0; i < 16; i++) now_.vars[i] += (goal.vars[i] - now_.vars[i]) * k;
     for (let i = 0; i < 4; i++) now_.cols[i] += (goal.cols[i] - now_.cols[i]) * k;
     assemble += ((assembling ? 1 : 0) - assemble) * (1 - Math.exp(-dt * (assembling ? 2.2 : 4)));
+    if (RM) assemble = assembling ? 1 : 0; // a still frame shows the finished word
     pulseK *= Math.exp(-dt * 3.5); cadence *= Math.exp(-dt * 0.9);
     const U = [L.s / 2 / W, L.s / 2 / H, L.x / W * 2 - 1, 1 - L.y / H * 2], speed = 1 + Math.min(1.5, cadence) * 0.6;
+    // tempo: full speed while the swarm travels or the visitor types, slow motion once a word has formed (never still)
+    const formed = assembling && assemble > 0.9;
+    tempo += (Math.max(formed ? 0.2 : 1, Math.min(1, cadence)) - tempo) * (1 - Math.exp(-dt * (formed ? 0.9 : 2.5)));
+    flow += dt * tempo * speed;
+    const Pd = now_.P.map((v, i) => v + 0.05 * Math.sin(flow * (0.5 + i * 0.13) + i * 1.7)); // the attractor breathes
+    const Md = now_.maps.slice(); for (let j = 0; j < 4; j++) { Md[j * 6 + 4] += 0.07 * Math.sin(flow * 0.41 + j * 1.9); Md[j * 6 + 5] += 0.07 * Math.cos(flow * 0.37 + j * 2.3); } // and the flame shifts
+    const a1 = flow * 0.12, a2 = -flow * 0.09;
     const area = Math.min(1.2, Math.max(0.28, (L.s / 600) ** 2));
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, fb); gl.viewport(0, 0, W, H); gl.enable(gl.BLEND);
@@ -226,12 +246,12 @@ float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.99,78.23)))*43758.5)/255.;o=vec4(v
     const passes = RM || !warm ? 10 : 1, unit = (F ? 0.05 : 3 / 255) * area;
     // the attractor
     gl.useProgram(orbit.p); gl.bindVertexArray(vOrbit);
-    gl.uniform4fv(orbit.u.P, now_.P); gl.uniform4fv(orbit.u.U, U); gl.uniform1f(orbit.u.T, t * 0.018 * speed); gl.uniform1f(orbit.u.W, unit * 0.8 * (160000 / N_ORBIT));
+    gl.uniform4fv(orbit.u.P, Pd); gl.uniform4fv(orbit.u.U, U); gl.uniform2f(orbit.u.ROT, Math.cos(a1), Math.sin(a1)); gl.uniform1f(orbit.u.T, flow * 0.018); gl.uniform1f(orbit.u.W, unit * 0.8 * (160000 / N_ORBIT));
     for (let i = passes; i--;) { gl.uniform2f(orbit.u.R, Math.random(), Math.random()); gl.drawArrays(gl.POINTS, 0, N_ORBIT); }
     // the flame
     gl.useProgram(flame.p); gl.bindVertexArray(vFlame);
-    gl.uniform4fv(flame.u.U, U); gl.uniform1f(flame.u.T, t * 0.011 * speed); gl.uniform1f(flame.u.FIT, 1.8);
-    gl.uniform1fv(flame.u.M, now_.maps); gl.uniform4fv(flame.u.V, now_.vars); gl.uniform1fv(flame.u.C, now_.cols); gl.uniform1f(flame.u.W, unit * 0.62 * (160000 / N_FLAME));
+    gl.uniform4fv(flame.u.U, U); gl.uniform2f(flame.u.ROT, Math.cos(a2), Math.sin(a2)); gl.uniform1f(flame.u.T, flow * 0.011); gl.uniform1f(flame.u.FIT, 1.8);
+    gl.uniform1fv(flame.u.M, Md); gl.uniform4fv(flame.u.V, now_.vars); gl.uniform1fv(flame.u.C, now_.cols); gl.uniform1f(flame.u.W, unit * 0.62 * (160000 / N_FLAME));
     for (let i = passes; i--;) { gl.uniform2f(flame.u.R, Math.random(), Math.random()); gl.drawArrays(gl.POINTS, 0, N_FLAME); }
     // the dots: step on the GPU, then draw
     if (!RM && dt > 0) {
@@ -240,14 +260,16 @@ float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.99,78.23)))*43758.5)/255.;o=vec4(v
       gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, tfs[1 - cur]); gl.beginTransformFeedback(gl.POINTS); gl.drawArrays(gl.POINTS, 0, N_DOTS); gl.endTransformFeedback();
       gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null); gl.disable(gl.RASTERIZER_DISCARD); cur = 1 - cur;
     }
+    // the word's shadow: wide, faint sprites that dim the exposure under the glyphs (so the light behind a word is
+    // always darker than the word). Its strength comes from how densely the dots cover the glyphs at this size.
+    const R = L.s / 2, perPx = N_DOTS / (inkArea * R * R);              // dots per pixel of glyph
+    const shPS = Math.max(9, L.s * 0.026), shOver = perPx * shPS * shPS * 0.45;
     gl.useProgram(dots.p); gl.bindVertexArray(vDots[cur]); gl.uniform4fv(dots.u.U, U);
-    if (assemble > 0.05) { // ink first: the exposure under each dot is dimmed, so the word reads over the brightest flame
-      gl.blendColor(0, 0, 0, 1 - 0.2 * assemble); gl.blendFunc(gl.ZERO, gl.CONSTANT_ALPHA); gl.uniform1f(dots.u.W, 0);
-      gl.drawArrays(gl.POINTS, 0, N_DOTS); gl.blendFunc(gl.ONE, gl.ONE);
+    if (assemble > 0.05) {
+      gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA); gl.uniform1f(dots.u.W, 0); gl.uniform1f(dots.u.WARP, 0); gl.uniform1f(dots.u.PS, shPS);
+      gl.uniform1f(dots.u.A, Math.min(0.6, -Math.log(0.6) / Math.max(1, shOver)) * assemble); // ~0.6 of the light survives per frame
+      gl.drawArrays(gl.POINTS, 0, N_DOTS);
     }
-    // the ink pass dims the dots' own exposure too (steady state w / (1 - DECAY * k), not w / (1 - DECAY)); the weight compensates
-    gl.uniform1f(dots.u.W, unit * (RM ? 3 : 4.2) * (0.6 + 0.4 * assemble));
-    gl.drawArrays(gl.POINTS, 0, N_DOTS);
     warm++;
     // tone-map the exposure as a globe
     gl.disable(gl.BLEND); gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, W, H);
@@ -256,6 +278,19 @@ float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.99,78.23)))*43758.5)/255.;o=vec4(v
     gl.uniform1f(tone.u.G, Math.log2(L.s / 850)); gl.uniform1f(tone.u.E, (F ? 0.42 : 0.42 * 0.05 * 255 / 3) * (1 + pulseK * 0.9));
     gl.uniform4f(tone.u.S, L.x / W, 1 - L.y / H, L.s / 2 / W, L.s / 2 / H);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
+    // the dots, on screen after the tone map: crisp, through the lens warp, weighted from the glyphs' dot density so
+    // every text fills to the same brightness whatever its length; in flight they are sparks
+    const dPS = Math.max(1.9, Math.min(2.8, L.s / 250)), cover = perPx * dPS * dPS * 0.42;
+    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);
+    gl.useProgram(dots.p); gl.bindVertexArray(vDots[cur]);
+    gl.uniform1f(dots.u.WARP, 1); gl.uniform1f(dots.u.PS, dPS); gl.uniform1f(dots.u.A, 0);
+    // a faint halo first (each dot as a wide, dim sprite), so the word glows rather than sits on the glass like a stamp
+    gl.uniform1f(dots.u.PS, dPS * 3.4); gl.uniform1f(dots.u.W, 0.22 * assemble / Math.max(1, cover * 11.6));
+    gl.drawArrays(gl.POINTS, 0, N_DOTS);
+    // then the dots, fine and not fully filled, so the word reads as luminous stipple rather than a stamp
+    gl.uniform1f(dots.u.PS, dPS); gl.uniform1f(dots.u.W, (0.42 + (Math.min(0.8, 0.3 / Math.max(1, cover)) - 0.42) * assemble) * (RM ? 1.1 : 1));
+    gl.drawArrays(gl.POINTS, 0, N_DOTS);
+    gl.disable(gl.BLEND);
     if (!RM) go();
   }
   const go = () => { if (!dead && !held && !RM && !raf && onScreen && !document.hidden) raf = requestAnimationFrame(frame); };
