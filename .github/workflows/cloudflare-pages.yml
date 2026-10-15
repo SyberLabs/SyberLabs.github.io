@@ -37,23 +37,51 @@ jobs:
         run: node --test 'server/test/**/*.test.js'
       - name: Check shared header and footer
         run: node scripts/site-chrome.mjs --check
-      - name: GitHits dependency snapshot
-        # Fail soft: without the secret this writes the fixture schema; GitHits never blocks a build.
-        # Targets follow each project's default-branch head; if GitHub is unreachable the committed
-        # targets.json is used as is.
-        run: |
-          node scripts/githits-snapshot.mjs --targets || echo "githits: keeping committed targets.json"
-          node scripts/githits-snapshot.mjs
-        continue-on-error: true
+      - name: Refresh dependency panel targets
+        run: node scripts/githits-snapshot.mjs --targets || echo "githits: keeping committed targets.json"
         env:
-          GITHITS_API_TOKEN: ${{ secrets.GITHITS_API_TOKEN }}
           GITHUB_TOKEN: ${{ github.token }}
+      - name: Select private GitHits accounting
+        id: private-githits
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if [ -n "$GITHITS_USAGE_TOKEN" ] && [ -n "$GITHITS_API_TOKEN" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GITHITS_USAGE_TOKEN: ${{ secrets.GITHITS_USAGE_TOKEN }}
+          GITHITS_API_TOKEN: ${{ secrets.GITHITS_API_TOKEN }}
+      - name: Check out pinned private accounting
+        if: steps.private-githits.outputs.enabled == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: SyberLabs/MasterMind
+          ref: a687483d60a0244ebeee3a364962d51f22d869fc
+          token: ${{ secrets.GITHITS_USAGE_TOKEN }}
+          path: .private-githits
+          persist-credentials: false
+          sparse-checkout: tools/githits-usage/**
+          sparse-checkout-cone-mode: false
+      - name: Snapshot dependencies with private usage retention
+        if: steps.private-githits.outputs.enabled == 'true'
+        run: node .private-githits/tools/githits-usage/ci-snapshot.mjs "$GITHUB_WORKSPACE"
+        env:
+          GITHITS_USAGE_TOKEN: ${{ secrets.GITHITS_USAGE_TOKEN }}
+          GITHITS_API_TOKEN: ${{ secrets.GITHITS_API_TOKEN }}
+      - name: Snapshot dependencies without live lookups
+        if: steps.private-githits.outputs.enabled != 'true'
+        run: node scripts/githits-snapshot.mjs
+        env:
+          GITHITS_API_TOKEN: ''
       - name: Check the Decision Arena report and replay match their recorded hashes
         run: node scripts/export-arena.mjs --check
       - name: Prepare public site
         run: |
           pnpm build:site
           test -s dist/index.html
+          test ! -e dist/.private-githits
           test -s dist/syberlabs.css
           test -s dist/syberlabs.js
           test -s dist/system-map.js
