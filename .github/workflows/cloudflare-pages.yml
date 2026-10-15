@@ -53,13 +53,13 @@ jobs:
           fi
         env:
           GITHITS_USAGE_TOKEN: ${{ secrets.GITHITS_USAGE_TOKEN }}
-          GITHITS_API_TOKEN: ${{ secrets.GITHITS_API_TOKEN }}
+          GITHITS_API_TOKEN: ${{ secrets.GITHITS_WEBSITE_API_TOKEN }}
       - name: Check out pinned private accounting
         if: steps.private-githits.outputs.enabled == 'true'
         uses: actions/checkout@v4
         with:
           repository: SyberLabs/MasterMind
-          ref: a687483d60a0244ebeee3a364962d51f22d869fc
+          ref: 274008ff945cbc69ee0b058bf8b84fb10e34f3a6
           token: ${{ secrets.GITHITS_USAGE_TOKEN }}
           path: .private-githits
           persist-credentials: false
@@ -70,7 +70,7 @@ jobs:
         run: node .private-githits/tools/githits-usage/ci-snapshot.mjs "$GITHUB_WORKSPACE"
         env:
           GITHITS_USAGE_TOKEN: ${{ secrets.GITHITS_USAGE_TOKEN }}
-          GITHITS_API_TOKEN: ${{ secrets.GITHITS_API_TOKEN }}
+          GITHITS_API_TOKEN: ${{ secrets.GITHITS_WEBSITE_API_TOKEN }}
       - name: Snapshot dependencies without live lookups
         if: steps.private-githits.outputs.enabled != 'true'
         run: node scripts/githits-snapshot.mjs

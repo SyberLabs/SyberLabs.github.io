@@ -4,7 +4,7 @@
 
 `.mcp.json` invokes the private MasterMind usage runtime. Install and load both
 absolute runtime paths as described below before starting the agent. Headless
-agents also set `GITHITS_API_TOKEN`; interactive OAuth uses the private bridge.
+agents prefer `GITHITS_WEBSITE_API_TOKEN`; interactive OAuth uses the private bridge.
 Never write a token to a file.
 
 - Use it for the exact source and docs of the dependency version in
@@ -18,4 +18,6 @@ Never write a token to a file.
 
 Install the private MasterMind `tools/githits-usage` package and invoke its `install.mjs` with an absolute Node 24 executable. Load the two non-secret absolute paths from its ignored `data/environment.json` before starting the agent: `GITHITS_USAGE_NODE` (the executable) and `GITHITS_USAGE_HOME` (the tool directory). The tracked MCP entry invokes that private executable and `mcp.mjs` directly; it requires neither Node on PATH nor a repository-root working directory.
 
-For headless authentication, also set `GITHITS_API_TOKEN` in the environment. Interactive OAuth is handled by the private bridge. Never put a token or usage ledger into this repository. Missing private runtime paths stop the tool; do not restore a direct unaccounted hosted fallback. The product runtime is unchanged.
+For headless authentication, set `GITHITS_WEBSITE_API_TOKEN` in the environment. The private runtime accepts the legacy `GITHITS_API_TOKEN` only as a transition fallback while distinct repo credentials are issued. Interactive OAuth is handled by the private bridge. Never put a token or usage ledger into this repository. Missing private runtime paths stop the tool; do not restore a direct unaccounted hosted fallback. The product runtime is unchanged.
+
+The installed private runtime shares cached public lookup results across all five repositories. Exact immutable content persists; mixed package, dependency and vulnerability data expires after 24 hours. Invalidation and private cache import are documented in the private package README. Website CI pins the reviewed cache-capable tooling and requires both `GITHITS_WEBSITE_API_TOKEN` and private retention access before live lookups. CI never falls back to the shared org token; without either credential it keeps the existing fixture mode. No usage/cache file goes into public build artifacts.
