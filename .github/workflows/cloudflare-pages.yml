@@ -38,7 +38,8 @@ jobs:
       - name: Check shared header and footer
         run: node scripts/site-chrome.mjs --check
       - name: Refresh dependency panel targets
-        run: node scripts/githits-snapshot.mjs --targets || echo "githits: keeping committed targets.json"
+        run: |
+          node scripts/githits-snapshot.mjs --targets || echo "githits: keeping committed targets.json"
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Select private GitHits accounting
