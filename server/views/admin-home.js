@@ -5,6 +5,7 @@ import { page } from './layout.js';
 
 const TOOLS = {
   saves: { label: 'Library', title: 'Saved things', copy: 'Your private app backups, ready to pick up wherever you sign in.', icon: '<path d="M5 3h14v18l-7-4-7 4V3Z"/>' },
+  board: { label: 'State', title: 'Board', copy: 'Asks waiting on a key, gates, open decisions and the portfolio, computed daily from git.', icon: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 15v-4M12 15V8M17 15v-2"/>' },
   changes: { label: 'Updates', title: 'What changed', copy: 'Keep the team in the loop. Read the latest changes and open their evidence.', icon: '<path d="M5 6h14M5 12h9M5 18h6"/><path d="m16 16 2 2 4-4"/>' },
   people: { label: 'Team', title: 'People', copy: 'View staff accounts and their access.', icon: '<circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6M21 21v-3a6 6 0 0 0-4-5"/>' },
   roles: { label: 'Access', title: 'Roles', copy: 'Explore the permissions behind each role and how access is assigned.', icon: '<path d="m12 3 8 4v5c0 5-8 9-8 9s-8-4-8-9V7l8-4Z"/><path d="m8 12 3 3 5-6"/>' },

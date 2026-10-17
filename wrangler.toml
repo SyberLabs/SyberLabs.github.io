@@ -27,3 +27,14 @@ GITHUB_CLIENT_ID = "REPLACE_ME_staging_github_oauth_app_client_id"
 binding = "DB"
 database_name = "syberlabs-accounts-staging"
 database_id = "64a028aa-c639-4b53-8b17-645d7610cfc8"
+
+# The board (server/views/board.js) reads board.v1 from this namespace; MasterMind's daily ledger job writes
+# it with `wrangler kv key put` under a token scoped to KV edit. Filled in by Seth from `wrangler kv namespace
+# create syberlabs-board` before merge; until then a deploy fails on purpose, like every REPLACE_ME above.
+[[kv_namespaces]]
+binding = "BOARD"
+id = "REPLACE_ME_board_kv_namespace_id"
+
+[[env.preview.kv_namespaces]]
+binding = "BOARD"
+id = "REPLACE_ME_board_kv_namespace_id_staging"
