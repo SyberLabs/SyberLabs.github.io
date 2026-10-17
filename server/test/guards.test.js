@@ -2,6 +2,7 @@
 // target rule exists), and case 20 (lockout, system role, self). Every refusal changes no row.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { CATALOGUE } from '../permissions.js';
 import { GUARD_COPY, disableUserStmts, removeRolePermStmt, revokeRoleStmt } from '../authz.js';
 import { TABLE, match } from '../routes.js';
 import { call, makeEnv, seedRole, signIn } from './helpers.js';
@@ -88,7 +89,7 @@ test('case 20: admin cannot lose id:roles.manage or its name, and roles have no 
     form: { id: 'role_admin', name: 'boss' } }));
   const [r] = await env.DB.batch([removeRolePermStmt(env.DB, { roleId: 'role_admin', key: 'id:roles.manage' })]);
   assert.equal(r.meta.changes, 0);
-  assert.equal(env.DB.sqlite.prepare("SELECT count(*) AS n FROM role_permissions WHERE role_id = 'role_admin'").get().n, 6);
+  assert.equal(env.DB.sqlite.prepare("SELECT count(*) AS n FROM role_permissions WHERE role_id = 'role_admin'").get().n, Object.keys(CATALOGUE).length);
   assert.equal(env.DB.sqlite.prepare("SELECT name FROM roles WHERE id = 'role_admin'").get().name, 'admin');
   assert.equal(match(TABLE, 'POST', '/admin/roles/delete'), null);
   assert.equal((await call(env, '/admin/roles/delete', { cookie: admin.cookie, form: { id: 'role_admin' } })).status, 404);

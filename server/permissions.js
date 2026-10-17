@@ -3,6 +3,7 @@
 export const CATALOGUE = {
   'site:changes.read':  { privileged: false, label: 'See What changed' },
   'site:changes.write': { privileged: false, label: 'Add, edit and remove What changed entries' },
+  'site:board.read':    { privileged: false, label: 'See the board' },
   'id:users.read':      { privileged: false, label: 'See staff accounts, their roles and sign-ins' },
   'id:users.manage':    { privileged: true,  label: 'Add people, grant and revoke roles, turn accounts off and on, remove sign-in methods' },
   'id:roles.manage':    { privileged: true,  label: 'Create roles and choose their permissions' },

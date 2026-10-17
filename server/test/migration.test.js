@@ -9,8 +9,8 @@ const DAY = 86400 * 1000;
 const raw = db => db.sqlite;
 
 // 0001 is applied to production D1 and is never edited; every change after it is a new numbered file.
-test('migrations apply in order: accounts, staff admission, then private saves', () => {
-  assert.deepEqual(MIGRATION_FILES, ['0001_accounts.sql', '0002_add_person.sql', '0003_account_saves.sql']);
+test('migrations apply in order: accounts, staff admission, private saves, then the board key', () => {
+  assert.deepEqual(MIGRATION_FILES, ['0001_accounts.sql', '0002_add_person.sql', '0003_account_saves.sql', '0004_board.sql']);
 });
 
 test('the schema applies (0001 then 0002) with foreign keys on, and every table and view exists', async () => {
@@ -125,7 +125,7 @@ test('privileged keys sit only on admin, and admin keeps every key (RFC-0002 2.4
   }
   await db.prepare("INSERT INTO role_permissions VALUES ('r-ops', 'id:users.read')").run();
   await assert.rejects(db.prepare("DELETE FROM role_permissions WHERE role_id = 'role_admin'").run(), /every key/);
-  assert.equal(await db.prepare("SELECT count(*) AS n FROM role_permissions WHERE role_id = 'role_admin'").first('n'), 6);
+  assert.equal(await db.prepare("SELECT count(*) AS n FROM role_permissions WHERE role_id = 'role_admin'").first('n'), Object.keys(CATALOGUE).length);
   assert.equal((await db.prepare("DELETE FROM role_permissions WHERE role_id = 'r-ops'").run()).meta.changes, 1);
 });
 
