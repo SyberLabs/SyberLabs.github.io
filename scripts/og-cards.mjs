@@ -62,8 +62,8 @@ const pages = [
     line: 'A film edited from real RISE screen recordings, then the interactive sample to try yourself.', seed: 'rise', accent: RISE },
   { slug: 'plus', path: '/plus/', eyebrow: 'RISE Plus · Coming soon', headline: 'Your own reading, read aloud.',
     line: 'Give your short writing a voice. Planned: $8.99 a month for 60,000 characters of ElevenLabs narration. Free reading stays free.', seed: 'plus', accent: RISE },
-  { slug: 'mateo', path: '/mateo/', eyebrow: 'Mateo Robles · Engineering portfolio', headline: 'Creative software. Inspect the engineering.',
-    line: 'Engines and RISE: selected work, source code, engineering decisions, and a résumé.', seed: 'mateo', accent: ICE },
+  { slug: 'mateo', path: '/mateo/', eyebrow: 'Mateo Robles · Software engineer · Available now', headline: 'AI apps and agent tooling. Inspect the engineering.',
+    line: 'Shipped RISE Composer, an MCP server for Claude. Santa Clara ’26, Bay Area.', seed: 'mateo', accent: ICE },
   { slug: 'privacy', path: '/privacy/', eyebrow: 'SyberLabs · Privacy', headline: 'What this site does with your data.',
     line: 'A static site with no accounts, forms, cookies or analytics.', seed: 'privacy', accent: ICE },
 ];
