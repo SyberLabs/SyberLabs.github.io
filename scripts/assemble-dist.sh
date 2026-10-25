@@ -19,7 +19,7 @@ mkdir -p dist/kit
 cp -r kit/v2 dist/kit/
 # social preview cards, one per page (regenerate with `node scripts/og-cards.mjs`)
 cp -r og dist/
-for dir in rise-demo omni-demo relay-demo projects approach jev kev research services privacy stack plus review mateo; do
+for dir in rise-demo omni-demo relay-demo projects approach jev kev research services privacy stack plus review mateo impact; do
   cp -r "$dir" dist/
 done
 # "What changed" is staff-only (MasterMind RFC 0002): its source projects/latest.js is deleted, and nothing here removes
