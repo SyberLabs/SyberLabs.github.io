@@ -17,7 +17,7 @@
   </url>
   <url>
     <loc>https://syberlabs.io/projects/flyspace/</loc>
-    <lastmod>2026-10-05</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
@@ -77,12 +77,12 @@
   </url>
   <url>
     <loc>https://syberlabs.io/services/</loc>
-    <lastmod>2026-09-27</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://syberlabs.io/plus/</loc>
-    <lastmod>2026-10-08</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
@@ -100,4 +100,6 @@
     <lastmod>2026-09-27</lastmod>
     <priority>0.3</priority>
   </url>
+  <url><loc>https://syberlabs.io/mateo/</loc><lastmod>2026-10-11</lastmod><priority>0.9</priority></url>
+  <url><loc>https://syberlabs.io/impact/</loc><lastmod>2026-10-22</lastmod><priority>0.7</priority></url>
 </urlset>

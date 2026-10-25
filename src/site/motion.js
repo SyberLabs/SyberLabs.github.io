@@ -81,6 +81,7 @@ export function spy() {
     for (const e of entries) {
       const a = map.get(e.target);
       if (e.isIntersecting) { links.forEach(l => l.removeAttribute('aria-current')); a.setAttribute('aria-current', 'location'); }
+      else if (a.getAttribute('aria-current')) a.removeAttribute('aria-current'); // scrolled out of it (e.g. back up to the hero): no stale mark
     }
   }, { rootMargin: '-40% 0px -55% 0px' });
   map.forEach((_, sec) => io.observe(sec));
@@ -142,8 +143,15 @@ export function toTop() {
   b.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>';
   b.addEventListener('click', e => { e.preventDefault(); scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' }); const h = document.querySelector('h1'); if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); } });
   document.body.appendChild(b);
-  let raf = 0;
-  const paint = () => { raf = 0; b.classList.toggle('is-on', scrollY > innerHeight * 0.8); };
+  // on phones it sits over the text, so it shows only while the reader scrolls back up (or at the very end)
+  const narrow = typeof matchMedia === 'function' ? matchMedia('(max-width: 640px)') : null;
+  let raf = 0, lastY = scrollY, up = false;
+  const paint = () => {
+    raf = 0;
+    const y = scrollY, end = y + innerHeight >= document.documentElement.scrollHeight - 80;
+    if (Math.abs(y - lastY) > 4) { up = y < lastY; lastY = y; }
+    b.classList.toggle('is-on', y > innerHeight * 0.8 && (!narrow?.matches || up || end));
+  };
   addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(paint); }, { passive: true });
   paint();
 }

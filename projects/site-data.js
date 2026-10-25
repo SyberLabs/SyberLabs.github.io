@@ -9,6 +9,8 @@
 
 export const CONTACT = 'mailto:syberlabs.software@gmail.com';
 export const EMAIL = 'syberlabs.software@gmail.com';
+// the founder card on the homepage carries Mateo's own address; every other contact goes to the lab inbox
+export const MATEO_EMAIL = 'hello.mateorobles@gmail.com';
 export const RESUME = '/mateo_robles_resume.pdf';
 export const LINKEDIN = 'https://www.linkedin.com/in/automateon/';
 export const GITHUB = 'https://github.com/SyberLabs';            // the lab's organisation
@@ -19,39 +21,43 @@ export const MATEO_SITE = 'https://mateo.syberlabs.space/';
 // Public tools and previews. Linked from the hero, the Atlas, the footer and each project page.
 export const RISE_APP = 'https://rise.syberlabs.io/';
 export const RISE_SAMPLE = 'https://rise.syberlabs.io/jev-scene-demo';
+// The public one-minute sample: the first item of the primary nav ("Try RISE") and the sample linked from /services/.
+export const RISE_TRY = 'https://rise.syberlabs.io/try/';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
 export const SKETCH_APP = 'https://sketch.syberlabs.io/';
 
-// RISE Plus voice: the homepage runtime section (src/App.jsx), a RISE evidence row and the Atlas note, switched by
-// `state` alone. 'coming' keeps purchase links closed until a paid launch is verified. The implementation
-// in RISE #542 is merged; a merge does not establish live payment availability. 'live' sends the reader
-// to RISE's Settings. After verifying a paid launch and flipping, run `node scripts/site-chrome.mjs`
-// (Atlas note) and `node scripts/llms.mjs`. /plus/ is static and has its own status labels and full details.
+// Customer entry point stays stable before and after sales open. The app owns checkout readiness.
+// Keep the marketing offer aligned with RISE's server-enforced plan; never infer paid availability from a merge.
 export const RISE_PLUS = {
-  state: 'coming', // 'coming' | 'live'
+  state: 'coming', // 'coming' | 'live'; change only after paid launch verification
   price: '$8.99',
-  // RISE's Plus entry point: the Plus voice row in Settings (route `settings`, src/core/route-url.js), which links to
-  // the Stripe payment link (PLUS_PAYMENT_LINK in RISE src/app/plus.js). The reader starts inside RISE, not at Stripe.
-  href: 'https://rise.syberlabs.io/settings',
+  characters: 60000,
+  href: 'https://rise.syberlabs.io/plus/',
   source: 'https://github.com/SyberLabs/RISE/pull/542',
 };
+export const MATEO_PORTFOLIO = '/mateo/';
 
+// Customer and hiring paths. Research and the complete archive remain in Menu.
 export const nav = [
-  { id: 'work', label: 'Work', href: '/#work' },
-  { id: 'research', label: 'Research', href: '/#research' },
-  { id: 'about', label: 'About', href: '/#about' },
-  { id: 'contact', label: 'Contact', href: CONTACT },
+  { id: 'try', label: 'Try RISE', href: RISE_TRY, external: true },
+  { id: 'plus', label: 'RISE Plus', href: '/plus/' },
+  { id: 'projects', label: 'Projects', href: '/#work' },
+  { id: 'services', label: 'Work with us', href: '/services/' },
+  { id: 'mateo', label: 'Meet Mateo', href: MATEO_PORTFOLIO },
 ];
 
 export const workWithUs = { label: 'Work with us', href: '/services/' };
 
-// The footer carries a few essentials; the full site map lives in the header's Menu (the Atlas), which works without JavaScript.
+// The footer carries a few essentials, then "All pages": the full site map (siteMap below) as a secondary directory
+// that works without JavaScript. The same map opens full-screen from the header's Menu (the Atlas).
 export const footerLinks = [
+  { label: 'Meet Mateo', href: MATEO_PORTFOLIO },
   { label: 'Research', href: '/research/' },
-  { label: 'Services', href: '/services/' },
+  { label: 'Work with us', href: '/services/' },
   { label: 'GitHub', href: GITHUB, external: true },
   { label: 'Email', href: CONTACT },
   { label: 'Privacy', href: '/privacy/' },
+  { label: 'Staff sign in', href: '/admin/' },
 ];
 
 export const projects = [
@@ -116,8 +122,8 @@ export const projects = [
       ['tested', 'Unit, integration and browser suites run in CI; the first-load budget and the design diagram are checked on every release.'],
       ['measured', 'Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.'],
       RISE_PLUS.state === 'live'
-        ? ['deployed', `RISE Plus voice runs at rise.syberlabs.io: an ElevenLabs voice for a reading of your own, ${RISE_PLUS.price} a month through Stripe, with no account.`]
-        : ['tested', `RISE Plus voice (an ElevenLabs voice, ${RISE_PLUS.price} a month) runs in production on Stripe test mode: on 2026-10-08 a test purchase unlocked it and the voice was heard reading the buyer's own file. Nothing is for sale yet; payments open after the owner's review.`],
+        ? ['deployed', `RISE Plus voice (optional) runs at rise.syberlabs.io: an ElevenLabs voice for a reading of your own, ${RISE_PLUS.price} a month through Stripe, with no account.`]
+        : ['tested', `RISE Plus voice, an optional ElevenLabs voice (${RISE_PLUS.price} a month): implementation merged; paid launch pending verification. It runs in production on Stripe test mode: on 2026-10-08 a test purchase unlocked it and the voice was heard reading the buyer's own file. Nothing is for sale yet; payments open after the owner's review. Reading in RISE does not need it.`],
       ['not yet', 'No reader study has been run; release evidence still records zero real-device and stranger-testing records. Realtime Live and Dive are out of current scope by decision.'],
     ],
     facts: [
@@ -129,7 +135,7 @@ export const projects = [
       ['Composer in Claude', 'Live as a custom connector: add one named RISE with the URL https://rise.syberlabs.io/api/mcp. Submission to Claude’s connector directory is planned.'],
       ['Earlier evidence', { label: 'Jev integration in RISE', href: '/jev/' }],
       ['Your own model', { label: 'Reader-owned AI: Jev and Kev', href: '/kev/' }],
-      ['RISE Plus', { label: RISE_PLUS.state === 'live' ? 'Your own reading, read aloud: live in RISE' : 'Your own reading, read aloud: paid launch pending verification', href: '/plus/' }],
+      ['RISE Plus', { label: RISE_PLUS.state === 'live' ? 'Optional voice, your own reading read aloud: live in RISE' : 'Optional voice, your own reading read aloud: paid launch pending verification', href: '/plus/' }],
       ['Source', { label: 'github.com/SyberLabs/RISE', href: 'https://github.com/SyberLabs/RISE' }],
     ],
   },
@@ -138,7 +144,7 @@ export const projects = [
     reflects: 'SyberLabs/Flyspace@e95ae73 · verified 2026-10-05',
     pageTitle: 'FLYSPACE: Spatial Workspace for AI over Live Data',
     headline: 'See the sources behind an answer.',
-    intro: 'A spatial workspace for thinking with AI over live data, with APIs on the fly. Drop Data blocks that pull real numbers, wire them into AI personas, and ask a question that is answered only from what the wires actually carry. Formerly OmniOS.',
+    intro: 'A spatial workspace for live data and the AI personas it feeds. Drop Data blocks that pull real numbers and wire them into personas; the public preview lets you explore that data and wiring. Run FLYSPACE locally with your own model (for example through Ollama) to ask a persona a question, answered only from what its wires actually carry. Formerly OmniOS.',
     summary: 'A limited public preview is live at omni.syberlabs.io: the canvas, the Shell Store and every keyless public data source run in your browser. AI answers and keyed sources are switched off there; the full app runs on your own machine with your own model keys.',
     status: { kind: 'live', label: 'Live preview' },
     primary: { label: 'Open the preview', href: OMNI_PREVIEW },
@@ -352,6 +358,7 @@ export const projects = [
 // (projects/project-template.js `atlas()`), so no screen is more than one tap from any other.
 export const siteMap = [
   { title: 'Use', items: [
+    { label: 'Try RISE', note: 'A one-minute sample · no account, no install', href: RISE_TRY, external: true },
     { label: 'RISE app', note: 'rise.syberlabs.io · open beta', href: RISE_APP, external: true, accent: '#f2d9a6', sigil: 'rise' },
     { label: 'FLYSPACE preview', note: 'omni.syberlabs.io · live preview', href: OMNI_PREVIEW, external: true, accent: '#f59be0', sigil: 'flyspace' },
     { label: 'RISE Sketch', note: 'sketch.syberlabs.io · living ink', href: SKETCH_APP, external: true, accent: '#c7a4ff' },
@@ -360,7 +367,7 @@ export const siteMap = [
   ] },
   { title: 'Projects', items: [
     { label: 'RISE', note: 'Creative suite · Reader, Composer, Sketch', href: '/projects/rise/', sigil: 'rise', accent: '#f2d9a6' },
-    { label: 'RISE Plus', note: `Your own reading, read aloud · ${RISE_PLUS.state === 'live' ? `live, ${RISE_PLUS.price} a month` : 'in progress, not for sale'}`, href: '/plus/' },
+    { label: 'RISE Plus', note: `Optional voice · ${RISE_PLUS.state === 'live' ? `live, ${RISE_PLUS.price} a month` : 'paid launch pending verification'}`, href: '/plus/' },
     { label: 'FLYSPACE', note: 'Spatial AI workspace · formerly OmniOS', href: '/projects/flyspace/', sigil: 'flyspace', accent: '#f59be0' },
     { label: 'SyberWork', note: 'Governed work runtime · work in progress', href: '/projects/syberwork/', sigil: 'syberwork', accent: '#a6f08f' },
     { label: 'Relay', note: 'Job application workspace', href: '/projects/relay/', sigil: 'relay', accent: '#62e3d8' },
@@ -380,7 +387,8 @@ export const siteMap = [
     { label: 'Approach', note: 'Make the work observable', href: '/approach/' },
     { label: 'How we build', note: 'Dependencies read through GitHits', href: '/stack/' },
     // { label: 'The factory', note: 'Agents build and review; humans look at the product', href: '/#factory' }, // hidden with the factory section (src/App.jsx INTERNAL_SECTIONS)
-    { label: 'Services', note: 'Interactive reading pilots', href: '/services/' },
+    { label: 'Work with us', note: 'Reading pilots for publishers and creators', href: '/services/' },
+    { label: 'Meet Mateo', note: 'Engineering portfolio, selected work and résumé', href: MATEO_PORTFOLIO },
     { label: 'About', note: 'The lab and its founder', href: '/#about' },
     { label: 'Review', note: 'State of the lab, by date', href: '/review/' },
     { label: 'Privacy', note: 'What this site does with your data', href: '/privacy/' },

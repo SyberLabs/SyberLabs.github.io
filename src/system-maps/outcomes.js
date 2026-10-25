@@ -23,12 +23,12 @@ export const outcomes = {
     link: { href: 'https://relay.syberlabs.io/', label: 'Open Relay' },
   },
   omnios: {
-    headline: 'Ask questions over live data, and see exactly what each answer used.',
+    headline: 'Wire live data into AI personas, and see exactly what each answer used. The public preview lets you explore the data and wiring; asking runs locally with your own model.',
     audience: 'For people who think through markets, economics and news with AI.',
     steps: [
       { who: 'you', actor: 'You', title: 'Place live data', text: 'Prediction markets, crypto, economic series, news and research, as blocks on a canvas.' },
       { who: 'you', actor: 'You', title: 'Wire it to a persona', text: 'A wire means “this feeds that”. A persona knows only what its wires carry.' },
-      { who: 'system', actor: 'FLYSPACE', title: 'Ask a question', text: 'Only working, up-to-date feeds go into the answer. Stale or broken ones are left out.' },
+      { who: 'system', actor: 'FLYSPACE', title: 'Ask a question', text: 'Locally, with your own model (for example through Ollama); AI answers are off on the public preview. Only working, up-to-date feeds go into the answer. Stale or broken ones are left out.' },
       { who: 'check', actor: 'FLYSPACE', title: 'See the sources', text: 'Every answer shows the sources that fed it.' },
     ],
     results: [
