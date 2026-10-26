@@ -40,7 +40,7 @@
 .evidence-ref { margin: var(--space-4) 0 0; font-size: 14px; line-height: 20px; color: var(--text-3); max-width: 72ch; }
 
 @media (max-width: 860px) {
-  .section-heading, .prose { grid-template-columns: 1fr; }
+  .section-heading, .prose { grid-template-columns: minmax(0, 1fr); } /* not 1fr: a long .commands line scrolls in its box instead of widening the page */
   .section-heading { row-gap: var(--space-4); }
   .section-heading h2, .prose > * { grid-column: 1; padding-left: 0; }
   .prose ul { padding-left: 1.1em; }

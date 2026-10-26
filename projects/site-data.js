@@ -388,7 +388,6 @@ export const siteMap = [
     { label: 'Work with us', note: 'Reading pilots for publishers and creators', href: '/services/' },
     { label: 'Meet Mateo', note: 'Engineering portfolio, selected work and résumé', href: MATEO_PORTFOLIO },
     { label: 'About', note: 'The lab and its founder', href: '/#about' },
-    { label: 'Review', note: 'State of the lab, by date', href: '/review/' },
     { label: 'Privacy', note: 'What this site does with your data', href: '/privacy/' },
   ] },
   { title: 'Contact', items: [
