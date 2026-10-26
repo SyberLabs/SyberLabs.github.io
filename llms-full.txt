@@ -54,7 +54,7 @@ Edited from real RISE screen recordings, with an AI-generated narrator and portr
 
 Screens inherited the page from print, so reading software mostly reproduces a page and adds a scrollbar. RISE starts from the other end: a text is a sequence in time, and time can carry pacing, light and sound the way a page carries typography.
 
-The bet is that the conditions around a text change how it is received. RISE is the instrument for testing that bet in a browser, with the reader in control of every condition. What has been shown so far is the instrument, not a measured preference; the project says so on every page.
+The bet is that the conditions around a text change how it is received. RISE is the instrument for testing that bet in a browser, with the reader in control of every condition. What has been shown so far is the instrument, not a measured preference.
 
 ### What you can do today
 
@@ -68,22 +68,22 @@ Five rooms. Everything else is a pane inside one of them.
 
 ### Rooms: The five rooms, as they open.
 
-Screenshots of a local build of SyberLabs/RISE@998d725 taken on 2026-10-05 in headless Chromium at 1440×900, nothing mocked. The text in every shot is Rural Architecture, from Lyrical Ballads by Wordsworth and Coleridge, a public-domain work served from RISE’s own Library (it was the day’s poem); the fields behind it are RISE’s procedural engines. A silent 25-second screen recording of the same build, Home → Begin → words arriving in Stream (with the few seconds of Preparing session the software renderer needs), is also available; the demo film above remains the edited one.
+Screenshots of a local build of SyberLabs/RISE@998d725 taken on 2026-10-05 in headless Chromium at 1440×900, nothing mocked. The text in every shot is Rural Architecture, from Lyrical Ballads by Wordsworth and Coleridge, a public-domain work served from RISE’s own Library; the fields behind it are RISE’s procedural engines. A silent 25-second screen recording of the same build, Home → Begin → words arriving in Stream (with the few seconds of Preparing session the software renderer needs), is also available.
 
 Recording: [Watch the screen recording (MP4, 25 s, no sound)](https://syberlabs.io/rise-demo/rooms/rise-rooms-begin-20261005.mp4)
 
-- 01 / Home: Home as it opens: today’s poem, the public-domain poem Rural Architecture (Wordsworth and Coleridge, Lyrical Ballads) from the Library, already streaming over its own visual field. Local build of SyberLabs/RISE@998d725, 2026-10-05. (https://syberlabs.io/rise-demo/rooms/rise-home-20261005.webp)
-- Menu: The Menu, open on Home: the five rooms, Home, Read, Library, Make and Settings, with Ask for a reading, Guide and Wormhole under More. Local build of SyberLabs/RISE@998d725, 2026-10-05. (https://syberlabs.io/rise-demo/rooms/rise-menu-20261005.webp)
-- 02 / Read · Stream: Read, in Stream, ten seconds into a 31-second reading of the public-domain poem Rural Architecture (Wordsworth and Coleridge, Lyrical Ballads) from the Library, with the control bar shown: pause, Page view, fullscreen, Visuals, Settings, end. Local build of SyberLabs/RISE@998d725, 2026-10-05. (https://syberlabs.io/rise-demo/rooms/rise-read-stream-20261005.webp)
-- 02 / Read · Page: Read, switched to Page view mid-reading: the same public-domain poem from the Library set as a page under its edition title, the visual field continuing below. Local build of SyberLabs/RISE@998d725, 2026-10-05. (https://syberlabs.io/rise-demo/rooms/rise-read-page-20261005.webp)
-- 03 / Library: Library: curated public-domain works in named editions (the Epic shelf opens with Standard Ebooks translations of The Iliad and Metamorphoses), with Chapel, Rosary, Stations, Journeys, Keystones and Provenance as panes. Local build of SyberLabs/RISE@998d725, 2026-10-05. (https://syberlabs.io/rise-demo/rooms/rise-library-20261005.webp)
-- 04 / Make: Make, opened from the Menu onto its Workshop pane with Vault, Scriptorium, Visual Lab and Visual Catalog alongside: a new, empty composition; the asset list is the build’s own procedural engines and sourced collections. Local build of SyberLabs/RISE@998d725, 2026-10-05. (https://syberlabs.io/rise-demo/rooms/rise-make-20261005.webp)
+- 01 / Home: Home as it opens: today’s poem, already streaming over its own visual field. (https://syberlabs.io/rise-demo/rooms/rise-home-20261005.webp)
+- Menu: The Menu, open on Home: the five rooms, Home, Read, Library, Make and Settings, with Ask for a reading, Guide and Wormhole under More. (https://syberlabs.io/rise-demo/rooms/rise-menu-20261005.webp)
+- 02 / Read · Stream: Read, in Stream, ten seconds into a 31-second reading, with the control bar shown: pause, Page view, fullscreen, Visuals, Settings, end. (https://syberlabs.io/rise-demo/rooms/rise-read-stream-20261005.webp)
+- 02 / Read · Page: Read, switched to Page view mid-reading: the same poem set as a page under its edition title, the visual field continuing below. (https://syberlabs.io/rise-demo/rooms/rise-read-page-20261005.webp)
+- 03 / Library: Library: curated public-domain works in named editions (the Epic shelf opens with Standard Ebooks translations of The Iliad and Metamorphoses), with Chapel, Rosary, Stations, Journeys, Keystones and Provenance as panes. (https://syberlabs.io/rise-demo/rooms/rise-library-20261005.webp)
+- 04 / Make: Make, opened from the Menu onto its Workshop pane with Vault, Scriptorium, Visual Lab and Visual Catalog alongside: a new, empty composition; the asset list is the build’s own procedural engines and sourced collections. (https://syberlabs.io/rise-demo/rooms/rise-make-20261005.webp)
 
 ### What a model may choose, and what it may not.
 
 The reader-owned decision contract, stepped through by rule from the code at 998d725: the finite menu, one call on the reader’s own connection, admission of offered keys only, and two refusals that open no reading.
 
-Text version of the interactive map: This map needs JavaScript. It steps through RISE’s decision contract: a request, the catalog’s finite questions, a refusal without a connection, one call on the reader’s OpenRouter key or local Kev, a refusal of an unoffered key, and the admitted answer becoming reading settings in the browser.
+Text version of the interactive map: This map needs JavaScript.
 
 ### How it is built
 
@@ -99,14 +99,14 @@ Text version of the interactive map: This map needs JavaScript. It steps through
 - deployed: The reader, Library, Chapel, Make rooms and the interactive sample run at rise.syberlabs.io.
 - tested: Unit, integration and browser suites run in CI; the first-load budget and the design diagram are checked on every release.
 - measured: Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.
-- tested: RISE Plus voice, an optional ElevenLabs voice ($8.99 a month): implementation merged; paid launch pending verification. It runs in production on Stripe test mode: on 2026-10-08 a test purchase unlocked it and the voice was heard reading the buyer's own file. Nothing is for sale yet; payments open after the owner's review. Reading in RISE does not need it.
-- not yet: No reader study has been run; release evidence still records zero real-device and stranger-testing records. Realtime Live and Dive are out of current scope by decision.
+- tested: RISE Plus voice, an optional ElevenLabs voice ($8.99 a month): implementation merged; paid launch pending verification. It runs in production on Stripe test mode: on 2026-10-08 a test purchase unlocked it and the voice was heard reading the buyer's own file.
+- not yet: No reader study has been run; release evidence still records zero real-device and stranger-testing records.
 
 ### Facts
 
 - Runs in: Any modern browser at rise.syberlabs.io
 - Technology: JavaScript (ES modules), Vite, Web Audio API, Canvas 2D, IndexedDB, Cloudflare Workers, Vitest, Playwright, GitHub Actions
-- AI integration: Optional and reader-owned: Connect OpenRouter (TypeSafe AI’s hosted Jev), or run RISE locally with a pinned Kev-4B; there is no production Kev deployment, by design. The server makes no model calls.
+- AI integration: Optional and reader-owned: Connect OpenRouter (TypeSafe AI’s hosted Jev), or run RISE locally with a pinned Kev-4B; there is no production Kev deployment, by design.
 - Privacy: Texts you bring and compositions you make stay in your browser. Once you connect your own AI, visual direction sends sections of the reading text to that connection (a text you bring, only with your consent). See the app’s posted Privacy and Terms.
 - License: Apache 2.0 for application code; texts and visual works carry their own terms
 - Composer in Claude: Live as a custom connector: add one named RISE with the URL https://rise.syberlabs.io/api/mcp. Submission to Claude’s connector directory is planned.
@@ -122,13 +122,13 @@ Status: Live preview
 Reflects: SyberLabs/Flyspace@e95ae73 · verified 2026-10-05
 Source: https://github.com/SyberLabs/Flyspace
 
-A spatial workspace for live data and the AI personas it feeds. Drop Data blocks that pull real numbers and wire them into personas; the public preview lets you explore that data and wiring. Run FLYSPACE locally with your own model (for example through Ollama) to ask a persona a question, answered only from what its wires actually carry. Formerly OmniOS.
+A spatial workspace for live data and the AI personas it feeds. Drop Data blocks that pull real numbers and wire them into personas. Run FLYSPACE locally with your own model (for example through Ollama) to ask a persona a question, answered only from what its wires carry. Formerly OmniOS.
 
 Page title: FLYSPACE: Spatial Workspace for AI over Live Data
 
 Headline: See the sources behind an answer.
 
-A limited public preview is live at omni.syberlabs.io: the canvas, the Shell Store and every keyless public data source run in your browser. AI answers and keyed sources are switched off there; the full app runs on your own machine with your own model keys.
+A limited public preview is live at omni.syberlabs.io: the canvas, the Shell Store and every keyless public data source run in your browser. AI answers and keyed sources are switched off there.
 
 Primary link: [Open the preview](https://omni.syberlabs.io/)
 
@@ -136,7 +136,7 @@ Secondary link: [Run it locally](https://github.com/SyberLabs/Flyspace#run)
 
 Also: [View source](https://github.com/SyberLabs/Flyspace)
 
-Live at [omni.syberlabs.io](https://omni.syberlabs.io/): The preview opens as OmniOS. Your canvas stays in your browser. Public data blocks are live; AI answers and keyed sources are disabled.
+Live at [omni.syberlabs.io](https://omni.syberlabs.io/): The preview opens as OmniOS. Your canvas stays in your browser.
 
 ### The morning: one question, cited sources, a crystal, a second persona
 
@@ -146,7 +146,7 @@ Recorded on 2026-10-05 from a local production build of OmniOS@e95ae73, driven t
 
 ### Why a canvas.
 
-When you ask an AI about the world, its context is invisible: you cannot see which numbers it was given, which it was not, and whether a source it cites carried anything at all. FLYSPACE makes the context physical. A block is a live view of one source. A wire says this feeds that. A persona is a mind whose entire context is what its incoming wires carry.
+When you ask an AI about the world, its context is invisible: you cannot see which numbers it was given, which it was not, and whether a source it cites carried anything at all. FLYSPACE makes the context physical.
 
 So the question “what does this thing actually know?” has a literal answer you can point at on screen. A source that carried no data is never cited, and an answer records which runs fed it, however many personas deep.
 
@@ -164,7 +164,7 @@ Everything below the first three steps needs a model key, so it runs locally, no
 
 The Investor shell, stepped through by rule: a feed fails, a feed goes stale, and the record says exactly which sources each answer used. Open any node to see who owns it.
 
-Text version of the interactive map: This map needs JavaScript. It steps through the Investor shell: four sources wired into an Analyst, a failed and a stale feed excluded from the answer, and the lineage from the Strategist back to the two sources that reached it.
+Text version of the interactive map: This map needs JavaScript.
 
 ### How it is built
 
@@ -173,7 +173,7 @@ Text version of the interactive map: This map needs JavaScript. It steps through
 - The inference ledger: Optional PostgreSQL records every model execution and the exact sources that fed it. When one persona feeds another, the ledger records which run was consumed, so a cascade stays walkable after the upstream blocks refetch. The canvas itself stays in IndexedDB and works with no server.
 - Capability compiler: An OpenAPI document, MCP tool schemas or a structured description compile into a capability manifest. One function registers it; write and destructive capabilities stay pending until approved; a manifest never grants itself authority; execution carries idempotency keys and reports an uncertain effect rather than guessing.
 - Keys stay server-side: Provider keys are read from the server environment and never sent to the browser. CI builds with canary values for every secret and fails if any reaches the client bundle.
-- Deployment posture: The full app is local-first and single-user. The public preview sets a demo flag that disables paid generation, keyed sources and ledger reads at the route level; the deployment checklist is published with the code.
+- Deployment posture: The public preview sets a demo flag that disables paid generation, keyed sources and ledger reads at the route level; the deployment checklist is published with the code.
 
 ### Evidence
 
@@ -205,7 +205,7 @@ Page title: SyberWork: Contract-Governed Work Runtime and Python SDK
 
 Headline: Contracts govern the work.
 
-An agent or a person proposes. Admission decides. An effect runs once, with an idempotency key, and is reconciled afterwards. Build Thread applies the same path to changes in your own Git repository: a model’s claim that the tests pass is an unverified signal until the host runs the checks itself.
+An effect runs once, with an idempotency key, and is reconciled afterwards. Build Thread applies the same path to changes in your own Git repository: a model’s claim that the tests pass is an unverified signal until the host runs the checks itself.
 
 Primary link: [View source](https://github.com/SyberLabs/SyberWork)
 
@@ -224,7 +224,7 @@ Python 3.11+ and git. No account, no model and no network required.
 - 01 / init, Name your real checks: syberlabs init writes a contract into .syberlabs/ and guesses the test command. When it cannot, it writes a check that fails until you name one, so an unchecked change never looks accepted.
 - 02 / start, Open a thread: A thread is one change to one repository, with the paths it may touch. The base commit is recorded as a verified git observation.
 - 03 / propose, Candidates on their own refs: Your edit, a coding tool’s edit, or an evolutionary search becomes a Git commit on a non-authoritative ref. The working tree is never touched.
-- 04 / check, The host runs the checks: Exit codes, durations and output digests are recorded against the candidate’s exact tree. A provider’s own claim never counts as a result.
+- 04 / check, The host runs the checks: Exit codes, durations and output digests are recorded against the candidate’s exact tree.
 - 05 / accept and publish, Compare-and-swap, then separate effects: Accept moves one branch with a compare-and-swap and nothing else. Push, pull request and publish are separate admitted actions, each idempotent and reconcilable after a crash.
 
 ### A model’s claim is not a result.
@@ -294,7 +294,7 @@ Page title: Relay: Job Application Workspace for AI-Assisted Drafting
 
 Headline: Every application has a history.
 
-Relay works alongside ChatGPT, Codex, Claude, Grok and your notes in Notion or Obsidian. Each job keeps its research, confirmed facts and draft versions in one history. Acceptance applies to the exact wording of a specific draft version, and Relay never submits an employer form.
+Relay works alongside ChatGPT, Codex, Claude, Grok and your notes in Notion or Obsidian. Each job keeps its research, confirmed facts and draft versions in one history. Relay never submits an employer form.
 
 Primary link: [View source](https://github.com/SyberLabs/relay)
 
@@ -304,32 +304,32 @@ Secondary link: [Integration setup](https://github.com/SyberLabs/relay/blob/main
 
 People already hunt for jobs with ChatGPT, Claude, Grok, Notion and Obsidian. The work falls apart in the gaps: a new chat forgets the last draft, a tracker overwrites a decision, an interview note resets an application’s status.
 
-Relay is the record that remembers. Research keeps its history, acceptance belongs to the text, and every handoff is bound to a job and a version so stale work is rejected instead of silently replacing a newer review.
+Research keeps its history, acceptance belongs to the text, and every handoff is bound to a job and a version so stale work is rejected instead of silently replacing a newer review.
 
 ### How a job moves through Relay
 
-Fictional example records ship with the app; no real applicant data is included.
+Fictional example records ship with the app.
 
 - 01 / Import, Bring the research: Add a job from a title and posting URL, pull a public Greenhouse or Lever board, map a tracker CSV, or import notes from Notion or Obsidian. Matching URLs join the same record.
 - 02 / Facts, Confirm what is true: A reusable candidate fact ledger that you confirm. Agent drafts are checked against it for selected claim patterns; unsupported claims are flagged, not silently passed.
 - 03 / Draft, Hand off to your assistant: Export a packet, let ChatGPT, Codex or Claude draft, and bring a version-bound draft back. Where the browser supports WebMCP, an assistant can stage a draft directly for review.
 - 04 / Accept, Approve the exact words: Acceptance records approval of one draft version. Change the text and it needs review again.
-- 05 / Send and record, You press submit: A human Inspect Accept arms a first-party Chrome extension to fill a form once. Relay does not POST the employer form, and outcomes are recorded with a receipt.
+- 05 / Send and record, You press submit: A human Inspect Accept arms a first-party Chrome extension to fill a form once. Outcomes are recorded with a receipt.
 
 ### Screens: Four screens from a local build.
 
 Captured on 2026-10-05 from relay@0000605 built and run locally with its own migrations and the mocked local sign-in. Every company, role and fact shown is a fictional example record; no real applicant data.
 
-- Runtime with a fictional example job selected. Approve & send stays disabled until an agent prepares the application. Fictional example records, local build of relay@0000605, 2026-10-05. (https://syberlabs.io/relay-demo/relay-runtime-20261005.jpg)
-- Exact acceptance. Accepting records approval of one draft version’s wording; changed wording needs fresh acceptance and nothing is sent. Fictional example records, local build of relay@0000605, 2026-10-05. (https://syberlabs.io/relay-demo/relay-accept-20261005.jpg)
-- Tracker. Three fictional jobs by status; imported submissions without a receipt stay visible but are excluded from reply rates. Fictional example records, local build of relay@0000605, 2026-10-05. (https://syberlabs.io/relay-demo/relay-tracker-20261005.jpg)
-- The fact ledger. Two fictional facts confirmed by the user and available for agent citations; Relay records the confirmation and does not verify facts itself. Fictional example records, local build of relay@0000605, 2026-10-05. (https://syberlabs.io/relay-demo/relay-facts-20261005.jpg)
+- Runtime with a fictional example job selected. Approve & send stays disabled until an agent prepares the application. (https://syberlabs.io/relay-demo/relay-runtime-20261005.jpg)
+- Exact acceptance. Nothing is sent. (https://syberlabs.io/relay-demo/relay-accept-20261005.jpg)
+- Tracker. Three fictional jobs by status; imported submissions without a receipt stay visible but are excluded from reply rates. (https://syberlabs.io/relay-demo/relay-tracker-20261005.jpg)
+- The fact ledger. Two fictional facts confirmed by the user and available for agent citations; Relay records the confirmation and does not verify facts itself. (https://syberlabs.io/relay-demo/relay-facts-20261005.jpg)
 
 ### What leaves Relay, and what comes back.
 
 Recorded by running the repository’s own modules: the bounded packet, the returned draft, the identity and version gate, the claim gate, and the five refusals that leave nothing written.
 
-Text version of the interactive map: This map needs JavaScript. It replays a recorded handoff: a posting canonicalised to one job, a bounded packet handed to an assistant, the returned draft re-validated, one claim flagged, and acceptance refused while a blocker is open.
+Text version of the interactive map: This map needs JavaScript.
 
 ### How it is built
 
@@ -364,7 +364,7 @@ Page title: OSAHR: Open-Source Stochastic Simulation Library in Python
 
 Headline: Replay a changing system.
 
-Rules rewrite a typed directed hypergraph at random times with exact probabilities. Three schedulers, incremental pattern matching checked against an exhaustive matcher, adaptive parameters, and a replay that reproduces every recorded state hash. Every public claim is graded Known, Measured, Inferred or Proposed.
+Rules rewrite a typed directed hypergraph at random times with exact probabilities. Every public claim is graded Known, Measured, Inferred or Proposed.
 
 Primary link: [View source](https://github.com/SyberLabs/OSAHR_Cell)
 
@@ -374,7 +374,7 @@ Secondary link: [Read the architecture](https://github.com/SyberLabs/OSAHR_Cell/
 
 Most simulators change the state of a fixed network. Many real systems change the network itself: a cell grows a connection, an organisation adds a role, an agent fleet forms a new channel. Modelling that exactly, with the right probabilities and a record you can replay, is the problem OSAHR takes on.
 
-The kernel is deliberately small and dependency-free so its invariants can be stated and checked. The adaptive, replayable network it provides is the primitive the lab’s governed-work infrastructure is designed to sit on; the seam between them is specified before it is built.
+The kernel is deliberately small and dependency-free so its invariants can be stated and checked. The adaptive, replayable network it provides is the primitive the lab’s governed-work infrastructure is designed to sit on.
 
 ### What you can do
 
@@ -382,14 +382,14 @@ pip install the wheel, or run the examples from a checkout.
 
 - 01 / Model, Declare a typed hypergraph: A schema, a graph, and rules written as pattern → template with a rate expression and optional adaptation of parameters and memory.
 - 02 / Run, Choose a scheduler: Direct SSA, modified next-reaction, or bounded thinning. All three are exact; incremental matching is checked against an exhaustive matcher.
-- 03 / Replay, Reproduce every state: Seeded runs reproduce their trace, and delta replay reproduces every recorded state hash. The site’s own OSAHR map was exported this way.
+- 03 / Replay, Reproduce every state: Seeded runs reproduce their trace, and delta replay reproduces every recorded state hash.
 - 04 / Review, Graded evidence packets: The decision workbench turns frozen experiments into reviewable packets. GrokCell is a prototype agent control plane on the same kernel.
 
 ### A hypergraph, one committed event at a time.
 
-Recorded by running the adaptive-signal example and exported from the trace. Every state is hashed; the replay reproduces every hash.
+Recorded by running the adaptive-signal example and exported from the trace.
 
-Text version of the interactive map: This map needs JavaScript. It replays a recorded run: two agents exchanging typed signal hyperedges, parameters adapting as rules fire, and the state hash after every committed event.
+Text version of the interactive map: This map needs JavaScript.
 
 ### Twenty-five events, one hash to replay.
 
@@ -405,7 +405,7 @@ memory: {'received_count': 10, 'intensity_ema': 0.17478781247500003}
 state hash: 6d73af0a24684c9afc339e1bc59dddbd6ca42a08792fca5b8b7e123fc262a857
 ```
 
-Complete output, unedited. From seed 20260729 the kernel committed 25 events in ten units of simulated time: two agents, ten signals received, the receiver’s value raised to 2.5 and its responsiveness driven from 0.1 to the clip at 1.0 by an injected external event at t = 3 and the rule’s own adaptation. The state hash is the canonical hash of the final state; a second run from the same seed prints the same lines, and the Inspect map above was exported from this same run. In the same checkout python -m pytest tests reported 127 passed, 1 skipped in 30 s (the skip is the optional ontology probe, which needs rdflib). This is a research model of a mechanism with illustrative parameters, not a calibrated forecast of any real system.
+Complete output, unedited. From seed 20260729 the kernel committed 25 events in ten units of simulated time: two agents, ten signals received, the receiver’s value raised to 2.5 and its responsiveness driven from 0.1 to the clip at 1.0 by an injected external event at t = 3 and the rule’s own adaptation. The state hash is the canonical hash of the final state; a second run from the same seed prints the same lines.
 
 ### How it is built
 
@@ -424,7 +424,6 @@ Complete output, unedited. From seed 20260729 the kernel committed 25 events in 
 
 - Stage: Open-source research library, version 0.2.1
 - Technology: Python 3.11+ (no runtime dependencies in the core library), pytest
-- Scope: Research models of mechanisms, not calibrated forecasts
 - License: Apache 2.0 in the LICENSE file; pyproject.toml’s metadata still says MIT
 - Source: [github.com/SyberLabs/OSAHR_Cell](https://github.com/SyberLabs/OSAHR_Cell)
 

@@ -172,7 +172,7 @@ const evidenceSection = p => p.evidence ? `
     <h2 id="evidence-title" class="sy-eyebrow pj-facts__label">Evidence</h2>
     <div class="pj-split__main">
       <ul class="pj-evidence" data-reveal-children>${p.evidence.map(([state, text]) => `<li class="pj-evidence__row is-${state.replace(/\s+/g, '-')}"><span class="pj-evidence__state sy-label"><i aria-hidden="true"></i>${esc(STATES[state] || state)}</span><p>${esc(text)}</p></li>`).join('')}</ul>
-      ${p.reflects ? `<p class="sy-small pj-evidence__ref">Reflects ${esc(p.reflects)}. Each state is earned by code, a named test, a measurement under stated conditions, or a deployment; none is promoted by wording.</p>` : ''}
+      ${p.reflects ? `<p class="sy-small pj-evidence__ref">Reflects ${esc(p.reflects)}. Each state is earned by code, a named test, a measurement under stated conditions, or a deployment.</p>` : ''}
     </div>
   </div>
 </section>` : '';
@@ -253,7 +253,7 @@ function neighbours(p) {
 function others(p) {
   return `
 <section class="pj-section sy-container" aria-labelledby="others-title">
-  <div class="pj-others__head" data-reveal><h2 id="others-title" class="sy-eyebrow">Other projects</h2><a class="sy-link sy-link--sm pj-others__all" href="/#work">All work${icon('arrow', 16)}</a></div>
+  <div class="pj-others__head" data-reveal><h2 id="others-title" class="sy-eyebrow">Other projects</h2></div>
   <ul class="sy-project-rows pj-others" data-reveal-children>${projects.filter(item => item.slug !== p.slug).map(item => projectRow(item, { intro: false })).join('')}</ul>
 </section>`;
 }
