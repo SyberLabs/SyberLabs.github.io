@@ -16,7 +16,7 @@ import './home.css';
 // shows rather than tells: visitors play their own sentence in a bounded, local typographic landscape.
 // Order below the hero: RISE Composer in Claude (the connector, with the Compose -> Admit -> Experience strike and
 // RISE Plus beneath), the publisher pilot, more from the lab (#work, the header's Projects link), research and
-// approach, about and contact (#about). The header and footer (nav, Sign in, All pages) are the shared chrome. The
+// approach, about and contact (#about). The header and footer (nav, the Menu's site map, contact links) are the shared chrome. The
 // connector instructions are also on /projects/rise/#composer; the GitHits dependency totals live on
 // /stack/#dependencies (src/githits-panel.jsx).
 
@@ -46,7 +46,7 @@ const Badge = ({ status }) => <span className={`sy-badge sy-badge--${status.kind
 
 // The header, the field canvas and the footer are the same markup every page gets (projects/project-template.js);
 // the homepage bundle boots the behaviours itself, so the shared /syberlabs.js is not loaded here.
-const Header = () => <div className="home-chrome" dangerouslySetInnerHTML={{ __html: chromeHeader('', { sticky: false, script: false }) }} />;
+const Header = () => <div className="home-chrome" dangerouslySetInnerHTML={{ __html: chromeHeader('', { sticky: false, script: false, here: '/' }) }} />;
 const Footer = () => <div className="home-chrome home-footer" dangerouslySetInnerHTML={{ __html: chromeFooter('/') }} />;
 
 // RISE Plus voice is labelled with its current availability (RISE_PLUS.state; /plus/ carries the full wording).

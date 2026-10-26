@@ -48,14 +48,16 @@ export const nav = [
 
 export const workWithUs = { label: 'Work with us', href: '/services/' };
 
-// The footer carries a few essentials, then "All pages": the full site map (siteMap below) as a secondary directory
-// that works without JavaScript. The same map opens full-screen from the header's Menu (the Atlas).
+// The footer carries a few essentials, every contact route and the legal page. It does not repeat the site map: the
+// full map (siteMap below) is the header's Menu (the Atlas), a <details> that opens and closes without JavaScript.
 export const footerLinks = [
   { label: 'Meet Mateo', href: MATEO_PORTFOLIO },
   { label: 'Research', href: '/research/' },
   { label: 'Work with us', href: '/services/' },
-  { label: 'GitHub', href: GITHUB, external: true },
   { label: 'Email', href: CONTACT },
+  { label: 'GitHub', href: GITHUB, external: true },
+  { label: 'LinkedIn', href: LINKEDIN, external: true },
+  { label: 'Résumé', href: RESUME },
   { label: 'Privacy', href: '/privacy/' },
   { label: 'Staff sign in', href: '/admin/' },
 ];
@@ -353,7 +355,8 @@ export const projects = [
 ];
 
 // The Atlas: every destination on the site, grouped. Rendered as the full-screen menu on every page
-// (projects/project-template.js `atlas()`), so no screen is more than one tap from any other.
+// (projects/project-template.js `atlas()`), so no screen is more than one tap from any other. It is the site's one
+// directory: the footer and the project pages do not repeat it.
 export const siteMap = [
   { title: 'Use', items: [
     { label: 'Try RISE', note: 'A one-minute sample · no account, no install', href: RISE_TRY, external: true },
