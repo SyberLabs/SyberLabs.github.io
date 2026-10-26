@@ -45,7 +45,7 @@
     <section class="stack-hero" aria-labelledby="stack-title">
       <p class="eyebrow">HOW WE BUILD</p>
       <h1 id="stack-title">Read the source, <em>not the memory.</em></h1>
-      <p class="lead">Our coding agents look up open-source dependencies at the exact version a project uses, through GitHits, a third-party index of public code. This page says what is wired up, what leaves our machines, and how far each piece has got.</p>
+      <p class="lead">Our coding agents look up open-source dependencies at the exact version a project uses, through GitHits, a third-party index of public code.</p>
     </section>
 
     <section class="stack-section" id="why" aria-labelledby="why-title">
@@ -67,7 +67,7 @@
         <h2 id="wiring-title">One index, two places.</h2>
       </div>
       <div class="pieces">
-        <article><span class="number">01 / AGENTS</span><h3>MCP in our repositories</h3><p>The GitHits MCP server is configured in SyberLabs repositories, so coding agents such as Claude Code can search and read dependency source, docs and changelogs at a named version, and check vulnerabilities and changelogs before a dependency is bumped.</p></article>
+        <article><span class="number">01 / AGENTS</span><h3>MCP in our repositories</h3><p>The GitHits MCP server is configured in SyberLabs repositories, so coding agents such as Claude Code can search and read dependency source, docs and changelogs at a named version, and check vulnerabilities before a dependency is bumped.</p></article>
         <article><span class="number">02 / THIS SITE</span><h3>Dependency panels at build time</h3><p>Each project page carries a dependency panel generated from GitHits’ package API (<code>api.githits.dev/v1</code>) when the site is built: license, latest version and known vulnerabilities for the packages the project declares. Only fields GitHits returned are shown. Where no snapshot has been fetched yet, the panel says so.</p></article>
       </div>
     </section>
@@ -124,7 +124,7 @@ npx githits@latest auth status</code></pre>
             <li><span class="state"><i aria-hidden="true"></i>Implemented</span><p>Build-time dependency snapshot from GitHits’ package API and the panel on each project page that reads it.</p></li>
             <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Not yet</span><p>No named test covers either piece, and nothing has been measured. We make no claim that agents are faster or make fewer mistakes with GitHits.</p></li>
           </ul>
-          <p class="evidence-ref">Reflects this site and those repositories as of 8 October 2026. Each state is earned by code, a named test, a measurement under stated conditions, or a deployment; none is promoted by wording.</p>
+          <p class="evidence-ref">Reflects this site and those repositories as of 8 October 2026. Each state is earned by code, a named test, a measurement under stated conditions, or a deployment.</p>
         </div>
       </div>
     </section>
@@ -136,7 +136,7 @@ npx githits@latest auth status</code></pre>
       </div>
       <div class="prose">
         <div>
-          <p>GitHits is a product of its own makers. It has not reviewed or endorsed this page, and SyberLabs has no partnership with it. Its home is <a href="https://githits.com/" rel="noopener">githits.com</a> and its documentation is at <a href="https://docs.githits.com/" rel="noopener">docs.githits.com</a>.</p>
+          <p>GitHits has not reviewed or endorsed this page, and SyberLabs has no partnership with it.</p>
         </div>
       </div>
     </section>

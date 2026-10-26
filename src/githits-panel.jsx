@@ -28,7 +28,6 @@ export function GitHitsPanel() {
     </div>
     <div className="prose">
       <div className="home-gh__data" style={{ '--sy-accent': 'var(--sy-ice)' }}>
-        <p>Every project page shows a dependency check: license, latest version and known vulnerabilities for each declared package, fetched from the GitHits package API each time this site is built. These are the totals.</p>
         {g.live
           ? <dl className="home-gh__stats">{stats.map(([value, term, note]) => <div key={term}><dt className="sy-label">{term}</dt><dd><b className={typeof value === 'number' ? '' : 'is-word'}>{value}</b><span>{note}</span></dd></div>)}</dl>
           : <p className="home-gh__pending sy-label" role="note"><i aria-hidden="true" />Snapshot pending — GitHits data not yet fetched</p>}
