@@ -28,40 +28,45 @@ const esc = value => String(value).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<':
 const badge = (status, cls = '') => `<span class="sy-badge sy-badge--${status.kind}${cls ? ' ' + cls : ''}">${esc(status.label)}</span>`;
 const PLATES = ['II', 'III', 'IV', 'V', 'VI', 'VII'];
 
-// The Atlas: the full-screen site map inside the header's <details>. Works without JS (details/summary);
-// src/site/nav.js adds Esc, focus handling and the "/" shortcut.
-const atlas = () => `<div class="sy-atlas" id="sy-atlas" role="dialog" aria-label="Site map">
+// The Atlas: the full-screen site map inside the header's <details>, and the site's one directory (the footer does not
+// repeat it). Works without JS: Menu opens and closes it (src/syberlabs.css keeps Menu above the panel until JS boots),
+// and `here`, the page's own path, marks its link aria-current in the markup. src/site/nav.js adds Esc, the close
+// button, focus handling and the "/" shortcut.
+const atlas = (here = '') => `<div class="sy-atlas" id="sy-atlas" role="dialog" aria-label="Site map">
   <span class="sy-atlas__backdrop" aria-hidden="true"></span>
   <div class="sy-atlas__panel">
     <div class="sy-atlas__head"><p class="sy-eyebrow">Atlas / every page on syberlabs.io</p><button class="sy-atlas__close" type="button" aria-label="Close menu">${icon('close', 20)}</button></div>
-    <nav class="sy-atlas__primary" aria-label="Main sections"><ul>${navLinks()}</ul></nav>
-    <div class="sy-atlas__groups">${siteMap.map(group => `<section class="sy-atlas__group" aria-labelledby="atlas-${group.title.toLowerCase()}"><h2 id="atlas-${group.title.toLowerCase()}" class="sy-atlas__title">${esc(group.title)}</h2><ul>${group.items.map(item => `<li><a href="${item.href}"${item.external ? ' rel="noopener"' : ''}${item.accent ? ` style="--sy-accent:${item.accent}"` : ''}>${item.sigil ? `<canvas class="sy-atlas__sigil" data-sigil="${item.sigil}" data-color="${item.accent}" aria-hidden="true"></canvas>` : '<span class="sy-atlas__dot" aria-hidden="true"></span>'}<span class="sy-atlas__label">${esc(item.label)}${item.external ? ' ' + icon('external', 14) : ''}</span><span class="sy-atlas__note">${esc(item.note)}</span></a></li>`).join('')}</ul></section>`).join('')}</div>
+    <nav class="sy-atlas__primary" aria-label="Main sections"><ul>${navLinks('', here)}</ul></nav>
+    <nav class="sy-atlas__groups" aria-label="All pages">${siteMap.map(group => `<section class="sy-atlas__group" aria-labelledby="atlas-${group.title.toLowerCase()}"><h2 id="atlas-${group.title.toLowerCase()}" class="sy-atlas__title">${esc(group.title)}</h2><ul>${group.items.map(item => `<li><a href="${item.href}"${item.href === here ? ' aria-current="page"' : ''}${item.external ? ' rel="noopener"' : ''}${item.accent ? ` style="--sy-accent:${item.accent}"` : ''}>${item.sigil ? `<canvas class="sy-atlas__sigil" data-sigil="${item.sigil}" data-color="${item.accent}" aria-hidden="true"></canvas>` : '<span class="sy-atlas__dot" aria-hidden="true"></span>'}<span class="sy-atlas__label">${esc(item.label)}${item.external ? ' ' + icon('external', 14) : ''}</span><span class="sy-atlas__note">${esc(item.note)}</span></a></li>`).join('')}</ul></section>`).join('')}</nav>
     <p class="sy-atlas__foot"><span>Press <kbd>/</kbd> anywhere to open this map · <kbd>Esc</kbd> closes</span><a href="mailto:${EMAIL}">${EMAIL}</a></p>
   </div>
 </div>`;
 
 // The five primary links (projects/site-data.js `nav`): the header row on wide screens, the top of the Atlas on every
-// screen, so a phone reaches them from Menu in one tap.
-const navLinks = (current = '') => nav.map(item => `<li><a href="${item.href}"${item.id === current ? ' aria-current="page"' : ''}${item.external ? ' rel="noopener"' : ''}>${item.label}${item.external ? ' ' + icon('external', 14) : ''}</a></li>`).join('');
+// screen, so a phone reaches them from Menu in one tap. The header row marks the page's section (`current`, a nav id);
+// the Atlas marks the link to the page itself (`here`, a path).
+const navLinks = (current = '', here = '') => nav.map(item => `<li><a href="${item.href}"${item.id === current || item.href === here ? ' aria-current="page"' : ''}${item.external ? ' rel="noopener"' : ''}>${item.label}${item.external ? ' ' + icon('external', 14) : ''}</a></li>`).join('');
 
 // Site chrome: identical markup on every static page (see scripts/site-chrome.mjs) and the project pages.
-// `current` marks the page: a nav id for the header, a link href for the footer.
+// `current` marks the page's section in the header row (a nav id); `here` is the page's path, marked in the Atlas.
+// The footer takes the path too. The summary carries no aria-expanded of its own: <details> reports its state without
+// JS, and src/site/nav.js keeps the attribute in step once it runs.
 // `sticky` (default) keeps the header in flow; the homepage passes false so it floats over the hero.
 // The customer subscription route is separate from staff sign-in in the footer.
-export const header = (current = '', { sticky = true, script = true } = {}) => {
+export const header = (current = '', { sticky = true, script = true, here = '' } = {}) => {
   return `<a class="sy-skip" href="#main">Skip to content</a>
 <div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
 <header class="sy-header${sticky ? ' sy-header--sticky' : ''}"><div class="sy-header__in">
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
   <nav class="sy-nav" aria-label="Primary"><ul>${navLinks(current)}</ul></nav>
-  <details class="sy-menu"><summary aria-label="Menu" aria-expanded="false" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas()}</details>
+  <details class="sy-menu"><summary aria-label="Menu" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas(here)}</details>
   <a class="sy-customer-account" href="${RISE_PLUS.href}">My RISE Plus</a>
 </div></header>${script ? '\n<script type="module" src="/syberlabs.js"></script>' : ''}`;
 };
 
-// The footer: one piece of art (the orb from mateo.syberlabs.space), one hairline bar of essentials, and "All pages",
-// the full site map as a secondary directory. It is a <details>, closed by default, so the footer stays quiet and every
-// page is still reachable without JavaScript and without opening the header's Menu.
+// The footer: one piece of art (the orb from mateo.syberlabs.space) and one hairline bar of essentials, every contact
+// route and the legal page (projects/site-data.js `footerLinks`). The site map is not repeated here: it is the header's
+// Menu, which works without JavaScript.
 export const footer = (current = '') => `<footer class="sy-footer">
 <div class="sy-footer__in">
   <a class="sy-footer__art" href="/" aria-label="SyberLabs home"><img src="/footer-orb.webp" alt="" width="960" height="523" loading="lazy" decoding="async"></a>
@@ -70,9 +75,6 @@ export const footer = (current = '') => `<footer class="sy-footer">
     <nav aria-label="Footer">${footerLinks.map(link => `<a href="${link.href}"${link.href === current ? ' aria-current="page"' : ''}>${link.label}${link.external ? ' ' + icon('external', 14) : ''}</a>`).join('')}</nav>
     <span class="sy-footer__copy">© 2026</span>
   </div>
-  <details class="sy-footer__all"><summary>All pages</summary>
-    <nav class="sy-footer__dir" aria-label="All pages">${siteMap.map(group => `<div><h2>${esc(group.title)}</h2><ul>${group.items.map(item => `<li><a href="${item.href}"${item.href === current ? ' aria-current="page"' : ''}${item.external ? ' rel="noopener"' : ''}>${esc(item.label)}${item.external ? ' ' + icon('external', 12) : ''}</a></li>`).join('')}</ul></div>`).join('')}</nav>
-  </details>
 </div></footer>`;
 
 // Breadcrumb for every page below the homepage.
@@ -172,7 +174,7 @@ const evidenceSection = p => p.evidence ? `
     <h2 id="evidence-title" class="sy-eyebrow pj-facts__label">Evidence</h2>
     <div class="pj-split__main">
       <ul class="pj-evidence" data-reveal-children>${p.evidence.map(([state, text]) => `<li class="pj-evidence__row is-${state.replace(/\s+/g, '-')}"><span class="pj-evidence__state sy-label"><i aria-hidden="true"></i>${esc(STATES[state] || state)}</span><p>${esc(text)}</p></li>`).join('')}</ul>
-      ${p.reflects ? `<p class="sy-small pj-evidence__ref">Reflects ${esc(p.reflects)}. Each state is earned by code, a named test, a measurement under stated conditions, or a deployment; none is promoted by wording.</p>` : ''}
+      ${p.reflects ? `<p class="sy-small pj-evidence__ref">Reflects ${esc(p.reflects)}. Each state is earned by code, a named test, a measurement under stated conditions, or a deployment.</p>` : ''}
     </div>
   </div>
 </section>` : '';
@@ -239,21 +241,12 @@ export function projectRow(item, { intro = true } = {}) {
   </a></li>`;
 }
 
-// Previous / next project, so the five pages read as one loop.
-function neighbours(p) {
-  const i = projects.indexOf(p), prev = projects[(i + projects.length - 1) % projects.length], next = projects[(i + 1) % projects.length];
-  const card = (q, dir) => `<a class="sy-neighbour sy-neighbour--${dir}" href="/projects/${q.slug}/" style="--sy-accent:${q.accent}" data-tilt="4">
-    <span class="sy-neighbour__dir sy-label">${dir === 'prev' ? icon('back', 16) + 'Previous' : 'Next' + icon('arrow', 16)}</span>
-    <canvas class="sy-neighbour__sigil" data-sigil="${q.slug}" aria-hidden="true"></canvas>
-    <span class="sy-neighbour__name">${esc(q.name)}</span><span class="sy-neighbour__cat">${esc(q.category)}</span>
-  </a>`;
-  return `<nav class="sy-neighbours sy-container" aria-label="Previous and next project" data-reveal>${card(prev, 'prev')}<a class="sy-neighbour sy-neighbour--all" href="/#work"><span class="sy-label">All projects</span><span class="sy-neighbour__name">${projects.length} projects</span></a>${card(next, 'next')}</nav>`;
-}
-
+// Every other project, closing the page: its one cross-project list. (The previous / next cards that used to follow
+// it named two of the same four projects again; the Menu holds the whole site map.)
 function others(p) {
   return `
 <section class="pj-section sy-container" aria-labelledby="others-title">
-  <div class="pj-others__head" data-reveal><h2 id="others-title" class="sy-eyebrow">Other projects</h2><a class="sy-link sy-link--sm pj-others__all" href="/#work">All work${icon('arrow', 16)}</a></div>
+  <div class="pj-others__head" data-reveal><h2 id="others-title" class="sy-eyebrow">Other projects</h2></div>
   <ul class="sy-project-rows pj-others" data-reveal-children>${projects.filter(item => item.slug !== p.slug).map(item => projectRow(item, { intro: false })).join('')}</ul>
 </section>`;
 }
@@ -263,7 +256,7 @@ export function renderProject(p) {
   return {
     title: `${p.pageTitle || p.name} | SyberLabs`,
     description: `${p.intro} ${p.summary || ''}`.trim(),
-    body: `${header('projects')}
+    body: `${header('projects', { here: `/projects/${p.slug}/` })}
 <main id="main">
   <section class="pj-hero sy-container" aria-labelledby="project-title">
     <div class="pj-hero__copy">
@@ -279,7 +272,6 @@ export function renderProject(p) {
   </section>
   ${sections(p)}
   ${others(p)}
-  ${neighbours(p)}
 </main>
 ${footer()}`,
   };

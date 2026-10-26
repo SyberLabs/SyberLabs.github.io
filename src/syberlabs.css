@@ -261,6 +261,11 @@ html.sy-js .sy-split.is-pending .sy-word > span { transform: translateY(110%); }
 html.sy-atlas-open, html.sy-atlas-open body { overflow: hidden; }
 /* backdrop-filter would make the header the containing block of the fixed Atlas, so it comes off while the map is open */
 .sy-header:has(.sy-menu[open]), html.sy-atlas-open .sy-header { -webkit-backdrop-filter: none; backdrop-filter: none; background: transparent; border-bottom-color: transparent; box-shadow: none; }
+/* Without JS (or until it boots) the map is still a plain <details>: Menu stays above the panel, so the same button
+   closes it, and the panel starts below the header row; the close button and key hints need src/site/nav.js. */
+html:not(.sy-js) .sy-menu[open] > summary { position: relative; z-index: 91; }
+html:not(.sy-js) .sy-menu[open] .sy-atlas__panel { padding-top: var(--sy-header-h); }
+html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { display: none; }
 @media (prefers-reduced-motion: no-preference) {
   .sy-menu[open] .sy-atlas__backdrop { animation: sy-fade 240ms var(--sy-ease) both; }
   .sy-menu[open] .sy-atlas__panel { animation: sy-rise 420ms var(--sy-ease) both; }
@@ -286,25 +291,6 @@ html.sy-atlas-open, html.sy-atlas-open body { overflow: hidden; }
 .sy-crumbs a { display: inline-flex; align-items: center; min-height: 32px; color: var(--sy-mist); }
 .sy-crumbs a:hover { color: var(--sy-ice); text-decoration: none; }
 .sy-crumbs [aria-current] { color: var(--sy-vellum); }
-
-/* ---------- previous / next project ---------- */
-.sy-neighbours { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 16px; margin-top: var(--space-9); }
-.sy-neighbour { position: relative; isolation: isolate; display: grid; grid-template-columns: 44px minmax(0, 1fr); grid-template-areas: "d d" "s n" "s c"; column-gap: 16px; row-gap: 4px; align-content: start; padding: 20px 22px 22px; border-radius: var(--sy-r-panel); border: 1px solid var(--sy-rule); background: linear-gradient(160deg, rgba(20,18,56,.55), rgba(8,7,31,.6)); color: var(--sy-vellum); text-decoration: none; overflow: hidden; transition: border-color var(--sy-t-enter), box-shadow var(--sy-t-enter), transform var(--sy-t-enter) var(--sy-ease); }
-.sy-neighbour::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(260px 200px at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--sy-accent) 24%, transparent), transparent 70%); opacity: 0; transition: opacity var(--sy-t-enter); }
-.sy-neighbour:hover { text-decoration: none; border-color: color-mix(in srgb, var(--sy-accent) 55%, var(--sy-rule-2)); box-shadow: 0 30px 80px -40px color-mix(in srgb, var(--sy-accent) 60%, transparent); }
-.sy-neighbour:hover::before { opacity: 1; }
-.sy-neighbour__dir { grid-area: d; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px; color: var(--sy-dim); }
-.sy-neighbour--next .sy-neighbour__dir { justify-self: end; }
-.sy-neighbour--next { text-align: right; grid-template-columns: minmax(0, 1fr) 44px; grid-template-areas: "d d" "n s" "c s"; }
-.sy-neighbour__sigil { grid-area: s; width: 44px; height: 44px; }
-.sy-neighbour__name { grid-area: n; font: 400 28px/1 var(--sy-serif); }
-.sy-neighbour__cat { grid-area: c; font: 500 12px/1.4 var(--sy-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--sy-accent); }
-.sy-neighbour--all { grid-template-columns: 1fr; grid-template-areas: "d" "n"; align-content: center; justify-items: center; text-align: center; min-width: 150px; color: var(--sy-mist); }
-.sy-neighbour--all .sy-neighbour__name { font-size: 18px; font-family: var(--sy-sans); color: var(--sy-vellum); }
-@media (max-width: 760px) {
-  .sy-neighbours { grid-template-columns: 1fr; }
-  .sy-neighbour--all { order: 3; min-height: 64px; }
-}
 
 /* ---------- "work in progress" badge: an amber dot with a dashed ring (kit badges: live, early, research) ---------- */
 .sy-badge--wip { --d: var(--sy-amber, #ffb54a); }
@@ -337,8 +323,8 @@ html.sy-atlas-open, html.sy-atlas-open body { overflow: hidden; }
   @keyframes sy-hue { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
 }
 
-/* ---------- footer map ---------- */
-/* the footer: the orb, then one hairline bar (mark / a few links / year) */
+/* ---------- footer ---------- */
+/* the footer: the orb, then one hairline bar (mark / essentials, contact and legal links / year); the site map is the Menu */
 .sy-footer__in { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: clamp(32px, 4vw, 44px); width: 100%; max-width: none; margin: 0; padding: clamp(32px, 3.6vw, 44px) var(--sy-gutter) 24px; }
 .sy-footer__art { display: block; width: min(100%, 300px); transition: transform var(--sy-t-enter) var(--sy-ease); }
 .sy-footer__art img { display: block; width: 100%; height: auto; -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%); } /* feathered: the orb lifts out of the page instead of sitting in a framed print */
@@ -347,18 +333,6 @@ html.sy-atlas-open, html.sy-atlas-open body { overflow: hidden; }
 .sy-footer__bar nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 22px; }
 .sy-footer__bar nav a { font-size: 13.5px; }
 .sy-footer__copy { font: 500 12px/1 var(--sy-mono); letter-spacing: .12em; color: var(--sy-dim); }
-.sy-footer__all { width: 100%; max-width: calc(var(--sy-max) - 2 * var(--sy-gutter)); }
-.sy-footer__all summary { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; list-style: none; font: 500 12px/1 var(--sy-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--sy-mist); }
-.sy-footer__all summary::-webkit-details-marker { display: none; }
-.sy-footer__all summary::after { content: "+"; font-size: 14px; color: var(--sy-dim); }
-.sy-footer__all[open] summary::after { content: "−"; }
-.sy-footer__all summary:hover { color: var(--sy-vellum); }
-.sy-footer__dir { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 32px 24px; padding: 8px 0 16px; }
-.sy-footer__dir h2 { margin: 0 0 8px; font: 500 12px/1.4 var(--sy-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--sy-dim); }
-.sy-footer__dir ul { list-style: none; margin: 0; padding: 0; }
-.sy-footer__dir a { display: inline-flex; align-items: center; gap: 4px; padding: 5px 0; font-size: 13.5px; color: var(--sy-mist); }
-.sy-footer__dir a:hover, .sy-footer__dir a[aria-current="page"] { color: var(--sy-vellum); }
-@media (max-width: 900px) { .sy-footer__dir { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .sy-footer__bar { justify-content: center; text-align: center; } .sy-footer__bar .sy-lockup { width: 100%; justify-content: center; } }
 
 /* Customer subscription access is distinct from staff authentication. */
