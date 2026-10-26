@@ -467,7 +467,7 @@ Complete output, unedited. From seed 20260729 the kernel committed 25 events in 
 ## Optional
 
 - [Work with us](https://syberlabs.io/services/): Work with SyberLabs: a scoped, paid pilot that turns one excerpt you have the rights to into a RISE reading, delivered as a shareable browser link that needs no account or install, with a short note after launch.
-- [Meet Mateo](https://syberlabs.io/mateo/): Mateo Robles builds creative software and applied AI systems. Explore Engines and RISE, inspect the code and engineering evidence, and download his résumé.
+- [Meet Mateo](https://syberlabs.io/mateo/): Software engineer for AI apps and agent tooling. Mateo Robles shipped RISE Composer, an MCP server for Claude. Santa Clara ’26, Bay Area, available now.
 - [Review](https://syberlabs.io/review/): Dated state-of-the-lab pages for SyberLabs reviews: what was decided, what is live, what is built and not released, and what waits on whom, each line linking its record.
 - [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.
 - [Full text for agents](https://syberlabs.io/llms-full.txt): Every project field in one file.
