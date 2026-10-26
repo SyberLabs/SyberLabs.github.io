@@ -207,7 +207,7 @@ export const projects = [
     why: { title: 'Why admission, not autonomy.',
       paragraphs: [
         'Agent frameworks make it easy for a model to act and hard to say afterwards who allowed it, on what evidence, and whether the effect really happened. SyberWork starts from the opposite constraint: generation is free, but nothing becomes an effect without a gate the host owns.',
-        'The gate is a contract plus a policy, compiled into an inspectable path. A proposal that does not fit is refused with the deciding rule and its provenance. The same machinery that governs a purchase order governs a code change, which is why the SDK can sit under an agent fleet without trusting any one agent.',
+        'The gate is a contract plus a policy, compiled into an inspectable path. A proposal that does not fit is refused with the deciding rule and its provenance. The same machinery that governs a purchase order governs a code change.',
       ] },
     use: { title: 'Build Thread: one governed change', note: 'Python 3.11+ and git. No account, no model and no network required.',
       steps: [
@@ -240,7 +240,6 @@ export const projects = [
     facts: [
       ['Stage', 'Open-source runtime and SDK, version 0.1.0, wheel verified'],
       ['Technology', 'Python 3.11+ with no runtime dependencies, SQLite, pytest; Docker files for the console'],
-      ['Protocol', 'sdk.syberlabs.space/v0alpha1, frozen'],
       ['License', 'Apache 2.0'],
       ['Source', { label: 'github.com/SyberLabs/SyberWork', href: 'https://github.com/SyberLabs/SyberWork' }],
     ],
