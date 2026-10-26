@@ -51,7 +51,7 @@ const pages = [
   { slug: 'kev', path: '/kev/', eyebrow: 'RISE · Reader-owned AI', headline: 'Your model, your connection.',
     line: 'RISE spends no shared inference: Jev runs on the reader’s OpenRouter account, Kev-4B on the reader’s own machine.', seed: 'kev', accent: RISE },
   { slug: 'jev', path: '/jev/', eyebrow: 'RISE · AI integration · Case study', headline: 'AI decisions with clear limits.',
-    line: 'The earlier Jev integration in RISE, kept as historical evidence while the reading-decision path moves to Kev.', seed: 'jev', accent: RISE },
+    line: 'The earlier Jev integration in RISE, kept as historical evidence.', seed: 'jev', accent: RISE },
   { slug: 'approach', path: '/approach/', eyebrow: 'SyberLabs · Approach', headline: 'Make the work observable.',
     line: 'Establish what a system knows, design what a person can do with it, and verify that they can review and change the result.', seed: 'approach', accent: ICE },
   { slug: 'stack', path: '/stack/', eyebrow: 'SyberLabs · How we build', headline: 'Read the source, not the memory.',
