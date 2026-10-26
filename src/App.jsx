@@ -106,7 +106,7 @@ const CLAUDE_CONNECTORS = 'https://support.claude.com/en/articles/11175166-get-s
 const RUNTIME = [
   ['01', 'Compose', 'A model writes the reading: the words, how they arrive, and custom visuals for the scene.'],
   ['02', 'Admit', 'RISE checks every choice against what it can perform. Nothing plays that it did not admit.'],
-  ['03', 'Experience', 'Words arrive in time, with image, sound and procedural motion. You step inside the answer.'],
+  ['03', 'Experience', 'Words arrive in time, with image, sound and procedural motion.'],
 ];
 
 // The strike (src/site/strike.js), played once when the flow comes into view and frozen on its last frame: node 1
@@ -161,13 +161,12 @@ function RiseLine() {
         <p className="sy-eyebrow">The RISE line</p>
         <h2 id="rise-title" className="sy-display">Whoever writes it, <em>RISE performs it.</em></h2>
       </div>
-      <p className="home-head__note sy-small">One stage, two authors: you, or your AI.</p>
     </div>
     <div className="home-line">
       <article className="home-line__card home-line__card--reader sy-card" aria-labelledby="reader-title" data-reveal>
         <p className="home-line__top"><span className="home-line__lockup" id="reader-title"><span>RISE</span> <b>Reader</b></span><Badge status={{ kind: 'live', label: 'Free · open beta' }} /></p>
         <p className="home-line__promise">You bring the words. <em>RISE stages them.</em></p>
-        <p className="home-line__what">A reading experience for people. Bring your own text or open today’s poem; RISE paces it and builds the visuals and sound around it.</p>
+        <p className="home-line__what">Bring your own text or open today’s poem.</p>
         <div className="home-rt__flow is-still home-line__steps">
           <ol className="home-rt__stages" aria-label="What RISE Reader does">
             {READER_POINTS.map(([t, d], i) => <li key={t} className="home-rt__stage">
@@ -192,7 +191,7 @@ function RiseLine() {
       <article className="home-line__card home-line__card--composer home-rt sy-card" aria-labelledby="composer-title" data-reveal>
         <p className="home-line__top"><span className="home-line__lockup" id="composer-title"><span>RISE</span> <b>Composer</b></span><Badge status={{ kind: 'live', label: 'Free · live in Claude' }} /></p>
         <p className="home-line__promise">Your AI writes the words <em>and the stage.</em></p>
-        <p className="home-line__what">The experiential runtime for machine intelligence. Over a connector, Claude composes the whole reading, custom visuals included, and RISE performs it.</p>
+        <p className="home-line__what">Over a connector, Claude composes the whole reading and RISE performs it.</p>
         <RuntimeFlow />
         <div className="home-rt__connect">
           <p className="sy-label">Add it to Claude</p>
@@ -204,7 +203,6 @@ function RiseLine() {
         </div>
       </article>
     </div>
-    <p className="home-line__also" data-reveal>Also in the RISE line: <a href="#work">RISE Sketch</a>, a drawing instrument with living ink.</p>
   </section>;
 }
 
@@ -342,8 +340,8 @@ function About() {
         </ul>
       </aside>
       <div className="home-cta sy-card" data-reveal>
-        <div><p className="sy-eyebrow">Contact</p><h3 className="home-cta__title home-plain">Write to <em>the lab.</em></h3><p className="sy-body">Questions about RISE, a pilot, or the research: one email reaches us.</p></div>
-        <div className="sy-actions"><a className="sy-btn sy-btn--solid" href={CONTACT}>Email the lab<Icon name="arrow" className="sy-icon--trail" /></a><a className="sy-btn sy-btn--line" href="/services/">Work with us</a></div>
+        <div><p className="sy-eyebrow">Contact</p><h3 className="home-cta__title home-plain">Write to <em>the lab.</em></h3></div>
+        <div className="sy-actions"><a className="sy-btn sy-btn--solid" href={CONTACT}>Email the lab<Icon name="arrow" className="sy-icon--trail" /></a></div>
       </div>
     </div>
   </section>;
