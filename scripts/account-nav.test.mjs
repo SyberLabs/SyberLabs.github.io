@@ -136,11 +136,36 @@ test('static chrome derives current navigation from routes, repairing missing an
     for (const prior of ['', 'services', 'mateo', 'plus', 'projects']) {
       const html = header(prior).replace('href="#main"', 'href="#content"') + '<main id="content"></main>' + footer();
       const generated = applyChrome(html, file);
-      const primary = generated.match(/<header[\s\S]*?<\/header>/)[0];
+      // The header row only; the Menu inside the header marks the page's own link separately (next test).
+      const primary = generated.match(/<nav class="sy-nav"[\s\S]*?<\/nav>/)[0];
       const current = [...primary.matchAll(/<a href="([^"]+)" aria-current="page"/g)].map(match => match[1]);
       assert.deepEqual(current, expected ? [expected] : [], `${file} previously ${prior}`);
       assert.match(generated, /href="#content">Skip to content/);
       assert.equal(applyChrome(generated, file), generated, 'regeneration is idempotent');
     }
+  }
+});
+
+// The Menu (the Atlas) is the one site directory: every page of the site map, the current page marked in the markup so
+// it holds without JS, and no stale aria-expanded on the <details> summary. The footer keeps contact and legal links
+// in view and does not repeat the map.
+test('the Menu is the one site directory; the footer keeps contact and legal links', async () => {
+  const { applyChrome } = await import('./site-chrome.mjs');
+  const { header, footer } = await import('../projects/project-template.js');
+  const { siteMap, footerLinks, CONTACT, GITHUB, LINKEDIN, RESUME } = await import('../projects/site-data.js');
+  for (const [file, marked] of [
+    ['research/sybershoke/index.html', ['/research/sybershoke/']],
+    ['mateo/index.html', ['/mateo/', '/mateo/']], // the Menu's primary row and its Lab group both link the page
+    ['privacy/index.html', ['/privacy/']],
+    ['404.html', []],
+  ]) {
+    const html = applyChrome(header() + '<main id="main"></main>' + footer(), file);
+    const atlas = html.match(/<div class="sy-atlas"[\s\S]*?<\/details>/)[0];
+    for (const item of siteMap.flatMap(group => group.items)) assert.ok(atlas.includes(`href="${item.href}"`), `${file}: Menu links ${item.label}`);
+    assert.deepEqual([...atlas.matchAll(/<a href="([^"]+)" aria-current="page"/g)].map(match => match[1]), marked, file);
+    assert.doesNotMatch(html, /aria-expanded=/, `${file}: <details> reports its own state`);
+    const foot = html.match(/<footer[\s\S]*?<\/footer>/)[0];
+    for (const href of [CONTACT, GITHUB, LINKEDIN, RESUME, '/privacy/']) assert.ok(foot.includes(`href="${href}"`), `${file}: footer links ${href}`);
+    assert.equal([...foot.matchAll(/<a /g)].length, footerLinks.length + 2, `${file}: footer is the orb, the mark and footerLinks, no site map`);
   }
 });
