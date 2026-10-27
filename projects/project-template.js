@@ -4,7 +4,7 @@
 // and footer into the static pages.
 // Each project carries its sigil (a de Jong attractor seeded by its slug) large in a plate frame, drawn flat
 // by kit/v2/syber-sigil.js and, when WebGL is fast, spun in 3D over it by src/site/field.js.
-import { projects, nav, footerLinks, siteMap, EMAIL, RISE_PLUS } from './site-data.js';
+import { projects, nav, footerLinks, siteMap, EMAIL } from './site-data.js';
 import { params as sigilParams } from '../kit/v2/syber-sigil.js';
 export { projects };
 
@@ -35,16 +35,14 @@ const PLATES = ['II', 'III', 'IV', 'V', 'VI', 'VII'];
 const atlas = (here = '') => `<div class="sy-atlas" id="sy-atlas" role="dialog" aria-label="Site map">
   <span class="sy-atlas__backdrop" aria-hidden="true"></span>
   <div class="sy-atlas__panel">
-    <div class="sy-atlas__head"><p class="sy-eyebrow">Atlas / every page on syberlabs.io</p><button class="sy-atlas__close" type="button" aria-label="Close menu">${icon('close', 20)}</button></div>
-    <nav class="sy-atlas__primary" aria-label="Main sections"><ul>${navLinks('', here)}</ul></nav>
-    <nav class="sy-atlas__groups" aria-label="All pages">${siteMap.map(group => `<section class="sy-atlas__group" aria-labelledby="atlas-${group.title.toLowerCase()}"><h2 id="atlas-${group.title.toLowerCase()}" class="sy-atlas__title">${esc(group.title)}</h2><ul>${group.items.map(item => `<li><a href="${item.href}"${item.href === here ? ' aria-current="page"' : ''}${item.external ? ' rel="noopener"' : ''}${item.accent ? ` style="--sy-accent:${item.accent}"` : ''}>${item.sigil ? `<canvas class="sy-atlas__sigil" data-sigil="${item.sigil}" data-color="${item.accent}" aria-hidden="true"></canvas>` : '<span class="sy-atlas__dot" aria-hidden="true"></span>'}<span class="sy-atlas__label">${esc(item.label)}${item.external ? ' ' + icon('external', 14) : ''}</span><span class="sy-atlas__note">${esc(item.note)}</span></a></li>`).join('')}</ul></section>`).join('')}</nav>
+    <div class="sy-atlas__head"><p class="sy-eyebrow">SyberLabs / Explore the work</p><button class="sy-atlas__close" type="button" aria-label="Close menu">${icon('close', 20)}</button></div>
+    <nav class="sy-atlas__groups" aria-label="Explore">${siteMap.map(group => `<section class="sy-atlas__group" aria-labelledby="atlas-${group.title.toLowerCase()}"><h2 id="atlas-${group.title.toLowerCase()}" class="sy-atlas__title">${esc(group.title)}</h2><ul>${group.items.map(item => `<li><a href="${item.href}"${item.href === here ? ' aria-current="page"' : ''}${item.external ? ' rel="noopener"' : ''}${item.accent ? ` style="--sy-accent:${item.accent}"` : ''}>${item.sigil ? `<canvas class="sy-atlas__sigil" data-sigil="${item.sigil}" data-color="${item.accent}" aria-hidden="true"></canvas>` : '<span class="sy-atlas__dot" aria-hidden="true"></span>'}<span class="sy-atlas__label">${esc(item.label)}${item.external ? ' ' + icon('external', 14) : ''}</span><span class="sy-atlas__note">${esc(item.note)}</span></a></li>`).join('')}</ul></section>`).join('')}</nav>
     <p class="sy-atlas__foot"><span>Press <kbd>/</kbd> anywhere to open this map · <kbd>Esc</kbd> closes</span><a href="mailto:${EMAIL}">${EMAIL}</a></p>
   </div>
 </div>`;
 
-// The five primary links (projects/site-data.js `nav`): the header row on wide screens, the top of the Atlas on every
-// screen, so a phone reaches them from Menu in one tap. The header row marks the page's section (`current`, a nav id);
-// the Atlas marks the link to the page itself (`here`, a path).
+// The three primary links use the header row on wide screens; selected work and contact destinations also live in Menu.
+// The header row marks its section; Menu marks exact destinations.
 const navLinks = (current = '', here = '') => nav.map(item => `<li><a href="${item.href}"${item.id === current || item.href === here ? ' aria-current="page"' : ''}${item.external ? ' rel="noopener"' : ''}>${item.label}${item.external ? ' ' + icon('external', 14) : ''}</a></li>`).join('');
 
 // Site chrome: identical markup on every static page (see scripts/site-chrome.mjs) and the project pages.
@@ -60,7 +58,6 @@ export const header = (current = '', { sticky = true, script = true, here = '' }
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
   <nav class="sy-nav" aria-label="Primary"><ul>${navLinks(current)}</ul></nav>
   <details class="sy-menu"><summary aria-label="Menu" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas(here)}</details>
-  <a class="sy-customer-account" href="${RISE_PLUS.href}">My RISE Plus</a>
 </div></header>${script ? '\n<script type="module" src="/syberlabs.js"></script>' : ''}`;
 };
 

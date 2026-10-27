@@ -119,7 +119,7 @@ test('transient server failures, malformed replies and timeout preserve validate
 test('public navigation routes subscribers to RISE and labels staff access separately', async () => {
   const { header, footer } = await import('../projects/project-template.js');
   const publicHeader = header();
-  assert.match(publicHeader, /href="https:\/\/rise\.syberlabs\.io\/plus\/">My RISE Plus<\/a>/);
+  assert.match(footer(), /href="https:\/\/rise\.syberlabs\.io\/plus\/">Subscriber account[\s\S]*?<\/a>/);
   assert.doesNotMatch(publicHeader, /href="\/admin(?:\/|"|\?)/);
   assert.match(footer(), /href="\/admin\/">Staff sign in<\/a>/);
 });
@@ -129,8 +129,8 @@ test('static chrome derives current navigation from routes, repairing missing an
   const { applyChrome } = await import('./site-chrome.mjs');
   const { header, footer } = await import('../projects/project-template.js');
   for (const [file, expected] of [
-    ['mateo/index.html', '/mateo/'], ['plus/index.html', '/plus/'],
-    ['services/index.html', '/services/'], ['projects/rise/index.html', '/#work'],
+    ['mateo/index.html', '/mateo/'], ['plus/index.html', null],
+    ['services/index.html', null], ['projects/rise/index.html', '/#work'],
     ['research/index.html', null], ['404.html', null],
   ]) {
     for (const prior of ['', 'services', 'mateo', 'plus', 'projects']) {
@@ -149,13 +149,13 @@ test('static chrome derives current navigation from routes, repairing missing an
 // The Menu (the Atlas) is the one site directory: every page of the site map, the current page marked in the markup so
 // it holds without JS, and no stale aria-expanded on the <details> summary. The footer keeps contact and legal links
 // in view and does not repeat the map.
-test('the Menu is the one site directory; the footer keeps contact and legal links', async () => {
+test('the selected Menu and footer preserve contact, subscriber and legal links', async () => {
   const { applyChrome } = await import('./site-chrome.mjs');
   const { header, footer } = await import('../projects/project-template.js');
   const { siteMap, footerLinks, CONTACT, GITHUB, LINKEDIN, RESUME } = await import('../projects/site-data.js');
   for (const [file, marked] of [
-    ['research/sybershoke/index.html', ['/research/sybershoke/']],
-    ['mateo/index.html', ['/mateo/', '/mateo/']], // the Menu's primary row and its Lab group both link the page
+    ['research/sybershoke/index.html', []],
+    ['mateo/index.html', ['/mateo/']], // one selected contact destination
     ['privacy/index.html', ['/privacy/']],
     ['404.html', []],
   ]) {

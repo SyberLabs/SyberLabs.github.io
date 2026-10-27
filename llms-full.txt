@@ -1,6 +1,6 @@
 # SyberLabs
 
-> RISE turns text into a reading experience with pacing, visuals and sound. Free in your browser, from SyberLabs, an independent AI lab.
+> Explore Mateo Robles’s mathematical engines, GitHits API and Claude Code integration, and RISE Composer contribution. Run a live demo and inspect the source.
 
 > **RISE and AI models:** since RISE #294 the RISE server calls no model. An AI reading request runs on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s machine (`/kev/` on the site). local Kev did not meet RISE’s bar in internal checks on RISE’s evaluations (RISE `docs/product/tasks/SCR-004.json`), and there is no production Kev deployment, by design. Once the reader connects, RISE’s visual direction sends sections of the reading text to that connection.
 
@@ -426,15 +426,24 @@ Complete output, unedited. From seed 20260729 the kernel committed 25 events in 
 - License: Apache 2.0 in the LICENSE file; pyproject.toml’s metadata still says MIT
 - Source: [github.com/SyberLabs/OSAHR_Cell](https://github.com/SyberLabs/OSAHR_Cell)
 
-## Research
+## Work
 
-- [Research index](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: the technical reports and notes on this site, the RISE reader-owned AI status pages, the five working papers in SyberLabs/papers, the Instrument Panel and the OSAHR decision workbench. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
-- [Reliable execution for AI agents](https://syberlabs.io/research/jev-execution/): Technical report on GrokCell Execution, a Python and SQLite execution layer for AI agents: bounded operations, durable evidence, atomic acceptance, and crash-recovery tests.
-- [Sybershoke](https://syberlabs.io/research/sybershoke/): Research note on Sybershoke, a deterministic fault-injection harness: seeded faults, invariants checked from a plain-text history, and shrinking to a small failing plan. Revision 2 adds a model of the Jev/Kev decision path, a red-team review of its own claims, and a first real system: the RISE Worker source, run against recorded production answers.
-- [Decision Arena](https://syberlabs.io/research/decision-arena/): The same RISE reading requests given to every decider: what each chose and how often it agreed with author-written expectations. The first run covers only the two no-model baselines; OpenAI, Jev and Kev are pending. Every score carries its interval; nothing is ranked.
-- [Papers](https://github.com/SyberLabs/papers): Working papers and studies on GitHub
-- [RISE, Jev and Kev](https://syberlabs.io/kev/): RISE runs its AI reading decisions on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s own machine. The RISE server calls no model, and there is no production Kev deployment, by design. Status and evidence limits.
-- [Jev in RISE](https://syberlabs.io/jev/): Historical case study of RISE’s integration of TypeSafe AI’s Jev. Jev is still available in RISE through the reader’s own OpenRouter account; the hosted path this page records was retired in September 2026.
+- [Engines](https://sykosyber.github.io/engines/works/gyre.html): Mathematical worlds · run Gyre
+- [GitHits integration](https://syberlabs.io/mateo/#githits): Python client + Claude Code
+- [RISE Composer](https://syberlabs.io/mateo/#rise): Admission before playback
+- [Sketch](https://sketch.syberlabs.io/): Draw with living procedural ink
+
+## Connect
+
+- [Meet Mateo](https://syberlabs.io/mateo/): Mateo Robles: software engineer building mathematical visual engines and AI tool integrations. Inspect his GitHits client, RISE Composer contribution and Engines.
+- [Mateo on GitHub](https://github.com/sykosyber): github.com/sykosyber
+
+## More
+
+- [Work with us](https://syberlabs.io/services/): Work with Mateo Robles on software engineering. Inspect his AI tool integrations, interactive mathematical engines and RISE Composer contribution, then discuss a role or focused project.
+- [Research archive](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: the technical reports and notes on this site, the RISE reader-owned AI status pages, the five working papers in SyberLabs/papers, the Instrument Panel and the OSAHR decision workbench. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
+- [Subscriber account](https://rise.syberlabs.io/plus/): Existing RISE subscribers
+- [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.
 
 ## Design system
 
@@ -443,28 +452,9 @@ Complete output, unedited. From seed 20260729 the kernel committed 25 events in 
 
 ## How we build
 
-- [Approach](https://syberlabs.io/approach/): How SyberLabs builds AI software: establish what a system knows, design what a person can do with it, and verify that they can review and change the result.
-- [How we build](https://syberlabs.io/stack/): How SyberLabs’ coding agents read open-source dependencies at the exact version a project uses, through GitHits, and what that sends off our machines.
+- [/approach/](https://syberlabs.io/approach/): How SyberLabs builds AI software: establish what a system knows, design what a person can do with it, and verify that they can review and change the result.
+- [/stack/](https://syberlabs.io/stack/): How SyberLabs’ coding agents read open-source dependencies at the exact version a project uses, through GitHits, and what that sends off our machines.
 
-## Use now
+## Full text
 
-- [Try RISE](https://rise.syberlabs.io/try/): A one-minute sample · no account, no install
-- [RISE app](https://rise.syberlabs.io/): rise.syberlabs.io · open beta
-- [FLYSPACE preview](https://omni.syberlabs.io/): omni.syberlabs.io · live preview
-- [RISE Sketch](https://sketch.syberlabs.io/): sketch.syberlabs.io · living ink
-- [RISE interactive sample](https://rise.syberlabs.io/jev-scene-demo): Change the scene while you read
-- [RISE demo](https://syberlabs.io/rise-demo/): Make reading an experience. See how RISE turns a book and a mood into text, motion, and sound, then try it yourself.
-
-## Contact
-
-- [Email](mailto:syberlabs.software@gmail.com): syberlabs.software@gmail.com
-- [GitHub](https://github.com/SyberLabs): github.com/SyberLabs
-- [LinkedIn](https://www.linkedin.com/in/automateon/): Mateo Robles
-- [Résumé](https://syberlabs.io/mateo_robles_resume.pdf): PDF
-
-## Optional
-
-- [Work with us](https://syberlabs.io/services/): Work with SyberLabs: a scoped, paid pilot that turns one excerpt you have the rights to into a RISE reading, delivered as a shareable browser link that needs no account or install, with a short note after launch.
-- [Meet Mateo](https://syberlabs.io/mateo/): Software engineer for AI apps and agent tooling. Mateo Robles shipped RISE Composer, an MCP server for Claude. Santa Clara ’26, Bay Area, available now.
-- [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.
 - [Full text for agents](https://syberlabs.io/llms-full.txt): Every project field in one file.

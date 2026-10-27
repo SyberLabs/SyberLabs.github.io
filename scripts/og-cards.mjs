@@ -37,8 +37,8 @@ const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 // One entry per page. `seed` names the sigil (projects use their slug, so the card carries the same
 // mark as the page); `line` is the single sentence under the headline.
 const pages = [
-  { slug: 'home', path: '/', eyebrow: 'Independent AI software lab', headline: 'Read. Think. Build.',
-    line: 'Creative humans, reliable agents: the RISE creative suite, FLYSPACE for thinking with AI over live data, and SyberWork for governed agent work.', seed: 'syberlabs', accent: ICE },
+  { slug: 'home', path: '/', eyebrow: 'Mateo Robles · Software engineer', headline: 'Mathematical worlds. AI integrations.',
+    line: 'Run Engines. Inspect the GitHits integration and RISE Composer contribution. Meet the engineer through the work.', seed: 'syberlabs', accent: ICE },
   ...projects.map(p => ({
     slug: p.slug, path: `/projects/${p.slug}/`, eyebrow: `Project ${p.number} · ${p.category}`, headline: p.headline,
     // the whole intro when it fits four lines, otherwise its first sentence
@@ -56,14 +56,14 @@ const pages = [
     line: 'Establish what a system knows, design what a person can do with it, and verify that they can review and change the result.', seed: 'approach', accent: ICE },
   { slug: 'stack', path: '/stack/', eyebrow: 'SyberLabs · How we build', headline: 'Read the source, not the memory.',
     line: 'Our coding agents read open-source dependencies at the exact version a project uses, through GitHits.', seed: 'stack', accent: ICE },
-  { slug: 'services', path: '/services/', eyebrow: 'SyberLabs · Services', headline: 'An interactive way to read your text.',
-    line: 'Scoped, paid interactive reading pilots for publishers and authors, built on RISE.', seed: 'services', accent: ICE },
+  { slug: 'services', path: '/services/', eyebrow: 'Work with SyberLabs · Mateo Robles', headline: 'Software engineering. Start with the work.',
+    line: 'AI tool integrations, interactive mathematical engines and product reliability. Discuss a role or a focused project.', seed: 'services', accent: ICE },
   { slug: 'rise-demo', path: '/rise-demo/', eyebrow: 'Product demo · Audiovisual reader', headline: 'See RISE in motion.',
     line: 'A film edited from real RISE screen recordings, then the interactive sample to try yourself.', seed: 'rise', accent: RISE },
   { slug: 'plus', path: '/plus/', eyebrow: 'RISE Plus · Coming soon', headline: 'Your own reading, read aloud.',
     line: 'Give your short writing a voice. Planned: $8.99 a month for 60,000 characters of ElevenLabs narration. Free reading stays free.', seed: 'plus', accent: RISE },
-  { slug: 'mateo', path: '/mateo/', eyebrow: 'Mateo Robles · Software engineer · Available now', headline: 'AI apps and agent tooling. Inspect the engineering.',
-    line: 'Shipped RISE Composer, an MCP server for Claude. Santa Clara ’26, Bay Area.', seed: 'mateo', accent: ICE },
+  { slug: 'mateo', path: '/mateo/', eyebrow: 'Mateo Robles · Software engineer · Available now', headline: 'Mateo Robles. Visual systems. AI tooling.',
+    line: 'GitHits client and Claude Code integration. RISE Composer contribution. Seven interactive Engines. Santa Clara ’26.', seed: 'mateo', accent: ICE },
   { slug: 'privacy', path: '/privacy/', eyebrow: 'SyberLabs · Privacy', headline: 'What this site does with your data.',
     line: 'A static site with no accounts, forms, cookies or analytics.', seed: 'privacy', accent: ICE },
 ];
