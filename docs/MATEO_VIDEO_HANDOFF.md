@@ -23,8 +23,8 @@ Activation object:
 
 ```js
 export const MATEO_VIDEO = {
-  src: '/mateo/media/mateo-intro-v7.mp4',
-  poster: '/mateo/media/mateo-intro-v7-poster.png',
+  src: '/mateo/media/mateo-intro-v8.mp4',
+  poster: '/mateo/media/mateo-intro-v8-poster.png',
   captions: '/mateo/media/mateo-intro-v7.en.vtt',
   transcriptFile: '/mateo/media/mateo-intro-v7-transcript.txt',
   durationSeconds: 120.6, // actual probed duration, not an estimate
@@ -42,3 +42,5 @@ Verified V7 delivery: 120.600 seconds, 1280×720 at 30 fps, H.264 High/yuv420p w
 - Check desktop and phone: explicit play/audio start, pause/resume, keyboard controls, seek, captions, transcript, skip/pause and error fallback. No overflow or blocked hiring path.
 - Check script-free native controls/transcript and reduced-motion behavior; the video does not start itself.
 - Run existing build/tests/QA and exact-head CI/review. Verify production MP4/poster/VTT/transcript and range/seek behavior after normal protected deployment.
+
+V8 changes visuals only. The approved V7 audio, captions and transcript are unchanged. The V7 media URLs remain available for rollback.
