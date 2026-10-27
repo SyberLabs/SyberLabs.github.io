@@ -3,7 +3,7 @@
 // then draws the project sigils (kit/v2/syber-sigil.js) as they scroll into view, and fills
 // the dependency evidence panel. The hand-authored RISE page has no #app; it loads this module
 // only for that panel (see renderSections in project-template.js).
-import { projects, renderProject } from './project-template.js';
+import { projects, renderProject } from './project-template.js?v=20261027b';
 import { drawAll } from '../kit/v2/syber-sigil.js';
 
 const slug = location.pathname.split('/').filter(Boolean).at(-1);
