@@ -19,7 +19,9 @@ if (video) {
   const delivered = (await readFile(resolve(video.transcriptFile.slice(1)), 'utf8')).replace(/\s+/g, ' ').trim();
   assert.equal(spoken, delivered, 'Static and downloadable transcript must match');
   assert.ok(spoken.startsWith('Hi, my name is Mateo Robles'), 'Keep the exact opening');
-  assert.ok(spoken.includes('Everybody deserves a chance'), 'Keep the exact motto');
+  assert.ok(spoken.endsWith("Let's build something useful together."), 'Keep the approved closing line');
+  assert.equal(spoken.split("Let's build something useful together.").length - 1, 1, 'Use the closing line once');
+  assert.doesNotMatch(spoken, /\bQA\b|quality assurance|Everybody deserves a chance/i, 'Use the current approved role and closing copy');
   console.log('mateo-video: complete local delivery present; media/player acceptance still required');
 } else {
   console.log('mateo-video: inactive; no unfinished film presented as live');

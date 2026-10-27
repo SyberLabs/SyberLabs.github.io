@@ -17,9 +17,9 @@ const work = [
     source: 'https://github.com/SyberLabs/RISE/pull/371', sourceLabel: 'Merged contribution', detail: '/mateo/#rise' },
 ];
 const beats = [
-  { title: 'Everybody deserves a chance', text: 'I’m Mateo, a junior software engineer. I build interactive mathematical systems and Python integrations for AI tools.' },
+  { title: 'Hi, I’m Mateo.', text: 'I’m a junior software engineer. I build interactive mathematical systems and Python integrations for AI tools.' },
   { title: 'Play with it. Inspect the code.', text: 'Gyre turns a mathematical rule into a live orbit. My GitHits integration filters source retrieval and records lookup evidence on the host.' },
-  { title: 'Let’s talk through the work.', text: 'Looking for a junior engineer? I’d like to hear what your team is building and walk you through my part in these projects.' },
+  { title: "Let's build something useful together.", text: 'Looking for a junior engineer? I’d like to hear what your team is building and walk you through my part in these projects.' },
 ];
 
 export default function App() {
@@ -40,11 +40,10 @@ export default function App() {
           <h1 id="hero-title">Mateo{MATEO_VIDEO ? ' ' : <br />}<em>Robles.</em></h1>
           {step === null ? <>
             <p className="home-hero__intro">I build playful mathematical systems and tools for AI developers.</p>
-            <p className="home-hero__meta">Computer Science · Santa Clara ’26<br />Open to software engineering, QA, technical support and product roles.</p>
-            <p className="home-nojs-only home-static-motto">Everybody deserves a chance <span aria-hidden="true">✦</span></p>
+            <p className="home-hero__meta">Computer Science · Santa Clara ’26<br />Open to software engineering, technical support and product roles.</p>
           </> : <div className="home-beat" id="pitch">
             <span className="home-beat__count" role="status">Part {step + 1} of 3</span>
-            <h2 ref={title} tabIndex={-1}>{beats[step].title}{step === 0 && <span className="home-pitch-star" aria-hidden="true">✦</span>}</h2>
+            <h2 ref={title} tabIndex={-1}>{beats[step].title}{step === 2 && <span className="home-pitch-star" aria-hidden="true">✦</span>}</h2>
             <p>{beats[step].text}</p>
             {step === 1 && <div className="home-beat__links"><a href={GYRE_APP}>Explore Gyre ↗</a><a href="/mateo/#githits">Inspect GitHits →</a></div>}
             {step === 2 && <a className="home-hire" href={CONTACT + '?subject=Engineering%20opportunity%20for%20Mateo'}>Invite Mateo to interview ↗</a>}
@@ -84,6 +83,7 @@ export default function App() {
         </article>)}
       </section>
       <p className="home-notes" id="about"><a href="/mateo/">More about Mateo →</a><a id="publishers" href="/services/">Work with Mateo →</a><a id="research" href="/research/">Research archive →</a></p>
+      {!MATEO_VIDEO && <p className="home-nojs-only home-static-motto">Let's build something useful together. <span aria-hidden="true">✦</span></p>}
     </main>
     <div className="home-chrome" dangerouslySetInnerHTML={{ __html: footer('/') }} />
   </>;
