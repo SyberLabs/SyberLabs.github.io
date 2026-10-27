@@ -138,6 +138,7 @@ export default function App() {
       </section>
       <div className="film-notes sy-wrap">
         <span>{MATEO_VIDEO.credit}</span>
+        <span className="hero-credit">Gyre to RISE Sophia. Imagery: <a href="https://images.nasa.gov/details/GSFC_20171208_Archive_e002131">NASA/GSFC</a> (Earth).</span>
         <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((p, i) => <p key={i}>{p}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>
         {videoError && <p role="status">Video unavailable. Read the transcript or explore the work below.</p>}
       </div>

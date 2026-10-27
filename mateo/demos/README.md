@@ -5,3 +5,11 @@
 - `rise-playback.mp4` records the RISE reading product from the 2026-10-05 build at `SyberLabs/RISE@998d725`. It demonstrates the product, rather than proving a particular later change.
 
 The GitHits evidence in `../proof/` uses controlled test data. It does not establish customer acceptance, adoption or savings.
+
+## Gyre to RISE Sophia
+
+`gyre-sophia-*.mp4` uses full-canvas Gyre motion and the actual RISE Sophia shell geometry. The rendering keeps the room ground transparent so Gyre remains visible behind the shell. These are cinematic adaptations of the public visual code, not a live application or model request.
+
+Earth imagery: NASA/GSFC, [NASA catalog source](https://images.nasa.gov/details/GSFC_20171208_Archive_e002131). The visible website credit links to the same source. This is factual imagery attribution, not a NASA endorsement.
+
+RISE source license and notices are preserved in `RISE-LICENSE.txt` and `RISE-NOTICE.txt`. The background files contain no audio; the approved narrated pitch is separate.
