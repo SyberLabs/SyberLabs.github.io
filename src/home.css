@@ -139,3 +139,7 @@
 .home-transcript summary:focus-visible, .home-video video:focus-visible { outline:2px solid var(--sy-ice); outline-offset:5px; }
 @media(max-width:800px) { .home-me--video { grid-template-columns:1fr; } }
 @media(max-width:640px) { .home-me--video { gap:20px; } .home-me--video .home-me__name { font-size:clamp(48px,14vw,62px); } .home-me--video .home-me__meta { margin-block:14px; } }
+
+/* The hiring introduction precedes the preserved studio experiments. */
+.home-me { margin-top: 0; border-top: 0; }
+.home-me .home-me__name { font-family: var(--sy-sans); }
