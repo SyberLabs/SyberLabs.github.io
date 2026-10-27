@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CONTACT, RESUME, GYRE_APP } from '../projects/site-data.js';
+import { CONTACT, EMAIL, RESUME, GYRE_APP } from '../projects/site-data.js';
 import { header, footer } from '../projects/project-template.js';
 import { drawAll } from '../kit/v2/syber-sigil.js';
 import { boot } from './site/site.js';
@@ -103,7 +103,23 @@ function Forms() {
   </section>;
 }
 
+// The Orb builds its WebGL2 scene only when its drawer is opened, so the closed drawer costs the page nothing.
+function OrbExperiment() {
+  const [open, setOpen] = useState(false);
+  return <details className="orb-experiment sy-wrap" onToggle={e => setOpen(e.currentTarget.open)}><summary>Explore the Orb</summary>{open && <Hero />}</details>;
+}
+
 const pauseOtherVideos = event => { for (const video of document.querySelectorAll('video')) if (video !== event.currentTarget) video.pause(); };
+
+// What a recruiter checks first, in the order they check it, shown in the hero from the first frame. Every line is
+// third-party proof that can be verified from its link; nothing here is a self-description.
+// Third place confirmed by Seth Carlson (Oct 27); event and project tied together by PorchLight's README.
+const HACKATHON = { result: 'Third place', event: 'Cline, Parallel & Composio Hackathon', date: 'October 2026', href: '#porchlight' };
+const PROOF = [
+  { label: 'Degree', text: 'B.S. Computer Science, Santa Clara University, 2026', href: RESUME },
+  HACKATHON && { label: 'Hackathon', text: `${HACKATHON.result}, ${HACKATHON.event}, ${HACKATHON.date}`, href: HACKATHON.href },
+  { label: 'GitHits', text: 'Design partnership: leading the A/B pilot and its Claude Code integration', href: '#work' },
+].filter(Boolean);
 
 export default function App() {
   const movieSeconds = Math.round(MATEO_VIDEO.durationSeconds);
@@ -122,7 +138,7 @@ export default function App() {
   const [lastFramed, setLastFramed] = useState(null);
   useEffect(() => { if (framed) setLastFramed(framed); }, [framed]);
   const art = FRAME_ART.find(a => a.id === lastFramed);
-  const [revealing, setRevealing] = useState(false); // false in the served HTML, so the panel is never inert without JS
+  // The name, role, proof and both actions are on screen from the first frame; only the background media is paced.
   const settle = useRef(() => {});
   useEffect(() => {
     const root = document.documentElement;
@@ -134,7 +150,6 @@ export default function App() {
     };
     settle.current = finish;
     if (!root.classList.contains('sy-reveal') || scrollY > 8) { finish(); return; }
-    setRevealing(true);
     const late = setTimeout(finish, REVEAL.fallback * 1000); // a slow or blocked clip never holds the panel back
     const scroll = () => { if (scrollY > 8) finish(); };
     addEventListener('scroll', scroll, { passive: true });
@@ -156,17 +171,19 @@ export default function App() {
         <BackgroundVideo pitchPlaying={started} onTime={onClipTime} onUnavailable={() => settle.current()} onArt={setFramed} />
         <div className="pitch-hero__copy sy-wrap">
           <h1 id="hero-title" tabIndex={-1}>
-            <span className="pitch-hero__brand" data-text="SyberLabs">SyberLabs</span>{' '}
-            <span className="pitch-hero__by">by <img className="pitch-hero__signature" src="/mateo/brand/mateo-robles-signature.webp" width="1200" height="511" alt="Mateo Robles" /></span>
+            <span className="pitch-hero__brand pitch-hero__name" data-text="Mateo Robles">Mateo Robles</span>
           </h1>
-          <p className="pitch-hero__role">Software &amp; Product Engineer</p>
-          <div className="pitch-hero__panel" inert={revealing && phase !== 'done' ? true : undefined}>
-            <p className="pitch-hero__line">Python integrations and interactive JavaScript products.</p>
+          <p className="pitch-hero__role">Software &amp; Product Engineer · Bay Area</p>
+          <div className="pitch-hero__panel">
+            <p className="pitch-hero__line">I build AI developer tools and interactive web products in Python and JavaScript.</p>
+            <ul className="pitch-hero__proof" aria-label="Credentials">
+              {PROOF.map(p => <li key={p.label}><span className="pitch-hero__proof-label">{p.label}</span><a href={p.href}>{p.text}</a></li>)}
+            </ul>
             <div className="pitch-hero__actions">
               <a className="sy-btn sy-btn--solid" href={CONTACT + '?subject=Interview%20with%20Mateo%20Robles'}>Interview Mateo</a>
               <a className="sy-btn sy-btn--line" href={RESUME}>View résumé</a>
             </div>
-            <p className="pitch-hero__availability">Available to start immediately</p>
+            <p className="pitch-hero__availability"><span>Available to start immediately</span><a href={CONTACT}>{EMAIL}</a></p>
           </div>
         </div>
         <video ref={movie} className="pitch-hero__film" id="mateo-intro-video" controls playsInline preload="none" tabIndex={enhanced && !started ? -1 : 0} aria-hidden={enhanced && !started ? true : undefined} poster={MATEO_VIDEO.poster} width="1280" height="720" aria-label="Meet Mateo: introduction" onPlay={e => { setStarted(true); pauseOtherVideos(e); }} onError={() => setVideoError(true)} onPlaying={() => setVideoError(false)}>
@@ -187,7 +204,7 @@ export default function App() {
         <div className="selected-work__intro">
           <p className="sy-eyebrow">Selected work / AI developer tools</p>
           <h2 id="work-title">GitHits design partnership</h2>
-          <p>GitHits searches open-source code so AI coding assistants can learn from real examples. For a design-partner pilot, I built the path between Claude Code and the GitHits API: a standard-library Python client, and the wiring that lets an agent use it under the host’s rules.</p>
+          <p>GitHits searches open-source code so AI coding assistants can learn from real examples, and offered SyberLabs a design partnership to measure what that is worth to a coding-agent factory. I designed the pilot and its integration: a standard-library Python client, and the wiring that lets Claude Code use it under the host’s rules. Our agent factory implemented both to that design.</p>
           <ol className="gh-flow" aria-label="How a lookup travels">
             <li><b>Agent</b><span>Claude Code</span></li>
             <li><b>Launcher</b><span>its only allowed command, behind a query guard</span></li>
@@ -204,26 +221,42 @@ export default function App() {
           <div><dt>Pinned to the API contract</dt><dd>Tests pin the exact part of GitHits’ OpenAPI document the client uses. The token goes only into the Authorization header and is scrubbed from errors; redirects and oversized responses are refused; lean defaults keep results small for an agent’s context window.</dd></div>
         </dl>
       </section>
-      <section className="demo-work sy-wrap" aria-label="Product demonstrations">
-        <article><div><p className="sy-eyebrow">Engines / Mateo’s browser art</p><h2>Mathematics you can play.</h2><p>Gyre turns mathematical rules into moving trails of light.</p><a href={GYRE_APP}>Explore Gyre <span aria-hidden="true">↗</span></a></div><video controls playsInline preload="none" poster="/mateo/demos/gyre-orbit.jpg" width="960" height="540" aria-label="Recorded Gyre interaction" onPlay={pauseOtherVideos}><source src="/mateo/demos/gyre-orbit.mp4" type="video/mp4" /></video></article>
-        <article><div><p className="sy-eyebrow">RISE / Lead developer</p><h2>A different way to read.</h2><p>An interactive reading app. I led core development of timed text, moving graphics, sound and video export.</p><a href="https://github.com/SyberLabs/RISE/pull/371">Selected changes and tests <span aria-hidden="true">↗</span></a></div><figure><video controls playsInline preload="none" poster="/mateo/demos/rise-playback.jpg" width="960" height="540" aria-label="Recorded RISE reading" onPlay={pauseOtherVideos}><source src="/mateo/demos/rise-playback.mp4" type="video/mp4" /></video><figcaption>Recorded product demonstration. RISE is a team project.</figcaption></figure></article>
-      </section>
-      <section id="lab" className="lab-identity sy-wrap" aria-labelledby="lab-identity-title">
-        <div className="lab-identity__copy">
-          <img className="lab-identity__emblem" src="/mateo/lab/emblem-mateo-robles.webp" width="900" height="675" alt="" loading="lazy" decoding="async" />
-          <p className="sy-eyebrow">The lab</p>
-          <h2 id="lab-identity-title">Infrastructure for AI agents.</h2>
-          <p>When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules the system controls, and records the reason when it refuses one.</p>
-          <a href="/projects/syberwork/">How SyberWork works <span aria-hidden="true">→</span></a>
+      <section id="porchlight" className="selected-work porchlight-work sy-wrap" aria-labelledby="porchlight-title">
+        <div className="selected-work__intro">
+          <p className="sy-eyebrow">Hackathon / Third place</p>
+          <h2 id="porchlight-title"><img className="porchlight-mark" src="/mateo/porchlight/porchlight-mark.webp" width="160" height="201" alt="" loading="lazy" decoding="async" />PorchLight</h2>
+          <p>Drop a pin on a neighborhood problem and an agent finds who fixes it. I built it in one afternoon at the Cline, Parallel &amp; Composio Hackathon in San Francisco, where it placed third.</p>
+          <p className="gh-note">Python and a Leaflet map, built with the Cline coding agent. Parallel search finds the responsible city agency with citations, an open-weight model writes the routing card, and Composio drafts the report and posts the pin to a shared Sheet and Slack.</p>
+          <p className="gh-links"><a href="https://github.com/sykosyber/porchlight">Source and README <span aria-hidden="true">↗</span></a><a href="https://luma.com/m8euvq9n">The hackathon <span aria-hidden="true">↗</span></a></p>
         </div>
-        <figure className="lab-identity__art">
-          <img src="/mateo/lab/agent-network-mateo-robles.webp" width="1100" height="921" alt="Glowing blue nodes joined by arcing links, like a network of agents." loading="lazy" decoding="async" />
-          <figcaption>Network and emblem: Mateo Robles, made with Midjourney.</figcaption>
-        </figure>
+        <dl className="gh-decisions">
+          <div><dt>No source, no claim</dt><dd>The agent names an agency only when a search result it actually received supports it. Citations the model invents are dropped, and an unsupported pin goes to a person with “Couldn’t verify the right agency.”</dd></div>
+          <div><dt>A pipeline, not a free-roaming agent</dt><dd>The same steps in the same order every run, from triage and cited research to deduplication and routing. Every external call has a timeout and a fallback, and each step shows in an agent trace with its timing.</dd></div>
+          <div><dt>Safe by construction</dt><dd>Reports are drafted, never sent: a person clicks send. Emergencies skip the pipeline and say to call 911. Contact details are stripped from a note before anything is stored or shared.</dd></div>
+        </dl>
       </section>
-      <Forms />
-      <details className="orb-experiment sy-wrap"><summary>Explore the Orb</summary><Hero /></details>
-      <section className="home-contact sy-wrap" aria-labelledby="contact-title"><div><p className="sy-eyebrow">Available to start immediately</p><h2 id="contact-title">Let’s build something useful together.</h2><p className="sy-small">Open to software engineering and product management roles.</p></div><div><a href="tel:+19259493105">925-949-3105</a><a href={CONTACT}>syberlabs.software@gmail.com</a><a href="https://www.linkedin.com/in/automateon/">linkedin.com/in/automateon</a><a href="https://github.com/sykosyber">github.com/sykosyber</a><a href="https://syberlabs.io/">syberlabs.io</a><a href={RESUME}>View résumé</a></div></section>
+      <section className="demo-work sy-wrap" aria-label="Product demonstrations">
+        <article><div><p className="sy-eyebrow">RISE / Lead developer</p><h2>A different way to read.</h2><p>An interactive reading app where text, sound and moving graphics play in time. I led core development of timed text, moving graphics, browser audio and video export.</p><a href="https://github.com/SyberLabs/RISE/pull/371">Selected changes and tests <span aria-hidden="true">↗</span></a></div><figure><video controls playsInline preload="none" poster="/mateo/demos/rise-playback.jpg" width="960" height="540" aria-label="Recorded RISE reading" onPlay={pauseOtherVideos}><source src="/mateo/demos/rise-playback.mp4" type="video/mp4" /></video><figcaption>Recorded product demonstration. RISE is a team project.</figcaption></figure></article>
+        <article><div><p className="sy-eyebrow">Engines / Creative computation</p><h2>Mathematics you can play.</h2><p>Gyre turns mathematical rules into moving trails of light.</p><a href={GYRE_APP}>Explore Gyre <span aria-hidden="true">↗</span></a></div><video controls playsInline preload="none" poster="/mateo/demos/gyre-orbit.jpg" width="960" height="540" aria-label="Recorded Gyre interaction" onPlay={pauseOtherVideos}><source src="/mateo/demos/gyre-orbit.mp4" type="video/mp4" /></video></article>
+      </section>
+      <section className="home-contact sy-wrap" aria-labelledby="contact-title"><div><p className="sy-eyebrow">Available to start immediately</p><h2 id="contact-title">Let’s build something useful together.</h2><img className="home-contact__signature" src="/mateo/brand/mateo-robles-signature.webp" width="1200" height="511" alt="" loading="lazy" decoding="async" /><p className="sy-small">Open to software engineering and product management roles.</p></div><div><a href="tel:+19259493105">925-949-3105</a><a href={CONTACT}>syberlabs.software@gmail.com</a><a href="https://www.linkedin.com/in/automateon/">linkedin.com/in/automateon</a><a href="https://github.com/sykosyber">github.com/sykosyber</a><a href={RESUME}>View résumé</a></div></section>
+      <div className="lab-appendix">
+        <section id="lab" className="lab-identity sy-wrap" aria-labelledby="lab-identity-title">
+          <div className="lab-identity__copy">
+            <img className="lab-identity__emblem" src="/mateo/lab/emblem-mateo-robles.webp" width="900" height="675" alt="" loading="lazy" decoding="async" />
+            <p className="sy-eyebrow">The lab</p>
+            <h2 id="lab-identity-title">Infrastructure for AI agents.</h2>
+            <p>When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules the system controls, and records the reason when it refuses one.</p>
+            <a href="/projects/syberwork/">How SyberWork works <span aria-hidden="true">→</span></a>
+          </div>
+          <figure className="lab-identity__art">
+            <img src="/mateo/lab/agent-network-mateo-robles.webp" width="1100" height="921" alt="Glowing blue nodes joined by arcing links, like a network of agents." loading="lazy" decoding="async" />
+            <figcaption>Network and emblem: Mateo Robles, made with Midjourney.</figcaption>
+          </figure>
+        </section>
+        <Forms />
+        <OrbExperiment />
+      </div>
     </main>
     <div className="home-chrome" dangerouslySetInnerHTML={{ __html: footer('/') }} />
   </>;

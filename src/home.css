@@ -206,8 +206,7 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .sy-reveal .pitch-hero .pitch-hero__brand::after { animation-delay:1.5s; }
 @keyframes brand-rise { from { opacity:0; transform:translateY(30px); } }
 @keyframes hero-rise { from { opacity:0; transform:translateY(30px); filter:blur(12px); } }
-.sy-reveal .pitch-hero[data-phase="idle"] .pitch-hero__role { opacity:0; transform:translateY(10px); }
-.sy-reveal .pitch-hero:not([data-phase="done"]) .pitch-hero__panel { opacity:0; transform:translateY(40px); filter:blur(8px); visibility:hidden; transition:opacity .9s ease, transform 1.3s cubic-bezier(.16,.84,.24,1), filter 1s ease, visibility 0s 1.3s; }
+/* The role, proof and actions are never held back: a recruiter can read and act from the first frame. */
 
 @media(max-width:800px) {
   /* stacked: the name under the header, Earth framed in the middle, the panel at the foot */
@@ -271,3 +270,31 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .gh-decisions>div { padding-top:22px; border-top:1px solid var(--sy-rule); }
 .gh-decisions>div:first-child { padding-top:0; border-top:0; }
 @media(max-width:600px) { .selected-work__intro>p:not(.sy-eyebrow):not(.gh-note):not(.gh-links) { font-size:16px; } .gh-flow li { grid-template-columns:96px 1fr; gap:12px; font-size:13px; } .gh-decisions { gap:26px; } .gh-decisions dt { font-size:18px; } }
+
+/* Proof first: the name in the chromatic treatment, the role, then the three facts a recruiter checks, each linked to
+   where it can be verified. The list reads as plain text without CSS or JavaScript. */
+.pitch-hero__name { font-size:clamp(56px,6.4vw,100px); }
+.pitch-hero__role { font-size:16px; letter-spacing:.04em; }
+.pitch-hero__proof { display:grid; gap:9px; margin:20px 0 0; padding:0; list-style:none; }
+.pitch-hero__proof li { display:grid; grid-template-columns:96px 1fr; gap:14px; align-items:baseline; font-size:15px; line-height:1.4; }
+.pitch-hero__proof-label { color:#9fb7bc; font:500 11px/1.4 var(--sy-mono); letter-spacing:.1em; text-transform:uppercase; }
+.pitch-hero__proof a { color:#f4f2ed; text-decoration:underline; text-decoration-color:#f4f2ed40; text-underline-offset:4px; }
+.pitch-hero__proof a:hover { color:var(--sy-ice); text-decoration-color:var(--sy-ice); }
+.pitch-hero__name + .pitch-hero__role, .pitch-hero h1 + .pitch-hero__role { margin-top:6px; }
+.pitch-hero h1:has(.pitch-hero__name) { margin-bottom:0; }
+.pitch-hero__panel { width:min(100%,600px); }
+.pitch-hero__availability { flex-wrap:wrap; gap:4px 8px; }
+.pitch-hero__availability a { margin-left:6px; color:inherit; text-decoration:underline; text-decoration-color:#b3c3c666; text-underline-offset:3px; }
+.home-contact__signature { display:block; width:min(220px,50vw); height:auto; margin:6px 0 10px -6px; opacity:.85; }
+@media(max-width:600px) {
+  .pitch-hero__name { font-size:clamp(40px,11.2vw,52px); }
+  .pitch-hero__role { font-size:14px; }
+  .pitch-hero__proof { gap:7px; margin-top:12px; }
+  .pitch-hero__proof li { grid-template-columns:78px 1fr; gap:10px; font-size:13px; }
+  .pitch-hero__proof-label { font-size:10px; }
+  .pitch-hero__availability a { flex-basis:100%; margin-left:14px; }
+}
+
+/* PorchLight, the hackathon build: the GitHits layout, with its small lantern mark beside the name */
+.porchlight-work { border-top:1px solid var(--sy-rule); }
+.porchlight-mark { display:inline-block; width:auto; height:.9em; margin:0 .3em -.08em 0; vertical-align:baseline; }
