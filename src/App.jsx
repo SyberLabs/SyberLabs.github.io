@@ -112,13 +112,13 @@ function OrbExperiment() {
 const pauseOtherVideos = event => { for (const video of document.querySelectorAll('video')) if (video !== event.currentTarget) video.pause(); };
 
 // What a recruiter checks first, in the order they check it, shown in the hero from the first frame. Every line is
-// third-party proof that can be verified from its link; nothing here is a self-description.
+// a fact that can be checked from its link.
 // Third place confirmed by Seth Carlson (Oct 27); event and project tied together by PorchLight's README.
 const HACKATHON = { result: 'Third place', event: 'Cline, Parallel & Composio Hackathon', date: 'October 2026', href: '#porchlight' };
 const PROOF = [
   { label: 'Degree', text: 'B.S. Computer Science, Santa Clara University, 2026', href: RESUME },
   HACKATHON && { label: 'Hackathon', text: `${HACKATHON.result}, ${HACKATHON.event}, ${HACKATHON.date}`, href: HACKATHON.href },
-  { label: 'GitHits', text: 'Design partnership: leading the A/B pilot and its Claude Code integration', href: '#work' },
+  { label: 'GitHits', text: 'Design partnership: designed our A/B pilot and the GitHits client for Claude Code', href: '#work' },
 ].filter(Boolean);
 
 export default function App() {
@@ -176,14 +176,14 @@ export default function App() {
           <p className="pitch-hero__role">Software &amp; Product Engineer · Bay Area</p>
           <div className="pitch-hero__panel">
             <p className="pitch-hero__line">I build AI developer tools and interactive web products in Python and JavaScript.</p>
-            <ul className="pitch-hero__proof" aria-label="Credentials">
-              {PROOF.map(p => <li key={p.label}><span className="pitch-hero__proof-label">{p.label}</span><a href={p.href}>{p.text}</a></li>)}
+            <ul className="pitch-hero__proof" role="list" aria-label="Credentials">
+              {PROOF.map(p => <li key={p.label}><span className="pitch-hero__proof-label">{p.label}<span className="sy-sr">:</span></span>{' '}<a href={p.href}>{p.text}</a></li>)}
             </ul>
             <div className="pitch-hero__actions">
               <a className="sy-btn sy-btn--solid" href={CONTACT + '?subject=Interview%20with%20Mateo%20Robles'}>Interview Mateo</a>
               <a className="sy-btn sy-btn--line" href={RESUME}>View résumé</a>
             </div>
-            <p className="pitch-hero__availability"><span>Available to start immediately</span><a href={CONTACT}>{EMAIL}</a></p>
+            <p className="pitch-hero__availability"><span>Available to start immediately.</span>{' '}<a href={CONTACT}>{EMAIL}</a></p>
           </div>
         </div>
         <video ref={movie} className="pitch-hero__film" id="mateo-intro-video" controls playsInline preload="none" tabIndex={enhanced && !started ? -1 : 0} aria-hidden={enhanced && !started ? true : undefined} poster={MATEO_VIDEO.poster} width="1280" height="720" aria-label="Meet Mateo: introduction" onPlay={e => { setStarted(true); pauseOtherVideos(e); }} onError={() => setVideoError(true)} onPlaying={() => setVideoError(false)}>
@@ -230,16 +230,16 @@ export default function App() {
           <p className="gh-links"><a href="https://github.com/sykosyber/porchlight">Source and README <span aria-hidden="true">↗</span></a><a href="https://luma.com/m8euvq9n">The hackathon <span aria-hidden="true">↗</span></a></p>
         </div>
         <dl className="gh-decisions">
-          <div><dt>No source, no claim</dt><dd>The agent names an agency only when a search result it actually received supports it. Citations the model invents are dropped, and an unsupported pin goes to a person with “Couldn’t verify the right agency.”</dd></div>
+          <div><dt>No source, no claim</dt><dd>A routing card must be backed by a search result the agent actually received. Citations the model invents are dropped, and an unsupported pin goes to a person with “Couldn’t verify the right agency.”</dd></div>
           <div><dt>A pipeline, not a free-roaming agent</dt><dd>The same steps in the same order every run, from triage and cited research to deduplication and routing. Every external call has a timeout and a fallback, and each step shows in an agent trace with its timing.</dd></div>
-          <div><dt>Safe by construction</dt><dd>Reports are drafted, never sent: a person clicks send. Emergencies skip the pipeline and say to call 911. Contact details are stripped from a note before anything is stored or shared.</dd></div>
+          <div><dt>Guardrails in code</dt><dd>Reports are drafted, never sent: a person clicks send. Emergencies skip the pipeline and say to call 911. Contact details are stripped from a note before anything is stored or shared.</dd></div>
         </dl>
       </section>
       <section className="demo-work sy-wrap" aria-label="Product demonstrations">
         <article><div><p className="sy-eyebrow">RISE / Lead developer</p><h2>A different way to read.</h2><p>An interactive reading app where text, sound and moving graphics play in time. I led core development of timed text, moving graphics, browser audio and video export.</p><span className="demo-work__links"><a href="https://github.com/SyberLabs/RISE/pull/643">An example change <span aria-hidden="true">↗</span></a><a href="https://github.com/SyberLabs/RISE/blob/b5115d77e9d5b76b17f6204c6c504988df683b0d/README.md">Development credits <span aria-hidden="true">↗</span></a></span></div><figure><video controls playsInline preload="none" poster="/mateo/demos/rise-playback.jpg" width="960" height="540" aria-label="Recorded RISE reading" onPlay={pauseOtherVideos}><source src="/mateo/demos/rise-playback.mp4" type="video/mp4" /></video><figcaption>Recorded product demonstration. RISE is a team project.</figcaption></figure></article>
         <article><div><p className="sy-eyebrow">Engines / Creative computation</p><h2>Mathematics you can play.</h2><p>Gyre turns mathematical rules into moving trails of light.</p><a href={GYRE_APP}>Explore Gyre <span aria-hidden="true">↗</span></a></div><video controls playsInline preload="none" poster="/mateo/demos/gyre-orbit.jpg" width="960" height="540" aria-label="Recorded Gyre interaction" onPlay={pauseOtherVideos}><source src="/mateo/demos/gyre-orbit.mp4" type="video/mp4" /></video></article>
       </section>
-      <section className="home-contact sy-wrap" aria-labelledby="contact-title"><div><p className="sy-eyebrow">Available to start immediately</p><h2 id="contact-title">Let’s build something useful together.</h2><img className="home-contact__signature" src="/mateo/brand/mateo-robles-signature.webp" width="1200" height="511" alt="" loading="lazy" decoding="async" /><p className="sy-small">Open to software engineering and product management roles.</p></div><div><a href="tel:+19259493105">925-949-3105</a><a href={CONTACT}>syberlabs.software@gmail.com</a><a href="https://www.linkedin.com/in/automateon/">linkedin.com/in/automateon</a><a href="https://github.com/sykosyber">github.com/sykosyber</a><a href={RESUME}>View résumé</a></div></section>
+      <section className="home-contact sy-wrap" aria-labelledby="contact-title"><div><p className="sy-eyebrow">Available to start immediately</p><h2 id="contact-title">Let’s build something useful together.</h2><img className="home-contact__signature" src="/mateo/brand/mateo-robles-signature.webp" width="1200" height="511" alt="" loading="lazy" decoding="async" /><p className="sy-small">Open to software engineering and product management roles.</p></div><div><a href="tel:+19259493105">925-949-3105</a>{' '}<a href={CONTACT}>syberlabs.software@gmail.com</a>{' '}<a href="https://www.linkedin.com/in/automateon/">linkedin.com/in/automateon</a>{' '}<a href="https://github.com/sykosyber">github.com/sykosyber</a>{' '}<a href={RESUME}>View résumé</a></div></section>
       <div className="lab-appendix">
         <section id="lab" className="lab-identity sy-wrap" aria-labelledby="lab-identity-title">
           <div className="lab-identity__copy">
