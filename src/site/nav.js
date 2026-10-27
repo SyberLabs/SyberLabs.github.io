@@ -25,7 +25,7 @@ export function atlas() {
     if (e.key === 'Escape' && menu.open) { menu.open = false; summary.focus(); }
     else if (e.key === '/' && !menu.open && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '') && !e.metaKey && !e.ctrlKey) { e.preventDefault(); menu.open = true; }
     else if (e.key === 'Tab' && menu.open) {
-      const f = [...menu.querySelectorAll('summary, .sy-atlas a, .sy-atlas button')].filter(x => x.offsetParent !== null || x === summary);
+      const f = [...menu.querySelectorAll('.sy-atlas a, .sy-atlas button')].filter(x => x.offsetParent !== null);
       const i = f.indexOf(document.activeElement);
       if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
       else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
