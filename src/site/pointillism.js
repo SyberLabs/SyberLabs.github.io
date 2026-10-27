@@ -1,8 +1,8 @@
-/* Pointillism: one population of dots that keeps reorganising into different forms. The same dots spell SyberLabs,
-   become a cloud that rains, a tree in the wind, a neural network that fires, a strange attractor and a spiral galaxy,
-   then spell the name again. Each form keeps moving once it has formed (the rain falls, the branches sway, signals
-   travel along the network's edges, the galaxy turns), and every change of form sends the dots on a short, staggered
-   flight to their new places and colours.
+/* Pointillism: a short loop about interconnectedness, told by one population of dots. The same points are scattered
+   apart, gather into a cloud that rains, rise as a tree, branch again as a neuron, reach for one another as a neural
+   network, find the same spiral as a galaxy, and finally become an eye with a galaxy for a pupil: imagination, the
+   faculty that sees it is all one. Then they come apart and the loop begins again. Each form keeps moving once it has
+   formed (drift, rain, wind, signals, rotation, a blink), and every change of form sets off as a wave across the field.
 
    mountPointillism(canvas, { onForm, reduced }) -> { supported, show(i), next(), setPaused(b), destroy() }
      onForm(i)  Called whenever the form changes (by the cycle or by show()).
@@ -11,18 +11,21 @@
    Canvas 2D, 1 device pixel per CSS px up to 2x, at most 60 frames a second. Pauses off screen and in hidden tabs.
    Pause stops the loop (the forms' clock and the cycle); the last frame stays. The pointer gently parts the dots. Forms live in a unit space (x in ±1.3, y in ±1, y down) scaled to the canvas. */
 
+// The loop: seven beats, one sentence each. sweep is the direction the dots set off in when the beat begins
+// (down: from the top; up: from the bottom; out: from the centre; in: from the edge), so a change reads as a flow:
+// the rain rises into the tree, the network gathers into a sky.
 export const FORMS = [
-  { id: 'syberlabs', label: 'SyberLabs' },
-  { id: 'rain', label: 'A cloud, raining' },
-  { id: 'tree', label: 'A tree in the wind' },
-  { id: 'network', label: 'A neural network, firing' },
-  { id: 'attractor', label: 'A strange attractor' },
-  { id: 'galaxy', label: 'A spiral galaxy' },
+  { id: 'apart', label: 'Apart', line: 'Look closely. Everything seems apart.', sweep: 'out' },
+  { id: 'rain', label: 'Rain', line: 'A cloud lets go, and becomes rain.', sweep: 'down' },
+  { id: 'tree', label: 'Tree', line: 'The rain rises again as a tree.', sweep: 'up' },
+  { id: 'thought', label: 'Thought', line: 'Its branching returns as a thought.', sweep: 'out' },
+  { id: 'mind', label: 'Mind', line: 'Thoughts reach for one another.', sweep: 'out' },
+  { id: 'sky', label: 'Sky', line: 'Reaching outward, they find the same spiral in the sky.', sweep: 'in' },
+  { id: 'imagination', label: 'Imagination', line: 'Imagination is the eye that sees it is all one.', sweep: 'in' },
 ];
 
-const FONT = '"Instrument Serif", Georgia, "Times New Roman", serif';
-const HOLD = 5600, STAGGER = 0.75, GAP = 1000 / 60;
-const TAU = Math.PI * 2;
+const HOLD = 6200, STAGGER = 1.5, GAP = 1000 / 60; // ms a beat holds; s a change of form takes to set off, across the field
+const TAU = Math.PI * 2, CAP = 70; // px kept clear under the forms for the beat's sentence
 
 const rng32 = seed => () => { seed |= 0; seed = seed + 0x6d2b79f5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
@@ -46,26 +49,85 @@ function form(N) {
 const paint = (f, i, c, r, jitter = 0.12) => { const k = 1 + (r() - 0.5) * 2 * jitter; f.col[i * 3] = Math.min(255, c[0] * k); f.col[i * 3 + 1] = Math.min(255, c[1] * k); f.col[i * 3 + 2] = Math.min(255, c[2] * k); };
 const gauss = r => { let u = 0; for (let k = 0; k < 4; k++) u += r(); return (u - 2) / 0.577; };
 
-function textForm(N, r, word = 'SyberLabs') {
-  const f = form(N), W = 1200, H = 320, unit = W / 2 / 1.25;
-  const ink = [];
-  try {
-    const c = document.createElement('canvas'); c.width = W; c.height = H;
-    const g = c.getContext('2d', { willReadFrequently: true });
-    let fs = 250; g.font = `${fs}px ${FONT}`;
-    const w = g.measureText(word).width; if (w > W * .94) { fs *= W * .94 / w; g.font = `${fs}px ${FONT}`; }
-    g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(word, W / 2, H / 2);
-    const d = g.getImageData(0, 0, W, H).data;
-    for (let y = 0; y < H; y += 2) for (let x = 0; x < W; x += 2) if (d[(y * W + x) * 4 + 3] > 140) ink.push(x, y);
-  } catch (e) { /* no 2D text: the fallback ring below */ }
-  const stops = [C.violet, C.blue, C.ice, C.pink, C.amber];
+// Apart: points scattered evenly through the field, each drifting on its own.
+function apartForm(N, r) {
+  const f = form(N), ph = new Float32Array(N), stops = [C.violet, C.blue, C.ice, C.pink, C.amber, C.green];
   for (let i = 0; i < N; i++) {
-    if (ink.length) { const j = (r() * ink.length / 2 | 0) * 2; f.bx[i] = (ink[j] + r() * 2 - W / 2) / unit; f.by[i] = (ink[j + 1] + r() * 2 - H / 2) / unit; }
-    else { const a = r() * TAU, d = .5 + r() * .1; f.bx[i] = Math.cos(a) * d; f.by[i] = Math.sin(a) * d; }
-    paint(f, i, ramp(stops, (f.bx[i] + 1.15) / 2.3), r); f.sz[i] = .9 + r() * 1.1;
+    const a = r() * TAU, d = Math.sqrt(r());
+    f.bx[i] = Math.cos(a) * d * 1.25; f.by[i] = Math.sin(a) * d * .88; ph[i] = r() * TAU;
+    f.sz[i] = .7 + r() * 1.5; paint(f, i, stops[r() * stops.length | 0], r, .15);
   }
-  const ph = Float32Array.from({ length: N }, () => r() * TAU);
-  f.step = (t, tx, ty, ta) => { for (let i = 0; i < N; i++) { tx[i] = f.bx[i] + Math.sin(t * 1.3 + ph[i]) * .004; ty[i] = f.by[i] + Math.cos(t * 1.1 + ph[i]) * .004; } ta.fill(1); };
+  f.step = (t, tx, ty, ta) => { for (let i = 0; i < N; i++) { tx[i] = f.bx[i] + Math.sin(t * .31 + ph[i]) * .035; ty[i] = f.by[i] + Math.cos(t * .27 + ph[i] * 1.7) * .03; ta[i] = .55 + .45 * Math.sin(t * .8 + ph[i]) ** 2; } };
+  return f;
+}
+
+// A neuron: dendrites branching out of the cell body like a tree's crown, and an axon carrying signals away.
+function neuronForm(N, r) {
+  const f = form(N), cx = -.3, cy = 0, segs = [];
+  const branch = (x, y, a, len, d) => {
+    const x2 = x + Math.cos(a) * len, y2 = y + Math.sin(a) * len; segs.push([x, y, x2, y2, d]);
+    if (d) for (let k = 0; k < 2; k++) branch(x2, y2, a + (k - .5) * (.38 + r() * .34) + (r() - .5) * .3, len * (.62 + r() * .3), d - 1);
+  };
+  for (let k = 0; k < 6; k++) { const a = Math.PI * (.6 + k / 5 * .8) + (r() - .5) * .25; branch(cx + Math.cos(a) * .1, cy + Math.sin(a) * .1, a, .16 + r() * .12, 5); }
+  // thick limbs near the cell body carry most of the dots, so the branching reads; twigs are a light dusting
+  const cum = []; let tot = 0; for (const [x, y, x2, y2, d] of segs) cum.push(tot += Math.hypot(x2 - x, y2 - y) * (d + 1) ** 1.6);
+  const pickSeg = () => { const v = r() * tot; let lo = 0, hi = cum.length - 1; while (lo < hi) { const m = lo + hi >> 1; if (cum[m] < v) lo = m + 1; else hi = m; } return segs[lo]; };
+  const ax = u => -.2 + u * 1.25, ay = u => Math.sin(u * Math.PI * 1.4) * .07; // the axon, u in 0..1
+  const ends = []; const tip = (x, y, a, len, d) => { const x2 = x + Math.cos(a) * len, y2 = y + Math.sin(a) * len; ends.push([x, y, x2, y2]); if (d) for (let k = 0; k < 2; k++) tip(x2, y2, a + (k - .5) * .9, len * .7, d - 1); };
+  tip(ax(1), ay(1), 0, .1, 3);
+  const nSoma = N * .14 | 0, nDend = N * .4 | 0, nAxon = N * .2 | 0, nSig = N * .12 | 0, kind = new Uint8Array(N), u0 = new Float32Array(N), ph = new Float32Array(N);
+  for (let i = 0; i < N; i++) {
+    ph[i] = r() * TAU;
+    if (i < nSoma) { const a = r() * TAU, d = r() < .5 ? .1 : Math.sqrt(r()) * .09; f.bx[i] = cx + Math.cos(a) * d; f.by[i] = cy + Math.sin(a) * d; f.sz[i] = 1.3 + r() * 1.4; paint(f, i, r() < .5 ? C.pink : C.magenta, r); }
+    else if (i < nSoma + nDend) { const [x, y, x2, y2, d] = pickSeg(), u = r(); f.bx[i] = x + (x2 - x) * u + (r() - .5) * .006 * (d + 1); f.by[i] = y + (y2 - y) * u + (r() - .5) * .006 * (d + 1); f.sz[i] = .8 + r() * 1.1; paint(f, i, d > 2 ? C.lilac : r() < .6 ? C.violet : C.ice, r); kind[i] = 1; }
+    else if (i < nSoma + nDend + nAxon) { const u = r(); f.bx[i] = ax(u) + (r() - .5) * .02; f.by[i] = ay(u) + (r() - .5) * .025; f.sz[i] = .8 + r() * .9; paint(f, i, Math.sin(u * 40) > .6 ? C.vellum : C.blue, r, .08); kind[i] = 2; }
+    else if (i < nSoma + nDend + nAxon + nSig) { u0[i] = r(); f.sz[i] = 1.6 + r() * .9; paint(f, i, C.ice, r, .05); kind[i] = 3; }
+    else { const [x, y, x2, y2] = ends[r() * ends.length | 0], u = r(); f.bx[i] = x + (x2 - x) * u; f.by[i] = y + (y2 - y) * u; f.sz[i] = 1 + r() * 1.2; paint(f, i, r() < .7 ? C.amber : C.cream, r); kind[i] = 4; }
+  }
+  f.step = (t, tx, ty, ta) => {
+    const beat = 1 + .06 * Math.sin(t * 2.2);
+    for (let i = 0; i < N; i++) {
+      const k = kind[i];
+      if (k === 3) { const u = (u0[i] + t * .32) % 1; tx[i] = ax(u); ty[i] = ay(u); ta[i] = Math.sin(Math.PI * u); continue; }
+      if (k === 0) { tx[i] = cx + (f.bx[i] - cx) * beat; ty[i] = cy + (f.by[i] - cy) * beat; }
+      else { const w = k === 1 ? Math.hypot(f.bx[i] - cx, f.by[i] - cy) : 0; tx[i] = f.bx[i] + Math.sin(t * .9 + ph[i] * .2) * .012 * w; ty[i] = f.by[i] + Math.cos(t * .8 + ph[i] * .2) * .012 * w; }
+      ta[i] = 1;
+    }
+  };
+  return f;
+}
+
+// An eye: lids, an iris of radial fibres and, where the pupil would be, a small turning galaxy. It blinks.
+function eyeForm(N, r) {
+  const f = form(N), lid = x => Math.max(0, 1 - (x / 1.18) ** 2) ** .85;
+  const nLid = N * .2 | 0, nIris = N * .38 | 0, nCore = N * .22 | 0, nGlint = N * .02 | 0;
+  const kind = new Uint8Array(N), rad = new Float32Array(N), th = new Float32Array(N);
+  for (let i = 0; i < N; i++) {
+    if (i < nLid) { const x = (r() * 2 - 1) * 1.18, up = r() < .55; f.bx[i] = x; f.by[i] = (up ? -.6 : .48) * lid(x) + (r() - .5) * .02; f.sz[i] = .9 + r() * 1.2; paint(f, i, up ? C.vellum : C.mist, r, .08); }
+    else if (i < nLid + nIris) {
+      const spoke = (r() * 90 | 0) / 90 * TAU + (r() - .5) * .03; rad[i] = .15 + Math.pow(r(), .8) * .27; th[i] = spoke; kind[i] = 1;
+      f.sz[i] = .8 + r() * 1.2; paint(f, i, rad[i] > .4 ? C.violet : ramp([C.amber, C.cream, C.ice, C.blue, C.teal], (rad[i] - .15) / .25), r);
+    } else if (i < nLid + nIris + nCore) {
+      const core = r() < .25; rad[i] = core ? Math.abs(gauss(r)) * .025 : .015 + Math.pow(r(), .8) * .12; th[i] = core ? r() * TAU : (i % 2) * Math.PI + rad[i] * 32 + gauss(r) * .25; kind[i] = 2;
+      f.sz[i] = .7 + r() * 1; paint(f, i, core ? C.cream : r() < .5 ? C.lilac : C.pink, r);
+    } else if (i < nLid + nIris + nCore + nGlint) { f.bx[i] = -.15 + gauss(r) * .02; f.by[i] = -.16 + gauss(r) * .02; f.sz[i] = 1.2 + r(); paint(f, i, C.vellum, r, .02); kind[i] = 3; }
+    else { // the white of the eye: sparse and faint
+      let x, y; do { x = (r() * 2 - 1) * 1.1; y = (r() * 2 - 1) * .6; } while (y < -.6 * lid(x) + .04 || y > .48 * lid(x) - .04 || x * x + y * y < .2);
+      f.bx[i] = x; f.by[i] = y; f.sz[i] = .6 + r() * .7; paint(f, i, C.slate, r); kind[i] = 4;
+    }
+  }
+  f.step = (t, tx, ty, ta) => {
+    const c = t % 6.5, blink = c > 4.6 && c < 4.95 ? .08 + .92 * Math.abs(Math.cos((c - 4.6) / .35 * Math.PI)) : 1; // one blink every 6.5 s
+    const gx = Math.sin(t * .35) * .07, gy = Math.sin(t * .23) * .03;
+    for (let i = 0; i < N; i++) {
+      const k = kind[i]; let x, y;
+      if (k === 1) { const a = th[i] + t * .03; x = gx + Math.cos(a) * rad[i]; y = gy + Math.sin(a) * rad[i]; }
+      else if (k === 2) { const a = th[i] + t * .5 / (.03 + rad[i]) * .05; x = gx + Math.cos(a) * rad[i]; y = gy + Math.sin(a) * rad[i] * .9; }
+      else if (k === 3) { x = f.bx[i] + gx; y = f.by[i] + gy; }
+      else { x = f.bx[i]; y = f.by[i]; }
+      tx[i] = x; ty[i] = y * blink; ta[i] = k === 4 ? .45 : k === 1 || k === 2 || k === 3 ? (blink < .5 ? .25 : 1) : 1;
+    }
+  };
   return f;
 }
 
@@ -81,7 +143,7 @@ function rainForm(N, r) {
   const x0 = new Float32Array(N), p0 = new Float32Array(N), sp = new Float32Array(N), sub = new Uint8Array(N);
   for (let i = nCloud; i < N; i += 3) {
     const x = -.82 + r() * 1.64, p = r(), s = .5 + r() * .22;
-    for (let k = 0; k < 3 && i + k < N; k++) { const j = i + k; x0[j] = x; p0[j] = p; sp[j] = s; sub[j] = k; f.sz[j] = .9 + (2 - k) * .25; paint(f, j, k ? C.blue : C.ice, r, .06); f.bx[j] = x; f.by[j] = .3; }
+    for (let k = 0; k < 3 && i + k < N; k++) { const j = i + k; x0[j] = x; p0[j] = p; sp[j] = s; sub[j] = k; f.sz[j] = .9 + (2 - k) * .25; paint(f, j, k ? C.blue : C.ice, r, .06); f.bx[j] = x; f.by[j] = p; }
   }
   f.step = (t, tx, ty, ta) => {
     for (let i = 0; i < nCloud; i++) { tx[i] = f.bx[i] + Math.sin(t * .5 + f.by[i] * 3) * .014; ty[i] = f.by[i] + Math.sin(t * .7 + f.bx[i] * 2) * .007; ta[i] = 1; }
@@ -169,24 +231,6 @@ function networkForm(N, r) {
   return f;
 }
 
-function attractorForm(N, r) {
-  const f = form(N), [a, b, c, d] = [-1.4, 1.6, 1.0, .7], stops = [C.violet, C.blue, C.ice, C.pink, C.magenta, C.amber];
-  let x = .1, y = .1;
-  for (let k = 0; k < 300; k++) { const nx = Math.sin(a * y) + c * Math.cos(a * x); y = Math.sin(b * x) + d * Math.cos(b * y); x = nx; }
-  for (let i = 0; i < N; i++) {
-    let px = x, py = y;
-    for (let k = 0; k < 3; k++) { px = x; py = y; const nx = Math.sin(a * y) + c * Math.cos(a * x); y = Math.sin(b * x) + d * Math.cos(b * y); x = nx; }
-    f.bx[i] = x / 2 * 1.15; f.by[i] = y / 1.7 * .95; f.sz[i] = .8 + r() * 1.1;
-    paint(f, i, ramp(stops, (Math.atan2(y - py, x - px) / TAU + .5)), r, .08);
-  }
-  f.step = (t, tx, ty, ta) => {
-    const q = Math.sin(t * .25) * .16, s = 1 + .035 * Math.sin(t * .6), cq = Math.cos(q), sq = Math.sin(q);
-    for (let i = 0; i < N; i++) { tx[i] = (f.bx[i] * cq - f.by[i] * sq) * s; ty[i] = (f.bx[i] * sq + f.by[i] * cq) * s; }
-    ta.fill(1);
-  };
-  return f;
-}
-
 function galaxyForm(N, r) {
   const f = form(N), rad = new Float32Array(N), th = new Float32Array(N);
   for (let i = 0; i < N; i++) {
@@ -204,7 +248,7 @@ function galaxyForm(N, r) {
   return f;
 }
 
-const BUILD = [textForm, rainForm, treeForm, networkForm, attractorForm, galaxyForm];
+const BUILD = [apartForm, rainForm, treeForm, neuronForm, networkForm, galaxyForm, eyeForm];
 
 export function mountPointillism(canvas, { onForm, reduced } = {}) {
   const none = { supported: false, show() {}, next() {}, setPaused() {}, destroy() {} };
@@ -218,13 +262,17 @@ export function mountPointillism(canvas, { onForm, reduced } = {}) {
 
   const allocate = n => {
     N = n; forms = BUILD.map(b => b(N, rng32(0x51b + b.name.length * 977)));
+    // dot i takes the i-th point of every form counted from the top (roughly), so a dot keeps its height from form to
+    // form: the top of the cloud becomes the crown of the tree, the rain its trunk, and changes read as flows
+    const jr = rng32(0x7ee);
+    forms.forEach(f => { const key = Float32Array.from(f.by, y => y + (jr() - .5) * .3); f.map = Int32Array.from({ length: N }, (_, i) => i).sort((a, b) => key[a] - key[b]); });
     [px, py, vx, vy, tx, ty, ta, ox, oy, oa, lx, ly, ca, delay] = Array.from({ length: 14 }, () => new Float32Array(N));
-    cr = new Float32Array(N); cg = new Float32Array(N); cb = new Float32Array(N); cz = Float32Array.from(forms[cur].sz);
-    const f = forms[cur];
+    cr = new Float32Array(N); cg = new Float32Array(N); cb = new Float32Array(N); cz = new Float32Array(N);
+    const f = forms[cur], M = f.map;
     for (let i = 0; i < N; i++) {
       const a = r() * TAU, d = Math.sqrt(r()) * 1.6; // the dots start as a loose cloud and gather into the first form
-      px[i] = still ? f.bx[i] : Math.cos(a) * d; py[i] = still ? f.by[i] : Math.sin(a) * d * .7;
-      cr[i] = f.col[i * 3]; cg[i] = f.col[i * 3 + 1]; cb[i] = f.col[i * 3 + 2]; ca[i] = still ? 1 : 0; delay[i] = r() * STAGGER;
+      const j = M[i]; px[i] = still ? f.bx[j] : Math.cos(a) * d; py[i] = still ? f.by[j] : Math.sin(a) * d * .7;
+      cr[i] = f.col[j * 3]; cg[i] = f.col[j * 3 + 1]; cb[i] = f.col[j * 3 + 2]; cz[i] = f.sz[j]; ca[i] = still ? 1 : 0; delay[i] = r() * STAGGER * .6;
     }
     lx.fill(NaN);
   };
@@ -234,7 +282,7 @@ export function mountPointillism(canvas, { onForm, reduced } = {}) {
     if (!w || !h) return;
     dpr = Math.min(window.devicePixelRatio || 1, 2); W = w; H = h;
     canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
-    S = Math.min(W / 2.6, H / 2.2);
+    S = Math.min(W / 2.6, (H - CAP) / 2.2);
     const want = Math.max(900, Math.min(2600, Math.round(W * H / 190)));
     if (!N || Math.abs(want - N) / N > .3) allocate(want);
     if (still || paused) render(performance.now()); // a frozen frame is redrawn at the new size, not advanced
@@ -250,22 +298,22 @@ export function mountPointillism(canvas, { onForm, reduced } = {}) {
     targets(f, still ? 0 : t, tx, ty, ta);
     const moving = !still && e < STAGGER + .05 && prev !== cur;
     if (moving) targets(forms[prev], t, ox, oy, oa);
-    const K = 70, D = 13, cs = Math.min(1, dt * 3.2), as = Math.min(1, dt * 6);
+    const K = 70, D = 13, cs = Math.min(1, dt * 3.2), as = Math.min(1, dt * 6), M = f.map, PM = forms[prev].map;
     for (let i = 0; i < N; i++) {
-      const go = !moving || e >= delay[i];
-      let x = go ? tx[i] : ox[i], y = go ? ty[i] : oy[i], a = go ? ta[i] : oa[i];
-      if (still) { px[i] = x; py[i] = y; ca[i] = a; cr[i] = f.col[i * 3]; cg[i] = f.col[i * 3 + 1]; cb[i] = f.col[i * 3 + 2]; cz[i] = f.sz[i]; continue; }
+      const go = !moving || e >= delay[i], j = M[i], q = PM[i];
+      let x = go ? tx[j] : ox[q], y = go ? ty[j] : oy[q], a = go ? ta[j] : oa[q];
+      if (still) { px[i] = x; py[i] = y; ca[i] = a; cr[i] = f.col[j * 3]; cg[i] = f.col[j * 3 + 1]; cb[i] = f.col[j * 3 + 2]; cz[i] = f.sz[j]; continue; }
       // a target that jumps (a raindrop or a signal starting over) is followed instantly, not flown to
       if (go && !moving && Math.abs(x - lx[i]) + Math.abs(y - ly[i]) > .3) { px[i] = x; py[i] = y; vx[i] = vy[i] = 0; ca[i] = 0; }
       lx[i] = x; ly[i] = y;
       let ax = (x - px[i]) * K - vx[i] * D, ay = (y - py[i]) * K - vy[i] * D;
       if (ptr) { const dx = px[i] - ptr[0], dy = py[i] - ptr[1], d2 = dx * dx + dy * dy; if (d2 < .09 && d2 > 1e-6) { const d = Math.sqrt(d2), k = (1 - d / .3) * 90; ax += dx / d * k; ay += dy / d * k; } }
       vx[i] += ax * dt; vy[i] += ay * dt; px[i] += vx[i] * dt; py[i] += vy[i] * dt;
-      if (go) { cr[i] += (f.col[i * 3] - cr[i]) * cs; cg[i] += (f.col[i * 3 + 1] - cg[i]) * cs; cb[i] += (f.col[i * 3 + 2] - cb[i]) * cs; cz[i] += (f.sz[i] - cz[i]) * cs; }
+      if (go) { cr[i] += (f.col[j * 3] - cr[i]) * cs; cg[i] += (f.col[j * 3 + 1] - cg[i]) * cs; cb[i] += (f.col[j * 3 + 2] - cb[i]) * cs; cz[i] += (f.sz[j] - cz[i]) * cs; }
       ca[i] += (a - ca[i]) * as;
     }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
-    const cx = W / 2, cy = H / 2;
+    const cx = W / 2, cy = (H - CAP) / 2;
     for (let i = 0; i < N; i++) {
       if (ca[i] < .02) continue;
       ctx.globalAlpha = Math.min(1, ca[i]);
@@ -292,13 +340,20 @@ export function mountPointillism(canvas, { onForm, reduced } = {}) {
   function show(i, now = performance.now()) {
     if (i === cur || !N) return;
     prev = cur; cur = i; switched = lastAuto = now;
-    for (let k = 0; k < N; k++) { delay[k] = r() * STAGGER; if (!still) { vx[k] += (r() - .5) * 1.4; vy[k] += (r() - .5) * 1.4; } }
+    // the change sets off as a wave in the beat's direction, measured from where each dot is now
+    const sweep = FORMS[i].sweep;
+    for (let k = 0; k < N; k++) {
+      const v = Math.min(1, Math.max(0, (py[k] + 1) / 2)), o = Math.min(1, Math.hypot(px[k] / 1.3, py[k]));
+      const w = sweep === 'down' ? v : sweep === 'up' ? 1 - v : sweep === 'in' ? 1 - o : o;
+      delay[k] = (w * .78 + r() * .22) * STAGGER;
+      if (!still) { vx[k] += (r() - .5) * .8; vy[k] += (r() - .5) * .8; }
+    }
     lx.fill(NaN); settleUntil = now + (STAGGER + 1.4) * 1000;
     onForm?.(i);
     if (still) render(now); else start();
   }
 
-  const toUnit = e => { const b = canvas.getBoundingClientRect(); return [(e.clientX - b.left - W / 2) / S, (e.clientY - b.top - H / 2) / S]; };
+  const toUnit = e => { const b = canvas.getBoundingClientRect(); return [(e.clientX - b.left - W / 2) / S, (e.clientY - b.top - (H - CAP) / 2) / S]; };
   const move = e => { ptr = e.pointerType === 'touch' ? null : toUnit(e); };
   const leave = () => { ptr = null; };
   canvas.addEventListener('pointermove', move); canvas.addEventListener('pointerleave', leave);
@@ -307,8 +362,6 @@ export function mountPointillism(canvas, { onForm, reduced } = {}) {
   const vis = () => { if (!document.hidden) start(); };
   document.addEventListener('visibilitychange', vis);
   resize(); switched = lastAuto = performance.now();
-  // the name is set in the site's serif: once the font has arrived, re-set it so the dots spell it in the right face
-  document.fonts?.ready?.then(() => { if (dead || !N) return; forms[0] = textForm(N, rng32(0x51b + 'textForm'.length * 977)); if (still && cur === 0) render(performance.now()); });
   start();
 
   return {

@@ -63,8 +63,8 @@ function Hero() {
   </section>;
 }
 
-// Pointillism (src/site/pointillism.js): one population of dots that reorganises into the lab's forms. The cycle
-// advances on its own; the chips jump to a form, and Pause holds the current one (moving content that runs longer
+// Pointillism (src/site/pointillism.js): a seven-beat loop about interconnectedness in one field of dots, each beat
+// with its sentence under the stage. The cycle advances on its own; the chips jump to a form, and Pause holds the current one (moving content that runs longer
 // than five seconds needs a way to stop it). Reduced motion: each form drawn once, still, and no cycle.
 function Forms() {
   const canvas = useRef(null), engine = useRef(null);
@@ -82,17 +82,17 @@ function Forms() {
     <div className="site-head home-forms__head">
       <div>
         <p className="sy-eyebrow">Pointillism</p>
-        <h2 id="forms-title" className="sy-display">One field of points, <em>every form.</em></h2>
+        <h2 id="forms-title" className="sy-display">Everything is <em>connected.</em></h2>
       </div>
-      <p className="home-forms__note sy-small">One field of dots becomes rain, a tree, a network or a galaxy. Choose a form.</p>
+      <p className="home-forms__note sy-small">A short loop in one field of points. Rain becomes a tree, a tree becomes a thought, thoughts become a sky, and imagination is the eye that sees the whole.</p>
     </div>
     {!live && <p className="home-forms__fallback">The interactive scene is unavailable in this browser. The recorded demos above still work.</p>}
     <figure className={`home-forms__stage${live ? ' is-live' : ''}`}>
       <canvas ref={canvas} className="home-forms__canvas" aria-hidden="true" />
-      <figcaption className="home-forms__now"><span className="sy-label">Now</span> <span>{FORMS[form].label}</span></figcaption>
+      <figcaption className="home-forms__now"><span key={form} className="home-forms__line">{FORMS[form].line}</span></figcaption>
     </figure>
     <div className="home-forms__controls">
-      <div className="home-forms__chips" role="group" aria-label="Choose a form">
+      <div className="home-forms__chips" role="group" aria-label="Go to a moment in the loop">
         {FORMS.map((f, i) => <button key={f.id} type="button" className="home-forms__chip" aria-pressed={i === form} onClick={() => pick(i)}>{f.label}</button>)}
       </div>
       <button type="button" className="home-forms__pause" aria-pressed={paused} onClick={toggle}>{paused ? 'Play' : 'Pause'}</button>

@@ -52,8 +52,11 @@
 .home-forms__note { margin: 0 0 4px; max-width: 30em; text-align: right; color: var(--sy-mist); }
 .home-forms__stage { position: relative; margin: 28px 0 0; height: clamp(380px, 58vw, 600px); border-radius: 14px; overflow: hidden; background: radial-gradient(60% 70% at 50% 48%, #12367a33, #0000 72%), var(--sy-ink); border: 1px solid var(--sy-rule); }
 .home-forms__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
-.home-forms__now { position: absolute; left: 20px; bottom: 16px; display: flex; gap: 10px; align-items: baseline; color: var(--sy-vellum); font: 400 22px/1.2 var(--sy-serif); pointer-events: none; }
-.home-forms__now .sy-label { font-family: var(--sy-mono); font-size: 11px; color: var(--sy-dim); letter-spacing: .08em; text-transform: uppercase; }
+/* the beat's sentence: centred under the forms (the engine keeps 70px clear for it), fading in with each beat */
+.home-forms__now { position: absolute; left: 0; right: 0; bottom: 22px; padding: 0 24px; text-align: center; color: var(--sy-vellum); font: 400 clamp(20px, 2.2vw, 28px)/1.25 var(--sy-serif); text-wrap: balance; pointer-events: none; }
+.home-forms__line { display: inline-block; animation: home-line 1.4s .5s ease both; }
+@keyframes home-line { from { opacity: 0; transform: translateY(6px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+@media (prefers-reduced-motion: reduce) { .home-forms__line { animation: none; } }
 .home-forms__stage:not(.is-live) .home-forms__now { display: none; }
 .home-forms__controls { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; margin-top: 16px; }
 .home-forms__chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -63,7 +66,7 @@
 .home-forms__pause { font-family: var(--sy-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
 .home-forms :is(button):focus-visible, .home-hero__cta:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
 @media (max-width: 800px) { .home-forms { padding-top: 80px; } .home-forms__head { flex-direction: column; align-items: flex-start; } .home-forms__note { text-align: left; } }
-@media (max-width: 640px) { .home-forms__stage { height: 420px; } .home-forms__now { left: 14px; bottom: 12px; font-size: 18px; } .home-forms__chip { padding: 7px 12px; font-size: 12px; min-height: 36px; } .home-me { margin-top: 72px; } }
+@media (max-width: 640px) { .home-forms__stage { height: 420px; } .home-forms__now { bottom: 14px; padding: 0 14px; font-size: 19px; } .home-forms__chip { padding: 7px 12px; font-size: 12px; min-height: 36px; } .home-me { margin-top: 72px; } }
 
 
 /* Hiring-first cinematic stage. The still is an actual Gyre capture, not a product mockup. */
