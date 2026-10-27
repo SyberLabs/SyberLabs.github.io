@@ -68,9 +68,9 @@ export default function App() {
             <track kind="captions" src={MATEO_VIDEO.captions} srcLang="en" label="English" default />
             Your browser cannot play this video. The transcript and project proof remain available below.
           </video>
-          <figcaption><span>{MATEO_VIDEO.credit}</span><a href="#work" onClick={() => movie.current?.pause()}>Skip to the work →</a></figcaption>
+          <figcaption><span>{MATEO_VIDEO.credit}</span><a href={GYRE_APP}>Explore Gyre ↗</a><a href="https://github.com/sykosyber/engines">Engine source ↗</a><a href="#work" onClick={() => movie.current?.pause()}>Skip to the work →</a></figcaption>
           {videoError && <p className="home-video__error" role="status">Video unavailable. Read the transcript or explore the work below.</p>}
-          <details className="home-transcript"><summary>Read the transcript</summary>{MATEO_VIDEO.transcript.map((paragraph, i) => <p key={i}>{paragraph}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>
+          <details className="home-transcript"><summary>Transcript and working approach</summary>{MATEO_VIDEO.transcript.map((paragraph, i) => <p key={i}>{paragraph}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download spoken transcript</a><p><strong>On screen:</strong> I take initiative, question requirements, and work from first principles to find the highest-leverage next step.</p></details>
         </figure> : (<figure className="home-engine" id="engines">
           <a href={GYRE_APP} aria-label="Run Gyre, one of Mateo’s interactive mathematical engines"><img src="/mateo/engines-gyre.webp" width="1000" height="1000" fetchPriority="high" alt="A luminous, multicolored attractor from Gyre." /></a>
           <figcaption><span>Gyre / Engines</span><a href={GYRE_APP}>Explore Gyre ↗</a><a href="https://github.com/sykosyber/engines">Source ↗</a></figcaption>
