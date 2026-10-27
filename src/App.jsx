@@ -9,6 +9,7 @@ import { cleanText } from './living-lab/scene.js';
 import { MATEO_VIDEO } from './mateo-video.js';
 import BackgroundVideo from './BackgroundVideo.jsx';
 import { HERO_MEDIA, REVEAL } from './hero-media.js';
+import { FRAME_ART } from './frame-art.js';
 import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
 import '../kit/v2/syber-atlas.css';
@@ -113,6 +114,7 @@ export default function App() {
   // idle: Gyre, the name rising; frame: the Sophia frame draws, the role follows; earth: Earth is framed;
   // done: the panel (line, actions, availability) rises. Every other visit, and any failure, is simply done.
   const [phase, setPhase] = useState('idle');
+  const [framed, setFramed] = useState('earth'); // what the Sophia frame holds now (FRAME_ART id), for the credit
   const [revealing, setRevealing] = useState(false); // false in the served HTML, so the panel is never inert without JS
   const settle = useRef(() => {});
   useEffect(() => {
@@ -144,10 +146,13 @@ export default function App() {
     <main id="main">
       <section className={`pitch-hero${started ? ' is-playing' : ''}`} data-phase={phase} aria-labelledby="hero-title" id="founder">
         <picture className="pitch-hero__art"><source media="(max-width: 600px)" srcSet={HERO_MEDIA.portraitPoster} /><img src={HERO_MEDIA.poster} width="1280" height="720" alt="" fetchPriority="high" /></picture>
-        <BackgroundVideo pitchPlaying={started} onTime={onClipTime} onUnavailable={() => settle.current()} />
+        <BackgroundVideo pitchPlaying={started} onTime={onClipTime} onUnavailable={() => settle.current()} onArt={setFramed} />
         <div className="pitch-hero__copy sy-wrap">
+          <h1 id="hero-title" tabIndex={-1}>
+            <span className="pitch-hero__brand">SyberLabs</span>{' '}
+            <span className="pitch-hero__by">by <img className="pitch-hero__signature" src="/mateo/brand/mateo-robles-signature.webp" width="1200" height="511" alt="Mateo Robles" /></span>
+          </h1>
           <p className="pitch-hero__role">Software &amp; Product Engineer</p>
-          <h1 id="hero-title" tabIndex={-1}><span>Mateo</span> <span>Robles</span></h1>
           <div className="pitch-hero__panel" inert={revealing && phase !== 'done' ? true : undefined}>
             <p className="pitch-hero__line">Python integrations and interactive JavaScript products.</p>
             <div className="pitch-hero__actions">
@@ -167,7 +172,7 @@ export default function App() {
       </section>
       <div className="film-notes sy-wrap">
         <span>{MATEO_VIDEO.credit}</span>
-        <span className="hero-credit">Gyre to RISE Sophia. Imagery: <a href="https://images.nasa.gov/details/GSFC_20171208_Archive_e002131">NASA/GSFC</a> (Earth).</span>
+        <span className="hero-credit">Gyre to RISE Sophia. In the frame: {FRAME_ART.map((a, i) => <React.Fragment key={a.id}>{i ? ' · ' : ''}<span className={a.id === framed ? 'is-framed' : undefined}>{a.date ? <><a href={a.href}>{a.title}</a>, {a.by}, {a.date}</> : <>{a.title}, <a href={a.href}>{a.by}</a></>}</span></React.Fragment>)}. Paintings: The Cleveland Museum of Art, CC0.</span>
         <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((p, i) => <p key={i}>{p}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>
         {videoError && <p role="status">Video unavailable. Read the transcript or explore the work below.</p>}
       </div>

@@ -64,6 +64,18 @@ then back to Gyre. On wide screens the clip sits right of the copy, scaled into
 a soft vignette so the frame and Earth are always whole and never under type;
 on phones it sits between the name and the panel.
 
+The hero title is `SyberLabs` in chromatic blue: a chrome gradient clipped to
+Instrument Sans letters, a fine light bezel on their edges and an embossed lit top
+edge and shadow, with one slow sheen on arrival. Beneath it, "by" and Mateo's own
+signature (`mateo/brand/mateo-robles-signature.webp`, alt text "Mateo Robles"),
+which writes itself in from the left on the first visit.
+
+The Sophia frame holds a different picture on each pass of the clip, chosen at
+random without repeating: Earth (in the clip), or one of two CC0 paintings from
+the Cleveland Museum of Art laid exactly over Earth's disc (`src/frame-art.js`
+holds the measured disc and timing). The credit line under the hero names all
+three and highlights the one in the frame.
+
 On the first visit in a tab the page follows the clip's own playback time
 (`REVEAL` in `src/hero-media.js`): with the Gyre the name rises (readable within
 a second); as the frame draws, the role follows; once Earth is framed, at about
