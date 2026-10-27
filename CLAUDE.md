@@ -62,3 +62,5 @@ of compatibility. If credentials, indexing, a pinned version or useful results
 are unavailable, say so and continue other checks; do not claim grounding ran
 or make exploratory traffic to fill a quota. Cached read data stays in private
 MasterMind; missing runtime paths never justify a direct hosted fallback.
+
+When changing an unhashed public stylesheet, update its existing link version in affected static pages. Verify a previously opened production tab after release so browser caching does not conceal the new design.
