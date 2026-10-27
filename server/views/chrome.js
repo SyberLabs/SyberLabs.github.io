@@ -14,6 +14,7 @@ export const signedInAs = user => `${identityName(user)} (${providerLabel(user.p
 export const NAV = [
   { id: 'portal', label: 'Launchpad', href: '/admin/', key: null },
   { id: 'changes', label: 'What changed', href: '/admin/changes', key: 'site:changes.read' },
+  { id: 'board', label: 'Board', href: '/admin/board', key: 'site:board.read' },
   { id: 'people', label: 'People', href: '/admin/people', key: 'id:users.read' },
   { id: 'roles', label: 'Roles', href: '/admin/roles', key: 'id:users.read' },
   { id: 'audit', label: 'Audit', href: '/admin/audit', key: 'id:audit.read' },
@@ -39,6 +40,7 @@ const NAV_ICONS = {
   saves: '<path d="M5 3h14v18l-7-4-7 4V3Z"/>',
   account: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
   changes: '<path d="M5 6h14M5 12h14M5 18h9"/>',
+  board: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 15v-4M12 15V8M17 15v-2"/>',
   people: '<circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6M21 21v-3a6 6 0 0 0-4-5"/>',
   roles: '<path d="m12 3 8 4v5c0 5-8 9-8 9s-8-4-8-9V7l8-4Z"/><path d="m8 12 3 3 5-6"/>',
   audit: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',

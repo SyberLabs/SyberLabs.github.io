@@ -10,6 +10,7 @@ import { adminHome } from './views/admin-home.js';
 import { savedThings, downloadSave, appReturn } from './views/saves.js';
 import { accountPage } from './views/account.js';
 import { changesPage, saveChange, deleteChange } from './views/changes.js';
+import { boardPage } from './views/board.js';
 import {
   peoplePage, addPerson, grantRole, revokeRole, disableUser, enableUser,
 } from './views/people.js';
@@ -37,6 +38,8 @@ export const ROUTES = [
   ['GET  /admin/changes',                      'site:changes.read',  changesPage],
   ['POST /admin/changes',                      'site:changes.write', saveChange],
   ['POST /admin/changes/delete',               'site:changes.write', deleteChange],
+  // Packet 6: the board (MasterMind board.v1 in the BOARD KV namespace), read-only.
+  ['GET  /admin/board',                        'site:board.read',    boardPage],
   // Packet 4
   ['GET  /admin/people',                       'id:users.read',      peoplePage],
   ['POST /admin/people/add',                   'id:users.manage',    addPerson],        // RFC-0002 R3-4: replaces invites
