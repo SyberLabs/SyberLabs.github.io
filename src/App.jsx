@@ -36,12 +36,12 @@ function Hero() {
     return () => { mo.disconnect(); o.destroy(); };
   }, []);
   const type = e => { const v = e.target.value.slice(0, 180); setText(v); orb.current?.setText(cleanText(v)); };
-  return <section className={`home-hero sy-nebula${live ? ' is-live' : ''}`} aria-labelledby="hero-title">
+  return <section className={`home-hero sy-nebula${live ? ' is-live' : ''}`} aria-labelledby="lab-title">
     <div className="sy-scrim home-hero__scrim" aria-hidden="true" />
     <div className="home-hero__in sy-wrap">
       <div className="home-hero__copy" ref={copy}>
         <p className="sy-eyebrow">SyberLabs / research studio</p>
-        <h1 id="hero-title" className="sy-display-xl home-hero__title">Systems that <em>come alive.</em></h1>
+        <h2 id="lab-title" className="sy-display-xl home-hero__title">Systems that <em>come alive.</em></h2>
         <p className="sy-body-lg home-hero__intro">A research studio where machine learning, complex systems and generative art meet. We build reading runtimes, agent infrastructure and instruments you can play.</p>
         <div className="home-hero__actions">
           <a className="sy-btn sy-btn--solid home-hero__cta" href="#forms">Explore the lab <span aria-hidden="true">↓</span></a>
@@ -98,17 +98,17 @@ function Forms() {
 }
 
 const work = [
-  { id: 'githits', title: 'GitHits integration',
-    text: 'Python client + Claude Code integration for an evaluation pilot. Filtered retrieval, with host-recorded lookup evidence.',
+  { id: 'githits', title: 'GitHits design partnership',
+    text: 'GitHits helps AI coding tools find useful code examples. I built and tested the connection to an AI coding assistant.',
     source: 'https://github.com/SyberLabs/SyberWork/pull/134', sourceLabel: 'Merged integration', detail: '/mateo/#githits' },
-  { id: 'rise', title: 'RISE Composer',
-    text: 'Team contribution: admission before playback, plus theme, loading and cancellation fixes.',
+  { id: 'rise', title: 'RISE',
+    text: 'RISE turns reading into an interactive experience with words, sound and visuals. I helped the team make readings play reliably and look consistent.',
     source: 'https://github.com/SyberLabs/RISE/pull/371', sourceLabel: 'Merged contribution', detail: '/mateo/#rise' },
 ];
 const beats = [
-  { title: 'Hi, I’m Mateo.', text: 'I’m a junior software engineer. I build interactive mathematical systems and Python integrations for AI tools.' },
+  { title: 'Hi, I’m Mateo.', text: 'I’m a software and product engineer. I build interactive mathematical systems and Python integrations for AI tools.' },
   { title: 'Play with it. Inspect the code.', text: 'Gyre turns a mathematical rule into a live orbit. My GitHits integration filters source retrieval and records lookup evidence on the host.' },
-  { title: "Let's build something useful together.", text: 'Looking for a junior engineer? I’d like to hear what your team is building and walk you through my part in these projects.' },
+  { title: "Let's build something useful together.", text: 'Looking for a software engineer? I’d like to hear what your team is building and walk you through my part in these projects.' },
 ];
 
 export default function App() {
@@ -121,17 +121,15 @@ export default function App() {
   const watch = () => { movie.current.focus(); movie.current.play().catch(() => setVideoError(true)); };
   const overview = () => { setStep(null); requestAnimationFrame(() => start.current.focus()); };
   return <>
-    <div className="home-chrome" dangerouslySetInnerHTML={{ __html: header('', { here: '/', sticky: false, script: false }) }} />
+    <div className="home-chrome" dangerouslySetInnerHTML={{ __html: header('', { here: '/', script: false }) }} />
     <main id="main">
-      <Hero />
-      <Forms />
       <div className="home-portfolio sy-wrap">
       <section className={`home-me${step !== null ? ' is-playing' : ''}${MATEO_VIDEO ? ' home-me--video' : ''}`} id="founder" aria-labelledby="founder-title">
         <div className="home-me__copy">
-          <p className="sy-eyebrow">Junior software engineer / Bay Area</p>
-          <h2 id="founder-title" className="home-me__name">Mateo{MATEO_VIDEO ? ' ' : <br />}<em>Robles.</em></h2>
+          <p className="sy-eyebrow">Software &amp; product engineer / Bay Area</p>
+          <h1 id="founder-title" className="home-me__name">Mateo{MATEO_VIDEO ? ' ' : <br />}<em>Robles.</em></h1>
           {step === null ? <>
-            <p className="home-me__intro">I build playful mathematical systems and tools for AI developers.</p>
+            <p className="home-me__intro">I build tools for coding assistants and interactive experiences for the web.</p>
             <p className="home-me__meta">Computer Science · Santa Clara ’26<br />Open to software engineering, technical support and product roles.</p>
           </> : <div className="home-beat" id="pitch">
             <span className="home-beat__count" role="status">Part {step + 1} of 3</span>
@@ -155,14 +153,14 @@ export default function App() {
           {step !== 2 && <a className="home-hire" href={CONTACT + '?subject=Engineering%20opportunity%20for%20Mateo'}>Talk about an engineering role ↗</a>}
         </div>
         {MATEO_VIDEO ? <figure className="home-video" id="intro-video">
-          <video ref={movie} id="mateo-intro-video" controls playsInline preload="none" poster={MATEO_VIDEO.poster} width="1920" height="1080" aria-label="Mateo Robles — animated introduction" onError={() => setVideoError(true)} onPlaying={() => setVideoError(false)}>
+          <video ref={movie} id="mateo-intro-video" controls playsInline preload="none" poster={MATEO_VIDEO.poster} width="1920" height="1080" aria-label="Mateo Robles: animated introduction" onError={() => setVideoError(true)} onPlaying={() => setVideoError(false)}>
             <source src={MATEO_VIDEO.src} type="video/mp4" />
             <track kind="captions" src={MATEO_VIDEO.captions} srcLang="en" label="English" default />
             Your browser cannot play this video. The transcript and project proof remain available below.
           </video>
           <figcaption><span>{MATEO_VIDEO.credit}</span><a href={GYRE_APP}>Explore Gyre ↗</a><a href="https://github.com/sykosyber/engines">Engine source ↗</a><a href="#work" onClick={() => movie.current?.pause()}>Skip to the work →</a></figcaption>
           {videoError && <p className="home-video__error" role="status">Video unavailable. Read the transcript or explore the work below.</p>}
-          <details className="home-transcript"><summary>Transcript and working approach</summary>{MATEO_VIDEO.transcript.map((paragraph, i) => <p key={i}>{paragraph}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download spoken transcript</a><p><strong>On screen:</strong> I take initiative, question requirements, and work from first principles to find the highest-leverage next step.</p></details>
+          <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((paragraph, i) => <p key={i}>{paragraph}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download spoken transcript</a></details>
         </figure> : (<figure className="home-engine" id="engines">
           <a href={GYRE_APP} aria-label="Run Gyre, one of Mateo’s interactive mathematical engines"><img src="/mateo/engines-gyre.webp" width="1000" height="1000" fetchPriority="high" alt="A luminous, multicolored attractor from Gyre." /></a>
           <figcaption><span>Gyre / Engines</span><a href={GYRE_APP}>Explore Gyre ↗</a><a href="https://github.com/sykosyber/engines">Source ↗</a></figcaption>
@@ -177,6 +175,8 @@ export default function App() {
       <p className="home-notes" id="about"><a href="/mateo/">More about Mateo →</a><a id="publishers" href="/services/">Work with Mateo →</a><a id="research" href="/research/">Research archive →</a></p>
       {!MATEO_VIDEO && <p className="home-nojs-only home-static-motto">Let's build something useful together. <span aria-hidden="true">✦</span></p>}
       </div>
+      <Forms />
+      <Hero />
     </main>
     <div className="home-chrome" dangerouslySetInnerHTML={{ __html: footer('/') }} />
   </>;
