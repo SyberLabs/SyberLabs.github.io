@@ -30,7 +30,7 @@ else {
 // ---------- Dependency evidence ----------
 // The project's declared packages as GitHits reported them, from /githits/<slug>.json (a snapshot made at build
 // time). Progressive enhancement: a missing file, a failed fetch or an unexpected shape leaves the host hidden.
-// Truth rules: null means "not checked" and shows as an em dash; an empty vulnerability list is "None reported
+// Truth rules: null means "not checked" and shows the reason in words; an empty vulnerability list is "None reported
 // by GitHits on <date>", never "no vulnerabilities"; a fixture snapshot says plainly that GitHits has not been asked.
 
 // Vite's dev server defines import.meta.env; the deployed file is copied as is, where it is undefined.
@@ -78,8 +78,8 @@ const safeUrl = url => typeof url === 'string' && /^https:\/\/[^\s"'<>]+$/.test(
 const isoDay = value => { const d = new Date(value); return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10); };
 const ext = '<svg class="sy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>';
 const link = (href, text, cls = 'pj-deps__link') => href ? `<a class="${cls}" href="${esc(href)}" rel="noopener">${text}${ext}</a>` : text;
-// An absent value: a dash on screen, words for a screen reader.
-const missing = (why = 'not reported') => `<span class="pj-deps__na" aria-hidden="true">—</span><span class="sy-sr">${why}</span>`;
+// Show why an absent value is unavailable to every reader.
+const missing = (why = 'not reported') => `<span class="pj-deps__na">${esc(why)}</span>`;
 const plural = (n, one, many = one + 's') => `${n} ${n === 1 ? one : many}`;
 
 const SEVERITY = ['critical', 'high', 'moderate', 'medium', 'low'];
@@ -147,13 +147,13 @@ function renderDependencies(data) {
 
   const attribution = !total ? `Read from the manifest; snapshot made ${dayHtml}.` : fixture
     ? `Package data will come from ${link('https://githits.com/', 'GitHits')}; until it is fetched this panel shows only what the manifest declares. Snapshot made ${dayHtml}.`
-    : `Package data from ${link('https://githits.com/', 'GitHits')}, retrieved ${dayHtml}. A dash means GitHits reported no value or the package was not checked.`;
+    : `Package data from ${link('https://githits.com/', 'GitHits')}, retrieved ${dayHtml}. Missing values say “not reported” or “not checked”.`;
 
   return `<div class="pj-split pj-split--facts">
     <h2 id="deps-title" class="sy-eyebrow pj-facts__label">Dependency evidence</h2>
     <div class="pj-split__main pj-deps__main">
       <p class="sy-small pj-deps__source">${total ? source : `No runtime dependencies declared in ${source}.`}</p>
-      ${fixture && total ? '<p class="pj-deps__pending sy-label" role="note"><i aria-hidden="true"></i>Snapshot pending — GitHits data not yet fetched; showing manifest only</p>' : ''}
+      ${fixture && total ? '<p class="pj-deps__pending sy-label" role="note"><i aria-hidden="true"></i>Snapshot pending: GitHits data not yet fetched; showing manifest only</p>' : ''}
       ${total ? `<div class="pj-deps__scroll" role="region" aria-labelledby="deps-caption" tabindex="0">
         <table class="pj-deps__table">
           <caption id="deps-caption" class="pj-deps__caption">${plural(total, 'runtime dependency', 'runtime dependencies')} from ${manifest ? esc(manifest) : 'the manifest'}${where ? ` at ${where}` : ''}</caption>
