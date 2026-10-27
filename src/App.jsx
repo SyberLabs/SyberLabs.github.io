@@ -147,7 +147,7 @@ export default function App() {
       </section>
       <Forms />
       <details className="orb-experiment sy-wrap"><summary>Explore the Orb</summary><Hero /></details>
-      <section className="home-contact sy-wrap" aria-labelledby="contact-title"><div><p className="sy-eyebrow">Available to start immediately</p><h2 id="contact-title">Let’s build something useful together.</h2></div><div><a href="tel:+19259493105">925-949-3105</a><a href={CONTACT}>syberlabs.software@gmail.com</a></div></section>
+      <section className="home-contact sy-wrap" aria-labelledby="contact-title"><div><p className="sy-eyebrow">Available to start immediately</p><h2 id="contact-title">Let’s build something useful together.</h2></div><div><a href="tel:+19259493105">925-949-3105</a><a href={CONTACT}>syberlabs.software@gmail.com</a><a href="https://www.linkedin.com/in/automateon/">linkedin.com/in/automateon</a><a href="https://github.com/sykosyber">github.com/sykosyber</a></div></section>
     </main>
     <div className="home-chrome" dangerouslySetInnerHTML={{ __html: footer('/') }} />
   </>;

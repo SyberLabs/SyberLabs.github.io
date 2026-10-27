@@ -65,3 +65,5 @@
 .portfolio-film :is(video,summary):focus-visible { outline:2px solid var(--sy-ice); outline-offset:5px; }
 .portfolio-contact .sy-actions { align-items:flex-start; flex-direction:column; }
 @media(max-width:800px) { .portfolio-hero { grid-template-columns:1fr; gap:32px; padding-block:48px; } }
+
+.portfolio-contact a { overflow-wrap:anywhere; }

@@ -336,3 +336,5 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
 .sy-field-host { display:none; }
 .sy-footer::before { display:none; }
 .sy-atlas__panel { background:#071013f5; }
+
+.sy-atlas__title { font-family:var(--sy-sans); font-size:18px; }
