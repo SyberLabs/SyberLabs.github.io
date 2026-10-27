@@ -21,8 +21,9 @@
    attractor's form and the flame's maps (the parameters glide to the new values, so every keystroke bends the
    light), and each keystroke pulses the exposure. Empty text returns to the lab's own words after a pause.
 
-   mountOrb(canvas, { avoid, narrow, words, allowSoftware }) -> { supported, setText(s), pulse(k), pause(), resume(), destroy() }
+   mountOrb(canvas, { avoid, center, narrow, words, allowSoftware }) -> { supported, setText(s), pulse(k), pause(), resume(), destroy() }
      avoid    Element whose right edge the orb stays clear of on wide screens (the copy column).
+     center   Wide screens: the orb alone, centred in the box (72% of its height at most); avoid is ignored.
      narrow   { scale, max, top, media }: on narrow screens the orb is min(width * scale, max) px, its top `top` px down.
      words    The idle cycle (default: SyberLabs, RISE, Read, Anything, Alive, Type here ↓).
    Sets --cx, --cy, --s (px) on the canvas parent so the still and the typing bar follow the orb. 1 texel per CSS px,
@@ -111,7 +112,7 @@ export function mountOrb(canvas, opts = {}) {
 }
 
 function run(cv, gl, RM, opts) {
-  const F = !!gl.getExtension('EXT_color_buffer_float'), host = cv.parentElement, avoid = opts.avoid;
+  const F = !!gl.getExtension('EXT_color_buffer_float'), host = cv.parentElement, avoid = opts.avoid, center = !!opts.center;
   const narrow = { scale: 0.7, max: 300, top: 64, ...opts.narrow };
   const WORDS = opts.words || ['SyberLabs', 'RISE', 'Read', 'Anything', 'Alive', 'Type here ↓'];
 
@@ -190,9 +191,9 @@ float n=fract(sin(dot(gl_FragCoord.xy,vec2(12.99,78.23)))*43758.5)/255.;o=vec4(v
     const w = Math.round(cw * want), h = Math.round(ch * want);
     if (w === W && h === H) return; W = cv.width = w; H = cv.height = h; px = want;
     // L is in texels; the CSS variables the bar and the still follow are in CSS px
-    const tr = avoid ? (avoid.getBoundingClientRect().right - cv.getBoundingClientRect().left) * px : W * 0.45;
-    const s = wide ? Math.min(H * 0.78, (W - tr) * 0.86) : Math.min(W * narrow.scale, narrow.max * px);
-    L = { s, x: wide ? tr + (W - tr) / 2 : W / 2, y: wide ? H * 0.47 : narrow.top * px + s / 2 };
+    const tr = center ? 0 : avoid ? (avoid.getBoundingClientRect().right - cv.getBoundingClientRect().left) * px : W * 0.45;
+    const s = wide ? (center ? Math.min(H * 0.72, W * 0.7) : Math.min(H * 0.78, (W - tr) * 0.86)) : Math.min(W * narrow.scale, narrow.max * px);
+    L = { s, x: wide ? tr + (W - tr) / 2 : W / 2, y: wide ? H * (center ? 0.45 : 0.47) : narrow.top * px + s / 2 };
     fill = wide ? 0 : 1; // narrow: the light and the words run out to the glass; there is no room for a dark rim
     if (host) { host.style.setProperty('--cx', L.x / px + 'px'); host.style.setProperty('--cy', L.y / px + 'px'); host.style.setProperty('--s', s / px + 'px'); }
     if (lastFill !== fill && fontsReady && (typed || word >= 0)) retarget(typed || WORDS[word]); lastFill = fill;

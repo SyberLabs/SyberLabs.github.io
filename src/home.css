@@ -1,49 +1,39 @@
 /* Homepage: the lab (the Orb hero), its forms (Pointillism), then Mateo. Tokens and components come from the kit + syberlabs.css. */
 .home-chrome { display: contents; }
 
-/* ---------- hero: the promise and one call to action; the Orb beside it (src/site/orb.js) ---------- */
-/* Orb geometry before (or without) the engine, which then sets --cx/--cy/--s from the DOM: the orb sits right of the
-   640px copy column, 78% of the hero's height at most. */
-.home-hero { position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
-@media (min-width: 901px) { .home-hero { min-height: min(100svh, 860px); } }
-.home-hero__art { --tr: calc(max((100vw - var(--sy-max)) / 2, 0px) + var(--sy-gutter) + 640px); --s: min(78vh, (100vw - var(--tr)) * .86); --cx: calc(var(--tr) + (100vw - var(--tr)) / 2); --cy: 47%; position: absolute; inset: 0; pointer-events: none; }
-/* the orb's own atmosphere: a cool glow under it, no violet cast (the kit's nebula is overridden here) */
-.home-hero.sy-nebula, html.sy-field-live .home-hero { background: radial-gradient(34% 46% at var(--cx, 76%) var(--cy, 47%), #12367a40, #0000 70%); }
-/* without the engine: a still exposure of Plate I in the orb's place */
-.home-still { position: absolute; z-index: -2; left: var(--cx); top: var(--cy); width: calc(var(--s) * 1.04); max-width: none; height: auto; aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(closest-side, #000 82%, transparent); mask-image: radial-gradient(closest-side, #000 82%, transparent); }
-.is-live .home-still { display: none; }
-.home-hero__in { flex: 1; display: grid; grid-template-columns: minmax(0, 640px) 1fr; align-items: center; width: 100%; padding-top: 104px; padding-bottom: 56px; }
-.home-hero__title { margin-top: 22px; font-size: clamp(52px, 6.4vw, 96px); line-height: .94; text-wrap: balance; }
-.home-hero__intro { max-width: 30em; margin: 26px 0 0; }
-.home-hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 26px; margin-top: 32px; }
-.home-hero__explore { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--sy-vellum); font-weight: 500; background: linear-gradient(var(--sy-ice), var(--sy-ice)) 0 calc(100% - 10px)/100% 1px no-repeat; }
-.home-hero__explore:hover { color: var(--sy-ice); text-decoration: none; }
-.home-hero a:focus-visible, .home-sec a:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
+/* ---------- hero: the Orb alone, centred (src/site/orb.js, center: true); the lab's words are inside the glass ---------- */
+/* Orb geometry before (or without) the engine, which then sets --cx/--cy/--s from the DOM: centred, 72% of the hero's
+   height at most (wide screens); under the header and 84% of the width, 380px at most (narrow screens). */
+.home-hero { position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100svh; background: radial-gradient(42% 52% at var(--cx, 50%) var(--cy, 45%), #12367a4d, #0000 70%), var(--sy-ink); }
+@media (min-width: 901px) { .home-hero { min-height: min(100svh, 980px); } }
+.home-hero__art { --s: min(72svh, 70vw); --cx: 50%; --cy: 45%; position: absolute; inset: 0; pointer-events: none; }
+.home-hero__art .sy-atmosphere { z-index: 0; }
+/* without the engine: a still exposure of Plate I in the orb's place, with the words as text beneath it */
+.home-still { position: absolute; z-index: 0; left: var(--cx); top: var(--cy); width: calc(var(--s) * 1.04); max-width: none; height: auto; aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(closest-side, #000 82%, transparent); mask-image: radial-gradient(closest-side, #000 82%, transparent); }
+.is-live .home-still, .is-live .home-hero__words { display: none; }
+.home-hero__words { position: absolute; left: var(--cx); top: calc(var(--cy) + var(--s) / 2 + 22px); transform: translateX(-50%); margin: 0; white-space: nowrap; color: var(--sy-mist); font: 400 clamp(18px, 2vw, 24px)/1.2 var(--sy-serif); letter-spacing: .01em; }
 /* the typing bar: one quiet line under the orb; it exists only while the engine runs */
-.home-orb__bar { display: none; position: absolute; z-index: 1; left: var(--cx); top: calc(var(--cy) + var(--s) / 2 + 22px); width: min(360px, calc(var(--s) * .82)); transform: translateX(-50%); flex-direction: column; align-items: center; gap: 8px; margin: 0; pointer-events: auto; }
+.home-orb__bar { display: none; position: absolute; z-index: 1; left: var(--cx); top: calc(var(--cy) + var(--s) / 2 + 22px); width: min(360px, calc(var(--s) * .7)); transform: translateX(-50%); flex-direction: column; align-items: center; gap: 8px; margin: 0; pointer-events: auto; }
 .is-live .home-orb__bar { display: flex; }
 .home-orb__bar input { width: 100%; padding: 10px 6px; border: 0; border-bottom: 1px solid var(--sy-rule-2); border-radius: 0; background: none; color: var(--sy-vellum); font: 400 15px/1.3 var(--sy-mono); letter-spacing: .02em; text-align: center; caret-color: var(--sy-ice); outline: none; transition: border-color var(--sy-t-hover); }
 .home-orb__bar input::placeholder { color: var(--sy-dim); }
 .home-orb__bar input:hover { border-color: color-mix(in srgb, var(--sy-ice) 50%, var(--sy-rule-2)); }
 .home-orb__bar input:focus-visible { border-color: var(--sy-ice); outline: none; }
 .home-orb__hint { font: 400 11px/1.4 var(--sy-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--sy-dim); }
+/* the only other thing on the first screen: a quiet way down */
+.home-hero__down { position: absolute; z-index: 1; left: 50%; bottom: 22px; display: grid; place-items: center; width: 44px; height: 44px; margin-left: -22px; border: 1px solid var(--sy-rule-2); border-radius: 50%; color: var(--sy-mist); font: 400 16px/1 var(--sy-sans); animation: home-down 2.8s ease-in-out infinite; }
+.home-hero__down:hover { color: var(--sy-ice); border-color: var(--sy-ice); text-decoration: none; }
+.home-hero__down:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
+@keyframes home-down { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+@media (prefers-reduced-motion: reduce) { .home-hero__down { animation: none; } }
 @media (max-width: 900px) {
-  /* phones and narrow tablets: the orb and its bar first (smaller, under the header), then the copy and the call to
-     action, still on the first screen. The engine (narrow: scale .66, max 260, top 60) places the orb at x = W/2,
-     y = 60 + s/2 below 900px whatever the box's proportions. */
-  .home-hero.sy-nebula, html.sy-field-live .home-hero { min-height: 0; background: radial-gradient(60% 40% at 50% var(--cy, 30%), #12367a40, #0000 70%), var(--sy-ink); }
-  .home-hero__in { grid-template-columns: 1fr; align-items: start; padding-top: 0; padding-bottom: 8px; }
-  .home-hero__scrim { display: none; }
-  .home-hero__art { order: -1; position: relative; inset: auto; width: 100%; height: calc(60px + min(66vw, 260px) + 74px); --s: min(66vw, 260px); --cx: 50%; --cy: calc(60px + min(66vw, 260px) / 2); }
-  .home-hero__art .sy-atmosphere { -webkit-mask-image: linear-gradient(#000 84%, transparent); mask-image: linear-gradient(#000 84%, transparent); }
-  .home-orb__bar { width: min(calc(100vw - 2 * var(--sy-gutter)), 320px); top: calc(var(--cy) + var(--s) / 2 + 8px); gap: 4px; }
+  /* the engine (narrow: scale .84, max 380, top 72) places the orb at x = W/2, y = 72 + s/2 below 900px */
+  .home-hero { min-height: calc(72px + min(84vw, 380px) + 190px); background: radial-gradient(70% 45% at 50% var(--cy, 40%), #12367a4d, #0000 70%), var(--sy-ink); }
+  .home-hero__art { --s: min(84vw, 380px); --cx: 50%; --cy: calc(72px + min(84vw, 380px) / 2); }
+  .home-orb__bar { width: min(calc(100vw - 2 * var(--sy-gutter)), 320px); top: calc(var(--cy) + var(--s) / 2 + 14px); gap: 4px; }
   .home-orb__bar input { padding: 7px 6px; font-size: 14px; }
-}
-@media (max-width: 640px) {
-  .home-hero__title { font-size: clamp(38px, 10.6vw, 54px); line-height: .98; margin-top: 12px; }
-  .home-hero__intro { font-size: 18px; margin-top: 16px; }
-  .home-hero__actions { margin-top: 22px; gap: 6px 20px; }
-  .home-hero__cta { flex: 1 1 100%; }
+  .home-hero__words { top: calc(var(--cy) + var(--s) / 2 + 14px); font-size: 18px; }
+  .home-hero__down { bottom: 14px; }
 }
 
 /* ---------- Pointillism: the lab's forms, one field of dots (src/site/pointillism.js) ---------- */
@@ -52,8 +42,10 @@
 .home-forms__note { margin: 0 0 4px; max-width: 30em; text-align: right; color: var(--sy-mist); }
 .home-forms__stage { position: relative; margin: 28px 0 0; height: clamp(380px, 58vw, 600px); border-radius: 14px; overflow: hidden; background: radial-gradient(60% 70% at 50% 48%, #12367a33, #0000 72%), var(--sy-ink); border: 1px solid var(--sy-rule); }
 .home-forms__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
-.home-forms__now { position: absolute; left: 20px; bottom: 16px; display: flex; gap: 10px; align-items: baseline; color: var(--sy-vellum); font: 400 22px/1.2 var(--sy-serif); pointer-events: none; }
-.home-forms__now .sy-label { font-family: var(--sy-mono); font-size: 11px; color: var(--sy-dim); letter-spacing: .08em; text-transform: uppercase; }
+.home-forms__now { position: absolute; left: 0; right: 0; bottom: 22px; padding: 0 24px; text-align: center; color: var(--sy-vellum); font: 400 clamp(20px, 2.2vw, 28px)/1.25 var(--sy-serif); text-wrap: balance; pointer-events: none; }
+.home-forms__line { display: inline-block; animation: home-line 1.4s .5s ease both; }
+@keyframes home-line { from { opacity: 0; transform: translateY(6px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+@media (prefers-reduced-motion: reduce) { .home-forms__line { animation: none; } }
 .home-forms__stage:not(.is-live) .home-forms__now { display: none; }
 .home-forms__controls { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; margin-top: 16px; }
 .home-forms__chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -61,9 +53,9 @@
 .home-forms__chip:hover, .home-forms__pause:hover { color: var(--sy-vellum); border-color: color-mix(in srgb, var(--sy-ice) 50%, var(--sy-rule-2)); }
 .home-forms__chip[aria-pressed="true"] { color: var(--sy-ink); background: var(--sy-ice); border-color: var(--sy-ice); }
 .home-forms__pause { font-family: var(--sy-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
-.home-forms :is(button):focus-visible, .home-hero__cta:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
+.home-forms :is(button):focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
 @media (max-width: 800px) { .home-forms { padding-top: 80px; } .home-forms__head { flex-direction: column; align-items: flex-start; } .home-forms__note { text-align: left; } }
-@media (max-width: 640px) { .home-forms__stage { height: 420px; } .home-forms__now { left: 14px; bottom: 12px; font-size: 18px; } .home-forms__chip { padding: 7px 12px; font-size: 12px; min-height: 36px; } .home-me { margin-top: 72px; } }
+@media (max-width: 640px) { .home-forms__stage { height: 420px; } .home-forms__now { bottom: 14px; padding: 0 14px; font-size: 19px; } .home-forms__chip { padding: 7px 12px; font-size: 12px; min-height: 36px; } .home-me { margin-top: 72px; } }
 
 /* ---------- Mateo ---------- */
 .home-portfolio { padding-bottom:16px; }

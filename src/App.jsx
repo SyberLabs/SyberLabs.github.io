@@ -16,18 +16,17 @@ import './home.css';
 // The homepage, in order: the lab (the Orb), the lab's forms (Pointillism), then Mateo (the introduction film, the
 // pitch and the linked proof of his work). The header floats over the Orb; the footer is the shared chrome.
 
-// The Orb (src/site/orb.js): a sphere of fractal flame and spectral attractor beside the headline, with a swarm of
-// dots that spells the lab's words. One input, the typing bar: as the visitor types, the dots re-assemble into their
-// text and the light bends to it. Text never leaves the browser (cleanText, src/living-lab/scene.js, bounds it).
-// Without WebGL2 (or on a software renderer) a still exposure of Plate I takes its place and the bar is hidden;
-// reduced motion gets one still exposure per text. The words the dots spell are also in the page as .sy-sr text.
-const ORB_WORDS = ['SyberLabs', 'RISE', 'Read', 'Anything', 'Alive', 'Type here ↓'];
+// The Orb (src/site/orb.js), alone and centred: no headline, no copy. The lab's words are spelt by the swarm of dots
+// inside the glass, and the typing bar under it lets a visitor spell their own (text never leaves the browser;
+// cleanText, src/living-lab/scene.js, bounds it). The h1 is for screen readers and crawlers. Without WebGL2 (or on a
+// software renderer) a still exposure of Plate I takes its place, with the words beneath it as text.
+const ORB_WORDS = ['SyberLabs', 'AI Studio', 'Creative Software', 'Generative Art', 'Living Systems', 'Type here ↓'];
 function Hero() {
-  const canvas = useRef(null), copy = useRef(null), orb = useRef(null);
+  const canvas = useRef(null), orb = useRef(null);
   const [live, setLive] = useState(false);
   const [text, setText] = useState('');
   useEffect(() => {
-    const o = orb.current = mountOrb(canvas.current, { avoid: copy.current, words: ORB_WORDS, narrow: { scale: 0.66, max: 260, top: 60, media: '(max-width: 900px)' }, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
+    const o = orb.current = mountOrb(canvas.current, { center: true, words: ORB_WORDS, narrow: { scale: 0.84, max: 380, top: 72, media: '(max-width: 900px)' }, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
     setLive(o.supported);
     // the Atlas covers the page with a blurred backdrop: hold the orb instead of re-blurring a moving one
     const html = document.documentElement;
@@ -36,33 +35,23 @@ function Hero() {
     return () => { mo.disconnect(); o.destroy(); };
   }, []);
   const type = e => { const v = e.target.value.slice(0, 180); setText(v); orb.current?.setText(cleanText(v)); };
-  return <section className={`home-hero sy-nebula${live ? ' is-live' : ''}`} aria-labelledby="hero-title">
-    <div className="sy-scrim home-hero__scrim" aria-hidden="true" />
-    <div className="home-hero__in sy-wrap">
-      <div className="home-hero__copy" ref={copy}>
-        <p className="sy-eyebrow">SyberLabs / research studio</p>
-        <h1 id="hero-title" className="sy-display-xl home-hero__title">Systems that <em>come alive.</em></h1>
-        <p className="sy-body-lg home-hero__intro">A research studio where machine learning, complex systems and generative art meet. We build reading runtimes, agent infrastructure and instruments you can play.</p>
-        <div className="home-hero__actions">
-          <a className="sy-btn sy-btn--solid home-hero__cta" href="#forms">Explore the lab <span aria-hidden="true">↓</span></a>
-          <a className="home-hero__explore" href="#founder">Meet the founder <span aria-hidden="true">↓</span></a>
-        </div>
-      </div>
-    </div>
+  return <section className={`home-hero home-hero--solo${live ? ' is-live' : ''}`} aria-labelledby="hero-title">
+    <h1 id="hero-title" className="sy-sr">SyberLabs: an AI studio for creative software, generative art and living systems.</h1>
     <div className="home-hero__art">
       <canvas ref={canvas} className="sy-atmosphere" aria-hidden="true" />
-      <img className="home-still" src={plateStill} srcSet={`${plateStillSm} 560w, ${plateStill} 1000w`} sizes="(max-width: 900px) 400px, 60vw" width="1000" height="1000" alt="" aria-hidden="true" decoding="async" />
-      <p className="sy-sr">SyberLabs. RISE. Read anything, alive.</p>
+      <img className="home-still" src={plateStill} srcSet={`${plateStillSm} 560w, ${plateStill} 1000w`} sizes="(max-width: 900px) 90vw, 70vh" width="1000" height="1000" alt="" aria-hidden="true" decoding="async" />
+      <p className="home-hero__words" aria-hidden="true">SyberLabs · AI Studio · Creative Software</p>
       <form className="home-orb__bar" onSubmit={e => e.preventDefault()}>
         <input type="text" value={text} onChange={type} maxLength={180} autoComplete="off" spellCheck={false} enterKeyHint="done" aria-label="Type anything; the orb spells it" placeholder="Type anything…" />
         <span className="home-orb__hint" aria-hidden="true">{text ? 'Your words stay in this browser' : 'The orb listens'}</span>
       </form>
     </div>
+    <a className="home-hero__down" href="#forms" aria-label="Scroll to Pointillism"><span aria-hidden="true">↓</span></a>
   </section>;
 }
 
-// Pointillism (src/site/pointillism.js): one population of dots that reorganises into the lab's forms. The cycle
-// advances on its own; the chips jump to a form, and Pause holds the current one (moving content that runs longer
+// Pointillism (src/site/pointillism.js): a seven-beat loop about interconnectedness in one field of dots, each beat
+// with its sentence under the stage. The cycle advances on its own; the chips jump to a form, and Pause holds the current one (moving content that runs longer
 // than five seconds needs a way to stop it). Reduced motion: each form drawn once, still, and no cycle.
 function Forms() {
   const canvas = useRef(null), engine = useRef(null);
@@ -80,16 +69,16 @@ function Forms() {
     <div className="site-head home-forms__head">
       <div>
         <p className="sy-eyebrow">Pointillism</p>
-        <h2 id="forms-title" className="sy-display">One field of points, <em>every form.</em></h2>
+        <h2 id="forms-title" className="sy-display">Everything is <em>connected.</em></h2>
       </div>
-      <p className="home-forms__note sy-small">The same dots spell the lab, gather into a raincloud, grow into a tree, fire as a neural network and turn as a galaxy. Each finds its place by one rule.</p>
+      <p className="home-forms__note sy-small">A short loop in one field of points. Rain becomes a tree, a tree becomes a thought, thoughts become a sky, and imagination is the eye that sees the whole.</p>
     </div>
     <figure className={`home-forms__stage${live ? ' is-live' : ''}`}>
       <canvas ref={canvas} className="home-forms__canvas" aria-hidden="true" />
-      <figcaption className="home-forms__now"><span className="sy-label">Now</span> <span>{FORMS[form].label}</span></figcaption>
+      <figcaption className="home-forms__now"><span key={form} className="home-forms__line">{FORMS[form].line}</span></figcaption>
     </figure>
     <div className="home-forms__controls">
-      <div className="home-forms__chips" role="group" aria-label="Choose a form">
+      <div className="home-forms__chips" role="group" aria-label="Go to a moment in the loop">
         {FORMS.map((f, i) => <button key={f.id} type="button" className="home-forms__chip" aria-pressed={i === form} onClick={() => pick(i)}>{f.label}</button>)}
       </div>
       <button type="button" className="home-forms__pause" aria-pressed={paused} onClick={toggle}>{paused ? 'Play' : 'Pause'}</button>
