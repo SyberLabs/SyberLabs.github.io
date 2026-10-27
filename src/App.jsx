@@ -117,6 +117,11 @@ export default function App() {
   // done: the panel (line, actions, availability) rises. Every other visit, and any failure, is simply done.
   const [phase, setPhase] = useState('idle');
   const [framed, setFramed] = useState(null); // what the Sophia frame holds now (FRAME_ART id), for the credit
+  // The credit names the painting only while it is on screen. The line keeps the last painting's text and fades out
+  // between appearances rather than leaving the layout, so nothing below it moves each time the loop turns.
+  const [lastFramed, setLastFramed] = useState(null);
+  useEffect(() => { if (framed) setLastFramed(framed); }, [framed]);
+  const art = FRAME_ART.find(a => a.id === lastFramed);
   const [revealing, setRevealing] = useState(false); // false in the served HTML, so the panel is never inert without JS
   const settle = useRef(() => {});
   useEffect(() => {
@@ -174,13 +179,30 @@ export default function App() {
       </section>
       <div className="film-notes sy-wrap">
         <span>{MATEO_VIDEO.credit}</span>
-        <span className="hero-credit">Gyre to RISE Sophia. In the frame: {FRAME_ART.map((a, i) => <React.Fragment key={a.id}>{i ? ' · ' : ''}<span className={a.id === framed ? 'is-framed' : undefined}>{a.date ? <><a href={a.href}>{a.title}</a>, {a.by}, {a.date}, The Cleveland Museum of Art, CC0</> : <>{a.title}, {a.by}, {a.made}</>}</span></React.Fragment>)}.</span>
+        {art && <span className={`hero-credit${framed ? '' : ' is-off'}`} aria-hidden={framed ? undefined : true}>In the frame: {art.date ? <><a href={art.href}>{art.title}</a>, {art.by} (The Cleveland Museum of Art, CC0)</> : <>{art.title}, by {art.by}, {art.made}</>}</span>}
         <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((p, i) => <p key={i}>{p}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>
         {videoError && <p role="status">Video unavailable. Read the transcript or explore the work below.</p>}
       </div>
       <section id="work" className="selected-work sy-wrap" aria-labelledby="work-title">
-        <div className="selected-work__intro"><p className="sy-eyebrow">Selected work</p><h2 id="work-title">GitHits design partnership</h2><p>Helping AI coding tools find useful code examples. I built and tested the connection to a coding assistant.</p><a href="/mateo/#githits">My contribution and code <span aria-hidden="true">↗</span></a></div>
-        <figure className="test-evidence"><figcaption>Recorded engineering checks</figcaption><p><strong>44 / 44</strong> tests passed</p><ul><li>Allowed searches work</li><li>Excluded sources are blocked</li><li>Search records can be checked</li></ul><p className="test-evidence__note">Controlled test data. No customer results or savings claimed.</p><a href="/mateo/proof/githits-tests.txt">Read the test output</a></figure>
+        <div className="selected-work__intro">
+          <p className="sy-eyebrow">Selected work / AI developer tools</p>
+          <h2 id="work-title">GitHits design partnership</h2>
+          <p>GitHits searches open-source code so AI coding assistants can learn from real examples. For a design-partner pilot, I built the path between Claude Code and the GitHits API: a standard-library Python client, and the wiring that lets an agent use it under the host’s rules.</p>
+          <ol className="gh-flow" aria-label="How a lookup travels">
+            <li><b>Agent</b><span>Claude Code</span></li>
+            <li><b>Launcher</b><span>its only allowed command, behind a query guard</span></li>
+            <li><b>Client</b><span>filters sources and licenses, keeps the record</span></li>
+            <li><b>GitHits API</b><span>five read-only operations</span></li>
+          </ol>
+          <p className="gh-note">Both changes went through SyberWork’s own review: conformance, rules, scenario and test checks before I admitted them. Tested against a local stand-in for the API, so no live usage or savings are claimed.</p>
+          <p className="gh-links"><a href="/mateo/#githits">Case study <span aria-hidden="true">→</span></a><a href="https://github.com/SyberLabs/SyberWork/pull/129">Client code <span aria-hidden="true">↗</span></a><a href="https://github.com/SyberLabs/SyberWork/pull/134">Claude Code wiring <span aria-hidden="true">↗</span></a><a href="/mateo/proof/githits-tests.txt">Test output</a></p>
+        </div>
+        <dl className="gh-decisions">
+          <div><dt>Our own code never counts as outside evidence</dt><dd>SyberLabs’ repositories are public, and GitHits indexes public code. The client refuses a target that names an excluded owner before any request is sent, drops results whose source is excluded, and discards a generated example that cites one. That last check is detection, not prevention, so the pilot also keeps its tasks unpublished.</dd></div>
+          <div><dt>Only licenses the project can honour</dt><dd>Code an agent copies can land in an Apache-2.0 repository, so results are held to a permissive allow list. SPDX expressions are parsed with real operator precedence; copyleft, unknown and missing licenses are dropped and counted.</dd></div>
+          <div><dt>The host keeps the record, not the agent</dt><dd>Every call, refusals included, appends a record signed with HMAC-SHA256: digests and counts, never the query, the result or the token. A record that fails verification is ignored and counted, so a forged line cannot pass as a lookup.</dd></div>
+          <div><dt>Pinned to the API contract</dt><dd>Tests pin the exact part of GitHits’ OpenAPI document the client uses. The token goes only into the Authorization header and is scrubbed from errors; redirects and oversized responses are refused; lean defaults keep results small for an agent’s context window.</dd></div>
+        </dl>
       </section>
       <section className="demo-work sy-wrap" aria-label="Product demonstrations">
         <article><div><p className="sy-eyebrow">Engines / Mateo’s browser art</p><h2>Mathematics you can play.</h2><p>Gyre turns mathematical rules into moving trails of light.</p><a href={GYRE_APP}>Explore Gyre <span aria-hidden="true">↗</span></a></div><video controls playsInline preload="none" poster="/mateo/demos/gyre-orbit.jpg" width="960" height="540" aria-label="Recorded Gyre interaction" onPlay={pauseOtherVideos}><source src="/mateo/demos/gyre-orbit.mp4" type="video/mp4" /></video></article>
