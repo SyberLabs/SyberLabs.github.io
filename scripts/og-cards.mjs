@@ -14,7 +14,9 @@
 //   node scripts/og-cards.mjs flyspace kev  only those slugs
 //
 // Playwright is resolved from OG_PLAYWRIGHT (a directory holding node_modules/playwright) or the
-// scratchpad install used when the cards were first made; Chromium from OG_CHROME.
+// scratchpad install used when the cards were first made; Chromium from OG_CHROME. Where Playwright's
+// browser download is blocked, `npm i playwright @sparticuz/chromium` in that directory and point OG_CHROME
+// at the binary `(await import('@sparticuz/chromium')).default.executablePath()` extracts (/tmp/chromium).
 import { readFile, writeFile, mkdir, stat, rm } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { execFile } from 'node:child_process';
@@ -37,8 +39,8 @@ const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 // One entry per page. `seed` names the sigil (projects use their slug, so the card carries the same
 // mark as the page); `line` is the single sentence under the headline.
 const pages = [
-  { slug: 'home', path: '/', eyebrow: 'Mateo Robles · Software engineer', headline: 'Mathematical worlds. AI integrations.',
-    line: 'Run Engines. Inspect the GitHits integration and RISE Composer contribution. Meet the engineer through the work.', seed: 'syberlabs', accent: ICE },
+  { slug: 'home', path: '/', eyebrow: 'Mateo Robles · Software & Product Engineer · Bay Area', headline: 'Mateo Robles. AI tools and web products.',
+    line: 'Santa Clara CS 2026. Third place, Cline, Parallel & Composio Hackathon. GitHits design partner. Available\u00a0now.', seed: 'syberlabs', accent: ICE },
   ...projects.map(p => ({
     slug: p.slug, path: `/projects/${p.slug}/`, eyebrow: `Project ${p.number} · ${p.category}`, headline: p.headline,
     // the whole intro when it fits four lines, otherwise its first sentence
@@ -62,8 +64,8 @@ const pages = [
     line: 'A film edited from real RISE screen recordings, then the interactive sample to try yourself.', seed: 'rise', accent: RISE },
   { slug: 'plus', path: '/plus/', eyebrow: 'RISE Plus · Coming soon', headline: 'Your own reading, read aloud.',
     line: 'Give your short writing a voice. Planned: $8.99 a month for 60,000 characters of ElevenLabs narration. Free reading stays free.', seed: 'plus', accent: RISE },
-  { slug: 'mateo', path: '/mateo/', eyebrow: 'Mateo Robles · Software engineer · Available now', headline: 'Mateo Robles. Visual systems. AI tooling.',
-    line: 'GitHits client and Claude Code integration. RISE Composer contribution. Seven interactive Engines. Santa Clara ’26.', seed: 'mateo', accent: ICE },
+  { slug: 'mateo', path: '/mateo/', eyebrow: 'Mateo Robles · Software & Product Engineer · Available now', headline: 'AI developer tools. Interactive web products.',
+    line: 'Santa Clara CS 2026. Third place, Cline, Parallel & Composio Hackathon. GitHits design partnership. RISE\u00a0lead\u00a0development.', seed: 'mateo', accent: ICE },
   { slug: 'privacy', path: '/privacy/', eyebrow: 'SyberLabs · Privacy', headline: 'What this site does with your data.',
     line: 'A static site with no accounts, forms, cookies or analytics.', seed: 'privacy', accent: ICE },
 ];
@@ -93,8 +95,9 @@ body { position: relative; color: var(--vellum); font: 400 17px/1.6 var(--sans);
 .copy { display: flex; flex-direction: column; min-width: 0; }
 .lockup { display: inline-flex; align-items: center; gap: 12px; font: 600 15px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--vellum); }
 .lockup img { width: 26px; height: auto; }
-.eyebrow { margin-top: 44px; font: 500 15px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mist); }
-.headline { margin-top: 18px; font: 400 ${p.headline.length > 28 ? 64 : 76}px/1.02 var(--serif); letter-spacing: -.015em; color: var(--vellum); text-wrap: balance; }
+/* eyebrows longer than 48 characters step down a size so they stay on one line */
+.eyebrow { margin-top: 44px; font: 500 ${p.eyebrow.length > 48 ? 13 : 15}px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mist); }
+.headline { margin-top: 18px; font: 400 ${p.headline.length > 42 ? 58 : p.headline.length > 28 ? 64 : 76}px/1.02 var(--serif); letter-spacing: -.015em; color: var(--vellum); text-wrap: balance; }
 .line { margin-top: 22px; font: 400 22px/1.4 var(--sans); color: var(--body); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .foot { margin-top: auto; display: flex; align-items: center; gap: 18px; padding-top: 24px; }
 .badge { display: inline-flex; align-items: center; gap: 10px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule-2); background: rgba(6,5,26,.6);
@@ -148,6 +151,14 @@ try {
     await page.setContent(card(p), { waitUntil: 'load' });
     await page.waitForFunction(() => !!window.__sigil);
     await page.evaluate(({ seed, color }) => window.__sigil.draw(document.getElementById('sigil'), seed, { color, animate: false }), { seed: p.seed, color: p.accent });
+    // draw() iterates the orbit in a Web Worker and paints on a later frame, so a screenshot taken as it returns can
+    // catch an empty plate. Wait for the sigil's pixels (with animate: false the first paint is the whole orbit); a sigil
+    // that never paints times out instead of writing a blank card.
+    await page.waitForFunction(() => {
+      const c = document.getElementById('sigil'), d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+      for (let i = 3; i < d.length; i += 4) if (d[i]) return true;
+      return false;
+    });
     const file = resolve(root, 'og', `${p.slug}.png`);
     await page.screenshot({ path: file, type: 'png', clip: { x: 0, y: 0, width: 1200, height: 630 } });
     await optimise(file);
