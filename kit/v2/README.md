@@ -72,11 +72,16 @@ which writes itself in from the left on the first visit.
 
 The Sophia frame holds a different picture on each pass of the clip, chosen at
 random without repeating, and it always holds something warm against the blue
-page: Earth (in the clip), The Pink Cloud (Henri-Edmond Cross, CC0 at the
-Cleveland Museum of Art) or one of Mateo's own pieces, laid exactly over Earth's
-disc (`src/frame-art.js` holds the measured disc and timing). The credit line
+page: The Pink Cloud (Henri-Edmond Cross, CC0 at the Cleveland Museum of Art) or
+one of Mateo's own pieces. The clip's Earth is never seen: the picture appears
+with Earth's first frame and follows Earth's measured size until it has gone
+(`src/frame-art.js` holds the disc and the size over time). The credit line
 under the hero names every picture and highlights the one in the frame. Keep
 baked-in text out of the frame.
+
+The title's bezel is built from stacked solid copies of the word, never an
+outline stroke: Instrument Sans draws letters from overlapping contours, and a
+stroke traces their inner joints as visible seams.
 
 Mateo's own Midjourney pieces carry the lab's identity below the hiring content:
 the chrome emblem and the agent network in the lab section. Credit them as
@@ -90,7 +95,7 @@ availability. Interview and Résumé stay in the header throughout, and the pane
 is inert only while hidden. A slow or blocked clip, scrolling, playing the film,
 reduced motion or a media error all end in the same full layout; return visits
 and script-free pages start there. The clip keeps looping behind the settled
-page. Keep NASA/GSFC's visible linked image acknowledgment. Keep the panel beside
+page. Keep the panel beside
 or below Earth, never over it, and do not restore a permanent opaque half-screen
 mask.
 

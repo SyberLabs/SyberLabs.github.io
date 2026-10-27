@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { HERO_MEDIA } from './hero-media.js';
-import { FRAME_ART, FRAME_DISC } from './frame-art.js';
+import { FRAME_ART, FRAME_DISC, earthRadius } from './frame-art.js';
 
-const ss = (a, b, x) => { const k = Math.min(1, Math.max(0, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
 const pickNext = last => { const pool = FRAME_ART.map((_, i) => i).filter(i => i !== last); return pool[Math.floor(Math.random() * pool.length)]; };
 
 // onTime(seconds) reports the clip's own playback time, which the homepage reveal follows; onUnavailable() fires
 // when the clip cannot play here (reduced motion or a media error), so nothing waits on it.
 // The Sophia frame: each pass of the clip shows one of FRAME_ART, chosen at random (never the same twice running).
-// Earth is in the clip; a painting is laid over Earth's disc, growing in and out with it, frame by frame.
+// Earth is in the clip; the picture is laid over Earth's disc and follows Earth's measured size frame by frame, fully
+// opaque and a little larger, so Earth is never seen.
 // onArt(id) reports what the frame holds, for the credit line.
 export default function BackgroundVideo({ pitchPlaying, onTime, onUnavailable, onArt }) {
   const clip = useRef(null), art = useRef(null);
@@ -46,8 +46,8 @@ export default function BackgroundVideo({ pitchPlaying, onTime, onUnavailable, o
     const ro = 'ResizeObserver' in window ? new ResizeObserver(place) : null; ro?.observe(box);
     return () => ro?.disconnect();
   }, [portrait, allowed, failed]);
-  // Follow the clip frame by frame: the painting grows in as Earth does and leaves as Earth leaves; each new pass
-  // of the clip (its time jumps back) draws the next choice.
+  // Follow the clip frame by frame: the picture grows in as Earth does and shrinks away as Earth leaves; each new
+  // pass of the clip (its time jumps back) draws the next choice.
   useEffect(() => {
     const video = movie.current, layer = art.current;
     if (!video || !layer) return;
@@ -56,8 +56,8 @@ export default function BackgroundVideo({ pitchPlaying, onTime, onUnavailable, o
       const t = video.currentTime;
       if (t + 1 < last) { index = pickNext(index); setArtIndex(index); }
       last = t;
-      const show = FRAME_ART[index].src ? ss(FRAME_DISC.in, FRAME_DISC.held, t) * (1 - ss(FRAME_DISC.out, FRAME_DISC.gone, t)) : 0;
-      layer.style.opacity = show.toFixed(3); layer.style.setProperty('--grow', (.82 + .18 * show).toFixed(3));
+      const r = earthRadius(t); // a disc of Earth's circumradius covers its polygon; 6% more covers its anti-aliased edge
+      layer.style.opacity = r > 0 ? '1' : '0'; layer.style.setProperty('--grow', r > 0 ? Math.min(1, r * 1.06 + .03).toFixed(3) : '0');
       raf = video.paused ? 0 : requestAnimationFrame(frame);
     };
     const go = () => { if (!raf) raf = requestAnimationFrame(frame); };
