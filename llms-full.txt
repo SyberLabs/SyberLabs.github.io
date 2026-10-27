@@ -428,9 +428,10 @@ Complete output, unedited. With random seed 20260729, the simulation recorded 25
 
 ## Work
 
-- [Engines](https://sykosyber.github.io/engines/works/gyre.html): Mathematical worlds · run Gyre
 - [GitHits integration](https://syberlabs.io/mateo/#githits): Code search for AI coding assistants
+- [PorchLight](https://syberlabs.io/mateo/#porchlight): Hackathon third place · cited city reports
 - [RISE](https://syberlabs.io/mateo/#rise): Interactive reading in your browser
+- [Engines](https://sykosyber.github.io/engines/works/gyre.html): Mathematical worlds · run Gyre
 
 ## Connect
 
