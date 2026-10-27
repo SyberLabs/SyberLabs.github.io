@@ -92,7 +92,7 @@ jobs:
           grep -Fq 'https://sykosyber.github.io/engines/works/gyre.html' dist/index.html
           grep -Fq '/mateo/#githits' dist/index.html
           grep -Fq 'build something useful together.' dist/index.html
-          grep -Fq 'https://github.com/SyberLabs/RISE/pull/371' dist/index.html
+          grep -Fq 'https://github.com/SyberLabs/RISE/pull/643' dist/index.html
           if grep -Fq 'Try a one-minute reading' dist/index.html; then echo 'Retired homepage funnel returned'; exit 1; fi
           if grep -Fq 'RISE Plus' dist/index.html; then echo 'Unlaunched promotion returned'; exit 1; fi
           grep -Fq 'id="dependencies"' dist/stack/index.html
