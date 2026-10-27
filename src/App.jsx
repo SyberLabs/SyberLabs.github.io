@@ -119,7 +119,7 @@ export default function App() {
           <h1 id="hero-title">Mateo Robles</h1>
           <p className="pitch-hero__line">Useful software.<br />Ready to build.</p>
           <div className="pitch-hero__actions">
-            <a className="sy-btn sy-btn--solid" href="/mateo/#contact">Interview Mateo <span aria-hidden="true">→</span></a>
+            <a className="sy-btn sy-btn--solid" href={CONTACT + '?subject=Interview%20with%20Mateo%20Robles'}>Interview Mateo <span aria-hidden="true">→</span></a>
             <a className="sy-btn sy-btn--line" href={RESUME}>View résumé</a>
           </div>
           <p className="pitch-hero__availability">Available to start immediately</p>
