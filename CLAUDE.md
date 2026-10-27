@@ -1,5 +1,22 @@
 # CLAUDE.md
 
+## SyberLabs website design
+
+`kit/v2/` is the canonical existing Claude/SyberLabs design kit. Read
+`kit/v2/README.md`, especially "Current website direction: immersive mathematical
+media", before changing the website. The approved direction is nearly black,
+off-white and restrained cyan, with full-bleed mathematical media, Instrument
+Sans headings, generous whitespace and sparse actions. Apply scoped website
+overrides; preserve shared kit consumers and the existing framework.
+
+For Mateo's hero, keep `Interview Mateo` and `View résumé` as the two conversion
+actions. Keep copy as real HTML and provide native accessible video when a real
+asset exists. Preserve menu, privacy and account access on mobile and desktop.
+Inspect the actual approved reference pixels when available and verify the
+rendered result at laptop and mobile widths. Do not invent product proof,
+seniority claims, personal contact addresses or video metadata. Do not describe
+Mateo as junior. Use plain punctuation without em dashes in new public copy.
+
 ## Public dependency lookup (GitHits)
 
 `.mcp.json` invokes the private MasterMind usage runtime. Install and load both
