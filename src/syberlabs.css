@@ -338,3 +338,13 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
 .sy-atlas__panel { background:#071013f5; }
 
 .sy-atlas__title { font-family:var(--sy-sans); font-size:18px; }
+
+/* Immediate hiring routes on the recruiter-facing pages, including phones. */
+.sy-header--hiring .sy-nav { display:block; margin-left:auto; }
+.sy-header--hiring .sy-menu { margin-left:24px; }
+@media(max-width:600px) {
+  .sy-header--hiring .sy-nav ul { gap:16px; }
+  .sy-header--hiring .sy-nav a { font-size:12px; }
+  .sy-header--hiring .sy-menu { margin-left:16px; }
+  .sy-header--hiring .sy-menu summary span { display:none; }
+}

@@ -129,8 +129,9 @@ test('static chrome derives current navigation from routes, repairing missing an
   const { applyChrome } = await import('./site-chrome.mjs');
   const { header, footer } = await import('../projects/project-template.js');
   for (const [file, expected] of [
-    ['mateo/index.html', '/mateo/'], ['plus/index.html', null],
-    ['services/index.html', null], ['projects/rise/index.html', '/#work'],
+    ['mateo/index.html', null], ['plus/index.html', null],
+    ['services/index.html', null], ['projects/rise/index.html', null],
+    ['projects/syberwork/index.html', '/#work'],
     ['research/index.html', null], ['404.html', null],
   ]) {
     for (const prior of ['', 'services', 'mateo', 'plus', 'projects']) {
@@ -140,6 +141,10 @@ test('static chrome derives current navigation from routes, repairing missing an
       const primary = generated.match(/<nav class="sy-nav"[\s\S]*?<\/nav>/)[0];
       const current = [...primary.matchAll(/<a href="([^"]+)" aria-current="page"/g)].map(match => match[1]);
       assert.deepEqual(current, expected ? [expected] : [], `${file} previously ${prior}`);
+      if (['mateo/index.html', 'services/index.html', 'projects/rise/index.html'].includes(file)) {
+        assert.match(primary, /href="mailto:syberlabs\.software@gmail\.com\?subject=Interview%20with%20Mateo%20Robles">Interview<\/a>/);
+        assert.match(primary, /href="\/mateo_robles_resume\.pdf">Résumé<\/a>/);
+      }
       assert.match(generated, /href="#content">Skip to content/);
       assert.equal(applyChrome(generated, file), generated, 'regeneration is idempotent');
     }

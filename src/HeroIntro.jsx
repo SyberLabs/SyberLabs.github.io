@@ -72,6 +72,7 @@ export default function HeroIntro({ stage, copy, pitchPlaying, replay = false })
   useEffect(() => { if (pitchPlaying) finish.current(); }, [pitchPlaying]);
   if (!active) return null;
   return <>
+    <p className="hero-intro__identity">Mateo Robles<span>Software &amp; Product Engineer</span></p>
     <div className="hero-intro" aria-hidden="true">
       <picture className="hero-intro__poster"><source media="(max-width:600px)" srcSet={EARTH_INTRO.portraitPoster} /><img src={EARTH_INTRO.poster} width="1280" height="720" alt="" fetchPriority="high" /></picture>
       <video ref={movie} muted playsInline preload="none" tabIndex={-1} /><canvas ref={canvas} />
