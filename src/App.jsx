@@ -3,10 +3,99 @@ import { CONTACT, RESUME, GYRE_APP } from '../projects/site-data.js';
 import { header, footer } from '../projects/project-template.js';
 import { drawAll } from '../kit/v2/syber-sigil.js';
 import { boot } from './site/site.js';
+import { mountOrb } from './site/orb.js';
+import { mountPointillism, FORMS } from './site/pointillism.js';
+import { cleanText } from './living-lab/scene.js';
 import { MATEO_VIDEO } from './mateo-video.js';
+import plateStill from './plate-i.webp';
+import plateStillSm from './plate-i-sm.webp';
 import '../kit/v2/syber-atlas.css';
 import './syberlabs.css';
 import './home.css';
+
+// The homepage, in order: the lab (the Orb), the lab's forms (Pointillism), then Mateo (the introduction film, the
+// pitch and the linked proof of his work). The header floats over the Orb; the footer is the shared chrome.
+
+// The Orb (src/site/orb.js): a sphere of fractal flame and spectral attractor beside the headline, with a swarm of
+// dots that spells the lab's words. One input, the typing bar: as the visitor types, the dots re-assemble into their
+// text and the light bends to it. Text never leaves the browser (cleanText, src/living-lab/scene.js, bounds it).
+// Without WebGL2 (or on a software renderer) a still exposure of Plate I takes its place and the bar is hidden;
+// reduced motion gets one still exposure per text. The words the dots spell are also in the page as .sy-sr text.
+const ORB_WORDS = ['SyberLabs', 'RISE', 'Read', 'Anything', 'Alive', 'Type here ↓'];
+function Hero() {
+  const canvas = useRef(null), copy = useRef(null), orb = useRef(null);
+  const [live, setLive] = useState(false);
+  const [text, setText] = useState('');
+  useEffect(() => {
+    const o = orb.current = mountOrb(canvas.current, { avoid: copy.current, words: ORB_WORDS, narrow: { scale: 0.66, max: 260, top: 60, media: '(max-width: 900px)' }, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
+    setLive(o.supported);
+    // the Atlas covers the page with a blurred backdrop: hold the orb instead of re-blurring a moving one
+    const html = document.documentElement;
+    const mo = new MutationObserver(() => html.classList.contains('sy-atlas-open') ? o.pause() : o.resume());
+    mo.observe(html, { attributes: true, attributeFilter: ['class'] });
+    return () => { mo.disconnect(); o.destroy(); };
+  }, []);
+  const type = e => { const v = e.target.value.slice(0, 180); setText(v); orb.current?.setText(cleanText(v)); };
+  return <section className={`home-hero sy-nebula${live ? ' is-live' : ''}`} aria-labelledby="hero-title">
+    <div className="sy-scrim home-hero__scrim" aria-hidden="true" />
+    <div className="home-hero__in sy-wrap">
+      <div className="home-hero__copy" ref={copy}>
+        <p className="sy-eyebrow">SyberLabs / research studio</p>
+        <h1 id="hero-title" className="sy-display-xl home-hero__title">Systems that <em>come alive.</em></h1>
+        <p className="sy-body-lg home-hero__intro">A research studio where machine learning, complex systems and generative art meet. We build reading runtimes, agent infrastructure and instruments you can play.</p>
+        <div className="home-hero__actions">
+          <a className="sy-btn sy-btn--solid home-hero__cta" href="#forms">Explore the lab <span aria-hidden="true">↓</span></a>
+          <a className="home-hero__explore" href="#founder">Meet the founder <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+    </div>
+    <div className="home-hero__art">
+      <canvas ref={canvas} className="sy-atmosphere" aria-hidden="true" />
+      <img className="home-still" src={plateStill} srcSet={`${plateStillSm} 560w, ${plateStill} 1000w`} sizes="(max-width: 900px) 400px, 60vw" width="1000" height="1000" alt="" aria-hidden="true" decoding="async" />
+      <p className="sy-sr">SyberLabs. RISE. Read anything, alive.</p>
+      <form className="home-orb__bar" onSubmit={e => e.preventDefault()}>
+        <input type="text" value={text} onChange={type} maxLength={180} autoComplete="off" spellCheck={false} enterKeyHint="done" aria-label="Type anything; the orb spells it" placeholder="Type anything…" />
+        <span className="home-orb__hint" aria-hidden="true">{text ? 'Your words stay in this browser' : 'The orb listens'}</span>
+      </form>
+    </div>
+  </section>;
+}
+
+// Pointillism (src/site/pointillism.js): one population of dots that reorganises into the lab's forms. The cycle
+// advances on its own; the chips jump to a form, and Pause holds the current one (moving content that runs longer
+// than five seconds needs a way to stop it). Reduced motion: each form drawn once, still, and no cycle.
+function Forms() {
+  const canvas = useRef(null), engine = useRef(null);
+  const [form, setForm] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [live, setLive] = useState(false);
+  useEffect(() => {
+    const p = engine.current = mountPointillism(canvas.current, { onForm: setForm });
+    setLive(p.supported);
+    return () => p.destroy();
+  }, []);
+  const pick = i => { engine.current?.show(i); setForm(i); };
+  const toggle = () => { const p = !paused; setPaused(p); engine.current?.setPaused(p); };
+  return <section id="forms" className="home-forms sy-wrap" aria-labelledby="forms-title">
+    <div className="site-head home-forms__head">
+      <div>
+        <p className="sy-eyebrow">Pointillism</p>
+        <h2 id="forms-title" className="sy-display">One field of points, <em>every form.</em></h2>
+      </div>
+      <p className="home-forms__note sy-small">The same dots spell the lab, gather into a raincloud, grow into a tree, fire as a neural network and turn as a galaxy. Each finds its place by one rule.</p>
+    </div>
+    <figure className={`home-forms__stage${live ? ' is-live' : ''}`}>
+      <canvas ref={canvas} className="home-forms__canvas" aria-hidden="true" />
+      <figcaption className="home-forms__now"><span className="sy-label">Now</span> <span>{FORMS[form].label}</span></figcaption>
+    </figure>
+    <div className="home-forms__controls">
+      <div className="home-forms__chips" role="group" aria-label="Choose a form">
+        {FORMS.map((f, i) => <button key={f.id} type="button" className="home-forms__chip" aria-pressed={i === form} onClick={() => pick(i)}>{f.label}</button>)}
+      </div>
+      <button type="button" className="home-forms__pause" aria-pressed={paused} onClick={toggle}>{paused ? 'Play' : 'Pause'}</button>
+    </div>
+  </section>;
+}
 
 const work = [
   { id: 'githits', title: 'GitHits integration',
@@ -27,20 +116,23 @@ export default function App() {
   const [videoError, setVideoError] = useState(false);
   const movie = useRef(null);
   const start = useRef(null), title = useRef(null);
-  useEffect(() => { const sigils = drawAll(document); boot(document); return () => sigils.disconnect(); }, []);
+  useEffect(() => { const sigils = drawAll(document); boot(document, { density: 'calm', offset: [-0.34, -0.42] }); return () => sigils.disconnect(); }, []);
   const begin = () => { setStep(0); requestAnimationFrame(() => title.current.focus({ preventScroll: true })); };
   const watch = () => { movie.current.focus(); movie.current.play().catch(() => setVideoError(true)); };
   const overview = () => { setStep(null); requestAnimationFrame(() => start.current.focus()); };
   return <>
-    <div className="home-chrome" dangerouslySetInnerHTML={{ __html: header('', { here: '/', script: false }) }} />
-    <main id="main" className="home-portfolio sy-wrap">
-      <section className={`home-hero${step !== null ? ' is-playing' : ''}${MATEO_VIDEO ? ' home-hero--video' : ''}`} aria-labelledby="hero-title">
-        <div className="home-hero__copy">
+    <div className="home-chrome" dangerouslySetInnerHTML={{ __html: header('', { here: '/', sticky: false, script: false }) }} />
+    <main id="main">
+      <Hero />
+      <Forms />
+      <div className="home-portfolio sy-wrap">
+      <section className={`home-me${step !== null ? ' is-playing' : ''}${MATEO_VIDEO ? ' home-me--video' : ''}`} id="founder" aria-labelledby="founder-title">
+        <div className="home-me__copy">
           <p className="sy-eyebrow">Junior software engineer / Bay Area</p>
-          <h1 id="hero-title">Mateo{MATEO_VIDEO ? ' ' : <br />}<em>Robles.</em></h1>
+          <h2 id="founder-title" className="home-me__name">Mateo{MATEO_VIDEO ? ' ' : <br />}<em>Robles.</em></h2>
           {step === null ? <>
-            <p className="home-hero__intro">I build playful mathematical systems and tools for AI developers.</p>
-            <p className="home-hero__meta">Computer Science · Santa Clara ’26<br />Open to software engineering, technical support and product roles.</p>
+            <p className="home-me__intro">I build playful mathematical systems and tools for AI developers.</p>
+            <p className="home-me__meta">Computer Science · Santa Clara ’26<br />Open to software engineering, technical support and product roles.</p>
           </> : <div className="home-beat" id="pitch">
             <span className="home-beat__count" role="status">Part {step + 1} of 3</span>
             <h2 ref={title} tabIndex={-1}>{beats[step].title}{step === 2 && <span className="home-pitch-star" aria-hidden="true">✦</span>}</h2>
@@ -48,7 +140,7 @@ export default function App() {
             {step === 1 && <div className="home-beat__links"><a href={GYRE_APP}>Explore Gyre ↗</a><a href="/mateo/#githits">Inspect GitHits →</a></div>}
             {step === 2 && <a className="home-hire" href={CONTACT + '?subject=Engineering%20opportunity%20for%20Mateo'}>Invite Mateo to interview ↗</a>}
           </div>}
-          <div className="home-hero__actions">
+          <div className="home-me__actions">
             {step === null ? <>
               {MATEO_VIDEO ? <>
                 <button type="button" className="sy-btn sy-btn--solid home-js-only" onClick={watch} aria-controls="mateo-intro-video">Watch Mateo’s introduction →</button>
@@ -84,6 +176,7 @@ export default function App() {
       </section>
       <p className="home-notes" id="about"><a href="/mateo/">More about Mateo →</a><a id="publishers" href="/services/">Work with Mateo →</a><a id="research" href="/research/">Research archive →</a></p>
       {!MATEO_VIDEO && <p className="home-nojs-only home-static-motto">Let's build something useful together. <span aria-hidden="true">✦</span></p>}
+      </div>
     </main>
     <div className="home-chrome" dangerouslySetInnerHTML={{ __html: footer('/') }} />
   </>;
