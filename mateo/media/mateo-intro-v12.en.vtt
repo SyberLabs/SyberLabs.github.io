@@ -1,0 +1,233 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.450
+Hi, my name is Mateo Robles.
+
+2
+00:00:02.450 --> 00:00:03.990
+I'm a computer science graduate
+
+3
+00:00:03.990 --> 00:00:05.720
+and the founder of SyberLabs,
+
+4
+00:00:05.720 --> 00:00:07.410
+a small research studio.
+
+5
+00:00:07.410 --> 00:00:09.790
+I build AI tools that people can trust,
+
+6
+00:00:09.790 --> 00:00:11.860
+because every step leaves evidence someone
+
+7
+00:00:11.860 --> 00:00:12.900
+can check.
+
+8
+00:00:12.900 --> 00:00:14.770
+In the GitHits design partnership,
+
+9
+00:00:14.770 --> 00:00:17.170
+I connected an AI coding tool to a service
+
+10
+00:00:17.170 --> 00:00:19.310
+that finds relevant code examples.
+
+11
+00:00:19.310 --> 00:00:20.590
+I built the connection,
+
+12
+00:00:20.590 --> 00:00:22.650
+added safeguards so it could only make allowed
+
+13
+00:00:22.650 --> 00:00:25.550
+requests, and kept a record of every call.
+
+14
+00:00:25.550 --> 00:00:28.250
+Then I tested it: successful searches,
+
+15
+00:00:28.250 --> 00:00:29.800
+requests that should be blocked,
+
+16
+00:00:29.800 --> 00:00:31.550
+and whether the records held up.
+
+17
+00:00:31.550 --> 00:00:33.390
+The demo uses controlled test data,
+
+18
+00:00:33.390 --> 00:00:35.360
+and public review feedback made the work
+
+19
+00:00:35.360 --> 00:00:36.360
+stronger.
+
+20
+00:00:36.360 --> 00:00:38.170
+GitHits fits into SyberWork,
+
+21
+00:00:38.170 --> 00:00:40.150
+where contracts govern work.
+
+22
+00:00:40.150 --> 00:00:42.230
+Every task keeps a case history of what
+
+23
+00:00:42.230 --> 00:00:43.950
+was proposed, admitted,
+
+24
+00:00:43.950 --> 00:00:45.340
+observed, approved,
+
+25
+00:00:45.340 --> 00:00:47.820
+and executed, so people stay in charge
+
+26
+00:00:47.820 --> 00:00:49.000
+of what ships.
+
+27
+00:00:49.000 --> 00:00:51.400
+Attest, which I built at the Kane CLI Hack
+
+28
+00:00:51.400 --> 00:00:54.210
+Day, makes documentation that can't lie.
+
+29
+00:00:54.210 --> 00:00:56.720
+An agent runs every step a README claims,
+
+30
+00:00:56.720 --> 00:00:58.400
+badges each one with evidence,
+
+31
+00:00:58.400 --> 00:01:00.780
+and patches the doc when a step fails.
+
+32
+00:01:00.780 --> 00:01:02.900
+FLYSPACE is our workspace for people
+
+33
+00:01:02.900 --> 00:01:03.950
+and agents.
+
+34
+00:01:03.950 --> 00:01:05.050
+I built its compiler,
+
+35
+00:01:05.050 --> 00:01:07.860
+which turns OpenAPI and MCP schemas into
+
+36
+00:01:07.860 --> 00:01:09.420
+typed blocks on a canvas,
+
+37
+00:01:09.420 --> 00:01:12.210
+and made agent writes wait for human approval.
+
+38
+00:01:12.210 --> 00:01:13.990
+I work from first principles:
+
+39
+00:01:13.990 --> 00:01:15.430
+start with the real goal,
+
+40
+00:01:15.430 --> 00:01:16.740
+question assumptions,
+
+41
+00:01:16.740 --> 00:01:18.720
+build the smallest useful version,
+
+42
+00:01:18.720 --> 00:01:19.600
+check the evidence,
+
+43
+00:01:19.600 --> 00:01:20.760
+and improve it.
+
+44
+00:01:20.760 --> 00:01:23.110
+My path from sociology to computer science
+
+45
+00:01:23.110 --> 00:01:25.030
+taught me that coordinating AI agents
+
+46
+00:01:25.030 --> 00:01:27.030
+is a lot like coordinating people.
+
+47
+00:01:27.030 --> 00:01:28.810
+Clear roles, shared goals,
+
+48
+00:01:28.810 --> 00:01:31.420
+context, and good handoffs matter.
+
+49
+00:01:31.420 --> 00:01:33.720
+I also make Gyre, which turns mathematics
+
+50
+00:01:33.720 --> 00:01:35.210
+into live browser art,
+
+51
+00:01:35.210 --> 00:01:36.530
+and I help build RISE,
+
+52
+00:01:36.530 --> 00:01:38.420
+which makes reading interactive.
+
+53
+00:01:38.420 --> 00:01:40.690
+I'm looking for new grad software engineering,
+
+54
+00:01:40.690 --> 00:01:42.870
+AI engineering, and creative technologist
+
+55
+00:01:42.870 --> 00:01:43.570
+roles.
+
+56
+00:01:43.570 --> 00:01:45.280
+If you want someone curious who follows
+
+57
+00:01:45.280 --> 00:01:47.180
+through, invite me to interview.
+
+58
+00:01:47.180 --> 00:01:49.280
+Let's build something useful together.
