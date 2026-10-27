@@ -4,16 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f5f3ec">
-  <meta name="description" content="Mateo Robles, Bay Area software and product engineer. B.S. Computer Science, Santa Clara 2026. GitHits client and Claude Code integration; RISE lead development. Available now.">
+  <meta name="description" content="Mateo Robles, Bay Area software and product engineer. Santa Clara CS 2026. Hackathon third place, GitHits design-partner pilot, RISE lead development. Available now.">
   <link rel="canonical" href="https://syberlabs.io/mateo/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Mateo Robles | Engineering Portfolio | SyberLabs">
-  <meta property="og:description" content="Mateo Robles, Bay Area software and product engineer. B.S. Computer Science, Santa Clara 2026. GitHits client and Claude Code integration; RISE lead development. Available now.">
+  <meta property="og:description" content="Mateo Robles, Bay Area software and product engineer. Santa Clara CS 2026. Hackathon third place, GitHits design-partner pilot, RISE lead development. Available now.">
   <meta property="og:url" content="https://syberlabs.io/mateo/">
   <meta property="og:image" content="https://syberlabs.io/og/mateo.png?v=20261027">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Mateo Robles | Engineering Portfolio | SyberLabs">
-  <meta name="twitter:description" content="Mateo Robles, Bay Area software and product engineer. B.S. Computer Science, Santa Clara 2026. GitHits client and Claude Code integration; RISE lead development. Available now.">
+  <meta name="twitter:description" content="Mateo Robles, Bay Area software and product engineer. Santa Clara CS 2026. Hackathon third place, GitHits design-partner pilot, RISE lead development. Available now.">
   <meta name="twitter:image" content="https://syberlabs.io/og/mateo.png?v=20261027">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <title>Mateo Robles | Engineering Portfolio | SyberLabs</title>
@@ -67,7 +67,8 @@
     "sameAs": [
       "https://www.linkedin.com/in/automateon/",
       "https://github.com/sykosyber"
-    ]
+    ],
+    "award": "Third place, Cline, Parallel & Composio Hackathon, San Francisco, October 2026"
   }
 }
   </script>
@@ -95,30 +96,30 @@
       <div class="portfolio-hero__copy">
         <p class="sy-eyebrow">Software &amp; product engineer / Bay Area</p>
         <h1 id="portfolio-title">Mateo Robles.<em>Software &amp; Product Engineer.</em></h1>
-        <p class="portfolio-lead">I build AI developer tools and interactive web products in Python and JavaScript: most recently the GitHits client and Claude Code integration for a design-partner pilot, and the reading and playback core of RISE. Open to software engineering and product management roles.</p>
-        <p class="portfolio-meta"><strong>Available to start immediately</strong><br>B.S. Computer Science, Data Science emphasis<br>Santa Clara University · 2026</p>
+        <p class="portfolio-lead">I build AI developer tools and interactive web products in Python and JavaScript, much of it with coding agents. Open to software engineering and product management roles.</p>
+        <p class="portfolio-meta"><strong>Available to start immediately</strong><br>B.S. Computer Science, Data Science emphasis<br>Santa Clara University · 2026<br>Third place, Cline, Parallel &amp; Composio Hackathon · October 2026</p>
         <div class="sy-actions"><a class="sy-btn sy-btn--solid" href="mailto:syberlabs.software@gmail.com?subject=Interview%20with%20Mateo%20Robles">Interview Mateo</a><a class="sy-btn sy-btn--line" href="/mateo_robles_resume.pdf">View résumé</a></div>
         <p class="portfolio-links"><a href="https://github.com/sykosyber">GitHub ↗</a><a href="https://www.linkedin.com/in/automateon/">LinkedIn ↗</a></p>
       </div>
       <!-- mateo:video -->
     </section>
-    <nav class="portfolio-selection" aria-label="Selected work"><span>Selected contributions</span><a href="#githits">01 / GitHits</a><a href="#engines">02 / Engines</a><a href="#rise">03 / RISE</a></nav>
+    <nav class="portfolio-selection" aria-label="Selected work"><span>Selected contributions</span><a href="#githits">01 / GitHits</a><a href="#porchlight">02 / PorchLight</a><a href="#rise">03 / RISE</a><a href="#engines">04 / Engines</a></nav>
     <article class="portfolio-case" id="githits" aria-labelledby="githits-title">
       <div class="portfolio-case__heading"><p class="sy-eyebrow">01 / AI developer tools · Python</p><h2 id="githits-title">GitHits design partnership</h2></div>
       <div class="portfolio-decisions">
-        <section><h3>What I built</h3><p>I built a Python client and Claude Code integration for a GitHits design-partner test. It finds code examples and source files, with repository filters to keep our own code out of independent evidence.</p></section>
+        <section><h3>What I did</h3><p>GitHits offered SyberLabs a design partnership. I designed the A/B pilot and its integration: a Python client for the GitHits API and the Claude Code wiring around it, with repository filters that keep our own code out of the evidence. Our coding-agent factory implemented both under host-run checks, and I reviewed and merged them.</p></section>
         <section><h3>The engineering decision</h3><p>The integration routes Claude Code’s lookups through the client and records each call in the software running the test. This gives the test a record of tool use instead of relying on the AI assistant to report it.</p></section>
       </div>
       <aside class="portfolio-proof" aria-label="GitHits verification"><p>Tested against a simulated GitHits service: requests, repository exclusions and lookup records. No live usage or savings are claimed.</p><a href="/mateo/proof/githits-tests.txt">Recorded test results ↗</a></aside>
       <div class="sy-actions"><a href="https://github.com/SyberLabs/SyberWork/pull/129">Python client source ↗</a><a href="https://github.com/SyberLabs/SyberWork/pull/134">Claude Code integration source ↗</a></div>
     </article>
-    <article class="portfolio-case" id="engines" aria-labelledby="engines-title">
-      <div class="portfolio-case__heading"><p class="sy-eyebrow">02 / Creative computation</p><h2 id="engines-title">Engines</h2></div>
-      <figure class="portfolio-demo"><video controls playsinline preload="none" poster="/mateo/demos/gyre-orbit.jpg" width="1280" height="720" aria-label="Gyre: a moving 3D artwork"><source src="/mateo/demos/gyre-orbit.mp4" type="video/mp4"><a href="/mateo/demos/gyre-orbit.mp4">Download the Gyre demonstration</a></video><figcaption>Gyre / Engines. A recorded view of the interactive artwork.</figcaption></figure>
-      <div class="portfolio-case__grid">
-        <div class="portfolio-case__copy"><h3>Mathematics you can explore.</h3><p>I built browser artworks that make mathematical rules visible and adjustable. In Gyre, those rules create a moving 3D trail of light. Change the starting pattern, shape and lighting to explore the result.</p><p>Gyre runs as a self-contained HTML file using the browser’s drawing tools. The recording shows one orbit; the live artwork lets you generate another.</p><div class="sy-actions"><a class="sy-btn sy-btn--solid" href="https://sykosyber.github.io/engines/works/gyre.html">Run Gyre ↗</a><a href="https://github.com/sykosyber/engines">Source and authorship ↗</a></div></div>
-        <figure class="portfolio-work"><img src="/mateo/engines-ostensoria.webp" width="1000" height="1000" alt="An abstract artwork created by mathematical rules in Ostensoria, one of Mateo’s Engines." loading="lazy"><figcaption>Ostensoria / Engines</figcaption></figure>
+    <article class="portfolio-case" id="porchlight" aria-labelledby="porchlight-title">
+      <div class="portfolio-case__heading"><p class="sy-eyebrow">02 / Hackathon, third place · Python</p><h2 id="porchlight-title">PorchLight</h2></div>
+      <div class="portfolio-decisions">
+        <section><h3>What I built</h3><p>Drop a pin on a neighborhood problem and an agent finds who fixes it. It triages the note, finds the responsible San Francisco agency with cited Parallel search, drafts the report and posts the pin to a shared Sheet and Slack through Composio. I built it in one afternoon with the Cline coding agent at the Cline, Parallel &amp; Composio Hackathon, where it placed third.</p></section>
+        <section><h3>The engineering decision</h3><p>A fixed pipeline with model steps inside it, not a free-roaming agent. The model may name an agency only when a search result it actually received supports it; otherwise the pin goes to a person. Reports are drafted, never sent, and emergencies skip the pipeline entirely.</p></section>
       </div>
+      <div class="sy-actions"><a class="sy-btn sy-btn--solid" href="https://github.com/sykosyber/porchlight">PorchLight source and README ↗</a><a href="https://luma.com/m8euvq9n">The hackathon ↗</a></div>
     </article>
     <article class="portfolio-case" id="rise" aria-labelledby="rise-title">
       <div class="portfolio-case__heading"><p class="sy-eyebrow">03 / Lead developer · JavaScript</p><h2 id="rise-title">RISE</h2></div>
@@ -129,6 +130,14 @@
       </div>
       <aside class="portfolio-proof" aria-label="RISE contribution verification"><p>PR #371 records selected unit and browser checks for one repair. Its report describes the tested candidate and the remaining acceptance limits.</p><a href="https://github.com/SyberLabs/RISE/pull/371">Changes and test scope ↗</a></aside>
       <div class="sy-actions"><a class="sy-btn sy-btn--solid" href="https://rise.syberlabs.io/">Open RISE ↗</a><a href="/projects/rise/">RISE case study</a><a href="https://github.com/SyberLabs/RISE/blob/b5115d77e9d5b76b17f6204c6c504988df683b0d/README.md">Project development credits ↗</a></div>
+    </article>
+    <article class="portfolio-case" id="engines" aria-labelledby="engines-title">
+      <div class="portfolio-case__heading"><p class="sy-eyebrow">04 / Creative computation</p><h2 id="engines-title">Engines</h2></div>
+      <figure class="portfolio-demo"><video controls playsinline preload="none" poster="/mateo/demos/gyre-orbit.jpg" width="1280" height="720" aria-label="Gyre: a moving 3D artwork"><source src="/mateo/demos/gyre-orbit.mp4" type="video/mp4"><a href="/mateo/demos/gyre-orbit.mp4">Download the Gyre demonstration</a></video><figcaption>Gyre / Engines. A recorded view of the interactive artwork.</figcaption></figure>
+      <div class="portfolio-case__grid">
+        <div class="portfolio-case__copy"><h3>Mathematics you can explore.</h3><p>I built browser artworks that make mathematical rules visible and adjustable. In Gyre, those rules create a moving 3D trail of light. Change the starting pattern, shape and lighting to explore the result.</p><p>Gyre runs as a self-contained HTML file using the browser’s drawing tools. The recording shows one orbit; the live artwork lets you generate another.</p><div class="sy-actions"><a class="sy-btn sy-btn--solid" href="https://sykosyber.github.io/engines/works/gyre.html">Run Gyre ↗</a><a href="https://github.com/sykosyber/engines">Source and authorship ↗</a></div></div>
+        <figure class="portfolio-work"><img src="/mateo/engines-ostensoria.webp" width="1000" height="1000" alt="An abstract artwork created by mathematical rules in Ostensoria, one of Mateo’s Engines." loading="lazy"><figcaption>Ostensoria / Engines</figcaption></figure>
+      </div>
     </article>
     <section class="portfolio-contact" id="contact" aria-labelledby="contact-title"><div><p class="sy-eyebrow">Available to start immediately</p><h2 id="contact-title">Let’s talk through the work.</h2><p>Open to software engineering and product management roles.</p></div><div class="portfolio-contact-links"><div class="sy-actions"><a class="sy-btn sy-btn--solid" href="mailto:syberlabs.software@gmail.com?subject=Engineering%20opportunity%20for%20Mateo">Email Mateo</a><a class="sy-btn sy-btn--line" href="tel:+19259493105">925-949-3105</a></div><a href="mailto:syberlabs.software@gmail.com">syberlabs.software@gmail.com</a><a href="https://www.linkedin.com/in/automateon/">linkedin.com/in/automateon</a><a href="https://github.com/sykosyber">github.com/sykosyber</a><a href="/mateo_robles_resume.pdf">View résumé</a></div></section>
   </main>

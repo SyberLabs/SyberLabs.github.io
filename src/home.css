@@ -294,3 +294,7 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
   .pitch-hero__proof-label { font-size:10px; }
   .pitch-hero__availability a { flex-basis:100%; margin-left:14px; }
 }
+
+/* PorchLight, the hackathon build: the GitHits layout, with its small lantern mark beside the name */
+.porchlight-work { border-top:1px solid var(--sy-rule); }
+.porchlight-mark { display:inline-block; width:auto; height:.9em; margin:0 .3em -.08em 0; vertical-align:baseline; }

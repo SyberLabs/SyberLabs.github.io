@@ -113,11 +113,12 @@ const pauseOtherVideos = event => { for (const video of document.querySelectorAl
 
 // What a recruiter checks first, in the order they check it, shown in the hero from the first frame. Every line is
 // third-party proof that can be verified from its link; nothing here is a self-description.
-const HACKATHON = null; // { result, event, date, href }: added only once the event and project are confirmed
+// Third place confirmed by Seth Carlson (Oct 27); event and project tied together by PorchLight's README.
+const HACKATHON = { result: 'Third place', event: 'Cline, Parallel & Composio Hackathon', date: 'October 2026', href: '#porchlight' };
 const PROOF = [
   { label: 'Degree', text: 'B.S. Computer Science, Santa Clara University, 2026', href: RESUME },
   HACKATHON && { label: 'Hackathon', text: `${HACKATHON.result}, ${HACKATHON.event}, ${HACKATHON.date}`, href: HACKATHON.href },
-  { label: 'GitHits', text: 'Design-partner pilot: built the Python client and Claude Code integration', href: '#work' },
+  { label: 'GitHits', text: 'Design partnership: leading the A/B pilot and its Claude Code integration', href: '#work' },
 ].filter(Boolean);
 
 export default function App() {
@@ -203,7 +204,7 @@ export default function App() {
         <div className="selected-work__intro">
           <p className="sy-eyebrow">Selected work / AI developer tools</p>
           <h2 id="work-title">GitHits design partnership</h2>
-          <p>GitHits searches open-source code so AI coding assistants can learn from real examples. For a design-partner pilot, I built the path between Claude Code and the GitHits API: a standard-library Python client, and the wiring that lets an agent use it under the host’s rules.</p>
+          <p>GitHits searches open-source code so AI coding assistants can learn from real examples, and offered SyberLabs a design partnership to measure what that is worth to a coding-agent factory. I designed the pilot and its integration: a standard-library Python client, and the wiring that lets Claude Code use it under the host’s rules. Our agent factory implemented both to that design.</p>
           <ol className="gh-flow" aria-label="How a lookup travels">
             <li><b>Agent</b><span>Claude Code</span></li>
             <li><b>Launcher</b><span>its only allowed command, behind a query guard</span></li>
@@ -218,6 +219,20 @@ export default function App() {
           <div><dt>Only licenses the project can honour</dt><dd>Code an agent copies can land in an Apache-2.0 repository, so results are held to a permissive allow list. SPDX expressions are parsed with real operator precedence; copyleft, unknown and missing licenses are dropped and counted.</dd></div>
           <div><dt>The host keeps the record, not the agent</dt><dd>Every call, refusals included, appends a record signed with HMAC-SHA256: digests and counts, never the query, the result or the token. A record that fails verification is ignored and counted, so a forged line cannot pass as a lookup.</dd></div>
           <div><dt>Pinned to the API contract</dt><dd>Tests pin the exact part of GitHits’ OpenAPI document the client uses. The token goes only into the Authorization header and is scrubbed from errors; redirects and oversized responses are refused; lean defaults keep results small for an agent’s context window.</dd></div>
+        </dl>
+      </section>
+      <section id="porchlight" className="selected-work porchlight-work sy-wrap" aria-labelledby="porchlight-title">
+        <div className="selected-work__intro">
+          <p className="sy-eyebrow">Hackathon / Third place</p>
+          <h2 id="porchlight-title"><img className="porchlight-mark" src="/mateo/porchlight/porchlight-mark.webp" width="160" height="201" alt="" loading="lazy" decoding="async" />PorchLight</h2>
+          <p>Drop a pin on a neighborhood problem and an agent finds who fixes it. I built it in one afternoon at the Cline, Parallel &amp; Composio Hackathon in San Francisco, where it placed third.</p>
+          <p className="gh-note">Python and a Leaflet map, built with the Cline coding agent. Parallel search finds the responsible city agency with citations, an open-weight model writes the routing card, and Composio drafts the report and posts the pin to a shared Sheet and Slack.</p>
+          <p className="gh-links"><a href="https://github.com/sykosyber/porchlight">Source and README <span aria-hidden="true">↗</span></a><a href="https://luma.com/m8euvq9n">The hackathon <span aria-hidden="true">↗</span></a></p>
+        </div>
+        <dl className="gh-decisions">
+          <div><dt>No source, no claim</dt><dd>The agent names an agency only when a search result it actually received supports it. Citations the model invents are dropped, and an unsupported pin goes to a person with “Couldn’t verify the right agency.”</dd></div>
+          <div><dt>A pipeline, not a free-roaming agent</dt><dd>The same steps in the same order every run, from triage and cited research to deduplication and routing. Every external call has a timeout and a fallback, and each step shows in an agent trace with its timing.</dd></div>
+          <div><dt>Safe by construction</dt><dd>Reports are drafted, never sent: a person clicks send. Emergencies skip the pipeline and say to call 911. Contact details are stripped from a note before anything is stored or shared.</dd></div>
         </dl>
       </section>
       <section className="demo-work sy-wrap" aria-label="Product demonstrations">
