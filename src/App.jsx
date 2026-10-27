@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { MATEO_EMAIL, RESUME, GYRE_APP } from '../projects/site-data.js';
+import { CONTACT, EMAIL, RESUME, GYRE_APP, MATEO_PORTFOLIO } from '../projects/site-data.js';
 import { header, footer } from '../projects/project-template.js';
 import { drawAll } from '../kit/v2/syber-sigil.js';
 import { boot } from './site/site.js';
@@ -16,8 +16,9 @@ import '../kit/v2/syber-atlas.css';
 import './syberlabs.css';
 import './home.css';
 
-// Hiring first: the hero reveals Mateo in step with one clip (Gyre, the Sophia frame, Earth, then the panel),
-// followed by his film and work, then the lab's Pointillism and Orb experiments.
+// Lab first (Mateo's call, Oct 27): the hero leads with SyberLabs, its founder and its work, over one paced clip
+// (Gyre, the Sophia frame, Earth). /mateo/ is the hiring page every application and referral links to; the hero keeps
+// its two conversion actions. Then the lab, the work, the founder, and the Pointillism and Orb experiments.
 
 // The Orb (src/site/orb.js): a sphere of fractal flame and spectral attractor beside the headline, with a swarm of
 // dots that spells the lab's words. One input, the typing bar: as the visitor types, the dots re-assemble into their
@@ -111,14 +112,14 @@ function OrbExperiment() {
 
 const pauseOtherVideos = event => { for (const video of document.querySelectorAll('video')) if (video !== event.currentTarget) video.pause(); };
 
-// What a recruiter checks first, in the order they check it, shown in the hero from the first frame. Every line is
-// a fact that can be checked from its link.
+// The lab's work, shown in the hero from the first frame, each line linked to its section below.
+// Mateo's personal credentials (degree, availability) live on /mateo/, the hiring page every application links to.
 // Third place confirmed by Seth Carlson (Oct 27); event and project tied together by PorchLight's README.
-const HACKATHON = { result: 'Third place', event: 'Cline, Parallel & Composio Hackathon', date: 'October 2026', href: '#porchlight' };
-const PROOF = [
-  { label: 'Degree', text: 'B.S. Computer Science, Santa Clara University, 2026', href: RESUME },
-  HACKATHON && { label: 'Hackathon', text: `${HACKATHON.result}, ${HACKATHON.event}, ${HACKATHON.date}`, href: HACKATHON.href },
-  { label: 'GitHits', text: 'Design partnership: designed our A/B pilot and the GitHits client for Claude Code', href: '#work' },
+const HACKATHON = { result: 'third place', event: 'Cline, Parallel & Composio Hackathon', date: 'October 2026', href: '#porchlight' };
+const WORK = [
+  { label: 'GitHits', text: 'Design partnership: an A/B pilot and a GitHits client for Claude Code', href: '#work' },
+  HACKATHON && { label: 'Hackathon', text: `PorchLight, ${HACKATHON.result}, ${HACKATHON.event}, ${HACKATHON.date}`, href: HACKATHON.href },
+  { label: 'RISE', text: 'Interactive reading with sound and moving visuals, in open beta', href: '#rise' },
 ].filter(Boolean);
 
 export default function App() {
@@ -166,24 +167,23 @@ export default function App() {
   return <>
     <div className="home-chrome" dangerouslySetInnerHTML={{ __html: header('', { here: '/', sticky: false, script: false, hiring: true }) }} />
     <main id="main">
-      <section className={`pitch-hero${started ? ' is-playing' : ''}`} data-phase={phase} aria-labelledby="hero-title" id="founder">
+      <section className={`pitch-hero${started ? ' is-playing' : ''}`} data-phase={phase} aria-labelledby="hero-title">
         <picture className="pitch-hero__art"><source media="(max-width: 600px)" srcSet={HERO_MEDIA.portraitPoster} /><img src={HERO_MEDIA.poster} width="1280" height="720" alt="" fetchPriority="high" /></picture>
         <BackgroundVideo pitchPlaying={started} onTime={onClipTime} onUnavailable={() => settle.current()} onArt={setFramed} />
         <div className="pitch-hero__copy sy-wrap">
           <h1 id="hero-title" tabIndex={-1}>
-            <span className="pitch-hero__brand pitch-hero__name" data-text="Mateo Robles">Mateo Robles</span>
+            <span className="pitch-hero__brand" data-text="SyberLabs">SyberLabs</span>
           </h1>
-          <p className="pitch-hero__role">Software &amp; Product Engineer · Bay Area</p>
+          <p className="pitch-hero__role">Research studio founded by <a href={MATEO_PORTFOLIO}>Mateo Robles</a></p>
           <div className="pitch-hero__panel">
-            <p className="pitch-hero__line">I build AI developer tools and interactive web products in Python and JavaScript.</p>
-            <ul className="pitch-hero__proof" role="list" aria-label="Credentials">
-              {PROOF.map(p => <li key={p.label}><span className="pitch-hero__proof-label">{p.label}<span className="sy-sr">:</span></span>{' '}<a href={p.href}>{p.text}</a></li>)}
+            <p className="pitch-hero__line">AI developer tools and interactive web products, built so every step leaves evidence someone can check.</p>
+            <ul className="pitch-hero__proof" role="list" aria-label="Selected work">
+              {WORK.map(p => <li key={p.label}><span className="pitch-hero__proof-label">{p.label}<span className="sy-sr">:</span></span>{' '}<a href={p.href}>{p.text}</a></li>)}
             </ul>
             <div className="pitch-hero__actions">
-              <a className="sy-btn sy-btn--solid" href={'mailto:' + MATEO_EMAIL + '?subject=Interview%20with%20Mateo%20Robles'}>Interview Mateo</a>
+              <a className="sy-btn sy-btn--solid" href={CONTACT + '?subject=Interview%20with%20Mateo%20Robles'}>Interview Mateo</a>
               <a className="sy-btn sy-btn--line" href={RESUME}>View résumé</a>
             </div>
-            <p className="pitch-hero__availability"><span>Available to start immediately.</span>{' '}<a href={'mailto:' + MATEO_EMAIL}>{MATEO_EMAIL}</a></p>
           </div>
         </div>
         <video ref={movie} className="pitch-hero__film" id="mateo-intro-video" controls playsInline preload="none" tabIndex={enhanced && !started ? -1 : 0} aria-hidden={enhanced && !started ? true : undefined} poster={MATEO_VIDEO.poster} width="1280" height="720" aria-label="Meet Mateo: introduction" onPlay={e => { setStarted(true); pauseOtherVideos(e); }} onError={() => setVideoError(true)} onPlaying={() => setVideoError(false)}>
@@ -200,6 +200,19 @@ export default function App() {
         <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((p, i) => <p key={i}>{p}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>
         {videoError && <p role="status">Video unavailable. Read the transcript or explore the work below.</p>}
       </div>
+      <section id="lab" className="lab-identity sy-wrap" aria-labelledby="lab-identity-title">
+        <div className="lab-identity__copy">
+          <img className="lab-identity__emblem" src="/mateo/lab/emblem-mateo-robles.webp" width="900" height="675" alt="" loading="lazy" decoding="async" />
+          <p className="sy-eyebrow">The lab</p>
+          <h2 id="lab-identity-title">Infrastructure for AI agents.</h2>
+          <p>When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules the system controls, and records the reason when it refuses one.</p>
+          <a href="/projects/syberwork/">How SyberWork works <span aria-hidden="true">→</span></a>
+        </div>
+        <figure className="lab-identity__art">
+          <img src="/mateo/lab/agent-network-mateo-robles.webp" width="1100" height="921" alt="Glowing blue nodes joined by arcing links, like a network of agents." loading="lazy" decoding="async" />
+          <figcaption>Network and emblem: Mateo Robles, made with Midjourney.</figcaption>
+        </figure>
+      </section>
       <section id="work" className="selected-work sy-wrap" aria-labelledby="work-title">
         <div className="selected-work__intro">
           <p className="sy-eyebrow">Selected work / AI developer tools</p>
@@ -236,24 +249,11 @@ export default function App() {
         </dl>
       </section>
       <section className="demo-work sy-wrap" aria-label="Product demonstrations">
-        <article><div><p className="sy-eyebrow">RISE / Lead developer</p><h2>A different way to read.</h2><p>An interactive reading app where text, sound and moving graphics play in time. I led core development of timed text, moving graphics, browser audio and video export.</p><span className="demo-work__links"><a href="https://github.com/SyberLabs/RISE/pull/643">An example change <span aria-hidden="true">↗</span></a><a href="https://github.com/SyberLabs/RISE/blob/b5115d77e9d5b76b17f6204c6c504988df683b0d/README.md">Development credits <span aria-hidden="true">↗</span></a></span></div><figure><video controls playsInline preload="none" poster="/mateo/demos/rise-playback.jpg" width="960" height="540" aria-label="Recorded RISE reading" onPlay={pauseOtherVideos}><source src="/mateo/demos/rise-playback.mp4" type="video/mp4" /></video><figcaption>Recorded product demonstration. RISE is a team project.</figcaption></figure></article>
+        <article id="rise"><div><p className="sy-eyebrow">RISE / Lead developer</p><h2>A different way to read.</h2><p>An interactive reading app where text, sound and moving graphics play in time. I led core development of timed text, moving graphics, browser audio and video export.</p><span className="demo-work__links"><a href="https://github.com/SyberLabs/RISE/pull/643">An example change <span aria-hidden="true">↗</span></a><a href="https://github.com/SyberLabs/RISE/blob/b5115d77e9d5b76b17f6204c6c504988df683b0d/README.md">Development credits <span aria-hidden="true">↗</span></a></span></div><figure><video controls playsInline preload="none" poster="/mateo/demos/rise-playback.jpg" width="960" height="540" aria-label="Recorded RISE reading" onPlay={pauseOtherVideos}><source src="/mateo/demos/rise-playback.mp4" type="video/mp4" /></video><figcaption>Recorded product demonstration. RISE is a team project.</figcaption></figure></article>
         <article><div><p className="sy-eyebrow">Engines / Creative computation</p><h2>Mathematics you can play.</h2><p>Gyre turns mathematical rules into moving trails of light.</p><a href={GYRE_APP}>Explore Gyre <span aria-hidden="true">↗</span></a></div><video controls playsInline preload="none" poster="/mateo/demos/gyre-orbit.jpg" width="960" height="540" aria-label="Recorded Gyre interaction" onPlay={pauseOtherVideos}><source src="/mateo/demos/gyre-orbit.mp4" type="video/mp4" /></video></article>
       </section>
-      <section className="home-contact sy-wrap" aria-labelledby="contact-title"><div><p className="sy-eyebrow">Available to start immediately</p><h2 id="contact-title">Let’s build something useful together.</h2><img className="home-contact__signature" src="/mateo/brand/mateo-robles-signature.webp" width="1200" height="511" alt="" loading="lazy" decoding="async" /><p className="sy-small">Open to software engineering and product management roles.</p></div><div><a href="tel:+19259493105">925-949-3105</a>{' '}<a href={'mailto:' + MATEO_EMAIL}>{MATEO_EMAIL}</a>{' '}<a href="https://www.linkedin.com/in/automateon/">linkedin.com/in/automateon</a>{' '}<a href="https://github.com/sykosyber">github.com/sykosyber</a>{' '}<a href={RESUME}>View résumé</a></div></section>
+      <section id="founder" className="home-contact sy-wrap" aria-labelledby="contact-title"><div><p className="sy-eyebrow">Founder</p><h2 id="contact-title">Let’s build something useful together.</h2><img className="home-contact__signature" src="/mateo/brand/mateo-robles-signature.webp" width="1200" height="511" alt="" loading="lazy" decoding="async" /><p className="sy-small">Mateo Robles founded SyberLabs. B.S. Computer Science, Santa Clara University, 2026. Open to software engineering and product management roles.</p></div><div><a href={MATEO_PORTFOLIO}>Mateo’s portfolio <span aria-hidden="true">→</span></a>{' '}<a href={CONTACT}>{EMAIL}</a>{' '}<a href="tel:+19259493105">925-949-3105</a>{' '}<a href="https://www.linkedin.com/in/automateon/">linkedin.com/in/automateon</a>{' '}<a href="https://github.com/sykosyber">github.com/sykosyber</a>{' '}<a href={RESUME}>View résumé</a></div></section>
       <div className="lab-appendix">
-        <section id="lab" className="lab-identity sy-wrap" aria-labelledby="lab-identity-title">
-          <div className="lab-identity__copy">
-            <img className="lab-identity__emblem" src="/mateo/lab/emblem-mateo-robles.webp" width="900" height="675" alt="" loading="lazy" decoding="async" />
-            <p className="sy-eyebrow">The lab</p>
-            <h2 id="lab-identity-title">Infrastructure for AI agents.</h2>
-            <p>When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules the system controls, and records the reason when it refuses one.</p>
-            <a href="/projects/syberwork/">How SyberWork works <span aria-hidden="true">→</span></a>
-          </div>
-          <figure className="lab-identity__art">
-            <img src="/mateo/lab/agent-network-mateo-robles.webp" width="1100" height="921" alt="Glowing blue nodes joined by arcing links, like a network of agents." loading="lazy" decoding="async" />
-            <figcaption>Network and emblem: Mateo Robles, made with Midjourney.</figcaption>
-          </figure>
-        </section>
         <Forms />
         <OrbExperiment />
       </div>

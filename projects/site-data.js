@@ -7,9 +7,10 @@
 // under stated conditions), deployed (it runs somewhere people can reach). Nothing is promoted
 // from one state to the next by wording.
 
-export const CONTACT = 'mailto:syberlabs.software@gmail.com';
-export const EMAIL = 'syberlabs.software@gmail.com';
-// Hiring inquiries go to Mateo; general studio inquiries keep EMAIL and CONTACT.
+export const CONTACT = 'mailto:hello.mateorobles@gmail.com';
+export const EMAIL = 'hello.mateorobles@gmail.com';
+// Mateo's own address is the single contact everywhere (site, résumé, structured data): he asked for it on Oct 27
+// because the old lab inbox was flagged as spam during outreach.
 export const MATEO_EMAIL = 'hello.mateorobles@gmail.com';
 export const RESUME = '/mateo_robles_resume.pdf';
 export const LINKEDIN = 'https://www.linkedin.com/in/automateon/';
