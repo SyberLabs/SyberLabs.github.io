@@ -61,12 +61,11 @@ export const header = (current = '', { sticky = true, script = true, here = '' }
 </div></header>${script ? '\n<script type="module" src="/syberlabs.js"></script>' : ''}`;
 };
 
-// The footer: one piece of art (the orb from mateo.syberlabs.space) and one hairline bar of essentials, every contact
-// route and the legal page (projects/site-data.js `footerLinks`). The site map is not repeated here: it is the header's
+// The footer: one hairline bar of essential contact, account and legal links. Every contact
+// route is defined by projects/site-data.js footerLinks. The site map is not repeated here: it is the header's
 // Menu, which works without JavaScript.
 export const footer = (current = '') => `<footer class="sy-footer">
 <div class="sy-footer__in">
-  <a class="sy-footer__art" href="/" aria-label="SyberLabs home"><img src="/footer-orb.webp" alt="" width="960" height="523" loading="lazy" decoding="async"></a>
   <div class="sy-footer__bar">
     <a class="sy-lockup" href="/"><img src="/syber-logo-96.png" alt="" width="18" height="20">SyberLabs</a>
     <nav aria-label="Footer">${footerLinks.map(link => `<a href="${link.href}"${link.href === current ? ' aria-current="page"' : ''}>${link.label}${link.external ? ' ' + icon('external', 14) : ''}</a>`).join('')}</nav>

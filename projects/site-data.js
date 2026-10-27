@@ -50,11 +50,7 @@ export const workWithUs = { label: 'Work with us', href: '/services/' };
 // The footer carries a few essentials, every contact route and the legal page. It does not repeat the site map: the
 // selected menu (siteMap below) is the header's Menu (the Atlas), a <details> that opens and closes without JavaScript.
 export const footerLinks = [
-  { label: 'Meet Mateo', href: MATEO_PORTFOLIO },
-  { label: 'Work with us', href: '/services/' },
-  { label: 'Email', href: CONTACT },
-  { label: 'GitHub', href: GITHUB, external: true },
-  { label: 'LinkedIn', href: LINKEDIN, external: true },
+  { label: 'Contact', href: CONTACT },
   { label: 'Résumé', href: RESUME },
   { label: 'Privacy', href: '/privacy/' },
   { label: 'Subscriber account', href: RISE_PLUS.href, external: true },

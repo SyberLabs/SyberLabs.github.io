@@ -152,7 +152,7 @@ test('static chrome derives current navigation from routes, repairing missing an
 test('the selected Menu and footer preserve contact, subscriber and legal links', async () => {
   const { applyChrome } = await import('./site-chrome.mjs');
   const { header, footer } = await import('../projects/project-template.js');
-  const { siteMap, footerLinks, CONTACT, GITHUB, LINKEDIN, RESUME } = await import('../projects/site-data.js');
+  const { siteMap, footerLinks, CONTACT, RESUME } = await import('../projects/site-data.js');
   for (const [file, marked] of [
     ['research/sybershoke/index.html', []],
     ['mateo/index.html', ['/mateo/']], // one selected contact destination
@@ -165,7 +165,7 @@ test('the selected Menu and footer preserve contact, subscriber and legal links'
     assert.deepEqual([...atlas.matchAll(/<a href="([^"]+)" aria-current="page"/g)].map(match => match[1]), marked, file);
     assert.doesNotMatch(html, /aria-expanded=/, `${file}: <details> reports its own state`);
     const foot = html.match(/<footer[\s\S]*?<\/footer>/)[0];
-    for (const href of [CONTACT, GITHUB, LINKEDIN, RESUME, '/privacy/']) assert.ok(foot.includes(`href="${href}"`), `${file}: footer links ${href}`);
-    assert.equal([...foot.matchAll(/<a /g)].length, footerLinks.length + 2, `${file}: footer is the orb, the mark and footerLinks, no site map`);
+    for (const href of [CONTACT, RESUME, '/privacy/']) assert.ok(foot.includes(`href="${href}"`), `${file}: footer links ${href}`);
+    assert.equal([...foot.matchAll(/<a /g)].length, footerLinks.length + 1, `${file}: footer is the mark and essential links, no duplicated site map`);
   }
 });
