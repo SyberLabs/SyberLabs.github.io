@@ -1,6 +1,6 @@
 # SyberLabs
 
-> Mateo Robles, software and product engineer. Explore his GitHits integration, mathematical Engines and RISE Composer contribution. Read the résumé or get in touch.
+> Mateo Robles, software and product engineer. Explore his GitHits integration, mathematical Engines and RISE product development. Read the résumé or get in touch.
 
 > **RISE and AI models:** since RISE #294 the RISE server calls no model. An AI reading request runs on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s machine (`/kev/` on the site). local Kev did not meet RISE’s bar in internal checks on RISE’s evaluations (RISE `docs/product/tasks/SCR-004.json`), and there is no production Kev deployment, by design. Once the reader connects, RISE’s visual direction sends sections of the reading text to that connection.
 
@@ -71,12 +71,12 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 ## Connect
 
-- [Meet Mateo](https://syberlabs.io/mateo/): Mateo Robles: software engineer building mathematical visual engines and AI tool integrations. Inspect his GitHits client, RISE Composer contribution and Engines.
+- [Meet Mateo](https://syberlabs.io/mateo/): Mateo Robles: software engineer building mathematical visual engines and AI tool integrations. Inspect his GitHits client, RISE product development and Engines.
 - [Mateo on GitHub](https://github.com/sykosyber): github.com/sykosyber
 
 ## More
 
-- [Work with us](https://syberlabs.io/services/): Work with Mateo Robles on software engineering. Inspect his AI tool integrations, interactive mathematical engines and RISE Composer contribution, then discuss a role or focused project.
+- [Work with us](https://syberlabs.io/services/): Work with Mateo Robles on software engineering. Inspect his AI tool integrations, interactive mathematical engines and RISE product development, then discuss a role or focused project.
 - [Research archive](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: the technical reports and notes on this site, the RISE reader-owned AI status pages, the five working papers in SyberLabs/papers, the Instrument Panel and the OSAHR decision workbench. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
 - [Subscriber account](https://rise.syberlabs.io/plus/): Existing RISE subscribers
 - [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.

@@ -1,8 +1,8 @@
-// Verified V7 delivery: plain-language narration and real project demonstrations.
+// Verified V8 visuals with the unchanged approved V7 narration and captions.
 // Media production is separate from website integration.
 export const MATEO_VIDEO = {
-  "src": "/mateo/media/mateo-intro-v7.mp4",
-  "poster": "/mateo/media/mateo-intro-v7-poster.png",
+  "src": "/mateo/media/mateo-intro-v8.mp4",
+  "poster": "/mateo/media/mateo-intro-v8-poster.png",
   "captions": "/mateo/media/mateo-intro-v7.en.vtt",
   "transcriptFile": "/mateo/media/mateo-intro-v7-transcript.txt",
   "durationSeconds": 120.6,
