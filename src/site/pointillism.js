@@ -291,6 +291,7 @@ export function mountPointillism(canvas, { onForm, reduced } = {}) {
   const targets = (f, t, X, Y, A) => f.step(t, X, Y, A);
 
   function render(now) {
+    if (!N) return; // A hidden stage can receive its first frame before ResizeObserver allocates it.
     // the forms' own clock (rain, wind, signals, rotation) stands still while paused
     const dt = Math.min((now - (last || now)) / 1000, 1 / 30); last = now;
     if (!paused) clock += dt;
