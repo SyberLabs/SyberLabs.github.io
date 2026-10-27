@@ -83,3 +83,5 @@ html.sy-field-live body.syber-portfolio { background:#f5f3ec; }
   .portfolio-proof { padding:18px; }
   .portfolio-contact { padding:48px 0; }
 }
+/* The menu shares this page's dark text tokens, so its panel is ivory too. */
+.syber-portfolio .sy-atlas__panel { background:#f5f2e9; }
