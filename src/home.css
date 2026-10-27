@@ -71,8 +71,8 @@
 
 /* Hiring-first cinematic stage. The still is an actual Gyre capture, not a product mockup. */
 .pitch-hero { position:relative; min-height: min(100svh, 920px); height: max(720px, 95svh); isolation:isolate; overflow:hidden; background:#030708; }
-.pitch-hero__art { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:70% 50%; }
-.pitch-hero::after { content:""; position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(90deg,#020607f2 0%,#020607bc 34%,#0206071f 68%),linear-gradient(0deg,#03070875,transparent 30%); }
+.pitch-hero__art { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; }
+.pitch-hero::after { content:""; position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(0deg,#03070880 0%,#0307081a 55%,#03070814 100%); }
 .pitch-hero__copy { position:relative; z-index:2; width:100%; padding-top:clamp(190px,27vh,320px); padding-bottom:150px; }
 .pitch-hero__role { margin:0 0 18px; color:#c4d8dd; font-size:14px; letter-spacing:.08em; }
 .pitch-hero h1 { margin:0 0 22px; font:500 clamp(48px,6.3vw,94px)/1.02 var(--sy-sans); letter-spacing:-.055em; }
@@ -129,7 +129,7 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .home-forms h2 { font-family:var(--sy-sans); }
 .home-forms em { font-style:normal; color:var(--sy-vellum); }
 #main :is(a,button,summary,video):focus-visible { outline:2px solid var(--sy-ice); outline-offset:5px; }
-@media(max-width:800px) { .pitch-hero { height:850px; min-height:100svh; } .pitch-hero__copy { padding-top:220px; } .pitch-hero__art { object-position:64% 50%; } .pitch-hero::after { background:linear-gradient(90deg,#030708dd,#0307083b),linear-gradient(0deg,#03070880,transparent 60%); } .selected-work { gap:32px; } .demo-work article { gap:32px; } }
+@media(max-width:800px) { .pitch-hero { height:850px; min-height:100svh; } .pitch-hero__copy { padding-top:220px; } .pitch-hero__art { object-position:center; } .pitch-hero::after { background:linear-gradient(0deg,#03070880 0%,#0307081a 65%); } .selected-work { gap:32px; } .demo-work article { gap:32px; } }
 @media(max-width:600px) { .pitch-hero { height:760px; min-height:92svh; } .pitch-hero__copy { padding-top:190px; padding-bottom:170px; } .pitch-hero__role { font-size:12px; letter-spacing:.03em; } .pitch-hero h1 { font-size:clamp(44px,11vw,66px); white-space:nowrap; } .pitch-hero__line { font-size:34px; } .pitch-hero__actions { gap:10px; margin-top:28px; } .pitch-hero__actions .sy-btn { padding:12px 16px; font-size:14px; } .pitch-hero__play { left:var(--sy-gutter); right:auto; bottom:48px; font-size:17px; gap:12px; } .pitch-hero__play>span { width:54px; height:54px; } .pitch-hero__film { object-fit:contain; } .selected-work { grid-template-columns:1fr; padding-block:60px; } .test-evidence { padding:28px 0 0; border-left:0; border-top:1px solid var(--sy-rule); } .demo-work article { grid-template-columns:1fr; gap:20px; padding-bottom:60px; } .demo-work { padding-top:60px; } .home-contact { flex-direction:column; align-items:flex-start; padding-block:60px; gap:20px; } .home-contact a { font-size:16px; } .film-notes { padding-top:8px; } }
 
 .home-orb__pause { min-height:44px; border:0; padding:8px; background:none; color:var(--sy-ice); font:13px var(--sy-sans); cursor:pointer; }
@@ -139,10 +139,16 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .home-forms:not(.is-live) :is(.home-forms__stage,.home-forms__controls) { display:none; }
 .home-forms__fallback { color:var(--sy-mist); font-size:14px; }
 
-.pitch-hero__art img { width:100%; height:100%; object-fit:cover; object-position:70% 50%; }
-.pitch-hero__background { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:70% 50%; opacity:0; pointer-events:none; }
+.pitch-hero__art img { width:100%; height:100%; object-fit:cover; object-position:center; }
+.pitch-hero__background { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; opacity:0; pointer-events:none; }
 .pitch-hero__background.is-ready { opacity:1; }
 .pitch-hero.is-playing .pitch-hero__background { visibility:hidden; }
 .pitch-hero__motion { position:absolute; top:88px; right:var(--sy-gutter); z-index:4; min-height:44px; padding:10px 14px; border:1px solid #f4f2ed66; border-radius:2px; background:#030708c9; color:#f4f2ed; font:12px var(--sy-sans); cursor:pointer; }
 .pitch-hero__play { background:#030708b8; border-radius:2px; }
 @media(max-width:600px) { .pitch-hero__art img,.pitch-hero__background { object-position:center; } .pitch-hero__motion { top:82px; font-size:11px; padding:8px 10px; } }
+
+/* Full-canvas motion stays visible behind the copy; contrast is local to text and controls. */
+.pitch-hero__copy { text-shadow:0 2px 3px #000e,0 0 18px #000c; }
+.pitch-hero__role,.pitch-hero__line,.pitch-hero__availability { color:#f4f2ed; }
+.pitch-hero__actions .sy-btn { text-shadow:none; box-shadow:0 2px 14px #0006; }
+.hero-credit a { color:var(--sy-ice); text-decoration:underline; text-underline-offset:3px; }
