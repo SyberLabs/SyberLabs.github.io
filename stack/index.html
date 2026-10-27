@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#06051a">
+  <meta name="theme-color" content="#f5f3ec">
   <meta name="description" content="How SyberLabs’ coding agents read open-source dependencies at the exact version a project uses, through GitHits, and what that sends off our machines.">
   <link rel="canonical" href="https://syberlabs.io/stack/">
   <meta property="og:type" content="website">
@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="/syberlabs.css?v=20261027">
-  <link rel="stylesheet" href="/stack/stack.css?v=20261027">
+  <link rel="stylesheet" href="/stack/stack.css?v=20261027-2">
   <title>How We Build | SyberLabs</title>
 </head>
 <body class="syber-stack">
@@ -53,8 +53,8 @@
       </div>
       <div class="prose">
         <div>
-          <p>A language model learns a library from whatever releases were public when it was trained. Asked about a dependency, it answers from that blend: a function renamed two releases ago, an option that exists only on the main branch, an advisory published after its cutoff. The answer reads well and fails against the version in the lockfile.</p>
-          <p>Reading the source at the pinned version settles the question. <a href="https://githits.com/" rel="noopener">GitHits</a> indexes public open-source code, documentation, package metadata, vulnerabilities and changelogs by version, and serves them over MCP, a command-line tool and a REST API. An agent can read the release the lockfile names instead of recalling one.</p>
+          <p>An AI coding assistant can mix up software versions: a renamed function, an option available only in unreleased code, or a security advisory published after training. Its answer may look convincing while failing against the version a project actually uses.</p>
+          <p>Reading the source at the project’s exact version gives the assistant evidence to check. <a href="https://githits.com/" rel="noopener">GitHits</a> indexes public open-source code, documentation, package metadata, vulnerabilities and changelogs by version, and makes them available through AI tool connections (MCP), a command-line tool and a web interface for software (REST API). The assistant can read the release recorded in the lockfile, which lists the dependency versions installed by the project.</p>
         </div>
       </div>
     </section>
@@ -65,8 +65,8 @@
         <h2 id="wiring-title">How we use GitHits.</h2>
       </div>
       <div class="pieces">
-        <article><span class="number">01 / AGENTS</span><h3>Code search inside our coding assistants</h3><p>GitHits uses MCP, a standard connection between AI assistants and tools. Its server is configured in SyberLabs repositories, so coding agents such as Claude Code can search and read dependency source, docs and changelogs at a named version, and check vulnerabilities before a dependency is bumped.</p></article>
-        <article><span class="number">02 / THIS SITE</span><h3>Dependency panels at build time</h3><p>Each project page carries a dependency panel generated from GitHits’ package API (<code>api.githits.dev/v1</code>) when the site is built: license, latest version and known vulnerabilities for the packages the project declares. Only fields GitHits returned are shown. Where no snapshot has been fetched yet, the panel says so.</p></article>
+        <article><span class="number">01 / AGENTS</span><h3>Code search inside our coding assistants</h3><p>GitHits uses MCP, a standard connection between AI assistants and tools. Its server is configured in SyberLabs repositories, so coding agents such as Claude Code can search and read dependency source, docs and changelogs at a named version, and check vulnerabilities before updating a dependency.</p></article>
+        <article><span class="number">02 / THIS SITE</span><h3>Dependency panels at build time</h3><p>Each project page carries a dependency panel generated from GitHits’ package API (<code>api.githits.dev/v1</code>) when the site is built: license, latest version and known vulnerabilities for the packages listed in the project’s dependency files. Only fields GitHits returned are shown. Where no saved report has been fetched yet, the panel says so.</p></article>
       </div>
     </section>
 
@@ -80,11 +80,11 @@
       </div>
       <div class="prose">
         <div>
-          <p>On a developer machine, one command detects the installed coding agents, configures GitHits for them and signs in. Sign-in is OAuth in the browser, and the token is kept in the system keychain.</p>
+          <p>On a developer machine, one command detects the installed coding agents, configures GitHits for them and signs in. Sign-in uses OAuth, which opens the provider’s sign-in page in your browser. The access token is kept in the system keychain.</p>
           <pre class="commands"><code>npx githits@latest init</code></pre>
           <p>A repository can also register the hosted server for every agent that opens it, in <code>.mcp.json</code>; the first use asks for sign-in.</p>
           <pre class="commands"><code>{ "mcpServers": { "githits": { "type": "http", "url": "https://mcp.githits.com" } } }</code></pre>
-          <p>In CI and other headless runs there is no browser. An API token is stored as the repository secret <code>GITHITS_API_TOKEN</code> and exposed to the job as an environment variable. It is never committed or written to a file, and the build still succeeds without it.</p>
+          <p>Automated builds (CI) and other runs without an interactive user have no browser for sign-in. An API token is stored as the repository secret <code>GITHITS_API_TOKEN</code> and exposed to the job as an environment variable. It is never committed or written to a file, and the build still succeeds without it.</p>
           <pre class="commands"><code><span class="c"># CI: token from the GitHits settings page, stored as a secret</span>
 env:
   GITHITS_API_TOKEN: ${{ secrets.GITHITS_API_TOKEN }}
@@ -99,7 +99,7 @@ npx githits@latest auth status</code></pre>
     <section class="stack-section" id="data" aria-labelledby="data-title">
       <div class="section-heading">
         <p class="eyebrow">WHAT LEAVES OUR MACHINES</p>
-        <h2 id="data-title">Public names go out. Private code stays.</h2>
+        <h2 id="data-title">What we send to GitHits.</h2>
       </div>
       <div class="prose">
         <ul>
