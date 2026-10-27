@@ -13,3 +13,17 @@ The GitHits evidence in `../proof/` uses controlled test data. It does not estab
 Earth imagery: NASA/GSFC, [NASA catalog source](https://images.nasa.gov/details/GSFC_20171208_Archive_e002131). The visible website credit links to the same source. This is factual imagery attribution, not a NASA endorsement.
 
 RISE source license and notices are preserved in `RISE-LICENSE.txt` and `RISE-NOTICE.txt`. The background files contain no audio; the approved narrated pitch is separate.
+
+## Earth-first hiring introduction, 2026-10-27
+
+`earth-recede-v1.mp4` and its portrait variant are silent 3-second recordings of
+RISE's actual Sophia shell geometry opening on NASA/GSFC Blue Marble 2007 West
+and receding. The source pin and Apache license/notice above also apply here.
+The Earth-start posters are used while this small clip loads. The page then
+uses a bounded, live point field adapted from Mateo's existing Pointillism
+work to reveal the real HTML name and links. The source handoff renderer hash
+was c7465743a8eb5a6989a415795a84873a26c42ee5e1e7dc358591421468700687.
+
+The full-canvas `gyre-full-v1.mp4` and portrait variant provide quiet mathematical
+motion after that introduction. They contain no audio or interface claims.
+Existing narrated-film audio, captions and transcript are unchanged.

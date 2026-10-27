@@ -8,6 +8,7 @@ import { mountPointillism, FORMS } from './site/pointillism.js';
 import { cleanText } from './living-lab/scene.js';
 import { MATEO_VIDEO } from './mateo-video.js';
 import BackgroundVideo from './BackgroundVideo.jsx';
+import HeroIntro from './HeroIntro.jsx';
 import { HERO_MEDIA } from './hero-media.js';
 import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
@@ -15,8 +16,8 @@ import '../kit/v2/syber-atlas.css';
 import './syberlabs.css';
 import './home.css';
 
-// The homepage, in order: the lab (the Orb), the lab's forms (Pointillism), then Mateo (the introduction film, the
-// pitch and the linked proof of his work). The header floats over the Orb; the footer is the shared chrome.
+// Hiring first: a bounded Earth-to-points introduction, Mateo's film and work,
+// then the lab's optional Pointillism and Orb experiments.
 
 // The Orb (src/site/orb.js): a sphere of fractal flame and spectral attractor beside the headline, with a swarm of
 // dots that spells the lab's words. One input, the typing bar: as the visitor types, the dots re-assemble into their
@@ -105,26 +106,28 @@ function Forms() {
 const pauseOtherVideos = event => { for (const video of document.querySelectorAll('video')) if (video !== event.currentTarget) video.pause(); };
 
 export default function App() {
-  const movie = useRef(null), play = useRef(null);
+  const movie = useRef(null), play = useRef(null), stage = useRef(null), copy = useRef(null);
   const [started, setStarted] = useState(false);
   const [enhanced, setEnhanced] = useState(false);
   const [videoError, setVideoError] = useState(false);
+  const [introReplay, setIntroReplay] = useState(0);
   useEffect(() => { setEnhanced(true); const sigils = drawAll(document); boot(document); return () => sigils.disconnect(); }, []);
   const watch = () => { movie.current.play().then(() => movie.current.focus()).catch(() => setVideoError(true)); };
   const overview = () => { movie.current.pause(); setStarted(false); requestAnimationFrame(() => play.current.focus()); };
   return <>
-    <div className="home-chrome" dangerouslySetInnerHTML={{ __html: header('', { here: '/', sticky: false, script: false }) }} />
+    <div className="home-chrome home-chrome--hiring" dangerouslySetInnerHTML={{ __html: header('', { here: '/', sticky: false, script: false, hiring: true }) }} />
     <main id="main">
-      <section className={`pitch-hero${started ? ' is-playing' : ''}`} aria-labelledby="hero-title" id="founder">
+      <section ref={stage} className={`pitch-hero${started ? ' is-playing' : ''}`} aria-labelledby="hero-title" id="founder">
         <picture className="pitch-hero__art"><source media="(max-width: 600px)" srcSet={HERO_MEDIA.portraitPoster} /><img src={HERO_MEDIA.poster} width="1280" height="720" alt="" fetchPriority="high" /></picture>
         <BackgroundVideo pitchPlaying={started} />
-        <div className="pitch-hero__copy sy-wrap">
+        <HeroIntro key={introReplay} stage={stage} copy={copy} pitchPlaying={started} replay={introReplay > 0} />
+        <div ref={copy} className="pitch-hero__copy sy-wrap">
           <p className="pitch-hero__role">Software &amp; Product Engineer</p>
-          <h1 id="hero-title">Mateo Robles</h1>
-          <p className="pitch-hero__line">Useful software.<br />Ready to build.</p>
+          <h1 id="hero-title" tabIndex={-1}><span data-intro-target>Mateo</span><span data-intro-target>Robles</span></h1>
+          <p className="pitch-hero__line">Useful software. Ready to build.</p>
           <div className="pitch-hero__actions">
-            <a className="sy-btn sy-btn--solid" href={CONTACT + '?subject=Interview%20with%20Mateo%20Robles'}>Interview Mateo <span aria-hidden="true">→</span></a>
-            <a className="sy-btn sy-btn--line" href={RESUME}>View résumé</a>
+            <a data-intro-target className="sy-btn sy-btn--solid" href={CONTACT + '?subject=Interview%20with%20Mateo%20Robles'}>Interview Mateo</a>
+            <a data-intro-target className="sy-btn sy-btn--line" href={RESUME}>View résumé</a>
           </div>
           <p className="pitch-hero__availability">Available to start immediately</p>
         </div>
@@ -137,6 +140,7 @@ export default function App() {
         {started && <button className="pitch-hero__back" type="button" onClick={overview}>Back to overview</button>}
       </section>
       <div className="film-notes sy-wrap">
+        <button className="intro-replay home-js-only" type="button" onClick={e => { e.currentTarget.blur(); movie.current.pause(); setStarted(false); window.scrollTo({ top: 0, behavior: 'instant' }); setIntroReplay(n => n + 1); }}>Replay visual intro</button>
         <span>{MATEO_VIDEO.credit}</span>
         <span className="hero-credit">Gyre to RISE Sophia. Imagery: <a href="https://images.nasa.gov/details/GSFC_20171208_Archive_e002131">NASA/GSFC</a> (Earth).</span>
         <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((p, i) => <p key={i}>{p}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>

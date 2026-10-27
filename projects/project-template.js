@@ -51,12 +51,12 @@ const navLinks = (current = '', here = '') => nav.map(item => `<li><a href="${it
 // JS, and src/site/nav.js keeps the attribute in step once it runs.
 // `sticky` (default) keeps the header in flow; the homepage passes false so it floats over the hero.
 // The customer subscription route is separate from staff sign-in in the footer.
-export const header = (current = '', { sticky = true, script = true, here = '' } = {}) => {
+export const header = (current = '', { sticky = true, script = true, here = '', hiring = false } = {}) => {
   return `<a class="sy-skip" href="#main">Skip to content</a>
 <div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
 <header class="sy-header${sticky ? ' sy-header--sticky' : ''}"><div class="sy-header__in">
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
-  <nav class="sy-nav" aria-label="Primary"><ul>${navLinks(current)}</ul></nav>
+  <nav class="sy-nav" aria-label="Primary"><ul>${hiring ? `<li><a href="mailto:${EMAIL}?subject=Interview%20with%20Mateo%20Robles">Interview</a></li><li><a href="/mateo_robles_resume.pdf">Résumé</a></li>` : navLinks(current)}</ul></nav>
   <details class="sy-menu"><summary aria-label="Menu" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas(here)}</details>
 </div></header>${script ? '\n<script type="module" src="/syberlabs.js"></script>' : ''}`;
 };

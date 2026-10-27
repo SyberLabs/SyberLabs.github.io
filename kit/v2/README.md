@@ -55,3 +55,15 @@ drawAll(document);                     // canvas[data-sigil="relay"][data-color]
 6. Status is always shown as dot + word, never as colour alone. Nothing is set below 12px, and serif is never used below 32px.
 
 The Mateo detail page uses an ivory reading surface (`#f5f3ec`), dark text (`#172c30`) and dark cyan links (`#176473`). Its header, menu and footer must remain readable in that page-local theme. The homepage keeps the cinematic near-black motion stage. Both use Instrument Sans, real project media and direct hiring actions.
+
+### Homepage first-visit reveal
+
+The hiring hero begins with Earth in the RISE Sophia shell, holds briefly, then
+recedes into a fine point field. The points gather into the real HTML name and
+hiring actions by about 6.4 seconds. This introduction runs once per browser tab
+session, with an explicit replay control. Header Interview/Résumé links and the
+narrated film remain reachable immediately. Skip moves focus to the readable
+heading. Reduced motion, missing WebGL, failed media, hidden tabs and resizing
+settle into the same usable HTML state. The final hiring controls never cycle
+away. Keep NASA/GSFC's visible linked image acknowledgment. Do not add a large
+centered panel over Earth or restore a permanent opaque half-screen mask.
