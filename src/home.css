@@ -163,16 +163,20 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .pitch-hero__role { margin:0 0 22px; }
 .pitch-hero h1 { margin:0 0 26px; line-height:1; }
 .pitch-hero h1>span { display:block; }
-/* SyberLabs in chromatic blue: a chrome gradient in the letters, a fine light bezel on their edges, embossed with a
-   lit top edge and a deep shadow under, and one slow sheen across on arrival */
-.pitch-hero__brand { position:relative; width:max-content; padding:.04em .02em .08em; font:600 clamp(64px,7.4vw,112px)/.95 var(--sy-sans); letter-spacing:-.045em; color:transparent; text-shadow:none;
-  background:linear-gradient(100deg,#0000 38%,#ffffffb3 48%,#0000 58%) -160% 0/250% 100% no-repeat,
-    linear-gradient(180deg,#f3fbff 0%,#c3e9ff 17%,#79c2ff 33%,#2a74e6 47%,#0b2c78 52%,#1f63d6 60%,#5fb0ff 76%,#c9eeff 92%,#f3fbff 100%);
-  -webkit-background-clip:text; background-clip:text; -webkit-text-stroke:1px #d9f3ff8c;
-  filter:drop-shadow(0 -1px 0 #f2fbffb3) drop-shadow(0 1px 0 #041845) drop-shadow(0 3px 2px #020b22e6) drop-shadow(0 14px 30px #000000c4); }
-.pitch-hero__brand { animation:brand-sheen 2.6s cubic-bezier(.3,.6,.2,1) .9s both; }
+/* SyberLabs in chromatic blue, in three stacked copies of the word: the element's own text in deep blue is the lower
+   edge; ::before (pale, raised a little more) is the lit upper edge; ::after carries the chrome gradient on top. Each
+   copy is a solid fill, so no inner glyph joints show (an outline stroke traced them as blocky seams). The copies are
+   hidden from assistive technology; the heading reads the word once. */
+.pitch-hero__brand { position:relative; width:max-content; padding:.04em .02em .1em; font:600 clamp(64px,7.4vw,112px)/.95 var(--sy-sans); letter-spacing:-.045em; color:#062061; text-shadow:none;
+  filter:drop-shadow(0 4px 3px #020b22d9) drop-shadow(0 16px 30px #000000b3); }
+.pitch-hero__brand::before, .pitch-hero__brand::after { content:attr(data-text); content:attr(data-text) / ""; position:absolute; inset:0; padding:inherit; pointer-events:none; }
+.pitch-hero__brand::before { color:#eaf8ff; transform:translateY(-.05em); }
+.pitch-hero__brand::after { color:transparent; transform:translateY(-.032em);
+  background:linear-gradient(100deg,#0000 38%,#ffffff99 48%,#0000 58%) -160% 0/250% 100% no-repeat,
+    linear-gradient(180deg,#f5fbff 0%,#cdeeff 16%,#86c9ff 32%,#3b82ec 45%,#1a49a8 51%,#2a6fdd 58%,#62b2ff 74%,#c4ebff 90%,#eef9ff 100%);
+  -webkit-background-clip:text; background-clip:text; animation:brand-sheen 2.6s cubic-bezier(.3,.6,.2,1) .9s both; }
 @keyframes brand-sheen { from { background-position:-160% 0,0 0; } to { background-position:260% 0,0 0; } }
-.pitch-hero__brand:hover { animation:brand-sheen 1.8s cubic-bezier(.3,.6,.2,1) both; }
+.pitch-hero__brand:hover::after { animation:brand-sheen 1.8s cubic-bezier(.3,.6,.2,1) both; }
 /* by, signed: the signature writes itself in from the left */
 .pitch-hero__by { display:flex !important; align-items:center; gap:14px; margin-top:6px; padding-left:.3em; color:#c4d8dd; font:400 18px/1 var(--sy-sans); letter-spacing:.02em; }
 .pitch-hero__signature { width:clamp(220px,24vw,340px); height:auto; margin:-14px 0 -22px; filter:drop-shadow(0 2px 3px #000c); }
@@ -195,7 +199,8 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .pitch-hero h1>span, .pitch-hero__role, .pitch-hero__panel { transition:opacity .9s ease, transform 1.3s cubic-bezier(.16,.84,.24,1), filter 1s ease; }
 .sy-reveal .pitch-hero h1>span { animation:hero-rise 1.5s cubic-bezier(.16,.84,.24,1) .35s both; }
 .sy-reveal .pitch-hero h1>span + span { animation-delay:.55s; }
-.sy-reveal .pitch-hero .pitch-hero__brand { animation:brand-rise 1.5s cubic-bezier(.16,.84,.24,1) .35s both, brand-sheen 2.6s cubic-bezier(.3,.6,.2,1) 1.5s both; }
+.sy-reveal .pitch-hero .pitch-hero__brand { animation:brand-rise 1.5s cubic-bezier(.16,.84,.24,1) .35s both; }
+.sy-reveal .pitch-hero .pitch-hero__brand::after { animation-delay:1.5s; }
 @keyframes brand-rise { from { opacity:0; transform:translateY(30px); } }
 @keyframes hero-rise { from { opacity:0; transform:translateY(30px); filter:blur(12px); } }
 .sy-reveal .pitch-hero[data-phase="idle"] .pitch-hero__role { opacity:0; transform:translateY(10px); }
@@ -224,7 +229,7 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
   .pitch-hero__art, .pitch-hero__clip { transform:translateY(-3%) scale(.58); -webkit-mask-image:radial-gradient(closest-side,#000 66%,transparent 100%); mask-image:radial-gradient(closest-side,#000 66%,transparent 100%); }
 }
 @media(prefers-reduced-motion:reduce) {
-  .pitch-hero h1>span, .pitch-hero__role, .pitch-hero__panel, .pitch-hero__brand, .pitch-hero__signature { transition:none; animation:none; }
+  .pitch-hero h1>span, .pitch-hero__role, .pitch-hero__panel, .pitch-hero__brand, .pitch-hero__brand::after, .pitch-hero__signature { transition:none; animation:none; }
 }
 
 /* The Sophia frame's painting: a disc laid exactly over Earth's (placed by BackgroundVideo.jsx from the clip's
