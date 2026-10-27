@@ -142,7 +142,7 @@ test('static chrome derives current navigation from routes, repairing missing an
       const current = [...primary.matchAll(/<a href="([^"]+)" aria-current="page"/g)].map(match => match[1]);
       assert.deepEqual(current, expected ? [expected] : [], `${file} previously ${prior}`);
       if (['mateo/index.html', 'services/index.html', 'projects/rise/index.html'].includes(file)) {
-        assert.match(primary, /href="mailto:syberlabs\.software@gmail\.com\?subject=Interview%20with%20Mateo%20Robles">Interview<\/a>/);
+        assert.match(primary, /href="mailto:hello\.mateorobles@gmail\.com\?subject=Interview%20with%20Mateo%20Robles">Interview<\/a>/);
         assert.match(primary, /href="\/mateo_robles_resume\.pdf">Résumé<\/a>/);
       }
       assert.match(generated, /href="#content">Skip to content/);

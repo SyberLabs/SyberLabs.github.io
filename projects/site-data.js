@@ -9,7 +9,7 @@
 
 export const CONTACT = 'mailto:syberlabs.software@gmail.com';
 export const EMAIL = 'syberlabs.software@gmail.com';
-// the founder card on the homepage carries Mateo's own address; every other contact goes to the lab inbox
+// Hiring inquiries go to Mateo; general studio inquiries keep EMAIL and CONTACT.
 export const MATEO_EMAIL = 'hello.mateorobles@gmail.com';
 export const RESUME = '/mateo_robles_resume.pdf';
 export const LINKEDIN = 'https://www.linkedin.com/in/automateon/';
