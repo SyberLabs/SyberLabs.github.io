@@ -7,6 +7,10 @@ import { resolve } from 'node:path';
 
 const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+// The detail page uses the same approved film and exact transcript as the homepage.
+const { MATEO_VIDEO: film } = await import('../src/mateo-video.js');
+const mateoFilm = `<figure class="portfolio-film"><video controls playsinline preload="none" poster="${esc(film.poster)}" width="1280" height="720" aria-label="Meet Mateo: two-minute introduction"><source src="${esc(film.src)}" type="video/mp4"><track kind="captions" src="${esc(film.captions)}" srclang="en" label="English" default><a href="${esc(film.src)}">Download the introduction</a></video><figcaption>${esc(film.credit)}</figcaption><details><summary>Read transcript</summary>${film.transcript.map(p => `<p>${esc(p)}</p>`).join('')}<a href="${esc(film.transcriptFile)}">Download transcript</a></details></figure>`;
+
 async function inject(file, markerRe, replacement) {
   const html = await readFile(file, 'utf8');
   if (!markerRe.test(html)) throw new Error(`prerender: marker not found in ${file}`);
@@ -15,6 +19,7 @@ async function inject(file, markerRe, replacement) {
 
 const { render, renderGitHits } = await import(pathToFileURL(resolve('dist-ssr/entry-server.js')).href);
 await inject(resolve('dist/index.html'), /<div id="root"><\/div>/, html => html.replace('<div id="root"></div>', `<div id="root">${render()}</div>`));
+await inject(resolve('dist/mateo/index.html'), /<!-- mateo:video -->/, html => html.replace('<!-- mateo:video -->', mateoFilm));
 // /stack/ carries the GitHits dependency totals (src/githits-panel.jsx), built from the same snapshots as the project panels.
 await inject(resolve('dist/stack/index.html'), /<!-- stack:githits -->/, html => html.replace('<!-- stack:githits -->', renderGitHits()));
 await rm('dist-ssr', { recursive: true, force: true });

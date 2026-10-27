@@ -21,11 +21,12 @@ import './home.css';
 // text and the light bends to it. Text never leaves the browser (cleanText, src/living-lab/scene.js, bounds it).
 // Without WebGL2 (or on a software renderer) a still exposure of Plate I takes its place and the bar is hidden;
 // reduced motion gets one still exposure per text. The words the dots spell are also in the page as .sy-sr text.
-const ORB_WORDS = ['SyberLabs', 'RISE', 'Read', 'Anything', 'Alive', 'Type here ↓'];
+const ORB_WORDS = ['SyberLabs', 'Mateo', 'Build', 'Create', 'Explore', 'Type here ↓'];
 function Hero() {
   const canvas = useRef(null), copy = useRef(null), orb = useRef(null);
   const [live, setLive] = useState(false);
   const [text, setText] = useState('');
+  const [paused, setPaused] = useState(false);
   useEffect(() => {
     const o = orb.current = mountOrb(canvas.current, { avoid: copy.current, words: ORB_WORDS, narrow: { scale: 0.66, max: 260, top: 60, media: '(max-width: 900px)' }, allowSoftware: window.SY_ALLOW_SOFTWARE_GL === true });
     setLive(o.supported);
@@ -41,8 +42,8 @@ function Hero() {
     <div className="home-hero__in sy-wrap">
       <div className="home-hero__copy" ref={copy}>
         <p className="sy-eyebrow">SyberLabs / research studio</p>
-        <h2 id="lab-title" className="sy-display-xl home-hero__title">Systems that <em>come alive.</em></h2>
-        <p className="sy-body-lg home-hero__intro">A research studio where machine learning, complex systems and generative art meet. We build reading runtimes, agent infrastructure and instruments you can play.</p>
+        <h2 id="lab-title" className="sy-display-xl home-hero__title">An idea <em>in motion.</em></h2>
+        <p className="sy-body-lg home-hero__intro">Type a word. Watch light and points rearrange around it.</p>
         <div className="home-hero__actions">
           <a className="sy-btn sy-btn--solid home-hero__cta" href="#forms">Explore the lab <span aria-hidden="true">↓</span></a>
           <a className="home-hero__explore" href="#founder">Meet the founder <span aria-hidden="true">↓</span></a>
@@ -52,10 +53,11 @@ function Hero() {
     <div className="home-hero__art">
       <canvas ref={canvas} className="sy-atmosphere" aria-hidden="true" />
       <img className="home-still" src={plateStill} srcSet={`${plateStillSm} 560w, ${plateStill} 1000w`} sizes="(max-width: 900px) 400px, 60vw" width="1000" height="1000" alt="" aria-hidden="true" decoding="async" />
-      <p className="sy-sr">SyberLabs. RISE. Read anything, alive.</p>
+      <p className="sy-sr">SyberLabs. Mateo. Build. Create. Explore.</p>
       <form className="home-orb__bar" onSubmit={e => e.preventDefault()}>
         <input type="text" value={text} onChange={type} maxLength={180} autoComplete="off" spellCheck={false} enterKeyHint="done" aria-label="Type anything; the orb spells it" placeholder="Type anything…" />
-        <span className="home-orb__hint" aria-hidden="true">{text ? 'Your words stay in this browser' : 'The orb listens'}</span>
+        <span className="home-orb__hint" aria-hidden="true">{text ? 'Your words stay in this browser' : 'Your words shape the light'}</span>
+      {live && <button className="home-orb__pause" type="button" aria-pressed={paused} onClick={() => { if (paused) orb.current.resume(); else orb.current.pause(); setPaused(!paused); }}>{paused ? 'Resume animation' : 'Pause animation'}</button>}
       </form>
     </div>
   </section>;
@@ -82,7 +84,7 @@ function Forms() {
         <p className="sy-eyebrow">Pointillism</p>
         <h2 id="forms-title" className="sy-display">One field of points, <em>every form.</em></h2>
       </div>
-      <p className="home-forms__note sy-small">The same dots spell the lab, gather into a raincloud, grow into a tree, fire as a neural network and turn as a galaxy. Each finds its place by one rule.</p>
+      <p className="home-forms__note sy-small">One field of dots becomes rain, a tree, a network or a galaxy. Choose a form.</p>
     </div>
     <figure className={`home-forms__stage${live ? ' is-live' : ''}`}>
       <canvas ref={canvas} className="home-forms__canvas" aria-hidden="true" />
@@ -97,86 +99,55 @@ function Forms() {
   </section>;
 }
 
-const work = [
-  { id: 'githits', title: 'GitHits design partnership',
-    text: 'GitHits helps AI coding tools find useful code examples. I built and tested the connection to an AI coding assistant.',
-    source: 'https://github.com/SyberLabs/SyberWork/pull/134', sourceLabel: 'Merged integration', detail: '/mateo/#githits' },
-  { id: 'rise', title: 'RISE',
-    text: 'RISE turns reading into an interactive experience with words, sound and visuals. I helped the team make readings play reliably and look consistent.',
-    source: 'https://github.com/SyberLabs/RISE/pull/371', sourceLabel: 'Merged contribution', detail: '/mateo/#rise' },
-];
-const beats = [
-  { title: 'Hi, I’m Mateo.', text: 'I’m a software and product engineer. I build interactive mathematical systems and Python integrations for AI tools.' },
-  { title: 'Play with it. Inspect the code.', text: 'Gyre turns a mathematical rule into a live orbit. My GitHits integration filters source retrieval and records lookup evidence on the host.' },
-  { title: "Let's build something useful together.", text: 'Looking for a software engineer? I’d like to hear what your team is building and walk you through my part in these projects.' },
-];
+const pauseOtherVideos = event => { for (const video of document.querySelectorAll('video')) if (video !== event.currentTarget) video.pause(); };
 
 export default function App() {
-  const [step, setStep] = useState(null);
+  const movie = useRef(null), play = useRef(null);
+  const [started, setStarted] = useState(false);
+  const [enhanced, setEnhanced] = useState(false);
   const [videoError, setVideoError] = useState(false);
-  const movie = useRef(null);
-  const start = useRef(null), title = useRef(null);
-  useEffect(() => { const sigils = drawAll(document); boot(document, { density: 'calm', offset: [-0.34, -0.42] }); return () => sigils.disconnect(); }, []);
-  const begin = () => { setStep(0); requestAnimationFrame(() => title.current.focus({ preventScroll: true })); };
-  const watch = () => { movie.current.focus(); movie.current.play().catch(() => setVideoError(true)); };
-  const overview = () => { setStep(null); requestAnimationFrame(() => start.current.focus()); };
+  useEffect(() => { setEnhanced(true); const sigils = drawAll(document); boot(document); return () => sigils.disconnect(); }, []);
+  const watch = () => { movie.current.play().then(() => movie.current.focus()).catch(() => setVideoError(true)); };
+  const overview = () => { movie.current.pause(); setStarted(false); requestAnimationFrame(() => play.current.focus()); };
   return <>
-    <div className="home-chrome" dangerouslySetInnerHTML={{ __html: header('', { here: '/', script: false }) }} />
+    <div className="home-chrome" dangerouslySetInnerHTML={{ __html: header('', { here: '/', sticky: false, script: false }) }} />
     <main id="main">
-      <div className="home-portfolio sy-wrap">
-      <section className={`home-me${step !== null ? ' is-playing' : ''}${MATEO_VIDEO ? ' home-me--video' : ''}`} id="founder" aria-labelledby="founder-title">
-        <div className="home-me__copy">
-          <p className="sy-eyebrow">Software &amp; product engineer / Bay Area</p>
-          <h1 id="founder-title" className="home-me__name">Mateo{MATEO_VIDEO ? ' ' : <br />}<em>Robles.</em></h1>
-          {step === null ? <>
-            <p className="home-me__intro">I build tools for coding assistants and interactive experiences for the web.</p>
-            <p className="home-me__meta">Computer Science · Santa Clara ’26<br />Open to software engineering, technical support and product roles.</p>
-          </> : <div className="home-beat" id="pitch">
-            <span className="home-beat__count" role="status">Part {step + 1} of 3</span>
-            <h2 ref={title} tabIndex={-1}>{beats[step].title}{step === 2 && <span className="home-pitch-star" aria-hidden="true">✦</span>}</h2>
-            <p>{beats[step].text}</p>
-            {step === 1 && <div className="home-beat__links"><a href={GYRE_APP}>Explore Gyre ↗</a><a href="/mateo/#githits">Inspect GitHits →</a></div>}
-            {step === 2 && <a className="home-hire" href={CONTACT + '?subject=Engineering%20opportunity%20for%20Mateo'}>Invite Mateo to interview ↗</a>}
-          </div>}
-          <div className="home-me__actions">
-            {step === null ? <>
-              {MATEO_VIDEO ? <>
-                <button type="button" className="sy-btn sy-btn--solid home-js-only" onClick={watch} aria-controls="mateo-intro-video">Watch Mateo’s introduction →</button>
-                <a className="sy-btn sy-btn--solid home-nojs-only" href="#intro-video">Watch Mateo’s introduction →</a>
-              </> : <>
-                <button ref={start} type="button" className="sy-btn sy-btn--solid home-js-only" onClick={begin}>Read Mateo’s pitch <span aria-hidden="true">→</span></button>
-                <a className="sy-btn sy-btn--solid home-nojs-only" href="#work">Read Mateo’s pitch →</a>
-              </>}
-            </> : <div className="home-pitch-controls"><button type="button" className="home-text-button" disabled={step === 0} onClick={() => setStep(step - 1)}>Back</button><button type="button" className="sy-btn sy-btn--solid" onClick={() => step === 2 ? overview() : setStep(step + 1)}>{step === 2 ? 'Finish →' : 'Next →'}</button><button type="button" className="home-text-button" onClick={overview}>Skip pitch</button></div>}
-            <a className="home-link" href={RESUME}>Résumé (PDF) ↗</a>
+      <section className={`pitch-hero${started ? ' is-playing' : ''}`} aria-labelledby="hero-title" id="founder">
+        <img className="pitch-hero__art" src="/mateo/demos/gyre-hero.jpg" width="1600" height="813" alt="" fetchPriority="high" />
+        <div className="pitch-hero__copy sy-wrap">
+          <p className="pitch-hero__role">Software &amp; Product Engineer</p>
+          <h1 id="hero-title">Mateo Robles</h1>
+          <p className="pitch-hero__line">Useful software.<br />Ready to build.</p>
+          <div className="pitch-hero__actions">
+            <a className="sy-btn sy-btn--solid" href="/mateo/#contact">Interview Mateo <span aria-hidden="true">→</span></a>
+            <a className="sy-btn sy-btn--line" href={RESUME}>View résumé</a>
           </div>
-          {step !== 2 && <a className="home-hire" href={CONTACT + '?subject=Engineering%20opportunity%20for%20Mateo'}>Talk about an engineering role ↗</a>}
+          <p className="pitch-hero__availability">Available to start immediately</p>
         </div>
-        {MATEO_VIDEO ? <figure className="home-video" id="intro-video">
-          <video ref={movie} id="mateo-intro-video" controls playsInline preload="none" poster={MATEO_VIDEO.poster} width="1920" height="1080" aria-label="Mateo Robles: animated introduction" onError={() => setVideoError(true)} onPlaying={() => setVideoError(false)}>
-            <source src={MATEO_VIDEO.src} type="video/mp4" />
-            <track kind="captions" src={MATEO_VIDEO.captions} srcLang="en" label="English" default />
-            Your browser cannot play this video. The transcript and project proof remain available below.
-          </video>
-          <figcaption><span>{MATEO_VIDEO.credit}</span><a href={GYRE_APP}>Explore Gyre ↗</a><a href="https://github.com/sykosyber/engines">Engine source ↗</a><a href="#work" onClick={() => movie.current?.pause()}>Skip to the work →</a></figcaption>
-          {videoError && <p className="home-video__error" role="status">Video unavailable. Read the transcript or explore the work below.</p>}
-          <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((paragraph, i) => <p key={i}>{paragraph}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download spoken transcript</a></details>
-        </figure> : (<figure className="home-engine" id="engines">
-          <a href={GYRE_APP} aria-label="Run Gyre, one of Mateo’s interactive mathematical engines"><img src="/mateo/engines-gyre.webp" width="1000" height="1000" fetchPriority="high" alt="A luminous, multicolored attractor from Gyre." /></a>
-          <figcaption><span>Gyre / Engines</span><a href={GYRE_APP}>Explore Gyre ↗</a><a href="https://github.com/sykosyber/engines">Source ↗</a></figcaption>
-        </figure>) }
+        <video ref={movie} className="pitch-hero__film" id="mateo-intro-video" controls playsInline preload="none" tabIndex={enhanced && !started ? -1 : 0} aria-hidden={enhanced && !started ? true : undefined} poster={MATEO_VIDEO.poster} width="1280" height="720" aria-label="Meet Mateo: two-minute introduction" onPlay={e => { setStarted(true); pauseOtherVideos(e); }} onError={() => setVideoError(true)} onPlaying={() => setVideoError(false)}>
+          <source src={MATEO_VIDEO.src} type="video/mp4" />
+          <track kind="captions" src={MATEO_VIDEO.captions} srcLang="en" label="English" default />
+          <a href={MATEO_VIDEO.src}>Download Mateo’s introduction</a>
+        </video>
+        <button ref={play} className="pitch-hero__play home-js-only" type="button" onClick={watch} aria-controls="mateo-intro-video"><span aria-hidden="true">▶</span>Meet Mateo <small>2 min</small></button>
+        {started && <button className="pitch-hero__back" type="button" onClick={overview}>Back to overview</button>}
       </section>
-      <section id="work" className="home-proofs" aria-label="Selected engineering work">
-        {work.map(p => <article key={p.id} id={p.id} aria-labelledby={`proof-${p.id}`}>
-          <h2 id={`proof-${p.id}`}>{p.title}</h2><p>{p.text}</p>
-          <div className="home-proof__links"><a href={p.source}>{p.sourceLabel} ↗</a><a href={p.detail}>My part →</a></div>
-        </article>)}
-      </section>
-      <p className="home-notes" id="about"><a href="/mateo/">More about Mateo →</a><a id="publishers" href="/services/">Work with Mateo →</a><a id="research" href="/research/">Research archive →</a></p>
-      {!MATEO_VIDEO && <p className="home-nojs-only home-static-motto">Let's build something useful together. <span aria-hidden="true">✦</span></p>}
+      <div className="film-notes sy-wrap">
+        <span>{MATEO_VIDEO.credit}</span>
+        <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((p, i) => <p key={i}>{p}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>
+        {videoError && <p role="status">Video unavailable. Read the transcript or explore the work below.</p>}
       </div>
+      <section id="work" className="selected-work sy-wrap" aria-labelledby="work-title">
+        <div className="selected-work__intro"><p className="sy-eyebrow">Selected work</p><h2 id="work-title">GitHits design partnership</h2><p>Helping AI coding tools find useful code examples. I built and tested the connection to a coding assistant.</p><a href="/mateo/#githits">My contribution and code <span aria-hidden="true">↗</span></a></div>
+        <figure className="test-evidence"><figcaption>Recorded engineering checks</figcaption><p><strong>44 / 44</strong> tests passed</p><ul><li>Allowed searches work</li><li>Excluded sources are blocked</li><li>Search records can be checked</li></ul><p className="test-evidence__note">Controlled test data. No customer results or savings claimed.</p><a href="/mateo/proof/githits-tests.txt">Read the test output</a></figure>
+      </section>
+      <section className="demo-work sy-wrap" aria-label="Product demonstrations">
+        <article><div><p className="sy-eyebrow">Engines / Mateo’s browser art</p><h2>Mathematics you can play.</h2><p>Gyre turns mathematical rules into moving trails of light.</p><a href={GYRE_APP}>Explore Gyre <span aria-hidden="true">↗</span></a></div><video controls playsInline preload="none" poster="/mateo/demos/gyre-orbit.jpg" width="960" height="540" aria-label="Recorded Gyre interaction" onPlay={pauseOtherVideos}><source src="/mateo/demos/gyre-orbit.mp4" type="video/mp4" /></video></article>
+        <article><div><p className="sy-eyebrow">RISE / team contribution</p><h2>A different way to read.</h2><p>Words, sound and visuals in the browser. I helped readings play reliably and look consistent.</p><a href="https://github.com/SyberLabs/RISE/pull/371">See my changes and tests <span aria-hidden="true">↗</span></a></div><figure><video controls playsInline preload="none" poster="/mateo/demos/rise-playback.jpg" width="960" height="540" aria-label="Recorded RISE reading" onPlay={pauseOtherVideos}><source src="/mateo/demos/rise-playback.mp4" type="video/mp4" /></video><figcaption>Recorded product demonstration. RISE is a team project.</figcaption></figure></article>
+      </section>
       <Forms />
-      <Hero />
+      <details className="orb-experiment sy-wrap"><summary>Explore the Orb</summary><Hero /></details>
+      <section className="home-contact sy-wrap" aria-labelledby="contact-title"><div><p className="sy-eyebrow">Available to start immediately</p><h2 id="contact-title">Let’s build something useful together.</h2></div><div><a href="tel:+19259493105">925-949-3105</a><a href={CONTACT}>syberlabs.software@gmail.com</a></div></section>
     </main>
     <div className="home-chrome" dangerouslySetInnerHTML={{ __html: footer('/') }} />
   </>;

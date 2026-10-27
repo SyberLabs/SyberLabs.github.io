@@ -328,3 +328,11 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
 @media (max-width: 640px) { .sy-footer__bar { justify-content: center; text-align: center; } .sy-footer__bar .sy-lockup { width: 100%; justify-content: center; } }
 
 /* Customer subscription access is distinct from staff authentication. */
+
+/* Atlas cinematic direction, shared by the hiring and product pages. */
+:root { --sy-ink:#030708; --sy-ink-2:#071013; --sy-vellum:#f4f2ed; --sy-mist:#b5c1c4; --sy-dim:#89999e; --sy-ice:#a2ddea; --sy-rule:#b6dbe31f; --sy-rule-2:#b6dbe33b; }
+.sy-header { background:#030708d9; backdrop-filter:blur(14px); border-color:#b6dbe31a; }
+.sy-header .sy-lockup { font-family:var(--sy-sans); letter-spacing:0; font-size:17px; font-weight:500; }
+.sy-field-host { display:none; }
+.sy-footer::before { display:none; }
+.sy-atlas__panel { background:#071013f5; }

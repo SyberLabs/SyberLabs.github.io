@@ -40,9 +40,8 @@ export const MATEO_PORTFOLIO = '/mateo/';
 
 // Selected work and hiring paths. Research remains available through its archive.
 export const nav = [
-  { id: 'projects', label: 'Selected work', href: '/#work' },
-  { id: 'mateo', label: 'Meet Mateo', href: MATEO_PORTFOLIO },
-  { id: 'contact', label: 'Contact', href: '/mateo/#contact' },
+  { id: 'projects', label: 'Work', href: '/#work' },
+  { id: 'mateo', label: 'About', href: MATEO_PORTFOLIO },
 ];
 
 export const workWithUs = { label: 'Work with us', href: '/services/' };
@@ -51,6 +50,7 @@ export const workWithUs = { label: 'Work with us', href: '/services/' };
 // selected menu (siteMap below) is the header's Menu (the Atlas), a <details> that opens and closes without JavaScript.
 export const footerLinks = [
   { label: 'Contact', href: CONTACT },
+  { label: '925-949-3105', href: 'tel:+19259493105' },
   { label: 'Résumé', href: RESUME },
   { label: 'Privacy', href: '/privacy/' },
   { label: 'Subscriber account', href: RISE_PLUS.href, external: true },
@@ -354,17 +354,16 @@ export const siteMap = [
   { title: 'Work', items: [
     { label: 'Engines', note: 'Mathematical worlds · run Gyre', href: GYRE_APP, external: true },
     { label: 'GitHits integration', note: 'Code search for AI coding assistants', href: '/mateo/#githits' },
-    { label: 'RISE Composer', note: 'Check a reading before it plays', href: '/mateo/#rise' },
-    { label: 'Sketch', note: 'Draw with animated ink', href: SKETCH_APP, external: true },
+    { label: 'RISE', note: 'Interactive reading in your browser', href: '/mateo/#rise' },
   ] },
   { title: 'Connect', items: [
-    { label: 'Meet Mateo', note: 'Contributions, source and résumé', href: MATEO_PORTFOLIO },
+    { label: 'Meet Mateo', note: 'Projects, code and résumé', href: MATEO_PORTFOLIO },
     { label: 'Email', note: EMAIL, href: CONTACT },
     { label: 'Mateo on GitHub', note: 'github.com/sykosyber', href: MATEO_GITHUB, external: true },
   ] },
   { title: 'More', items: [
     { label: 'Work with us', note: 'Engineering roles and focused projects', href: '/services/' },
-    { label: 'Research archive', note: 'Reports and earlier project evidence', href: '/research/' },
+    { label: 'Research archive', note: 'Past projects and research', href: '/research/' },
     { label: 'Subscriber account', note: 'Existing RISE subscribers', href: RISE_PLUS.href, external: true },
     { label: 'Privacy', note: 'Data and contact policy', href: '/privacy/' },
   ] },
