@@ -38,7 +38,7 @@
 .home-notes a { display:inline-flex; align-items:center; min-height:44px; }
 .home-portfolio :is(a,button):focus-visible, .home-beat h2:focus-visible { outline:2px solid var(--sy-ice); outline-offset:5px; }
 .home-portfolio a:hover { color:var(--sy-ice); }
-/* The wish appears once in the pitch opening. Reduced motion holds a static star. */
+/* A subtle closing accent. Reduced motion holds a static star. */
 .home-pitch-star { position:absolute; top:-22px; right:12%; pointer-events:none; color:var(--sy-ice); font:20px/1 var(--sy-sans); opacity:0; animation:home-shooting-star 1400ms 600ms 1 both; }
 .home-pitch-star::before { content:""; position:absolute; top:50%; right:16px; width:70px; height:1px; background:linear-gradient(90deg,transparent,currentColor); transform-origin:right; transform:rotate(-28deg); }
 @keyframes home-shooting-star { 0% { opacity:0; transform:translate(-90px,40px); } 20%,75% { opacity:.9; } 100% { opacity:0; transform:translate(15px,-10px); } }
