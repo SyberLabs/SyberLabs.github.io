@@ -212,7 +212,7 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
   /* stacked: the name under the header, Earth framed in the middle, the panel at the foot */
   .pitch-hero__copy { justify-content:flex-start; padding-top:104px; padding-bottom:108px; }
   .pitch-hero__panel { margin-top:auto; }
-  .pitch-hero::after { background:linear-gradient(180deg,#030708b3 0%,#03070800 22%,#03070800 58%,#030708cc 100%); }
+  .pitch-hero::after { background:linear-gradient(180deg,#030708b3 0%,#03070800 22%,#03070800 40%,#030708cc 100%); }
 }
 @media(max-width:600px) {
   .pitch-hero__role { font-size:13px; margin-bottom:10px; }
@@ -280,7 +280,7 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .pitch-hero__proof-label { color:#9fb7bc; font:500 11px/1.4 var(--sy-mono); letter-spacing:.1em; text-transform:uppercase; }
 .pitch-hero__proof a { color:#f4f2ed; text-decoration:underline; text-decoration-color:#f4f2ed40; text-underline-offset:4px; }
 .pitch-hero__proof a:hover { color:var(--sy-ice); text-decoration-color:var(--sy-ice); }
-.pitch-hero__name + .pitch-hero__role, .pitch-hero h1 + .pitch-hero__role { margin-top:6px; }
+.pitch-hero h1 + .pitch-hero__role { margin-top:6px; }
 .pitch-hero h1:has(.pitch-hero__name) { margin-bottom:0; }
 .pitch-hero__panel { width:min(100%,600px); }
 .pitch-hero__availability { flex-wrap:wrap; gap:4px 8px; }
@@ -301,3 +301,8 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 
 /* RISE: an example PR and the README credit side by side */
 .demo-work__links { display:flex; flex-wrap:wrap; gap:6px 24px; }
+
+/* Review fixes (#170): the name never re-runs its entrance when the client render replaces the prerendered hero, so
+   a slow script cannot blank it; from 601 to 800 px the copy clears the Meet Mateo button so the email stays clickable. */
+.sy-reveal .pitch-hero h1>.pitch-hero__name { animation:none; }
+@media(min-width:601px) and (max-width:800px) { .pitch-hero__copy { padding-bottom:164px; } }
