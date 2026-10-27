@@ -30,7 +30,7 @@ function SelectedWork() {
   const tourButton = useRef(null);
   return <section id="work" className="home-work sy-wrap" aria-labelledby="work-title">
     <div className="home-work__heading">
-      <div><p className="sy-eyebrow">Selected work / Mateo Robles</p><h2 id="work-title">Three ways to <em>inspect the work.</em></h2></div>
+      <div><p className="sy-eyebrow">Mateo’s elevator pitch / Selected work</p><h2 id="work-title">Everybody deserves a chance</h2><p className="home-pitch-intro">Start with Mateo’s work. Three examples, with code you can inspect.</p></div>
       <div className="home-tour-controls">
         <div className="home-tour-nav">
           <button ref={tourButton} type="button" className="sy-btn sy-btn--line" onClick={() => setStep(step === null ? 0 : (step + 1) % 3)}>{step === null ? 'The 30-second pitch →' : 'Next example →'}</button>

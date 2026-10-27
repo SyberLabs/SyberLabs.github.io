@@ -17,6 +17,7 @@
 .home-work { padding-block:64px; scroll-margin-top:90px; }
 .home-work__heading { display:flex; align-items:end; justify-content:space-between; gap:24px; padding-bottom:36px; border-bottom:1px solid var(--sy-rule-2); }
 .home-work h2, .home-contact h2 { margin:16px 0 0; font:400 clamp(38px,4.4vw,62px)/1.06 var(--sy-serif); text-wrap:balance; }
+.home-pitch-intro { margin:18px 0 0; color:var(--sy-mist); line-height:1.6; }
 .home-tour-controls { display:none; flex-shrink:0; }
 .sy-js .home-tour-controls { display:block; }
 .home-tour-nav { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
