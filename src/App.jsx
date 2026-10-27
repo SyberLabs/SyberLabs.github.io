@@ -196,7 +196,7 @@ export default function App() {
       </section>
       <div className="film-notes sy-wrap">
         <span>{MATEO_VIDEO.credit}</span>
-        {art && <span className={`hero-credit${framed ? '' : ' is-off'}`} aria-hidden={framed ? undefined : true}>In the frame: {art.date ? <><a href={art.href}>{art.title}</a>, {art.by} (The Cleveland Museum of Art, CC0)</> : <>{art.title}, by {art.by}, {art.made}</>}</span>}
+        {art && <span className={`hero-credit${framed ? '' : ' is-off'}`} aria-hidden={framed ? undefined : true}>In the frame: {art.date ? <><a href={art.href}>{art.title}</a>, {art.by} (The Cleveland Museum of Art, CC0)</> : <>{art.href ? <a href={art.href}>{art.title}</a> : art.title}, by {art.by}, {art.made}</>}</span>}
         <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((p, i) => <p key={i}>{p}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>
         {videoError && <p role="status">Video unavailable. Read the transcript or explore the work below.</p>}
       </div>

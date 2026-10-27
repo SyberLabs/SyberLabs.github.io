@@ -2,14 +2,14 @@
 // Earth itself is never seen: the picture appears with Earth's first frame and covers it until it has gone. Each pass
 // of the clip shows one, chosen at random without repeating the last, and the frame always holds something warm
 // against the blue page. The Pink Cloud is open access (CC0) at the Cleveland Museum of Art; the other two are
-// Mateo's own pieces, made with Midjourney, and credited that way.
+// plates drawn by Mateo's own Engines code (Ostensoria), so the hero shows work he built rather than generated images.
 export const FRAME_ART = [
   { id: 'pink-cloud', title: 'The Pink Cloud', by: 'Henri-Edmond Cross', date: 'c. 1896',
     src: '/mateo/frame/pink-cloud-cross-2020.106.jpg', href: 'https://www.clevelandart.org/art/2020.106' },
-  { id: 'dune-car', title: 'Dune Run', by: 'Mateo Robles', made: 'made with Midjourney',
-    src: '/mateo/frame/dune-car-mateo-robles.jpg' },
-  { id: 'chromatic-burst', title: 'Chromatic Burst', by: 'Mateo Robles', made: 'made with Midjourney',
-    src: '/mateo/frame/chromatic-burst-mateo-robles.jpg' },
+  { id: 'ostensoria-ember', title: 'Ostensoria', by: 'Mateo Robles', made: 'drawn by his Engines code',
+    src: '/mateo/frame/ostensoria-02-mateo-robles.jpg', href: 'https://sykosyber.github.io/engines/#ostensoria' },
+  { id: 'ostensoria-rose', title: 'Ostensoria', by: 'Mateo Robles', made: 'drawn by his Engines code',
+    src: '/mateo/frame/ostensoria-04-mateo-robles.jpg', href: 'https://sykosyber.github.io/engines/#ostensoria' },
 ];
 
 // Where Earth's disc sits in each clip, in clip pixels (both clips are 1280 by 720, one turned on its side), and

@@ -24,8 +24,9 @@ media is used.
 
 `../frame/` holds the pictures shown in the hero's Sophia frame, which cover the
 clip's Earth completely: *The Pink Cloud*, Henri-Edmond Cross, c. 1896, open access (CC0) at the
-Cleveland Museum of Art (2020.106), and two pieces by Mateo Robles made with
-Midjourney, *Dune Run* and *Chromatic Burst*. `../lab/` holds his agent network
+Cleveland Museum of Art (2020.106), and two *Ostensoria* plates drawn by Mateo's
+own Engines code (github.com/sykosyber/engines, assets/plates/ostensoria-02 and -04),
+which replaced two Midjourney pieces so the hero shows work he built. `../lab/` holds his agent network
 and chrome emblem, also made with Midjourney (the network's baked-in caption is
 cropped off). Every piece is credited on the homepage.
 
