@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import { readFile, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { MATEO_VIDEO as video } from '../src/mateo-video.js';
-import { HERO_MEDIA, EARTH_INTRO } from '../src/hero-media.js';
+import { HERO_MEDIA } from '../src/hero-media.js';
 
-for (const path of [...Object.values(HERO_MEDIA), ...Object.values(EARTH_INTRO)]) {
+for (const path of Object.values(HERO_MEDIA)) {
   assert.match(path, /^\/mateo\/demos\/[a-z0-9.-]+$/i, 'Hero media must be local');
   const file = await stat(resolve(path.slice(1)));
   assert.ok(file.isFile() && file.size > 0 && file.size <= 4 * 1024 * 1024, 'Hero media must exist and stay below 4 MiB');

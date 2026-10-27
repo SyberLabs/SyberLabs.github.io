@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { HERO_MEDIA } from './hero-media.js';
 
-export default function BackgroundVideo({ pitchPlaying }) {
+// onTime(seconds) reports the clip's own playback time, which the homepage reveal follows; onUnavailable() fires
+// when the clip cannot play here (reduced motion or a media error), so nothing waits on it.
+export default function BackgroundVideo({ pitchPlaying, onTime, onUnavailable }) {
   const movie = useRef(null);
   const [allowed, setAllowed] = useState(false);
   const [portrait, setPortrait] = useState(false);
@@ -17,6 +19,8 @@ export default function BackgroundVideo({ pitchPlaying }) {
     return () => { reduced.removeEventListener('change', update); narrow.removeEventListener('change', update); };
   }, []);
   const src = portrait ? HERO_MEDIA.portrait : HERO_MEDIA.landscape;
+  const report = useRef({ onTime, onUnavailable }); report.current = { onTime, onUnavailable };
+  useEffect(() => { if (failed || matchMedia('(prefers-reduced-motion: reduce)').matches) report.current.onUnavailable?.(); }, [failed]);
   useEffect(() => {
     const video = movie.current;
     if (!allowed || failed || !video) return;
@@ -37,7 +41,7 @@ export default function BackgroundVideo({ pitchPlaying }) {
   }, [allowed, failed, paused, pitchPlaying, src]);
   if (!allowed || failed) return null;
   return <>
-    <video ref={movie} className={`pitch-hero__background${ready ? ' is-ready' : ''}`} src={src} autoPlay muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1} onLoadStart={() => setReady(false)} onPlaying={() => setReady(true)} onError={() => setFailed(true)} />
+    <video ref={movie} className={`pitch-hero__background${ready ? ' is-ready' : ''}`} src={src} autoPlay muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1} onLoadStart={() => setReady(false)} onPlaying={() => setReady(true)} onTimeUpdate={e => report.current.onTime?.(e.currentTarget.currentTime)} onError={() => setFailed(true)} />
     {!pitchPlaying && <button className="pitch-hero__motion" type="button" aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? 'Play background motion' : 'Pause background motion'}</button>}
   </>;
 }
