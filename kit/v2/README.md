@@ -75,3 +75,13 @@ and script-free pages start there. The clip keeps looping behind the settled
 page. Keep NASA/GSFC's visible linked image acknowledgment. Keep the panel beside
 or below Earth, never over it, and do not restore a permanent opaque half-screen
 mask.
+
+### Editable brand assets
+
+`brand/` contains a transparent color S mark, a `currentColor` monochrome mark
+and a portable lockup with an outlined Instrument Sans wordmark. These are
+editable adaptations of the existing `syber-logo.png`, not a preexisting
+official vector or a pixel-perfect trace. Existing live PNGs remain unchanged.
+See [provenance and usage](brand/PROVENANCE.md), the preserved
+[font license](brand/Instrument-Sans-OFL.txt) and the
+[light/dark size preview](brand/preview.html).
