@@ -138,3 +138,11 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 
 .home-forms:not(.is-live) :is(.home-forms__stage,.home-forms__controls) { display:none; }
 .home-forms__fallback { color:var(--sy-mist); font-size:14px; }
+
+.pitch-hero__art img { width:100%; height:100%; object-fit:cover; object-position:70% 50%; }
+.pitch-hero__background { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:70% 50%; opacity:0; pointer-events:none; }
+.pitch-hero__background.is-ready { opacity:1; }
+.pitch-hero.is-playing .pitch-hero__background { visibility:hidden; }
+.pitch-hero__motion { position:absolute; top:88px; right:var(--sy-gutter); z-index:2; min-height:44px; padding:10px 14px; border:1px solid #f4f2ed66; border-radius:2px; background:#030708c9; color:#f4f2ed; font:12px var(--sy-sans); cursor:pointer; }
+.pitch-hero__play { background:#030708b8; border-radius:2px; }
+@media(max-width:600px) { .pitch-hero__art img,.pitch-hero__background { object-position:center; } .pitch-hero__motion { top:82px; font-size:11px; padding:8px 10px; } }

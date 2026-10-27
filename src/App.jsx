@@ -7,6 +7,8 @@ import { mountOrb } from './site/orb.js';
 import { mountPointillism, FORMS } from './site/pointillism.js';
 import { cleanText } from './living-lab/scene.js';
 import { MATEO_VIDEO } from './mateo-video.js';
+import BackgroundVideo from './BackgroundVideo.jsx';
+import { HERO_MEDIA } from './hero-media.js';
 import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
 import '../kit/v2/syber-atlas.css';
@@ -114,7 +116,8 @@ export default function App() {
     <div className="home-chrome" dangerouslySetInnerHTML={{ __html: header('', { here: '/', sticky: false, script: false }) }} />
     <main id="main">
       <section className={`pitch-hero${started ? ' is-playing' : ''}`} aria-labelledby="hero-title" id="founder">
-        <img className="pitch-hero__art" src="/mateo/demos/gyre-hero.jpg" width="1600" height="813" alt="" fetchPriority="high" />
+        <picture className="pitch-hero__art"><source media="(max-width: 600px)" srcSet={HERO_MEDIA.portraitPoster} /><img src={HERO_MEDIA.poster} width="1280" height="720" alt="" fetchPriority="high" /></picture>
+        <BackgroundVideo pitchPlaying={started} />
         <div className="pitch-hero__copy sy-wrap">
           <p className="pitch-hero__role">Software &amp; Product Engineer</p>
           <h1 id="hero-title">Mateo Robles</h1>
