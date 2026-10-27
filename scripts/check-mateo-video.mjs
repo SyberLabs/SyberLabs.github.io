@@ -18,7 +18,8 @@ for (const art of FRAME_ART.filter(a => a.src)) {
   const file = await stat(resolve(art.src.slice(1))).catch(() => null);
   assert.ok(file?.isFile() && file.size > 20 * 1024 && file.size <= 1.5 * 1024 * 1024, `Frame art ${art.src} must exist, between 20 KiB and 1.5 MiB`);
   // a museum work names its date and links its record; Mateo's own pieces say how they were made
-  const credited = art.date ? /^https:\/\/www\.clevelandart\.org\/art\//.test(art.href) : art.by === 'Mateo Robles' && /midjourney/i.test(art.made || '');
+  const credited = art.date ? /^https:\/\/www\.clevelandart\.org\/art\//.test(art.href)
+    : art.by === 'Mateo Robles' && (/midjourney/i.test(art.made || '') || (/Engines/.test(art.made || '') && /^https:\/\/sykosyber\.github\.io\/engines\//.test(art.href || '')));
   assert.ok(art.title && art.by && credited, `Frame art ${art.id} needs its credit and source`);
 }
 
