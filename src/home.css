@@ -65,3 +65,10 @@
  .home-contact { padding-block:32px 48px; }
  .home-contact__actions .sy-btn { width:100%; }
 }
+
+/* One brief shooting star; reduced motion keeps a quiet static point of light. */
+.home-work h2 { position:relative; }
+.home-pitch-star { position:absolute; top:-22px; right:12%; pointer-events:none; color:var(--sy-ice); font:20px/1 var(--sy-sans); opacity:0; animation:home-shooting-star 1400ms 600ms 1 both; }
+.home-pitch-star::before { content:""; position:absolute; top:50%; right:16px; width:70px; height:1px; background:linear-gradient(90deg,transparent,currentColor); transform-origin:right; transform:rotate(-28deg); }
+@keyframes home-shooting-star { 0% { opacity:0; transform:translate(-90px,40px); } 20%,75% { opacity:.9; } 100% { opacity:0; transform:translate(15px,-10px); } }
+@media(prefers-reduced-motion:reduce) { .home-pitch-star { animation:none; opacity:.65; } .home-pitch-star::before { display:none; } }
