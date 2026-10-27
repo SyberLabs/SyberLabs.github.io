@@ -434,7 +434,7 @@ Complete output, unedited. From seed 20260729 the kernel committed 25 events in 
 
 ## Connect
 
-- [Meet Mateo](https://syberlabs.io/mateo/): Mateo Robles: software engineer building mathematical visual engines and AI tool integrations. Inspect his GitHits client, RISE product development and Engines.
+- [Meet Mateo](https://syberlabs.io/mateo/): Mateo Robles, software and product engineer. Explore his GitHits integration, RISE development and interactive browser art. Available to start immediately.
 - [Mateo on GitHub](https://github.com/sykosyber): github.com/sykosyber
 
 ## More
