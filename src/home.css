@@ -144,6 +144,7 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .pitch-hero__background.is-ready { opacity:1; }
 .pitch-hero.is-playing .pitch-hero__background, .pitch-hero.is-playing .pitch-hero__clip { visibility:hidden; }
 .pitch-hero__clip { position:absolute; inset:0; pointer-events:none; }
+.pitch-hero__still { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; opacity:.94; }
 .pitch-hero__motion { position:absolute; top:88px; right:var(--sy-gutter); z-index:4; min-height:44px; padding:10px 14px; border:1px solid #f4f2ed66; border-radius:2px; background:#030708c9; color:#f4f2ed; font:12px var(--sy-sans); cursor:pointer; }
 .pitch-hero__play { background:#030708b8; border-radius:2px; }
 @media(max-width:600px) { .pitch-hero__art img,.pitch-hero__background { object-position:center; } .pitch-hero__motion { top:82px; font-size:11px; padding:8px 10px; } }
@@ -218,15 +219,19 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
   .pitch-hero__brand { font-size:clamp(50px,14vw,60px); }
   .pitch-hero__by { gap:10px; font-size:14px; margin-top:2px; }
   .pitch-hero__signature { width:min(190px,48vw); margin:-10px 0 -16px; }
-  .pitch-hero__role { margin-top:10px; }
+  .pitch-hero__role { margin-top:20px; } /* clear of the signature's lower swash */
   .pitch-hero__motion { top:auto; bottom:42px; right:var(--sy-gutter); }
-  .pitch-hero__panel { width:100%; padding:18px 18px 16px; }
-  .pitch-hero__line { font-size:19px; max-width:none; }
-  .pitch-hero__actions { margin-top:16px; }
-  .pitch-hero__availability { font-size:12px; margin-top:12px; }
+  /* a compact panel: one line of copy, the two actions side by side at the minimum touch height, one quiet line */
+  .pitch-hero__panel { width:100%; padding:12px 12px 10px; }
+  .pitch-hero__line { font-size:15px; line-height:1.4; max-width:none; }
+  .pitch-hero__actions { flex-wrap:nowrap; gap:8px; margin-top:10px; }
+  .pitch-hero__actions .sy-btn { flex:1; justify-content:center; min-height:44px; padding:10px 12px; font-size:14px; }
+  .pitch-hero__availability { font-size:12px; margin-top:8px; }
   .pitch-hero__play { bottom:30px; }
   /* the frame held between the name and the panel, fading out before the clip's edges */
-  .pitch-hero__art, .pitch-hero__clip { transform:translateY(-3%) scale(.58); -webkit-mask-image:radial-gradient(closest-side,#000 66%,transparent 100%); mask-image:radial-gradient(closest-side,#000 66%,transparent 100%); }
+  /* the Gyre alone, full-bleed behind the copy, dimmed a little so the title and the panel stay crisp */
+  .pitch-hero__art, .pitch-hero__clip { transform:none; -webkit-mask-image:linear-gradient(180deg,#000 0,#000 72%,transparent 100%); mask-image:linear-gradient(180deg,#000 0,#000 72%,transparent 100%); }
+  .pitch-hero__art, .pitch-hero__background.is-ready, .pitch-hero__still { opacity:.7; }
 }
 @media(prefers-reduced-motion:reduce) {
   .pitch-hero h1>span, .pitch-hero__role, .pitch-hero__panel, .pitch-hero__brand, .pitch-hero__brand::after, .pitch-hero__signature { transition:none; animation:none; }

@@ -28,3 +28,9 @@ Cleveland Museum of Art (2020.106), and two pieces by Mateo Robles made with
 Midjourney, *Dune Run* and *Chromatic Burst*. `../lab/` holds his agent network
 and chrome emblem, also made with Midjourney (the network's baked-in caption is
 cropped off). Every piece is credited on the homepage.
+
+## Phones and still frames
+
+Phones play `gyre-full-portrait-v1.mp4` (the Gyre alone, restored from before
+#158) with its poster. `gyre-sophia-held-v1.jpg` is the landscape clip held at
+10 s, shown with a painting in the frame when the clip cannot play.

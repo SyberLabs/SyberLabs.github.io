@@ -70,6 +70,12 @@ edge and shadow, with one slow sheen on arrival. Beneath it, "by" and Mateo's ow
 signature (`mateo/brand/mateo-robles-signature.webp`, alt text "Mateo Robles"),
 which writes itself in from the left on the first visit.
 
+On phones (600px and narrower) the hero shows the Gyre alone, full-bleed and
+slightly dimmed, with no Sophia frame, Earth or painting (`gyre-full-portrait-v1`).
+If autoplay is refused (iOS Low Power Mode does this even for muted video), wide
+screens show the clip's held frame with a painting laid in it, phones show the
+Gyre poster, and the first tap or key press starts the motion.
+
 The Sophia frame holds a different picture on each pass of the clip, chosen at
 random without repeating, and it always holds something warm against the blue
 page: The Pink Cloud (Henri-Edmond Cross, CC0 at the Cleveland Museum of Art) or
