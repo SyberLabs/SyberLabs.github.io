@@ -51,7 +51,7 @@ const navLinks = (current = '', here = '') => nav.map(item => `<li><a href="${it
 // `sticky` (default) keeps the header in flow; the homepage passes false so it floats over the hero.
 // The customer subscription route is separate from staff sign-in in the footer.
 export const header = (current = '', { sticky = true, script = true, here = '', hiring = false } = {}) => {
-  hiring ||= ['/mateo/', '/services/', '/projects/rise/'].includes(here);
+  hiring ||= ['/mateo/', '/services/', '/projects/rise/', '/research/', '/research/jev-execution/', '/research/decision-arena/', '/research/sybershoke/', '/rise-demo/', '/jev/', '/kev/'].includes(here);
   return `<a class="sy-skip" href="#main">Skip to content</a>
 <div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
 <header class="sy-header${sticky ? ' sy-header--sticky' : ''}${hiring ? ' sy-header--hiring' : ''}"><div class="sy-header__in">
