@@ -76,7 +76,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 ## More
 
-- [Work with us](https://syberlabs.io/services/): Work with Mateo Robles on software engineering. Inspect his AI tool integrations, interactive mathematical engines and RISE product development, then discuss a role or focused project.
+- [Work with us](https://syberlabs.io/services/): Work with Mateo Robles on software engineering. Explore his work on AI coding tools, interactive browser art and the RISE reading app, then discuss a role or focused project.
 - [Research archive](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: the technical reports and notes on this site, the RISE reader-owned AI status pages, the five working papers in SyberLabs/papers, the Instrument Panel and the OSAHR decision workbench. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
 - [Subscriber account](https://rise.syberlabs.io/plus/): Existing RISE subscribers
 - [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.

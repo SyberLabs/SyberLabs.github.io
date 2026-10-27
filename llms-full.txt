@@ -30,7 +30,7 @@ Source: https://github.com/SyberLabs/RISE
 
 An interactive reading app that combines text, sound and moving visuals in your browser. Read words at a pace you choose, or switch to a page view.
 
-Page title: RISE: Browser-Based Audiovisual Reader
+Page title: RISE: Interactive Reading with Text, Sound and Visuals
 
 Headline: Read beyond the page.
 
@@ -50,21 +50,21 @@ Video: https://syberlabs.io/rise-demo/rise-marketing-20260929-v3.mp4
 
 Edited from real RISE screen recordings, with an AI-generated narrator and portrait. RISE creates its own abstract visuals and synthesized sound; the film uses an original music bed.
 
-### Why a reader, not an app that shows text.
+### Why combine reading with sound and visuals?
 
-Screens inherited the page from print, so reading software mostly reproduces a page and adds a scrollbar. RISE starts from the other end: a text is a sequence in time, and time can carry pacing, light and sound the way a page carries typography.
+RISE explores reading as an experience that unfolds over time. Readers can set the pace and combine the words with light and sound, or return to a page view.
 
-The bet is that the conditions around a text change how it is received. RISE is the instrument for testing that bet in a browser, with the reader in control of every condition. What has been shown so far is the instrument, not a measured preference.
+The idea is to explore whether the presentation changes how people experience a text. RISE provides browser controls for that exploration. No reader study has established a preference for this approach.
 
 ### What you can do today
 
-Five rooms. Everything else is a pane inside one of them.
+Five main areas, with related tools grouped inside each one.
 
-- 01 / Home, Begin today’s reading: Home names one reading, with its own visual field behind it. Press Begin, or roll another reading.
+- 01 / Home, Begin today’s reading: Home offers one reading with moving visuals behind it. Press Begin, or choose another reading.
 - 02 / Read, Stream or Page: Words arrive over time at a pace you set, or sit on a page you can navigate. Switch at any point; your place is kept.
-- 03 / Library, Curated public-domain texts: Literature, philosophy, poetry and scripture, prepared through an editorial pipeline that tracks edition, structure and rights. The Chapel holds the Douay-Rheims Bible and liturgy paced by a liturgy engine.
-- 04 / Make, Compose your own: Workshop, Scriptorium and Visual Lab author audiovisual compositions; the Vault saves them in your browser.
-- 05 / Ask, A reading from your own model: Describe what you want to read and a bounded decision model picks a book and presentation from the held catalog. Connect OpenRouter, or run Kev-4B locally; nothing is billed to SyberLabs and nothing leaves your connection.
+- 03 / Library, Curated public-domain texts: Browse literature, philosophy, poetry and scripture, with records of each edition, its structure and its rights. The Chapel includes the Douay-Rheims Bible and liturgy with timed pacing.
+- 04 / Make, Compose your own: Create readings with text, sound and visuals using Workshop, Scriptorium and Visual Lab. Save them in your browser with the Vault.
+- 05 / Ask, A reading from your own model: Describe what you want to read. The model chooses a book and presentation only from the supplied catalog. Connect through OpenRouter, or run Kev-4B locally; model requests use your connection and are not billed to SyberLabs.
 
 ### Rooms: The five rooms, as they open.
 
@@ -87,12 +87,12 @@ Text version of the interactive map: This map needs JavaScript.
 
 ### How it is built
 
-- One-way pipeline: Source text → timed units → pacing → compiled session → clock-driven player. The same compiled session drives Stream and Page.
-- Content-addressed texts: Book text is served as SHA-256-named JSON and verified on every read, which took 15.4 MB out of the JavaScript bundle.
-- A first-load budget: About 59 KB brotli over three requests, held under a 64 KB budget that CI enforces.
-- No shared inference: The Cloudflare Worker serves the app and a static decision catalog. It runs no model and holds no model credential; the six former inference routes answer 410.
+- One reading, two views: RISE divides text into timed units, sets the pacing and prepares one reading session. That same session drives both Stream and Page, so switching views keeps your place.
+- Book files checked when opened: Book text loads separately from the app, removing 15.4 MB from its JavaScript bundle. Files use SHA-256 content hashes as names, and RISE checks the hash each time it reads a file.
+- A limit on initial download size: The initial download is about 59 KB across three requests with Brotli compression. Automated build checks enforce a 64 KB limit.
+- No model runs on the RISE server: The Cloudflare Worker serves the app and its catalog of reading choices. It runs no model and holds no model credential. Six retired model-request routes return HTTP 410 (Gone).
 - Composer, in ChatGPT: In ChatGPT, RISE lets the model prepare a reading with text, sound and visuals in one tool call. RISE checks the result before making it playable, and the reader presses Begin to start. Rejected readings cannot play.
-- Tested design contracts: Around 2,800 Vitest unit and integration tests plus Playwright browser tests, a generated architecture diagram, and release gates with artifact verification and rollback.
+- Automated checks before release: Around 2,800 Vitest unit and integration tests, plus Playwright browser tests, check the app. Releases also check a generated architecture diagram and the built files, with a way to restore an earlier release.
 
 ### Evidence
 
@@ -124,7 +124,7 @@ Source: https://github.com/SyberLabs/Flyspace
 
 A visual workspace where you connect data sources to AI assistants and see which sources feed each answer. AI answers require running FLYSPACE locally with your own model, for example through Ollama. Formerly OmniOS.
 
-Page title: FLYSPACE: Spatial Workspace for AI over Live Data
+Page title: FLYSPACE: Connect Data Sources to AI Assistants
 
 Headline: See the sources behind an answer.
 
@@ -142,23 +142,23 @@ Live at [omni.syberlabs.io](https://omni.syberlabs.io/): The preview opens as Om
 
 Video: https://syberlabs.io/omni-demo/omnios-morning-20261005.mp4
 
-Recorded on 2026-10-05 from a local production build of OmniOS@e95ae73, driven through the “morning” journey its own acceptance test specifies. The data in the blocks and the two persona answers are that test’s fixed fixtures, not live markets or a live model; the canvas, wires, provenance chips and lineage are the real interface. Silent, 30 seconds.
+Recorded on 2026-10-05 from a local production build of OmniOS@e95ae73, following the “morning” journey specified by its acceptance test. The blocks and two AI answers use fixed test data, not live markets or a live model. The canvas, connections, source labels and answer history are the real interface. Silent, 30 seconds.
 
 ### Why a canvas.
 
-When you ask an AI about the world, its context is invisible: you cannot see which numbers it was given, which it was not, and whether a source it cites carried anything at all. FLYSPACE makes the context physical.
+FLYSPACE shows which data an AI assistant receives. A canvas displays the sources, their connections and whether they supplied any data.
 
-So the question “what does this thing actually know?” has a literal answer you can point at on screen. A source that carried no data is never cited, and an answer records which runs fed it, however many personas deep.
+Each answer records the source data used to produce it, including data passed through other AI assistants. Sources that supplied no data are not cited.
 
 ### What you can do in the preview
 
-Everything below the first three steps needs a model key, so it runs locally, not on the public preview.
+The first three steps work in the public preview. AI questions and voice controls require a local setup with a model connection.
 
-- 01 / Shell, Open a pre-wired shell: The Shell Store spawns saved canvases. The Investor shell arrives with Polymarket, CoinGecko, World Bank and Hacker News already wired into an Analyst, and the Analyst into a Strategist.
+- 01 / Shell, Open a saved workspace: The Shell Store opens saved workspaces. The Investor workspace connects Polymarket, CoinGecko, World Bank and Hacker News to an Analyst assistant, then connects that assistant to a Strategist.
 - 02 / Blocks, Pull real numbers: Add blocks for prediction markets, crypto prices, economic series, research and news. Every built-in source is public and needs no key.
-- 03 / Wires, Say what feeds what: Draw a wire from a block to a persona. Ports are typed; a wire that does not fit is refused with a sentence naming both ports, and the graph is left unchanged.
-- 04 / Ask, Locally, with your key: Ask a persona a question. The answer cites only the sources its wires carried, and the inference ledger records provider, model, latency and which runs fed the turn.
-- 05 / Talk, Spoken canvas control: Hold Talk and say a command from a fixed grammar: “wire hacker news to the analyst”, “delete this”, “undo”. Speech only proposes; the interaction engine decides, previews a delete, and refuses ambiguous names.
+- 03 / Wires, Say what feeds what: Connect a data block to an AI assistant. FLYSPACE checks that their input and output formats match. If they do not, it explains the mismatch and leaves the workspace unchanged.
+- 04 / Ask, Ask with your own model: Ask an assistant a question. Its answer cites only the sources connected to it. A record identifies the model provider, model, response time and source data used.
+- 05 / Talk, Spoken canvas control: Hold Talk and use a supported command such as “wire hacker news to the analyst”, “delete this” or “undo”. The app checks the request, previews deletion and asks for clearer names when a request is ambiguous.
 
 ### Which sources reach an answer.
 
@@ -168,12 +168,12 @@ Text version of the interactive map: This map needs JavaScript.
 
 ### How it is built
 
-- Blocks, wires, personas: A block is a live view of one source; a wire is an admitted edge, not a line drawn first; a persona answers from its inbound active wires and cannot choose its own inputs.
-- Typed ports: Declared ports are enforced when a wire is created. Compatible schemas connect; a mismatch is refused unless a text projection is chosen. Blocks with no ports stay connectable as untyped.
-- The inference ledger: Optional PostgreSQL records every model execution and the exact sources that fed it. When one persona feeds another, the ledger records which run was consumed, so a cascade stays walkable after the upstream blocks refetch. The canvas itself stays in IndexedDB and works with no server.
-- Capability compiler: An OpenAPI document, MCP tool schemas or a structured description compile into a capability manifest. One function registers it; write and destructive capabilities stay pending until approved; a manifest never grants itself authority; execution carries idempotency keys and reports an uncertain effect rather than guessing.
-- Keys stay server-side: Provider keys are read from the server environment and never sent to the browser. CI builds with canary values for every secret and fails if any reaches the client bundle.
-- Deployment posture: The public preview sets a demo flag that disables paid generation, keyed sources and ledger reads at the route level; the deployment checklist is published with the code.
+- Sources, connections and assistants: A block shows one data source. A wire connects it only after the app checks that connection. An AI assistant, called a persona in the app, answers using its active incoming connections and cannot select its own inputs.
+- Check data formats before connecting: The app checks declared input and output formats when you create a connection. A mismatch is refused unless you choose a text-only conversion. Blocks without declared formats can still connect without that check.
+- Record how each answer was made: An optional PostgreSQL database records each model request and the exact source data used. It also records answers passed between assistants, so you can trace them after source data changes. The canvas stays in browser storage (IndexedDB) and works without a server.
+- Review tools before allowing changes: Tool descriptions become a list of available actions, called a capability manifest. It can be built from OpenAPI documents, MCP tool schemas or a structured description and registered with one function. Actions that write or delete data require approval; the list cannot grant itself permission. Unique request keys prevent duplicates, and uncertain results remain marked uncertain.
+- Keys stay server-side: Model-provider keys are read from the server environment and never sent to the browser. Automated builds substitute detectable test values for secrets and fail if any value appears in browser code.
+- Limits of the public preview: The public preview disables paid model requests, sources requiring keys and access to the model-request history at the server routes. The setup checklist is published with the code.
 
 ### Evidence
 
@@ -201,7 +201,7 @@ Source: https://github.com/SyberLabs/SyberWork
 
 Tools for checking and approving AI work before it makes changes. Rules define the allowed steps, a named person approves the work, and a tamper-evident history records what was proposed, checked, approved and done.
 
-Page title: SyberWork: Contract-Governed Work Runtime and Python SDK
+Page title: SyberWork: Review and Approval Tools for AI Work
 
 Headline: Check AI work before it changes anything.
 
@@ -213,19 +213,19 @@ Secondary link: [Build Thread in ten minutes](https://github.com/SyberLabs/Syber
 
 ### Why check each proposed step?
 
-Agent frameworks make it easy for a model to act and hard to say afterwards who allowed it, on what evidence, and whether the effect really happened. SyberWork starts from the opposite constraint: generation is free, but nothing becomes an effect without a gate the host owns.
+When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules controlled by the system running it.
 
-The gate is a contract plus a policy, compiled into an inspectable path. A proposal that does not fit is refused with the deciding rule and its provenance. The same machinery that governs a purchase order governs a code change.
+The rules define what may happen and who can approve it. If a proposal breaks a rule, SyberWork refuses it and records the reason and the rule used. The same checks can apply to a purchase order or a code change.
 
-### Build Thread: one governed change
+### Build Thread: review one code change
 
 Python 3.11+ and git. No account, no model and no network required.
 
 - 01 / init, Name your real checks: syberlabs init writes a contract into .syberlabs/ and guesses the test command. When it cannot, it writes a check that fails until you name one, so an unchecked change never looks accepted.
-- 02 / start, Open a thread: A thread is one change to one repository, with the paths it may touch. The base commit is recorded as a verified git observation.
-- 03 / propose, Candidates on their own refs: Your edit, a coding tool’s edit, or an evolutionary search becomes a Git commit on a non-authoritative ref. The working tree is never touched.
-- 04 / check, The host runs the checks: Exit codes, durations and output digests are recorded against the candidate’s exact tree.
-- 05 / accept and publish, Compare-and-swap, then separate effects: Accept moves one branch with a compare-and-swap and nothing else. Push, pull request and publish are separate admitted actions, each idempotent and reconcilable after a crash.
+- 02 / start, Open a thread: A thread tracks one change to one repository and names the files it may affect. It records and checks the starting Git commit.
+- 03 / propose, Keep proposed edits separate: Your edit, a coding tool’s edit, or an automated search result is saved as a separate Git commit for review. It does not change your working files.
+- 04 / check, The host runs the checks: Checks run against the exact proposed files. The record keeps their exit codes, how long they took and hashes of their output.
+- 05 / accept and publish, Accept the change, then choose what to publish: Accept updates one branch only if it still points to the expected commit. Pushing code, opening a pull request and publishing each require a separate allowed action, with duplicate prevention and recovery checks.
 
 ### A model’s claim is not a result.
 
@@ -255,16 +255,16 @@ $ PYTHONPATH=. python examples/build_thread.py
 build-thread complete
 ```
 
-Candidate c1 arrived with a provider claiming the tests passed at 0.97 confidence; the host ran the checks on c1’s exact tree, they failed, and acceptance was denied. Candidate c2 passed every check and was accepted with a compare-and-swap of one branch. The working tree and main were untouched; the thread resumed from its journal with a valid 18-event chain; replaying it under a contract version that adds a lint check shows both candidates would now be refused for the missing check.
+The provider claimed c1 passed its tests with 0.97 confidence, but checks run on its exact files failed, so SyberWork rejected it. Candidate c2 passed all checks. It was accepted by updating one branch only after confirming the branch had not changed (compare-and-swap). The working files and main branch were untouched. The thread resumed from a valid 18-event history. Replaying that history with a new lint-check requirement shows both candidates would be rejected for the missing check.
 
 ### How it is built
 
-- Two packages, one direction: syberlabs is the reusable core: canonical JSON, the event hash chain, admission rules, the planner interface and an in-memory Session. syberwork is the application: storage, HTTP API, CLI, console and connectors. The core never imports the app.
+- Separate the core from the app: The reusable syberlabs package defines the rules, proposal interface and in-memory Session. It uses a fixed JSON format and a hash-linked event history. The syberwork app adds storage, a web API, command-line tools, a console and connectors. The core never imports the app.
 - A chain you can verify: Every case event is hashed into a chain with a canonical-JSON digest and rule id beside it, an HMAC witness, an Ed25519 signature of the chain head, and an append-only transparency log kept in a separate file by a witness process that holds the key.
-- A frozen protocol: sdk.syberlabs.space/v0alpha1: fifteen JSON schemas for contracts, policies, observations, proposals, admission decisions, effects, reconciliation and evolution, with a validator and golden traces.
-- Compiled paths and replay: The compiler turns a contract into a dependency-ordered known path, action gates, acceptance queries and a form schema. Amendment replay compares a new contract version against recorded history and makes no model calls, destination writes or live reads.
-- External planners, bounded: A planner is any HTTPS or loopback endpoint that receives the objective, allowed actions, contract, events and acceptance, and returns one proposed action. It never executes.
-- Real effects, once: Executors send durable writes with idempotency keys and conditional headers, record the receipt, and leave an uncertain effect marked uncertain rather than retried blindly.
+- A fixed format for exchanging work records: Fifteen JSON schemas define work rules, observations, proposals, approval decisions, actions, outcome checks and rule changes. The protocol is sdk.syberlabs.space/v0alpha1, with a format checker and reference event sequences.
+- Plan checks and review rule changes: The compiler turns the work rules into ordered steps, approval checks, completion checks and form fields. Replay shows how changed rules would apply to recorded history without calling a model, changing a destination or fetching live data.
+- Separate proposals from execution: A planner receives the objective, allowed actions, work rules, history and completion criteria, then proposes one action. It cannot execute the action. It can run through an HTTPS service or a local loopback address.
+- Prevent duplicate writes: Executors send writes with unique request keys and conditions that prevent duplicates or outdated changes, then record the receipt. If the outcome is uncertain, it stays marked uncertain rather than being retried blindly.
 
 ### Evidence
 
@@ -299,42 +299,42 @@ Primary link: [View source](https://github.com/SyberLabs/relay)
 
 Secondary link: [Integration setup](https://github.com/SyberLabs/relay/blob/main/integrations/README.md)
 
-### Why a record, not another assistant.
+### Why keep one history per application?
 
 People already hunt for jobs with ChatGPT, Claude, Grok, Notion and Obsidian. The work falls apart in the gaps: a new chat forgets the last draft, a tracker overwrites a decision, an interview note resets an application’s status.
 
-Research keeps its history, acceptance belongs to the text, and every handoff is bound to a job and a version so stale work is rejected instead of silently replacing a newer review.
+Relay keeps research and draft history for each job. Approval applies to one exact draft. Returned work must match the job and its current version, so an old draft cannot silently replace newer reviewed work.
 
 ### How a job moves through Relay
 
 Fictional example records ship with the app.
 
 - 01 / Import, Bring the research: Add a job from a title and posting URL, pull a public Greenhouse or Lever board, map a tracker CSV, or import notes from Notion or Obsidian. Matching URLs join the same record.
-- 02 / Facts, Confirm what is true: A reusable candidate fact ledger that you confirm. Agent drafts are checked against it for selected claim patterns; unsupported claims are flagged, not silently passed.
-- 03 / Draft, Hand off to your assistant: Export a packet, let ChatGPT, Codex or Claude draft, and bring a version-bound draft back. Where the browser supports WebMCP, an assistant can stage a draft directly for review.
+- 02 / Facts, Confirm what is true: Confirm facts about your experience in a reusable list. Relay checks selected claim patterns in AI drafts against those facts and flags unsupported claims. These checks do not verify whether a fact is true.
+- 03 / Draft, Hand off to your assistant: Export the job’s research and drafting instructions for ChatGPT, Codex or Claude, then import the draft for the same job version. Browsers supporting WebMCP, a tool connection for browser assistants, can let an assistant place a draft directly in the review queue.
 - 04 / Accept, Approve the exact words: Acceptance records approval of one draft version. Change the text and it needs review again.
-- 05 / Send and record, You press submit: A human Inspect Accept arms a first-party Chrome extension to fill a form once. Outcomes are recorded with a receipt.
+- 05 / Send and record, You press submit: After a person uses Inspect Accept to approve the form details, Relay’s Chrome extension can fill the form once. You still press submit. The outcome is recorded with a receipt.
 
 ### Screens: Four screens from a local build.
 
 Captured on 2026-10-05 from relay@0000605 built and run locally with its own migrations and the mocked local sign-in. Every company, role and fact shown is a fictional example record; no real applicant data.
 
 - Runtime with a fictional example job selected. Approve & send stays disabled until an agent prepares the application. (https://syberlabs.io/relay-demo/relay-runtime-20261005.jpg)
-- Exact acceptance. Nothing is sent. (https://syberlabs.io/relay-demo/relay-accept-20261005.jpg)
+- Review and approve one exact draft. Nothing is sent. (https://syberlabs.io/relay-demo/relay-accept-20261005.jpg)
 - Tracker. Three fictional jobs by status; imported submissions without a receipt stay visible but are excluded from reply rates. (https://syberlabs.io/relay-demo/relay-tracker-20261005.jpg)
 - The fact ledger. Two fictional facts confirmed by the user and available for agent citations; Relay records the confirmation and does not verify facts itself. (https://syberlabs.io/relay-demo/relay-facts-20261005.jpg)
 
 ### What leaves Relay, and what comes back.
 
-Recorded by running the repository’s own modules: the bounded packet, the returned draft, the identity and version gate, the claim gate, and the five refusals that leave nothing written.
+Recorded by running the repository’s own modules: research sent to an assistant, the returned draft, checks of the job identity, version and claims, and five rejected examples that write nothing.
 
 Text version of the interactive map: This map needs JavaScript.
 
 ### How it is built
 
 - One history per job: Posting observations are preserved as rows; rediscovery keeps an existing interview or submitted status instead of resetting it.
-- Version-bound handoffs: Draft packets and editor checks carry the job identity and generation-time version, and reject stale work.
-- Claim checks: Word and number overlap between a draft and cited confirmed facts. The check is heuristic and says so: it does not establish factual truth.
+- Reject outdated drafts: Research sent to an assistant and drafts returned for review carry the job identity and version. Relay rejects work based on an outdated version.
+- Claim checks: Relay compares words and numbers in a draft with the confirmed facts it cites. This is an approximate check and is labelled as such; it does not establish factual truth.
 - Edge deployment: TypeScript and React on Cloudflare Workers with Drizzle ORM, a Manifest V3 extension, and Playwright tests.
 
 ### Evidence
@@ -359,7 +359,7 @@ Source: https://github.com/SyberLabs/OSAHR_Cell
 
 An open-source Python library for simulating networks whose connections change over time. Rules and probabilities determine each change, and recorded runs can be replayed and checked.
 
-Page title: OSAHR: Open-Source Stochastic Simulation Library in Python
+Page title: OSAHR: Simulate Changing Networks in Python
 
 Headline: Replay a changing system.
 
@@ -369,22 +369,22 @@ Primary link: [View source](https://github.com/SyberLabs/OSAHR_Cell)
 
 Secondary link: [Read the architecture](https://github.com/SyberLabs/OSAHR_Cell/blob/main/ARCHITECTURE.md)
 
-### Why a kernel for networks that rewrite themselves.
+### Why simulate changing connections?
 
 Most simulators change the state of a fixed network. Many real systems change the network itself: a cell grows a connection, an organisation adds a role, an agent fleet forms a new channel. Modelling that exactly, with the right probabilities and a record you can replay, is the problem OSAHR takes on.
 
-The kernel is deliberately small and dependency-free so its invariants can be stated and checked. The adaptive, replayable network it provides is the primitive the lab’s governed-work infrastructure is designed to sit on.
+The simulation core is small and has no external dependencies, making its rules easier to state and check. It is intended as a foundation for the lab’s work approval tools.
 
 ### What you can do
 
-pip install the wheel, or run the examples from a checkout.
+Install the Python package with pip, or download the source and run its examples.
 
-- 01 / Model, Declare a typed hypergraph: A schema, a graph, and rules written as pattern → template with a rate expression and optional adaptation of parameters and memory.
-- 02 / Run, Choose a scheduler: Direct SSA, modified next-reaction, or bounded thinning. All three are exact; incremental matching is checked against an exhaustive matcher.
-- 03 / Replay, Reproduce every state: Seeded runs reproduce their trace, and delta replay reproduces every recorded state hash.
-- 04 / Review, Graded evidence packets: The decision workbench turns frozen experiments into reviewable packets. GrokCell is a prototype agent control plane on the same kernel.
+- 01 / Model, Define the network and its rules: Define the kinds of items and connections in the network, the patterns each rule can change, and how often those changes can occur. Rules can also update settings and memory.
+- 02 / Run, Choose a scheduler: Choose how the simulator schedules changes: Direct SSA, modified next-reaction or bounded thinning. All three preserve the exact probabilities. The faster pattern search is checked against a search of every possibility.
+- 03 / Replay, Reproduce every state: Use the same random seed to repeat a run. Replay can also apply each recorded change and verify the hash, a fingerprint of the simulation state, at every step.
+- 04 / Review, Review recorded experiments: The decision workbench packages recorded experiments for review with labels for their evidence level. GrokCell is a prototype for coordinating AI agents on the same simulation core.
 
-### A hypergraph, one committed event at a time.
+### Watch network connections change one event at a time.
 
 Recorded by running the adaptive-signal example and exported from the trace.
 
@@ -404,14 +404,14 @@ memory: {'received_count': 10, 'intensity_ema': 0.17478781247500003}
 state hash: 6d73af0a24684c9afc339e1bc59dddbd6ca42a08792fca5b8b7e123fc262a857
 ```
 
-Complete output, unedited. From seed 20260729 the kernel committed 25 events in ten units of simulated time: two agents, ten signals received, the receiver’s value raised to 2.5 and its responsiveness driven from 0.1 to the clip at 1.0 by an injected external event at t = 3 and the rule’s own adaptation. The state hash is the canonical hash of the final state; a second run from the same seed prints the same lines.
+Complete output, unedited. With random seed 20260729, the simulation recorded 25 events in ten units of simulated time. Two agents exchanged ten received signals. The receiver’s value rose to 2.5 and its responsiveness rose from 0.1 to the limit of 1.0, through an external event at t = 3 and changes made by the rule itself. The state hash fingerprints the final state. A second run with the same seed prints the same lines.
 
 ### How it is built
 
-- Exact stochastic rewriting: Continuous-time rules over a typed directed hypergraph, with the invariants written down in the architecture document.
-- Incremental matching: Incidence-constrained pattern search keeps matching fast as the graph grows and is cross-checked against an exhaustive matcher.
-- Adaptive parameters: Rules can rewrite the model’s own parameters and memory, so the dynamics change as the structure does.
-- No runtime dependencies: Python 3.11+ only in the core; experiments are confirmatory records on the kernel.
+- Changes with exact probabilities: Rules change network connections at random times while preserving their exact probabilities. The network is a typed directed hypergraph, whose connections can link several items at once. Its required properties are documented in the architecture guide.
+- Recheck only affected patterns: After a change, the simulator searches affected connections for rule matches. This incremental search is checked against a search of every possible match.
+- Adaptive parameters: Rules can update the model’s settings and memory, changing how it behaves as its connections change.
+- No runtime dependencies: The core runs on Python 3.11+ without extra packages. Recorded experiments document checks of that core.
 
 ### Evidence
 
@@ -439,7 +439,7 @@ Complete output, unedited. From seed 20260729 the kernel committed 25 events in 
 
 ## More
 
-- [Work with us](https://syberlabs.io/services/): Work with Mateo Robles on software engineering. Inspect his AI tool integrations, interactive mathematical engines and RISE product development, then discuss a role or focused project.
+- [Work with us](https://syberlabs.io/services/): Work with Mateo Robles on software engineering. Explore his work on AI coding tools, interactive browser art and the RISE reading app, then discuss a role or focused project.
 - [Research archive](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: the technical reports and notes on this site, the RISE reader-owned AI status pages, the five working papers in SyberLabs/papers, the Instrument Panel and the OSAHR decision workbench. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
 - [Subscriber account](https://rise.syberlabs.io/plus/): Existing RISE subscribers
 - [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.

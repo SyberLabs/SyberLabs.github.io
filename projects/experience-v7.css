@@ -1,9 +1,9 @@
-/* Project page template (design system v2 "Atlas"). Tokens and components come from /syberlabs.css.
-   --accent / --sy-accent are set per project: the sigil, its plate ticks, the index number and the active tab. */
+/* Project case studies use the existing Atlas kit. The page-local reading theme
+   below leaves site chrome, the RISE landing hero and other kit consumers intact. */
 
 #app { min-height: 100vh; }
 
-/* Hero: copy column + the project's sigil large in a plate frame */
+/* Hero foundations; .pj-page below supplies the evidence-led reading layout. */
 .pj-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 380px); column-gap: var(--space-8); align-items: center; padding-top: var(--space-9); }
 .pj-eyebrow { display: flex; align-items: center; gap: var(--space-2); }
 .pj-number { color: var(--sy-accent); }
@@ -152,6 +152,77 @@
 @media (prefers-reduced-motion: no-preference) {
   .pj-deps[data-state="ready"] { animation: pj-deps-in 500ms var(--sy-ease) both; }
   @keyframes pj-deps-in { from { opacity: 0; transform: translate3d(0, 12px, 0); } }
+}
+
+/* Evidence-led reading surface, scoped to template-rendered project bodies. */
+main.pj-page {
+  --sy-ink: #f5f3ec;
+  --sy-ink-2: #ebe9e1;
+  --sy-ink-3: #e2e4df;
+  --sy-vellum: #172c30;
+  --sy-body: #30484b;
+  --sy-mist: #4b6264;
+  --sy-dim: #52686a;
+  --sy-rule: rgba(23, 44, 48, .18);
+  --sy-rule-2: rgba(23, 44, 48, .32);
+  --sy-accent: #176473;
+  --sy-ice: #176473;
+  --sy-live: #276a50;
+  --sy-research: #176473;
+  --sy-warning: #835700;
+  --sy-danger: #a43232;
+  color-scheme: light;
+  background: var(--sy-ink);
+  color: var(--sy-vellum);
+  font-family: var(--sy-sans);
+  position: relative;
+}
+.pj-page .pj-hero { grid-template-columns: minmax(0, 1fr); padding-top: clamp(40px, 6vw, 88px); }
+.pj-page .pj-hero__copy { max-width: 1000px; }
+.pj-page .pj-name { font: 600 clamp(24px, 3vw, 36px)/1.15 var(--sy-sans); letter-spacing: -.035em; }
+.pj-page .pj-title { font: 600 clamp(40px, 5.8vw, 80px)/1.08 var(--sy-sans); letter-spacing: -.045em; max-width: 18ch; text-wrap: balance; }
+.pj-page .sy-title { font: 600 clamp(26px, 3vw, 40px)/1.18 var(--sy-sans); letter-spacing: -.03em; text-wrap: balance; }
+.pj-page .pj-intro { max-width: 58ch; font-size: clamp(19px, 2vw, 23px); line-height: 1.6; }
+.pj-page .pj-summary { max-width: 72ch; }
+.pj-page .pj-section { padding-top: clamp(64px, 8vw, 112px); }
+.pj-page .pj-split { grid-template-columns: minmax(140px, 1fr) minmax(0, 4fr); gap: 32px; }
+.pj-page .pj-split__main { grid-column: 2; padding-left: 0; }
+.pj-page .sy-eyebrow { font-family: var(--sy-sans); letter-spacing: .1em; }
+.pj-page :focus-visible { outline: 2px solid var(--sy-accent); outline-offset: 4px; }
+.pj-page .sy-btn { border-radius: 4px; box-shadow: none; }
+.pj-page .sy-btn--solid { background: var(--sy-vellum); color: var(--sy-ink); }
+.pj-page .sy-btn--line { color: var(--sy-vellum); border-color: var(--sy-rule-2); background: transparent; }
+.pj-page .sy-btn:hover { box-shadow: none; }
+.pj-page .sy-badge { background: transparent; }
+.pj-page .sy-badge::before, .pj-page .pj-evidence__state i { box-shadow: none; }
+.pj-page .pj-live__card { border-block: 1px solid var(--sy-rule); padding-inline: 0; }
+.pj-page .pj-live__dot { animation: none; box-shadow: none; }
+.pj-page .pj-live__card:hover .pj-live__label b { text-decoration: underline; text-underline-offset: 4px; }
+.pj-page .pj-gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 24px; }
+.pj-page .pj-gallery__plate, .pj-page .pj-video__box, .pj-page .pj-run__box { border: 1px solid var(--sy-rule); border-radius: 4px; }
+.pj-page .pj-gallery__plate img { aspect-ratio: auto; object-fit: contain; }
+.pj-page .pj-gallery__caption, .pj-page .pj-video__caption, .pj-page .pj-run__caption { line-height: 1.6; }
+.pj-page .pj-design { gap: 0 32px; }
+.pj-page .pj-design__item { padding: 28px 0; border-top: 1px solid var(--sy-rule); }
+.pj-page .pj-how__item { background: transparent; }
+.pj-page .pj-why { grid-template-columns: 1fr; max-width: 72ch; }
+.pj-page .pj-others .sy-project-row__title { font-family: var(--sy-sans); font-weight: 600; }
+.pj-page .pj-others .sy-project-row { --sy-accent: #176473 !important; }
+.pj-page .pj-others .sy-project-row:hover { background: rgba(23, 100, 115, .05); }
+
+/* Shared RISE evidence keeps its own dark palette and authored hero, while
+   the real screenshots and demo retain full, unframed source dimensions. */
+.rise-page .pj-section .sy-title { font-family: var(--sy-sans); font-weight: 600; line-height: 1.2; }
+.rise-page .pj-gallery__plate img { aspect-ratio: auto; object-fit: contain; }
+
+@media (max-width: 1023px) {
+  .pj-page .pj-split { grid-template-columns: 1fr; gap: 16px; }
+  .pj-page .pj-split__main { grid-column: 1; }
+}
+@media (max-width: 640px) {
+  .pj-page .pj-gallery__grid { grid-template-columns: 1fr; gap: 32px; }
+  .pj-page .pj-title { font-size: clamp(36px, 10vw, 48px); }
+  .pj-page .pj-live__card { padding: 24px 0; }
 }
 
 .pj-others__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5); }
