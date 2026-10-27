@@ -118,6 +118,66 @@ main details p { font-size: 14px; line-height: 20px; }
   .table-wrap.wide table { min-width: 560px; }
   th, td { padding-right: var(--space-2); }
 }
+
+/* Page-local reading theme from the existing Atlas kit. Research evidence and
+   authorship are unchanged; only this archive and its report pages opt in. */
+:root.research-reading {
+  --sy-ink: #f5f3ec;
+  --sy-ink-2: #ebe9e1;
+  --sy-ink-3: #e2e4df;
+  --sy-vellum: #172c30;
+  --sy-body: #30484b;
+  --sy-mist: #4b6264;
+  --sy-dim: #52686a;
+  --sy-rule: rgba(23, 44, 48, .18);
+  --sy-rule-2: rgba(23, 44, 48, .32);
+  --sy-accent: #176473;
+  --sy-ice: #176473;
+  --sy-deep: #176473;
+  --sy-success: #276a50;
+  --sy-live: #276a50;
+  --sy-research: #176473;
+  --sy-warning: #835700;
+  --sy-danger: #a43232;
+  --font-display: var(--sy-sans);
+  --font-reading: var(--sy-sans);
+  --radius: 4px;
+  color-scheme: light;
+}
+.research-reading body { background-image: none; }
+.research-reading .sy-field-host { display: none; }
+.research-reading .sy-header,
+.research-reading .sy-header.is-scrolled { background: #f5f3ecf5; border-color: var(--sy-rule); box-shadow: none; }
+.research-reading .sy-atlas__backdrop { background: #f5f3ecf2; }
+.research-reading .sy-atlas__panel { background: var(--sy-ink); }
+.research-reading .sy-atlas__close { background: var(--sy-ink-2); }
+.research-reading .sy-atlas__title { font-family: var(--sy-sans); }
+.research-reading .sy-footer { background: var(--sy-ink); }
+.research-reading .sy-footer::before { display: none; }
+.research-reading .hero h1 { font-size: clamp(40px, 6.2vw, 84px); font-weight: 600; line-height: 1.08; letter-spacing: -.045em; text-wrap: balance; }
+.research-reading .hero h1 em { background: none; color: var(--sy-ice); font-style: normal; padding: 0; }
+.research-reading article h2,
+.research-reading .cards h2 { font-weight: 600; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.2; letter-spacing: -.025em; text-wrap: balance; }
+.research-reading .card h3 { font-weight: 600; }
+.research-reading .card { background: transparent; }
+.research-reading .metrics strong { font-weight: 600; font-size: clamp(36px, 4vw, 56px); line-height: 1.15; }
+.research-reading .metrics > div:first-child strong { background: none; color: var(--sy-vellum); }
+.research-reading .legend li i,
+.research-reading .states li i { box-shadow: none; }
+.research-reading pre { background: var(--sy-ink-2); color: var(--sy-vellum); }
+.research-reading pre code { color: inherit; }
+.research-reading .table-wrap { max-width: 100%; overscroll-behavior-x: contain; }
+.research-reading th { color: var(--sy-vellum); }
+.research-reading td { color: var(--sy-body); }
+.research-reading aside a { min-height: 40px; display: flex; align-items: center; }
+.research-reading .aside-note { display: block; }
+@media (max-width: 640px) {
+  .research-reading .hero { padding-top: 40px; }
+  .research-reading .kicker { margin-top: 40px; }
+  .research-reading .hero h1 { font-size: clamp(36px, 10vw, 52px); }
+  .research-reading .meta { overflow-wrap: anywhere; }
+}
+
 @media print {
   :root, body { background: #fff; color: #000; }
   .sy-header, .sy-skip, .status, aside, .hero-bottom > a, .sy-footer { display: none; }
