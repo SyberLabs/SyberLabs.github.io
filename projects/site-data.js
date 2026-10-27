@@ -352,9 +352,10 @@ export const projects = [
 // The Menu selects useful work and contact routes. Existing archives and deep links remain published.
 export const siteMap = [
   { title: 'Work', items: [
-    { label: 'Engines', note: 'Mathematical worlds · run Gyre', href: GYRE_APP, external: true },
     { label: 'GitHits integration', note: 'Code search for AI coding assistants', href: '/mateo/#githits' },
+    { label: 'PorchLight', note: 'Hackathon third place · cited city reports', href: '/mateo/#porchlight' },
     { label: 'RISE', note: 'Interactive reading in your browser', href: '/mateo/#rise' },
+    { label: 'Engines', note: 'Mathematical worlds · run Gyre', href: GYRE_APP, external: true },
   ] },
   { title: 'Connect', items: [
     { label: 'Meet Mateo', note: 'Projects, code and résumé', href: MATEO_PORTFOLIO },
