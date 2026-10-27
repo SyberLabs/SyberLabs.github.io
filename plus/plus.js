@@ -31,17 +31,24 @@ if (host) {
     pulse(0.75 + Math.min(0.35, list[i].w.length / 24));
   };
 
-  // RISE's rule (src/live/voices/browser.js chooseVoice): the page's language only, natural voices first, then Google, then the one default.
+  // RISE's quality ranking (src/live/voices/browser.js): exact locale, then base language;
+  // downloaded Premium/Enhanced voices count even when only their URI names the quality.
   function chooseVoice(voices, lang) {
     const tag = v => String(v || '').replace(/_/g, '-').toLowerCase(), wanted = tag(lang), base = wanted.split('-')[0];
     const exact = voices.filter(v => tag(v.lang) === wanted);
     const same = exact.length ? exact : voices.filter(v => tag(v.lang).split('-')[0] === base);
-    const natural = same.filter(v => /\(Natural\)/u.test(v.name));
-    if (natural.length) return natural.find(v => !/Multilingual/u.test(v.name)) || natural[0];
-    const google = same.find(v => GOOGLE.test(v.name));
-    if (google) return google;
-    const defaults = same.filter(v => v.default === true);
-    return defaults.length === 1 ? defaults[0] : null;
+    const novelty = /^(?:Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Kathy|Ralph|Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley)(?: \(.*\))?$/u;
+    const quality = v => {
+      const said = `${v.name} ${v.voiceURI || ''}`;
+      let rank = 1;
+      if (/natural|neural|premium|wavenet|journey|studio/iu.test(said)) rank = 4;
+      else if (/enhanced/iu.test(said)) rank = 3;
+      else if (GOOGLE.test(v.name)) rank = 2;
+      else if (/compact|espeak|speech\.synthesis\.voice|eloquence/iu.test(said) || /^Microsoft\b/iu.test(v.name) || novelty.test(v.name)) rank = 0;
+      return /multilingual/iu.test(v.name) ? rank - 0.5 : rank;
+    };
+    return same.map((v, index) => ({ v, index, rank: quality(v) }))
+      .sort((a, b) => b.rank - a.rank || Number(b.v.default === true) - Number(a.v.default === true) || a.index - b.index)[0]?.v || null;
   }
   // voices load late in some browsers: wait for voiceschanged, at most 1.5 s
   const voices = () => new Promise(resolve => {
