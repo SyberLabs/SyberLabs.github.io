@@ -172,7 +172,7 @@ export default function App() {
       </section>
       <div className="film-notes sy-wrap">
         <span>{MATEO_VIDEO.credit}</span>
-        <span className="hero-credit">Gyre to RISE Sophia. In the frame: {FRAME_ART.map((a, i) => <React.Fragment key={a.id}>{i ? ' · ' : ''}<span className={a.id === framed ? 'is-framed' : undefined}>{a.date ? <><a href={a.href}>{a.title}</a>, {a.by}, {a.date}</> : <>{a.title}, <a href={a.href}>{a.by}</a></>}</span></React.Fragment>)}. Paintings: The Cleveland Museum of Art, CC0.</span>
+        <span className="hero-credit">Gyre to RISE Sophia. In the frame: {FRAME_ART.map((a, i) => <React.Fragment key={a.id}>{i ? ' · ' : ''}<span className={a.id === framed ? 'is-framed' : undefined}>{a.date ? <><a href={a.href}>{a.title}</a>, {a.by}, {a.date}, The Cleveland Museum of Art, CC0</> : a.made ? <>{a.title}, {a.by}, {a.made}</> : <>{a.title}, <a href={a.href}>{a.by}</a></>}</span></React.Fragment>)}.</span>
         <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((p, i) => <p key={i}>{p}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>
         {videoError && <p role="status">Video unavailable. Read the transcript or explore the work below.</p>}
       </div>
@@ -183,6 +183,19 @@ export default function App() {
       <section className="demo-work sy-wrap" aria-label="Product demonstrations">
         <article><div><p className="sy-eyebrow">Engines / Mateo’s browser art</p><h2>Mathematics you can play.</h2><p>Gyre turns mathematical rules into moving trails of light.</p><a href={GYRE_APP}>Explore Gyre <span aria-hidden="true">↗</span></a></div><video controls playsInline preload="none" poster="/mateo/demos/gyre-orbit.jpg" width="960" height="540" aria-label="Recorded Gyre interaction" onPlay={pauseOtherVideos}><source src="/mateo/demos/gyre-orbit.mp4" type="video/mp4" /></video></article>
         <article><div><p className="sy-eyebrow">RISE / Lead developer</p><h2>A different way to read.</h2><p>An interactive reading app. I led core development of timed text, moving graphics, sound and video export.</p><a href="https://github.com/SyberLabs/RISE/pull/371">Selected changes and tests <span aria-hidden="true">↗</span></a></div><figure><video controls playsInline preload="none" poster="/mateo/demos/rise-playback.jpg" width="960" height="540" aria-label="Recorded RISE reading" onPlay={pauseOtherVideos}><source src="/mateo/demos/rise-playback.mp4" type="video/mp4" /></video><figcaption>Recorded product demonstration. RISE is a team project.</figcaption></figure></article>
+      </section>
+      <section id="lab" className="lab-identity sy-wrap" aria-labelledby="lab-identity-title">
+        <div className="lab-identity__copy">
+          <img className="lab-identity__emblem" src="/mateo/lab/emblem-mateo-robles.webp" width="900" height="675" alt="" loading="lazy" decoding="async" />
+          <p className="sy-eyebrow">The lab</p>
+          <h2 id="lab-identity-title">Infrastructure for AI agents.</h2>
+          <p>When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules the system controls, and records the reason when it refuses one.</p>
+          <a href="/projects/syberwork/">How SyberWork works <span aria-hidden="true">→</span></a>
+        </div>
+        <figure className="lab-identity__art">
+          <img src="/mateo/lab/agent-network-mateo-robles.webp" width="1100" height="921" alt="Glowing blue nodes joined by arcing links, like a network of agents." loading="lazy" decoding="async" />
+          <figcaption>Network and emblem: Mateo Robles, made with Midjourney.</figcaption>
+        </figure>
       </section>
       <Forms />
       <details className="orb-experiment sy-wrap"><summary>Explore the Orb</summary><Hero /></details>

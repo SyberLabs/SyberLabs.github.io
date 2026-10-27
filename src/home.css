@@ -233,3 +233,15 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .pitch-hero__frame-art img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
 .pitch-hero__frame-art::after { content:""; position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle at 34% 28%,#ffffff2e 0,#ffffff00 32%),radial-gradient(circle,#0000 58%,#03070866 82%,#030708e6 100%); }
 .hero-credit .is-framed, .hero-credit .is-framed a { color:#f4f2ed; }
+
+/* The lab: Mateo's own techy pieces carry the studio's identity below the hiring content. The emblem is a small
+   chrome seal over the heading; the agent network glows on the stage's black with no box around it. */
+.lab-identity { display:grid; grid-template-columns:.9fr 1.1fr; align-items:center; gap:clamp(32px,6vw,96px); padding-block:100px; border-top:1px solid var(--sy-rule); }
+.lab-identity__emblem { display:block; width:clamp(120px,13vw,190px); height:auto; margin-bottom:18px; mix-blend-mode:screen; } /* its black ground drops out on the stage */
+.lab-identity h2 { margin:18px 0; font:500 clamp(32px,4vw,54px)/1.08 var(--sy-sans); letter-spacing:-.035em; }
+.lab-identity__copy>p:not(.sy-eyebrow) { max-width:42ch; color:var(--sy-mist); font-size:18px; line-height:1.6; }
+.lab-identity__copy a { display:inline-flex; align-items:center; gap:6px; min-height:44px; color:var(--sy-ice); font-size:15px; }
+.lab-identity__art { margin:0; }
+.lab-identity__art img { display:block; width:100%; height:auto; mix-blend-mode:screen; -webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%); mask-image:radial-gradient(closest-side,#000 72%,transparent 100%); }
+.lab-identity__art figcaption { padding-top:8px; color:var(--sy-mist); font-size:12px; line-height:1.5; text-align:center; }
+@media(max-width:800px) { .lab-identity { grid-template-columns:1fr; gap:24px; padding-block:64px; } }

@@ -20,10 +20,11 @@ The homepage hero uses `gyre-sophia-v1.mp4` and its portrait variant alone. Its
 first-visit reveal is timed to the clip in `src/hero-media.js`; no other intro
 media is used.
 
-## Sophia frame paintings
+## Sophia frame pictures and lab artwork
 
-`../frame/` holds the two paintings shown in the hero's Sophia frame in place of
-Earth, both open access (CC0) at the Cleveland Museum of Art:
-*Point Judith, Rhode Island*, Martin Johnson Heade, 1867–68 (1970.161), and
-*The Pink Cloud*, Henri-Edmond Cross, c. 1896 (2020.106). They are credited on
-the homepage beside NASA/GSFC's Earth.
+`../frame/` holds the pictures shown in the hero's Sophia frame in place of
+Earth: *The Pink Cloud*, Henri-Edmond Cross, c. 1896, open access (CC0) at the
+Cleveland Museum of Art (2020.106), and two pieces by Mateo Robles made with
+Midjourney, *Dune Run* and *Chromatic Burst*. `../lab/` holds his agent network
+and chrome emblem, also made with Midjourney (the network's baked-in caption is
+cropped off). Every piece is credited on the homepage.

@@ -17,7 +17,9 @@ for (const art of FRAME_ART.filter(a => a.src)) {
   assert.match(art.src, /^\/mateo\/frame\/[a-z0-9.-]+\.(jpg|webp)$/i, 'Frame art must be local');
   const file = await stat(resolve(art.src.slice(1))).catch(() => null);
   assert.ok(file?.isFile() && file.size > 20 * 1024 && file.size <= 1.5 * 1024 * 1024, `Frame art ${art.src} must exist, between 20 KiB and 1.5 MiB`);
-  assert.ok(art.title && art.by && art.date && /^https:\/\/www\.clevelandart\.org\/art\//.test(art.href), `Frame art ${art.id} needs its credit and source`);
+  // a museum work names its date and links its record; Mateo's own pieces say how they were made
+  const credited = art.date ? /^https:\/\/www\.clevelandart\.org\/art\//.test(art.href) : art.by === 'Mateo Robles' && /midjourney/i.test(art.made || '');
+  assert.ok(art.title && art.by && credited, `Frame art ${art.id} needs its credit and source`);
 }
 
 if (video) {

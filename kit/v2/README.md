@@ -71,10 +71,16 @@ signature (`mateo/brand/mateo-robles-signature.webp`, alt text "Mateo Robles"),
 which writes itself in from the left on the first visit.
 
 The Sophia frame holds a different picture on each pass of the clip, chosen at
-random without repeating: Earth (in the clip), or one of two CC0 paintings from
-the Cleveland Museum of Art laid exactly over Earth's disc (`src/frame-art.js`
-holds the measured disc and timing). The credit line under the hero names all
-three and highlights the one in the frame.
+random without repeating, and it always holds something warm against the blue
+page: Earth (in the clip), The Pink Cloud (Henri-Edmond Cross, CC0 at the
+Cleveland Museum of Art) or one of Mateo's own pieces, laid exactly over Earth's
+disc (`src/frame-art.js` holds the measured disc and timing). The credit line
+under the hero names every picture and highlights the one in the frame. Keep
+baked-in text out of the frame.
+
+Mateo's own Midjourney pieces carry the lab's identity below the hiring content:
+the chrome emblem and the agent network in the lab section. Credit them as
+"Mateo Robles, made with Midjourney".
 
 On the first visit in a tab the page follows the clip's own playback time
 (`REVEAL` in `src/hero-media.js`): with the Gyre the name rises (readable within
