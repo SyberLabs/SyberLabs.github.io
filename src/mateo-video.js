@@ -1,18 +1,17 @@
-// V12: 1080p makeover with new narration covering GitHits, SyberWork, Attest and FLYSPACE.
-// Source, renderer and verification live in SyberLabs/presence (media/mateo). V7-V10 files stay for rollback.
+// V13 removes the overbroad Attest passage from V12, with synchronized captions and transcript.
+// All other scenes remain; earlier versioned assets stay available for rollback.
 export const MATEO_VIDEO = {
-  "src": "/mateo/media/mateo-intro-v12.mp4",
-  "poster": "/mateo/media/mateo-intro-v12-poster.jpg",
-  "captions": "/mateo/media/mateo-intro-v12.en.vtt",
-  "transcriptFile": "/mateo/media/mateo-intro-v12-transcript.txt",
-  "durationSeconds": 110.133,
+  "src": "/mateo/media/mateo-intro-v13.mp4",
+  "poster": "/mateo/media/mateo-intro-v13-poster.jpg",
+  "captions": "/mateo/media/mateo-intro-v13.en.vtt",
+  "transcriptFile": "/mateo/media/mateo-intro-v13-transcript.txt",
+  "durationSeconds": 98.353333,
   "credit": "Animated introduction. Synthetic narration.",
   "transcript": [
     "Hi, my name is Mateo Robles.",
     "I'm a computer science graduate and the founder of SyberLabs, a small research studio. I build AI tools that people can trust, because every step leaves evidence someone can check.",
     "In the GitHits design partnership, I connected an AI coding tool to a service that finds relevant code examples. I built the connection, added safeguards so it could only make allowed requests, and kept a record of every call. Then I tested it: successful searches, requests that should be blocked, and whether the records held up. The demo uses controlled test data, and public review feedback made the work stronger.",
     "GitHits fits into SyberWork, where contracts govern work. Every task keeps a case history of what was proposed, admitted, observed, approved, and executed, so people stay in charge of what ships.",
-    "Attest, which I built at the Kane CLI Hack Day, makes documentation that can't lie. An agent runs every step a README claims, badges each one with evidence, and patches the doc when a step fails.",
     "FLYSPACE is our workspace for people and agents. I built its compiler, which turns OpenAPI and MCP schemas into typed blocks on a canvas, and made agent writes wait for human approval.",
     "I work from first principles: start with the real goal, question assumptions, build the smallest useful version, check the evidence, and improve it.",
     "My path from sociology to computer science taught me that coordinating AI agents is a lot like coordinating people. Clear roles, shared goals, context, and good handoffs matter.",
