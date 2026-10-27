@@ -1,0 +1,213 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.450
+Hi, my name is Mateo Robles.
+
+2
+00:00:02.450 --> 00:00:03.990
+I'm a computer science graduate
+
+3
+00:00:03.990 --> 00:00:05.720
+and the founder of SyberLabs,
+
+4
+00:00:05.720 --> 00:00:07.410
+a small research studio.
+
+5
+00:00:07.410 --> 00:00:09.790
+I build AI tools that people can trust,
+
+6
+00:00:09.790 --> 00:00:11.860
+because every step leaves evidence someone
+
+7
+00:00:11.860 --> 00:00:12.900
+can check.
+
+8
+00:00:12.900 --> 00:00:14.770
+In the GitHits design partnership,
+
+9
+00:00:14.770 --> 00:00:17.170
+I connected an AI coding tool to a service
+
+10
+00:00:17.170 --> 00:00:19.310
+that finds relevant code examples.
+
+11
+00:00:19.310 --> 00:00:20.590
+I built the connection,
+
+12
+00:00:20.590 --> 00:00:22.650
+added safeguards so it could only make allowed
+
+13
+00:00:22.650 --> 00:00:25.550
+requests, and kept a record of every call.
+
+14
+00:00:25.550 --> 00:00:28.250
+Then I tested it: successful searches,
+
+15
+00:00:28.250 --> 00:00:29.800
+requests that should be blocked,
+
+16
+00:00:29.800 --> 00:00:31.550
+and whether the records held up.
+
+17
+00:00:31.550 --> 00:00:33.390
+The demo uses controlled test data,
+
+18
+00:00:33.390 --> 00:00:35.360
+and public review feedback made the work
+
+19
+00:00:35.360 --> 00:00:36.360
+stronger.
+
+20
+00:00:36.360 --> 00:00:38.170
+GitHits fits into SyberWork,
+
+21
+00:00:38.170 --> 00:00:40.150
+where contracts govern work.
+
+22
+00:00:40.150 --> 00:00:42.230
+Every task keeps a case history of what
+
+23
+00:00:42.230 --> 00:00:43.950
+was proposed, admitted,
+
+24
+00:00:43.950 --> 00:00:45.340
+observed, approved,
+
+25
+00:00:45.340 --> 00:00:47.820
+and executed, so people stay in charge
+
+26
+00:00:47.820 --> 00:00:49.000
+of what ships.
+
+27
+00:00:49.000 --> 00:00:51.120
+FLYSPACE is our workspace for people
+
+28
+00:00:51.120 --> 00:00:52.170
+and agents.
+
+29
+00:00:52.170 --> 00:00:53.270
+I built its compiler,
+
+30
+00:00:53.270 --> 00:00:56.080
+which turns OpenAPI and MCP schemas into
+
+31
+00:00:56.080 --> 00:00:57.640
+typed blocks on a canvas,
+
+32
+00:00:57.640 --> 00:01:00.430
+and made agent writes wait for human approval.
+
+33
+00:01:00.430 --> 00:01:02.210
+I work from first principles:
+
+34
+00:01:02.210 --> 00:01:03.650
+start with the real goal,
+
+35
+00:01:03.650 --> 00:01:04.960
+question assumptions,
+
+36
+00:01:04.960 --> 00:01:06.940
+build the smallest useful version,
+
+37
+00:01:06.940 --> 00:01:07.820
+check the evidence,
+
+38
+00:01:07.820 --> 00:01:08.980
+and improve it.
+
+39
+00:01:08.980 --> 00:01:11.330
+My path from sociology to computer science
+
+40
+00:01:11.330 --> 00:01:13.250
+taught me that coordinating AI agents
+
+41
+00:01:13.250 --> 00:01:15.250
+is a lot like coordinating people.
+
+42
+00:01:15.250 --> 00:01:17.030
+Clear roles, shared goals,
+
+43
+00:01:17.030 --> 00:01:19.640
+context, and good handoffs matter.
+
+44
+00:01:19.640 --> 00:01:21.940
+I also make Gyre, which turns mathematics
+
+45
+00:01:21.940 --> 00:01:23.430
+into live browser art,
+
+46
+00:01:23.430 --> 00:01:24.750
+and I help build RISE,
+
+47
+00:01:24.750 --> 00:01:26.640
+which makes reading interactive.
+
+48
+00:01:26.640 --> 00:01:28.910
+I'm looking for new grad software engineering,
+
+49
+00:01:28.910 --> 00:01:31.090
+AI engineering, and creative technologist
+
+50
+00:01:31.090 --> 00:01:31.790
+roles.
+
+51
+00:01:31.790 --> 00:01:33.500
+If you want someone curious who follows
+
+52
+00:01:33.500 --> 00:01:35.400
+through, invite me to interview.
+
+53
+00:01:35.400 --> 00:01:37.500
+Let's build something useful together.

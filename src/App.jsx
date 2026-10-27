@@ -106,6 +106,8 @@ function Forms() {
 const pauseOtherVideos = event => { for (const video of document.querySelectorAll('video')) if (video !== event.currentTarget) video.pause(); };
 
 export default function App() {
+  const movieSeconds = Math.round(MATEO_VIDEO.durationSeconds);
+  const movieDuration = `${Math.floor(movieSeconds / 60)}:${String(movieSeconds % 60).padStart(2, '0')}`;
   const movie = useRef(null), play = useRef(null);
   const [started, setStarted] = useState(false);
   const [enhanced, setEnhanced] = useState(false);
@@ -162,12 +164,12 @@ export default function App() {
             <p className="pitch-hero__availability">Available to start immediately</p>
           </div>
         </div>
-        <video ref={movie} className="pitch-hero__film" id="mateo-intro-video" controls playsInline preload="none" tabIndex={enhanced && !started ? -1 : 0} aria-hidden={enhanced && !started ? true : undefined} poster={MATEO_VIDEO.poster} width="1280" height="720" aria-label="Meet Mateo: two-minute introduction" onPlay={e => { setStarted(true); pauseOtherVideos(e); }} onError={() => setVideoError(true)} onPlaying={() => setVideoError(false)}>
+        <video ref={movie} className="pitch-hero__film" id="mateo-intro-video" controls playsInline preload="none" tabIndex={enhanced && !started ? -1 : 0} aria-hidden={enhanced && !started ? true : undefined} poster={MATEO_VIDEO.poster} width="1280" height="720" aria-label="Meet Mateo: introduction" onPlay={e => { setStarted(true); pauseOtherVideos(e); }} onError={() => setVideoError(true)} onPlaying={() => setVideoError(false)}>
           <source src={MATEO_VIDEO.src} type="video/mp4" />
           <track kind="captions" src={MATEO_VIDEO.captions} srcLang="en" label="English" default />
           <a href={MATEO_VIDEO.src}>Download Mateo’s introduction</a>
         </video>
-        <button ref={play} className="pitch-hero__play home-js-only" type="button" onClick={watch} aria-controls="mateo-intro-video"><span aria-hidden="true">▶</span>Meet Mateo <small>2 min</small></button>
+        <button ref={play} className="pitch-hero__play home-js-only" type="button" onClick={watch} aria-controls="mateo-intro-video"><span aria-hidden="true">▶</span>Meet Mateo <small>{movieDuration}</small></button>
         {started && <button className="pitch-hero__back" type="button" onClick={overview}>Back to overview</button>}
       </section>
       <div className="film-notes sy-wrap">

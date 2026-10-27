@@ -9,7 +9,7 @@ const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 
 // The detail page uses the same approved film and exact transcript as the homepage.
 const { MATEO_VIDEO: film } = await import('../src/mateo-video.js');
-const mateoFilm = `<figure class="portfolio-film"><video controls playsinline preload="metadata" poster="${esc(film.poster)}" width="1280" height="720" aria-label="Meet Mateo: two-minute introduction"><source src="${esc(film.src)}" type="video/mp4"><track kind="captions" src="${esc(film.captions)}" srclang="en" label="English" default><a href="${esc(film.src)}">Download the introduction</a></video><figcaption>${esc(film.credit)}</figcaption><details><summary>Read transcript</summary>${film.transcript.map(p => `<p>${esc(p)}</p>`).join('')}<a href="${esc(film.transcriptFile)}">Download transcript</a></details></figure>`;
+const mateoFilm = `<figure class="portfolio-film"><video controls playsinline preload="metadata" poster="${esc(film.poster)}" width="1280" height="720" aria-label="Meet Mateo: introduction"><source src="${esc(film.src)}" type="video/mp4"><track kind="captions" src="${esc(film.captions)}" srclang="en" label="English" default><a href="${esc(film.src)}">Download the introduction</a></video><figcaption>${esc(film.credit)}</figcaption><details><summary>Read transcript</summary>${film.transcript.map(p => `<p>${esc(p)}</p>`).join('')}<a href="${esc(film.transcriptFile)}">Download transcript</a></details></figure>`;
 
 async function inject(file, markerRe, replacement) {
   const html = await readFile(file, 'utf8');
