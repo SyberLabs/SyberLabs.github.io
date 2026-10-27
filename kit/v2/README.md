@@ -53,3 +53,5 @@ drawAll(document);                     // canvas[data-sigil="relay"][data-color]
 4. All copy lives in the served HTML. The canvas is progressive enhancement, and the page reads fine with JS disabled or without WebGL2.
 5. The engine renders ≤1 texel per CSS px and at most 60 frames a second, pauses off-screen (IntersectionObserver) and while the tab is hidden, `pause()`/`resume()` hold the frame while something covers the plate (a full-screen menu), and `destroy()` cancels the RAF and loses the GL context.
 6. Status is always shown as dot + word, never as colour alone. Nothing is set below 12px, and serif is never used below 32px.
+
+The Mateo detail page uses an ivory reading surface (`#f5f3ec`), dark text (`#172c30`) and dark cyan links (`#176473`). Its header, menu and footer must remain readable in that page-local theme. The homepage keeps the cinematic near-black motion stage. Both use Instrument Sans, real project media and direct hiring actions.
