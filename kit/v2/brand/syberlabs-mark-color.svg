@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 651 720" role="img" aria-labelledby="brand-title brand-desc">
+<title id="brand-title">SyberLabs folded S mark</title>
+<desc id="brand-desc">Editable vector adaptation of the existing prismatic ribbon raster. Simplified gradients and folds; not a pixel-perfect trace.</desc>
+<defs>
+<linearGradient id="crown" gradientUnits="userSpaceOnUse" x1="155" y1="76" x2="320" y2="304"><stop offset="0" stop-color="#1374ef"/><stop offset=".28" stop-color="#30cfff"/><stop offset=".43" stop-color="#f5f6e9"/><stop offset=".59" stop-color="#438cfe"/><stop offset=".78" stop-color="#1839d9"/><stop offset=".93" stop-color="#eef9f5"/><stop offset="1" stop-color="#82cfff"/></linearGradient>
+<linearGradient id="upper-fold" gradientUnits="userSpaceOnUse" x1="225" y1="164" x2="305" y2="298"><stop offset="0" stop-color="#0876ef"/><stop offset=".38" stop-color="#0039a6"/><stop offset=".7" stop-color="#061a4d"/><stop offset="1" stop-color="#1aaaf8"/></linearGradient>
+<linearGradient id="middle" gradientUnits="userSpaceOnUse" x1="179" y1="223" x2="298" y2="445"><stop offset="0" stop-color="#a1f4ff"/><stop offset=".18" stop-color="#4162c3"/><stop offset=".46" stop-color="#0446b4"/><stop offset=".65" stop-color="#29c3ff"/><stop offset=".82" stop-color="#0959c6"/><stop offset="1" stop-color="#071b48"/></linearGradient>
+<linearGradient id="bridge" gradientUnits="userSpaceOnUse" x1="310" y1="280" x2="560" y2="436"><stop offset="0" stop-color="#123875"/><stop offset=".45" stop-color="#52d9fa"/><stop offset=".75" stop-color="#ebf8ee"/><stop offset="1" stop-color="#a5daff"/></linearGradient>
+<linearGradient id="right-fold" gradientUnits="userSpaceOnUse" x1="405" y1="358" x2="648" y2="558"><stop offset="0" stop-color="#b7f5f5"/><stop offset=".25" stop-color="#f6f3e9"/><stop offset=".43" stop-color="#7799ee"/><stop offset=".65" stop-color="#0564eb"/><stop offset=".84" stop-color="#043c9f"/><stop offset="1" stop-color="#7bdff8"/></linearGradient>
+<linearGradient id="lower-fold" gradientUnits="userSpaceOnUse" x1="67" y1="388" x2="150" y2="546"><stop offset="0" stop-color="#eef8e8"/><stop offset=".25" stop-color="#52dcf9"/><stop offset=".59" stop-color="#0065e5"/><stop offset="1" stop-color="#07377b"/></linearGradient>
+<linearGradient id="base" gradientUnits="userSpaceOnUse" x1="245" y1="479" x2="355" y2="714"><stop offset="0" stop-color="#2cb3f4"/><stop offset=".22" stop-color="#d5f4ee"/><stop offset=".4" stop-color="#f6e9df"/><stop offset=".57" stop-color="#6685ec"/><stop offset=".76" stop-color="#0a50d4"/><stop offset="1" stop-color="#8be4f8"/></linearGradient>
+<clipPath id="ribbon-outline"><path d="M321 9 641 161 642 333 416 223 316 270Q301 277 310 289L632 407Q642 413 642 430L642 548Q642 560 632 566L330 710 10 552 10 391 272 515 355 480 22 333Q10 329 10 315V155Z"/></clipPath>
+</defs>
+<g id="folded-s" clip-path="url(#ribbon-outline)">
+  <path id="ribbon-base" fill="#075ad6" d="M321 9 641 161 642 333 416 223 316 270Q301 277 310 289L632 407Q642 413 642 430L642 548Q642 560 632 566L330 710 10 552 10 391 272 515 355 480 22 333Q10 329 10 315V155Z"/>
+  <path id="crown-face" fill="url(#crown)" d="M10 155 321 9 641 161 642 333 285 154Z"/>
+  <path id="upper-inner-fold" fill="url(#upper-fold)" d="M10 155 285 154 416 223 316 270Q301 277 310 289L415 356Z"/>
+  <path id="lower-left-fold" fill="url(#lower-fold)" d="M10 391 272 515 10 552Z"/>
+  <path id="bottom-span" fill="url(#base)" d="M10 552 177 475 451 605 642 548 330 710Z"/>
+  <path id="middle-upper-fold" fill="url(#bridge)" d="M310 289 632 407 415 356Z"/>
+  <path id="right-return-fold" fill="url(#right-fold)" d="M415 356 632 407Q642 413 642 430L642 548Q642 560 632 566L451 605 272 515 355 480 426 450Q451 439 451 420Q451 378 415 356Z"/>
+  <path id="middle-span" fill="url(#middle)" d="M10 155 415 356Q451 378 451 420Q451 439 426 450L355 480 22 333Q10 329 10 315Z"/>
+  <path id="fold-edge" fill="none" stroke="#e3fcff" stroke-width="2" stroke-opacity=".7" d="M10 155 415 356Q451 378 451 420V605"/>
+</g>
+</svg>
