@@ -2,8 +2,8 @@
 // Pure module: used in the browser (experience-v7.js), at build time (scripts/prerender.mjs), by the homepage
 // (src/App.jsx renders the same header/footer) and by scripts/site-chrome.mjs, which writes the same header
 // and footer into the static pages.
-// Each project carries its sigil (a de Jong attractor seeded by its slug) large in a plate frame, drawn flat
-// by kit/v2/syber-sigil.js and, when WebGL is fast, spun in 3D over it by src/site/field.js.
+// Case studies lead with project context and real evidence. Sigil helpers remain
+// available to the shared site chrome and project directory.
 import { projects, nav, footerLinks, siteMap, EMAIL } from './site-data.js';
 import { params as sigilParams } from '../kit/v2/syber-sigil.js';
 export { projects };
@@ -26,7 +26,6 @@ export const icon = (name, size = 20, cls = '') =>
   `<svg class="sy-icon ${cls}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
 const esc = value => String(value).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const badge = (status, cls = '') => `<span class="sy-badge sy-badge--${status.kind}${cls ? ' ' + cls : ''}">${esc(status.label)}</span>`;
-const PLATES = ['II', 'III', 'IV', 'V', 'VI', 'VII'];
 
 // The Atlas: the full-screen site map inside the header's <details>, and the site's one directory (the footer does not
 // repeat it). Works without JS: Menu opens and closes it (src/syberlabs.css keeps Menu above the panel until JS boots),
@@ -96,14 +95,14 @@ function actions(p) {
 // A live destination, named at the top of the page so a visitor can reach the running thing in one tap.
 const liveBar = p => p.live ? `
 <section class="pj-live sy-container" aria-label="Where to use ${esc(p.name)}" data-reveal>
-  <a class="pj-live__card sy-card" href="${p.live.href}" rel="noopener" data-tilt="2">
+  <a class="pj-live__card" href="${p.live.href}" rel="noopener">
     <span class="pj-live__dot" aria-hidden="true"></span>
     <span class="pj-live__text"><span class="pj-live__label">${esc(p.status.label)} · <b>${esc(p.live.label)}</b></span><span class="pj-live__note">${esc(p.live.note)}</span></span>
     <span class="sy-btn sy-btn--solid pj-live__go">Open${icon('external', 18, 'sy-icon--trail')}</span>
   </a>
 </section>` : '';
 
-// A demo film in a plate frame. The video never autoplays; the poster is the page's still.
+// A real demo film. The video never autoplays; the poster is the page's still.
 const videoSection = p => p.video ? `
 <section class="pj-section pj-video sy-container" aria-labelledby="video-title">
   <div class="pj-split" data-reveal>
@@ -111,7 +110,7 @@ const videoSection = p => p.video ? `
     <p class="sy-title pj-split__main">${esc(p.video.title)}</p>
   </div>
   <figure class="pj-video__figure" data-reveal>
-    <div class="sy-plate pj-video__box" data-tilt="2"><video controls preload="none" playsinline poster="${p.video.poster}" aria-label="${esc(p.video.title)}"><source src="${p.video.src}" type="video/mp4"><a href="${p.video.src}">Download the film (MP4)</a></video></div>
+    <div class="pj-video__box"><video controls preload="none" playsinline poster="${p.video.poster}" aria-label="${esc(p.video.title)}"><source src="${p.video.src}" type="video/mp4"><a href="${p.video.src}">Download the film (MP4)</a></video></div>
     <figcaption class="sy-small pj-video__caption">${esc(p.video.caption)}</figcaption>
   </figure>
 </section>` : '';
@@ -133,11 +132,11 @@ const useSection = p => p.use ? `
     <div class="pj-split__main"><p class="sy-title">${esc(p.use.title)}</p>${p.use.note ? `<p class="sy-small pj-split__note">${esc(p.use.note)}</p>` : ''}</div>
   </div>
   <ol class="pj-how pj-how--steps pj-how--${p.use.steps.length}" data-reveal-children>
-    ${p.use.steps.map(([label, title, text]) => `<li class="pj-how__item sy-card" data-tilt="5"><span class="sy-label">${esc(label)}</span><h3 class="sy-subheading">${esc(title)}</h3><p>${esc(text)}</p></li>`).join('')}
+    ${p.use.steps.map(([label, title, text]) => `<li class="pj-how__item"><span class="sy-label">${esc(label)}</span><h3 class="sy-subheading">${esc(title)}</h3><p>${esc(text)}</p></li>`).join('')}
   </ol>
 </section>` : '';
 
-// Gallery: screenshots of the real thing, each in a plate frame with a caption that says exactly what it shows
+// Gallery: screenshots of the real thing, each with a caption that says exactly what it shows
 // (room, build, date, source of the text). p.gallery = { title, note, link?, items: [{ src, alt, label?, caption, width?, height? }] }.
 const gallerySection = p => p.gallery ? `
 <section class="pj-section pj-gallery sy-container" aria-labelledby="gallery-title">
@@ -146,7 +145,7 @@ const gallerySection = p => p.gallery ? `
     <div class="pj-split__main"><p class="sy-title">${esc(p.gallery.title)}</p>${p.gallery.note ? `<p class="sy-small pj-split__note">${esc(p.gallery.note)}${p.gallery.link ? ` <a class="sy-link pj-gallery__link" href="${p.gallery.link.href}">${esc(p.gallery.link.label)}</a>` : ''}</p>` : ''}</div>
   </div>
   <ul class="pj-gallery__grid" data-reveal-children>
-    ${p.gallery.items.map(it => `<li class="pj-gallery__item"><figure class="pj-gallery__figure"><div class="sy-plate pj-gallery__plate" data-tilt="3"><img src="${it.src}" alt="${esc(it.alt)}" width="${it.width || 1440}" height="${it.height || 900}" loading="lazy" decoding="async"></div><figcaption class="sy-small pj-gallery__caption">${it.label ? `<b>${esc(it.label)}</b>` : ''}${esc(it.caption)}</figcaption></figure></li>`).join('')}
+    ${p.gallery.items.map(it => `<li class="pj-gallery__item"><figure class="pj-gallery__figure"><div class="pj-gallery__plate"><img src="${it.src}" alt="${esc(it.alt)}" width="${it.width || 1440}" height="${it.height || 900}" loading="lazy" decoding="async"></div><figcaption class="sy-small pj-gallery__caption">${it.label ? `<b>${esc(it.label)}</b>` : ''}${esc(it.caption)}</figcaption></figure></li>`).join('')}
   </ul>
 </section>` : '';
 
@@ -158,7 +157,7 @@ const designSection = p => p.design ? `
     <p class="sy-title pj-split__main">${esc(p.design.title)}</p>
   </div>
   <ul class="pj-design" data-reveal-children>
-    ${p.design.items.map(([title, text]) => `<li class="pj-design__item sy-card" data-tilt="4"><h3 class="sy-subheading">${esc(title)}</h3><p>${esc(text)}</p></li>`).join('')}
+    ${p.design.items.map(([title, text]) => `<li class="pj-design__item"><h3 class="sy-subheading">${esc(title)}</h3><p>${esc(text)}</p></li>`).join('')}
   </ul>
 </section>` : '';
 
@@ -195,7 +194,7 @@ const runSection = p => p.run ? `
     <div class="pj-split__main"><p class="sy-title">${esc(p.run.title)}</p><p class="sy-small pj-split__note">${esc(p.run.note)}</p></div>
   </div>
   <figure class="pj-run__figure" data-reveal>
-    <div class="sy-plate pj-run__box" data-tilt="2"><p class="pj-run__cmd sy-label">${esc(p.run.command)}</p><pre class="pj-run__out"><code>${esc(p.run.output)}</code></pre></div>
+    <div class="pj-run__box"><p class="pj-run__cmd sy-label">${esc(p.run.command)}</p><pre class="pj-run__out"><code>${esc(p.run.output)}</code></pre></div>
     <figcaption class="sy-small pj-run__caption">${esc(p.run.caption)}</figcaption>
   </figure>
 </section>` : '';
@@ -205,7 +204,7 @@ const runSection = p => p.run ? `
 const depsSection = p => `
 <section id="dependency-evidence" class="pj-section pj-deps sy-container" aria-labelledby="deps-title" data-githits="${esc(p.slug)}" hidden></section>`;
 
-const sections = p => `${liveBar(p)}${videoSection(p)}${whySection(p)}${useSection(p)}${gallerySection(p)}${mapSection(p)}${runSection(p)}${designSection(p)}${evidenceSection(p)}${facts(p)}${depsSection(p)}`;
+const sections = p => `${liveBar(p)}${videoSection(p)}${gallerySection(p)}${runSection(p)}${mapSection(p)}${whySection(p)}${useSection(p)}${designSection(p)}${evidenceSection(p)}${facts(p)}${depsSection(p)}`;
 
 // Every section below the hero, in reading order. Exported so the static RISE page (projects/rise/index.html,
 // authored by hand) can carry the same sections: scripts/prerender.mjs fills its marker at build time. That page
@@ -248,12 +247,11 @@ function others(p) {
 }
 
 export function renderProject(p) {
-  const i = projects.indexOf(p);
   return {
     title: `${p.pageTitle || p.name} | SyberLabs`,
     description: `${p.intro} ${p.summary || ''}`.trim(),
     body: `${header('projects', { here: `/projects/${p.slug}/` })}
-<main id="main">
+<main id="main" class="pj-page">
   <section class="pj-hero sy-container" aria-labelledby="project-title">
     <div class="pj-hero__copy">
       ${crumbs([{ label: 'Work', href: '/#work' }, { label: p.name }])}
@@ -264,7 +262,6 @@ export function renderProject(p) {
       ${p.summary ? `<p class="pj-summary" data-reveal>${esc(p.summary)}</p>` : ''}
       <div data-reveal>${actions(p)}</div>
     </div>
-    ${sigilPlate(p.slug, PLATES[i] || 'II', p.name, 'pj-sigil')}
   </section>
   ${sections(p)}
   ${others(p)}
