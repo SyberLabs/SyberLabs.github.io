@@ -9,6 +9,7 @@ import { cleanText } from './living-lab/scene.js';
 import { MATEO_VIDEO } from './mateo-video.js';
 import BackgroundVideo from './BackgroundVideo.jsx';
 import { HERO_MEDIA, REVEAL } from './hero-media.js';
+import { FRAME_ART } from './frame-art.js';
 import plateStill from './plate-i.webp';
 import plateStillSm from './plate-i-sm.webp';
 import '../kit/v2/syber-atlas.css';
@@ -113,6 +114,7 @@ export default function App() {
   // idle: Gyre, the name rising; frame: the Sophia frame draws, the role follows; earth: Earth is framed;
   // done: the panel (line, actions, availability) rises. Every other visit, and any failure, is simply done.
   const [phase, setPhase] = useState('idle');
+  const [framed, setFramed] = useState('earth'); // what the Sophia frame holds now (FRAME_ART id), for the credit
   const [revealing, setRevealing] = useState(false); // false in the served HTML, so the panel is never inert without JS
   const settle = useRef(() => {});
   useEffect(() => {
@@ -144,10 +146,13 @@ export default function App() {
     <main id="main">
       <section className={`pitch-hero${started ? ' is-playing' : ''}`} data-phase={phase} aria-labelledby="hero-title" id="founder">
         <picture className="pitch-hero__art"><source media="(max-width: 600px)" srcSet={HERO_MEDIA.portraitPoster} /><img src={HERO_MEDIA.poster} width="1280" height="720" alt="" fetchPriority="high" /></picture>
-        <BackgroundVideo pitchPlaying={started} onTime={onClipTime} onUnavailable={() => settle.current()} />
+        <BackgroundVideo pitchPlaying={started} onTime={onClipTime} onUnavailable={() => settle.current()} onArt={setFramed} />
         <div className="pitch-hero__copy sy-wrap">
+          <h1 id="hero-title" tabIndex={-1}>
+            <span className="pitch-hero__brand">SyberLabs</span>{' '}
+            <span className="pitch-hero__by">by <img className="pitch-hero__signature" src="/mateo/brand/mateo-robles-signature.webp" width="1200" height="511" alt="Mateo Robles" /></span>
+          </h1>
           <p className="pitch-hero__role">Software &amp; Product Engineer</p>
-          <h1 id="hero-title" tabIndex={-1}><span>Mateo</span> <span>Robles</span></h1>
           <div className="pitch-hero__panel" inert={revealing && phase !== 'done' ? true : undefined}>
             <p className="pitch-hero__line">Python integrations and interactive JavaScript products.</p>
             <div className="pitch-hero__actions">
@@ -167,7 +172,7 @@ export default function App() {
       </section>
       <div className="film-notes sy-wrap">
         <span>{MATEO_VIDEO.credit}</span>
-        <span className="hero-credit">Gyre to RISE Sophia. Imagery: <a href="https://images.nasa.gov/details/GSFC_20171208_Archive_e002131">NASA/GSFC</a> (Earth).</span>
+        <span className="hero-credit">Gyre to RISE Sophia. In the frame: {FRAME_ART.map((a, i) => <React.Fragment key={a.id}>{i ? ' · ' : ''}<span className={a.id === framed ? 'is-framed' : undefined}>{a.date ? <><a href={a.href}>{a.title}</a>, {a.by}, {a.date}, The Cleveland Museum of Art, CC0</> : a.made ? <>{a.title}, {a.by}, {a.made}</> : <>{a.title}, <a href={a.href}>{a.by}</a></>}</span></React.Fragment>)}.</span>
         <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((p, i) => <p key={i}>{p}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>
         {videoError && <p role="status">Video unavailable. Read the transcript or explore the work below.</p>}
       </div>
@@ -178,6 +183,19 @@ export default function App() {
       <section className="demo-work sy-wrap" aria-label="Product demonstrations">
         <article><div><p className="sy-eyebrow">Engines / Mateo’s browser art</p><h2>Mathematics you can play.</h2><p>Gyre turns mathematical rules into moving trails of light.</p><a href={GYRE_APP}>Explore Gyre <span aria-hidden="true">↗</span></a></div><video controls playsInline preload="none" poster="/mateo/demos/gyre-orbit.jpg" width="960" height="540" aria-label="Recorded Gyre interaction" onPlay={pauseOtherVideos}><source src="/mateo/demos/gyre-orbit.mp4" type="video/mp4" /></video></article>
         <article><div><p className="sy-eyebrow">RISE / Lead developer</p><h2>A different way to read.</h2><p>An interactive reading app. I led core development of timed text, moving graphics, sound and video export.</p><a href="https://github.com/SyberLabs/RISE/pull/371">Selected changes and tests <span aria-hidden="true">↗</span></a></div><figure><video controls playsInline preload="none" poster="/mateo/demos/rise-playback.jpg" width="960" height="540" aria-label="Recorded RISE reading" onPlay={pauseOtherVideos}><source src="/mateo/demos/rise-playback.mp4" type="video/mp4" /></video><figcaption>Recorded product demonstration. RISE is a team project.</figcaption></figure></article>
+      </section>
+      <section id="lab" className="lab-identity sy-wrap" aria-labelledby="lab-identity-title">
+        <div className="lab-identity__copy">
+          <img className="lab-identity__emblem" src="/mateo/lab/emblem-mateo-robles.webp" width="900" height="675" alt="" loading="lazy" decoding="async" />
+          <p className="sy-eyebrow">The lab</p>
+          <h2 id="lab-identity-title">Infrastructure for AI agents.</h2>
+          <p>When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules the system controls, and records the reason when it refuses one.</p>
+          <a href="/projects/syberwork/">How SyberWork works <span aria-hidden="true">→</span></a>
+        </div>
+        <figure className="lab-identity__art">
+          <img src="/mateo/lab/agent-network-mateo-robles.webp" width="1100" height="921" alt="Glowing blue nodes joined by arcing links, like a network of agents." loading="lazy" decoding="async" />
+          <figcaption>Network and emblem: Mateo Robles, made with Midjourney.</figcaption>
+        </figure>
       </section>
       <Forms />
       <details className="orb-experiment sy-wrap"><summary>Explore the Orb</summary><Hero /></details>

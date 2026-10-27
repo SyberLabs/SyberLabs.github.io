@@ -142,7 +142,8 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .pitch-hero__art img { width:100%; height:100%; object-fit:cover; object-position:center; }
 .pitch-hero__background { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; opacity:0; pointer-events:none; }
 .pitch-hero__background.is-ready { opacity:1; }
-.pitch-hero.is-playing .pitch-hero__background { visibility:hidden; }
+.pitch-hero.is-playing .pitch-hero__background, .pitch-hero.is-playing .pitch-hero__clip { visibility:hidden; }
+.pitch-hero__clip { position:absolute; inset:0; pointer-events:none; }
 .pitch-hero__motion { position:absolute; top:88px; right:var(--sy-gutter); z-index:4; min-height:44px; padding:10px 14px; border:1px solid #f4f2ed66; border-radius:2px; background:#030708c9; color:#f4f2ed; font:12px var(--sy-sans); cursor:pointer; }
 .pitch-hero__play { background:#030708b8; border-radius:2px; }
 @media(max-width:600px) { .pitch-hero__art img,.pitch-hero__background { object-position:center; } .pitch-hero__motion { top:82px; font-size:11px; padding:8px 10px; } }
@@ -160,8 +161,24 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .pitch-hero::after { background:linear-gradient(90deg,#030708a6 0%,#03070800 48%),linear-gradient(0deg,#03070899 0%,#03070800 34%); }
 .pitch-hero__copy { display:flex; flex-direction:column; justify-content:center; min-height:max(680px,100svh); padding-top:120px; padding-bottom:150px; }
 .pitch-hero__role { margin:0 0 22px; }
-.pitch-hero h1 { font-size:clamp(64px,7.2vw,104px); line-height:.94; margin:0 0 32px; }
+.pitch-hero h1 { margin:0 0 26px; line-height:1; }
 .pitch-hero h1>span { display:block; }
+/* SyberLabs in chromatic blue: a chrome gradient in the letters, a fine light bezel on their edges, embossed with a
+   lit top edge and a deep shadow under, and one slow sheen across on arrival */
+.pitch-hero__brand { position:relative; width:max-content; padding:.04em .02em .08em; font:600 clamp(64px,7.4vw,112px)/.95 var(--sy-sans); letter-spacing:-.045em; color:transparent; text-shadow:none;
+  background:linear-gradient(100deg,#0000 38%,#ffffffb3 48%,#0000 58%) -160% 0/250% 100% no-repeat,
+    linear-gradient(180deg,#f3fbff 0%,#c3e9ff 17%,#79c2ff 33%,#2a74e6 47%,#0b2c78 52%,#1f63d6 60%,#5fb0ff 76%,#c9eeff 92%,#f3fbff 100%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-stroke:1px #d9f3ff8c;
+  filter:drop-shadow(0 -1px 0 #f2fbffb3) drop-shadow(0 1px 0 #041845) drop-shadow(0 3px 2px #020b22e6) drop-shadow(0 14px 30px #000000c4); }
+.pitch-hero__brand { animation:brand-sheen 2.6s cubic-bezier(.3,.6,.2,1) .9s both; }
+@keyframes brand-sheen { from { background-position:-160% 0,0 0; } to { background-position:260% 0,0 0; } }
+.pitch-hero__brand:hover { animation:brand-sheen 1.8s cubic-bezier(.3,.6,.2,1) both; }
+/* by, signed: the signature writes itself in from the left */
+.pitch-hero__by { display:flex !important; align-items:center; gap:14px; margin-top:6px; padding-left:.3em; color:#c4d8dd; font:400 18px/1 var(--sy-sans); letter-spacing:.02em; }
+.pitch-hero__signature { width:clamp(220px,24vw,340px); height:auto; margin:-14px 0 -22px; filter:drop-shadow(0 2px 3px #000c); }
+.sy-reveal .pitch-hero__signature { animation:signature-write 1.9s cubic-bezier(.45,.1,.25,1) 1s both; }
+@keyframes signature-write { from { clip-path:inset(0 100% 0 0); } to { clip-path:inset(0 0 0 0); } }
+.pitch-hero__role { margin-top:26px; }
 .pitch-hero__panel { width:min(100%,500px); padding:24px 26px 22px; border:1px solid #a2ddea38; border-radius:4px; background:#030708a3; -webkit-backdrop-filter:blur(14px) saturate(1.15); backdrop-filter:blur(14px) saturate(1.15); box-shadow:0 20px 60px #0009; text-shadow:none; }
 .pitch-hero__line { font-size:22px; line-height:1.35; letter-spacing:-.02em; max-width:24ch; }
 .pitch-hero__actions { margin-top:22px; }
@@ -169,7 +186,7 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .pitch-hero__art, .pitch-hero__background.is-ready { opacity:.94; }
 @media(min-width:801px) {
   /* scaled into a soft vignette: the frame and Earth are held whole, right of the copy, never cropped */
-  .pitch-hero__art, .pitch-hero__background { transform:translateX(21%) scale(.72); -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%,#000 86%,transparent 100%),linear-gradient(0deg,transparent 0,#000 14%,#000 86%,transparent 100%); -webkit-mask-composite:source-in; mask-image:linear-gradient(90deg,transparent 0,#000 30%,#000 86%,transparent 100%),linear-gradient(0deg,transparent 0,#000 14%,#000 86%,transparent 100%); mask-composite:intersect; }
+  .pitch-hero__art, .pitch-hero__clip { transform:translateX(21%) scale(.72); -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%,#000 86%,transparent 100%),linear-gradient(0deg,transparent 0,#000 14%,#000 86%,transparent 100%); -webkit-mask-composite:source-in; mask-image:linear-gradient(90deg,transparent 0,#000 30%,#000 86%,transparent 100%),linear-gradient(0deg,transparent 0,#000 14%,#000 86%,transparent 100%); mask-composite:intersect; }
 }
 
 /* First visit (html.sy-reveal, index.html), timed to the clip by data-phase (src/App.jsx, REVEAL in hero-media.js):
@@ -178,6 +195,8 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .pitch-hero h1>span, .pitch-hero__role, .pitch-hero__panel { transition:opacity .9s ease, transform 1.3s cubic-bezier(.16,.84,.24,1), filter 1s ease; }
 .sy-reveal .pitch-hero h1>span { animation:hero-rise 1.5s cubic-bezier(.16,.84,.24,1) .35s both; }
 .sy-reveal .pitch-hero h1>span + span { animation-delay:.55s; }
+.sy-reveal .pitch-hero .pitch-hero__brand { animation:brand-rise 1.5s cubic-bezier(.16,.84,.24,1) .35s both, brand-sheen 2.6s cubic-bezier(.3,.6,.2,1) 1.5s both; }
+@keyframes brand-rise { from { opacity:0; transform:translateY(30px); } }
 @keyframes hero-rise { from { opacity:0; transform:translateY(30px); filter:blur(12px); } }
 .sy-reveal .pitch-hero[data-phase="idle"] .pitch-hero__role { opacity:0; transform:translateY(10px); }
 .sy-reveal .pitch-hero:not([data-phase="done"]) .pitch-hero__panel { opacity:0; transform:translateY(40px); filter:blur(8px); visibility:hidden; transition:opacity .9s ease, transform 1.3s cubic-bezier(.16,.84,.24,1), filter 1s ease, visibility 0s 1.3s; }
@@ -190,16 +209,39 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 }
 @media(max-width:600px) {
   .pitch-hero__role { font-size:13px; margin-bottom:10px; }
-  .pitch-hero h1 { font-size:clamp(40px,11.4vw,50px); line-height:1; white-space:nowrap; margin:0; }
-  .pitch-hero h1>span { display:inline; }
+  .pitch-hero h1 { margin:0; }
+  .pitch-hero__brand { font-size:clamp(50px,14vw,60px); }
+  .pitch-hero__by { gap:10px; font-size:14px; margin-top:2px; }
+  .pitch-hero__signature { width:min(190px,48vw); margin:-10px 0 -16px; }
+  .pitch-hero__role { margin-top:10px; }
+  .pitch-hero__motion { top:auto; bottom:42px; right:var(--sy-gutter); }
   .pitch-hero__panel { width:100%; padding:18px 18px 16px; }
   .pitch-hero__line { font-size:19px; max-width:none; }
   .pitch-hero__actions { margin-top:16px; }
   .pitch-hero__availability { font-size:12px; margin-top:12px; }
   .pitch-hero__play { bottom:30px; }
   /* the frame held between the name and the panel, fading out before the clip's edges */
-  .pitch-hero__art, .pitch-hero__background { transform:translateY(-6%) scale(.66); -webkit-mask-image:radial-gradient(closest-side,#000 66%,transparent 100%); mask-image:radial-gradient(closest-side,#000 66%,transparent 100%); }
+  .pitch-hero__art, .pitch-hero__clip { transform:translateY(-3%) scale(.58); -webkit-mask-image:radial-gradient(closest-side,#000 66%,transparent 100%); mask-image:radial-gradient(closest-side,#000 66%,transparent 100%); }
 }
 @media(prefers-reduced-motion:reduce) {
-  .pitch-hero h1>span, .pitch-hero__role, .pitch-hero__panel { transition:none; animation:none; }
+  .pitch-hero h1>span, .pitch-hero__role, .pitch-hero__panel, .pitch-hero__brand, .pitch-hero__signature { transition:none; animation:none; }
 }
+
+/* The Sophia frame's painting: a disc laid exactly over Earth's (placed by BackgroundVideo.jsx from the clip's
+   cover box; --grow and opacity follow the clip frame by frame), shaded at the limb like a sphere behind glass. */
+.pitch-hero__frame-art { position:absolute; left:var(--disc-x,50%); top:var(--disc-y,50%); width:calc(var(--disc-r,0px) * 2); height:calc(var(--disc-r,0px) * 2); border-radius:50%; overflow:hidden; transform:translate(-50%,-50%) scale(var(--grow,1)); will-change:opacity,transform; }
+.pitch-hero__frame-art img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.pitch-hero__frame-art::after { content:""; position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle at 34% 28%,#ffffff2e 0,#ffffff00 32%),radial-gradient(circle,#0000 58%,#03070866 82%,#030708e6 100%); }
+.hero-credit .is-framed, .hero-credit .is-framed a { color:#f4f2ed; }
+
+/* The lab: Mateo's own techy pieces carry the studio's identity below the hiring content. The emblem is a small
+   chrome seal over the heading; the agent network glows on the stage's black with no box around it. */
+.lab-identity { display:grid; grid-template-columns:.9fr 1.1fr; align-items:center; gap:clamp(32px,6vw,96px); padding-block:100px; border-top:1px solid var(--sy-rule); }
+.lab-identity__emblem { display:block; width:clamp(120px,13vw,190px); height:auto; margin-bottom:18px; mix-blend-mode:screen; } /* its black ground drops out on the stage */
+.lab-identity h2 { margin:18px 0; font:500 clamp(32px,4vw,54px)/1.08 var(--sy-sans); letter-spacing:-.035em; }
+.lab-identity__copy>p:not(.sy-eyebrow) { max-width:42ch; color:var(--sy-mist); font-size:18px; line-height:1.6; }
+.lab-identity__copy a { display:inline-flex; align-items:center; gap:6px; min-height:44px; color:var(--sy-ice); font-size:15px; }
+.lab-identity__art { margin:0; }
+.lab-identity__art img { display:block; width:100%; height:auto; mix-blend-mode:screen; -webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%); mask-image:radial-gradient(closest-side,#000 72%,transparent 100%); }
+.lab-identity__art figcaption { padding-top:8px; color:var(--sy-mist); font-size:12px; line-height:1.5; text-align:center; }
+@media(max-width:800px) { .lab-identity { grid-template-columns:1fr; gap:24px; padding-block:64px; } }

@@ -4,11 +4,22 @@ import { readFile, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { MATEO_VIDEO as video } from '../src/mateo-video.js';
 import { HERO_MEDIA } from '../src/hero-media.js';
+import { FRAME_ART } from '../src/frame-art.js';
 
 for (const path of Object.values(HERO_MEDIA)) {
   assert.match(path, /^\/mateo\/demos\/[a-z0-9.-]+$/i, 'Hero media must be local');
   const file = await stat(resolve(path.slice(1)));
   assert.ok(file.isFile() && file.size > 0 && file.size <= 4 * 1024 * 1024, 'Hero media must exist and stay below 4 MiB');
+}
+
+// The Sophia frame's paintings: local, present, credited and modest in size, so a switch never shows a broken image.
+for (const art of FRAME_ART.filter(a => a.src)) {
+  assert.match(art.src, /^\/mateo\/frame\/[a-z0-9.-]+\.(jpg|webp)$/i, 'Frame art must be local');
+  const file = await stat(resolve(art.src.slice(1))).catch(() => null);
+  assert.ok(file?.isFile() && file.size > 20 * 1024 && file.size <= 1.5 * 1024 * 1024, `Frame art ${art.src} must exist, between 20 KiB and 1.5 MiB`);
+  // a museum work names its date and links its record; Mateo's own pieces say how they were made
+  const credited = art.date ? /^https:\/\/www\.clevelandart\.org\/art\//.test(art.href) : art.by === 'Mateo Robles' && /midjourney/i.test(art.made || '');
+  assert.ok(art.title && art.by && credited, `Frame art ${art.id} needs its credit and source`);
 }
 
 if (video) {
