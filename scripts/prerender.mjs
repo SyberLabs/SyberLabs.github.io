@@ -4,7 +4,6 @@
 import { readFile, writeFile, rm } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
-import { createHash } from 'node:crypto';
 
 const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -18,10 +17,8 @@ async function inject(file, markerRe, replacement) {
   await writeFile(file, replacement(html));
 }
 
-const styleVersion = createHash('sha256').update(await readFile('dist/syberlabs.css')).digest('hex').slice(0, 12);
-
 const { render, renderGitHits } = await import(pathToFileURL(resolve('dist-ssr/entry-server.js')).href);
-await inject(resolve('dist/index.html'), /<div id="root"><\/div>/, html => html.replace('<div id="root"></div>', `<div id="root">${render()}</div>`).replace('href="/syberlabs.css"', `href="/syberlabs.css?v=${styleVersion}"`));
+await inject(resolve('dist/index.html'), /<div id="root"><\/div>/, html => html.replace('<div id="root"></div>', `<div id="root">${render()}</div>`));
 await inject(resolve('dist/mateo/index.html'), /<!-- mateo:video -->/, html => html.replace('<!-- mateo:video -->', mateoFilm));
 // /stack/ carries the GitHits dependency totals (src/githits-panel.jsx), built from the same snapshots as the project panels.
 await inject(resolve('dist/stack/index.html'), /<!-- stack:githits -->/, html => html.replace('<!-- stack:githits -->', renderGitHits()));
