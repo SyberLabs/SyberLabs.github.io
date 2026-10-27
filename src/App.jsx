@@ -23,7 +23,7 @@ import './home.css';
 // reduced motion gets one still exposure per text. The words the dots spell are also in the page as .sy-sr text.
 const ORB_WORDS = ['SyberLabs', 'Mateo', 'Build', 'Create', 'Explore', 'Type here ↓'];
 function Hero() {
-  const canvas = useRef(null), copy = useRef(null), orb = useRef(null);
+  const canvas = useRef(null), copy = useRef(null), orb = useRef(null), manualPause = useRef(false);
   const [live, setLive] = useState(false);
   const [text, setText] = useState('');
   const [paused, setPaused] = useState(false);
@@ -32,7 +32,7 @@ function Hero() {
     setLive(o.supported);
     // the Atlas covers the page with a blurred backdrop: hold the orb instead of re-blurring a moving one
     const html = document.documentElement;
-    const mo = new MutationObserver(() => html.classList.contains('sy-atlas-open') ? o.pause() : o.resume());
+    const mo = new MutationObserver(() => html.classList.contains('sy-atlas-open') || manualPause.current ? o.pause() : o.resume());
     mo.observe(html, { attributes: true, attributeFilter: ['class'] });
     return () => { mo.disconnect(); o.destroy(); };
   }, []);
@@ -57,7 +57,7 @@ function Hero() {
       <form className="home-orb__bar" onSubmit={e => e.preventDefault()}>
         <input type="text" value={text} onChange={type} maxLength={180} autoComplete="off" spellCheck={false} enterKeyHint="done" aria-label="Type anything; the orb spells it" placeholder="Type anything…" />
         <span className="home-orb__hint" aria-hidden="true">{text ? 'Your words stay in this browser' : 'Your words shape the light'}</span>
-      {live && <button className="home-orb__pause" type="button" aria-pressed={paused} onClick={() => { if (paused) orb.current.resume(); else orb.current.pause(); setPaused(!paused); }}>{paused ? 'Resume animation' : 'Pause animation'}</button>}
+      {live && <button className="home-orb__pause" type="button" aria-pressed={paused} onClick={() => { manualPause.current = !paused; if (paused) orb.current.resume(); else orb.current.pause(); setPaused(!paused); }}>{paused ? 'Resume animation' : 'Pause animation'}</button>}
       </form>
     </div>
   </section>;
@@ -78,7 +78,7 @@ function Forms() {
   }, []);
   const pick = i => { engine.current?.show(i); setForm(i); };
   const toggle = () => { const p = !paused; setPaused(p); engine.current?.setPaused(p); };
-  return <section id="forms" className="home-forms sy-wrap" aria-labelledby="forms-title">
+  return <section id="forms" className={`home-forms sy-wrap${live ? ' is-live' : ''}`} aria-labelledby="forms-title">
     <div className="site-head home-forms__head">
       <div>
         <p className="sy-eyebrow">Pointillism</p>
@@ -86,6 +86,7 @@ function Forms() {
       </div>
       <p className="home-forms__note sy-small">One field of dots becomes rain, a tree, a network or a galaxy. Choose a form.</p>
     </div>
+    {!live && <p className="home-forms__fallback">The interactive scene is unavailable in this browser. The recorded demos above still work.</p>}
     <figure className={`home-forms__stage${live ? ' is-live' : ''}`}>
       <canvas ref={canvas} className="home-forms__canvas" aria-hidden="true" />
       <figcaption className="home-forms__now"><span className="sy-label">Now</span> <span>{FORMS[form].label}</span></figcaption>

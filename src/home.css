@@ -132,3 +132,6 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .home-orb__pause { min-height:44px; border:0; padding:8px; background:none; color:var(--sy-ice); font:13px var(--sy-sans); cursor:pointer; }
 
 .home-contact a { overflow-wrap:anywhere; }
+
+.home-forms:not(.is-live) :is(.home-forms__stage,.home-forms__controls) { display:none; }
+.home-forms__fallback { color:var(--sy-mist); font-size:14px; }
