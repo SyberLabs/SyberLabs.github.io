@@ -9,7 +9,7 @@
      reduced    Defaults to prefers-reduced-motion: each form is drawn once, still, and the cycle does not advance.
 
    Canvas 2D, 1 device pixel per CSS px up to 2x, at most 60 frames a second. Pauses off screen and in hidden tabs.
-   The pointer gently parts the dots. Forms live in a unit space (x in ±1.3, y in ±1, y down) scaled to the canvas. */
+   Pause stops the loop (the forms' clock and the cycle); the last frame stays. The pointer gently parts the dots. Forms live in a unit space (x in ±1.3, y in ±1, y down) scaled to the canvas. */
 
 export const FORMS = [
   { id: 'syberlabs', label: 'SyberLabs' },
@@ -212,7 +212,7 @@ export function mountPointillism(canvas, { onForm, reduced } = {}) {
   if (!ctx) return none;
   const still = reduced ?? (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
   const r = rng32(0x5eb3);
-  let W = 0, H = 0, S = 1, dpr = 1, N = 0, forms = [], cur = 0, prev = 0, switched = 0, lastAuto = 0, raf = 0, last = 0, t0 = performance.now();
+  let W = 0, H = 0, S = 1, dpr = 1, N = 0, forms = [], cur = 0, prev = 0, switched = 0, lastAuto = 0, raf = 0, last = 0, clock = 0, settleUntil = 0;
   let onScreen = true, paused = false, dead = false, ptr = null;
   let px, py, vx, vy, cr, cg, cb, ca, cz, delay, tx, ty, ta, ox, oy, oa, lx, ly;
 
@@ -237,17 +237,19 @@ export function mountPointillism(canvas, { onForm, reduced } = {}) {
     S = Math.min(W / 2.6, H / 2.2);
     const want = Math.max(900, Math.min(2600, Math.round(W * H / 190)));
     if (!N || Math.abs(want - N) / N > .3) allocate(want);
-    if (still) render(performance.now());
+    if (still || paused) render(performance.now()); // a frozen frame is redrawn at the new size, not advanced
   };
 
   const targets = (f, t, X, Y, A) => f.step(t, X, Y, A);
 
   function render(now) {
-    const t = (now - t0) / 1000, e = (now - switched) / 1000, f = forms[cur];
+    // the forms' own clock (rain, wind, signals, rotation) stands still while paused
+    const dt = Math.min((now - (last || now)) / 1000, 1 / 30); last = now;
+    if (!paused) clock += dt;
+    const t = clock, e = (now - switched) / 1000, f = forms[cur];
     targets(f, still ? 0 : t, tx, ty, ta);
     const moving = !still && e < STAGGER + .05 && prev !== cur;
     if (moving) targets(forms[prev], t, ox, oy, oa);
-    const dt = Math.min((now - (last || now)) / 1000, 1 / 30); last = now;
     const K = 70, D = 13, cs = Math.min(1, dt * 3.2), as = Math.min(1, dt * 6);
     for (let i = 0; i < N; i++) {
       const go = !moving || e >= delay[i];
@@ -280,6 +282,9 @@ export function mountPointillism(canvas, { onForm, reduced } = {}) {
       if (!paused && now - lastAuto > HOLD + STAGGER * 1000) show((cur + 1) % FORMS.length, now);
       render(now);
     }
+    // paused: the loop stops and the last frame stays on the canvas. A form picked while paused flies into place
+    // (its clock still stopped) and then holds.
+    if (paused && now >= settleUntil) return;
     raf = requestAnimationFrame(tick);
   };
   const start = () => { if (!still && !raf && !dead && onScreen && !document.hidden) { last = 0; raf = requestAnimationFrame(tick); } };
@@ -288,9 +293,9 @@ export function mountPointillism(canvas, { onForm, reduced } = {}) {
     if (i === cur || !N) return;
     prev = cur; cur = i; switched = lastAuto = now;
     for (let k = 0; k < N; k++) { delay[k] = r() * STAGGER; if (!still) { vx[k] += (r() - .5) * 1.4; vy[k] += (r() - .5) * 1.4; } }
-    lx.fill(NaN);
+    lx.fill(NaN); settleUntil = now + (STAGGER + 1.4) * 1000;
     onForm?.(i);
-    if (still) render(now);
+    if (still) render(now); else start();
   }
 
   const toUnit = e => { const b = canvas.getBoundingClientRect(); return [(e.clientX - b.left - W / 2) / S, (e.clientY - b.top - H / 2) / S]; };
@@ -310,7 +315,7 @@ export function mountPointillism(canvas, { onForm, reduced } = {}) {
     supported: true,
     show: i => show(i),
     next: () => show((cur + 1) % FORMS.length),
-    setPaused: p => { paused = !!p; if (!paused) lastAuto = performance.now(); },
+    setPaused: p => { paused = !!p; if (!paused) { lastAuto = performance.now(); start(); } },
     destroy() { dead = true; cancelAnimationFrame(raf); ro?.disconnect(); io?.disconnect(); document.removeEventListener('visibilitychange', vis); canvas.removeEventListener('pointermove', move); canvas.removeEventListener('pointerleave', leave); },
   };
 }
