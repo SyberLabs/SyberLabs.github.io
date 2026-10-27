@@ -115,7 +115,7 @@ export default function App() {
   const watch = () => { movie.current.play().then(() => movie.current.focus()).catch(() => setVideoError(true)); };
   const overview = () => { movie.current.pause(); setStarted(false); requestAnimationFrame(() => play.current.focus()); };
   return <>
-    <div className="home-chrome home-chrome--hiring" dangerouslySetInnerHTML={{ __html: header('', { here: '/', sticky: false, script: false, hiring: true }) }} />
+    <div className="home-chrome" dangerouslySetInnerHTML={{ __html: header('', { here: '/', sticky: false, script: false, hiring: true }) }} />
     <main id="main">
       <section ref={stage} className={`pitch-hero${started ? ' is-playing' : ''}`} aria-labelledby="hero-title" id="founder">
         <picture className="pitch-hero__art"><source media="(max-width: 600px)" srcSet={HERO_MEDIA.portraitPoster} /><img src={HERO_MEDIA.poster} width="1280" height="720" alt="" fetchPriority="high" /></picture>
@@ -124,7 +124,7 @@ export default function App() {
         <div ref={copy} className="pitch-hero__copy sy-wrap">
           <p className="pitch-hero__role">Software &amp; Product Engineer</p>
           <h1 id="hero-title" tabIndex={-1}><span data-intro-target>Mateo</span><span data-intro-target>Robles</span></h1>
-          <p className="pitch-hero__line">Useful software. Ready to build.</p>
+          <p className="pitch-hero__line">Python integrations and interactive JavaScript products.</p>
           <div className="pitch-hero__actions">
             <a data-intro-target className="sy-btn sy-btn--solid" href={CONTACT + '?subject=Interview%20with%20Mateo%20Robles'}>Interview Mateo</a>
             <a data-intro-target className="sy-btn sy-btn--line" href={RESUME}>View résumé</a>

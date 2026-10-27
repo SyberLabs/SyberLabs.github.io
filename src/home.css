@@ -171,8 +171,10 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .sy-intro-pending .pitch-hero__copy { opacity:0; visibility:hidden; pointer-events:none; }
 .pitch-hero[data-intro-ready="true"] .hero-intro__poster { display:none; }
 .pitch-hero.is-playing .hero-intro,.pitch-hero.is-playing .hero-intro__skip { display:none; }
-.home-chrome--hiring .sy-nav { display:block; margin-left:auto; }
-.home-chrome--hiring .sy-menu { margin-left:24px; }
+.hero-intro__identity { display:none; position:absolute; top:88px; left:var(--sy-gutter); z-index:3; margin:0; padding:10px 14px; background:#030708c9; color:#f4f2ed; font:500 16px/1.4 var(--sy-sans); }
+.hero-intro__identity span { display:block; margin-top:3px; color:#c4d8dd; font-size:12px; font-weight:400; }
+.sy-intro-pending .hero-intro__identity { display:block; }
+.sy-intro-pending .pitch-hero__motion { display:none; }
 @media(max-width:600px) {
   .pitch-hero__copy { padding-top:max(140px,22svh); padding-bottom:200px; }
   .pitch-hero h1 { font-size:clamp(64px,18vw,82px); white-space:normal; margin-bottom:24px; }
@@ -182,10 +184,6 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
   .pitch-hero__availability { font-size:12px; }
   .pitch-hero__play { bottom:30px; }
   .hero-intro__skip { bottom:106px; }
-  .home-chrome--hiring .sy-nav ul { gap:16px; }
-  .home-chrome--hiring .sy-nav a { font-size:12px; }
-  .home-chrome--hiring .sy-menu { margin-left:16px; }
-  .home-chrome--hiring .sy-menu summary span { display:none; }
 }
 @media(prefers-reduced-motion:reduce) {
   .sy-intro-pending .hero-intro,.sy-intro-pending .hero-intro__skip { display:none; }
