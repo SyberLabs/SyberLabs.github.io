@@ -40,9 +40,8 @@ export const MATEO_PORTFOLIO = '/mateo/';
 
 // Selected work and hiring paths. Research remains available through its archive.
 export const nav = [
-  { id: 'projects', label: 'Selected work', href: '/#work' },
-  { id: 'mateo', label: 'Meet Mateo', href: MATEO_PORTFOLIO },
-  { id: 'contact', label: 'Contact', href: '/mateo/#contact' },
+  { id: 'projects', label: 'Work', href: '/#work' },
+  { id: 'mateo', label: 'About', href: MATEO_PORTFOLIO },
 ];
 
 export const workWithUs = { label: 'Work with us', href: '/services/' };
@@ -51,6 +50,7 @@ export const workWithUs = { label: 'Work with us', href: '/services/' };
 // selected menu (siteMap below) is the header's Menu (the Atlas), a <details> that opens and closes without JavaScript.
 export const footerLinks = [
   { label: 'Contact', href: CONTACT },
+  { label: '925-949-3105', href: 'tel:+19259493105' },
   { label: 'Résumé', href: RESUME },
   { label: 'Privacy', href: '/privacy/' },
   { label: 'Subscriber account', href: RISE_PLUS.href, external: true },
@@ -59,11 +59,11 @@ export const footerLinks = [
 
 export const projects = [
   {
-    slug: 'rise', number: '01', name: 'RISE', category: 'Audiovisual reader', accent: '#f2d9a6',
+    slug: 'rise', number: '01', name: 'RISE', category: 'Interactive reading app', accent: '#f2d9a6',
     reflects: 'SyberLabs/RISE@998d725 · verified 2026-10-05',
     pageTitle: 'RISE: Browser-Based Audiovisual Reader',
     headline: 'Read beyond the page.',
-    intro: 'A browser-based audiovisual reader. RISE presents a text through time, image, sound and procedural visuals, so a book can be read as a timed stream or a typeset page.',
+    intro: 'An interactive reading app that combines text, sound and moving visuals in your browser. Read words at a pace you choose, or switch to a page view.',
     summary: 'Open beta at rise.syberlabs.io. Reading runs entirely in the browser, and the files and compositions you bring stay in browser storage. An optional AI reading request runs on the reader’s own model connection; once connected, visual direction also sends sections of the reading text there. The RISE server holds no model credential.',
     status: { kind: 'live', label: 'Live · open beta' },
     primary: { label: 'Open RISE', href: RISE_APP },
@@ -103,7 +103,7 @@ export const projects = [
           caption: 'Make, opened from the Menu onto its Workshop pane with Vault, Scriptorium, Visual Lab and Visual Catalog alongside: a new, empty composition; the asset list is the build’s own procedural engines and sourced collections.' },
       ] },
     map: { id: 'rise', title: 'What a model may choose, and what it may not.',
-      note: 'The reader-owned decision contract, stepped through by rule from the code at 998d725: the finite menu, one call on the reader’s own connection, admission of offered keys only, and two refusals that open no reading.',
+      note: 'How RISE checks an AI reading suggestion, using the rules at 998d725: the model makes one request through your connection and can choose only from the supplied options. Two examples show a suggestion being refused without opening a reading.',
       fallback: 'This map needs JavaScript.' },
     design: { title: 'How it is built',
       items: [
@@ -111,7 +111,7 @@ export const projects = [
         ['Content-addressed texts', 'Book text is served as SHA-256-named JSON and verified on every read, which took 15.4 MB out of the JavaScript bundle.'],
         ['A first-load budget', 'About 59 KB brotli over three requests, held under a 64 KB budget that CI enforces.'],
         ['No shared inference', 'The Cloudflare Worker serves the app and a static decision catalog. It runs no model and holds no model credential; the six former inference routes answer 410.'],
-        ['Composer, in ChatGPT', 'In ChatGPT, RISE is a Composer: the host model composes one sealed Current in a single tool call, the Worker validates and admits it, and nothing plays until the reader presses Begin. A refused Current never becomes playable.'],
+        ['Composer, in ChatGPT', 'In ChatGPT, RISE lets the model prepare a reading with text, sound and visuals in one tool call. RISE checks the result before making it playable, and the reader presses Begin to start. Rejected readings cannot play.'],
         ['Tested design contracts', 'Around 2,800 Vitest unit and integration tests plus Playwright browser tests, a generated architecture diagram, and release gates with artifact verification and rollback.'],
       ] },
     evidence: [
@@ -137,11 +137,11 @@ export const projects = [
     ],
   },
   {
-    slug: 'flyspace', number: '02', name: 'FLYSPACE', category: 'Spatial AI workspace', accent: '#f59be0',
+    slug: 'flyspace', number: '02', name: 'FLYSPACE', category: 'Visual data workspace', accent: '#f59be0',
     reflects: 'SyberLabs/Flyspace@e95ae73 · verified 2026-10-05',
     pageTitle: 'FLYSPACE: Spatial Workspace for AI over Live Data',
     headline: 'See the sources behind an answer.',
-    intro: 'A spatial workspace for live data and the AI personas it feeds. Drop Data blocks that pull real numbers and wire them into personas. Run FLYSPACE locally with your own model (for example through Ollama) to ask a persona a question, answered only from what its wires carry. Formerly OmniOS.',
+    intro: 'A visual workspace where you connect data sources to AI assistants and see which sources feed each answer. AI answers require running FLYSPACE locally with your own model, for example through Ollama. Formerly OmniOS.',
     summary: 'A limited public preview is live at omni.syberlabs.io: the canvas, the Shell Store and every keyless public data source run in your browser. AI answers and keyed sources are switched off there.',
     status: { kind: 'live', label: 'Live preview' },
     primary: { label: 'Open the preview', href: OMNI_PREVIEW },
@@ -192,16 +192,16 @@ export const projects = [
     ],
   },
   {
-    slug: 'syberwork', number: '03', name: 'SyberWork', category: 'Governed work runtime', accent: '#a6f08f',
+    slug: 'syberwork', number: '03', name: 'SyberWork', category: 'AI work review tools', accent: '#a6f08f',
     reflects: 'SyberLabs/SyberWork@208eaf6 · verified 2026-10-05',
     pageTitle: 'SyberWork: Contract-Governed Work Runtime and Python SDK',
-    headline: 'Contracts govern the work.',
-    intro: 'A runtime and Python SDK for governed work. A contract says what may happen, a rule in code admits or refuses each step, a named person approves, and a hash-chained case history records what was proposed, observed, approved and executed.',
-    summary: 'An effect runs once, with an idempotency key, and is reconciled afterwards. Build Thread applies the same path to changes in your own Git repository: a model’s claim that the tests pass is an unverified signal until the host runs the checks itself.',
+    headline: 'Check AI work before it changes anything.',
+    intro: 'Tools for checking and approving AI work before it makes changes. Rules define the allowed steps, a named person approves the work, and a tamper-evident history records what was proposed, checked, approved and done.',
+    summary: 'Build Thread applies these checks to code changes in your Git repository. It runs the checks itself before accepting a change, even if the model says the tests passed. Actions use unique keys to prevent duplicate execution, and their results are checked afterwards.',
     status: { kind: 'wip', label: 'Work in progress' },
     primary: { label: 'View source', href: 'https://github.com/SyberLabs/SyberWork', external: true },
     secondary: { label: 'Build Thread in ten minutes', href: 'https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md' },
-    why: { title: 'Why admission, not autonomy.',
+    why: { title: 'Why check each proposed step?',
       paragraphs: [
         'Agent frameworks make it easy for a model to act and hard to say afterwards who allowed it, on what evidence, and whether the effect really happened. SyberWork starts from the opposite constraint: generation is free, but nothing becomes an effect without a gate the host owns.',
         'The gate is a contract plus a policy, compiled into an inspectable path. A proposal that does not fit is refused with the deciding rule and its provenance. The same machinery that governs a purchase order governs a code change.',
@@ -267,7 +267,7 @@ export const projects = [
     gallery: { eyebrow: 'Screens', title: 'Four screens from a local build.',
       note: 'Captured on 2026-10-05 from relay@0000605 built and run locally with its own migrations and the mocked local sign-in. Every company, role and fact shown is a fictional example record; no real applicant data.',
       items: [
-        { src: '/relay-demo/relay-runtime-20261005.jpg', alt: 'Relay Runtime with the fictional Northstar Example — Backend Engineer job selected: review queue on the left, exact answers and attachments panels, and a disabled Approve & send control.',
+        { src: '/relay-demo/relay-runtime-20261005.jpg', alt: 'Relay Runtime with the fictional Northstar Example, Backend Engineer job selected: review queue on the left, exact answers and attachments panels, and a disabled Approve & send control.',
           caption: 'Runtime with a fictional example job selected. Approve & send stays disabled until an agent prepares the application.' },
         { src: '/relay-demo/relay-accept-20261005.jpg', alt: 'Relay draft review for the same fictional job: Save draft and Accept exact draft controls with the note that acceptance records approval of these exact words and nothing is sent.',
           caption: 'Exact acceptance. Nothing is sent.' },
@@ -299,12 +299,12 @@ export const projects = [
     ],
   },
   {
-    slug: 'osahr', number: '05', name: 'OSAHR', category: 'Stochastic simulation library', accent: '#ffae63',
+    slug: 'osahr', number: '05', name: 'OSAHR', category: 'Network simulation library', accent: '#ffae63',
     reflects: 'SyberLabs/OSAHR_Cell@7293e27 · verified 2026-10-05',
     pageTitle: 'OSAHR: Open-Source Stochastic Simulation Library in Python',
     headline: 'Replay a changing system.',
-    intro: 'An open-source Python library for exact stochastic simulation of networks that change their own structure, with seeded, hash-checked replay.',
-    summary: 'Rules rewrite a typed directed hypergraph at random times with exact probabilities. Every public claim is graded Known, Measured, Inferred or Proposed.',
+    intro: 'An open-source Python library for simulating networks whose connections change over time. Rules and probabilities determine each change, and recorded runs can be replayed and checked.',
+    summary: 'The simulator represents connections that can join several items at once, then changes them at random times using exact probabilities. Every public claim is graded Known, Measured, Inferred or Proposed.',
     status: { kind: 'research', label: 'Research' },
     primary: { label: 'View source', href: 'https://github.com/SyberLabs/OSAHR_Cell', external: true },
     secondary: { label: 'Read the architecture', href: 'https://github.com/SyberLabs/OSAHR_Cell/blob/main/ARCHITECTURE.md' },
@@ -353,18 +353,17 @@ export const projects = [
 export const siteMap = [
   { title: 'Work', items: [
     { label: 'Engines', note: 'Mathematical worlds · run Gyre', href: GYRE_APP, external: true },
-    { label: 'GitHits integration', note: 'Python client + Claude Code', href: '/mateo/#githits' },
-    { label: 'RISE Composer', note: 'Admission before playback', href: '/mateo/#rise' },
-    { label: 'Sketch', note: 'Draw with living procedural ink', href: SKETCH_APP, external: true },
+    { label: 'GitHits integration', note: 'Code search for AI coding assistants', href: '/mateo/#githits' },
+    { label: 'RISE', note: 'Interactive reading in your browser', href: '/mateo/#rise' },
   ] },
   { title: 'Connect', items: [
-    { label: 'Meet Mateo', note: 'Contributions, source and résumé', href: MATEO_PORTFOLIO },
+    { label: 'Meet Mateo', note: 'Projects, code and résumé', href: MATEO_PORTFOLIO },
     { label: 'Email', note: EMAIL, href: CONTACT },
     { label: 'Mateo on GitHub', note: 'github.com/sykosyber', href: MATEO_GITHUB, external: true },
   ] },
   { title: 'More', items: [
     { label: 'Work with us', note: 'Engineering roles and focused projects', href: '/services/' },
-    { label: 'Research archive', note: 'Reports and earlier project evidence', href: '/research/' },
+    { label: 'Research archive', note: 'Past projects and research', href: '/research/' },
     { label: 'Subscriber account', note: 'Existing RISE subscribers', href: RISE_PLUS.href, external: true },
     { label: 'Privacy', note: 'Data and contact policy', href: '/privacy/' },
   ] },

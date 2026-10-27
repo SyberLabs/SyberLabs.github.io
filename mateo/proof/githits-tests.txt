@@ -1,0 +1,58 @@
+Recorded verification using controlled test data
+Source: https://github.com/SyberLabs/SyberWork/tree/7caa7c25b30f4fdf5939bbb9b8116b92a1eecece
+Command: python3.12 -B -m unittest discover -s tests -p test_githits.py -v
+Scope: local stand-in for the API, with generated test credentials. No live API or customer outcome is measured.
+
+test_compact_output_by_default_and_json_on_request (test_githits.Cli.test_compact_output_by_default_and_json_on_request) ... ok
+test_exit_codes (test_githits.Cli.test_exit_codes) ... ok
+test_a_read_body_citing_an_excluded_owner_is_blocked (test_githits.Contamination.test_a_read_body_citing_an_excluded_owner_is_blocked) ... ok
+test_an_example_citing_an_excluded_owner_is_dropped_whole (test_githits.Contamination.test_an_example_citing_an_excluded_owner_is_dropped_whole) ... ok
+test_an_excluded_target_is_refused_without_a_request (test_githits.Contamination.test_an_excluded_target_is_refused_without_a_request) ... ok
+test_grep_list_and_read_results_under_an_excluded_owner_are_dropped (test_githits.Contamination.test_grep_list_and_read_results_under_an_excluded_owner_are_dropped) ... ok
+test_search_hits_under_an_excluded_owner_are_dropped_and_counted (test_githits.Contamination.test_search_hits_under_an_excluded_owner_are_dropped_and_counted) ... ok
+test_auth_rate_limit_and_errors_are_told_apart_without_the_token (test_githits.Doctor.test_auth_rate_limit_and_errors_are_told_apart_without_the_token) ... ok
+test_no_token_sends_nothing (test_githits.Doctor.test_no_token_sends_nothing) ... ok
+test_ready (test_githits.Doctor.test_ready) ... ok
+test_free_text_counts_only_a_code_host_mention (test_githits.Exclusion.test_free_text_counts_only_a_code_host_mention) ... ok
+test_owner_and_repository_locators_in_every_spelling (test_githits.Exclusion.test_owner_and_repository_locators_in_every_spelling) ... ok
+test_the_environment_adds_to_the_default_and_only_an_explicit_switch_replaces_it (test_githits.Exclusion.test_the_environment_adds_to_the_default_and_only_an_explicit_switch_replaces_it)
+#129's verification, finding 4: the variable replaced the default, so naming an unrelated owner silently ... ok
+test_example_licenses_come_from_source_links_license_lines_and_references (test_githits.LicensePolicy.test_example_licenses_come_from_source_links_license_lines_and_references) ... ok
+test_nested_spdx_expressions_honour_parentheses_and_precedence (test_githits.LicensePolicy.test_nested_spdx_expressions_honour_parentheses_and_precedence)
+#129's verification, finding 2: ``allows`` split on OR before honouring parentheses, so ... ok
+test_spdx_expressions_against_the_permissive_default (test_githits.LicensePolicy.test_spdx_expressions_against_the_permissive_default) ... ok
+test_the_environment_replaces_the_list_or_turns_the_check_off (test_githits.LicensePolicy.test_the_environment_replaces_the_list_or_turns_the_check_off) ... ok
+test_a_copyleft_hit_is_dropped_and_counted_and_a_permissive_one_kept (test_githits.Licenses.test_a_copyleft_hit_is_dropped_and_counted_and_a_permissive_one_kept) ... ok
+test_an_example_citing_copyleft_or_unlicensed_sources_is_dropped (test_githits.Licenses.test_an_example_citing_copyleft_or_unlicensed_sources_is_dropped) ... ok
+test_any_restores_pass_through (test_githits.Licenses.test_any_restores_pass_through) ... ok
+test_contamination_is_judged_before_the_license (test_githits.Licenses.test_contamination_is_judged_before_the_license) ... ok
+test_forged_tampered_and_malformed_lines_are_ignored_and_counted (test_githits.Records.test_forged_tampered_and_malformed_lines_are_ignored_and_counted) ... ok
+test_no_record_without_the_record_settings (test_githits.Records.test_no_record_without_the_record_settings) ... ok
+test_records_hold_digests_and_counts_never_the_query_and_verify_by_mac (test_githits.Records.test_records_hold_digests_and_counts_never_the_query_and_verify_by_mac) ... ok
+test_every_header_the_client_sends_or_reads_is_in_the_fixture (test_githits.SpecPin.test_every_header_the_client_sends_or_reads_is_in_the_fixture) ... ok
+test_every_operation_path_method_and_schema_name_is_in_the_fixture (test_githits.SpecPin.test_every_operation_path_method_and_schema_name_is_in_the_fixture) ... ok
+test_every_request_the_client_builds_is_valid_under_the_fixture (test_githits.SpecPin.test_every_request_the_client_builds_is_valid_under_the_fixture) ... ok
+test_every_response_field_the_client_reads_is_in_the_fixture (test_githits.SpecPin.test_every_response_field_the_client_reads_is_in_the_fixture) ... ok
+test_only_the_example_request_carries_a_license_and_no_result_schema_has_one (test_githits.SpecPin.test_only_the_example_request_carries_a_license_and_no_result_schema_has_one)
+The license policy's evidence in 0.1.0: ``license_mode`` on examples, licenses in example Markdown, and ... ok
+test_the_doctor_operation_is_pinned_apart_and_its_request_and_answer_fit_it (test_githits.SpecPin.test_the_doctor_operation_is_pinned_apart_and_its_request_and_answer_fit_it) ... ok
+test_the_fake_serves_responses_valid_under_the_fixture (test_githits.SpecPin.test_the_fake_serves_responses_valid_under_the_fixture) ... ok
+test_the_fixture_is_exactly_the_closed_subset_for_the_client_operations (test_githits.SpecPin.test_the_fixture_is_exactly_the_closed_subset_for_the_client_operations) ... ok
+test_the_fixture_is_the_pinned_document (test_githits.SpecPin.test_the_fixture_is_the_pinned_document) ... ok
+test_a_token_echoed_across_the_cut_or_in_the_request_id_is_scrubbed (test_githits.Token.test_a_token_echoed_across_the_cut_or_in_the_request_id_is_scrubbed)
+#129's verification, finding 3: the problem's title was cut to 120 characters before the scrub, so a ... ok
+test_an_echoed_token_is_scrubbed_from_the_error_and_the_cli (test_githits.Token.test_an_echoed_token_is_scrubbed_from_the_error_and_the_cli) ... ok
+test_no_session_or_agent_header_unless_set (test_githits.Token.test_no_session_or_agent_header_unless_set) ... ok
+test_settings_are_checked_before_any_request (test_githits.Token.test_settings_are_checked_before_any_request) ... ok
+test_the_token_goes_only_into_the_authorization_header (test_githits.Token.test_the_token_goes_only_into_the_authorization_header) ... ok
+test_without_a_token_nothing_is_sent_and_the_call_is_recorded (test_githits.Token.test_without_a_token_nothing_is_sent_and_the_call_is_recorded) ... ok
+test_a_malformed_body_is_an_error_and_recorded (test_githits.Transport.test_a_malformed_body_is_an_error_and_recorded) ... ok
+test_a_non_200_answer_is_an_error_and_its_status_is_recorded (test_githits.Transport.test_a_non_200_answer_is_an_error_and_its_status_is_recorded) ... ok
+test_a_redirect_is_refused_and_not_followed (test_githits.Transport.test_a_redirect_is_refused_and_not_followed) ... ok
+test_an_oversize_body_is_refused_with_or_without_a_length (test_githits.Transport.test_an_oversize_body_is_refused_with_or_without_a_length) ... ok
+test_lean_defaults_are_sent (test_githits.Transport.test_lean_defaults_are_sent) ... ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 1.762s
+
+OK

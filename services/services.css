@@ -1,11 +1,36 @@
+/* Page-local adaptation of the approved black, off-white and cyan direction. */
+:root {
+  --sy-ink: #06090a;
+  --sy-ink-2: #0b1012;
+  --sy-ink-3: #11191c;
+  --sy-vellum: #f1f0eb;
+  --sy-body: #d0d5d5;
+  --sy-mist: #b5bfc1;
+  --sy-dim: #95a2a5;
+  --sy-ice: #a5deeb;
+  --sy-accent: #a5deeb;
+  --sy-rule: rgba(194, 220, 225, .2);
+  --sy-rule-2: rgba(194, 220, 225, .4);
+  --sy-stars: none;
+  --sy-r-pill: 2px;
+  --sy-r-panel: 2px;
+  --font-display: var(--sy-sans);
+  color-scheme: dark;
+}
+.sy-btn--solid { background: var(--sy-vellum); color: var(--sy-ink); box-shadow: none; }
+.sy-btn--solid:hover { background: #fff; transform: none; box-shadow: none; }
+.sy-btn--line { background: transparent; }
+.sy-btn--line:hover { background: var(--sy-ink-3); box-shadow: none; }
+.sy-btn { white-space: normal; line-height: 1.4; padding-block: 12px; }
+
 /* Services page. Tokens, header, buttons and footer come from /syberlabs.css. */
 .intro, .inquiry { max-width: calc(var(--content-max) + 2 * var(--gutter)); margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter); }
 main section[id] { scroll-margin-top: 100px; }
 main h1, main h2 { text-wrap: balance; }
 .eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2); }
 
-.intro { padding-top: var(--space-8); padding-bottom: var(--space-9); }
-.intro h1 { max-width: 900px; margin: var(--space-4) 0 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(44px, 5vw, 72px); line-height: 1; letter-spacing: -0.015em; }
+.intro { padding-top: var(--space-9); padding-bottom: var(--space-9); }
+.intro h1 { max-width: 900px; margin: var(--space-4) 0 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(44px, 5vw, 72px); line-height: 1; letter-spacing: -.04em; }
 .lead { max-width: 640px; margin: var(--space-5) 0 0; font-size: 18px; line-height: 28px; color: var(--text-2); }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin-top: var(--space-6); }
 .intro-note { max-width: var(--measure); margin: var(--space-5) 0 0; font-size: 14px; line-height: 20px; color: var(--text-3); }
@@ -35,7 +60,7 @@ main h1, main h2 { text-wrap: balance; }
 }
 
 
-.intro h1 em { color:var(--sy-ice); font-weight:400; }
+.intro h1 em { color:var(--sy-ice); font-weight:400; font-style:normal; }
 .inquiry-brief .privacy:first-of-type { margin-top:0; }
 
 .service-scope { margin-top:28px; border-top:1px solid var(--line); padding-top:16px; font-size:14px; color:var(--text-2); line-height:1.6; }
@@ -43,7 +68,10 @@ main h1, main h2 { text-wrap: balance; }
 .service-scope a { text-decoration:underline; text-underline-offset:4px; }
 main :is(a,summary):focus-visible { outline:2px solid var(--sy-ice); outline-offset:4px; }
 
-.service-proof { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; max-width:calc(var(--content-max) + 2 * var(--gutter)); margin:auto; padding:24px var(--gutter); border-block:1px solid var(--line); }
-.service-proof a { min-width:0; font:30px/1.2 var(--font-display); }
+.service-proof { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; max-width:calc(var(--content-max) + 2 * var(--gutter)); margin:auto; padding:36px var(--gutter); border-block:1px solid var(--line); }
+.service-proof a { min-width:0; color:var(--text); font:30px/1.2 var(--font-display); }
 .service-proof span { display:block; margin-top:10px; color:var(--text-2); font:13px/1.6 var(--font-mono); }
 @media(max-width:640px) { .service-proof { grid-template-columns:1fr; gap:20px; } }
+
+.service-proof a:hover { color:var(--sy-ice); }
+.inquiry > * { min-width:0; }

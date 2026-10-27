@@ -21,7 +21,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 ## Projects
 
-- [RISE](https://syberlabs.io/projects/rise/): Audiovisual reader. A browser-based audiovisual reader. RISE presents a text through time, image, sound and procedural visuals, so a book can be read as a timed stream or a typeset page.
+- [RISE](https://syberlabs.io/projects/rise/): Interactive reading app. An interactive reading app that combines text, sound and moving visuals in your browser. Read words at a pace you choose, or switch to a page view.
   - Status: Live · open beta
   - Reflects: SyberLabs/RISE@998d725 · verified 2026-10-05
   - Source: https://github.com/SyberLabs/RISE
@@ -31,7 +31,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
   - Evidence, measured: Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.
   - Evidence, tested: RISE Plus voice, an optional ElevenLabs voice ($8.99 a month): implementation merged; paid launch pending verification. It runs in production on Stripe test mode: on 2026-10-08 a test purchase unlocked it and the voice was heard reading the buyer's own file.
   - Evidence, not yet: No reader study has been run; release evidence still records zero real-device and stranger-testing records.
-- [FLYSPACE](https://syberlabs.io/projects/flyspace/): Spatial AI workspace. A spatial workspace for live data and the AI personas it feeds. Drop Data blocks that pull real numbers and wire them into personas. Run FLYSPACE locally with your own model (for example through Ollama) to ask a persona a question, answered only from what its wires carry. Formerly OmniOS.
+- [FLYSPACE](https://syberlabs.io/projects/flyspace/): Visual data workspace. A visual workspace where you connect data sources to AI assistants and see which sources feed each answer. AI answers require running FLYSPACE locally with your own model, for example through Ollama. Formerly OmniOS.
   - Status: Live preview
   - Reflects: SyberLabs/Flyspace@e95ae73 · verified 2026-10-05
   - Source: https://github.com/SyberLabs/Flyspace
@@ -40,7 +40,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
   - Evidence, tested: Unit tests across the stores, services and capability engine, and six Playwright specs including the “morning” golden path: shell → question → cited sources → crystal → second persona.
   - Evidence, implemented: The capability compiler and the server-side broker are implemented and hardened against fixtures and stubbed transports.
   - Evidence, not yet: No third-party API or MCP server has been measured in production use. Speech is tested with typed transcripts; there is no live microphone measurement. The hosted identity boundary exists in code with no provisioned issuer.
-- [SyberWork](https://syberlabs.io/projects/syberwork/): Governed work runtime. A runtime and Python SDK for governed work. A contract says what may happen, a rule in code admits or refuses each step, a named person approves, and a hash-chained case history records what was proposed, observed, approved and executed.
+- [SyberWork](https://syberlabs.io/projects/syberwork/): AI work review tools. Tools for checking and approving AI work before it makes changes. Rules define the allowed steps, a named person approves the work, and a tamper-evident history records what was proposed, checked, approved and done.
   - Status: Work in progress
   - Reflects: SyberLabs/SyberWork@208eaf6 · verified 2026-10-05
   - Source: https://github.com/SyberLabs/SyberWork
@@ -55,7 +55,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
   - Evidence, tested: The domain, handoff and profile modules were executed under Node for the site’s recorded Relay map; the D1 acceptance write is reproduced as a rule.
   - Evidence, implemented: Runtime, Tracker, the fact ledger, CSV and job-board import, and every integration listed in the repository.
   - Evidence, not yet: No public deployment and no customer counts, hiring outcomes or throughput improvements are claimed. Autonomous hunting is not included.
-- [OSAHR](https://syberlabs.io/projects/osahr/): Stochastic simulation library. An open-source Python library for exact stochastic simulation of networks that change their own structure, with seeded, hash-checked replay.
+- [OSAHR](https://syberlabs.io/projects/osahr/): Network simulation library. An open-source Python library for simulating networks whose connections change over time. Rules and probabilities determine each change, and recorded runs can be replayed and checked.
   - Status: Research
   - Reflects: SyberLabs/OSAHR_Cell@7293e27 · verified 2026-10-05
   - Source: https://github.com/SyberLabs/OSAHR_Cell
@@ -66,9 +66,8 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 ## Work
 
 - [Engines](https://sykosyber.github.io/engines/works/gyre.html): Mathematical worlds · run Gyre
-- [GitHits integration](https://syberlabs.io/mateo/#githits): Python client + Claude Code
-- [RISE Composer](https://syberlabs.io/mateo/#rise): Admission before playback
-- [Sketch](https://sketch.syberlabs.io/): Draw with living procedural ink
+- [GitHits integration](https://syberlabs.io/mateo/#githits): Code search for AI coding assistants
+- [RISE](https://syberlabs.io/mateo/#rise): Interactive reading in your browser
 
 ## Connect
 
@@ -85,7 +84,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 ## Design system
 
 - [Atlas kit v2](https://syberlabs.io/kit/v2/): SyberLabs Design System v2 "Atlas" kit. Files: `syber-atlas.css` (tokens + components), `syber-atmosphere.js` (Plate I engine), `syber-sigil.js` (product sigils), `syber-mark-96.png`, `demo.html`.
-- [Kit README](https://syberlabs.io/kit/v2/README.md): Sections: Vendoring, CSS, JS (ES modules, no dependencies), Rules (accessibility and performance).
+- [Kit README](https://syberlabs.io/kit/v2/README.md): Sections: Current website direction: immersive mathematical media, Vendoring, CSS, JS (ES modules, no dependencies), Rules (accessibility and performance).
 
 ## How we build
 

@@ -21,14 +21,14 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 # Projects
 
-## RISE: Audiovisual reader
+## RISE: Interactive reading app
 
 Page: https://syberlabs.io/projects/rise/
 Status: Live · open beta
 Reflects: SyberLabs/RISE@998d725 · verified 2026-10-05
 Source: https://github.com/SyberLabs/RISE
 
-A browser-based audiovisual reader. RISE presents a text through time, image, sound and procedural visuals, so a book can be read as a timed stream or a typeset page.
+An interactive reading app that combines text, sound and moving visuals in your browser. Read words at a pace you choose, or switch to a page view.
 
 Page title: RISE: Browser-Based Audiovisual Reader
 
@@ -81,7 +81,7 @@ Recording: [Watch the screen recording (MP4, 25 s, no sound)](https://syberlabs.
 
 ### What a model may choose, and what it may not.
 
-The reader-owned decision contract, stepped through by rule from the code at 998d725: the finite menu, one call on the reader’s own connection, admission of offered keys only, and two refusals that open no reading.
+How RISE checks an AI reading suggestion, using the rules at 998d725: the model makes one request through your connection and can choose only from the supplied options. Two examples show a suggestion being refused without opening a reading.
 
 Text version of the interactive map: This map needs JavaScript.
 
@@ -91,7 +91,7 @@ Text version of the interactive map: This map needs JavaScript.
 - Content-addressed texts: Book text is served as SHA-256-named JSON and verified on every read, which took 15.4 MB out of the JavaScript bundle.
 - A first-load budget: About 59 KB brotli over three requests, held under a 64 KB budget that CI enforces.
 - No shared inference: The Cloudflare Worker serves the app and a static decision catalog. It runs no model and holds no model credential; the six former inference routes answer 410.
-- Composer, in ChatGPT: In ChatGPT, RISE is a Composer: the host model composes one sealed Current in a single tool call, the Worker validates and admits it, and nothing plays until the reader presses Begin. A refused Current never becomes playable.
+- Composer, in ChatGPT: In ChatGPT, RISE lets the model prepare a reading with text, sound and visuals in one tool call. RISE checks the result before making it playable, and the reader presses Begin to start. Rejected readings cannot play.
 - Tested design contracts: Around 2,800 Vitest unit and integration tests plus Playwright browser tests, a generated architecture diagram, and release gates with artifact verification and rollback.
 
 ### Evidence
@@ -115,14 +115,14 @@ Text version of the interactive map: This map needs JavaScript.
 - RISE Plus: [Optional voice, your own reading read aloud: paid launch pending verification](https://syberlabs.io/plus/)
 - Source: [github.com/SyberLabs/RISE](https://github.com/SyberLabs/RISE)
 
-## FLYSPACE: Spatial AI workspace
+## FLYSPACE: Visual data workspace
 
 Page: https://syberlabs.io/projects/flyspace/
 Status: Live preview
 Reflects: SyberLabs/Flyspace@e95ae73 · verified 2026-10-05
 Source: https://github.com/SyberLabs/Flyspace
 
-A spatial workspace for live data and the AI personas it feeds. Drop Data blocks that pull real numbers and wire them into personas. Run FLYSPACE locally with your own model (for example through Ollama) to ask a persona a question, answered only from what its wires carry. Formerly OmniOS.
+A visual workspace where you connect data sources to AI assistants and see which sources feed each answer. AI answers require running FLYSPACE locally with your own model, for example through Ollama. Formerly OmniOS.
 
 Page title: FLYSPACE: Spatial Workspace for AI over Live Data
 
@@ -192,26 +192,26 @@ Text version of the interactive map: This map needs JavaScript.
 - License: No license file yet; the repository is public
 - Source: [github.com/SyberLabs/Flyspace](https://github.com/SyberLabs/Flyspace)
 
-## SyberWork: Governed work runtime
+## SyberWork: AI work review tools
 
 Page: https://syberlabs.io/projects/syberwork/
 Status: Work in progress
 Reflects: SyberLabs/SyberWork@208eaf6 · verified 2026-10-05
 Source: https://github.com/SyberLabs/SyberWork
 
-A runtime and Python SDK for governed work. A contract says what may happen, a rule in code admits or refuses each step, a named person approves, and a hash-chained case history records what was proposed, observed, approved and executed.
+Tools for checking and approving AI work before it makes changes. Rules define the allowed steps, a named person approves the work, and a tamper-evident history records what was proposed, checked, approved and done.
 
 Page title: SyberWork: Contract-Governed Work Runtime and Python SDK
 
-Headline: Contracts govern the work.
+Headline: Check AI work before it changes anything.
 
-An effect runs once, with an idempotency key, and is reconciled afterwards. Build Thread applies the same path to changes in your own Git repository: a model’s claim that the tests pass is an unverified signal until the host runs the checks itself.
+Build Thread applies these checks to code changes in your Git repository. It runs the checks itself before accepting a change, even if the model says the tests passed. Actions use unique keys to prevent duplicate execution, and their results are checked afterwards.
 
 Primary link: [View source](https://github.com/SyberLabs/SyberWork)
 
 Secondary link: [Build Thread in ten minutes](https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md)
 
-### Why admission, not autonomy.
+### Why check each proposed step?
 
 Agent frameworks make it easy for a model to act and hard to say afterwards who allowed it, on what evidence, and whether the effect really happened. SyberWork starts from the opposite constraint: generation is free, but nothing becomes an effect without a gate the host owns.
 
@@ -350,20 +350,20 @@ Text version of the interactive map: This map needs JavaScript.
 - Boundary: Relay prepares and tracks application materials. It does not submit employer forms, host an MCP connection, or sync accounts in the background.
 - Source: [github.com/SyberLabs/relay](https://github.com/SyberLabs/relay)
 
-## OSAHR: Stochastic simulation library
+## OSAHR: Network simulation library
 
 Page: https://syberlabs.io/projects/osahr/
 Status: Research
 Reflects: SyberLabs/OSAHR_Cell@7293e27 · verified 2026-10-05
 Source: https://github.com/SyberLabs/OSAHR_Cell
 
-An open-source Python library for exact stochastic simulation of networks that change their own structure, with seeded, hash-checked replay.
+An open-source Python library for simulating networks whose connections change over time. Rules and probabilities determine each change, and recorded runs can be replayed and checked.
 
 Page title: OSAHR: Open-Source Stochastic Simulation Library in Python
 
 Headline: Replay a changing system.
 
-Rules rewrite a typed directed hypergraph at random times with exact probabilities. Every public claim is graded Known, Measured, Inferred or Proposed.
+The simulator represents connections that can join several items at once, then changes them at random times using exact probabilities. Every public claim is graded Known, Measured, Inferred or Proposed.
 
 Primary link: [View source](https://github.com/SyberLabs/OSAHR_Cell)
 
@@ -429,9 +429,8 @@ Complete output, unedited. From seed 20260729 the kernel committed 25 events in 
 ## Work
 
 - [Engines](https://sykosyber.github.io/engines/works/gyre.html): Mathematical worlds · run Gyre
-- [GitHits integration](https://syberlabs.io/mateo/#githits): Python client + Claude Code
-- [RISE Composer](https://syberlabs.io/mateo/#rise): Admission before playback
-- [Sketch](https://sketch.syberlabs.io/): Draw with living procedural ink
+- [GitHits integration](https://syberlabs.io/mateo/#githits): Code search for AI coding assistants
+- [RISE](https://syberlabs.io/mateo/#rise): Interactive reading in your browser
 
 ## Connect
 
@@ -448,7 +447,7 @@ Complete output, unedited. From seed 20260729 the kernel committed 25 events in 
 ## Design system
 
 - [Atlas kit v2](https://syberlabs.io/kit/v2/): SyberLabs Design System v2 "Atlas" kit. Files: `syber-atlas.css` (tokens + components), `syber-atmosphere.js` (Plate I engine), `syber-sigil.js` (product sigils), `syber-mark-96.png`, `demo.html`.
-- [Kit README](https://syberlabs.io/kit/v2/README.md): Sections: Vendoring, CSS, JS (ES modules, no dependencies), Rules (accessibility and performance).
+- [Kit README](https://syberlabs.io/kit/v2/README.md): Sections: Current website direction: immersive mathematical media, Vendoring, CSS, JS (ES modules, no dependencies), Rules (accessibility and performance).
 
 ## How we build
 

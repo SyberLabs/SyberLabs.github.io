@@ -1,0 +1,24 @@
+{
+  "source_repository": "https://github.com/SyberLabs/SyberWork",
+  "source_pull_request": 134,
+  "started_utc": "2026-10-27T02:55:38.238752+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+  "exit_code": 0,
+  "tests_run": 44,
+  "passing_tests_count": 44,
+  "file_sha256": {
+    "tests/test_githits.py": "2434934c929b4403c7a7a5abe7518de574d14a8a5c3ac691ac385dc987717ef9",
+    "syberlabs/githits.py": "e018d087ea08534cf11afa3bcf9d7d237561d3b16343414e42ad766ea2dfa0ad",
+    "syberlabs/cli.py": "8c09320d5821011083c7ed750fcd37ec93a5fc6b7fd0c14e6f77e832e38a4220",
+    "tests/fixtures/githits_openapi_v1.json": "c388ab7e53a25fdfbd914c10634d799ae923b01ab8880750c750e775c21f1b9c",
+    "tests/fixtures/githits_openapi_v1_languages.json": "492fcb7f97838a2bed4dfc4618c3858cc8589787f1f3ff92422ffff3fdc8904c"
+  },
+  "representative_passing_tests": [
+    "test_githits.Contamination.test_an_excluded_target_is_refused_without_a_request",
+    "test_githits.Token.test_the_token_goes_only_into_the_authorization_header",
+    "test_githits.Records.test_records_hold_digests_and_counts_never_the_query_and_verify_by_mac"
+  ],
+  "source_commit": "7caa7c25b30f4fdf5939bbb9b8116b92a1eecece",
+  "evidence": "Tested with controlled test data. No live API or customer result is claimed.",
+  "command": "python3.12 -B -m unittest discover -s tests -p test_githits.py -v"
+}
