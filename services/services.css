@@ -1,33 +1,14 @@
 /* Services page. Tokens, header, buttons and footer come from /syberlabs.css. */
-.intro, .sample, .inquiry, .details-inner { max-width: calc(var(--content-max) + 2 * var(--gutter)); margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter); }
+.intro, .inquiry { max-width: calc(var(--content-max) + 2 * var(--gutter)); margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter); }
 main section[id] { scroll-margin-top: 100px; }
 main h1, main h2 { text-wrap: balance; }
-.eyebrow, .number { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2); }
+.eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2); }
 
-.intro { padding-top: var(--space-10); padding-bottom: var(--space-9); }
-.intro h1 { max-width: 900px; margin: var(--space-6) 0 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(44px, 5vw, 72px); line-height: 1; letter-spacing: -0.015em; }
+.intro { padding-top: var(--space-8); padding-bottom: var(--space-9); }
+.intro h1 { max-width: 900px; margin: var(--space-4) 0 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(44px, 5vw, 72px); line-height: 1; letter-spacing: -0.015em; }
 .lead { max-width: 640px; margin: var(--space-5) 0 0; font-size: 18px; line-height: 28px; color: var(--text-2); }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin-top: var(--space-6); }
 .intro-note { max-width: var(--measure); margin: var(--space-5) 0 0; font-size: 14px; line-height: 20px; color: var(--text-3); }
-
-.details { background: linear-gradient(var(--line), var(--line)) center top / min(calc(100% - 2 * var(--gutter)), var(--content-max)) 1px no-repeat, linear-gradient(var(--line), var(--line)) center bottom / min(calc(100% - 2 * var(--gutter)), var(--content-max)) 1px no-repeat; }
-.details-inner { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.details article { padding: var(--space-7) var(--space-6); }
-.details article:first-child { padding-left: 0; }
-.details article:last-child { padding-right: 0; }
-.details article + article { border-left: 1px solid var(--line); }
-.details h2 { margin: var(--space-4) 0 var(--space-2); font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; }
-.details p { margin: 0; font-size: 16px; line-height: 24px; color: var(--text-2); }
-
-.sample { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; gap: var(--space-7); padding-bottom: var(--space-9); }
-.sample h2 { margin: var(--space-4) 0; font-family: var(--font-display); font-size: clamp(32px, 3.4vw, 48px); font-weight: 400; line-height: 1.1; }
-.sample-copy > p:not(.eyebrow) { font-size: 16px; line-height: 24px; color: var(--text-2); }
-.sample .sy-btn { margin-top: var(--space-3); }
-.sample-copy .sample-note, .sample-copy .sample-source { font-size: 14px; line-height: 22px; }
-.sample-source a, .email-fallback a { text-decoration: underline; text-underline-offset: 4px; }
-.sample-figure { min-width: 0; margin: 0; }
-.sample-figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 16px; }
-.sample-figure figcaption { margin-top: var(--space-3); font-size: 13px; line-height: 20px; color: var(--text-2); }
 
 .inquiry { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-8); padding-top: var(--space-9); padding-bottom: var(--space-10); }
 .inquiry h2 { max-width: 760px; margin: var(--space-4) 0 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; }
@@ -38,14 +19,11 @@ main h1, main h2 { text-wrap: balance; }
 .inquiry-brief h3 { margin: 0 0 var(--space-4); font-size: 20px; font-weight: 500; }
 .inquiry-brief ol { margin: 0; padding-left: 1.25em; color: var(--text-2); }
 .inquiry-brief li { padding-left: .35em; margin-bottom: var(--space-3); line-height: 24px; }
-.inquiry .privacy { margin: var(--space-6) 0 0; font-size: 14px; line-height: 22px; color: var(--text-2); }
+.inquiry .privacy { margin: var(--space-4) 0 0; font-size: 14px; line-height: 22px; color: var(--text-2); }
 
 @media (max-width: 860px) {
-  .sample, .inquiry { grid-template-columns: 1fr; gap: var(--space-6); }
+  .inquiry { grid-template-columns: 1fr; gap: var(--space-6); }
   .inquiry-brief { border-left: 0; border-top: 1px solid var(--line); padding: var(--space-6) 0 0; }
-  .details-inner { grid-template-columns: 1fr; }
-  .details article, .details article:first-child, .details article:last-child { padding: var(--space-6) 0; }
-  .details article + article { border-left: 0; border-top: 1px solid var(--line); }
 }
 @media (max-width: 640px) {
   .intro { padding-top: var(--space-8); padding-bottom: var(--space-8); }
@@ -54,15 +32,18 @@ main h1, main h2 { text-wrap: balance; }
   .inquiry { padding-top: var(--space-8); padding-bottom: var(--space-8); }
   .inquiry h2 { font-size: 32px; line-height: 36px; }
   .inquiry .primary-action { width: 100%; }
-  .sample .sy-btn { width: 100%; }
 }
 
-/* What a pilot produces (#pilot): reuses the .details columns; lists and the heading row are its own. */
-.pilot { margin-top: var(--space-9); }
-.pilot-head { max-width: calc(var(--content-max) + 2 * var(--gutter)); margin: 0 auto; padding: var(--space-8) var(--gutter) 0; }
-.pilot-head h2 { max-width: 760px; margin: var(--space-4) 0 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; }
-.pilot-head p:not(.eyebrow) { max-width: var(--measure); margin: var(--space-5) 0 var(--space-5); font-size: 16px; line-height: 24px; color: var(--text-2); }
-.pilot ul, .pilot ol { margin: 0 0 var(--space-3); padding-left: 1.2em; color: var(--text-2); font-size: 16px; line-height: 24px; }
-.pilot li + li { margin-top: var(--space-2); }
-.pilot article p { font-size: 14px; line-height: 22px; }
-@media (max-width: 640px) { .pilot-head h2 { font-size: 32px; line-height: 36px; } .pilot-head .sy-btn { width: 100%; } }
+
+.intro h1 em { color:var(--sy-ice); font-weight:400; }
+.inquiry-brief .privacy:first-of-type { margin-top:0; }
+
+.service-scope { margin-top:28px; border-top:1px solid var(--line); padding-top:16px; font-size:14px; color:var(--text-2); line-height:1.6; }
+.service-scope summary { min-height:44px; cursor:pointer; color:var(--sy-vellum); }
+.service-scope a { text-decoration:underline; text-underline-offset:4px; }
+main :is(a,summary):focus-visible { outline:2px solid var(--sy-ice); outline-offset:4px; }
+
+.service-proof { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; max-width:calc(var(--content-max) + 2 * var(--gutter)); margin:auto; padding:24px var(--gutter); border-block:1px solid var(--line); }
+.service-proof a { min-width:0; font:30px/1.2 var(--font-display); }
+.service-proof span { display:block; margin-top:10px; color:var(--text-2); font:13px/1.6 var(--font-mono); }
+@media(max-width:640px) { .service-proof { grid-template-columns:1fr; gap:20px; } }

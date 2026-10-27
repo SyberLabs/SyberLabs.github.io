@@ -4,6 +4,7 @@
 set -eu
 cd "$(dirname "$0")/.."
 test -d dist
+node scripts/check-mateo-video.mjs
 cp 404.html robots.txt sitemap.xml site.webmanifest _redirects \
   syber-mark.png syber-logo.png syber-logo.webp syber-logo-96.png \
   og-image.png footer-orb.webp mateo_robles_resume.pdf \

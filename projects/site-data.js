@@ -21,10 +21,11 @@ export const MATEO_SITE = 'https://mateo.syberlabs.space/';
 // Public tools and previews. Linked from the hero, the Atlas, the footer and each project page.
 export const RISE_APP = 'https://rise.syberlabs.io/';
 export const RISE_SAMPLE = 'https://rise.syberlabs.io/jev-scene-demo';
-// The public one-minute sample: the first item of the primary nav ("Try RISE") and the sample linked from /services/.
+// Legacy public sample retained for existing deep links; not the portfolio’s first-click journey.
 export const RISE_TRY = 'https://rise.syberlabs.io/try/';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
 export const SKETCH_APP = 'https://sketch.syberlabs.io/';
+export const GYRE_APP = 'https://sykosyber.github.io/engines/works/gyre.html';
 
 // Customer entry point stays stable before and after sales open. The app owns checkout readiness.
 // Keep the marketing offer aligned with RISE's server-enforced plan; never infer paid availability from a merge.
@@ -37,28 +38,22 @@ export const RISE_PLUS = {
 };
 export const MATEO_PORTFOLIO = '/mateo/';
 
-// Customer and hiring paths. Research and the complete archive remain in Menu.
+// Selected work and hiring paths. Research remains available through its archive.
 export const nav = [
-  { id: 'try', label: 'Try RISE', href: RISE_TRY, external: true },
-  { id: 'plus', label: 'RISE Plus', href: '/plus/' },
-  { id: 'projects', label: 'Projects', href: '/#work' },
-  { id: 'services', label: 'Work with us', href: '/services/' },
+  { id: 'projects', label: 'Selected work', href: '/#work' },
   { id: 'mateo', label: 'Meet Mateo', href: MATEO_PORTFOLIO },
+  { id: 'contact', label: 'Contact', href: '/mateo/#contact' },
 ];
 
 export const workWithUs = { label: 'Work with us', href: '/services/' };
 
 // The footer carries a few essentials, every contact route and the legal page. It does not repeat the site map: the
-// full map (siteMap below) is the header's Menu (the Atlas), a <details> that opens and closes without JavaScript.
+// selected menu (siteMap below) is the header's Menu (the Atlas), a <details> that opens and closes without JavaScript.
 export const footerLinks = [
-  { label: 'Meet Mateo', href: MATEO_PORTFOLIO },
-  { label: 'Research', href: '/research/' },
-  { label: 'Work with us', href: '/services/' },
-  { label: 'Email', href: CONTACT },
-  { label: 'GitHub', href: GITHUB, external: true },
-  { label: 'LinkedIn', href: LINKEDIN, external: true },
+  { label: 'Contact', href: CONTACT },
   { label: 'Résumé', href: RESUME },
   { label: 'Privacy', href: '/privacy/' },
+  { label: 'Subscriber account', href: RISE_PLUS.href, external: true },
   { label: 'Staff sign in', href: '/admin/' },
 ];
 
@@ -354,50 +349,24 @@ export const projects = [
   },
 ];
 
-// The Atlas: every destination on the site, grouped. Rendered as the full-screen menu on every page
-// (projects/project-template.js `atlas()`), so no screen is more than one tap from any other. It is the site's one
-// directory: the footer and the project pages do not repeat it.
+// The Menu selects useful work and contact routes. Existing archives and deep links remain published.
 export const siteMap = [
-  { title: 'Use', items: [
-    { label: 'Try RISE', note: 'A one-minute sample · no account, no install', href: RISE_TRY, external: true },
-    { label: 'RISE app', note: 'rise.syberlabs.io · open beta', href: RISE_APP, external: true, accent: '#f2d9a6', sigil: 'rise' },
-    { label: 'FLYSPACE preview', note: 'omni.syberlabs.io · live preview', href: OMNI_PREVIEW, external: true, accent: '#f59be0', sigil: 'flyspace' },
-    { label: 'RISE Sketch', note: 'sketch.syberlabs.io · living ink', href: SKETCH_APP, external: true, accent: '#c7a4ff' },
-    { label: 'RISE interactive sample', note: 'Change the scene while you read', href: RISE_SAMPLE, external: true },
-    { label: 'RISE demo', note: 'Watch the film', href: '/rise-demo/' },
+  { title: 'Work', items: [
+    { label: 'Engines', note: 'Mathematical worlds · run Gyre', href: GYRE_APP, external: true },
+    { label: 'GitHits integration', note: 'Python client + Claude Code', href: '/mateo/#githits' },
+    { label: 'RISE Composer', note: 'Admission before playback', href: '/mateo/#rise' },
+    { label: 'Sketch', note: 'Draw with living procedural ink', href: SKETCH_APP, external: true },
   ] },
-  { title: 'Projects', items: [
-    { label: 'RISE', note: 'Creative suite · Reader, Composer, Sketch', href: '/projects/rise/', sigil: 'rise', accent: '#f2d9a6' },
-    { label: 'RISE Plus', note: `Optional voice · ${RISE_PLUS.state === 'live' ? `live, ${RISE_PLUS.price} a month` : 'paid launch pending verification'}`, href: '/plus/' },
-    { label: 'FLYSPACE', note: 'Spatial AI workspace · formerly OmniOS', href: '/projects/flyspace/', sigil: 'flyspace', accent: '#f59be0' },
-    { label: 'SyberWork', note: 'Governed work runtime · work in progress', href: '/projects/syberwork/', sigil: 'syberwork', accent: '#a6f08f' },
-    { label: 'Relay', note: 'Job application workspace', href: '/projects/relay/', sigil: 'relay', accent: '#62e3d8' },
-    { label: 'OSAHR', note: 'Stochastic simulation library', href: '/projects/osahr/', sigil: 'osahr', accent: '#ffae63' },
-  ] },
-  { title: 'Research', items: [
-    { label: 'Research index', note: 'Every study, note and report', href: '/research/' },
-    { label: 'Reliable execution for AI agents', note: 'Technical report · Sept 2026', href: '/research/jev-execution/' },
-    { label: 'Sybershoke', note: 'Research note · shock tests for multi-agent systems', href: '/research/sybershoke/' },
-    { label: 'Decision Arena', note: 'Report · same request, different deciders', href: '/research/decision-arena/' },
-    { label: 'Papers', note: 'Working papers and studies on GitHub', href: 'https://github.com/SyberLabs/papers', external: true },
-    { label: 'RISE, Jev and Kev', note: 'Reader-owned AI', href: '/kev/' },
-    { label: 'Jev in RISE', note: 'Earlier case study', href: '/jev/' },
-  ] },
-  { title: 'Lab', items: [
-    { label: 'Home', note: 'Read. Think. Build.', href: '/' },
-    { label: 'Approach', note: 'Make the work observable', href: '/approach/' },
-    { label: 'How we build', note: 'Dependencies read through GitHits', href: '/stack/' },
-    // { label: 'The factory', note: 'Agents build and review; humans look at the product', href: '/#factory' }, // hidden with the factory section (src/App.jsx INTERNAL_SECTIONS)
-    { label: 'Work with us', note: 'Reading pilots for publishers and creators', href: '/services/' },
-    { label: 'Meet Mateo', note: 'Engineering portfolio, selected work and résumé', href: MATEO_PORTFOLIO },
-    { label: 'About', note: 'The lab and its founder', href: '/#about' },
-    { label: 'Privacy', note: 'What this site does with your data', href: '/privacy/' },
-  ] },
-  { title: 'Contact', items: [
+  { title: 'Connect', items: [
+    { label: 'Meet Mateo', note: 'Contributions, source and résumé', href: MATEO_PORTFOLIO },
     { label: 'Email', note: EMAIL, href: CONTACT },
-    { label: 'GitHub', note: 'github.com/SyberLabs', href: GITHUB, external: true },
-    { label: 'LinkedIn', note: 'Mateo Robles', href: LINKEDIN, external: true },
-    { label: 'Résumé', note: 'PDF', href: RESUME },
+    { label: 'Mateo on GitHub', note: 'github.com/sykosyber', href: MATEO_GITHUB, external: true },
+  ] },
+  { title: 'More', items: [
+    { label: 'Work with us', note: 'Engineering roles and focused projects', href: '/services/' },
+    { label: 'Research archive', note: 'Reports and earlier project evidence', href: '/research/' },
+    { label: 'Subscriber account', note: 'Existing RISE subscribers', href: RISE_PLUS.href, external: true },
+    { label: 'Privacy', note: 'Data and contact policy', href: '/privacy/' },
   ] },
 ];
 

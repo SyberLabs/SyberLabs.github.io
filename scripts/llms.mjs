@@ -37,7 +37,6 @@ const discipline = header.slice(header.indexOf('Every project claim')).trim();
 
 const homeDescription = await describe('/');
 const source = p => p.facts.find(([k]) => k === 'Source')?.[1]?.href;
-const sections = Object.fromEntries(siteMap.map(s => [s.title, s.items]));
 
 // Pages that explain how SyberLabs builds. /stack/ is listed once its page exists.
 const HOW = ['/approach/', '/stack/'];
@@ -135,12 +134,10 @@ async function tail() {
     if (d) how.push(`- [${item?.label ?? href}](${abs(href)}): ${d}`);
   }
   return [
-    `## Research\n\n${(await linkList(sections.Research)).join('\n')}`,
+    ...(await Promise.all(siteMap.map(async group => `## ${group.title}\n\n${(await linkList(group.items)).join('\n')}`))),
     `## Design system\n\n- [Atlas kit v2](${ORIGIN}/kit/v2/): ${await describe('/kit/v2/')}\n- [Kit README](${ORIGIN}/kit/v2/README.md): ${kitSections}.`,
     `## How we build\n\n${how.join('\n')}`,
-    `## Use now\n\n${(await linkList(sections.Use)).join('\n')}`,
-    `## Contact\n\n${sections.Contact.map(it => `- [${it.label}](${abs(it.href)}): ${it.note}`).join('\n')}`,
-    `## Optional\n\n${(await linkList(sections.Lab)).join('\n')}\n- [Full text for agents](${ORIGIN}/llms-full.txt): Every project field in one file.`,
+    `## Full text\n\n- [Full text for agents](${ORIGIN}/llms-full.txt): Every project field in one file.`,
   ].join('\n\n');
 }
 
