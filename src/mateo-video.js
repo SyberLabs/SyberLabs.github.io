@@ -1,20 +1,23 @@
-// Verified V10 visuals with the unchanged approved V7 narration and captions.
-// Media production is separate from website integration.
+// V12: 1080p makeover with new narration covering GitHits, SyberWork, Attest and FLYSPACE.
+// Source, renderer and verification live in SyberLabs/presence (media/mateo). V7-V10 files stay for rollback.
 export const MATEO_VIDEO = {
-  "src": "/mateo/media/mateo-intro-v10.mp4",
-  "poster": "/mateo/media/mateo-intro-v10-poster.png",
-  "captions": "/mateo/media/mateo-intro-v7.en.vtt",
-  "transcriptFile": "/mateo/media/mateo-intro-v7-transcript.txt",
-  "durationSeconds": 120.6,
+  "src": "/mateo/media/mateo-intro-v12.mp4",
+  "poster": "/mateo/media/mateo-intro-v12-poster.jpg",
+  "captions": "/mateo/media/mateo-intro-v12.en.vtt",
+  "transcriptFile": "/mateo/media/mateo-intro-v12-transcript.txt",
+  "durationSeconds": 110.133,
   "credit": "Animated introduction. Synthetic narration.",
   "transcript": [
     "Hi, my name is Mateo Robles.",
-    "I'm a computer science graduate who builds useful software and brings clarity to complex work. I'm ready to contribute, learn quickly, and take ownership.",
-    "In the GitHits design partnership, I helped connect an AI coding tool to a service that finds relevant code examples. The goal is simple: give the tool useful references while keeping clear limits on what it can request. My contribution included building that connection, adding safeguards, and keeping a record of what happened so the results could be checked. I tested successful searches, requests that should be blocked, and whether the records could be trusted. The demonstration uses controlled test data, not customer results. Working through review feedback strengthened both the implementation and how I explained my decisions. That is experience solving a real software problem and making the work clear enough for another developer to check.",
-    "I work from first principles: start with the real goal and question assumptions. Then I choose the highest-impact next step, build the smallest useful version, check the evidence, and improve it. High agency means taking initiative and following through.",
-    "My path from sociology to computer science gave me two lenses: how people respond to incentives, and how systems respond to rules. Organizing AI tools that work on their own reminds me of coordinating people: clear roles, shared goals, context, and good handoffs matter. I look for both the human and technical reasons work gets stuck.",
-    "Gyre turns mathematics into live browser art. RISE makes reading interactive through text, audio, and visuals. I helped the team make readings play reliably and look consistent.",
-    "I'm open to software engineering, technical support, product or associate product management, and implementation roles. If you want someone curious, adaptable, and ready to contribute, invite me to interview.",
+    "I'm a computer science graduate and the founder of SyberLabs, a small research studio. I build AI tools that people can trust, because every step leaves evidence someone can check.",
+    "In the GitHits design partnership, I connected an AI coding tool to a service that finds relevant code examples. I built the connection, added safeguards so it could only make allowed requests, and kept a record of every call. Then I tested it: successful searches, requests that should be blocked, and whether the records held up. The demo uses controlled test data, and public review feedback made the work stronger.",
+    "GitHits fits into SyberWork, where contracts govern work. Every task keeps a case history of what was proposed, admitted, observed, approved, and executed, so people stay in charge of what ships.",
+    "Attest, which I built at the Kane CLI Hack Day, makes documentation that can't lie. An agent runs every step a README claims, badges each one with evidence, and patches the doc when a step fails.",
+    "FLYSPACE is our workspace for people and agents. I built its compiler, which turns OpenAPI and MCP schemas into typed blocks on a canvas, and made agent writes wait for human approval.",
+    "I work from first principles: start with the real goal, question assumptions, build the smallest useful version, check the evidence, and improve it.",
+    "My path from sociology to computer science taught me that coordinating AI agents is a lot like coordinating people. Clear roles, shared goals, context, and good handoffs matter.",
+    "I also make Gyre, which turns mathematics into live browser art, and I help build RISE, which makes reading interactive.",
+    "I'm looking for new grad software engineering, AI engineering, and creative technologist roles. If you want someone curious who follows through, invite me to interview.",
     "Let's build something useful together."
   ]
 };
