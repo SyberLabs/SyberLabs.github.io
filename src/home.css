@@ -56,3 +56,18 @@
  .home-proofs article + article { padding-top:20px; border-top:1px solid var(--sy-rule); }
  .home-hero.is-playing h1 { font-size:54px; }
 }
+
+/* The video becomes the first visual experience only after a verified delivery. */
+.home-hero--video { grid-template-columns:.75fr 1.25fr; gap:36px; min-height:540px; }
+.home-hero--video h1 { font-size:clamp(54px,6vw,88px); line-height:1; }
+.home-video { min-width:0; margin:0; scroll-margin-top:90px; }
+.home-video video { display:block; width:100%; height:auto; aspect-ratio:16/9; background:#090818; border:1px solid var(--sy-rule-2); border-radius:10px; }
+.home-video figcaption { display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px 20px; margin-top:12px; color:var(--sy-mist); font-size:12px; line-height:1.6; }
+.home-video figcaption a, .home-transcript a { color:var(--sy-ice); }
+.home-video__error { color:var(--sy-body); font-size:14px; line-height:1.6; }
+.home-transcript { margin-top:12px; color:var(--sy-mist); font-size:14px; line-height:1.7; }
+.home-transcript summary { min-height:44px; display:list-item; align-content:center; cursor:pointer; color:var(--sy-ice); }
+.home-transcript p { margin:12px 0; }
+.home-transcript summary:focus-visible, .home-video video:focus-visible { outline:2px solid var(--sy-ice); outline-offset:5px; }
+@media(max-width:800px) { .home-hero--video { grid-template-columns:1fr; } }
+@media(max-width:640px) { .home-hero--video { gap:20px; } .home-hero--video h1 { font-size:clamp(48px,14vw,62px); } .home-hero--video .home-hero__meta { margin-block:14px; } }
