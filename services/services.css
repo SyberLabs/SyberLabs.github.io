@@ -12,6 +12,7 @@ html.sy-field-live body.syber-services { background:#f5f3ec; }
 .syber-services .sy-field-host { display:none; }
 .syber-services .sy-header, .syber-services .sy-header.is-scrolled { background:rgba(245,243,236,.97); box-shadow:none; }
 .syber-services .sy-atlas__backdrop { background:rgba(245,243,236,.98); }
+.syber-services .sy-atlas__panel { background:#f5f3ec; }
 .syber-services .sy-atlas__close { background:#eeece3; }
 .syber-services .sy-atlas__title { font-family:var(--sy-sans); }
 .syber-services .sy-atlas__dot { box-shadow:none; }
