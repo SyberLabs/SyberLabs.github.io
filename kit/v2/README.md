@@ -58,12 +58,20 @@ The Mateo detail page uses an ivory reading surface (`#f5f3ec`), dark text (`#17
 
 ### Homepage first-visit reveal
 
-The hiring hero begins with Earth in the RISE Sophia shell, holds briefly, then
-recedes into a fine point field. The points gather into the real HTML name and
-hiring actions by about 6.4 seconds. This introduction runs once per browser tab
-session, with an explicit replay control. Header Interview/Résumé links and the
-narrated film remain reachable immediately. Skip moves focus to the readable
-heading. Reduced motion, missing WebGL, failed media, hidden tabs and resizing
-settle into the same usable HTML state. The final hiring controls never cycle
-away. Keep NASA/GSFC's visible linked image acknowledgment. Do not add a large
-centered panel over Earth or restore a permanent opaque half-screen mask.
+The hiring hero is one composition timed to one clip, `gyre-sophia-*.mp4`:
+Gyre motion, the RISE Sophia frame drawing itself, Earth held in the frame,
+then back to Gyre. On wide screens the clip sits right of the copy, scaled into
+a soft vignette so the frame and Earth are always whole and never under type;
+on phones it sits between the name and the panel.
+
+On the first visit in a tab the page follows the clip's own playback time
+(`REVEAL` in `src/hero-media.js`): with the Gyre the name rises (readable within
+a second); as the frame draws, the role follows; once Earth is framed, at about
+5.7 seconds, the panel rises with the line, `Interview Mateo`, `View résumé` and
+availability. Interview and Résumé stay in the header throughout, and the panel
+is inert only while hidden. A slow or blocked clip, scrolling, playing the film,
+reduced motion or a media error all end in the same full layout; return visits
+and script-free pages start there. The clip keeps looping behind the settled
+page. Keep NASA/GSFC's visible linked image acknowledgment. Keep the panel beside
+or below Earth, never over it, and do not restore a permanent opaque half-screen
+mask.
