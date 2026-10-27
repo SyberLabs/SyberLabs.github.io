@@ -58,7 +58,7 @@ export const header = (current = '', { sticky = true, script = true, here = '', 
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
   <nav class="sy-nav" aria-label="Primary"><ul>${hiring ? `<li><a href="mailto:${EMAIL}?subject=Interview%20with%20Mateo%20Robles">Interview</a></li><li><a href="/mateo_robles_resume.pdf">Résumé</a></li>` : navLinks(current)}</ul></nav>
   <details class="sy-menu"><summary aria-label="Menu" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas(here)}</details>
-</div></header>${script ? '\n<script type="module" src="/syberlabs.js"></script>' : ''}`;
+</div></header>${script ? '\n<script type="module" src="/syberlabs.js?v=20261027-nav"></script>' : ''}`;
 };
 
 // The footer: one hairline bar of essential contact, account and legal links. Every contact

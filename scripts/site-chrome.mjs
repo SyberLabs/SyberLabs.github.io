@@ -14,7 +14,7 @@ const pages = ['mateo/index.html', '404.html', 'approach/index.html', 'stack/ind
   'research/decision-arena/index.html',
   'projects/rise/index.html'];
 
-const HEADER = /<a class="sy-skip" href="#(\w+)">Skip to content<\/a>\s*(?:<div class="sy-field-host"[\s\S]*?<\/div>\s*)?<header class="sy-header[\s\S]*?<\/header>(?:\s*<script type="module" src="\/syberlabs\.js"><\/script>)?/;
+const HEADER = /<a class="sy-skip" href="#(\w+)">Skip to content<\/a>\s*(?:<div class="sy-field-host"[\s\S]*?<\/div>\s*)?<header class="sy-header[\s\S]*?<\/header>(?:\s*<script type="module" src="\/syberlabs\.js(?:\?[^\"]*)?"><\/script>)?/;
 const FOOTER = /<footer class="sy-footer[\s\S]*?<\/footer>/;
 
 export function applyChrome(html, file) {
