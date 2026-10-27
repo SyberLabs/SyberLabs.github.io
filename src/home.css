@@ -146,7 +146,8 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .pitch-hero__copy { text-shadow:0 2px 3px #000e,0 0 18px #000c; }
 .pitch-hero__role,.pitch-hero__line,.pitch-hero__availability { color:#f4f2ed; }
 .pitch-hero__actions .sy-btn { text-shadow:none; box-shadow:0 2px 14px #0006; }
-.hero-credit { color:var(--sy-dim); font-size:11px; }
+.hero-credit { color:var(--sy-dim); font-size:11px; transition:opacity .6s ease; }
+.hero-credit.is-off { opacity:0; }
 .hero-credit a { color:inherit; text-decoration:underline; text-decoration-color:#8990bb66; text-underline-offset:3px; }
 
 /* The hero is one composition. The clip (Gyre, the RISE Sophia frame drawing itself, Earth held in it, back to

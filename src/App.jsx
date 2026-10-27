@@ -115,7 +115,11 @@ export default function App() {
   // done: the panel (line, actions, availability) rises. Every other visit, and any failure, is simply done.
   const [phase, setPhase] = useState('idle');
   const [framed, setFramed] = useState(null); // what the Sophia frame holds now (FRAME_ART id), for the credit
-  const art = FRAME_ART.find(a => a.id === framed); // credited only while it is in the frame (never on phones)
+  // The credit names the painting only while it is on screen. The line keeps the last painting's text and fades out
+  // between appearances rather than leaving the layout, so nothing below it moves each time the loop turns.
+  const [lastFramed, setLastFramed] = useState(null);
+  useEffect(() => { if (framed) setLastFramed(framed); }, [framed]);
+  const art = FRAME_ART.find(a => a.id === lastFramed);
   const [revealing, setRevealing] = useState(false); // false in the served HTML, so the panel is never inert without JS
   const settle = useRef(() => {});
   useEffect(() => {
@@ -173,7 +177,7 @@ export default function App() {
       </section>
       <div className="film-notes sy-wrap">
         <span>{MATEO_VIDEO.credit}</span>
-        {art && <span className="hero-credit">In the frame: {art.date ? <><a href={art.href}>{art.title}</a>, {art.by} (The Cleveland Museum of Art, CC0)</> : <>{art.title}, by {art.by}, {art.made}</>}</span>}
+        {art && <span className={`hero-credit${framed ? '' : ' is-off'}`} aria-hidden={framed ? undefined : true}>In the frame: {art.date ? <><a href={art.href}>{art.title}</a>, {art.by} (The Cleveland Museum of Art, CC0)</> : <>{art.title}, by {art.by}, {art.made}</>}</span>}
         <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((p, i) => <p key={i}>{p}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>
         {videoError && <p role="status">Video unavailable. Read the transcript or explore the work below.</p>}
       </div>
