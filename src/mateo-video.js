@@ -1,8 +1,8 @@
-// Verified V9 visuals with the unchanged approved V7 narration and captions.
+// Verified V10 visuals with the unchanged approved V7 narration and captions.
 // Media production is separate from website integration.
 export const MATEO_VIDEO = {
-  "src": "/mateo/media/mateo-intro-v9.mp4",
-  "poster": "/mateo/media/mateo-intro-v9-poster.png",
+  "src": "/mateo/media/mateo-intro-v10.mp4",
+  "poster": "/mateo/media/mateo-intro-v10-poster.png",
   "captions": "/mateo/media/mateo-intro-v7.en.vtt",
   "transcriptFile": "/mateo/media/mateo-intro-v7-transcript.txt",
   "durationSeconds": 120.6,
