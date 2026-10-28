@@ -435,7 +435,7 @@ Complete output, unedited. With random seed 20260729, the simulation recorded 25
 
 ## Connect
 
-- [Meet Mateo](https://syberlabs.io/mateo/): Mateo Robles, Bay Area software and product engineer. Santa Clara CS 2026. Hackathon third place, GitHits design-partner pilot, RISE lead development. Available now.
+- [Meet Mateo](https://syberlabs.github.io/mateo-site/): Projects, code and résumé
 - [Mateo on GitHub](https://github.com/sykosyber): github.com/sykosyber
 
 ## More
