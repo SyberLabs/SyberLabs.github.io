@@ -143,7 +143,7 @@ test('static chrome derives current navigation from routes, repairing missing an
       assert.deepEqual(current, expected ? [expected] : [], `${file} previously ${prior}`);
       if (['mateo/index.html', 'services/index.html', 'projects/rise/index.html'].includes(file)) {
         assert.match(primary, /href="mailto:hello\.mateorobles@gmail\.com\?subject=Interview%20with%20Mateo%20Robles">Interview<\/a>/);
-        assert.match(primary, /href="\/mateo_robles_resume\.pdf">Résumé<\/a>/);
+        assert.match(primary, /href="https:\/\/syberlabs\.space\/mateo-site\/#resumes">Résumé<\/a>/);
       }
       assert.match(generated, /href="#content">Skip to content/);
       assert.equal(applyChrome(generated, file), generated, 'regeneration is idempotent');
@@ -160,7 +160,7 @@ test('the selected Menu and footer preserve contact, subscriber and legal links'
   const { siteMap, footerLinks, CONTACT, RESUME } = await import('../projects/site-data.js');
   for (const [file, marked] of [
     ['research/sybershoke/index.html', []],
-    ['mateo/index.html', ['/mateo/']], // one selected contact destination
+    ['mateo/index.html', []], // Meet Mateo now links to Mateo's own site, so nothing in the Menu is this page
     ['privacy/index.html', ['/privacy/']],
     ['404.html', []],
   ]) {
