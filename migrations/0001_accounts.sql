@@ -78,7 +78,7 @@ CREATE TRIGGER role_perms_admin_keeps_all BEFORE DELETE ON role_permissions
 CREATE TABLE user_roles (
   user_id     TEXT NOT NULL REFERENCES users(id),
   role_id     TEXT NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
-  granted_by  TEXT REFERENCES users(id),          -- NULL = bootstrap or break-glass, from Seth's terminal
+  granted_by  TEXT REFERENCES users(id),          -- NULL = bootstrap or break-glass, from the owner's terminal
   granted_at  INTEGER NOT NULL,
   PRIMARY KEY (user_id, role_id)
 );
@@ -109,7 +109,7 @@ CREATE TABLE invites (
 CREATE TABLE audit_events (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   at             INTEGER NOT NULL,
-  actor_user_id  TEXT,                            -- NULL = bootstrap, from Seth's terminal
+  actor_user_id  TEXT,                            -- NULL = bootstrap, from the owner's terminal
   action         TEXT NOT NULL,                   -- signin.ok invite.create invite.revoke invite.redeem
                                                   -- role.grant role.revoke role.create role.perms
                                                   -- user.disable user.enable identity.remove

@@ -47,7 +47,7 @@ export const ROUTES = [
   ['GET  /admin/roles',                        'id:users.read',      rolesPage],
   ['POST /admin/roles',                        'id:roles.manage',    saveRole],         // RFC-0002 8.2: non-privileged keys only
   ['GET  /admin/audit',                        'id:audit.read',      auditPage],
-  // Packet 5. Removing a sign-in method has no page in v1: it is Seth's runbook step (RFC-0002 2.5, 8.4.9).
+  // Packet 5. Removing a sign-in method has no page in v1: it is the owner's runbook step (RFC-0002 2.5, 8.4.9).
   ['POST /admin/account/add-google',           SIGNED_IN,            addGoogle,         { provider: 'google' }],  // session under 10 min
 ];
 

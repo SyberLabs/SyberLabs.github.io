@@ -1,5 +1,5 @@
 # Cloudflare Pages config for syberlabs-home (auth plan 11.3, RFC-0002 8.4.3). Once this file exists it is the
-# source of truth: the dashboard can no longer edit these fields. Every REPLACE_ME is filled in by Seth from
+# source of truth: the dashboard can no longer edit these fields. Every REPLACE_ME is filled in by the owner from
 # `wrangler d1 create` and the OAuth app pages before merge; until then a deploy fails on purpose.
 # Client ids are public by nature. Secrets (APP_SECRET, *_CLIENT_SECRET) never go here.
 name = "syberlabs-home"

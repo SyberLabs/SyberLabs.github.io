@@ -40,7 +40,7 @@ async function userById(db, id) {
 // once shared a login cannot be confused (RFC-0002 3.5).
 const fullName = p => (p.provider !== 'google' && p.login ? `@${p.login} (GitHub id ${p.subject})` : identityName(p));
 
-// "Admins left after this: @sdcarlson; GitHub id N (never signed in)." (RFC-0002 2.4, 3.5)
+// "Admins left after this: @octocat; GitHub id N (never signed in)." (RFC-0002 2.4, 3.5)
 async function adminsLeftLine(db, userId) {
   const { results } = await db.prepare(`SELECT i.provider, i.login, i.subject, i.email, ${LAST_SIGNIN} AS last_login_at
       FROM admins a JOIN users u ON u.id = a.user_id LEFT JOIN identities i ON i.id = ${FIRST_IDENTITY}
@@ -60,7 +60,7 @@ async function loadPeople(db) {
   return { users: users.results, identities: identities.results, grants: grants.results, roles: roles.results };
 }
 
-// "GitHub @login" or "Google you@example.com". There is no Remove button: removing a method is Seth's runbook
+// "GitHub @login" or "Google you@example.com". There is no Remove button: removing a method is the owner's runbook
 // step (RFC-0002 2.5, 8.4.9).
 const methodLabel = i => (i.provider === 'google' ? `Google ${identityName(i)}`
   : i.login ? `GitHub @${i.login}` : `GitHub id ${i.subject}`);

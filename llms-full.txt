@@ -345,7 +345,7 @@ Text version of the interactive map: This map needs JavaScript.
 
 ### Facts
 
-- Built by: Seth Carlson and Mateo Robles
+- Built by: SyberLabs
 - Technology: TypeScript, React, Vinext, Cloudflare Workers, D1, Drizzle ORM, Chrome extension (Manifest V3), Playwright
 - Boundary: Relay prepares and tracks application materials. It does not submit employer forms, host an MCP connection, or sync accounts in the background.
 - Source: [github.com/SyberLabs/relay](https://github.com/SyberLabs/relay)

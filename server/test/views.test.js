@@ -76,7 +76,7 @@ test('nav is filtered by permissions and always includes Launchpad, Saved things
 });
 
 test('workspace shell keeps profile and permission-filtered desktop and mobile navigation available without scripts', () => {
-  const html = page(ctxFor({ perms: ['site:changes.read'], user: { login: 'sdcarlson' } }), { title: 'X', body: '', section: 'changes' });
+  const html = page(ctxFor({ perms: ['site:changes.read'], user: { login: 'octocat' } }), { title: 'X', body: '', section: 'changes' });
   assert.match(html, /<body class="workspace-app">/);
   assert.match(html, /class="workspace-sidebar"/);
   assert.match(html, /<details class="workspace-mobile-nav"><summary>Navigate<\/summary>/);
@@ -84,8 +84,8 @@ test('workspace shell keeps profile and permission-filtered desktop and mobile n
   assert.equal((html.match(/aria-label="Team"/g) || []).length, 2);
   assert.equal((html.match(/href="\/admin\/changes" aria-current="page"/g) || []).length, 2);
   assert.equal((html.match(/action="\/auth\/signout"/g) || []).length, 2);
-  assert.match(html, /aria-label="Profile: @sdcarlson \(GitHub\)"/);
-  assert.match(html, /staff-profile__label">@sdcarlson<small>GitHub<\/small>/);
+  assert.match(html, /aria-label="Profile: @octocat \(GitHub\)"/);
+  assert.match(html, /staff-profile__label">@octocat<small>GitHub<\/small>/);
   assert.doesNotMatch(html, /\/admin\/people|\/admin\/roles|\/admin\/audit/);
   const byId = page(ctxFor({ user: { login: null, subject: '4242' } }), { title: 'X', body: '' });
   assert.match(byId, /Profile: GitHub id 4242 \(GitHub\)/);
@@ -355,7 +355,7 @@ test('404 and CSRF pages render in the chrome', async () => {
 
 test('audit page: an ordered list of one-line sentences, newest first, names never hex, empty state', async () => {
   const env = makeEnv();
-  const admin = await signIn(env.DB, { perms: ['id:audit.read'], login: 'sdcarlson' });
+  const admin = await signIn(env.DB, { perms: ['id:audit.read'], login: 'octocat' });
   const empty = await (await call(env, '/admin/audit', { cookie: admin.cookie })).text();
   assert.match(empty, /Nothing recorded yet\./);
   const byId = seedUser(env.DB, { login: null, subject: '4242' });
@@ -370,10 +370,10 @@ test('audit page: an ordered list of one-line sentences, newest first, names nev
   noRawXss(body);
   assert.match(body, /<ol class="staff-audit">/);
   assert.doesNotMatch(body, /<table/);
-  assert.ok(body.includes('<li><time datetime="2026-10-09T14:02:00.000Z">2026-10-09 14:02 UTC</time>, @sdcarlson turned off GitHub id 4242.</li>'));
+  assert.ok(body.includes('<li><time datetime="2026-10-09T14:02:00.000Z">2026-10-09 14:02 UTC</time>, @octocat turned off GitHub id 4242.</li>'));
   assert.ok(body.includes('the terminal added the What changed entry "&lt;script&gt;'));
-  assert.ok(body.includes('@sdcarlson granted viewer to a removed account.'));
-  assert.ok(body.includes('@sdcarlson added GitHub id 4242 as admin.'));
+  assert.ok(body.includes('@octocat granted viewer to a removed account.'));
+  assert.ok(body.includes('@octocat added GitHub id 4242 as admin.'));
   assert.ok(body.indexOf('added GitHub id 4242') < body.indexOf('turned off GitHub id 4242'), 'newest first');
   assert.doesNotMatch(body, /ffffffff|203\.0\.113/, 'no hex ids, no IP prefixes');
 });

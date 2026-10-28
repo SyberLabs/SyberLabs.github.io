@@ -7,7 +7,7 @@ export { identityName };
 export const PROVIDER_LABEL = { github: 'GitHub', google: 'Google' };
 export const providerLabel = p => PROVIDER_LABEL[p] || 'the provider';
 
-// "@sdcarlson (GitHub)", or "you@example.com (Google)"
+// "@octocat (GitHub)", or "you@example.com (Google)"
 export const signedInAs = user => `${identityName(user)} (${providerLabel(user.provider)})`;
 
 // The section nav (RFC-0002 3.3), in this order. Account is open to every session, the rest need their key.
