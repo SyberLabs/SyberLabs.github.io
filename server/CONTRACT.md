@@ -173,7 +173,7 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
     `providerLabel(p)`. `page()` puts its own " · SyberLabs staff" after `title`; `alert(kind, html)` kinds are
     `neutral | success | warning | danger`.
   - `forbidden.js` re-exports `notFoundHtml`, `errorHtml`, `unavailableHtml`, `CSRF_COPY` from `views/error.js`.
-  - `confirm.js` exports `confirmed(ctx)`, `actingAs(user)` ("You, Seth via GitHub," escaped, trailing comma) and
+  - `confirm.js` exports `confirmed(ctx)`, `actingAs(user)` ("You, @octocat (GitHub)," escaped, trailing comma) and
     `confirmHtml(ctx, {title, lines, action, fields, submitLabel, cancel = '/admin/', section})` -> string.
   - Sign-in page: one GitHub form, and the `e=` copy names GitHub (no `?p=` until Packet 5 adds a second provider). Its forms send `switch=1` (no `prompt` field), and `login_hint` on a Google invite. Copy follows RFC 3.4;
     the no-keys empty state says "Ask an admin" (no names in the repo).
@@ -230,14 +230,14 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
     `change_entries.created_by`/`updated_by`/`updated_at`/`deleted_at`; `audit_dedupe` and the 90-day `signin.denied`
     retention tier are gone. `change_entries_order` replaces the partial index.
   - `/api/me`, `/api/admin/changes` and `/api/*` in `_routes.json` are gone (RFC R1-8); every error is HTML.
-  - Bootstrap writes users, identities and grants directly from Seth's terminal (RFC 8.4.8); its audit action is
+  - Bootstrap writes users, identities and grants directly from the owner's terminal (RFC 8.4.8); its audit action is
     `bootstrap`.
 - **review round 2:**
   - **Spec target.** This branch implements RFC-0002 as of `88e25a9` (red-team round 2). Round 3 (`e4f92b8`) deletes
     invites (`invites` table, `login_hint`, case b, redemption batch, invite revoke, open-invites list, `welcome=1`) for
     `POST /admin/people/add`, drops `users.display_name` and the seeded `viewer`, makes `/auth/signin` never redirect,
     makes `POST /auth/signout` PUBLIC and splits a CI function job. Those are not adopted here: whether this branch
-    tracks round 3 is Seth's call. Reviews should not flag that drift until he decides. Round 3 items adopted one by one
+    tracks round 3 is the owner's call. Reviews should not flag that drift until the owner decides. Round 3 items adopted one by one
     are cited in code (`enableUser` confirm).
   - Confirm pages also cover deleting a What changed entry (RFC 2.4, 3.5, test 15) and turning on an account that holds
     `role_admin` (RFC `e4f92b8` 2.4, 8.2, test 19).
@@ -301,7 +301,7 @@ implemented, with the reason:
   this task keeps the CI guards and their `if` form. Packet 1b's canary guard and the removal of #84's `rm -f` are done.
 - **Headers (8.2).** `X-Frame-Options`, `Permissions-Policy` and `Cross-Origin-Opener-Policy` stay: the RFC says they
   add nothing, not that they harm. `form-action` names only GitHub until Packet 5 adds Google.
-- **Names in copy (3.3, 3.4: "Ask Seth or Mateo").** The copy says "Ask an admin": no names in the repo.
+- **Names in copy (3.3, 3.4).** The copy says "Ask an admin": no names in the repo.
 - **`id:users.manage` label (2.4).** The permission now includes removing sign-in methods; the existing live schema already supports Packet 5 without new identity columns.
 - **Two RFC conflicts, settled for the copy table in 3.4.** Test 4 expects `e=refused` for `error=server_error`, but
   3.4 has no such code and maps every non-`access_denied` error to `provider`; the code uses `e=provider&p=github`.

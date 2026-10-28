@@ -77,7 +77,7 @@ test('browser back refreshes signed-out HTML after login and validates sign-out 
   const f = fixture(); account(f.doc);
   f.requests[0].resolve(response(401)); await settle();
   const back = f.win.dispatch('pageshow');
-  f.requests[1].resolve(signedIn('@seth')); await back;
+  f.requests[1].resolve(signedIn('@octocat')); await back;
   assert.equal(f.nodes['sy-account-member'].hidden, false);
   const focus = f.win.dispatch('focus');
   f.requests[2].resolve(response(401)); await focus;
@@ -101,7 +101,7 @@ test('visibility refresh waits until visible and old requests cannot overwrite n
 
 test('transient server failures, malformed replies and timeout preserve validated state', async () => {
   const f = fixture(); const refresh = account(f.doc);
-  f.requests[0].resolve(signedIn('@seth')); await settle();
+  f.requests[0].resolve(signedIn('@octocat')); await settle();
   for (const result of [response(503), response(200, { version: 1, user: null })]) {
     const pending = refresh(); f.requests.at(-1).resolve(result); await pending;
     assert.equal(f.nodes['sy-account-member'].hidden, false);

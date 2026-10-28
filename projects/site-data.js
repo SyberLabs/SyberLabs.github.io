@@ -293,7 +293,7 @@ export const projects = [
       ['not yet', 'No public deployment and no customer counts, hiring outcomes or throughput improvements are claimed. Autonomous hunting is not included.'],
     ],
     facts: [
-      ['Built by', 'Seth Carlson and Mateo Robles'],
+      ['Built by', 'SyberLabs'],
       ['Technology', 'TypeScript, React, Vinext, Cloudflare Workers, D1, Drizzle ORM, Chrome extension (Manifest V3), Playwright'],
       ['Boundary', 'Relay prepares and tracks application materials. It does not submit employer forms, host an MCP connection, or sync accounts in the background.'],
       ['Source', { label: 'github.com/SyberLabs/relay', href: 'https://github.com/SyberLabs/relay' }],

@@ -6,7 +6,7 @@ import { page, head, hidden, signedInAs } from './layout.js';
 // A confirm route acts only on the second POST.
 export const confirmed = ctx => ctx.form.get('confirm') === '1';
 
-// "You, @sdcarlson (GitHub)," (escaped): the acting identity, named on every confirm page.
+// "You, @octocat (GitHub)," (escaped): the acting identity, named on every confirm page.
 export const actingAs = user => `You, ${esc(signedInAs(user))},`;
 
 // lines: trusted HTML strings (callers escape every value). fields: object or [name, value] pairs.

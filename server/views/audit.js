@@ -1,5 +1,5 @@
 // /admin/audit (RFC-0002 2.6): the last 200 events, newest first, as an <ol> of one-line sentences:
-// "2026-10-09 14:02 UTC, @sdcarlson turned off @x." Actor and target render from the identity join as
+// "2026-10-09 14:02 UTC, @octocat turned off @x." Actor and target render from the identity join as
 // @login, else "GitHub id N", else "a removed account"; a hex id is never printed. Read only.
 import { esc, html } from '../http.js';
 import { displayNames } from '../authz.js';
@@ -47,7 +47,7 @@ export async function auditPage(ctx) {
     if (r.target_type === 'user' && r.target_id) ids.add(r.target_id);
   }
   const names = ids.size ? await displayNames(db, [...ids]) : new Map();
-  // A NULL actor is Seth's terminal: bootstrap or break-glass (RFC-0002 8.1).
+  // A NULL actor is the owner's terminal: bootstrap or break-glass (RFC-0002 8.1).
   const who = id => (id ? names.get(id) || 'a removed account' : 'the terminal');
 
   const sentence = r => {

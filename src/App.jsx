@@ -114,7 +114,7 @@ const pauseOtherVideos = event => { for (const video of document.querySelectorAl
 
 // The lab's work, shown in the hero from the first frame, each line linked to its section below.
 // Mateo's personal credentials (degree, availability) live on /mateo/, the hiring page every application links to.
-// Third place confirmed by Seth Carlson (Oct 27); event and project tied together by PorchLight's README.
+// Third place confirmed by SyberLabs (Oct 27); event and project tied together by PorchLight's README.
 const HACKATHON = { result: 'third place', event: 'Cline, Parallel & Composio Hackathon', date: 'October 2026', href: '#porchlight' };
 const WORK = [
   { label: 'GitHits', text: 'Design partnership: an A/B pilot and a GitHits client for Claude Code', href: '#work' },

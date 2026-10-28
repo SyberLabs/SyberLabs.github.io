@@ -42,14 +42,14 @@ test('people page: one list item per person (no table); readers get no actions; 
 
 test('case 21: granting admin needs the confirm page, which names the acting identity; confirm=1 grants', async () => {
   const env = makeEnv();
-  const admin = await signIn(env.DB, { roles: ['role_admin'], login: 'seth-test' });
+  const admin = await signIn(env.DB, { roles: ['role_admin'], login: 'admin-test' });
   const target = await signIn(env.DB, { roles: ['role_viewer'], login: 'mateo-test' });
   const before = env.DB.totalChanges();
   let res = await call(env, '/admin/people/roles/grant', { cookie: admin.cookie, form: { user: target.userId, role: 'role_admin' } });
   assert.equal(res.status, 200);
   const page = await res.text();
   // RFC-0002 3.5: the acting identity, then the target as "@login (GitHub id N)".
-  assert.match(page, new RegExp(`You, @seth-test \\(GitHub\\), are granting <strong>admin</strong> to @mateo-test \\(GitHub id ${target.subject}\\)\\.`));
+  assert.match(page, new RegExp(`You, @admin-test \\(GitHub\\), are granting <strong>admin</strong> to @mateo-test \\(GitHub id ${target.subject}\\)\\.`));
   assert.match(page, /Admin can add people, grant and revoke roles, turn accounts off and on, and create roles\./);
   assert.match(page, /href="\/admin\/people">Cancel<\/a>/);
   assert.match(page, /name="confirm" value="1"/);
