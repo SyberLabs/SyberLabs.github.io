@@ -12,12 +12,12 @@ export const EMAIL = 'hello.mateorobles@gmail.com';
 // Mateo's own address is the single contact everywhere (site, résumé, structured data): he asked for it on Oct 27
 // because the old lab inbox was flagged as spam during outreach.
 export const MATEO_EMAIL = 'hello.mateorobles@gmail.com';
-export const RESUME = 'https://syberlabs.github.io/mateo-site/#resumes';   // the three role-family résumés on Mateo's site
+export const RESUME = 'https://syberlabs.space/mateo-site/#resumes';   // the three role-family résumés on Mateo's site
 export const LINKEDIN = 'https://www.linkedin.com/in/automateon/';
 export const GITHUB = 'https://github.com/SyberLabs';            // the lab's organisation
 // Mateo's own profiles, wherever he appears as a person (the hero's founder line, the founder card, structured data)
 export const MATEO_GITHUB = 'https://github.com/sykosyber';
-export const MATEO_SITE = 'https://syberlabs.github.io/mateo-site/';
+export const MATEO_SITE = 'https://syberlabs.space/mateo-site/';
 
 // Public tools and previews. Linked from the hero, the Atlas, the footer and each project page.
 export const RISE_APP = 'https://rise.syberlabs.io/';

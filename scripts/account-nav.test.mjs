@@ -143,7 +143,7 @@ test('static chrome derives current navigation from routes, repairing missing an
       assert.deepEqual(current, expected ? [expected] : [], `${file} previously ${prior}`);
       if (['mateo/index.html', 'services/index.html', 'projects/rise/index.html'].includes(file)) {
         assert.match(primary, /href="mailto:hello\.mateorobles@gmail\.com\?subject=Interview%20with%20Mateo%20Robles">Interview<\/a>/);
-        assert.match(primary, /href="https:\/\/syberlabs\.github\.io\/mateo-site\/#resumes">Résumé<\/a>/);
+        assert.match(primary, /href="https:\/\/syberlabs\.space\/mateo-site\/#resumes">Résumé<\/a>/);
       }
       assert.match(generated, /href="#content">Skip to content/);
       assert.equal(applyChrome(generated, file), generated, 'regeneration is idempotent');
