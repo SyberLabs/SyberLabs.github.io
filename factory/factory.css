@@ -1,0 +1,49 @@
+/* The factory page: the homepage's near-black stage, off-white type and restrained cyan (kit/v2, immersive direction).
+   One column of reading, a numbered line for the Build Thread, a grid of guarantees, and an honest list of limits. */
+body.syber-factory { background:#030708; }
+.syber-factory .sy-field-host { display:none; }
+.factory { padding-bottom:40px; }
+.factory h2 { margin:0 0 14px; font:500 clamp(28px,3.4vw,44px)/1.1 var(--sy-sans); letter-spacing:-.03em; color:var(--sy-vellum); }
+.factory h3 { margin:0; font:500 20px/1.3 var(--sy-sans); letter-spacing:-.015em; color:var(--sy-vellum); }
+.factory p { color:var(--sy-mist); }
+.factory a:not(.sy-btn) { color:var(--sy-ice); text-underline-offset:4px; }
+.factory :focus-visible { outline:2px solid var(--sy-ice); outline-offset:4px; }
+.factory section { padding-block:72px; border-top:1px solid var(--sy-rule); }
+
+.factory-hero { border-top:0 !important; padding-top:clamp(56px,10vh,110px) !important; }
+.factory-hero__emblem { display:block; width:clamp(110px,12vw,170px); height:auto; margin-bottom:22px; mix-blend-mode:screen; }
+.factory-hero h1 { max-width:14ch; margin:16px 0 22px; font:500 clamp(46px,6.4vw,92px)/.98 var(--sy-sans); letter-spacing:-.05em; color:var(--sy-vellum); }
+.factory-lede { max-width:52ch; margin:0; font-size:clamp(18px,1.6vw,21px); line-height:1.55; color:#d3dbdc !important; }
+.factory-links { display:flex; flex-wrap:wrap; align-items:center; gap:10px 24px; margin:28px 0 0; }
+.factory-links .sy-btn { min-height:44px; padding:0 20px; border-radius:2px; font-size:14px; background:#eeece7; border-color:#eeece7; color:#070b0d; box-shadow:none; }
+.factory-links a:not(.sy-btn) { display:inline-flex; align-items:center; gap:6px; min-height:44px; font-size:15px; }
+
+.factory-note { max-width:60ch; margin:0 0 30px; font-size:16px; line-height:1.6; }
+.factory-line { display:grid; margin:0; padding:0; list-style:none; }
+.factory-line li { display:grid; grid-template-columns:64px 1fr; gap:20px; padding:26px 0; border-top:1px solid var(--sy-rule); }
+.factory-line li:first-child { border-top:0; }
+.factory-line__n { color:var(--sy-ice); font:400 13px/1.9 var(--sy-mono); }
+.factory-line p { max-width:66ch; margin:10px 0 0; font-size:16px; line-height:1.65; }
+.factory-line .factory-never { position:relative; padding-left:16px; font-size:14px; color:var(--sy-dim); }
+.factory-line .factory-never::before { content:""; position:absolute; left:0; top:.6em; width:6px; height:6px; border:1px solid var(--sy-dim); border-radius:50%; }
+
+.factory-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:30px 56px; margin:26px 0 0; }
+.factory-grid dt { color:var(--sy-vellum); font:500 19px/1.3 var(--sy-sans); }
+.factory-grid dd { margin:10px 0 0; color:var(--sy-mist); font-size:15px; line-height:1.65; }
+
+.factory-self-built { display:grid; grid-template-columns:1.05fr .95fr; gap:clamp(32px,6vw,90px); align-items:center; }
+.factory-self-built p { max-width:54ch; font-size:16px; line-height:1.65; }
+.factory-self-built figure { margin:0; }
+.factory-self-built img { display:block; width:100%; height:auto; mix-blend-mode:screen; -webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%); mask-image:radial-gradient(closest-side,#000 72%,transparent 100%); }
+.factory-self-built figcaption { padding-top:8px; text-align:center; color:var(--sy-dim); font-size:12px; }
+
+.factory-limits ul { display:grid; gap:14px; max-width:70ch; margin:16px 0 0; padding:0; list-style:none; }
+.factory-limits li { position:relative; padding-left:20px; color:var(--sy-mist); font-size:15px; line-height:1.65; }
+.factory-limits li::before { content:"·"; position:absolute; left:4px; color:var(--sy-ice); }
+.factory-limits em { color:var(--sy-vellum); font-style:normal; }
+
+@media (max-width:800px) {
+  .factory section { padding-block:52px; }
+  .factory-grid, .factory-self-built { grid-template-columns:1fr; }
+  .factory-line li { grid-template-columns:40px 1fr; gap:12px; }
+}

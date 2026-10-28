@@ -117,10 +117,41 @@ const pauseOtherVideos = event => { for (const video of document.querySelectorAl
 // Third place confirmed by SyberLabs (Oct 27); event and project tied together by PorchLight's README.
 const HACKATHON = { result: 'third place', event: 'Cline, Parallel & Composio Hackathon', date: 'October 2026', href: '#porchlight' };
 const WORK = [
+  { label: 'Factory', text: 'How a change travels from an agent to a person’s admission', href: '/factory/' },
   { label: 'GitHits', text: 'Design partnership: an A/B pilot and a GitHits client for Claude Code', href: '#work' },
   HACKATHON && { label: 'Hackathon', text: `PorchLight, ${HACKATHON.result}, ${HACKATHON.event}, ${HACKATHON.date}`, href: HACKATHON.href },
   { label: 'RISE', text: 'Interactive reading with sound and moving visuals, in open beta', href: '#rise' },
 ].filter(Boolean);
+
+// The factory in five steps, as SyberWork's Build Thread runs them (docs/BUILD_THREAD.md); /factory/ has the detail.
+const FACTORY_STEPS = [
+  ['Propose', 'Model adapters write candidates; a repair loop feeds back real check results until one passes.'],
+  ['Check', 'The host runs the contract’s checks on each candidate’s exact tree. A model’s own claim counts for nothing.'],
+  ['Review', 'An independent critic reviews the change. It can never be the agent that wrote it.'],
+  ['Admit', 'Twenty-one ordered rules decide, and a person accepts. The only write is your thread’s branch.'],
+  ['Publish', 'Pushing and opening a pull request are separate admitted actions, each recorded.'],
+];
+
+// The header in huge words streaming through: three full-bleed rows, alternating direction and speed, reading
+// SYBERLABS / THE {AUTONOMOUS} / SOFTWARE FACTORY at every moment. Each row is two identical runs, so the loop has
+// no seam. Decorative: the h1 carries the words for assistive technology. Reduced motion holds it still; it pauses
+// with the background (Pause motion) and while the clip cannot move.
+const STREAM = [
+  [<span key="s" className="stream__chrome">SyberLabs</span>],
+  [<span key="t">The</span>, <span key="a" className="stream__brace">{'{'}</span>, <span key="b" className="stream__chrome">Autonomous</span>, <span key="c" className="stream__brace">{'}'}</span>],
+  [<span key="f">Software</span>, <span key="g">Factory</span>],
+];
+function StreamTitle() {
+  return <div className="stream" aria-hidden="true">
+    {STREAM.map((words, i) => <div key={i} className={`stream__row stream__row--${i}`}>
+      <div className="stream__track">
+        {[0, 1].map(copy => <div key={copy} className="stream__run">
+          {[0, 1, 2].map(n => <span key={n} className="stream__phrase">{words}<span className="stream__sep">✦</span></span>)}
+        </div>)}
+      </div>
+    </div>)}
+  </div>;
+}
 
 export default function App() {
   const movieSeconds = Math.round(MATEO_VIDEO.durationSeconds);
@@ -170,13 +201,12 @@ export default function App() {
       <section className={`pitch-hero${started ? ' is-playing' : ''}`} data-phase={phase} aria-labelledby="hero-title">
         <picture className="pitch-hero__art"><source media="(max-width: 600px)" srcSet={HERO_MEDIA.portraitPoster} /><img src={HERO_MEDIA.poster} width="1280" height="720" alt="" fetchPriority="high" /></picture>
         <BackgroundVideo pitchPlaying={started} onTime={onClipTime} onUnavailable={() => settle.current()} onArt={setFramed} />
+        <StreamTitle />
         <div className="pitch-hero__copy sy-wrap">
-          <h1 id="hero-title" tabIndex={-1}>
-            <span className="pitch-hero__brand" data-text="SyberLabs">SyberLabs</span>
-          </h1>
-          <p className="pitch-hero__role">Research studio founded by <a href={MATEO_PORTFOLIO}>Mateo Robles</a></p>
+          <h1 id="hero-title" className="sy-sr" tabIndex={-1}>SyberLabs: the autonomous software factory</h1>
+          <p className="pitch-hero__role">Founded by <a href={MATEO_PORTFOLIO}>Mateo Robles</a></p>
           <div className="pitch-hero__panel">
-            <p className="pitch-hero__line">AI developer tools and interactive web products, built so every step leaves evidence someone can check.</p>
+            <p className="pitch-hero__line">AI agents write, test and repair code on their own. The factory runs every check itself, keeps a signed record of each step, and ships nothing until a person admits it.</p>
             <ul className="pitch-hero__proof" role="list" aria-label="Selected work">
               {WORK.map(p => <li key={p.label}><span className="pitch-hero__proof-label">{p.label}<span className="sy-sr">:</span></span>{' '}<a href={p.href}>{p.text}</a></li>)}
             </ul>
@@ -200,13 +230,17 @@ export default function App() {
         <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((p, i) => <p key={i}>{p}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>
         {videoError && <p role="status">Video unavailable. Read the transcript or explore the work below.</p>}
       </div>
-      <section id="lab" className="lab-identity sy-wrap" aria-labelledby="lab-identity-title">
+      <section id="factory" className="lab-identity sy-wrap" aria-labelledby="factory-title">
         <div className="lab-identity__copy">
           <img className="lab-identity__emblem" src="/mateo/lab/emblem-mateo-robles.webp" width="900" height="675" alt="" loading="lazy" decoding="async" />
-          <p className="sy-eyebrow">The lab</p>
-          <h2 id="lab-identity-title">Infrastructure for AI agents.</h2>
-          <p>When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules the system controls, and records the reason when it refuses one.</p>
-          <a href="/projects/syberwork/">How SyberWork works <span aria-hidden="true">→</span></a>
+          <p className="sy-eyebrow">The factory</p>
+          <h2 id="factory-title">Agents build. The factory checks. A person admits.</h2>
+          <p>SyberWork is the factory floor. Every change is a candidate on a side branch; nothing reaches your branch until it passes the host’s own checks and a person accepts it.</p>
+          <ol className="factory-steps">
+            {FACTORY_STEPS.map(([step, text]) => <li key={step}><b>{step}</b><span>{text}</span></li>)}
+          </ol>
+          <p className="factory-self">SyberWork builds itself this way: its own pull requests are proposed, checked and admitted through the factory.</p>
+          <a href="/factory/">Inside the factory <span aria-hidden="true">→</span></a>
         </div>
         <figure className="lab-identity__art">
           <img src="/mateo/lab/agent-network-mateo-robles.webp" width="1100" height="921" alt="Glowing blue nodes joined by arcing links, like a network of agents." loading="lazy" decoding="async" />
@@ -215,7 +249,7 @@ export default function App() {
       </section>
       <section id="work" className="selected-work sy-wrap" aria-labelledby="work-title">
         <div className="selected-work__intro">
-          <p className="sy-eyebrow">Selected work / AI developer tools</p>
+          <p className="sy-eyebrow">Made in the factory / AI developer tools</p>
           <h2 id="work-title">GitHits design partnership</h2>
           <p>GitHits searches open-source code so AI coding assistants can learn from real examples, and offered SyberLabs a design partnership to measure what that is worth to a coding-agent factory. I designed the pilot and its integration: a standard-library Python client, and the wiring that lets Claude Code use it under the host’s rules. Our agent factory implemented both to that design.</p>
           <ol className="gh-flow" aria-label="How a lookup travels">
