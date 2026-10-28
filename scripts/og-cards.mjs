@@ -39,8 +39,10 @@ const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 // One entry per page. `seed` names the sigil (projects use their slug, so the card carries the same
 // mark as the page); `line` is the single sentence under the headline.
 const pages = [
-  { slug: 'home', path: '/', eyebrow: 'Research studio · Founded by Mateo Robles', headline: 'AI developer tools and interactive web products.',
-    line: 'GitHits design partnership. PorchLight, third place at the Cline, Parallel & Composio Hackathon. RISE, interactive reading in open\u00a0beta.', seed: 'syberlabs', accent: ICE },
+  { slug: 'home', path: '/', eyebrow: 'SyberLabs · Founded by Mateo Robles', headline: 'The autonomous software factory.',
+    line: 'AI agents write, test and repair code on their own. The factory runs every check itself, keeps a signed record, and ships nothing until a person\u00a0admits\u00a0it.', seed: 'syberlabs', accent: ICE },
+  { slug: 'factory', path: '/factory/', eyebrow: 'SyberLabs · The factory', headline: 'Agents build. The host checks. A person admits.',
+    line: 'One change, step by step: candidates on side refs, checks on the exact tree, twenty-one ordered rules, a signed record of\u00a0each\u00a0step.', seed: 'syberwork', accent: ICE },
   ...projects.map(p => ({
     slug: p.slug, path: `/projects/${p.slug}/`, eyebrow: `Project ${p.number} · ${p.category}`, headline: p.headline,
     // the whole intro when it fits four lines, otherwise its first sentence

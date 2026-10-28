@@ -39,7 +39,7 @@ const homeDescription = await describe('/');
 const source = p => p.facts.find(([k]) => k === 'Source')?.[1]?.href;
 
 // Pages that explain how SyberLabs builds. /stack/ is listed once its page exists.
-const HOW = ['/approach/', '/stack/'];
+const HOW = ['/factory/', '/approach/', '/stack/'];
 const SKIP = new Set(['/', '/#about', '/kit/v2/', ...HOW, ...projects.map(p => `/projects/${p.slug}/`)]);
 
 async function linkList(items) {

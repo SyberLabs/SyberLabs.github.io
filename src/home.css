@@ -311,3 +311,66 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
    a slow script cannot blank it; from 601 to 800 px the copy clears the Meet Mateo button so the email stays clickable. */
 .sy-reveal .pitch-hero h1>.pitch-hero__name { animation:none; }
 @media(min-width:601px) and (max-width:800px) { .pitch-hero__copy { padding-bottom:164px; } }
+
+/* The factory: the tagline under the chrome title, and the five steps in the factory section */
+.pitch-hero h1>.pitch-hero__tagline { display:block; white-space:normal; margin-top:14px; color:#eef4f6; font:500 clamp(22px,2.4vw,34px)/1.15 var(--sy-sans); letter-spacing:-.02em; text-shadow:0 2px 3px #000e,0 0 18px #000c; }
+.factory-steps { display:grid; gap:0; margin:24px 0 0; padding:0; list-style:none; counter-reset:step; }
+.factory-steps li { counter-increment:step; display:grid; grid-template-columns:28px 92px 1fr; gap:12px; align-items:baseline; padding:12px 0; border-top:1px solid var(--sy-rule); font-size:14px; line-height:1.5; }
+.factory-steps li::before { content:counter(step,decimal-leading-zero); color:var(--sy-ice); font:400 11px var(--sy-mono); }
+.factory-steps b { color:var(--sy-vellum); font-weight:500; }
+.factory-steps span { color:var(--sy-mist); }
+.lab-identity__copy>p.factory-self { margin:20px 0 4px; color:var(--sy-dim); font-size:13px; line-height:1.6; max-width:46ch; }
+@media(max-width:600px) { .pitch-hero h1>.pitch-hero__tagline { font-size:20px; margin-top:8px; } .factory-steps li { grid-template-columns:24px 1fr; } .factory-steps span { grid-column:2; } }
+
+/* ---------- The header: huge words streaming through ---------- */
+.stream { position:relative; z-index:2; display:grid; gap:0; width:100%; padding-top:clamp(84px,11vh,120px); overflow:hidden; pointer-events:none;
+  font:600 clamp(64px,11.5vw,188px)/.88 var(--sy-sans); letter-spacing:-.045em; text-transform:uppercase; color:#eef2f2;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 3%,#000 97%,transparent 100%); mask-image:linear-gradient(90deg,transparent 0,#000 3%,#000 97%,transparent 100%); }
+.stream__row { overflow:hidden; white-space:nowrap; }
+.stream__track { display:flex; width:max-content; animation:stream-left var(--dur,64s) linear infinite; will-change:transform; }
+.stream__row--1 .stream__track { --dur:52s; animation-name:stream-right; animation-direction:reverse; animation-name:stream-left; }
+.stream__row--2 .stream__track { --dur:76s; }
+.stream__run { display:flex; }
+.stream__phrase { display:inline-flex; align-items:baseline; gap:.22em; padding-right:.32em; text-shadow:0 4px 18px #000a; }
+.stream__sep { align-self:center; color:var(--sy-ice); font-size:.28em; opacity:.8; text-shadow:none; }
+.stream__brace { color:var(--sy-ice); font:400 .78em/1 var(--sy-mono); letter-spacing:0; text-shadow:0 0 24px #90d8f066; }
+.stream__brace + .stream__chrome { margin-left:-.12em; }
+.stream__chrome + .stream__brace { margin-left:-.14em; }
+/* chromatic blue: one solid gradient fill (no outline, so no seams in the letters) and a lit edge from shadows */
+.stream__chrome { color:transparent; text-shadow:none;
+  background:linear-gradient(180deg,#f5fbff 0%,#cdeeff 16%,#86c9ff 32%,#3b82ec 45%,#1a49a8 51%,#2a6fdd 58%,#62b2ff 74%,#c4ebff 90%,#eef9ff 100%);
+  -webkit-background-clip:text; background-clip:text; filter:drop-shadow(0 -1px 0 #eaf8ffcc) drop-shadow(0 3px 2px #020b22e6) drop-shadow(0 12px 26px #000000a6); }
+@keyframes stream-left { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+@keyframes stream-right { from { transform:translateX(-50%); } to { transform:translateX(0); } }
+/* held still: reduced motion, the visitor's Pause motion, or a clip that cannot move */
+.pitch-hero:has(.pitch-hero__motion[aria-pressed="true"]) .stream__track,
+.pitch-hero:has(.pitch-hero__clip.is-still) .stream__track,
+.pitch-hero.is-playing .stream__track { animation-play-state:paused; }
+.pitch-hero.is-playing .stream { visibility:hidden; }
+@media (prefers-reduced-motion:reduce) { .stream__track { animation:none; } }
+/* on arrival the rows rise one after another */
+.sy-reveal .stream__row { animation:hero-rise 1.4s cubic-bezier(.16,.84,.24,1) both; }
+.sy-reveal .stream__row--0 { animation-delay:.2s; } .sy-reveal .stream__row--1 { animation-delay:.42s; } .sy-reveal .stream__row--2 { animation-delay:.64s; }
+@media (prefers-reduced-motion:reduce) { .sy-reveal .stream__row { animation:none; } }
+/* the copy below the stream, no longer vertically centred against a title */
+.pitch-hero { display:flex; flex-direction:column; }
+.pitch-hero .pitch-hero__copy { min-height:0; flex:1; justify-content:flex-start; padding-top:clamp(18px,3vh,34px); padding-bottom:120px; }
+@media (max-width:800px) {
+  .stream { padding-top:88px; font-size:clamp(54px,17vw,96px); }
+  .pitch-hero .pitch-hero__copy { padding-top:16px; }
+}
+
+/* Desktop: the stream owns the top of the stage and the Sophia frame drops below it, so the words never cover the
+   painting; the copy sits under the stream on the left, the frame on the right. */
+@media(min-width:801px) {
+  .pitch-hero .pitch-hero__art, .pitch-hero .pitch-hero__clip { transform:translate(22%,16%) scale(.6); }
+  .stream { font-size:clamp(64px,9.6vw,160px); }
+  .pitch-hero .pitch-hero__copy { padding-top:clamp(26px,4vh,44px); }
+  .pitch-hero .pitch-hero__panel { width:min(100%,520px); }
+}
+/* Phones: three compact rows, then the copy with room to breathe */
+@media(max-width:600px) {
+  .stream { padding-top:80px; font-size:clamp(48px,15vw,72px); }
+  .pitch-hero .pitch-hero__copy { padding-top:22px; }
+  .pitch-hero__role { margin-bottom:16px; }
+}

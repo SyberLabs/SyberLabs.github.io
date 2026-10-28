@@ -41,6 +41,7 @@ export const MATEO_PORTFOLIO = '/mateo/';
 
 // Selected work and hiring paths. Research remains available through its archive.
 export const nav = [
+  { id: 'factory', label: 'Factory', href: '/factory/' },
   { id: 'projects', label: 'Work', href: '/#work' },
   { id: 'mateo', label: 'About', href: MATEO_PORTFOLIO },
 ];
@@ -353,6 +354,7 @@ export const projects = [
 // The Menu selects useful work and contact routes. Existing archives and deep links remain published.
 export const siteMap = [
   { title: 'Work', items: [
+    { label: 'The factory', note: 'Agents build, the host checks, a person admits', href: '/factory/' },
     { label: 'GitHits integration', note: 'Code search for AI coding assistants', href: '/mateo/#githits' },
     { label: 'PorchLight', note: 'Hackathon third place · cited city reports', href: '/mateo/#porchlight' },
     { label: 'RISE', note: 'Interactive reading in your browser', href: '/mateo/#rise' },

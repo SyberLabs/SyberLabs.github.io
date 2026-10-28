@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#030708">
+  <meta name="description" content="Inside SyberLabs' autonomous software factory: agents propose code as Git candidates, the host runs every check on the exact tree, ordered rules and a person admit each change, and every step is a signed record.">
+  <link rel="canonical" href="https://syberlabs.io/factory/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="The Factory | SyberLabs">
+  <meta property="og:description" content="Inside SyberLabs' autonomous software factory: agents propose code as Git candidates, the host runs every check on the exact tree, ordered rules and a person admit each change, and every step is a signed record.">
+  <meta property="og:url" content="https://syberlabs.io/factory/">
+  <meta property="og:image" content="https://syberlabs.io/og/factory.png?v=1">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The Factory | SyberLabs">
+  <meta name="twitter:description" content="Inside SyberLabs' autonomous software factory: agents propose code as Git candidates, the host runs every check on the exact tree, ordered rules and a person admit each change, and every step is a signed record.">
+  <meta name="twitter:image" content="https://syberlabs.io/og/factory.png?v=1">
+  <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/syberlabs.css?v=20261027">
+  <link rel="stylesheet" href="/factory/factory.css?v=20261028">
+  <title>The Factory | SyberLabs</title>
+</head>
+<body class="syber-factory">
+  <a class="sy-skip" href="#main">Skip to content</a>
+<div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
+<header class="sy-header sy-header--sticky"><div class="sy-header__in">
+  <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
+  <nav class="sy-nav" aria-label="Primary"><ul><li><a href="/factory/" aria-current="page">Factory</a></li><li><a href="/#work">Work</a></li><li><a href="/mateo/">About</a></li></ul></nav>
+  <details class="sy-menu"><summary aria-label="Menu" aria-controls="sy-atlas"><svg class="sy-icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>Menu</span></summary><div class="sy-atlas" id="sy-atlas" role="dialog" aria-label="Site map">
+  <span class="sy-atlas__backdrop" aria-hidden="true"></span>
+  <div class="sy-atlas__panel">
+    <div class="sy-atlas__head"><p class="sy-eyebrow">SyberLabs / Explore the work</p><button class="sy-atlas__close" type="button" aria-label="Close menu"><svg class="sy-icon " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <nav class="sy-atlas__groups" aria-label="Explore"><section class="sy-atlas__group" aria-labelledby="atlas-work"><h2 id="atlas-work" class="sy-atlas__title">Work</h2><ul><li><a href="/factory/" aria-current="page"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">The factory</span><span class="sy-atlas__note">Agents build, the host checks, a person admits</span></a></li><li><a href="/mateo/#githits"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">GitHits integration</span><span class="sy-atlas__note">Code search for AI coding assistants</span></a></li><li><a href="/mateo/#porchlight"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">PorchLight</span><span class="sy-atlas__note">Hackathon third place · cited city reports</span></a></li><li><a href="/mateo/#rise"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">RISE</span><span class="sy-atlas__note">Interactive reading in your browser</span></a></li><li><a href="https://sykosyber.github.io/engines/works/gyre.html" rel="noopener"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Engines <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">Mathematical worlds · run Gyre</span></a></li></ul></section><section class="sy-atlas__group" aria-labelledby="atlas-connect"><h2 id="atlas-connect" class="sy-atlas__title">Connect</h2><ul><li><a href="https://syberlabs.space/mateo-site/" rel="noopener"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Meet Mateo <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">Projects, code and résumé</span></a></li><li><a href="mailto:hello.mateorobles@gmail.com"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Email</span><span class="sy-atlas__note">hello.mateorobles@gmail.com</span></a></li><li><a href="https://github.com/sykosyber" rel="noopener"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Mateo on GitHub <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">github.com/sykosyber</span></a></li></ul></section><section class="sy-atlas__group" aria-labelledby="atlas-more"><h2 id="atlas-more" class="sy-atlas__title">More</h2><ul><li><a href="/services/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Work with us</span><span class="sy-atlas__note">Engineering roles and focused projects</span></a></li><li><a href="/research/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Research archive</span><span class="sy-atlas__note">Past projects and research</span></a></li><li><a href="https://rise.syberlabs.io/plus/" rel="noopener"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Subscriber account <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">Existing RISE subscribers</span></a></li><li><a href="/privacy/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Privacy</span><span class="sy-atlas__note">Data and contact policy</span></a></li></ul></section></nav>
+    <p class="sy-atlas__foot"><span>Press <kbd>/</kbd> anywhere to open the menu · <kbd>Esc</kbd> closes</span><a href="mailto:hello.mateorobles@gmail.com">hello.mateorobles@gmail.com</a></p>
+  </div>
+</div></details>
+</div></header>
+<script type="module" src="/syberlabs.js?v=20261027-nav"></script>
+  <main class="factory" id="main">
+    <section class="factory-hero sy-wrap" aria-labelledby="factory-title">
+      <img class="factory-hero__emblem" src="/mateo/lab/emblem-mateo-robles.webp" width="900" height="675" alt="">
+      <p class="sy-eyebrow">SyberLabs / The factory</p>
+      <h1 id="factory-title">The autonomous software factory.</h1>
+      <p class="factory-lede">Agents write, test and repair code on their own. SyberWork, the factory floor, runs every check itself, keeps a signed record of each step, and lets nothing reach your branch until a person admits it.</p>
+      <p class="factory-links"><a class="sy-btn sy-btn--solid" href="https://github.com/SyberLabs/SyberWork">Read the source</a><a href="https://github.com/SyberLabs/SyberWork/pull/134">See a change it shipped <span aria-hidden="true">↗</span></a></p>
+    </section>
+
+    <section class="factory-steps-detail sy-wrap" aria-labelledby="steps-title">
+      <h2 id="steps-title">One change, step by step</h2>
+      <p class="factory-note">A Build Thread is one governed change to one repository. Each step writes to the record, and each has a line it never crosses.</p>
+      <ol class="factory-line">
+        <li><span class="factory-line__n">01</span><div><h3>Start</h3><p>Pins the base commit, the contract version and the paths the change may touch.</p><p class="factory-never">Never moves a branch or touches your working tree.</p></div></li>
+        <li><span class="factory-line__n">02</span><div><h3>Context</h3><p>Chooses the excerpts an agent will read from path and symbol matches, and records why each one was chosen. No embeddings.</p><p class="factory-never">Never stores the excerpt text; it is re-read from Git when an agent runs.</p></div></li>
+        <li><span class="factory-line__n">03</span><div><h3>Propose</h3><p>Model adapters write candidates as Git commits on side refs. The default repair loop sends the host’s own check results back to the model until a candidate passes or the budget runs out; an evolutionary search is the alternative. On the factory’s own benchmark fixtures, repair solved more tasks per dollar, so it is the default.</p><p class="factory-never">Never edits your working tree. A model saying its tests pass is shown as unverified and changes nothing.</p></div></li>
+        <li><span class="factory-line__n">04</span><div><h3>Check</h3><p>The host runs the contract’s checks on the candidate’s exact tree, in a fresh worktree with a scrubbed environment, and records each result’s state, exit code and output digest. An independent critic reviews the change; the critic can never be the candidate’s own author, and a high finding blocks acceptance.</p><p class="factory-never">Never counts a provider’s claim as a result.</p></div></li>
+        <li><span class="factory-line__n">05</span><div><h3>Admit</h3><p>Twenty-one ordered admission rules decide, the first to answer wins, and agents and people face the same rules. A person accepts the candidate, or a second person with the right role approves it first.</p><p class="factory-never">The only write is a compare-and-swap of the thread’s own branch: no push, no merge, no change to main.</p></div></li>
+        <li><span class="factory-line__n">06</span><div><h3>Publish</h3><p>Pushing the branch, opening a pull request and publishing a package are separate actions, each admitted, each recorded, each safe to retry and reconcile.</p><p class="factory-never">Accepting never publishes on its own.</p></div></li>
+      </ol>
+    </section>
+
+    <section class="factory-record sy-wrap" aria-labelledby="record-title">
+      <h2 id="record-title">What the record guarantees</h2>
+      <dl class="factory-grid">
+        <div><dt>Observed by the host</dt><dd>Check results are processes the host started on a tree it wrote, not reports from an agent.</dd></div>
+        <div><dt>Chained and signed</dt><dd>Every event joins a hash chain. A separate witness process holds the key that signs the chain head and appends to a transparency log.</dd></div>
+        <div><dt>Budgeted</dt><dd>A contract can price each model. The host measures the spend, stops a search at its dollar limit, and refuses to admit a change the thread could not afford.</dd></div>
+        <div><dt>Measured</dt><dd>Each work item reports its cost, turns, agent time, fix rounds, lookups, review rejections and human interventions, each traced to the events it came from.</dd></div>
+      </dl>
+    </section>
+
+    <section class="factory-self-built sy-wrap" aria-labelledby="self-title">
+      <div>
+        <h2 id="self-title">Built by its own factory</h2>
+        <p>SyberWork’s own pull requests run through a Build Thread before they merge. The receiving repository checks out the change, proposes it as a candidate, runs its tests and conformance on the exact tree, and admits it under the same rules. Each pull request carries the trail: who admitted it, the rules review, and the host’s checks.</p>
+        <p>The GitHits client and its Claude Code wiring were made this way.</p>
+        <p class="factory-links"><a href="https://github.com/SyberLabs/SyberWork/pull/129">GitHits client <span aria-hidden="true">↗</span></a><a href="https://github.com/SyberLabs/SyberWork/pull/134">Claude Code wiring <span aria-hidden="true">↗</span></a><a href="/#work">The GitHits work <span aria-hidden="true">→</span></a></p>
+      </div>
+      <figure><img src="/mateo/lab/agent-network-mateo-robles.webp" width="1100" height="921" alt="Glowing blue nodes joined by arcing links, like a network of agents." loading="lazy" decoding="async"><figcaption>Network and emblem: Mateo Robles, made with Midjourney.</figcaption></figure>
+    </section>
+
+    <section class="factory-limits sy-wrap" aria-labelledby="limits-title">
+      <h2 id="limits-title">Where the claims stop</h2>
+      <ul>
+        <li>Checks run in a temporary worktree with a scrubbed environment. That is not a sandbox, so untrusted agent code runs as a separate command.</li>
+        <li>An admitted change is <em>tested</em>: the named checks passed on that tree. It is not proof that the change is right, wanted, measured or deployed.</li>
+        <li>The hash chain is integrity evidence inside its database’s trust boundary, not a public transparency service.</li>
+        <li>Browser verification of documentation with Attest and Kane is designed, not built.</li>
+      </ul>
+    </section>
+  </main>
+<footer class="sy-footer">
+<div class="sy-footer__in">
+  <div class="sy-footer__bar">
+    <a class="sy-lockup" href="/"><img src="/syber-logo-96.png" alt="" width="18" height="20">SyberLabs</a>
+    <nav aria-label="Footer"><a href="mailto:hello.mateorobles@gmail.com">Contact</a><a href="tel:+19259493105">925-949-3105</a><a href="https://syberlabs.space/mateo-site/#resumes">Résumé</a><a href="/privacy/">Privacy</a><a href="https://rise.syberlabs.io/plus/">Subscriber account <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="/admin/">Staff sign in</a></nav>
+    <span class="sy-footer__copy">© 2026</span>
+  </div>
+</div></footer>
+</body>
+</html>
