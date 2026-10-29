@@ -132,27 +132,6 @@ const FACTORY_STEPS = [
   ['Publish', 'Pushing and opening a pull request are separate admitted actions, each recorded.'],
 ];
 
-// The header in huge words streaming through: three full-bleed rows, alternating direction and speed, reading
-// SYBERLABS / THE {AUTONOMOUS} / SOFTWARE FACTORY at every moment. Each row is two identical runs, so the loop has
-// no seam. Decorative: the h1 carries the words for assistive technology. Reduced motion holds it still; it pauses
-// with the background (Pause motion) and while the clip cannot move.
-const STREAM = [
-  [<span key="s" className="stream__chrome">SyberLabs</span>],
-  [<span key="t">The</span>, <span key="a" className="stream__brace">{'{'}</span>, <span key="b" className="stream__chrome">Autonomous</span>, <span key="c" className="stream__brace">{'}'}</span>],
-  [<span key="f">Software</span>, <span key="g">Factory</span>],
-];
-function StreamTitle() {
-  return <div className="stream" aria-hidden="true">
-    {STREAM.map((words, i) => <div key={i} className={`stream__row stream__row--${i}`}>
-      <div className="stream__track">
-        {[0, 1].map(copy => <div key={copy} className="stream__run">
-          {[0, 1, 2].map(n => <span key={n} className="stream__phrase">{words}<span className="stream__sep">✦</span></span>)}
-        </div>)}
-      </div>
-    </div>)}
-  </div>;
-}
-
 export default function App() {
   const movieSeconds = Math.round(MATEO_VIDEO.durationSeconds);
   const movieDuration = `${Math.floor(movieSeconds / 60)}:${String(movieSeconds % 60).padStart(2, '0')}`;
@@ -201,9 +180,11 @@ export default function App() {
       <section className={`pitch-hero${started ? ' is-playing' : ''}`} data-phase={phase} aria-labelledby="hero-title">
         <picture className="pitch-hero__art"><source media="(max-width: 600px)" srcSet={HERO_MEDIA.portraitPoster} /><img src={HERO_MEDIA.poster} width="1280" height="720" alt="" fetchPriority="high" /></picture>
         <BackgroundVideo pitchPlaying={started} onTime={onClipTime} onUnavailable={() => settle.current()} onArt={setFramed} />
-        <StreamTitle />
         <div className="pitch-hero__copy sy-wrap">
-          <h1 id="hero-title" className="sy-sr" tabIndex={-1}>SyberLabs: the autonomous software factory</h1>
+          <h1 id="hero-title" tabIndex={-1}>
+            <span className="pitch-hero__brand" data-text="SyberLabs">SyberLabs</span>
+            <span className="sy-sr">: </span><span className="pitch-hero__tagline">High-Fidelity Systems</span>
+          </h1>
           <p className="pitch-hero__role">Founded by <a href={MATEO_PORTFOLIO}>Mateo Robles</a></p>
           <div className="pitch-hero__panel">
             <p className="pitch-hero__line">AI agents write, test and repair code on their own. The factory runs every check itself, keeps a signed record of each step, and ships nothing until a person admits it.</p>
