@@ -35,7 +35,7 @@ export default function BackgroundVideo({ pitchPlaying, onTime, onUnavailable, o
     return () => { reduced.removeEventListener('change', update); narrow.removeEventListener('change', update); };
   }, []);
   const still = mounted && (!allowed || failed || blocked);
-  const framed = mounted && !portrait; // the Sophia frame and its painting: wide screens only
+  const framed = false; // the Gyre alone everywhere: the Sophia frame and its paintings are retired from the hero
   const src = portrait ? HERO_MEDIA.portrait : HERO_MEDIA.landscape;
   const report = useRef({ onTime, onUnavailable, onArt }); report.current = { onTime, onUnavailable, onArt };
   // still: the painting fills the frame the whole time; playing: the frame loop below reports it as it shows and hides
