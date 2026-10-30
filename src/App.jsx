@@ -218,7 +218,7 @@ export default function App() {
           <h2 id="factory-title">Agents build. The factory checks. A person admits.</h2>
           <p>SyberWork is the factory floor. Every change is a candidate on a side branch; nothing reaches your branch until it passes the host’s own checks and a person accepts it.</p>
           <ol className="factory-steps">
-            {FACTORY_STEPS.map(([step, text]) => <li key={step}><b>{step}</b><span>{text}</span></li>)}
+            {FACTORY_STEPS.map(([step, text]) => <li key={step} className={step === 'Admit' ? 'is-human' : undefined}><b>{step}</b><span>{text}</span></li>)}
           </ol>
           <p className="factory-self">SyberWork builds itself this way: its own pull requests are proposed, checked and admitted through the factory.</p>
           <a href="/factory/">Inside the factory <span aria-hidden="true">→</span></a>

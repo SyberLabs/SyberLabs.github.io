@@ -72,7 +72,7 @@ body {
   overflow-x: clip;
 }
 img, video, svg { max-width: 100%; }
-::selection { background: rgba(144, 216, 240, .25); }
+::selection { background: rgba(2, 151, 222, .32); color: #fff; }
 a { color: var(--sy-ice); text-decoration: none; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 a:hover { text-decoration-line: underline; }
 :focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
@@ -124,16 +124,16 @@ a:hover { text-decoration-line: underline; }
 
 /* ---------- the field ---------- */
 .sy-field-host { position: fixed; inset: 0; z-index: -10; pointer-events: none; overflow: hidden;
-  background: radial-gradient(60% 50% at 70% 30%, #1b1360 0%, #0000 70%), radial-gradient(40% 40% at 20% 80%, #0048f033 0%, #0000 70%), var(--sy-ink); }
+  background: radial-gradient(60% 50% at 70% 30%, rgba(2, 151, 222, .16) 0%, #0000 70%), radial-gradient(40% 40% at 20% 80%, rgba(1, 93, 140, .2) 0%, #0000 70%), var(--sy-ink); }
 .sy-field { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 html.sy-field-live body { background: transparent; } /* the canvas carries the stars */
-.sy-field-host::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(6,5,26,.55), rgba(6,5,26,.2) 45%, rgba(6,5,26,0) 70%), linear-gradient(180deg, rgba(6,5,26,.1), rgba(6,5,26,.45) 60%, rgba(6,5,26,.72)); }
-@media (max-width: 900px) { .sy-field-host::after { background: linear-gradient(180deg, rgba(6,5,26,.3), rgba(6,5,26,.62) 40%, rgba(6,5,26,.82)); } }
+.sy-field-host::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(2,7,10,.55), rgba(2,7,10,.2) 45%, rgba(2,7,10,0) 70%), linear-gradient(180deg, rgba(2,7,10,.1), rgba(2,7,10,.45) 60%, rgba(2,7,10,.72)); }
+@media (max-width: 900px) { .sy-field-host::after { background: linear-gradient(180deg, rgba(2,7,10,.3), rgba(2,7,10,.62) 40%, rgba(2,7,10,.82)); } }
 html.sy-field-live .sy-nebula, html.sy-field-live .sy-nebula--center { background: transparent; }
 
 /* ---------- glass + surfaces ---------- */
-.sy-glass { background: linear-gradient(160deg, rgba(20,18,56,.66), rgba(8,7,31,.72)); border: 1px solid var(--sy-rule-2); -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); }
-.sy-card { position: relative; isolation: isolate; border-radius: var(--sy-r-panel); background: linear-gradient(160deg, rgba(20,18,56,.55), rgba(8,7,31,.6)); border: 1px solid var(--sy-rule); overflow: hidden;
+.sy-glass { background: linear-gradient(160deg, rgba(12,27,37,.66), rgba(2,7,10,.72)); border: 1px solid var(--sy-rule-2); -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); }
+.sy-card { position: relative; isolation: isolate; border-radius: var(--sy-r-panel); background: linear-gradient(160deg, rgba(12,27,37,.55), rgba(2,7,10,.6)); border: 1px solid var(--sy-rule); overflow: hidden;
   transition: border-color var(--sy-t-enter) var(--sy-ease), box-shadow var(--sy-t-enter) var(--sy-ease), transform var(--sy-t-enter) var(--sy-ease); }
 .sy-card::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity var(--sy-t-enter);
   background: radial-gradient(240px 240px at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--sy-accent) 22%, transparent), transparent 70%); }
@@ -159,10 +159,10 @@ html.sy-js .sy-split.is-pending .sy-word > span { transform: translateY(110%); }
 
 /* ---------- header: progress bar, scrolled state, spectrum underline for the live section ---------- */
 .sy-header { transition: background var(--sy-t-page), transform var(--sy-t-page) var(--sy-ease), box-shadow var(--sy-t-page); }
-.sy-header.is-scrolled { background: rgba(8, 7, 31, .82); box-shadow: 0 10px 40px -20px #000; }
+.sy-header.is-scrolled { background: rgba(2, 7, 10, .86); box-shadow: 0 10px 40px -20px #000; }
 .sy-progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; transform-origin: 0 50%; transform: scaleX(0); background: var(--sy-spectrum); opacity: .9; pointer-events: none; }
 .sy-nav ul a { position: relative; }
-.sy-nav ul a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 1px; background: var(--sy-spectrum); transform: scaleX(0); transform-origin: 0 50%; transition: transform var(--sy-t-enter) var(--sy-ease); }
+.sy-nav ul a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 1px; background: var(--sy-electric, var(--sy-ice)); box-shadow: 0 0 8px var(--sy-electric, var(--sy-ice)); transform: scaleX(0); transform-origin: 0 50%; transition: transform var(--sy-t-enter) var(--sy-ease); }
 .sy-nav ul a:hover::after, .sy-nav ul a[aria-current]::after { transform: scaleX(1); }
 .sy-nav ul a[aria-current="location"] { color: var(--sy-vellum); }
 .sy-nav { margin-left: auto; }
@@ -173,8 +173,8 @@ html.sy-js .sy-split.is-pending .sy-word > span { transform: translateY(110%); }
 .sy-account [hidden] { display: none !important; }
 .sy-account-member {
   width: 168px; min-height: 44px; border: 0; border-radius: 999px;
-  background: linear-gradient(120deg, rgba(25, 20, 56, .94), rgba(12, 10, 34, .96));
-  box-shadow: inset 0 0 0 1px rgba(180, 187, 226, .24), 0 4px 18px rgba(0, 0, 0, .12);
+  background: linear-gradient(120deg, rgba(12, 27, 37, .94), rgba(2, 7, 10, .96));
+  box-shadow: inset 0 0 0 1px rgba(140, 200, 235, .24), 0 4px 18px rgba(0, 0, 0, .12);
   transition: box-shadow var(--sy-t-hover), background var(--sy-t-hover);
 }
 .sy-account-member { display: flex; align-items: center; gap: 0; }
@@ -190,27 +190,27 @@ html.sy-js .sy-split.is-pending .sy-word > span { transform: translateY(110%); }
 }
 .sy-account-avatar::before {
   content: ""; position: absolute; inset: 5px; z-index: -1; border-radius: inherit;
-  background: conic-gradient(from 35deg, #90d8f0, #9a6bff 34%, #ff58d6 60%, #9a6bff 82%, #90d8f0);
-  box-shadow: 0 0 12px rgba(154, 107, 255, .12);
+  background: conic-gradient(from 35deg, #0297de, #4cc0f5 34%, #fc734d 60%, #4cc0f5 82%, #0297de);
+  box-shadow: 0 0 12px rgba(2, 151, 222, .14);
   transition: box-shadow var(--sy-t-hover);
 }
 .sy-account-avatar::after {
   content: ""; position: absolute; inset: 6px; z-index: -1; border-radius: inherit;
-  background: #14102e; transition: background var(--sy-t-hover);
+  background: #07121a; transition: background var(--sy-t-hover);
 }
 .sy-account-initial { font-size: 14px; font-weight: 600; line-height: 1; }
 .sy-account-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; color: var(--sy-dim); font-size: 13px; white-space: nowrap; text-decoration: none; }
 .sy-account-member:focus-within {
-  box-shadow: inset 0 0 0 1px rgba(144, 216, 240, .42), 0 0 22px rgba(154, 107, 255, .12);
+  box-shadow: inset 0 0 0 1px rgba(2, 151, 222, .5), 0 0 22px rgba(2, 151, 222, .16);
 }
 .sy-account-launchpad:hover { color: #fff; text-decoration: none; }
 .sy-account-link:hover { color: var(--sy-vellum); text-decoration: underline; text-underline-offset: 4px; }
 .sy-account-avatar:hover { text-decoration: none; }
-.sy-account-avatar:hover::before { box-shadow: 0 0 16px rgba(154, 107, 255, .34); }
-.sy-account-avatar:hover::after { background: #241a43; }
+.sy-account-avatar:hover::before { box-shadow: 0 0 16px rgba(2, 151, 222, .4); }
+.sy-account-avatar:hover::after { background: #0c1b25; }
 .sy-account a:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
 @media (hover: hover) {
-  .sy-account-member:hover { box-shadow: inset 0 0 0 1px rgba(180, 187, 226, .36), 0 0 22px rgba(154, 107, 255, .10); }
+  .sy-account-member:hover { box-shadow: inset 0 0 0 1px rgba(140, 200, 235, .36), 0 0 22px rgba(2, 151, 222, .12); }
 }
 @media (prefers-reduced-motion: reduce) {
   .sy-account *, .sy-account *::before, .sy-account *::after { transition: none; }
@@ -233,19 +233,21 @@ html.sy-js .sy-split.is-pending .sy-word > span { transform: translateY(110%); }
 .sy-menu { display: block; }
 .sy-menu summary { gap: 10px; }
 .sy-menu summary .sy-icon { width: 18px; height: 18px; }
-.sy-menu[open] summary { border-color: var(--sy-ice); background: rgba(144, 216, 240, .08); }
+.sy-menu[open] summary { border-color: var(--sy-ice); background: rgba(2, 151, 222, .1); }
 .sy-atlas { position: fixed; inset: 0; z-index: 90; display: grid; place-items: stretch; }
-.sy-atlas__backdrop { position: absolute; inset: 0; background: rgba(6, 5, 26, .72); -webkit-backdrop-filter: blur(22px) saturate(1.3); backdrop-filter: blur(22px) saturate(1.3); }
+.sy-atlas__backdrop { position: absolute; inset: 0; background: rgba(2, 7, 10, .8); -webkit-backdrop-filter: blur(22px) saturate(1.3); backdrop-filter: blur(22px) saturate(1.3); }
 .sy-atlas__panel { position: relative; display: flex; flex-direction: column; gap: 32px; width: 100%; max-width: var(--sy-max); margin: 0 auto; padding: 24px var(--sy-gutter) 32px; overflow: auto; overscroll-behavior: contain; }
 .sy-atlas__head { display: flex; align-items: center; justify-content: space-between; min-height: var(--sy-header-h); border-bottom: 1px solid var(--sy-rule); }
-.sy-atlas__close { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--sy-rule-2); background: rgba(6,5,26,.5); color: var(--sy-vellum); cursor: pointer; }
+.sy-atlas__close { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--sy-rule-2); background: rgba(2,7,10,.6); color: var(--sy-vellum); cursor: pointer; }
 .sy-atlas__close:hover { border-color: var(--sy-ice); }
 .sy-atlas__groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
 .sy-atlas__title { margin: 0 0 12px; font: 400 clamp(28px, 3vw, 40px)/1 var(--sy-serif); color: var(--sy-vellum); }
 .sy-atlas__group ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--sy-rule); }
 .sy-atlas__group li a { --sy-accent: var(--sy-ice); display: grid; grid-template-columns: 28px minmax(0, 1fr); grid-template-areas: "s l" "s n"; column-gap: 12px; align-items: center; min-height: 56px; padding: 10px 6px; border-bottom: 1px solid var(--sy-rule); color: var(--sy-vellum); text-decoration: none; border-radius: 6px; transition: background var(--sy-t-hover), padding var(--sy-t-enter) var(--sy-ease); }
-.sy-atlas__group li a:hover, .sy-atlas__group li a:focus-visible { background: rgba(160, 170, 255, .07); padding-left: 10px; text-decoration: none; }
+.sy-atlas__group li a:hover, .sy-atlas__group li a:focus-visible { background: rgba(2, 151, 222, .08); padding-left: 10px; text-decoration: none; }
 .sy-atlas__group li a[aria-current="page"] .sy-atlas__label { color: var(--sy-ice); }
+/* you are here: the one warm dot in the map */
+.sy-atlas__group li a[aria-current="page"] .sy-atlas__dot { background: var(--sy-cantaloupe, #fc734d); box-shadow: 0 0 12px var(--sy-cantaloupe, #fc734d); opacity: 1; }
 .sy-atlas__sigil { grid-area: s; width: 28px; height: 28px; }
 .sy-atlas__dot { grid-area: s; width: 8px; height: 8px; margin-left: 10px; border-radius: 50%; background: var(--sy-accent); box-shadow: 0 0 12px var(--sy-accent); opacity: .7; }
 .sy-atlas__label { grid-area: l; display: inline-flex; align-items: center; gap: 6px; font: 500 16px/1.3 var(--sy-sans); }
@@ -289,13 +291,13 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
 
 /* ---------- "work in progress" badge: an amber dot with a dashed ring (kit badges: live, early, research) ---------- */
 .sy-badge--wip { --d: var(--sy-amber, #ffb54a); }
-.sy-badge--wip::before { background: var(--d); box-shadow: 0 0 0 2px rgba(6,5,26,.9), 0 0 0 3px color-mix(in srgb, var(--d) 70%, transparent); }
+.sy-badge--wip::before { background: var(--d); box-shadow: 0 0 0 2px rgba(2,7,10,.9), 0 0 0 3px color-mix(in srgb, var(--d) 70%, transparent); }
 
 /* ---------- back to top ---------- */
-.sy-totop { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 40; display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--sy-rule-2); background: rgba(8,7,31,.78); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); color: var(--sy-vellum); opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; transition: opacity var(--sy-t-enter), transform var(--sy-t-enter) var(--sy-ease), border-color var(--sy-t-hover); }
+.sy-totop { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 40; display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--sy-rule-2); background: rgba(2,7,10,.8); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); color: var(--sy-vellum); opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; transition: opacity var(--sy-t-enter), transform var(--sy-t-enter) var(--sy-ease), border-color var(--sy-t-hover); }
 .sy-totop.is-on { opacity: 1; transform: none; pointer-events: auto; }
 .sy-totop:hover { border-color: var(--sy-ice); text-decoration: none; }
-@media (max-width: 640px) { .sy-totop { width: 40px; height: 40px; background: rgb(8 6 26 / .72); } } /* smaller over text on phones */
+@media (max-width: 640px) { .sy-totop { width: 40px; height: 40px; background: rgb(2 7 10 / .76); } } /* smaller over text on phones */
 
 /* ---------- 3D sigil over the flat one ---------- */
 .sy-plate--sigil { overflow: hidden; }
@@ -329,15 +331,92 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
 
 /* Customer subscription access is distinct from staff authentication. */
 
-/* Atlas cinematic direction, shared by the hiring and product pages. */
-:root { --sy-ink:#030708; --sy-ink-2:#071013; --sy-vellum:#f4f2ed; --sy-mist:#b5c1c4; --sy-dim:#89999e; --sy-ice:#a2ddea; --sy-rule:#b6dbe31f; --sy-rule-2:#b6dbe33b; }
-.sy-header { background:#030708d9; backdrop-filter:blur(14px); border-color:#b6dbe31a; }
-.sy-header .sy-lockup { font-family:var(--sy-sans); letter-spacing:0; font-size:17px; font-weight:500; }
-.sy-field-host { display:none; }
-.sy-footer::before { display:none; }
-.sy-atlas__panel { background:#071013f5; }
+/* ======================================================================================================
+   Midnight theme (October 30, 2026), the whole site: Midnight Black #02070A, Electric Blue #0297DE,
+   Cantaloupe Orange #FC734D. Defined once, here; pages no longer carry their own colour blocks.
+   - Midnight is the material. Every page, menu and footer sits on it.
+   - Electric Blue is the system's light: links, focus, structure, the hero's wordmark and glow.
+   - Cantaloupe is heat, used a little: the action a person takes (solid buttons), live signals, the
+     Admit step, the "you are here" dot and the warm horizon under the hero.
+   Text on either colour fill is Midnight (white on #0297DE is 3.2:1; Midnight on it is 6.3:1, and 7.4:1
+   on #FC734D). Scoped to the website: kit/v2/syber-atlas.css keeps its own tokens for vendored apps.
+   ====================================================================================================== */
+:root {
+  --sy-midnight: #02070a;
+  --sy-electric: #0297de;
+  --sy-electric-hi: #4cc0f5;
+  --sy-electric-deep: #015d8c;
+  --sy-cantaloupe: #fc734d;
+  --sy-cantaloupe-hi: #fd9273;
+  --sy-cantaloupe-deep: #e4522c;
 
-.sy-atlas__title { font-family:var(--sy-sans); font-size:18px; }
+  --sy-ink: var(--sy-midnight);
+  --sy-ink-2: #07121a;
+  --sy-ink-3: #0c1b25;
+  --sy-vellum: #f1f6f9;
+  --sy-body: #c3cfd6;
+  --sy-mist: #93a4ae;
+  --sy-dim: #708490;
+  --sy-rule: rgba(140, 200, 235, .14);
+  --sy-rule-2: rgba(140, 200, 235, .28);
+  --sy-ice: var(--sy-electric);
+  --sy-blue: var(--sy-electric);
+  --sy-deep: var(--sy-electric-deep);
+  --sy-violet: var(--sy-electric-deep);
+  --sy-magenta: var(--sy-cantaloupe);
+  --sy-amber: var(--sy-cantaloupe);
+  --sy-live: var(--sy-cantaloupe);
+  --sy-research: #7fcff5;
+  --sy-accent: var(--sy-electric);
+  --sy-accent-rise: var(--sy-electric);
+  --sy-accent-syberwork: var(--sy-electric);
+  --sy-accent-relay: var(--sy-electric);
+  --sy-accent-omnios: var(--sy-electric);
+  --sy-accent-osahr: var(--sy-electric);
+  /* cool light, a white-hot core, then heat: the hero's horizon as a line */
+  --sy-spectrum: linear-gradient(100deg, #0297de 0%, #63c3f2 34%, #eef3f2 54%, #fda98f 72%, #fc734d 100%);
+  /* no starfield: on Midnight the 1px dots read as dust on the glass, and the hero already carries the light */
+  --sy-stars: none;
+  --sy-r-pill: 3px;
+  --sy-r-panel: 4px;
+  --font-display: var(--sy-sans);
+  --font-reading: var(--sy-sans);
+  --on-primary: var(--sy-midnight);
+  --brand: var(--sy-electric);
+  color-scheme: dark;
+}
+.sy-header { background: rgba(2, 7, 10, .82); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-color: var(--sy-rule); }
+.sy-header .sy-lockup { font-family: var(--sy-sans); letter-spacing: 0; font-size: 17px; font-weight: 500; }
+.sy-field-host { display: none; }
+.sy-footer { background: var(--sy-ink); }
+.sy-footer::before { display: none; }
+.sy-atlas__panel { background: rgba(2, 7, 10, .96); }
+.sy-atlas__title { font-family: var(--sy-sans); font-size: 18px; }
+
+/* The one solid button: Cantaloupe, lit from above, warm light beneath. Line buttons stay cool. */
+.sy-btn--solid { color: var(--sy-midnight); background: var(--sy-cantaloupe); border-color: transparent; font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .38), inset 0 -1px 0 rgba(120, 30, 10, .25), 0 12px 34px -14px rgba(252, 115, 77, .8); }
+.sy-btn--solid:hover { color: var(--sy-midnight); background: var(--sy-cantaloupe-hi); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), inset 0 -1px 0 rgba(120, 30, 10, .2), 0 16px 42px -12px rgba(252, 115, 77, .95); }
+.sy-btn--solid:active { background: var(--sy-cantaloupe-deep); }
+.sy-btn--line { color: var(--sy-vellum); border-color: var(--sy-rule-2); background: rgba(2, 7, 10, .4); }
+.sy-btn--line:hover { color: #fff; border-color: var(--sy-electric); box-shadow: 0 0 26px -8px rgba(2, 151, 222, .85), inset 0 0 0 1px rgba(2, 151, 222, .35); }
+.sy-link:hover { color: var(--sy-electric-hi); }
+
+/* kit components whose own literal colours are the kit's indigo */
+.sy-badge { background: transparent; }
+.sy-plate--sigil { background: radial-gradient(closest-side, color-mix(in srgb, var(--sy-accent) 14%, transparent), transparent 80%), radial-gradient(circle at 50% 50%, #07121a, var(--sy-ink)); }
+.sy-plate--card { background: linear-gradient(160deg, #0a1821 0%, var(--sy-ink) 60%); }
+.sy-plate-caption { background: rgba(2, 7, 10, .76); }
+.sy-scrim { background: linear-gradient(90deg, rgba(2,7,10,.94) 0%, rgba(2,7,10,.86) 30%, rgba(2,7,10,.35) 48%, rgba(2,7,10,0) 58%), linear-gradient(0deg, rgba(2,7,10,.96) 0%, rgba(2,7,10,0) 22%), radial-gradient(120% 90% at 66% 50%, #0000 55%, rgba(2,7,10,.8) 100%); }
+.sy-scrim--heavy { background: linear-gradient(0deg, rgba(2,7,10,.92), rgba(2,7,10,.62) 60%, rgba(2,7,10,.72)); }
+.sy-nebula { background: radial-gradient(40% 55% at 68% 48%, rgba(2, 151, 222, .2), #0000 70%), radial-gradient(28% 34% at 62% 74%, rgba(252, 115, 77, .1), #0000 70%), var(--sy-ink); }
+.sy-nebula--center { background: radial-gradient(50% 60% at 50% 45%, rgba(2, 151, 222, .18), #0000 70%), radial-gradient(30% 34% at 50% 78%, rgba(252, 115, 77, .09), #0000 70%), var(--sy-ink); }
+.sy-ring { color: var(--sy-electric); }
+.sy-strip { background: linear-gradient(0deg, rgba(2, 7, 10, .9), rgba(2, 7, 10, .6)); }
+.sy-strip a:hover { background: rgba(2, 151, 222, .06); }
+.sy-skeleton { background: linear-gradient(90deg, var(--sy-ink-3) 0, #13283a 50%, var(--sy-ink-3) 100%) 0 0/200% 100%; }
+.sy-input:focus { box-shadow: 0 0 0 3px rgba(2, 151, 222, .28); }
+.sy-project-row:hover { background: rgba(2, 151, 222, .05); }
 
 /* Immediate hiring routes on the recruiter-facing pages, including phones. */
 .sy-header--hiring .sy-nav { display:block; margin-left:auto; font-family:var(--sy-sans); }

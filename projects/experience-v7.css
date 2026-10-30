@@ -154,24 +154,8 @@
   @keyframes pj-deps-in { from { opacity: 0; transform: translate3d(0, 12px, 0); } }
 }
 
-/* Evidence-led reading surface, scoped to template-rendered project bodies. */
+/* Evidence-led reading layout, scoped to template-rendered project bodies; colours from the Midnight theme. */
 main.pj-page {
-  --sy-ink: #f5f3ec;
-  --sy-ink-2: #ebe9e1;
-  --sy-ink-3: #e2e4df;
-  --sy-vellum: #172c30;
-  --sy-body: #30484b;
-  --sy-mist: #4b6264;
-  --sy-dim: #52686a;
-  --sy-rule: rgba(23, 44, 48, .18);
-  --sy-rule-2: rgba(23, 44, 48, .32);
-  --sy-accent: #176473;
-  --sy-ice: #176473;
-  --sy-live: #276a50;
-  --sy-research: #176473;
-  --sy-warning: #835700;
-  --sy-danger: #a43232;
-  color-scheme: light;
   background: var(--sy-ink);
   color: var(--sy-vellum);
   font-family: var(--sy-sans);
@@ -189,10 +173,8 @@ main.pj-page {
 .pj-page .pj-split__main { grid-column: 2; padding-left: 0; }
 .pj-page .sy-eyebrow { font-family: var(--sy-sans); letter-spacing: .1em; }
 .pj-page :focus-visible { outline: 2px solid var(--sy-accent); outline-offset: 4px; }
-.pj-page .sy-btn { border-radius: 4px; box-shadow: none; }
-.pj-page .sy-btn--solid { background: var(--sy-vellum); color: var(--sy-ink); }
+.pj-page .sy-btn { border-radius: 4px; }
 .pj-page .sy-btn--line { color: var(--sy-vellum); border-color: var(--sy-rule-2); background: transparent; }
-.pj-page .sy-btn:hover { box-shadow: none; }
 .pj-page .sy-badge { background: transparent; }
 .pj-page .sy-badge::before, .pj-page .pj-evidence__state i { box-shadow: none; }
 .pj-page .pj-live__card { border-block: 1px solid var(--sy-rule); padding-inline: 0; }
@@ -207,8 +189,7 @@ main.pj-page {
 .pj-page .pj-how__item { background: transparent; }
 .pj-page .pj-why { grid-template-columns: 1fr; max-width: 72ch; }
 .pj-page .pj-others .sy-project-row__title { font-family: var(--sy-sans); font-weight: 600; }
-.pj-page .pj-others .sy-project-row { --sy-accent: #176473 !important; }
-.pj-page .pj-others .sy-project-row:hover { background: rgba(23, 100, 115, .05); }
+.pj-page .pj-others .sy-project-row:hover { background: rgba(2, 151, 222, .05); }
 
 /* Shared RISE evidence keeps its own dark palette and authored hero, while
    the real screenshots and demo retain full, unframed source dimensions. */

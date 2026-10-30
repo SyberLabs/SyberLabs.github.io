@@ -33,7 +33,8 @@ const LIMIT = 200 * 1024;
 
 const { projects } = await import(pathToFileURL(resolve(root, 'projects/site-data.js')).href);
 
-const ICE = '#90d8f0', RESEARCH = '#c7a4ff', RISE = '#f2d9a6';
+// The site's Midnight theme (src/syberlabs.css): Electric Blue for every sigil, Cantaloupe for live signals.
+const ICE = '#0297de', RESEARCH = '#4cc0f5', RISE = '#0297de';
 const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 // One entry per page. `seed` names the sigil (projects use their slug, so the card carries the same
@@ -76,12 +77,12 @@ const logo = `data:image/png;base64,${(await readFile(resolve(root, 'syber-logo-
 // The sigil module, with its exports hoisted onto window so an inline module script can draw with it.
 const sigil = (await readFile(resolve(root, 'kit/v2/syber-sigil.js'), 'utf8')).replace(/^export /gm, '') + '\nwindow.__sigil = { params, draw };';
 
-const DOT = { live: '#6ff5a8', early: ICE, research: RESEARCH, wip: '#ffb54a' };
+const DOT = { live: '#fc734d', early: ICE, research: '#7fcff5', wip: '#fc734d' };
 
 function card(p) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><style>
-/* Atlas tokens (kit/v2/syber-atlas.css). The webfonts are not loaded: see the note at the top of og-cards.mjs. */
-:root { --ink: #06051a; --vellum: #eef0ff; --body: #dfe2fb; --mist: #b4bbe2; --dim: #8990bb; --rule: rgba(170,180,255,.16); --rule-2: rgba(170,180,255,.32);
+/* Midnight theme tokens (src/syberlabs.css). The webfonts are not loaded: see the note at the top of og-cards.mjs. */
+:root { --ink: #02070a; --vellum: #f1f6f9; --body: #c3cfd6; --mist: #93a4ae; --dim: #708490; --rule: rgba(140,200,235,.14); --rule-2: rgba(140,200,235,.28);
   --accent: ${p.accent};
   --serif: "Instrument Serif", Georgia, "Liberation Serif", "Times New Roman", serif;
   --sans: "Instrument Sans", system-ui, "DejaVu Sans", "Liberation Sans", sans-serif;
@@ -89,10 +90,9 @@ function card(p) {
 * { box-sizing: border-box; margin: 0; }
 html, body { width: 1200px; height: 630px; overflow: hidden; }
 body { position: relative; color: var(--vellum); font: 400 17px/1.6 var(--sans); -webkit-font-smoothing: antialiased;
-  background: radial-gradient(60% 80% at 82% 50%, color-mix(in srgb, var(--accent) 14%, transparent), #0000 70%),
-    radial-gradient(40% 55% at 68% 48%, #2a1a7a55, #0000 70%), radial-gradient(30% 40% at 76% 40%, #0048f040, #0000 70%),
-    radial-gradient(22% 30% at 60% 62%, #ff58d626, #0000 70%), var(--ink); }
-.stars { position: absolute; inset: 0; background-image: radial-gradient(1px 1px at 12% 18%, #fff8 50%, #0000 51%), radial-gradient(1px 1px at 72% 34%, #cfe4ff99 50%, #0000 51%), radial-gradient(1px 1px at 38% 71%, #fff6 50%, #0000 51%), radial-gradient(1px 1px at 88% 82%, #e8c9ff88 50%, #0000 51%), radial-gradient(1px 1px at 55% 9%, #fff5 50%, #0000 51%); background-size: 420px 420px, 530px 530px, 610px 610px, 470px 470px, 700px 700px; }
+  background: radial-gradient(60% 80% at 82% 50%, color-mix(in srgb, var(--accent) 16%, transparent), #0000 70%),
+    radial-gradient(30% 34% at 82% 108%, rgba(252,115,77,.34), #0000 70%), radial-gradient(60% 40% at 82% 112%, rgba(252,115,77,.12), #0000 70%), var(--ink); }
+.stars { display: none; }
 .frame { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 440px; gap: 48px; padding: 56px 64px 52px; }
 .copy { display: flex; flex-direction: column; min-width: 0; }
 .lockup { display: inline-flex; align-items: center; gap: 12px; font: 600 15px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--vellum); }
@@ -102,11 +102,11 @@ body { position: relative; color: var(--vellum); font: 400 17px/1.6 var(--sans);
 .headline { margin-top: 18px; font: 400 ${p.headline.length > 42 ? 58 : p.headline.length > 28 ? 64 : 76}px/1.02 var(--serif); letter-spacing: -.015em; color: var(--vellum); text-wrap: balance; }
 .line { margin-top: 22px; font: 400 22px/1.4 var(--sans); color: var(--body); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .foot { margin-top: auto; display: flex; align-items: center; gap: 18px; padding-top: 24px; }
-.badge { display: inline-flex; align-items: center; gap: 10px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule-2); background: rgba(6,5,26,.6);
+.badge { display: inline-flex; align-items: center; gap: 10px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule-2); background: rgba(2,7,10,.6);
   font: 500 14px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--vellum); white-space: nowrap; }
 .badge::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--d); box-shadow: 0 0 10px var(--d); }
 .url { font: 500 15px/1 var(--mono); letter-spacing: .06em; color: var(--dim); white-space: nowrap; }
-.plate { position: relative; align-self: center; width: 440px; height: 440px; border-radius: 14px; border: 1px solid var(--rule); background: rgba(12,10,42,.55); overflow: hidden; }
+.plate { position: relative; align-self: center; width: 440px; height: 440px; border-radius: 14px; border: 1px solid var(--rule); background: rgba(12,27,37,.55); overflow: hidden; }
 .plate::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 50%, color-mix(in srgb, var(--accent) 12%, transparent), #0000 72%); }
 .ring { position: absolute; inset: 22px; border-radius: 50%; border: 1px solid var(--rule); }
 .ring::after { content: ""; position: absolute; inset: 20px; border-radius: 50%; border: 1px dashed var(--rule); }

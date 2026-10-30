@@ -61,7 +61,7 @@ export const footerLinks = [
 
 export const projects = [
   {
-    slug: 'rise', number: '01', name: 'RISE', category: 'Interactive reading app', accent: '#f2d9a6',
+    slug: 'rise', number: '01', name: 'RISE', category: 'Interactive reading app', accent: '#0297de',
     reflects: 'SyberLabs/RISE@998d725 · verified 2026-10-05',
     pageTitle: 'RISE: Interactive Reading with Text, Sound and Visuals',
     headline: 'Read beyond the page.',
@@ -139,7 +139,7 @@ export const projects = [
     ],
   },
   {
-    slug: 'flyspace', number: '02', name: 'FLYSPACE', category: 'Visual data workspace', accent: '#f59be0',
+    slug: 'flyspace', number: '02', name: 'FLYSPACE', category: 'Visual data workspace', accent: '#0297de',
     reflects: 'SyberLabs/Flyspace@e95ae73 · verified 2026-10-05',
     pageTitle: 'FLYSPACE: Connect Data Sources to AI Assistants',
     headline: 'See the sources behind an answer.',
@@ -194,7 +194,7 @@ export const projects = [
     ],
   },
   {
-    slug: 'syberwork', number: '03', name: 'SyberWork', category: 'AI work review tools', accent: '#a6f08f',
+    slug: 'syberwork', number: '03', name: 'SyberWork', category: 'AI work review tools', accent: '#0297de',
     reflects: 'SyberLabs/SyberWork@208eaf6 · verified 2026-10-05',
     pageTitle: 'SyberWork: Review and Approval Tools for AI Work',
     headline: 'Check AI work before it changes anything.',
@@ -244,7 +244,7 @@ export const projects = [
     ],
   },
   {
-    slug: 'relay', number: '04', name: 'Relay', category: 'Job application workspace', accent: '#62e3d8',
+    slug: 'relay', number: '04', name: 'Relay', category: 'Job application workspace', accent: '#0297de',
     reflects: 'SyberLabs/relay@0000605 · verified 2026-10-05',
     pageTitle: 'Relay: Job Application Workspace for AI-Assisted Drafting',
     headline: 'Every application has a history.',
@@ -301,7 +301,7 @@ export const projects = [
     ],
   },
   {
-    slug: 'osahr', number: '05', name: 'OSAHR', category: 'Network simulation library', accent: '#ffae63',
+    slug: 'osahr', number: '05', name: 'OSAHR', category: 'Network simulation library', accent: '#0297de',
     reflects: 'SyberLabs/OSAHR_Cell@7293e27 · verified 2026-10-05',
     pageTitle: 'OSAHR: Simulate Changing Networks in Python',
     headline: 'Replay a changing system.',
