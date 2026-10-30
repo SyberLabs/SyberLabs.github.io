@@ -1,6 +1,6 @@
-/* The factory page: the homepage's near-black stage, off-white type and restrained cyan (kit/v2, immersive direction).
+/* The factory page: the homepage's Midnight stage (src/syberlabs.css), with the Admit step in Cantaloupe.
    One column of reading, a numbered line for the Build Thread, a grid of guarantees, and an honest list of limits. */
-body.syber-factory { background:#030708; }
+body.syber-factory { background:var(--sy-ink); }
 .syber-factory .sy-field-host { display:none; }
 .factory { padding-bottom:40px; }
 .factory h2 { margin:0 0 14px; font:500 clamp(28px,3.4vw,44px)/1.1 var(--sy-sans); letter-spacing:-.03em; color:var(--sy-vellum); }
@@ -13,9 +13,9 @@ body.syber-factory { background:#030708; }
 .factory-hero { border-top:0 !important; padding-top:clamp(56px,10vh,110px) !important; }
 .factory-hero__emblem { display:block; width:clamp(110px,12vw,170px); height:auto; margin-bottom:22px; mix-blend-mode:screen; }
 .factory-hero h1 { max-width:14ch; margin:16px 0 22px; font:500 clamp(46px,6.4vw,92px)/.98 var(--sy-sans); letter-spacing:-.05em; color:var(--sy-vellum); }
-.factory-lede { max-width:52ch; margin:0; font-size:clamp(18px,1.6vw,21px); line-height:1.55; color:#d3dbdc !important; }
+.factory-lede { max-width:52ch; margin:0; font-size:clamp(18px,1.6vw,21px); line-height:1.55; color:var(--sy-body) !important; }
 .factory-links { display:flex; flex-wrap:wrap; align-items:center; gap:10px 24px; margin:28px 0 0; }
-.factory-links .sy-btn { min-height:44px; padding:0 20px; border-radius:2px; font-size:14px; background:#eeece7; border-color:#eeece7; color:#070b0d; box-shadow:none; }
+.factory-links .sy-btn { min-height:44px; padding:0 20px; border-radius:2px; font-size:14px; }
 .factory-links a:not(.sy-btn) { display:inline-flex; align-items:center; gap:6px; min-height:44px; font-size:15px; }
 
 .factory-note { max-width:60ch; margin:0 0 30px; font-size:16px; line-height:1.6; }

@@ -30,12 +30,12 @@ export function page(ctx, { title, body, section = '', admin = true, signOut, co
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#06051a">
+  <meta name="theme-color" content="#02070a">
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <title>${esc(title)} · SyberLabs staff</title>
-  <link rel="stylesheet" href="/syberlabs.css?v=4">
-  <link rel="stylesheet" href="/staff.css?v=10">
+  <link rel="stylesheet" href="/syberlabs.css?v=20261030">
+  <link rel="stylesheet" href="/staff.css?v=20261030">
 </head>
 <body${user ? ' class="workspace-app"' : ''}>
 <!--email_off-->

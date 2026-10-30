@@ -29,10 +29,12 @@ const TAU = Math.PI * 2, CAP = 70; // px kept clear under the forms for the beat
 
 const rng32 = seed => () => { seed |= 0; seed = seed + 0x6d2b79f5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+// The site's Midnight theme: the cool roles are Electric Blue (#0297de) and its tints, the warm roles Cantaloupe
+// (#fc734d) and its tints. The tree keeps its own greens and browns.
 const C = {
-  vellum: hex('#eef0ff'), mist: hex('#b4bbe2'), slate: hex('#7f8db5'), ice: hex('#90d8f0'), blue: hex('#4890f0'),
-  violet: hex('#9a6bff'), lilac: hex('#c7a4ff'), magenta: hex('#ff58d6'), pink: hex('#f59be0'), amber: hex('#ffb54a'),
-  cream: hex('#f2d9a6'), green: hex('#a6f08f'), leaf: hex('#6fd38a'), lime: hex('#c9f59a'), teal: hex('#62e3d8'),
+  vellum: hex('#f1f6f9'), mist: hex('#a8c3d2'), slate: hex('#5f7d8f'), ice: hex('#6cc6f5'), blue: hex('#0297de'),
+  violet: hex('#1e74c8'), lilac: hex('#9fd8f7'), magenta: hex('#fc734d'), pink: hex('#fda58c'), amber: hex('#fe9f78'),
+  cream: hex('#ffe3d4'), green: hex('#a6f08f'), leaf: hex('#6fd38a'), lime: hex('#c9f59a'), teal: hex('#62e3d8'),
   bark: hex('#8a5a3c'), oak: hex('#b98352'),
 };
 const mix = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];

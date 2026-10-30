@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RISE: AI-Assisted Reading App | SyberLabs</title>
 <meta name="description" content="RISE is a browser-based audiovisual reader, live at rise.syberlabs.io. Text through time, image, sound and procedural visuals; reading stays in your browser.">
-<meta name="theme-color" content="#05060a">
+<meta name="theme-color" content="#02070a">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400;1,7..72,500&display=swap">
@@ -14,20 +14,20 @@
 <meta property="og:title" content="RISE: AI-Assisted Reading App | SyberLabs">
 <meta property="og:description" content="RISE is a browser-based audiovisual reader, live at rise.syberlabs.io. Text through time, image, sound and procedural visuals; reading stays in your browser.">
 <meta property="og:url" content="https://syberlabs.io/projects/rise/">
-<meta property="og:image" content="https://syberlabs.io/og/rise.png?v=1">
+<meta property="og:image" content="https://syberlabs.io/og/rise.png?v=20261030">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="RISE: AI-Assisted Reading App | SyberLabs">
 <meta name="twitter:description" content="RISE is a browser-based audiovisual reader, live at rise.syberlabs.io. Text through time, image, sound and procedural visuals; reading stays in your browser.">
-<meta name="twitter:image" content="https://syberlabs.io/og/rise.png?v=1">
+<meta name="twitter:image" content="https://syberlabs.io/og/rise.png?v=20261030">
 <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/syberlabs.css?v=20261027d">
-<link rel="stylesheet" href="../experience-v7.css?v=20261027b">
+<link rel="stylesheet" href="/syberlabs.css?v=20261030">
+<link rel="stylesheet" href="../experience-v7.css?v=20261030">
 <style>
 /* ---------- RISE tokens (single dark world, by choice) ---------- */
 :root{
   color-scheme: dark;
-  --ink:#05060a;          /* existing site theme-color */
+  --ink:#02070a;          /* the site's Midnight Black (src/syberlabs.css) */
   --ink-2:#0d0a1c;
   --paper:#f4f1ff;        /* text on ink */
   --mute:#a9a3c7;         /* secondary text, 8.3:1 on ink */
@@ -76,16 +76,17 @@ html.sy-field-live .rise-page{background:transparent}
 .bar nav span[aria-hidden]{opacity:.5}
 
 /* ---------- hero ---------- */
-.rise-contribution{padding:28px var(--gutter);background:#f5f3ec;color:#172c30;font-family:var(--sy-sans)}
+.rise-contribution{padding:28px var(--gutter);background:var(--sy-ink-2);color:var(--sy-vellum);font-family:var(--sy-sans);border-bottom:1px solid var(--sy-rule)}
 .rise-contribution__in{max-width:1208px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:24px}
 .rise-contribution h2{margin:0 0 12px;font:500 clamp(24px,2.4vw,32px)/1.15 var(--sy-sans);letter-spacing:-.025em}
-.rise-contribution p{max-width:72ch;margin:0;color:#425a5d;font-size:16px;line-height:1.6}
-.rise-contribution__source{display:inline-flex;align-items:center;min-height:44px;color:#176473;font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.rise-contribution p{max-width:72ch;margin:0;color:var(--sy-body);font-size:16px;line-height:1.6}
+.rise-contribution__source{display:inline-flex;align-items:center;min-height:44px;color:var(--sy-ice);font-size:13px;text-decoration:underline;text-underline-offset:3px}
 .rise-contribution__actions{display:flex;flex-wrap:wrap;gap:12px}
-.rise-contribution .sy-btn{min-height:48px;padding:12px 18px;border:1px solid #71898c;border-radius:2px;box-shadow:none;color:#172c30;font:500 14px/1.4 var(--sy-sans);text-transform:none;letter-spacing:0}
-.rise-contribution .sy-btn--solid{background:#174b55;border-color:#174b55;color:#fff}
+.rise-contribution .sy-btn{min-height:48px;padding:12px 18px;border:1px solid var(--sy-rule-2);border-radius:2px;box-shadow:none;color:var(--sy-vellum);font:500 14px/1.4 var(--sy-sans);text-transform:none;letter-spacing:0}
+.rise-contribution .sy-btn--solid{background:var(--sy-cantaloupe);border-color:transparent;color:var(--sy-midnight);font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.38),0 12px 34px -14px rgba(252,115,77,.8)}
+.rise-contribution .sy-btn--solid:hover{background:var(--sy-cantaloupe-hi);color:var(--sy-midnight)}
 .rise-contribution .sy-btn--line{background:transparent}
-.rise-contribution a:focus-visible{outline:2px solid #176473;outline-offset:4px}
+.rise-contribution a:focus-visible{outline:2px solid var(--sy-ice);outline-offset:4px}
 @media(max-width:800px){.rise-contribution__in{grid-template-columns:1fr;gap:12px}}
 .hero{
   position:relative;isolation:isolate;overflow-x:clip;

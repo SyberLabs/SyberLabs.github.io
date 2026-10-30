@@ -4,10 +4,14 @@
 
 `kit/v2/` is the canonical existing Claude/SyberLabs design kit. Read
 `kit/v2/README.md`, especially "Current website direction: immersive mathematical
-media", before changing the website. The approved direction is nearly black,
-off-white and restrained cyan, with full-bleed mathematical media, Instrument
-Sans headings, generous whitespace and sparse actions. Apply scoped website
-overrides; preserve shared kit consumers and the existing framework.
+media", before changing the website. The direction is the Midnight theme:
+Midnight Black `#02070A` surfaces, off-white text, Electric Blue `#0297DE` for
+light, links and focus, and Cantaloupe Orange `#FC734D` used a little (solid
+action buttons, live signals, the Admit step, the hero's warm horizon), with
+full-bleed mathematical media, Instrument Sans headings, generous whitespace and
+sparse actions. The theme is defined once, at the end of `src/syberlabs.css`;
+pages do not carry their own colour blocks. Apply scoped website overrides;
+preserve shared kit consumers and the existing framework.
 
 For Mateo's hero, keep `Interview Mateo` and `View résumé` as the two conversion
 actions. Keep copy as real HTML and provide native accessible video when a real

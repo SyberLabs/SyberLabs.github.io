@@ -1,31 +1,6 @@
-/* Services uses the same page-local ivory reading surface as Mateo. */
-body.syber-services {
-  --sy-ink:#f5f3ec; --sy-ink-2:#eeece3; --sy-ink-3:#e4e8e3;
-  --sy-vellum:#172c30; --sy-body:#344a4d; --sy-mist:#4a6062; --sy-dim:#586c6d;
-  --sy-ice:#176473; --sy-accent:#176473;
-  --sy-rule:rgba(23,44,48,.2); --sy-rule-2:rgba(23,44,48,.4);
-  --line:rgba(23,44,48,.2); --text:#172c30; --text-2:#4a6062; --text-3:#586c6d;
-  --font-display:var(--sy-sans); --sy-r-pill:3px; --sy-r-panel:3px;
-  background:#f5f3ec; color:#172c30; color-scheme:light;
-}
-html.sy-field-live body.syber-services { background:#f5f3ec; }
-.syber-services .sy-field-host { display:none; }
-.syber-services .sy-header, .syber-services .sy-header.is-scrolled { background:rgba(245,243,236,.97); box-shadow:none; }
-.syber-services .sy-atlas__backdrop { background:rgba(245,243,236,.98); }
-.syber-services .sy-atlas__panel { background:#f5f3ec; }
-.syber-services .sy-atlas__close { background:#eeece3; }
-.syber-services .sy-atlas__title { font-family:var(--sy-sans); }
-.syber-services .sy-atlas__dot { box-shadow:none; }
-.syber-services .sy-progress, .syber-services .sy-nav ul a::after { background:#176473; }
-.syber-services .sy-footer { background:#eeece3; }
-.syber-services .sy-footer::before { background:none; }
-.syber-services .sy-totop { background:#f5f3ec; }
-.syber-services .sy-btn { white-space:normal; min-height:48px; padding:12px 20px; line-height:1.4; box-shadow:none; }
-.syber-services .sy-btn--solid { background:#174b55; color:#fff; }
-.syber-services .sy-btn--solid:hover { background:#103b43; transform:none; box-shadow:none; }
-.syber-services .sy-btn--line { background:transparent; }
-.syber-services .sy-btn--line:hover { background:#e4e8e3; box-shadow:none; }
-.syber-services :focus-visible { outline:2px solid #176473; outline-offset:5px; }
+/* Reading page on the site's Midnight theme (src/syberlabs.css): colours come from there; only measures live here. */
+.syber-services .sy-btn { white-space:normal; min-height:48px; padding:12px 20px; line-height:1.4; }
+.syber-services :focus-visible { outline-offset:5px; }
 
 /* Services page. Tokens, header, buttons and footer come from /syberlabs.css. */
 .intro, .inquiry { max-width: calc(var(--content-max) + 2 * var(--gutter)); margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter); }
