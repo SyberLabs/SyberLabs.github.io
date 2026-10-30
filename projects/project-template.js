@@ -184,7 +184,7 @@ const mapSection = p => p.map ? `
     <div class="pj-split__main"><p class="sy-title">${esc(p.map.title)}</p><p class="sy-small pj-split__note">${esc(p.map.note)}</p></div>
   </div>
   <div class="pj-map__host" data-system-map="${esc(p.map.id)}" data-reveal><p class="sy-small pj-map__fallback">${esc(p.map.fallback)}</p></div>
-  <script type="module" src="/system-map.js"></script>
+  <script type="module" src="/system-map.js?v=20261030-contrast"></script>
 </section>` : '';
 
 // A recorded run: the output of running the repository's own example, shown as it came back.
