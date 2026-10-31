@@ -196,8 +196,7 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
     the no-keys empty state says "Ask an admin" (no names in the repo).
   - `changes.js` hard-deletes (RFC 5.1; the audit row keeps the old row) and writes only the RFC 8.1 columns, so it works
     on either migration; `deleted_at`, `created_by`, `updated_*` stay unused. Rows use `staff-change__*` (RFC 2.6), not
-    `.home-latest*`. It also exports `validateEntry(input)` -> `{entry, errors}`, shared with `scripts/changes-import.mjs`
-    (`<commit>` or `--file <path>`; first line `-- source <sha>, N rows`; one bad entry exits 1 with no SQL).
+    `.home-latest*`. It also exports `validateEntry(input)` -> `{entry, errors}`.
   - `staff.css` sits at the repo root and is linked as `/staff.css?v=1`: **`scripts/assemble-dist.sh` must copy it into
     `dist/`** (owner of that file). It aliases `sy-btn--primary` and `sy-h3` (not kit classes) for people/roles.
   - `privacy/index.html` copy describes what this build does (GitHub and Google, no-scope GitHub, user agent and IP
@@ -290,7 +289,7 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
     takes `errorHtml` for the Add person lookup message, which carries a link.
   - `projects/latest.js`, the homepage `Latest()` section and its `.home-latest*` CSS are deleted;
     `scripts/assemble-dist.sh` no longer removes `dist/projects/latest.js`, so the CI `test ! -e` guard can fail, and
-    CI greps `dist/` for the canary title. `scripts/changes-import.mjs <commit>` still reads the file from git history.
+    CI greps `dist/` for the canary title.
 
 ## Deviations from RFC
 

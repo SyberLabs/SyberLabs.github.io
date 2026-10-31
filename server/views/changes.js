@@ -39,7 +39,7 @@ export const MESSAGES = {
   href: 'Links must start with https:// or a single /.',
 };
 
-// Validates one entry (form or import). Returns {entry, errors}; errors maps field -> message.
+// Validates one entry (form). Returns {entry, errors}; errors maps field -> message.
 export function validateEntry(input) {
   const get = k => (typeof input[k] === 'string' ? input[k].trim() : input[k] == null ? '' : String(input[k]).trim());
   const entry = { date: get('date'), project: get('project'), state: get('state'), title: get('title'), text: get('text'), href: get('href') };

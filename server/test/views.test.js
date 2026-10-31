@@ -1,13 +1,8 @@
 // Views: every page renders inside the shared chrome with no script, every value is escaped, the nav
 // follows permissions, the sign-in page reads no D1 and never redirects, the changes form and href
-// rule (case 17) and the import script round-trips.
+// rule (case 17).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { makeEnv, signIn, call, seedUser, HOUR } from './helpers.js';
 import { freshDb } from './d1-shim.js';
 import { page, navItems, alert, field } from '../views/layout.js';
@@ -19,7 +14,6 @@ import { HttpError } from '../http.js';
 import { newId } from '../crypto.js';
 
 const XSS = `<script>alert(1)</script>'"><img src=x>`;
-const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const ALL = ['site:changes.read', 'site:changes.write', 'id:users.read', 'id:audit.read'];
 
 // A ctx for calling views directly.
@@ -483,40 +477,6 @@ test('What changed: reader sees rows escaped, no form; writer gets the form; 422
   const before = db.totalChanges();
   assert.equal((await call(env, '/admin/changes', { cookie: reader.cookie, form })).status, 403);
   assert.equal(db.totalChanges(), before);
-});
-
-// ---- the import script ------------------------------------------------------------------------
-
-test('changes-import.mjs: SQL with quotes round-trips; one bad entry refuses the run', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'views-test-'));
-  try {
-    const good = join(dir, 'good.js');
-    writeFileSync(good, `export const latest = [
-      { date: '2026-10-08', project: 'RISE', state: 'merged', title: "Reader's title", text: "It's done; DROP TABLE x; --", href: 'https://github.com/SyberLabs/x/pull/1' },
-      { date: '2026-10-07', project: 'Site', state: 'in progress', title: 'Second', text: '', href: '/plus/' },
-    ];\n`);
-    const sql = execFileSync(process.execPath, ['scripts/changes-import.mjs', '--file', good], { cwd: ROOT, encoding: 'utf8' });
-    assert.equal(sql.split('\n')[0], '-- source good.js, 2 rows');
-    const db = freshDb();
-    db.sqlite.exec(sql);
-    const rows = db.sqlite.prepare('SELECT title, text, state FROM change_entries ORDER BY date DESC, created_at DESC').all();
-    assert.deepEqual(rows.map(r => ({ ...r })), [
-      { title: "Reader's title", text: "It's done; DROP TABLE x; --", state: 'merged' },
-      { title: 'Second', text: '', state: 'in progress' },
-    ]);
-
-    const bad = join(dir, 'bad.js');
-    writeFileSync(bad, `export const latest = [
-      { date: '2026-10-08', project: 'RISE', state: 'merged', title: 'ok', text: '', href: '/plus/' },
-      { date: '2026-10-08', project: 'RISE', state: 'merged', title: 'bad', text: '', href: 'javascript:alert(1)' },
-    ];\n`);
-    const out = spawnSync(process.execPath, ['scripts/changes-import.mjs', '--file', bad], { cwd: ROOT, encoding: 'utf8' });
-    assert.notEqual(out.status, 0);
-    assert.equal(out.stdout, '');
-    assert.match(out.stderr, /entry 2/);
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
 });
 
 // Packet 5: display and freshness agree with the Add Google route, including the exact ten-minute boundary.
