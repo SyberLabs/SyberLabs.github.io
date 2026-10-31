@@ -1,0 +1,41 @@
+name: Production probe
+
+# Every ten minutes scripts/probe.mjs asks syberlabs.io, the account API, RISE, the RISE Composer connector,
+# the Flyspace preview and RISE Sketch what their owners need answered. Two failures about 30 s apart open one
+# `incident` issue and post once to #alerts; the first passing run closes it with the duration. Schedule and
+# manual runs only, never pull_request: a fork's pull request must never run with the Slack webhook.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  # One probe at a time: a run that starts while the last one is still retrying waits for it, so the two
+  # never race to open the same incident.
+  group: production-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The script is all the probe runs: no media-heavy tree and no push credentials.
+          sparse-checkout: scripts/probe.mjs
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Probe production
+        run: node scripts/probe.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          # Empty until an admin adds the secret; the probe then says Slack is not configured and still manages incidents.
+          SLACK_ALERTS_WEBHOOK: ${{ secrets.SLACK_ALERTS_WEBHOOK }}
