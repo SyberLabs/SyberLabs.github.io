@@ -9,8 +9,8 @@ const DAY = 86400 * 1000;
 const raw = db => db.sqlite;
 
 // 0001 is applied to production D1 and is never edited; every change after it is a new numbered file.
-test('migrations apply in order: accounts, staff admission, then private saves', () => {
-  assert.deepEqual(MIGRATION_FILES, ['0001_accounts.sql', '0002_add_person.sql', '0003_account_saves.sql']);
+test('migrations apply in order: accounts, staff admission, private saves, then the Mission Control key', () => {
+  assert.deepEqual(MIGRATION_FILES, ['0001_accounts.sql', '0002_add_person.sql', '0003_account_saves.sql', '0004_board.sql']);
 });
 
 test('the schema applies (0001 then 0002) with foreign keys on, and every table and view exists', async () => {
@@ -42,7 +42,7 @@ test('migrations hold no people, emails, provider ids or content (the CI greps, 
   assert.match("VALUES ('gh', '132870419')", G6);
 });
 
-test('catalogue (case 18): after 0001 and 0002, CATALOGUE matches the permissions rows exactly', async () => {
+test('catalogue (case 18): after every migration, CATALOGUE matches the permissions rows exactly', async () => {
   const rows = (await freshDb().prepare('SELECT key, description, privileged FROM permissions ORDER BY key').all()).results;
   assert.deepEqual(rows.map(r => r.key), Object.keys(CATALOGUE).sort());
   for (const r of rows) {
@@ -106,6 +106,40 @@ test('0002 triggers: the admin role row is fixed, and grants change by delete an
     .bind('admin2', '', 'role_admin').run()).meta.changes, 0);
 });
 
+// The live database when 0004 was written: 0001 to 0003 applied, admins, a viewer with a custom role, entries,
+// audit rows and a saved backup. Fake ids, as everywhere here.
+test('0004 on a database shaped like production: adds the Mission Control key to admin only and keeps every row', async () => {
+  const db = freshDb({ upTo: 3 });
+  const now = Date.now();
+  const founders = [seedUser(db, { roles: ['role_admin'], login: 'founder-a' }), seedUser(db, { roles: ['role_admin'], login: 'founder-b' })];
+  const viewer = seedUser(db, { roles: ['role_viewer'], perms: ['id:audit.read'], login: 'viewer-a' });
+  raw(db).prepare(`INSERT INTO change_entries (id, date, project, state, title, text, href, created_at)
+    VALUES ('c1', '2026-10-08', 'RISE', 'merged', 'Entry', '', '/', ?)`).run(now);
+  raw(db).prepare("INSERT INTO audit_events (at, actor_user_id, action) VALUES (?, ?, 'signin.ok')").run(now, founders[0].userId);
+  raw(db).prepare(`INSERT INTO account_saves (id, user_id, app, name, payload, bytes, request_id, created_at)
+    VALUES ('s1', ?, 'rise', 'Draft', '{}', 2, 'r1', ?)`).run(founders[1].userId, now);
+  const snapshot = () => Object.fromEntries(['users', 'identities', 'user_roles', 'roles', 'role_permissions', 'permissions',
+    'change_entries', 'audit_events', 'sessions', 'account_saves'].map(t => [t, raw(db).prepare(`SELECT * FROM ${t} ORDER BY 1, 2`).all().map(r => ({ ...r }))]));
+  const before = snapshot();
+
+  migrate(db, ['0004_board.sql']);
+  const after = snapshot();
+  const isBoard = key => key === 'site:board.read';
+  assert.deepEqual(after.permissions.filter(p => isBoard(p.key)),
+    [{ key: 'site:board.read', description: CATALOGUE['site:board.read'].label, privileged: 0 }]);
+  assert.deepEqual(after.role_permissions.filter(rp => isBoard(rp.permission_key)), [{ role_id: 'role_admin', permission_key: 'site:board.read' }]);
+  // Those two rows are the whole change.
+  assert.deepEqual({ ...after, permissions: after.permissions.filter(p => !isBoard(p.key)),
+    role_permissions: after.role_permissions.filter(rp => !isBoard(rp.permission_key)) }, before);
+  const keysOf = userId => raw(db).prepare(`SELECT DISTINCT rp.permission_key AS k FROM user_roles ur
+    JOIN role_permissions rp ON rp.role_id = ur.role_id WHERE ur.user_id = ?`).all(userId).map(r => r.k);
+  for (const f of founders) assert.ok(keysOf(f.userId).includes('site:board.read'), f.login);
+  assert.ok(!keysOf(viewer.userId).includes('site:board.read'), 'the viewer and the custom role do not get it');
+  // A second run is refused whole, because the key exists, and changes nothing.
+  assert.throws(() => migrate(db, ['0004_board.sql']), /UNIQUE/);
+  assert.deepEqual(snapshot(), after);
+});
+
 test('permission keys and role names are constrained', async () => {
   const db = freshDb();
   await assert.rejects(db.prepare("INSERT INTO permissions (key, description) VALUES ('Bad', 'x')").run(), /CHECK/);
@@ -125,7 +159,7 @@ test('privileged keys sit only on admin, and admin keeps every key (RFC-0002 2.4
   }
   await db.prepare("INSERT INTO role_permissions VALUES ('r-ops', 'id:users.read')").run();
   await assert.rejects(db.prepare("DELETE FROM role_permissions WHERE role_id = 'role_admin'").run(), /every key/);
-  assert.equal(await db.prepare("SELECT count(*) AS n FROM role_permissions WHERE role_id = 'role_admin'").first('n'), 6);
+  assert.equal(await db.prepare("SELECT count(*) AS n FROM role_permissions WHERE role_id = 'role_admin'").first('n'), 7);
   assert.equal((await db.prepare("DELETE FROM role_permissions WHERE role_id = 'r-ops'").run()).meta.changes, 1);
 });
 

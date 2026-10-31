@@ -105,6 +105,14 @@ session (RFC 2.2, 3.2); 303 to the sealed `r`).
 (RFC 3.5 strings), `revokeRoleStmt`, `disableUserStmts`, `removeRolePermStmt` (lockout-safe statement builders over
 the `admins` view).
 
+**probes.js** (Mission Control): `CHECKS` (RISE Reader and its `/api/mcp` connector, the FLYSPACE preview and its four
+paid routes, which must answer 503, and RISE Sketch; never syberlabs.io, which served the page), `PROBE_TIMEOUT_MS =
+3000`, `runProbes(checks?, timeoutMs?)` -> `[{id, label, method, url, expect, initialize, status, failure, up, ms}]`
+(`failure`: null | status | no_server_info | network | timeout), `hasServerInfo(text)`. Every check runs at once, sends
+no cookie, no Origin and no body except the connector's JSON-RPC `initialize`, follows no redirect, and resolves by
+its deadline even when fetch ignores the abort. A body is read only for `serverInfo` (at most 64 KiB) and is never
+returned; an exception's message is never kept.
+
 **views/** — each returns HTML strings; handlers return Responses.
 - `chrome.js`: `staffHeader(ctx, {section, user, signOut})` (RFC 2.6: skip link, `.sy-field-host`, then
   `<header class="staff-header">` with wrapping rows: lockup + Sign out; `Staff` eyebrow + "Signed in as @login
@@ -123,6 +131,14 @@ the `admins` view).
   confirms first); `roles.js`: `rolesPage`, `saveRole`;
   `audit.js`: `auditPage`; `confirm.js`: `confirmHtml(ctx, {title, lines, action, fields, submitLabel})`
   (re-posts every field plus `confirm=1`). A handler that needs a confirm acts only when `ctx.form.get('confirm') === '1'`.
+- Mission Control `board.js` (MasterMind `docs/contracts/board-v1.md`): `boardPage` (`GET /admin/board`,
+  `site:board.read`, which `migrations/0004_board.sql` adds and grants to `role_admin`), `readBoard(env)` -> `{state:
+  'ok', board}` | `{state: 'unbound' | 'missing' | 'malformed' | 'unreadable'}` (KV binding `BOARD`, key `board:v1`,
+  read as text within 3 s and parsed here), `BOARD_KEY`, `STALE_MS` (36 h), `repoName(v)`. The checks and the read run
+  together. Without a board the page says it is not connected and lists the three steps that connect it; a KV throw
+  is a warning. Board strings are escaped, links go only to GitHub from an `owner/repo` name, a hex sha, a number or
+  an issue URL, and an unknown telemetry metric shows its reason, never a value. `wrangler.toml` has no `BOARD`
+  binding yet: its namespace id comes first, from the owner.
 
 ## Tests (`node --test 'server/test/**/*.test.js'`; RFC 8.5 case numbers)
 
@@ -140,6 +156,7 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
 | github.test.js | github.js | 6 |
 | authz.test.js | authz.js (Packet 2) | 7, 8 |
 | views.test.js | views (Packet 2) | 22, escaping of names, nav filtered by perms |
+| board.test.js | Mission Control | the key, each missing board, escaping, staleness, telemetry unknowns, the checks |
 | changes.test.js | Packet 3 | 3, 12 (code + escaping) |
 | people.test.js, roles.test.js, guards.test.js | Packet 4 | 13, 14, 19, 20, 21, 23 |
 
