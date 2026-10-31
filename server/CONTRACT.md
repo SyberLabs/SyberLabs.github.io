@@ -142,6 +142,7 @@ and `helpers.js` (`makeEnv`, `seedRole`, `seedUser`, `seedSession`, `signIn`, `c
 | views.test.js | views (Packet 2) | 22, escaping of names, nav filtered by perms |
 | changes.test.js | Packet 3 | 3, 12 (code + escaping) |
 | people.test.js, roles.test.js, guards.test.js | Packet 4 | 13, 14, 19, 20, 21, 23 |
+| telemetry.test.js | site.request (RFC 0004) | telemetry.v1 conformance |
 
 ## Contract changes
 
@@ -341,3 +342,19 @@ introduced by this seam. App local stores remain authoritative; uploads and vali
 explicit user actions. Tests: account-api.test.js includes owner isolation, CORS/CSRF, quotas,
 retries, input bounds, disabled/expired sessions, account-switch races in both directions and
 fail-closed storage errors.
+
+## site.request counts (telemetry.v1, 2026-10-31)
+
+MasterMind RFC 0004 and `docs/contracts/telemetry-v1.md`. `handle()` writes one Analytics Engine data point per
+response through `env.EVENTS`, after the response is final, inside a try and never awaited: `indexes
+['site.request']`, `blobs [event, release, route, method, status, code, app]`, `doubles [1, ms]`. Only the
+production configuration declares the binding (`wrangler.toml`; preview declares none). `telemetry/events.json`
+is the allowlist: **telemetry.js** `sitePoint(fields)` builds the point from it or returns null, and
+`tag(res, code)` / `codeOf(res)` keep an error code beside a Response (`fail()`, the 403 page, `unavailable()`,
+the account API's `failure()`), read before `secure()` copies it. `route` is `routes.template(table, pathname)`
+or `account-api.accountRoute(pathname)`, else `unmatched`; `app` is the request Origin against `APP_ORIGINS`
+and `ORIGIN`, else `none`; `release` is **release.js** `RELEASE`, `unknown` as committed and the short sha in
+the bundle CI builds. No user, session or save id, address, User-Agent, raw path or query string is written.
+Tests: telemetry.test.js holds responses byte-identical with the binding absent, present, throwing and
+malformed, checks every point against the allowlist and its closed sets, and pushes input text into every
+request field.
