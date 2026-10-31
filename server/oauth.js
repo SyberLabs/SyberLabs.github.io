@@ -10,7 +10,7 @@ import * as github from './github.js';
 import * as google from './google.js';
 import { enabledProviders, googleEnabled } from './providers.js';
 
-export { PROVIDERS, enabledProviders, googleEnabled } from './providers.js';
+export { googleEnabled } from './providers.js';
 
 export const OAUTH_COOKIE = '__Host-sl_oauth';
 export const STATE_TTL_MS = 600000; // GitHub's code lifetime is 10 minutes

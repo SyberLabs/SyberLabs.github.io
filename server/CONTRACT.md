@@ -53,7 +53,7 @@ dependencies: Web Crypto, `fetch`, `URL` and D1 `prepare/bind/first/all/run/batc
 R1-14; cached; rejects unless 32 bytes), `sealJson(key, value, aad)` / `openJson(key, sealed, aad)` -> value|null (AES-GCM, random 96-bit IV, `b64url(iv||ct)`; open never throws).
 
 **http.js** (foundation): `esc(v)` (& < > " ', null -> ''), `CSP`, `SECURITY_HEADERS`, `secure(res)` (copy with
-every header set and `Access-Control-Allow-Origin` removed), `html(body, init?)`, `text(body, init?)`,
+every header set and `Access-Control-Allow-Origin` removed), `html(body, init?)`,
 `redirect(location, init?)` (303 default, empty body); `init = {status, headers, cookies: string[]}`. `ERRORS`
 (`[status, message]` per code), `class HttpError(code, message?)` (`.status` from `ERRORS`),
 `class AuthError(code, detail?)` (codes: cancelled, expired, provider, disabled). `cookie(name, value, maxAgeSeconds)` (`Path=/; Secure; HttpOnly; SameSite=Lax`, never Domain),
