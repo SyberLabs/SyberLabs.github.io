@@ -6,7 +6,6 @@ import { newId, randomToken, sha256Hex } from '../crypto.js';
 
 export const ORIGIN = 'https://syberlabs.io';
 export const SESSION_COOKIE = '__Host-sl_session';
-export const OAUTH_COOKIE = '__Host-sl_oauth';
 export const HOUR = 3600 * 1000;
 
 export function makeEnv(overrides = {}) {

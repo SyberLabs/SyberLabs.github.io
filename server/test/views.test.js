@@ -17,10 +17,10 @@ const XSS = `<script>alert(1)</script>'"><img src=x>`;
 const ALL = ['site:changes.read', 'site:changes.write', 'id:users.read', 'id:audit.read'];
 
 // A ctx for calling views directly.
-function ctxFor({ perms = [], user = {}, path = '/admin/', method = 'GET' } = {}) {
-  const url = new URL(path, 'https://syberlabs.io');
+function ctxFor({ perms = [], user = {} } = {}) {
+  const url = new URL('/admin/', 'https://syberlabs.io');
   return {
-    env: { ORIGIN: 'https://syberlabs.io' }, url, now: Date.now(), request: new Request(url, { method }),
+    env: { ORIGIN: 'https://syberlabs.io' }, url, now: Date.now(), request: new Request(url),
     form: new URLSearchParams(), perms: new Set(perms),
     user: { id: 'u1', identityId: 'i1', sessionHash: 'h', displayName: 'Test user', provider: 'github', login: 'test-user', email: null, expiresAt: Date.now() + HOUR, ...user },
   };

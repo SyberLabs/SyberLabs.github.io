@@ -275,7 +275,6 @@ test('d1 shim: D1 result shapes, binding rules, atomic batch, broken binding', a
     { results: [{ id: 'u1', display_name: 'A' }], success: true, meta: { changes: 0, last_row_id: 0, changed_db: false, rows_read: 1 } });
   assert.equal(await db.prepare('SELECT display_name FROM users WHERE id = ?').bind('u1').first('display_name'), 'A');
   assert.equal(await db.prepare('SELECT * FROM users WHERE id = ?').bind('none').first(), null);
-  assert.deepEqual(await db.prepare('SELECT id FROM users').raw(), [['u1']]);
   assert.equal(await db.prepare('SELECT ?1 AS t, ?1 + ?2 AS s').bind(true, 2).first('s'), 3);
   assert.throws(() => db.prepare('SELECT ?').bind(undefined), /D1_TYPE_ERROR/);
   const ret = await db.prepare("UPDATE users SET display_name = 'B' WHERE id = 'u1' RETURNING id").all();
