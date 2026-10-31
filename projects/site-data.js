@@ -13,8 +13,6 @@ export const EMAIL = 'hello.mateorobles@gmail.com';
 // because the old lab inbox was flagged as spam during outreach.
 export const MATEO_EMAIL = 'hello.mateorobles@gmail.com';
 export const RESUME = 'https://syberlabs.space/mateo-site/#resumes';   // the three role-family résumés on Mateo's site
-export const LINKEDIN = 'https://www.linkedin.com/in/automateon/';
-export const GITHUB = 'https://github.com/SyberLabs';            // the lab's organisation
 // Mateo's own profiles, wherever he appears as a person (the hero's founder line, the founder card, structured data)
 export const MATEO_GITHUB = 'https://github.com/sykosyber';
 export const MATEO_SITE = 'https://syberlabs.space/mateo-site/';
@@ -22,10 +20,7 @@ export const MATEO_SITE = 'https://syberlabs.space/mateo-site/';
 // Public tools and previews. Linked from the hero, the Atlas, the footer and each project page.
 export const RISE_APP = 'https://rise.syberlabs.io/';
 export const RISE_SAMPLE = 'https://rise.syberlabs.io/jev-scene-demo';
-// Legacy public sample retained for existing deep links; not the portfolio’s first-click journey.
-export const RISE_TRY = 'https://rise.syberlabs.io/try/';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
-export const SKETCH_APP = 'https://sketch.syberlabs.io/';
 export const GYRE_APP = 'https://sykosyber.github.io/engines/works/gyre.html';
 
 // Customer entry point stays stable before and after sales open. The app owns checkout readiness.
@@ -45,8 +40,6 @@ export const nav = [
   { id: 'projects', label: 'Work', href: '/#work' },
   { id: 'mateo', label: 'About', href: MATEO_PORTFOLIO },
 ];
-
-export const workWithUs = { label: 'Work with us', href: '/services/' };
 
 // The footer carries a few essentials, every contact route and the legal page. It does not repeat the site map: the
 // selected menu (siteMap below) is the header's Menu (the Atlas), a <details> that opens and closes without JavaScript.
@@ -372,5 +365,3 @@ export const siteMap = [
     { label: 'Privacy', note: 'Data and contact policy', href: '/privacy/' },
   ] },
 ];
-
-export const skills = ['Python', 'TypeScript', 'JavaScript', 'SQL', 'React', 'Next.js', 'FastAPI', 'PostgreSQL', 'SQLite', 'Redis', 'Cloudflare Workers', 'LightGBM', 'scikit-learn', 'pandas', 'NumPy', 'LLM applications', 'AI agents', 'pytest', 'Vitest', 'Playwright'];

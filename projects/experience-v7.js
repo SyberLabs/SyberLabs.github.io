@@ -86,7 +86,7 @@ const SEVERITY = ['critical', 'high', 'moderate', 'medium', 'low'];
 const severityOf = v => { const s = String(v?.severity || '').toLowerCase(); return SEVERITY.includes(s) ? s : 'unrated'; };
 const severityLevel = s => s === 'critical' || s === 'high' ? 'high' : s === 'moderate' || s === 'medium' ? 'moderate' : s === 'low' ? 'low' : 'unrated';
 
-function vulnerabilityCell(list, fixture) {
+function vulnerabilityCell(list) {
   if (!Array.isArray(list)) return missing('not checked');
   if (!list.length) return '<span class="pj-deps__none">None reported</span>';
   const counts = {};
@@ -94,7 +94,7 @@ function vulnerabilityCell(list, fixture) {
   const order = [...SEVERITY, 'unrated'].filter(s => counts[s]);
   const worst = severityLevel(order[0]);
   const ids = list.map(v => v?.id ? link(safeUrl(v.url), esc(v.id), 'pj-deps__id') : '').filter(Boolean);
-  return `<span class="pj-deps__vuln is-${worst}"><i aria-hidden="true"></i><b>${list.length}</b> <span>${order.map(s => `${counts[s]} ${s}`).join(', ')}</span></span>${ids.length && !fixture ? `<span class="pj-deps__ids">${ids.join(' ')}</span>` : ''}`;
+  return `<span class="pj-deps__vuln is-${worst}"><i aria-hidden="true"></i><b>${list.length}</b> <span>${order.map(s => `${counts[s]} ${s}`).join(', ')}</span></span>${ids.length ? `<span class="pj-deps__ids">${ids.join(' ')}</span>` : ''}`;
 }
 
 function packageRow(pkg) {
@@ -106,7 +106,7 @@ function packageRow(pkg) {
     <th scope="row"><span class="pj-deps__pkg">${link(safeUrl(pkg.githitsUrl), name)}</span>${pkg.registry ? `<span class="pj-deps__registry">${esc(pkg.registry)}</span>` : ''}</th>
     <td>${pkg.license ? `<span class="pj-deps__mono">${esc(pkg.license)}</span>` : missing()}</td>
     <td>${latest}</td>
-    <td>${vulnerabilityCell(pkg.vulnerabilities, false)}</td>
+    <td>${vulnerabilityCell(pkg.vulnerabilities)}</td>
   </tr>`;
 }
 

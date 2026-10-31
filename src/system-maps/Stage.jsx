@@ -10,7 +10,7 @@ const SIZE = {
   narrow: { record: [118, 50], artifact: [118, 50], gate: [118, 50], human: [118, 46], agent: [118, 46], external: [118, 50], vertex: [52, 52], hyper: [13, 13] },
 };
 
-export function place(node, layout) {
+function place(node, layout) {
   const narrow = layout === 'narrow';
   const [x, y] = narrow && node.m ? node.m : [node.x, node.y];
   const [w, h] = (SIZE[layout][node.type] || SIZE[layout].record);
@@ -28,7 +28,7 @@ function boundary(p, toward) {
   return [p.x + dx * s, p.y + dy * s];
 }
 
-export function geometry(edge, a, b, layout) {
+function geometry(edge, a, b, layout) {
   const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, dx = b.x - a.x, dy = b.y - a.y, l = Math.hypot(dx, dy) || 1;
   const bend = (layout === 'narrow' && edge.mb !== undefined ? edge.mb : edge.bend) || 0, c = [mx - dy / l * bend, my + dx / l * bend];
   const p0 = boundary(a, c), p1 = boundary(b, c);

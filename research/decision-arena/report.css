@@ -8,8 +8,7 @@
   font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2);
 }
 .kicker { margin: var(--space-8) 0 var(--space-5); }
-.hero h1 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(56px, 8.6vw, 124px); line-height: .9; letter-spacing: -0.02em; color: var(--text); }
-.hero h1 em { font-style: italic; background: var(--sy-spectrum); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .08em; }
+.hero h1 { margin: 0; font-family: var(--font-display); color: var(--text); }
 .dek { max-width: 720px; margin: var(--space-6) 0 var(--space-4); font-size: 22px; line-height: 32px; color: var(--text); }
 .hero-note { margin: 0; font-size: 16px; line-height: 24px; color: var(--text-2); }
 
@@ -27,15 +26,14 @@
 .layout { display: grid; grid-template-columns: 200px minmax(0, 760px); gap: var(--space-8); padding-top: var(--space-8); padding-bottom: var(--space-9); }
 aside nav { position: sticky; top: calc(var(--header-height) + var(--space-6)); display: grid; gap: var(--space-2); }
 aside nav p { margin: 0 0 var(--space-2); }
-aside a { display: block; padding: var(--space-1) 0; font-size: 14px; line-height: 20px; color: var(--text-2); }
+aside a { padding: var(--space-1) 0; font-size: 14px; line-height: 20px; color: var(--text-2); }
 aside a:hover { color: var(--text); text-decoration: none; }
 .aside-note { margin: var(--space-7) 0 0; font-size: 14px; line-height: 20px; color: var(--text-3); }
 article { min-width: 0; }
 article section { border-top: 1px solid var(--line); padding: var(--space-6) 0 var(--space-7); scroll-margin-top: calc(var(--header-height) + var(--space-4)); }
 article section:first-child { border: 0; padding-top: 0; }
 .section-label { margin: 0 0 var(--space-4); }
-article h2 { margin: 0 0 var(--space-5); font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; color: var(--text); }
-article h3 { margin: var(--space-4) 0 var(--space-2); font-size: 18px; line-height: 28px; font-weight: 600; color: var(--text); }
+article h2 { margin: 0 0 var(--space-5); font-family: var(--font-display); color: var(--text); }
 article p, article li { font-size: 16px; line-height: 28px; color: var(--text-2); }
 article p { margin: var(--space-4) 0; }
 article strong { color: var(--text); font-weight: 600; }
@@ -53,14 +51,13 @@ article code { font-family: var(--font-mono); font-size: max(12px, .85em); color
 table { border-collapse: collapse; width: 100%; text-align: left; font-size: 14px; line-height: 20px; }
 caption { text-align: left; font-size: 14px; line-height: 20px; color: var(--text-3); padding-bottom: var(--space-3); }
 th, td { padding: var(--space-3) var(--space-4) var(--space-3) 0; vertical-align: top; border-bottom: 1px solid var(--line); }
-td { color: var(--text-2); }
-tbody th { font-weight: 500; color: var(--text); min-width: 9em; }
+tbody th { font-weight: 500; min-width: 9em; }
 th small, td small { display: block; color: var(--text-3); font-size: 12px; line-height: 16px; font-weight: 400; letter-spacing: 0; text-transform: none; font-family: var(--font-mono); }
 thead th small { margin-top: var(--space-1); }
 tbody th:first-child, thead th:first-child { position: sticky; left: 0; z-index: 1; background: var(--bg); }
 td.num { font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
 td.num .big { display: block; font-family: var(--font-display); font-size: 28px; line-height: 32px; color: var(--text); }
-td.not-run { font-style: italic; color: var(--text-3); }
+td.not-run { font-style: italic; }
 
 .cases-wrap { max-height: 70vh; overflow-y: auto; }
 .cases-wrap thead th { position: sticky; top: 0; z-index: 2; background: var(--bg); }
@@ -96,8 +93,8 @@ a.choice .pace { color: var(--brand); text-decoration: underline; text-underline
 /* Method */
 .facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-2) var(--space-5); margin: var(--space-5) 0; font-size: 14px; line-height: 20px; }
 .facts dd { margin: 0; color: var(--text); overflow-wrap: anywhere; }
-pre { margin: var(--space-5) 0; padding: var(--space-5); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); color: var(--text-2); overflow: auto; line-height: 1.8; }
-pre code { font-size: 13px; overflow-wrap: normal; color: inherit; }
+pre { margin: var(--space-5) 0; padding: var(--space-5); border: 1px solid var(--line); border-radius: var(--radius); overflow: auto; line-height: 1.8; }
+pre code { font-size: 13px; overflow-wrap: normal; }
 .limits { padding-left: var(--space-5); }
 .terms { font-size: 14px !important; line-height: 22px !important; border-top: 1px solid var(--line); padding-top: var(--space-4); }
 
@@ -105,15 +102,12 @@ pre code { font-size: 13px; overflow-wrap: normal; color: inherit; }
   .layout { grid-template-columns: 1fr; gap: var(--space-6); padding-top: var(--space-7); }
   aside nav { position: static; grid-template-columns: repeat(2, 1fr); }
   aside nav p { grid-column: 1 / -1; }
-  .aside-note { display: none; }
   .hero .meta { flex-direction: column; gap: var(--space-2); }
 }
 @media (max-width: 640px) {
   .hero { padding-top: var(--space-8); }
   .kicker { margin-top: var(--space-7); }
-  .hero h1 { font-size: 52px; line-height: 52px; }
   .dek { font-size: 19px; line-height: 28px; }
-  article h2 { font-size: 30px; line-height: 34px; }
   pre { padding: var(--space-4); }
   th, td { padding-right: var(--space-3); }
   .facts { grid-template-columns: 1fr; gap: var(--space-1); }
@@ -125,14 +119,7 @@ pre code { font-size: 13px; overflow-wrap: normal; color: inherit; }
 .research-reading body { background-image: none; }
 .research-reading .hero h1 { font-size: clamp(40px, 6.2vw, 84px); font-weight: 600; line-height: 1.08; letter-spacing: -.045em; text-wrap: balance; }
 .research-reading .hero h1 em { background: none; color: var(--sy-ice); font-style: normal; padding: 0; }
-.research-reading article h2,
-.research-reading .cards h2 { font-weight: 600; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.2; letter-spacing: -.025em; text-wrap: balance; }
-.research-reading .card h3 { font-weight: 600; }
-.research-reading .card { background: transparent; }
-.research-reading .metrics strong { font-weight: 600; font-size: clamp(36px, 4vw, 56px); line-height: 1.15; }
-.research-reading .metrics > div:first-child strong { background: none; color: var(--sy-vellum); }
-.research-reading .legend li i,
-.research-reading .states li i { box-shadow: none; }
+.research-reading article h2 { font-weight: 600; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.2; letter-spacing: -.025em; text-wrap: balance; }
 .research-reading pre { background: var(--sy-ink-2); color: var(--sy-vellum); }
 .research-reading pre code { color: inherit; }
 .research-reading .table-wrap { max-width: 100%; overscroll-behavior-x: contain; }

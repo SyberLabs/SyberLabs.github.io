@@ -40,7 +40,7 @@ function keyBoxes(selected) {
     </div>`;
 }
 
-export const NAME_COPY = 'Role names are 2 to 40 lowercase letters, digits or hyphens, starting with a letter, like editor.';
+const NAME_COPY = 'Role names are 2 to 40 lowercase letters, digits or hyphens, starting with a letter, like editor.';
 
 function roleForm(editing, values, errors) {
   const selected = new Set(values.perms || (editing ? editing.keys : []));
@@ -61,7 +61,7 @@ function roleForm(editing, values, errors) {
 }
 
 // A list of roles, each with its description, keys and holders (RFC-0002 2.6; no tables on staff pages).
-export async function renderRoles(ctx, { status = 200, notice = '', values = {}, errors = {}, editId } = {}) {
+async function renderRoles(ctx, { status = 200, notice = '', values = {}, errors = {}, editId } = {}) {
   const roles = await loadRoles(ctx.env.DB);
   const manage = can(ctx, 'id:roles.manage');
   const editing = manage ? roles.find(r => r.id === (editId ?? ctx.url.searchParams.get('edit')) && r.is_system !== 1) : null;

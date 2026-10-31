@@ -112,21 +112,6 @@ export function splitWords(el) {
   el.classList.add('sy-split');
 }
 
-export function headerScroll() {
-  const header = document.querySelector('.sy-header');
-  if (!header) return;
-  let lastY = scrollY, raf = 0;
-  const paint = () => {
-    raf = 0;
-    const y = scrollY, down = y > lastY + 4, up = y < lastY - 4;
-    if (y < 80) header.classList.remove('is-hidden');
-    else if (down) header.classList.add('is-hidden');
-    else if (up) header.classList.remove('is-hidden');
-    lastY = y;
-  };
-  addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(paint); }, { passive: true });
-}
-
 /* Spectrum text (syberlabs.css sy-hue) moves its gradient with a background-position animation, which the browser
    repaints rather than composites; pausing it off screen leaves only the words in view doing that work. */
 export function hue(root = document) {

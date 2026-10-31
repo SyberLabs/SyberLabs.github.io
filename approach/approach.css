@@ -66,4 +66,3 @@
 .approach-main :is(h1,h2) { text-wrap:balance; }
 
 .syber-approach main :is(p,li) { overflow-wrap:break-word; }
-.syber-approach main :is(article,.prose > *) { min-width:0; }

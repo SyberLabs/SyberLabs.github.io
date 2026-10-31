@@ -34,17 +34,17 @@ function production(req) {
 }
 
 // GET /admin/board with fetch stubbed; returns the response, its text and every request the checks made.
-async function render(env, cookie, { fetch = production, now = NOW } = {}) {
+async function render(env, cookie, { fetch = production } = {}) {
   const stub = stubFetch(fetch);
   try {
-    const res = await call(env, '/admin/board', { cookie, now });
+    const res = await call(env, '/admin/board', { cookie, now: NOW });
     return { res, body: await res.text(), calls: stub.calls };
   } finally {
     stub.restore();
   }
 }
 
-const adminEnv = async (overrides = {}) => {
+const adminEnv = async overrides => {
   const env = makeEnv(overrides);
   const admin = await signIn(env.DB, { roles: ['role_admin'], now: NOW });
   return { env, cookie: admin.cookie };

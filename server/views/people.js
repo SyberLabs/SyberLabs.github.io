@@ -110,7 +110,7 @@ function addForm(ctx, data, values, errors) {
 }
 
 // The page, with an optional notice (trusted HTML) and the Add person form's values and errors.
-export async function renderPeople(ctx, { status = 200, notice = '', values = {}, errors = {} } = {}) {
+async function renderPeople(ctx, { status = 200, notice = '', values = {}, errors = {} } = {}) {
   const data = await loadPeople(ctx.env.DB);
   const manage = can(ctx, 'id:users.manage');
   const ok = NOTICES[ctx.url.searchParams.get('ok')];

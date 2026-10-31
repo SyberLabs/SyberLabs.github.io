@@ -11,8 +11,7 @@ main h1, main h2 { text-wrap: balance; }
 .intro { padding-top: var(--space-9); padding-bottom: var(--space-9); }
 .intro h1 { max-width: 900px; margin: var(--space-4) 0 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(44px, 5vw, 72px); line-height: 1; letter-spacing: -.04em; }
 .lead { max-width: 640px; margin: var(--space-5) 0 0; font-size: 18px; line-height: 28px; color: var(--text-2); }
-.actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin-top: var(--space-6); }
-.intro-note { max-width: var(--measure); margin: var(--space-5) 0 0; font-size: 14px; line-height: 20px; color: var(--text-3); }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
 
 .inquiry { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-8); padding-top: var(--space-9); padding-bottom: var(--space-10); }
 .inquiry h2 { max-width: 760px; margin: var(--space-4) 0 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; }
@@ -21,8 +20,6 @@ main h1, main h2 { text-wrap: balance; }
 .inquiry-copy .email-fallback { font-size: 14px; overflow-wrap: anywhere; }
 .inquiry-brief { border-left: 1px solid var(--line); padding-left: var(--space-7); }
 .inquiry-brief h3 { margin: 0 0 var(--space-4); font-size: 20px; font-weight: 500; }
-.inquiry-brief ol { margin: 0; padding-left: 1.25em; color: var(--text-2); }
-.inquiry-brief li { padding-left: .35em; margin-bottom: var(--space-3); line-height: 24px; }
 .inquiry .privacy { margin: var(--space-4) 0 0; font-size: 14px; line-height: 22px; color: var(--text-2); }
 
 @media (max-width: 860px) {

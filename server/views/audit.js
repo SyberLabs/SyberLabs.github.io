@@ -10,7 +10,7 @@ const LIMIT = 200;
 // Every action the app writes (and session.revoke, which older rows hold), with the verb phrase the page
 // shows: "turn off", never "disable" (RFC-0002 3.5). t = the target's name, role = a role name, title = an
 // entry title, all already escaped; provider = "Google" (a fixed label) for identity.add.
-export const ACTION_SENTENCES = {
+const ACTION_SENTENCES = {
   'signin.ok': () => 'signed in',
   'user.add': v => `added ${v.t}${v.role ? ` as ${v.role}` : ''}`,
   bootstrap: () => 'bootstrapped the first accounts',

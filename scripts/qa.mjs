@@ -12,13 +12,12 @@
 //   - sitemap.xml URLs with no page, and pages (except 404.html and the kit demo) missing from the sitemap
 //   - files the CI workflow tests for (`test -s dist/...`) that are missing
 // Exits non-zero on broken internal links or missing files; everything else is a warning.
-import { readFile, readdir, stat } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { existsSync, statSync } from 'node:fs';
 import { resolve, join, relative, posix } from 'node:path';
 
 const root = resolve(process.argv[2] || 'dist');
 const ORIGIN = 'https://syberlabs.io';
-const SITEMAP_EXEMPT = new Set(['404.html', 'kit/v2/demo.html']);
 
 async function walk(dir) {
   const out = [];
@@ -175,7 +174,7 @@ if (existsSync(sitemapFile)) {
   const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1].trim());
   for (const loc of locs) if (!pageUrls.has(loc)) report('sitemap.xml', `sitemap URL has no page: ${loc}`, true);
   for (const [rel] of parsed) {
-    if (SITEMAP_EXEMPT.has(rel) || !rel.endsWith('index.html')) continue;
+    if (!rel.endsWith('index.html')) continue;
     const url = `${ORIGIN}/${rel.slice(0, -'index.html'.length)}`;
     if (!locs.includes(url)) report('sitemap.xml', `page missing from sitemap: ${url}`);
   }
