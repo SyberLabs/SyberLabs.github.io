@@ -225,13 +225,12 @@ function facts(p) {
 </section>`;
 }
 
-export function projectRow(item, { intro = true } = {}) {
-  const tech = item.facts.find(([k]) => k === 'Technology')?.[1];
+export function projectRow(item) {
   return `<li><a class="sy-project-row" href="/projects/${item.slug}/" style="--sy-accent:${item.accent}" data-tilt="2">
     <span class="sy-project-row__index">${item.number}</span>
     <canvas class="sy-project-row__sigil" data-sigil="${item.slug}" aria-hidden="true"></canvas>
     <span class="sy-project-row__name"><span class="sy-project-row__title">${esc(item.name)}</span><span class="sy-project-row__cat">${esc(item.category)}</span></span>
-    <span class="sy-project-row__body"><span class="sy-project-row__headline">${esc(item.headline)}</span>${intro ? `<span class="sy-project-row__intro">${esc(item.intro)}</span>${tech ? `<span class="sy-project-row__stack">${esc(tech)}</span>` : ''}` : ''}</span>
+    <span class="sy-project-row__body"><span class="sy-project-row__headline">${esc(item.headline)}</span></span>
     ${badge(item.status)}
     <svg class="sy-project-row__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.arrow}</svg>
   </a></li>`;
@@ -243,7 +242,7 @@ function others(p) {
   return `
 <section class="pj-section sy-container" aria-labelledby="others-title">
   <div class="pj-others__head" data-reveal><h2 id="others-title" class="sy-eyebrow">Other projects</h2></div>
-  <ul class="sy-project-rows pj-others" data-reveal-children>${projects.filter(item => item.slug !== p.slug).map(item => projectRow(item, { intro: false })).join('')}</ul>
+  <ul class="sy-project-rows pj-others" data-reveal-children>${projects.filter(item => item.slug !== p.slug).map(item => projectRow(item)).join('')}</ul>
 </section>`;
 }
 
