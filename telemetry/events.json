@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "dataset": "syberlabs_events",
+  "events": {
+    "site.request": {
+      "owner": "Seth",
+      "decision": "Are account saves working for each consumer app?",
+      "blobs": [
+        { "name": "release" },
+        { "name": "route" },
+        { "name": "method", "values": ["GET", "HEAD", "POST", "OPTIONS", "other"] },
+        { "name": "status", "values": ["2xx", "3xx", "4xx", "5xx"] },
+        { "name": "code" },
+        { "name": "app", "values": ["omni", "rise", "sketch", "site", "none"] }
+      ],
+      "doubles": ["count", "ms"]
+    }
+  }
+}
