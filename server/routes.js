@@ -105,6 +105,13 @@ export function match(table, method, pathname) {
   return methods.size ? { methods: [...methods].sort() } : null;
 }
 
+// The pattern a path matches, whatever the method, or null. site.request records this template, never the
+// raw path, which can carry an id.
+export function template(table, pathname) {
+  const parts = pathname.split('/');
+  return table.find(route => matchPath(route.segments, parts))?.pattern || null;
+}
+
 // For a signed-out POST: the longest parameterless GET route that owns the form's path (RFC-0002 3.6).
 export function ownerPage(table, pathname) {
   let best = '/admin/';
