@@ -2,8 +2,10 @@
 // surface the question its owner cares about. A check fails only when two attempts about 30 seconds
 // apart both fail, so one dropped request never alerts anyone, and nothing is carried between runs.
 // A failing check opens one GitHub issue labelled `incident` and posts once to Slack; the first run
-// that passes closes it with the duration. The open issue is the state: while it is open, nothing is
-// posted again.
+// that passes closes it with the duration. The issue is the state: while it is open, nothing is posted
+// again. A post Slack does not confirm leaves the issue labelled `unannounced`, open or closed, and each
+// later run retries that post until Slack confirms it, so a Slack outage delays an alert but never loses
+// it, and a confirmed post is never repeated.
 //
 //   node scripts/probe.mjs    run every check; with GITHUB_TOKEN it opens and closes incidents, and
 //                             with SLACK_ALERTS_WEBHOOK it also posts to #alerts
@@ -18,6 +20,7 @@ import { pathToFileURL } from 'node:url';
 const UA = 'syberlabs-probe (+https://github.com/SyberLabs/SyberLabs.github.io/blob/main/scripts/probe.mjs)';
 const REPO = 'SyberLabs/SyberLabs.github.io';
 const LABEL = 'incident';
+const UNANNOUNCED = 'unannounced';
 const TIMEOUT_MS = 15000;
 export const RETRY_MS = 30000;
 
@@ -137,6 +140,11 @@ function line({ check, first, retry, failing }) {
 
 export const title = check => `Incident: ${check.id} failing`;
 
+const incidentText = (check, r, at, url) => `Incident: ${check.id} failing. ${check.name} (${target(check)}) expected ${check.expected}, ` +
+  `got ${both(r.first, r.retry)}. Failing since ${iso(at)}. Owner: ${check.owner}. ${url}`;
+const recoveredText = (id, owner, duration, url) => `Recovered: ${id} passes again after ${duration}. Owner: ${owner}. ${url}`;
+const owes = issue => (issue.labels || []).some(l => (typeof l === 'string' ? l : l.name) === UNANNOUNCED);
+
 function issueBody({ check, first, retry, at }) {
   return [
     `- Check: \`${check.id}\` (${check.name})`,
@@ -204,8 +212,11 @@ export async function main({
   }
   const gh = github(env.GITHUB_TOKEN, env.GITHUB_REPOSITORY || REPO, fetchImpl);
   let open;
+  let unsent = [];
   try {
     open = (await gh('GET', `/issues?state=open&labels=${LABEL}&per_page=100`)).filter(issue => !issue.pull_request);
+    // A recovery Slack never confirmed is owed from its closed issue.
+    if (webhook) unsent = (await gh('GET', `/issues?state=closed&labels=${LABEL},${UNANNOUNCED}&per_page=100`)).filter(issue => !issue.pull_request);
   } catch (err) {
     // Without the open incidents a post could not be deduplicated, so nothing is opened, closed or posted.
     log(`Incidents unavailable: ${why(err)}. Nothing was opened, closed or posted.`);
@@ -213,9 +224,17 @@ export async function main({
   }
   let errors = 0;
   let labelled = false;
-  const slack = async text => {
+  const labels = async () => {
+    if (labelled) return;
+    await gh('POST', '/labels', { name: LABEL, color: 'b60205', description: 'A production check failed twice in a row (scripts/probe.mjs)' });
+    if (webhook) await gh('POST', '/labels', { name: UNANNOUNCED, color: 'fbca04', description: 'Slack has not confirmed this incident\'s latest post; scripts/probe.mjs retries it' });
+    labelled = true;
+  };
+  // The issue already carries `unannounced` when this runs; only a post Slack confirms takes it off.
+  const announce = async (issue, text) => {
     if (!webhook) return;
-    try { await postSlack(webhook, text, fetchImpl); } catch (err) { errors += 1; log(`Slack post failed: ${why(err)}`); }
+    try { await postSlack(webhook, text, fetchImpl); } catch (err) { errors += 1; log(`Slack post failed: ${why(err)}`); return; }
+    await gh('DELETE', `/issues/${issue.number}/labels/${UNANNOUNCED}`);
   };
   for (const r of results) {
     const { check } = r;
@@ -223,26 +242,35 @@ export async function main({
     try {
       if (r.failing && issue) {
         log(`${check.id}: incident #${issue.number} stays open`);
+        if (webhook && owes(issue)) await announce(issue, incidentText(check, r, since(issue), issue.html_url));
       } else if (r.failing) {
-        if (!labelled) {
-          await gh('POST', '/labels', { name: LABEL, color: 'b60205', description: 'A production check failed twice in a row (scripts/probe.mjs)' });
-          labelled = true;
-        }
-        const created = await gh('POST', '/issues', { title: title(check), body: issueBody(r), labels: [LABEL] });
+        await labels();
+        const created = await gh('POST', '/issues', { title: title(check), body: issueBody(r), labels: webhook ? [LABEL, UNANNOUNCED] : [LABEL] });
         log(`${check.id}: opened incident #${created.number} ${created.html_url}`);
-        await slack(`Incident: ${check.id} failing. ${check.name} (${target(check)}) expected ${check.expected}, got ${both(r.first, r.retry)}. ` +
-          `Failing since ${iso(r.at)}. Owner: ${check.owner}. ${created.html_url}`);
+        await announce(created, incidentText(check, r, r.at, created.html_url));
       } else if (issue) {
         const at = now();
         const duration = minutes(at - since(issue));
+        if (webhook) await labels();
         await gh('POST', `/issues/${issue.number}/comments`, { body: `Passing again at ${iso(at)}, ${duration} after the first failure. Closed by scripts/probe.mjs.` });
-        await gh('PATCH', `/issues/${issue.number}`, { state: 'closed', state_reason: 'completed' });
+        // Recovery is owed before the issue closes, so a lost post is retried from the closed issue.
+        await gh('PATCH', `/issues/${issue.number}`, { state: 'closed', state_reason: 'completed', ...(webhook && { labels: [LABEL, UNANNOUNCED] }) });
         log(`${check.id}: closed incident #${issue.number} after ${duration}`);
-        await slack(`Recovered: ${check.id} passes again after ${duration}. Owner: ${check.owner}. ${issue.html_url}`);
+        await announce(issue, recoveredText(check.id, check.owner, duration, issue.html_url));
       }
     } catch (err) {
       errors += 1;
       log(`${check.id}: ${why(err)}`);
+    }
+  }
+  for (const issue of unsent) {
+    const id = /^Incident: (\S+) failing$/.exec(issue.title)?.[1] || issue.title;
+    const duration = minutes((Date.parse(issue.closed_at) || now()) - since(issue));
+    try {
+      await announce(issue, recoveredText(id, checks.find(c => c.id === id)?.owner || 'unnamed', duration, issue.html_url));
+    } catch (err) {
+      errors += 1;
+      log(`${id}: ${why(err)}`);
     }
   }
   return errors ? 1 : 0;

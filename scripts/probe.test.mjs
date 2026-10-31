@@ -24,8 +24,9 @@ const GOOD = {
 const good = check => (GOOD[check.id] || (() => Response.json({ error: 'unavailable' }, { status: 503 })))();
 
 // plan: check id -> 'fail' (every attempt) or ['fail', 'pass'] (per attempt). A failure is a 500 whose body
-// is a canary. issues: GitHub's issues, in memory. slack: the webhook's status, or 'throw'.
-function world({ plan = {}, issues = [], slack = 200, github = 200, labelExists = false } = {}) {
+// is a canary. issues: GitHub's issues, in memory. slack: the webhook's status, or 'throw'. clock: when
+// GitHub records an issue as closed.
+function world({ plan = {}, issues = [], slack = 200, github = 200, labelExists = false, clock = T0 } = {}) {
   const posts = [];
   const calls = [];
   const attempts = new Map();
@@ -47,9 +48,10 @@ function world({ plan = {}, issues = [], slack = 200, github = 200, labelExists 
       calls.push([method, path, body]);
       if (github !== 200) return Response.json({ message: 'nope' }, { status: github });
       if (method === 'GET' && path.startsWith('/issues?')) {
-        assert.match(path, /state=open/);
-        assert.match(path, /labels=incident/);
-        return Response.json(issues.filter(i => i.state === 'open' && i.labels.includes('incident')));
+        const query = new URLSearchParams(path.slice('/issues?'.length));
+        const wanted = query.get('labels').split(',');
+        assert.ok(wanted.includes('incident'), path);
+        return Response.json(issues.filter(i => i.state === query.get('state') && wanted.every(l => i.labels.includes(l))));
       }
       if (method === 'POST' && path === '/labels') return Response.json({}, { status: labelExists ? 422 : 201 });
       if (method === 'POST' && path === '/issues') {
@@ -64,7 +66,15 @@ function world({ plan = {}, issues = [], slack = 200, github = 200, labelExists 
         issue.comments.push(body.body);
         return Response.json({}, { status: 201 });
       }
-      if (method === 'PATCH' && issue && path === `/issues/${issue.number}`) return Response.json(Object.assign(issue, body));
+      if (method === 'PATCH' && issue && path === `/issues/${issue.number}`) {
+        if (body.state === 'closed') issue.closed_at = new Date(clock).toISOString();
+        return Response.json(Object.assign(issue, body));
+      }
+      const label = issue && path.startsWith(`/issues/${issue.number}/labels/`) && decodeURIComponent(path.split('/').pop());
+      if (method === 'DELETE' && label) {
+        issue.labels = issue.labels.filter(l => l !== label);
+        return Response.json(issue.labels.map(name => ({ name })));
+      }
       throw new Error(`unexpected GitHub call ${method} ${path}`);
     }
     const check = CHECKS.find(c => c.url === url);
@@ -103,7 +113,8 @@ test('every check passes: one attempt each, no retry, no issue and no Slack', as
   assert.deepEqual(sleeps, []);
   assert.deepEqual([...w.attempts.values()], CHECKS.map(() => 1));
   assert.equal(out.match(/^pass /gm).length, CHECKS.length);
-  assert.deepEqual(w.calls.map(([m, p]) => `${m} ${p.split('?')[0]}`), ['GET /issues']);
+  assert.deepEqual(w.calls.map(([m, p]) => `${m} ${p}`), ['GET /issues?state=open&labels=incident&per_page=100',
+    'GET /issues?state=closed&labels=incident,unannounced&per_page=100']);
   assert.deepEqual(w.posts, []);
 });
 
@@ -129,7 +140,6 @@ test('two failures in a row open one incident and post once; later runs stay qui
   const [issue] = w.issues;
   assert.equal(issue.title, 'Incident: omni-home failing');
   assert.equal(issue.title, title(CHECKS.find(c => c.id === 'omni-home')));
-  assert.deepEqual(issue.labels, ['incident']);
   for (const want of ['- Check: `omni-home` (Flyspace preview home)', '- URL: GET https://omni.syberlabs.io/',
     '- Expected: 200 with `<title>Flyspace</title>`', '- Got: 500 on both attempts', '- First failure: 2026-10-31T01:50:00Z', '- Owner: Mateo']) {
     assert.ok(issue.body.includes(want), want);
@@ -138,7 +148,9 @@ test('two failures in a row open one incident and post once; later runs stay qui
   assert.equal(w.posts[0], 'Incident: omni-home failing. Flyspace preview home (GET https://omni.syberlabs.io/) expected 200 with ' +
     '`&lt;title&gt;Flyspace&lt;/title&gt;`, got 500 on both attempts. Failing since 2026-10-31T01:50:00Z. Owner: Mateo. ' +
     `https://github.com/${REPO}/issues/1`);
-  assert.equal(w.calls.filter(([m, p]) => m === 'POST' && p === '/labels').length, 1, 'the label is made sure of before the issue');
+  assert.deepEqual(w.calls.filter(([m, p]) => m === 'POST' && p === '/labels').map(([, , b]) => b.name), ['incident', 'unannounced'],
+    'both labels are made sure of before the issue');
+  assert.deepEqual(issue.labels, ['incident'], 'a confirmed post takes unannounced off');
 
   for (const minutes of [10, 20]) {
     const again = await run(w, { now: T0 + minutes * MINUTE });
@@ -180,6 +192,48 @@ test('a full cycle: opened on two failures, closed by the next passing run with 
   assert.equal(w.issues[0].state, 'closed');
   assert.match(w.issues[0].comments[0], /, 20 minutes after the first failure\./);
   assert.deepEqual(passing.posts, [`Recovered: sketch-home passes again after 20 minutes. Owner: unnamed. https://github.com/${REPO}/issues/1`]);
+});
+
+test('a Slack failure at opening leaves the incident unannounced, and the next run announces it once', async () => {
+  const w = world({ plan: { 'omni-home': 'fail' }, slack: 500 });
+  const first = await run(w);
+  assert.equal(first.code, 1);
+  assert.match(first.out, /^Slack post failed: Slack answered 500$/m);
+  const [issue] = w.issues;
+  assert.deepEqual(issue.labels, ['incident', 'unannounced']);
+
+  const later = world({ plan: { 'omni-home': 'fail' }, issues: w.issues });
+  const second = await run(later, { now: T0 + 10 * MINUTE });
+  assert.equal(second.code, 0);
+  assert.deepEqual(later.posts, ['Incident: omni-home failing. Flyspace preview home (GET https://omni.syberlabs.io/) expected 200 with ' +
+    '`&lt;title&gt;Flyspace&lt;/title&gt;`, got 500 on both attempts. Failing since 2026-10-31T01:50:00Z. Owner: Mateo. ' +
+    `https://github.com/${REPO}/issues/1`]);
+  assert.deepEqual(issue.labels, ['incident']);
+
+  await run(later, { now: T0 + 20 * MINUTE });
+  assert.equal(later.posts.length, 1, 'a confirmed post is never repeated');
+});
+
+test('a Slack failure at recovery keeps the closed incident unannounced until a post succeeds', async () => {
+  const w = world({ issues: [openIncident('rise-mcp')], slack: 'throw', clock: T0 + 40 * MINUTE });
+  const first = await run(w, { now: T0 + 40 * MINUTE });
+  assert.equal(first.code, 1);
+  const [issue] = w.issues;
+  assert.equal(issue.state, 'closed');
+  assert.deepEqual(issue.labels, ['incident', 'unannounced']);
+
+  const stillDown = world({ issues: w.issues, slack: 503 });
+  assert.equal((await run(stillDown, { now: T0 + 50 * MINUTE })).code, 1);
+  assert.deepEqual(issue.labels, ['incident', 'unannounced']);
+
+  const later = world({ issues: w.issues });
+  const third = await run(later, { now: T0 + 60 * MINUTE });
+  assert.equal(third.code, 0);
+  assert.deepEqual(later.posts, [`Recovered: rise-mcp passes again after 40 minutes. Owner: Seth. https://github.com/${REPO}/issues/7`],
+    'the duration runs to when the incident closed, not to the late post');
+  assert.deepEqual(issue.labels, ['incident']);
+  await run(later, { now: T0 + 70 * MINUTE });
+  assert.equal(later.posts.length, 1);
 });
 
 test('an issue whose first-failure line was edited away falls back to when it opened', async () => {
