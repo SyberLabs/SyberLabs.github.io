@@ -361,3 +361,63 @@
 
 /* Leave the skip-link destination below the sticky desktop header. */
 .workspace-content > #main { scroll-margin-top: 84px; }
+
+/* Mission Control (/admin/board): the live checks, then the board. Lists and cards, never tables (RFC-0002 2.6),
+   and every state is a word beside its colour. The sparkline's past weeks (#1a7fb8) and current week (Electric
+   Blue's hi step) both clear 3:1 on the card and stay apart under colour-vision deficiency. */
+.board-badge.sy-badge { min-height: 24px; padding: 0 9px; font-size: 11px; background: #07131b; }
+.board-badge--good { --d: var(--sy-success); }
+.board-badge--bad { --d: var(--sy-danger); }
+.board-badge--warn { --d: var(--sy-warning); }
+.board-badge--info { --d: var(--sy-ice); }
+.board-section > .sy-small { margin: 0 0 var(--space-4); max-width: var(--measure); color: var(--sy-mist); }
+.board-section > .staff-alert { margin-bottom: var(--space-4); }
+/* Card grids wrap to one column on a phone; min() keeps a column from overflowing a narrow one. */
+.board-probes, .board-metrics, .board-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.board-probes { grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); }
+.board-metrics, .board-repos { grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); }
+.board-gates { grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr)); }
+.board-probe, .board-item, .board-tile, .board-connect { min-width: 0; padding: 16px 18px; border: 1px solid var(--sy-rule); border-radius: 12px; background: #0e1d27; }
+.board-probe { display: grid; gap: 6px; align-content: start; }
+.board-probe.is-down { border-color: color-mix(in srgb, var(--sy-danger) 55%, transparent); }
+.board-probe p, .board-item p, .board-connect p { margin: 0; }
+.board-probe__name { color: var(--sy-vellum); font-weight: 500; overflow-wrap: anywhere; }
+.board-probe__result { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; color: var(--sy-body); font: 400 13px/1.5 var(--sy-mono); }
+.board-probe__target { color: var(--sy-dim); font: 400 12px/1.5 var(--sy-mono); overflow-wrap: anywhere; }
+.board-connect { display: grid; gap: var(--space-3); max-width: 760px; border-left: 3px solid var(--sy-warning); }
+.board-connect__title { color: var(--sy-vellum); font: 600 17px/1.4 var(--sy-sans); }
+.board-steps { display: grid; gap: var(--space-2); margin: 0; padding-left: 22px; color: var(--sy-body); line-height: 1.6; }
+.board-steps li::marker { color: var(--sy-ice); }
+.board-item { display: grid; gap: 8px; align-content: start; }
+.board-item__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; color: var(--sy-mist); font: 400 12px/1.5 var(--sy-mono); }
+.board-item__meta a { color: var(--sy-mist); text-decoration: underline; }
+.board-item__id { color: var(--sy-vellum); }
+.board-item__title { color: var(--sy-vellum); overflow-wrap: anywhere; }
+.board-item__title a { margin-left: 6px; font-size: 13px; text-decoration: underline; }
+.board-item .sy-small { color: var(--sy-mist); overflow-wrap: anywhere; }
+.board-options { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.board-options li { padding: 2px 8px; border: 1px dashed var(--sy-rule-2); border-radius: var(--sy-r-pill); color: var(--sy-mist); font-size: 13px; overflow-wrap: anywhere; }
+.board-dl.staff-dl > div { grid-template-columns: 96px minmax(0, 1fr); gap: 12px; align-items: baseline; }
+.board-dl dt { font-size: 11px; }
+.board-subhead { margin: var(--space-5) 0 var(--space-3); color: var(--sy-vellum); font: 600 16px/24px var(--sy-sans); }
+.board-metric__name { margin: 0; color: var(--sy-vellum); font: 500 16px/1.4 var(--sy-sans); overflow-wrap: anywhere; }
+.board-metric__value { color: var(--sy-vellum); font: 600 28px/1.15 var(--sy-sans); overflow-wrap: anywhere; }
+.board-metric__value.is-unknown { color: var(--sy-mist); font-size: 20px; }
+.board-metric__unit { color: var(--sy-mist); font: 500 15px/1.4 var(--sy-sans); }
+.board-metric__reason { color: var(--sy-body); font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+.board-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(170px, 100%), 1fr)); gap: 12px; margin: 0; }
+.board-tile { display: flex; flex-direction: column; gap: 4px; }
+.board-tile dt { color: var(--sy-mist); font-size: 13px; line-height: 1.4; }
+.board-tile dd { order: -1; margin: 0; color: var(--sy-vellum); font: 600 28px/1.15 var(--sy-sans); }
+.board-repo__name { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; color: var(--sy-vellum); font-weight: 500; overflow-wrap: anywhere; }
+.board-activity { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 14px; }
+.board-spark { display: block; flex: none; }
+.board-spark__bar { fill: #1a7fb8; }
+.board-spark__bar.is-now { fill: var(--sy-electric-hi); }
+.board-spark__zero { fill: var(--sy-rule-2); }
+.board-spark__hit { fill: transparent; }
+.board-spark g:hover .board-spark__bar { fill: var(--sy-vellum); }
+@media (max-width: 600px) {
+  .board-probe, .board-item, .board-tile, .board-connect { padding: 14px 16px; }
+  .board-dl.staff-dl > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}

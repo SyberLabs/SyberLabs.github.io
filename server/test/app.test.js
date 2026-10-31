@@ -121,7 +121,7 @@ test('case 11: a signed-in GET writes zero rows and reads with permissions fresh
 test('/admin/ renders a portal whose tool cards follow the current permissions', async () => {
   const env = makeEnv();
   const cases = [
-    [['role_admin'], undefined, ['saves', 'account', 'changes', 'people', 'roles', 'audit']],
+    [['role_admin'], undefined, ['saves', 'account', 'board', 'changes', 'people', 'roles', 'audit']],
     [[], ['id:users.read', 'id:audit.read'], ['saves', 'account', 'people', 'roles', 'audit']],
     [[], ['id:audit.read'], ['saves', 'account', 'audit']],
     [[], [], ['saves', 'account']],

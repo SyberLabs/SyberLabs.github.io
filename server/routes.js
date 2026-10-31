@@ -15,6 +15,7 @@ import {
 } from './views/people.js';
 import { rolesPage, saveRole } from './views/roles.js';
 import { auditPage } from './views/audit.js';
+import { boardPage } from './views/board.js';
 
 // [method path, access, handler, opts?]; access = PUBLIC | SIGNED_IN | '<permission key>'. Each handler decides
 // for itself whether an action needs a confirm page first (views/confirm.js confirmed), and ownerPage()
@@ -47,6 +48,8 @@ export const ROUTES = [
   ['GET  /admin/roles',                        'id:users.read',      rolesPage],
   ['POST /admin/roles',                        'id:roles.manage',    saveRole],         // RFC-0002 8.2: non-privileged keys only
   ['GET  /admin/audit',                        'id:audit.read',      auditPage],
+  // Mission Control: the board.v1 consumer (MasterMind docs/contracts/board-v1.md) and the live checks.
+  ['GET  /admin/board',                        'site:board.read',    boardPage],
   // Packet 5. Removing a sign-in method has no page in v1: it is the owner's runbook step (RFC-0002 2.5, 8.4.9).
   ['POST /admin/account/add-google',           SIGNED_IN,            addGoogle,         { provider: 'google' }],  // session under 10 min
 ];

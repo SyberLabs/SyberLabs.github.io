@@ -13,6 +13,7 @@ export const signedInAs = user => `${identityName(user)} (${providerLabel(user.p
 // The section nav (RFC-0002 3.3), in this order. Account is open to every session, the rest need their key.
 export const NAV = [
   { id: 'portal', label: 'Launchpad', href: '/admin/', key: null },
+  { id: 'board', label: 'Mission Control', href: '/admin/board', key: 'site:board.read' },
   { id: 'changes', label: 'What changed', href: '/admin/changes', key: 'site:changes.read' },
   { id: 'people', label: 'People', href: '/admin/people', key: 'id:users.read' },
   { id: 'roles', label: 'Roles', href: '/admin/roles', key: 'id:users.read' },
@@ -38,6 +39,7 @@ const NAV_ICONS = {
   portal: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
   saves: '<path d="M5 3h14v18l-7-4-7 4V3Z"/>',
   account: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  board: '<path d="M3 12h4l3-8 4 16 3-8h4"/>',
   changes: '<path d="M5 6h14M5 12h14M5 18h9"/>',
   people: '<circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6M21 21v-3a6 6 0 0 0-4-5"/>',
   roles: '<path d="m12 3 8 4v5c0 5-8 9-8 9s-8-4-8-9V7l8-4Z"/><path d="m8 12 3 3 5-6"/>',
