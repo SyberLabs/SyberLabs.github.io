@@ -342,7 +342,7 @@ test('the workflow runs on the schedule or by hand only, with read contents and 
   // Comments dropped: the header says in words why there is no pull_request trigger.
   const yml = (await readFile(new URL('../.github/workflows/probe.yml', import.meta.url), 'utf8')).replace(/^ *#.*\n/gm, '');
   const on = /^on:\n([\s\S]*?)^\S/m.exec(yml)[1];
-  assert.match(on, /^ {2}schedule:\n {4}- cron: '\*\/10 \* \* \* \*'$/m);
+  assert.match(on, /^ {2}schedule:\n {4}- cron: '7,17,27,37,47,57 \* \* \* \*'$/m);
   assert.match(on, /^ {2}workflow_dispatch:$/m);
   assert.deepEqual([...on.matchAll(/^ {2}(\w+):/gm)].map(m => m[1]), ['schedule', 'workflow_dispatch']);
   assert.doesNotMatch(yml, /pull_request/);
