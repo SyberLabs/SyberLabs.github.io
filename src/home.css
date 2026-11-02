@@ -352,3 +352,11 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 
 /* The factory's one human step: Admit is the person, so it is the warm one. */
 .factory-steps li.is-human::before, .factory-steps li.is-human b { color:var(--sy-cantaloupe); }
+
+/* Spotlight: the project of the week, with its screenshot across the full width below the account */
+.spotlight-work { border-top:1px solid var(--sy-rule); }
+.spotlight-badge { display:inline-block; margin-right:10px; padding:3px 8px; border-radius:var(--sy-r-pill); background:var(--sy-cantaloupe); color:var(--sy-midnight); font-weight:600; letter-spacing:.04em; }
+.spotlight-work__shot { grid-column:1 / -1; margin:0; }
+.spotlight-work__shot img { display:block; width:100%; height:auto; border:1px solid var(--sy-rule-2); border-radius:var(--sy-r-panel); }
+.spotlight-work__shot figcaption { padding-top:10px; color:var(--sy-mist); font-size:12px; line-height:1.5; }
+@media(max-width:600px) { .spotlight-work .gh-decisions { order:2; } .spotlight-work__shot { order:1; } }

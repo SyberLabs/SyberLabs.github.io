@@ -116,7 +116,10 @@ const pauseOtherVideos = event => { for (const video of document.querySelectorAl
 // Mateo's personal credentials (degree, availability) live on /mateo/, the hiring page every application links to.
 // Third place confirmed by SyberLabs (Oct 27); event and project tied together by PorchLight's README.
 const HACKATHON = { result: 'third place', event: 'Cline, Parallel & Composio Hackathon', date: 'October 2026', href: '#porchlight' };
+// Project of the week. Copy comes only from what the prototype itself shows; it makes no claim about who built it.
+const SPOTLIGHT = { week: 'Week of November 2, 2026', title: 'Steward agent', text: 'Steward agent, a care loop for a simulated reptile enclosure', href: '#spotlight' };
 const WORK = [
+  SPOTLIGHT && { label: 'Spotlight', text: SPOTLIGHT.text, href: SPOTLIGHT.href },
   { label: 'Factory', text: 'How a change travels from an agent to a person’s admission', href: '/factory/' },
   { label: 'GitHits', text: 'Design partnership: an A/B pilot and a GitHits client for Claude Code', href: '#work' },
   HACKATHON && { label: 'Hackathon', text: `PorchLight, ${HACKATHON.result}, ${HACKATHON.event}, ${HACKATHON.date}`, href: HACKATHON.href },
@@ -211,6 +214,25 @@ export default function App() {
         <details className="home-transcript"><summary>Read transcript</summary>{MATEO_VIDEO.transcript.map((p, i) => <p key={i}>{p}</p>)}<a href={MATEO_VIDEO.transcriptFile}>Download transcript</a></details>
         {videoError && <p role="status">Video unavailable. Read the transcript or explore the work below.</p>}
       </div>
+      <section id="spotlight" className="selected-work spotlight-work sy-wrap" aria-labelledby="spotlight-title">
+        <div className="selected-work__intro">
+          <p className="sy-eyebrow"><span className="spotlight-badge">Project of the week</span> Spotlight / {SPOTLIGHT.week}</p>
+          <h2 id="spotlight-title">{SPOTLIGHT.title}</h2>
+          <p>A care agent for a simulated reptile enclosure. It runs one loop: sense the enclosure, decide what the animals need, act, and log what it did.</p>
+          <p className="gh-note">Eleven animals share one mock enclosure: three leopard geckos, two crested geckos, three chameleons and three turtles. These species would never share a tank in real life. The mock exists to prototype the care loop, not to model a real habitat.</p>
+          <p className="gh-links"><a href="/jev/">How Jev answers <span aria-hidden="true">→</span></a></p>
+        </div>
+        <dl className="gh-decisions">
+          <div><dt>Two decision brains</dt><dd>A switch picks who makes the calls: fixed rules, or Jev, TypeSafe AI’s decision model. SyberLabs has no partnership with TypeSafe AI.</dd></div>
+          <div><dt>Seven typed questions</dt><dd>Each call asks the same seven questions, each with a fixed answer type: a setting for the rock lamp and the dock lamp, yes or no on misting, releasing insects and dropping greens, which animal needs attention, and a 0 to 1 rating for the enclosure.</dd></div>
+          <div><dt>Act only above 0.5</dt><dd>Every answer comes back with a probability. A yes-or-no answer only turns into an action when its probability is above 0.5.</dd></div>
+          <div><dt>Labelled as a simulation</dt><dd>The page can’t reach Jev’s API, so it copies the interface: enclosure state goes in, the questions are answered in parallel, and calibrated probabilities come back. The page says so next to the decisions.</dd></div>
+        </dl>
+        <figure className="spotlight-work__shot">
+          <img src="/mateo/spotlight/steward-agent.webp" width="1670" height="930" alt="Top-down view of a sandy enclosure with branches, plants, a basking rock, a hide and a pond with a log. Geckos, a chameleon and turtles are labelled by name. Beside it, the Steward agent panel is switched on with Jev as the decision brain, and a list of Jev decisions shows each question’s answer and probability." loading="lazy" decoding="async" />
+          <figcaption>The prototype on day 7 of a simulated run. Animals, sensor readings and decisions are all simulated.</figcaption>
+        </figure>
+      </section>
       <section id="factory" className="lab-identity sy-wrap" aria-labelledby="factory-title">
         <div className="lab-identity__copy">
           <img className="lab-identity__emblem" src="/mateo/lab/emblem-mateo-robles.webp" width="900" height="675" alt="" loading="lazy" decoding="async" />
