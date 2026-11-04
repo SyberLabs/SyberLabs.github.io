@@ -11,16 +11,16 @@ import {
 
 const NOW = Date.UTC(2026, 9, 9, 14, 2);
 
-function req(path = '/admin/', { cookie, headers = {}, method = 'GET' } = {}) {
+function req(path, { cookie, headers = {}, method = 'GET' } = {}) {
   const h = new Headers(headers);
   if (cookie) h.set('Cookie', cookie);
   return new Request(new URL(path, ORIGIN), { method, headers: h });
 }
 
-async function ctxFor(env, cookieHeader, { form = {}, now = NOW } = {}) {
+async function ctxFor(env, cookieHeader, { form = {} } = {}) {
   const request = req('/auth/signout', { cookie: cookieHeader, method: 'POST' });
-  const { user, perms } = await loadSession(env, request, now);
-  return { request, env, url: new URL(request.url), now, params: {},
+  const { user, perms } = await loadSession(env, request, NOW);
+  return { request, env, url: new URL(request.url), now: NOW, params: {},
     form: new URLSearchParams(form), user, perms };
 }
 

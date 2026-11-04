@@ -15,12 +15,12 @@ async function signIn(...args) {
   return user;
 }
 const snapshot = (overrides = {}) => ({ app: 'omni', name: 'Private workspace', payload: { documents: ['hello'] }, requestId: randomUUID(), ...overrides });
-function request(env, path, { method = 'GET', cookie, origin, body, headers = {}, now, expectedUserId = accountForCookie.get(cookie) } = {}) {
+function request(env, path, { method = 'GET', cookie, origin, body, headers = {}, expectedUserId = accountForCookie.get(cookie) } = {}) {
   const h = new Headers(headers);
   if (cookie) h.set('Cookie', cookie);
   if (path.startsWith(`${ROOT}/saves`) && expectedUserId) h.set('X-SyberLabs-Expected-User', expectedUserId);
   if (origin !== undefined) h.set('Origin', origin);
-  return handle(new Request(new URL(path, ORIGIN), { method, headers: h, body }), env, now);
+  return handle(new Request(new URL(path, ORIGIN), { method, headers: h, body }), env);
 }
 function save(env, cookie, data = snapshot(), opts = {}) {
   return request(env, `${ROOT}/saves`, { method: 'POST', cookie, origin: OMNI,

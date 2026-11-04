@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { makeEnv, seedUser, seedSession, stubFetch, ORIGIN, HOUR } from './helpers.js';
-import { b64urlDecode, b64urlEncode, stateKey, openJson, randomToken, sha256Hex, newId } from '../crypto.js';
+import { b64urlDecode, b64urlEncode, stateKey, openJson, randomToken, sha256Hex } from '../crypto.js';
 import { HttpError } from '../http.js';
 import { OAUTH_COOKIE, STATE_TTL_MS, sealState, openState, startLogin, callback } from '../oauth.js';
 
@@ -34,8 +34,8 @@ function assertHostCookie(setCookie, name, maxAge) {
   assert.ok(!/domain/i.test(setCookie));
 }
 
-async function start(env, form = {}, { provider = 'github', now = NOW } = {}) {
-  const res = await startLogin(ctxOf(env, { method: 'POST', path: `/auth/start/${provider}`, form, provider, now }));
+async function start(env, form = {}, { now = NOW } = {}) {
+  const res = await startLogin(ctxOf(env, { method: 'POST', path: '/auth/start/github', form, now }));
   const loc = new URL(res.headers.get('Location'));
   const sealed = cookieValue(res, OAUTH_COOKIE);
   return { res, loc, sealed, state: loc.searchParams.get('state'), cookie: `${OAUTH_COOKIE}=${sealed}` };

@@ -38,9 +38,9 @@ const discipline = header.slice(header.indexOf('Every project claim')).trim();
 const homeDescription = await describe('/');
 const source = p => p.facts.find(([k]) => k === 'Source')?.[1]?.href;
 
-// Pages that explain how SyberLabs builds. /stack/ is listed once its page exists.
+// Pages that explain how SyberLabs builds.
 const HOW = ['/factory/', '/approach/', '/stack/'];
-const SKIP = new Set(['/', '/#about', '/kit/v2/', ...HOW, ...projects.map(p => `/projects/${p.slug}/`)]);
+const SKIP = new Set(['/', '/kit/v2/', ...HOW, ...projects.map(p => `/projects/${p.slug}/`)]);
 
 async function linkList(items) {
   const out = [];

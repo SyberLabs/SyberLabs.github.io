@@ -2,7 +2,6 @@
 // and Add person (20), which replaced invites (RFC-0002 R3-4).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { sha256Hex } from '../crypto.js';
 import { call, makeEnv, seedSession, signIn, stubFetch } from './helpers.js';
 
 const q = (db, sql, ...a) => db.sqlite.prepare(sql).get(...a);
@@ -327,8 +326,8 @@ test('add person end to end: the added id signs in through case a after a rename
   const admin = await signIn(env.DB, { roles: ['role_admin'] });
   await add(env, admin.cookie, { role: 'role_viewer', account: '9191', confirm: '1' });
   const { startLogin, callback, OAUTH_COOKIE } = await import('../oauth.js');
-  const ctx = (path, extra) => ({ env, url: new URL(path, env.ORIGIN), now: Date.now(), params: { provider: 'github' },
-    form: new URLSearchParams(), user: null, perms: new Set(), ...extra });
+  const ctx = path => ({ env, url: new URL(path, env.ORIGIN), now: Date.now(), params: { provider: 'github' },
+    form: new URLSearchParams(), user: null, perms: new Set() });
   const started = await startLogin({ ...ctx('/auth/start/github'), request: new Request(`${env.ORIGIN}/auth/start/github`, { method: 'POST' }) });
   const sealed = started.headers.getSetCookie()[0].split(';')[0];
   const state = new URL(started.headers.get('Location')).searchParams.get('state');

@@ -78,7 +78,6 @@ a:hover { text-decoration-line: underline; }
 :focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 
-.sy-visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .sy-container { width: 100%; max-width: var(--sy-max); margin: 0 auto; padding: 0 var(--sy-gutter); }
 .sy-icon { display: inline-block; flex: none; vertical-align: middle; }
 .sy-subheading { margin: 0; font: 600 18px/28px var(--sy-sans); color: var(--sy-vellum); }
@@ -131,15 +130,6 @@ html.sy-field-live body { background: transparent; } /* the canvas carries the s
 @media (max-width: 900px) { .sy-field-host::after { background: linear-gradient(180deg, rgba(2,7,10,.3), rgba(2,7,10,.62) 40%, rgba(2,7,10,.82)); } }
 html.sy-field-live .sy-nebula, html.sy-field-live .sy-nebula--center { background: transparent; }
 
-/* ---------- glass + surfaces ---------- */
-.sy-glass { background: linear-gradient(160deg, rgba(12,27,37,.66), rgba(2,7,10,.72)); border: 1px solid var(--sy-rule-2); -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); }
-.sy-card { position: relative; isolation: isolate; border-radius: var(--sy-r-panel); background: linear-gradient(160deg, rgba(12,27,37,.55), rgba(2,7,10,.6)); border: 1px solid var(--sy-rule); overflow: hidden;
-  transition: border-color var(--sy-t-enter) var(--sy-ease), box-shadow var(--sy-t-enter) var(--sy-ease), transform var(--sy-t-enter) var(--sy-ease); }
-.sy-card::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity var(--sy-t-enter);
-  background: radial-gradient(240px 240px at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--sy-accent) 22%, transparent), transparent 70%); }
-.sy-card:hover { border-color: color-mix(in srgb, var(--sy-accent) 55%, var(--sy-rule-2)); box-shadow: 0 30px 80px -40px color-mix(in srgb, var(--sy-accent) 60%, transparent), 0 0 0 1px color-mix(in srgb, var(--sy-accent) 20%, transparent) inset; }
-.sy-card:hover::before { opacity: 1; }
-
 /* ---------- 3D tilt (vars set by src/site/motion.js) ---------- */
 .sy-tilt { transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transform-style: preserve-3d; will-change: transform; transition: transform 160ms var(--sy-ease); }
 .sy-tilt:hover { transition-duration: 60ms; }
@@ -155,7 +145,6 @@ html.sy-js .sy-reveal.sy-split { opacity: 1; transform: none; filter: none; }
 html.sy-js .sy-split .sy-word { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .08em; margin-bottom: -.08em; }
 html.sy-js .sy-split .sy-word > span { display: inline-block; transform: translateY(110%); transition: transform 900ms var(--sy-ease) calc(var(--i, 0) * 70ms); }
 html.sy-js .sy-split.is-in .sy-word > span, html.sy-js .sy-split:not(.sy-reveal) .sy-word > span { transform: none; }
-html.sy-js .sy-split.is-pending .sy-word > span { transform: translateY(110%); }
 
 /* ---------- header: progress bar, scrolled state, spectrum underline for the live section ---------- */
 .sy-header { transition: background var(--sy-t-page), transform var(--sy-t-page) var(--sy-ease), box-shadow var(--sy-t-page); }
@@ -167,66 +156,14 @@ html.sy-js .sy-split.is-pending .sy-word > span { transform: translateY(110%); }
 .sy-nav ul a[aria-current="location"] { color: var(--sy-vellum); }
 .sy-nav { margin-left: auto; }
 .sy-nav ul a .sy-icon { width: 12px; height: 12px; margin-left: 4px; color: var(--sy-dim); }
-/* Signed in, one calm surface holds two direct destinations; the orbit identifies the profile.
-   Signed out (or still checking), Sign in is a quiet text link: secondary to the five nav items. */
-.sy-account { flex: 0 0 auto; display: flex; justify-content: flex-end; min-width: 64px; min-height: 44px; }
-.sy-account [hidden] { display: none !important; }
-.sy-account-member {
-  width: 168px; min-height: 44px; border: 0; border-radius: 999px;
-  background: linear-gradient(120deg, rgba(12, 27, 37, .94), rgba(2, 7, 10, .96));
-  box-shadow: inset 0 0 0 1px rgba(140, 200, 235, .24), 0 4px 18px rgba(0, 0, 0, .12);
-  transition: box-shadow var(--sy-t-hover), background var(--sy-t-hover);
-}
-.sy-account-member { display: flex; align-items: center; gap: 0; }
-.sy-account-launchpad {
-  flex: 1; min-width: 0; min-height: 44px; padding: 0 10px 0 16px; gap: 6px;
-  font-size: 14px; white-space: nowrap; border-radius: 999px 0 0 999px;
-}
-.sy-account-launchpad .sy-icon { width: 15px; height: 15px; color: var(--sy-mist); }
-.sy-account-avatar {
-  position: relative; isolation: isolate; display: inline-flex; flex: 0 0 44px;
-  align-items: center; justify-content: center; width: 44px; height: 44px;
-  border: 0; border-radius: 50%; color: var(--sy-vellum); text-decoration: none;
-}
-.sy-account-avatar::before {
-  content: ""; position: absolute; inset: 5px; z-index: -1; border-radius: inherit;
-  background: conic-gradient(from 35deg, #0297de, #4cc0f5 34%, #fc734d 60%, #4cc0f5 82%, #0297de);
-  box-shadow: 0 0 12px rgba(2, 151, 222, .14);
-  transition: box-shadow var(--sy-t-hover);
-}
-.sy-account-avatar::after {
-  content: ""; position: absolute; inset: 6px; z-index: -1; border-radius: inherit;
-  background: #07121a; transition: background var(--sy-t-hover);
-}
-.sy-account-initial { font-size: 14px; font-weight: 600; line-height: 1; }
-.sy-account-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; color: var(--sy-dim); font-size: 13px; white-space: nowrap; text-decoration: none; }
-.sy-account-member:focus-within {
-  box-shadow: inset 0 0 0 1px rgba(2, 151, 222, .5), 0 0 22px rgba(2, 151, 222, .16);
-}
-.sy-account-launchpad:hover { color: #fff; text-decoration: none; }
-.sy-account-link:hover { color: var(--sy-vellum); text-decoration: underline; text-underline-offset: 4px; }
-.sy-account-avatar:hover { text-decoration: none; }
-.sy-account-avatar:hover::before { box-shadow: 0 0 16px rgba(2, 151, 222, .4); }
-.sy-account-avatar:hover::after { background: #0c1b25; }
-.sy-account a:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
-@media (hover: hover) {
-  .sy-account-member:hover { box-shadow: inset 0 0 0 1px rgba(140, 200, 235, .36), 0 0 22px rgba(2, 151, 222, .12); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .sy-account *, .sy-account *::before, .sy-account *::after { transition: none; }
-}
 @media (max-width: 1050px) { .sy-nav { display: none; } .sy-menu { margin-left: auto; } }
 @media (max-width: 480px) {
   .sy-header__in { gap: 8px; }
-  .sy-header .sy-lockup { font-size: 12px; letter-spacing: .14em; }
   .sy-menu summary { padding: 0 12px; }
   .sy-menu summary > span { display: none; }
-  .sy-account-member { width: 136px; }
-  .sy-account-launchpad { padding: 0 8px 0 12px; font-size: 12px; }
-  .sy-account-launchpad .sy-icon { display: none; }
 }
 @media (max-width: 360px) {
-  .sy-header .sy-lockup { font-size: 0; gap: 0; }
+  .sy-header .sy-lockup { gap: 0; }
 }
 
 /* ---------- the Atlas: a full-screen site map, from <details class="sy-menu"> ---------- */
@@ -275,7 +212,6 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
 @media (max-width: 640px) {
   .sy-atlas__groups { grid-template-columns: 1fr; gap: 20px; }
   .sy-atlas__panel { padding-top: 12px; gap: 20px; }
-  .sy-atlas__title { font-size: 26px; }
   .sy-atlas__group li a { min-height: 52px; }
   .sy-menu summary span { display: none; } .sy-menu summary { padding: 0 12px; }
 }
@@ -310,8 +246,7 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
 .site-sigil .sy-plate { transition: box-shadow var(--sy-t-enter); }
 .site-sigil:hover .sy-plate { box-shadow: 0 40px 100px -40px color-mix(in srgb, var(--sy-accent) 65%, transparent); }
 
-/* ---------- spectrum text + glow helpers ---------- */
-.sy-glow { text-shadow: 0 0 40px color-mix(in srgb, var(--sy-accent) 40%, transparent); }
+/* ---------- spectrum text ---------- */
 @media (prefers-reduced-motion: no-preference) {
   /* stepped at 24 updates a second (each step moves the gradient a few px, below what the eye resolves on a soft
      gradient) and paused off screen by motion.js hue(): it repaints, so it should not run every frame */
@@ -328,8 +263,6 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
 .sy-footer__bar nav a { font-size: 13.5px; }
 .sy-footer__copy { font: 500 12px/1 var(--sy-mono); letter-spacing: .12em; color: var(--sy-dim); }
 @media (max-width: 640px) { .sy-footer__bar { justify-content: center; text-align: center; } .sy-footer__bar .sy-lockup { width: 100%; justify-content: center; } }
-
-/* Customer subscription access is distinct from staff authentication. */
 
 /* ======================================================================================================
    Midnight theme (October 30, 2026), the whole site: Midnight Black #02070A, Electric Blue #0297DE,

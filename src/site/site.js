@@ -16,13 +16,13 @@ export function boot(root = document, fieldOpts) {
 }
 
 /* <b data-count="87">87</b> counts up from 0 when it scrolls in. */
-export function counters(root = document) {
+function counters(root = document) {
   const els = [...root.querySelectorAll('[data-count]')];
   if (!els.length || reducedMotion() || !('IntersectionObserver' in window)) return;
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (!e.isIntersecting) return; io.unobserve(e.target);
     const el = e.target, t0 = performance.now(), dur = 1400;
-    // data-count is read every frame: a live number that lands mid-count (factory-stats.js) ends the count where it should
+    // data-count is read every frame: a live number that lands mid-count ends the count where it should
     const tick = now => { const k = Math.min(1, (now - t0) / dur), v = Math.round(parseFloat(el.dataset.count) * (1 - Math.pow(1 - k, 3))); el.textContent = String(v); if (k < 1) requestAnimationFrame(tick); };
     requestAnimationFrame(tick);
   }), { threshold: 0.4 });
@@ -30,7 +30,7 @@ export function counters(root = document) {
 }
 
 let field;
-export function mountFieldLazy(fieldOpts = {}) {
+function mountFieldLazy(fieldOpts = {}) {
   if (field || document.documentElement.dataset.field === 'off') return;
   let canvas = document.querySelector('canvas.sy-field');
   if (!canvas) {
@@ -48,7 +48,7 @@ export function mountFieldLazy(fieldOpts = {}) {
 }
 
 /* canvas[data-sigil3d="seed"] inside a plate: the product's de Jong parameters spun as a 3D cloud. */
-export function mountSigils3d(root = document) {
+function mountSigils3d(root = document) {
   const list = [...root.querySelectorAll('canvas[data-sigil3d]')];
   if (!list.length) return;
   import('./field.js').then(m => {
@@ -60,5 +60,3 @@ export function mountSigils3d(root = document) {
     }
   });
 }
-
-export { reducedMotion };

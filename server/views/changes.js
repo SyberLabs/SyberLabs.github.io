@@ -7,7 +7,7 @@ import { auditStmt } from '../authz.js';
 import { page, head, alert, field, errorSummary, fixPrefix, postButton } from './layout.js';
 import { confirmHtml, confirmed } from './confirm.js';
 
-export const STATES = ['deployed', 'merged', 'decided', 'recorded', 'in progress'];
+const STATES = ['deployed', 'merged', 'decided', 'recorded', 'in progress'];
 const LIMIT = 100;
 const COLUMNS = 'id, date, project, state, title, text, href';
 
@@ -29,8 +29,8 @@ export function validHref(raw) {
 
 const realDate = s => /^\d{4}-\d{2}-\d{2}$/.test(s) && new Date(`${s}T00:00:00Z`).toISOString().slice(0, 10) === s;
 
-export const LABELS = { date: 'Date', project: 'Project', state: 'State', title: 'Title', text: 'Text', href: 'Link' };
-export const MESSAGES = {
+const LABELS = { date: 'Date', project: 'Project', state: 'State', title: 'Title', text: 'Text', href: 'Link' };
+const MESSAGES = {
   date: 'Use a date like 2026-10-09.',
   project: 'Projects are 1 to 60 characters.',
   state: 'Choose a state.',
@@ -39,7 +39,7 @@ export const MESSAGES = {
   href: 'Links must start with https:// or a single /.',
 };
 
-// Validates one entry (form or import). Returns {entry, errors}; errors maps field -> message.
+// Validates one entry (form). Returns {entry, errors}; errors maps field -> message.
 export function validateEntry(input) {
   const get = k => (typeof input[k] === 'string' ? input[k].trim() : input[k] == null ? '' : String(input[k]).trim());
   const entry = { date: get('date'), project: get('project'), state: get('state'), title: get('title'), text: get('text'), href: get('href') };

@@ -33,11 +33,11 @@ export const ERROR_COPY = {
 };
 
 // The 503 copy on this page (RFC-0002 3.4): shown in place, with the buttons hidden.
-export const UNAVAILABLE_HTML = `Sign-in is unavailable right now. Reload in a minute, or ${contact('email SyberLabs')}.`;
+const UNAVAILABLE_HTML = `Sign-in is unavailable right now. Reload in a minute, or ${contact('email SyberLabs')}.`;
 
 // The GitHub POST form: full width, 48 px, solid, because it is the only way in (RFC-0002 3.2). switch=1 asks
 // GitHub for its account picker.
-export function githubForm({ next, switching } = {}) {
+function githubForm({ next, switching } = {}) {
   const fields = hidden([['next', next], ['switch', switching ? '1' : '']]);
   const button = `<button class="sy-btn sy-btn--solid staff-provider" type="submit">${GITHUB_MARK}<span>Continue with GitHub</span></button>`;
   return `<form method="post" action="/auth/start/github">${fields}${button}</form>`;
@@ -45,7 +45,7 @@ export function githubForm({ next, switching } = {}) {
 
 // Google's button, under GitHub's and centred (RFC-0002 3.2). staff.css resets the <button> so the focus ring
 // hugs the image.
-export function googleForm({ next, switching } = {}) {
+function googleForm({ next, switching } = {}) {
   const fields = hidden([['next', next], ['switch', switching ? '1' : '']]);
   return `<form method="post" action="/auth/start/google" class="staff-signin__google">${fields}<button class="staff-google" type="submit">${GOOGLE_BUTTON}</button></form>`;
 }
@@ -73,7 +73,7 @@ export function signinBody(opts) {
 }
 
 // "Sign-in was cancelled · Sign in", so a screen reader announces the alert on load.
-export function signinTitle(code, provider) {
+function signinTitle(code, provider) {
   const copy = ERROR_COPY[code];
   return copy ? `${copy.title({ provider })} · Sign in` : 'Sign in';
 }

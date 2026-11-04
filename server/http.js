@@ -8,7 +8,7 @@ export const esc = value => (value == null ? '' : String(value)).replace(/[&<>"'
 // No script-src or connect-src: default-src 'none' blocks every script on staff pages (RFC-0002 8.2).
 // Browsers apply form-action to the 303 after POST /auth/start, so each enabled provider is named; Google only
 // while it is on (oauth.js enabledProviders), so with it off no response mentions it.
-export const cspFor = ({ google = false } = {}) => [
+const cspFor = ({ google = false } = {}) => [
   "default-src 'none'",
   // 'unsafe-inline' is for styles only: the shared footer writes style="--sy-accent:…". No remote style and
   // no font source: staff pages render in the kit's fallback stacks (RFC-0002 2.6).
@@ -55,7 +55,6 @@ function build(body, { status = 200, headers = {}, cookies = [] } = {}, type) {
 }
 
 export const html = (body, init) => build(body, init, 'text/html; charset=utf-8');
-export const text = (body, init) => build(body, init, 'text/plain; charset=utf-8');
 
 // Empty-body redirect, 303 unless told otherwise.
 export function redirect(location, { status = 303, headers = {}, cookies = [] } = {}) {

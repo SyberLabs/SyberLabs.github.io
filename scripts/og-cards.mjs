@@ -92,7 +92,6 @@ html, body { width: 1200px; height: 630px; overflow: hidden; }
 body { position: relative; color: var(--vellum); font: 400 17px/1.6 var(--sans); -webkit-font-smoothing: antialiased;
   background: radial-gradient(60% 80% at 82% 50%, color-mix(in srgb, var(--accent) 16%, transparent), #0000 70%),
     radial-gradient(30% 34% at 82% 108%, rgba(252,115,77,.34), #0000 70%), radial-gradient(60% 40% at 82% 112%, rgba(252,115,77,.12), #0000 70%), var(--ink); }
-.stars { display: none; }
 .frame { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 440px; gap: 48px; padding: 56px 64px 52px; }
 .copy { display: flex; flex-direction: column; min-width: 0; }
 .lockup { display: inline-flex; align-items: center; gap: 12px; font: 600 15px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--vellum); }
@@ -113,7 +112,6 @@ body { position: relative; color: var(--vellum); font: 400 17px/1.6 var(--sans);
 canvas { position: absolute; inset: 0; width: 440px; height: 440px; display: block; }
 .plate-cap { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
 </style></head><body>
-<div class="stars"></div>
 <div class="frame">
   <div class="copy">
     <div class="lockup"><img src="${logo}" alt="">SyberLabs</div>

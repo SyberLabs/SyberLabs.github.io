@@ -1,5 +1,5 @@
 // A D1 binding over node:sqlite, so tests run the real migrations/*.sql. Only the surface server/ may
-// use: prepare(sql).bind(...).first(col?) / all() / run() / raw(), batch([...]) and exec(sql).
+// use: prepare(sql).bind(...).first(col?) / all() / run() and batch([...]).
 // Like D1: every call is async, binding undefined throws, booleans bind as 1/0, batch is one transaction.
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -52,12 +52,6 @@ class Statement {
 
   async all() { return this.exec(); }
   async run() { return this.exec(); }
-
-  async raw() {
-    const stmt = this.db.sqlite.prepare(this.sql);
-    stmt.setReturnArrays(true);
-    return stmt.all(...this.params);
-  }
 }
 
 export class D1Shim {
@@ -77,11 +71,6 @@ export class D1Shim {
       this.sqlite.exec('ROLLBACK');
       throw err;
     }
-  }
-
-  async exec(sql) {
-    this.sqlite.exec(sql);
-    return { count: 1, duration: 0 };
   }
 
   // Test helpers (not part of D1): rows written so far, including trigger and cascade changes (and rows
@@ -124,6 +113,6 @@ export function freshDb({ upTo = MIGRATION_FILES.length } = {}) {
 // A binding whose every query rejects, for the "D1 throw -> 503" tests.
 export function brokenDb() {
   const fail = async () => { throw new Error('D1_ERROR: simulated outage'); };
-  const stmt = { bind: () => stmt, first: fail, all: fail, run: fail, raw: fail };
-  return { prepare: () => stmt, batch: fail, exec: fail };
+  const stmt = { bind: () => stmt, first: fail, all: fail, run: fail };
+  return { prepare: () => stmt, batch: fail };
 }

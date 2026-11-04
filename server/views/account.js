@@ -9,13 +9,13 @@ import { GITHUB_MARK } from './chrome.js';
 import { contact } from './signin.js';
 
 // RFC-0002 3.4: the codes the Add Google callback sends back here (oauth.js), with the account page's copy.
-export const ADD_GOOGLE_COPY = {
+const ADD_GOOGLE_COPY = {
   cancelled: ['neutral', () => 'Adding Google was cancelled.'],
   expired: ['warning', () => "Adding Google couldn't be finished. Try again."],
   provider: ['danger', () => `Google didn't finish the sign-in. Try again, or ${contact('email SyberLabs')}.`],
   google_taken: ['warning', () => 'That Google account is already on another SyberLabs account. Choose a different one.'],
 };
-export const GOOGLE_ADDED = 'Google is added. You can now sign in with GitHub or Google.';
+const GOOGLE_ADDED = 'Google is added. You can now sign in with GitHub or Google.';
 
 // The notice from ?added=google or ?e=. "added" shows only when Google really is among the methods, so a
 // crafted link cannot show it (RFC-0002 3.3).

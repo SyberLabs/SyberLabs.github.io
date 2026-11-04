@@ -15,9 +15,9 @@ const claims = (changes = {}) => ({ iss: 'https://accounts.google.com', aud: 'go
   sub: 'google-sub-test', nonce: 'nonce-test', exp: NOW / 1000 + 3600, iat: NOW / 1000,
   email: 'display@example.test', email_verified: true, ...changes });
 const token = c => `${b64urlEncode(JSON.stringify({ alg: 'RS256' }))}.${b64urlEncode(JSON.stringify(c))}.signature`;
-function ctx(env, path, { cookie = '', form = {}, user = null, now = NOW } = {}) {
+function ctx(env, path, { cookie = '', form = {}, user = null } = {}) {
   const url = new URL(path, ORIGIN);
-  return { env, url, now, user, params: { provider: 'google' }, form: new URLSearchParams(form),
+  return { env, url, now: NOW, user, params: { provider: 'google' }, form: new URLSearchParams(form),
     request: new Request(url, { headers: cookie ? { Cookie: cookie } : {} }) };
 }
 const cookieValue = res => res.headers.getSetCookie().find(c => c.startsWith(`${OAUTH_COOKIE}=`)).split(';')[0];
@@ -26,15 +26,15 @@ async function start(env, opts = {}) {
   const url = new URL(res.headers.get('Location'));
   return { res, url, state: url.searchParams.get('state'), nonce: url.searchParams.get('nonce'), cookie: cookieValue(res) };
 }
-async function add(env, u, sessionToken, opts = {}) {
+async function add(env, sessionToken) {
   const cookie = `${SESSION_COOKIE}=${sessionToken}`;
   const session = await loadSession(env, ctx(env, '/admin/account', { cookie }).request, NOW);
-  const res = await addGoogle(ctx(env, '/admin/account/add-google', { cookie, user: session.user, ...opts }));
+  const res = await addGoogle(ctx(env, '/admin/account/add-google', { cookie, user: session.user }));
   const url = new URL(res.headers.get('Location'), ORIGIN);
   return { res, url, state: url.searchParams.get('state'), nonce: url.searchParams.get('nonce'), cookie: `${cookie}; ${cookieValue(res)}` };
 }
-async function finish(env, flow, changes = {}, handler) {
-  const stub = stubFetch(req => handler ? handler(req) : { id_token: token(claims({ nonce: flow.nonce, ...changes })) });
+async function finish(env, flow) {
+  const stub = stubFetch(() => ({ id_token: token(claims({ nonce: flow.nonce })) }));
   try {
     const res = await callback(ctx(env, `/auth/callback/google?code=google-code&state=${flow.state}`, { cookie: flow.cookie }));
     return { res, calls: stub.calls };
@@ -153,7 +153,7 @@ test('Add Google seals the signed-in user and uses chooser; callback inserts met
   const env = envOf();
   const u = seedUser(env.DB);
   const sessionToken = await seedSession(env.DB, { ...u, now: NOW });
-  const flow = await add(env, u, sessionToken);
+  const flow = await add(env, sessionToken);
   assert.equal(flow.url.searchParams.get('prompt'), 'select_account');
   const st = await openState(env, 'google', flow.cookie.split(`${OAUTH_COOKIE}=`)[1], NOW);
   assert.equal(st.l, u.userId);
@@ -169,7 +169,7 @@ test('Add Google rejects ended sessions, switched users, and a subject already b
     const env = envOf();
     const u = seedUser(env.DB);
     const sessionToken = await seedSession(env.DB, { ...u, now: NOW });
-    const flow = await add(env, u, sessionToken);
+    const flow = await add(env, sessionToken);
     if (reason === 'ended') env.DB.sqlite.prepare('DELETE FROM sessions').run();
     if (reason === 'switched') {
       const other = seedUser(env.DB);
@@ -189,7 +189,7 @@ test('Add Google transaction rechecks session revocation and concurrent Google a
     const env = envOf();
     const u = seedUser(env.DB);
     const sessionToken = await seedSession(env.DB, { ...u, now: NOW });
-    const flow = await add(env, u, sessionToken);
+    const flow = await add(env, sessionToken);
     const batch = env.DB.batch.bind(env.DB);
     env.DB.batch = async stmts => {
       if (race === 'revoked') env.DB.sqlite.prepare('DELETE FROM sessions WHERE id_hash = ?').run(await sha256Hex(sessionToken));
@@ -212,7 +212,7 @@ test('two concurrent Google callbacks for one person attach only one method and 
   const env = envOf();
   const u = seedUser(env.DB);
   const sessionToken = await seedSession(env.DB, { ...u, now: NOW });
-  const flows = [await add(env, u, sessionToken), await add(env, u, sessionToken)];
+  const flows = [await add(env, sessionToken), await add(env, sessionToken)];
   let release;
   const ready = new Promise(resolve => { release = resolve; });
   const batch = env.DB.batch.bind(env.DB);
@@ -243,7 +243,7 @@ test('two people concurrently claiming one Google subject produce one link and o
   const flows = [];
   for (const u of users) {
     const sessionToken = await seedSession(env.DB, { ...u, now: NOW });
-    flows.push(await add(env, u, sessionToken));
+    flows.push(await add(env, sessionToken));
   }
   let release;
   const ready = new Promise(resolve => { release = resolve; });
@@ -272,7 +272,7 @@ test('signout while Google callback awaits its transaction prevents linking and 
   const env = envOf();
   const u = seedUser(env.DB);
   const sessionToken = await seedSession(env.DB, { ...u, now: NOW });
-  const flow = await add(env, u, sessionToken);
+  const flow = await add(env, sessionToken);
   let atBatch;
   const entered = new Promise(resolve => { atBatch = resolve; });
   let resume;

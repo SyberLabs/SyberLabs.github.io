@@ -30,7 +30,7 @@ export function errorHtml(ctx, err) {
   return page(ctx, { title, body });
 }
 
-export const STAFF_UNAVAILABLE_HTML = `Staff pages are unavailable right now. Reload in a minute, or ${contact('email SyberLabs')}.`;
+const STAFF_UNAVAILABLE_HTML = `Staff pages are unavailable right now. Reload in a minute, or ${contact('email SyberLabs')}.`;
 
 // No ctx: this renders when config or D1 is missing, so it touches neither (RFC-0002 2.1, 3.4).
 // Under /admin: "Staff pages are unavailable", with the lockup and Sign out but no account line or nav,
