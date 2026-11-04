@@ -4,9 +4,11 @@ name: Production probe
 # the Flyspace preview and RISE Sketch what their owners need answered. Two failures about 30 s apart open one
 # `incident` issue and post once to #alerts; the first passing run closes it with the duration. Schedule and
 # manual runs only, never pull_request: a fork's pull request must never run with the Slack webhook.
+# The minutes sit off :00 and the other round marks: GitHub delays or drops scheduled runs under load, worst at the
+# start of the hour. With '*/10' no scheduled run fired in the first two hours after this workflow merged.
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '7,17,27,37,47,57 * * * *'
   workflow_dispatch:
 
 permissions:
