@@ -66,7 +66,7 @@
       </div>
       <div class="pieces">
         <article><span class="number">01 / AGENTS</span><h3>Code search inside our coding assistants</h3><p>GitHits uses MCP, a standard connection between AI assistants and tools. Its server is configured in SyberLabs repositories, so coding agents such as Claude Code can search and read dependency source, docs and changelogs at a named version, and check vulnerabilities before updating a dependency.</p></article>
-        <article><span class="number">02 / THIS SITE</span><h3>Dependency panels at build time</h3><p>Each project page carries a dependency panel generated from GitHits’ package API (<code>api.githits.dev/v1</code>) when the site is built: license, latest version and known vulnerabilities for the packages listed in the project’s dependency files. Only fields GitHits returned are shown. Where no saved report has been fetched yet, the panel says so.</p></article>
+        <article><span class="number">02 / THIS SITE</span><h3>Dependency panels at build time</h3><p>Each product page can carry a dependency panel generated from GitHits’ package API (<code>api.githits.dev/v1</code>) when the site is built: license, latest version and known vulnerabilities for the packages listed in the project’s dependency files. Only fields GitHits returned are shown. Where no live report has been fetched yet, the panel stays hidden.</p></article>
       </div>
     </section>
 
@@ -118,8 +118,8 @@ npx githits@latest auth status</code></pre>
       <div class="prose">
         <div>
           <ul class="evidence">
-            <li><span class="state"><i aria-hidden="true"></i>Implemented</span><p>GitHits MCP configured for coding agents in RISE, OmniOS, SyberWork, MasterMind and this site’s repository, with instructions on what may be sent.</p></li>
-            <li><span class="state"><i aria-hidden="true"></i>Implemented</span><p>Build-time dependency snapshot from GitHits’ package API and the panel on each project page that reads it.</p></li>
+            <li><span class="state"><i aria-hidden="true"></i>Implemented</span><p>GitHits MCP configured for coding agents in the SyberWork, RISE, FLYSPACE and Attest repositories and this site’s repository, with instructions on what may be sent.</p></li>
+            <li><span class="state"><i aria-hidden="true"></i>Implemented</span><p>Build-time dependency snapshot from GitHits’ package API and the product-page panel that reads it.</p></li>
             <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Not yet</span><p>No named test covers either piece, and nothing has been measured. We make no claim that agents are faster or make fewer mistakes with GitHits.</p></li>
           </ul>
           <p class="evidence-ref">Reflects this site and those repositories as of 8 October 2026. Each state is earned by code, a named test, a measurement under stated conditions, or a deployment.</p>

@@ -63,7 +63,8 @@ async function mountDependencies(host) {
   if (host.dataset.state) return;
   host.dataset.state = 'loading';
   const data = await loadDependencies(host.dataset.githits);
-  if (!data) { host.dataset.state = 'none'; return; }
+  // A fixture snapshot (no live GitHits data) stays hidden, like a missing one: an empty table reads as unfinished.
+  if (!data || data.source !== 'githits-api') { host.dataset.state = 'none'; return; }
   try {
     host.innerHTML = renderDependencies(data);
     host.hidden = false;

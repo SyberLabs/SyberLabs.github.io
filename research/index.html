@@ -14,9 +14,12 @@
   <link rel="stylesheet" href="/syberlabs.css?v=20261105">
   <link rel="stylesheet" href="research.css?v=20261030">
   <meta property="og:title" content="Research Index | SyberLabs Research">
-  <meta property="og:description" content="One card per research artifact: claim, evidence state, what it does not establish, date and source. Reports, notes, status pages, working papers, instruments and evidence packets.">
+  <meta property="og:description" content="One card per research artifact: claim, evidence state, what it does not establish, date and source. Reports, notes, status pages and working papers.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://syberlabs.io/research/">
+  <meta property="og:image" content="https://syberlabs.io/og/research.png?v=20261105">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://syberlabs.io/og/research.png?v=20261105">
 </head>
 <body>
 <a class="sy-skip" href="#main">Skip to content</a>
@@ -41,7 +44,7 @@
     <p class="kicker">SYBERLABS RESEARCH</p>
     <h1>Research and<br><em>experiments.</em></h1>
     <p class="dek">Reports, working papers and recorded experiments, with sources, dates and known limits.</p>
-    <div class="hero-bottom"><p>12 artifacts<br><span>3 reports on this site · 2 RISE status pages · 5 working papers · 2 instruments</span></p><a href="#on-this-site">Read the cards <svg class="sy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></a></div>
+    <div class="hero-bottom"><p>10 artifacts<br><span>3 reports on this site · 2 RISE status pages · 5 working papers</span></p><a href="#on-this-site">Read the cards <svg class="sy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></a></div>
   </section>
 
   <div class="status" role="note" aria-label="How evidence states are read">
@@ -56,7 +59,7 @@
   </div>
 
   <div class="layout">
-    <aside><nav aria-label="Index contents"><p>CONTENTS</p><a href="#on-this-site">01 / On this site</a><a href="#rise">02 / RISE and reader-owned AI</a><a href="#papers">03 / Working papers</a><a href="#instruments">04 / Instruments and packets</a><a href="#provenance">05 / Provenance</a></nav></aside>
+    <aside><nav aria-label="Index contents"><p>CONTENTS</p><a href="#on-this-site">01 / On this site</a><a href="#rise">02 / RISE and reader-owned AI</a><a href="#papers">03 / Working papers</a><a href="#provenance">04 / Provenance</a></nav></aside>
     <div class="cards">
 
       <section id="on-this-site" aria-labelledby="on-this-site-title">
@@ -266,52 +269,8 @@
           </dl>
         </article>
       </section>
-
-      <section id="instruments" aria-labelledby="instruments-title">
-        <p class="section-label">04 / INSTRUMENTS AND EVIDENCE PACKETS</p>
-        <h2 id="instruments-title">Run the systems, keep the record.</h2>
-
-        <article class="card" id="instrument-panel">
-          <div class="card__head">
-            <p class="kind">Instrument · SyberLabs/cross-platform</p>
-            <h3><a href="https://github.com/SyberLabs/cross-platform" rel="noopener">The Instrument Panel: five real systems in one inspection shell</a></h3>
-            <p class="claim">A single local platform through which SyberRuntime, Barn, Bough, OSAHR and Relay can be run, inspected and understood. Nothing simulates those systems: every number, refusal, hash and graph shown was produced by the named source repository, and any event opens to the source file and line that produced it.</p>
-          </div>
-          <dl class="facts">
-            <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> an adapter layer over the unmodified source checkouts, an event stream with per-event provenance, six guided scenarios (input configuration, not playback: each step declares what it expects and reports what happened), and the three seams the source systems already define.</span></li>
-              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> a fidelity matrix that names the symbol that ran for each capability, and an integration map that records the commands run and the pinned source commits.</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> an automated test suite in the repository; a public deployment. It runs at 127.0.0.1:8765 from a checkout with a Python environment and Node 24.</span></li>
-            </ul></dd></div>
-            <div><dt>Establishes</dt><dd>That the five systems can be driven live from one shell with their behaviour attributed to source, and that a refusal the scenario did not predict is reported as such.</dd></div>
-            <div><dt>Does not establish</dt><dd>Anything about Jev or Kev: no provider call is active. SyberRuntime’s acceptance gate reports fail on a fresh clone because its evidence corpus is gitignored; two Barn benchmark tests fail upstream; Bough’s Cypher is generated but never pushed; Relay’s Obsidian, database and Cloudflare paths are not exercised; the Barn→Bough twin is a shape from one short run, not a fitted model.</dd></div>
-            <div><dt>Date</dt><dd>27 September 2026</dd></div>
-            <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/cross-platform" rel="noopener">SyberLabs/cross-platform</a> at 5e031ae (README, docs/FIDELITY.md, docs/INTEGRATION_MAP.md)</dd></div>
-          </dl>
-        </article>
-
-        <article class="card" id="osahr-workbench">
-          <div class="card__head">
-            <p class="kind">Evidence packets · SyberLabs/OSAHR_Cell</p>
-            <h3><a href="https://github.com/SyberLabs/OSAHR_Cell/tree/main/workbench" rel="noopener">OSAHR decision workbench: licensed evidence packets</a></h3>
-            <p class="claim">One auditable loop over the frozen Experiment 06 corpus: a scenario is validated, freeze and analysis checksums are pinned, the claim grammar is rescored, an action license and a claim license are derived, and a JSON and HTML packet is written that replay recomputes. Editing a packet does not grant a claim.</p>
-          </div>
-          <dl class="facts">
-            <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> <code>python -m workbench decide</code> and <code>replay</code>, three scenarios (identity, high stress, long outage), and the packet format in <code>workbench/packet.py</code>.</span></li>
-              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> 18 tests in <code>workbench/tests/test_workbench.py</code>.</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> real-network calibration: it is always graded Proposed, and promoting it to Measured fails replay.</span></li>
-            </ul></dd></div>
-            <div><dt>Establishes</dt><dd>That a named scenario becomes a human-pending action and a replayable evidence packet without licensing a directed effect the ensemble withholds: an unresolved hold acts under hold with the claim license denied. Every packet carries Known, Measured, Inferred and Proposed grades.</dd></div>
-            <div><dt>Does not establish</dt><dd>A new simulator, or any directed effect beyond what the Experiment 06 record admits. It refuses to mint a licensed packet from an attacker-supplied ensemble, from <code>claims.score</code> MCP input, or from a scenario outside the evaluation corpus.</dd></div>
-            <div><dt>Date</dt><dd>27 September 2026</dd></div>
-            <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/OSAHR_Cell/tree/main/workbench" rel="noopener">OSAHR_Cell/workbench</a> at 7293e27</dd></div>
-          </dl>
-        </article>
-      </section>
-
       <section id="provenance" aria-labelledby="provenance-title">
-        <p class="section-label">05 / PROVENANCE</p>
+        <p class="section-label">04 / PROVENANCE</p>
         <h2 id="provenance-title">What this index reflects.</h2>
         <p class="reflects">Reflects SyberLabs/papers@e925ed6, SyberLabs/cross-platform@5e031ae, SyberLabs/OSAHR_Cell@7293e27, SyberLabs/sybershoke@45956fe and SyberLabs/RISE@998d725 (its task SCR-004 at @681ccaa, checked 2026-10-08), and the site pages linked above as of SyberLabs/SyberLabs.github.io@085cf5b · verified 2026-10-08.</p>
         <p class="reflects">Not indexed here: the private SyberLabs/grokcell-execution repository, reachable only through the report above, and the per-project evidence rows, which live on each <a href="/projects/rise/">project page</a>.</p>

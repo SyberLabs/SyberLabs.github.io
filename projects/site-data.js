@@ -1,8 +1,8 @@
 // Single source of site navigation and project data.
 // Bundled into the homepage by Vite (src/App.jsx), used by the build-time prerender
 // (scripts/prerender.mjs) and loaded as-is by the project pages (experience-v7.js).
-// Every project claim is taken from its repository at the commit named in `reflects`, its public
-// page, or docs/SYSTEM_MAPS.md. Evidence states follow MasterMind's discipline: implemented
+// Every project claim is taken from its repository at the commit named in `reflects` or its public
+// page. Evidence states: implemented
 // (the behaviour exists in code), tested (a named test exercises it), measured (numbers exist
 // under stated conditions), deployed (it runs somewhere people can reach). Nothing is promoted
 // from one state to the next by wording.
@@ -16,7 +16,7 @@ export const GITHUB = 'https://github.com/SyberLabs';            // the company'
 // Public tools and previews. Linked from the hero, the Atlas, the footer and each project page.
 export const RISE_APP = 'https://rise.syberlabs.io/';
 export const RISE_SAMPLE = 'https://rise.syberlabs.io/jev-scene-demo';
-// Legacy public sample retained for existing deep links; not the portfolio’s first-click journey.
+// Legacy public sample retained for existing deep links; not the site’s first-click journey.
 export const RISE_TRY = 'https://rise.syberlabs.io/try/';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
 export const SKETCH_APP = 'https://sketch.syberlabs.io/';
@@ -60,7 +60,8 @@ export const projects = [
     summary: 'Build Thread applies these checks to code changes in your Git repository. It runs the checks itself before accepting a change, even if the model says the tests passed. Actions use unique keys to prevent duplicate execution, and their results are checked afterwards.',
     status: { kind: 'wip', label: 'Work in progress' },
     primary: { label: 'View source', href: 'https://github.com/SyberLabs/SyberWork', external: true },
-    secondary: { label: 'Build Thread in ten minutes', href: 'https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md' },
+    secondary: { label: 'Discuss a pilot', href: CONSULT },
+    ghost: { label: 'Build Thread in ten minutes', href: 'https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md' },
     why: { title: 'Why check each proposed step?',
       paragraphs: [
         'When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules controlled by the system running it.',
@@ -90,9 +91,9 @@ export const projects = [
       ] },
     evidence: [
       ['tested', 'Twenty-three golden conformance traces, a clean-install release gate and CI green on CPython 3.11 to 3.13.'],
-      ['measured', 'On the author’s machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.'],
+      ['measured', 'On one development machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.'],
       ['implemented', 'The included procurement case runs end to end against a separate reference system, with a real order POST under an idempotency key and manager sign-off.'],
-      ['not yet', 'The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has not been run against a real model.'],
+      ['not yet', 'The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has had one pilot against a real model, on three fixtures that proved too easy; it has no general result yet.'],
     ],
     facts: [
       ['Stage', 'Open-source runtime and SDK, version 0.1.0, wheel verified'],
@@ -106,15 +107,15 @@ export const projects = [
     reflects: 'SyberLabs/attest@274b8e7 · verified 2026-11-05',
     pageTitle: 'Attest: Prove Every Promise Your Docs Make',
     headline: 'Prove every promise your docs make.',
-    intro: 'Point Attest at a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the real app, in a real browser, and hands the document back with each step marked proven, stale, broken, unverifiable or skipped, with evidence behind every mark.',
-    summary: 'Attest is the first station of the SyberLabs factory. Steps that fail go to an agent, SyberWork decides what that agent may change, and the browser check runs again. A case closes only when the fix is proven, and every case leaves a receipt.',
-    status: { kind: 'wip', label: 'Open source · early' },
+    intro: 'Point Attest at a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the real app (commands in a scratch directory, browser steps in a real Chrome) and hands the document back with each step marked proven, stale, broken, unverifiable or skipped, with evidence behind every mark.',
+    summary: 'Attest is the first station of the SyberLabs factory. Steps that fail go to an agent, an authority policy decides what that agent may change, and the browser check runs again. A case closes only when the fix is proven, and every case leaves a receipt.',
+    status: { kind: 'wip', label: 'Public source · early' },
     primary: { label: 'View source', href: 'https://github.com/SyberLabs/attest', external: true },
     secondary: { label: 'Discuss a pilot', href: CONSULT },
     why: { title: 'Why prove a document?',
       paragraphs: [
         'Docs, quickstarts and specs make promises: run this command, click this button, see this label. Products change underneath them, and the first person to notice is usually a frustrated customer.',
-        'Attest treats each step as a claim to be checked against the running product. A claim is proven only when a command passed or a browser saw the promised label, never because a model said so.',
+        'Attest treats each step as a claim to be checked against the running product. A claim is proven only when a command passed or the browser run observed the promised label; the verdict is a fixed rule, never a model’s say-so.',
       ] },
     use: { title: 'Four ways to use it', note: 'Python 3.11 or newer. Browser steps use Kane CLI, TestMu’s browser agent.',
       steps: [
@@ -138,10 +139,10 @@ export const projects = [
       ['not yet', 'There is no hosted service; Attest runs locally as a command-line tool. Shell steps run on the host, not in a sandbox. No outside team runs it in production yet.'],
     ],
     facts: [
-      ['Stage', 'Open-source command-line tool, version 0.1.0'],
+      ['Stage', 'Public-source command-line tool, version 0.1.0'],
       ['Technology', 'Python 3.11+, OpenAI structured outputs, Kane CLI and Chrome'],
       ['Works with', { label: 'SyberWork, the factory floor', href: '/projects/syberwork/' }],
-      ['License', 'MIT'],
+      ['License', 'MIT, declared in pyproject.toml'],
       ['Source', { label: 'github.com/SyberLabs/attest', href: 'https://github.com/SyberLabs/attest' }],
     ],
   },
@@ -232,9 +233,9 @@ export const projects = [
     summary: 'A limited public preview is live at omni.syberlabs.io: the canvas, the Shell Store and every keyless public data source run in your browser. AI answers and keyed sources are switched off there.',
     status: { kind: 'live', label: 'Live preview' },
     primary: { label: 'Open the preview', href: OMNI_PREVIEW },
-    secondary: { label: 'Run it locally', href: 'https://github.com/SyberLabs/Flyspace#run' },
-    ghost: { label: 'View source', href: 'https://github.com/SyberLabs/Flyspace', icon: 'external' },
-    live: { href: OMNI_PREVIEW, label: 'omni.syberlabs.io', note: 'The preview opens as OmniOS. Your canvas stays in your browser.' },
+    secondary: { label: 'Discuss a pilot', href: CONSULT },
+    ghost: { label: 'Run it locally', href: 'https://github.com/SyberLabs/Flyspace#run' },
+    live: { href: OMNI_PREVIEW, label: 'omni.syberlabs.io', note: 'The preview runs at omni.syberlabs.io. Your canvas stays in your browser.' },
     video: { src: '/omni-demo/omnios-morning-20261005.mp4', poster: '/omni-demo/omnios-morning-20261005-poster.jpg', title: 'The morning: one question, cited sources, a crystal, a second persona',
       caption: 'Recorded on 2026-10-05 from a local production build of OmniOS@e95ae73, following the “morning” journey specified by its acceptance test. The blocks and two AI answers use fixed test data, not live markets or a live model. The canvas, connections, source labels and answer history are the real interface. Silent, 30 seconds.' },
     why: { title: 'Why a canvas.',

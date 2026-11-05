@@ -8,7 +8,7 @@ const require = createRequire(process.env.PW_REQUIRE_FROM || import.meta.url);
 const { chromium } = require('playwright');
 const out = process.argv[2] || 'shots', BASE = process.argv[3] || 'http://localhost:4173';
 mkdirSync(out, { recursive: true });
-const pages = ['/', '/mateo/', '/projects/rise/', '/projects/flyspace/', '/projects/syberwork/', '/projects/relay/', '/projects/osahr/', '/approach/', '/stack/', '/services/', '/plus/', '/research/', '/research/sybershoke/', '/research/decision-arena/', '/kev/', '/jev/', '/rise-demo/', '/privacy/', '/404.html'];
+const pages = ['/', '/projects/syberwork/', '/projects/attest/', '/projects/rise/', '/projects/flyspace/', '/factory/', '/approach/', '/stack/', '/services/', '/plus/', '/research/', '/research/sybershoke/', '/research/decision-arena/', '/research/jev-execution/', '/kev/', '/jev/', '/rise-demo/', '/privacy/', '/404.html'];
 const browser = await chromium.launch({ executablePath: process.env.PW_EXECUTABLE || undefined, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const errors = [];
 for (const [label, vp] of [['desktop', { width: 1440, height: 900 }], ['phone', { width: 390, height: 844 }]]) {
@@ -26,7 +26,7 @@ for (const [label, vp] of [['desktop', { width: 1440, height: 900 }], ['phone', 
     // mid-page: scroll a screen and a half so reveals, tilt cards and the field's scroll response are visible
     await page.mouse.wheel(0, vp.height * 1.5); await page.waitForTimeout(1400);
     await page.screenshot({ path: `${out}/${label}-${name}-mid.png` });
-    if (path === '/' || path === '/projects/relay/') {
+    if (path === '/') {
       await page.mouse.wheel(0, -99999); await page.waitForTimeout(400);
       await page.click('.sy-menu summary'); await page.waitForTimeout(900);
       await page.screenshot({ path: `${out}/${label}-${name}-atlas.png` });

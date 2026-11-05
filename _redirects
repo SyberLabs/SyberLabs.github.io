@@ -30,3 +30,5 @@
 /projects/osahr / 301
 /projects/osahr/* / 301
 /relay-demo/* / 301
+/impact /projects/attest/ 301
+/impact/* /projects/attest/ 301

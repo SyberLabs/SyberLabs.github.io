@@ -4,7 +4,7 @@ import { githits } from './githits.js';
 // GitHits dependency totals, rendered at build time into /stack/ (scripts/prerender.mjs fills the
 // <!-- stack:githits --> marker through src/entry-server.jsx). Moved there from the homepage, unchanged in what it
 // reports: totals from the project pages' dependency panels, computed from data/githits (src/githits.js).
-// A fixture snapshot shows "Snapshot pending", no numbers. GitHits is a third-party tool we use: no logo, no
+// Without a live snapshot it says so in one line: no empty table, no numbers. GitHits is a third-party tool we use: no logo, no
 // partnership or endorsement wording. Styles live in stack/stack.css.
 const Arrow = () => <svg className="sy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></svg>;
 
@@ -28,13 +28,13 @@ export function GitHitsPanel() {
     </div>
     <div className="prose">
       <div className="home-gh__data" style={{ '--sy-accent': 'var(--sy-ice)' }}>
-        {g.live
-          ? <dl className="home-gh__stats">{stats.map(([value, term, note]) => <div key={term}><dt className="sy-label">{term}</dt><dd><b className={typeof value === 'number' ? '' : 'is-word'}>{value}</b><span>{note}</span></dd></div>)}</dl>
-          : <p className="home-gh__pending sy-label" role="note"><i aria-hidden="true" />Snapshot pending — GitHits data not yet fetched</p>}
-        <ul className="home-gh__rows">
-          {g.rows.map(r => <li key={r.slug} style={{ '--sy-accent': r.accent }}><a href={r.href}><span className="home-gh__name">{r.name}</span><span className="home-gh__val">{row(r)}</span><Arrow /></a></li>)}
-        </ul>
-        <p className="sy-small home-gh__attr">{g.live ? <>Package data from GitHits, retrieved {day}.</> : <>Package data from GitHits once fetched. Snapshot made {day}.</>}</p>
+        {g.live ? <>
+          <dl className="home-gh__stats">{stats.map(([value, term, note]) => <div key={term}><dt className="sy-label">{term}</dt><dd><b className={typeof value === 'number' ? '' : 'is-word'}>{value}</b><span>{note}</span></dd></div>)}</dl>
+          <ul className="home-gh__rows">
+            {g.rows.map(r => <li key={r.slug} style={{ '--sy-accent': r.accent }}><a href={r.href}><span className="home-gh__name">{r.name}</span><span className="home-gh__val">{row(r)}</span><Arrow /></a></li>)}
+          </ul>
+          <p className="sy-small home-gh__attr">Package data from GitHits, retrieved {day}.</p>
+        </> : <p className="home-gh__pending sy-label" role="note"><i aria-hidden="true" />No live GitHits snapshot has been published yet.</p>}
       </div>
     </div>
   </section>;

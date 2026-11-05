@@ -1,15 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Stage from './Stage.jsx';
-import relay from './systems/relay.jsx';
 import omnios from './systems/omnios.jsx';
 import rise from './systems/rise.jsx';
-import barn from './systems/barn.jsx';
-import osahr from './systems/osahr.jsx';
-import runtime from './systems/runtime.jsx';
 import { outcomes } from './outcomes.js';
 import './system-maps.css';
 
-const systems = [rise, omnios, barn, osahr, runtime, relay];
+// Only the product maps are published; the research maps stay in the repository, unbundled.
+const systems = [rise, omnios];
 
 const GRADES = {
   recorded: ['Recorded', 'Produced by running the repository’s code. The export script in scripts/ reproduces it.'],
@@ -286,14 +283,6 @@ export default function SystemMaps({ only = null } = {}) {
           </ul>
           <p>A moving token marks an edge the current step traversed. Nothing moves between steps.</p>
         </div>
-        {!only && <div>
-          <span>WHERE THEY MEET</span>
-          <p>These systems do not share a runtime. Bough calls OSAHR’s schedulers to check its exact results. Two other meetings happen only in <a href="https://github.com/SyberLabs/cross-platform">cross-platform</a>, a separate test harness: it runs a Relay draft through SyberRuntime and passes Bough’s advice to Barn. Barn’s own plan makes that advice a suggestion, never an authorization.</p>
-        </div>}
-        {!only && <div>
-          <span>NOT MAPPED YET</span>
-          <p><strong>Turtle</strong> evaluates authority policies (P0); it is not connected to SyberRuntime and was not run here. <strong>SyberWork</strong> is a separate contract runtime. The <strong>SyberLabs SDK</strong> has no public repository yet. OmniOS’s persistent lineage needs its optional ledger database.</p>
-        </div>}
       </div>
     </div>
   </section>;

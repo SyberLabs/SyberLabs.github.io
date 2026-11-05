@@ -67,6 +67,8 @@ const pages = [
     line: 'A film edited from real RISE screen recordings, then the interactive sample to try yourself.', seed: 'rise', accent: RISE },
   { slug: 'plus', path: '/plus/', eyebrow: 'RISE Plus · Coming soon', headline: 'Your own reading, read aloud.',
     line: 'Give your short writing a voice. Planned: $8.99 a month for 60,000 characters of ElevenLabs narration. Free reading stays free.', seed: 'plus', accent: RISE },
+  { slug: 'research', path: '/research/', eyebrow: 'SyberLabs · Research', headline: 'Every claim, with its evidence.',
+    line: 'Reports, notes and working papers, each with its claim, its evidence state, what it does not establish, and its\u00a0source.', seed: 'research', accent: RESEARCH },
   { slug: 'privacy', path: '/privacy/', eyebrow: 'SyberLabs · Privacy', headline: 'What this site does with your data.',
     line: 'A static site with no accounts, forms, cookies or analytics.', seed: 'privacy', accent: ICE },
 ];

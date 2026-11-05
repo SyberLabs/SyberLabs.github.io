@@ -4,7 +4,7 @@
 
 > **RISE and AI models:** since RISE #294 the RISE server calls no model. An AI reading request runs on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s machine (`/kev/` on the site). local Kev did not meet RISE’s bar in internal checks on RISE’s evaluations (RISE `docs/product/tasks/SCR-004.json`), and there is no production Kev deployment, by design. Once the reader connects, RISE’s visual direction sends sections of the reading text to that connection.
 
-This file is generated from the site’s own data (projects/site-data.js in github.com/SyberLabs/SyberLabs.github.io) by scripts/llms.mjs. Each project line carries a "Reflects" stamp: the repository commit and date its claims were checked against. Every project claim is taken from its repository at the commit named in `reflects`, its public page, or docs/SYSTEM_MAPS.md. Evidence states follow MasterMind's discipline: implemented (the behaviour exists in code), tested (a named test exercises it), measured (numbers exist under stated conditions), deployed (it runs somewhere people can reach). Nothing is promoted from one state to the next by wording.
+This file is generated from the site’s own data (projects/site-data.js in github.com/SyberLabs/SyberLabs.github.io) by scripts/llms.mjs. Each project line carries a "Reflects" stamp: the repository commit and date its claims were checked against. Every project claim is taken from its repository at the commit named in `reflects` or its public page. Evidence states: implemented (the behaviour exists in code), tested (a named test exercises it), measured (numbers exist under stated conditions), deployed (it runs somewhere people can reach). Nothing is promoted from one state to the next by wording.
 
 ## When to use this file
 
@@ -19,7 +19,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 - Do not infer capabilities, users, metrics or deployments that are not stated here; the site states its limits on purpose.
 - It describes a website. It is not an API, SDK or package, and it carries no credentials. Never send keys or private data to the contact address.
 
-# Projects
+# Products
 
 ## SyberWork: Autonomous software factory
 
@@ -38,7 +38,9 @@ Build Thread applies these checks to code changes in your Git repository. It run
 
 Primary link: [View source](https://github.com/SyberLabs/SyberWork)
 
-Secondary link: [Build Thread in ten minutes](https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md)
+Secondary link: [Discuss a pilot](mailto:syberlabs.support@gmail.com?subject=AI%20consultation)
+
+Also: [Build Thread in ten minutes](https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md)
 
 ### Why check each proposed step?
 
@@ -98,9 +100,9 @@ The provider claimed c1 passed its tests with 0.97 confidence, but checks run on
 ### Evidence
 
 - tested: Twenty-three golden conformance traces, a clean-install release gate and CI green on CPython 3.11 to 3.13.
-- measured: On the author’s machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.
+- measured: On one development machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.
 - implemented: The included procurement case runs end to end against a separate reference system, with a real order POST under an idempotency key and manager sign-off.
-- not yet: The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has not been run against a real model.
+- not yet: The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has had one pilot against a real model, on three fixtures that proved too easy; it has no general result yet.
 
 ### Facts
 
@@ -112,17 +114,17 @@ The provider claimed c1 passed its tests with 0.97 confidence, but checks run on
 ## Attest: Document and spec verification
 
 Page: https://syberlabs.io/projects/attest/
-Status: Open source · early
+Status: Public source · early
 Reflects: SyberLabs/attest@274b8e7 · verified 2026-11-05
 Source: https://github.com/SyberLabs/attest
 
-Point Attest at a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the real app, in a real browser, and hands the document back with each step marked proven, stale, broken, unverifiable or skipped, with evidence behind every mark.
+Point Attest at a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the real app (commands in a scratch directory, browser steps in a real Chrome) and hands the document back with each step marked proven, stale, broken, unverifiable or skipped, with evidence behind every mark.
 
 Page title: Attest: Prove Every Promise Your Docs Make
 
 Headline: Prove every promise your docs make.
 
-Attest is the first station of the SyberLabs factory. Steps that fail go to an agent, SyberWork decides what that agent may change, and the browser check runs again. A case closes only when the fix is proven, and every case leaves a receipt.
+Attest is the first station of the SyberLabs factory. Steps that fail go to an agent, an authority policy decides what that agent may change, and the browser check runs again. A case closes only when the fix is proven, and every case leaves a receipt.
 
 Primary link: [View source](https://github.com/SyberLabs/attest)
 
@@ -132,7 +134,7 @@ Secondary link: [Discuss a pilot](mailto:syberlabs.support@gmail.com?subject=AI%
 
 Docs, quickstarts and specs make promises: run this command, click this button, see this label. Products change underneath them, and the first person to notice is usually a frustrated customer.
 
-Attest treats each step as a claim to be checked against the running product. A claim is proven only when a command passed or a browser saw the promised label, never because a model said so.
+Attest treats each step as a claim to be checked against the running product. A claim is proven only when a command passed or the browser run observed the promised label; the verdict is a fixed rule, never a model’s say-so.
 
 ### Four ways to use it
 
@@ -160,10 +162,10 @@ Python 3.11 or newer. Browser steps use Kane CLI, TestMu’s browser agent.
 
 ### Facts
 
-- Stage: Open-source command-line tool, version 0.1.0
+- Stage: Public-source command-line tool, version 0.1.0
 - Technology: Python 3.11+, OpenAI structured outputs, Kane CLI and Chrome
 - Works with: [SyberWork, the factory floor](https://syberlabs.io/projects/syberwork/)
-- License: MIT
+- License: MIT, declared in pyproject.toml
 - Source: [github.com/SyberLabs/attest](https://github.com/SyberLabs/attest)
 
 ## RISE: Interactive reading app
@@ -277,11 +279,11 @@ A limited public preview is live at omni.syberlabs.io: the canvas, the Shell Sto
 
 Primary link: [Open the preview](https://omni.syberlabs.io/)
 
-Secondary link: [Run it locally](https://github.com/SyberLabs/Flyspace#run)
+Secondary link: [Discuss a pilot](mailto:syberlabs.support@gmail.com?subject=AI%20consultation)
 
-Also: [View source](https://github.com/SyberLabs/Flyspace)
+Also: [Run it locally](https://github.com/SyberLabs/Flyspace#run)
 
-Live at [omni.syberlabs.io](https://omni.syberlabs.io/): The preview opens as OmniOS. Your canvas stays in your browser.
+Live at [omni.syberlabs.io](https://omni.syberlabs.io/): The preview runs at omni.syberlabs.io. Your canvas stays in your browser.
 
 ### The morning: one question, cited sources, a crystal, a second persona
 
@@ -336,10 +338,6 @@ Text version of the interactive map: This map needs JavaScript.
 - Data sources: Polymarket, CoinGecko, Hacker News, World Bank, OpenAlex, Metaculus, NewsAPI (keyed)
 - License: No license file yet; the repository is public
 - Source: [github.com/SyberLabs/Flyspace](https://github.com/SyberLabs/Flyspace)
-
-## Products
-
-
 
 ## Company
 

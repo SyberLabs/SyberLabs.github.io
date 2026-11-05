@@ -27,7 +27,7 @@ const PRODUCTS = projects.map(p => ({ ...p, line: PRODUCT_LINES[p.slug] ?? p.int
 // What a customer can buy today. Details, process and the RISE pilot live on /services/.
 const SERVICES = [
   ['AI consultation', 'A focused working session on where AI agents can safely do real work in your product or operations: what to automate, what must be checked, and where a person has to approve.'],
-  ['Custom builds', 'Agent systems, integrations and internal tools, built with the discipline of our own products: host-run checks, signed records and human approval before anything ships.'],
+  ['Custom builds', 'Agent systems, integrations and internal tools, built the way we build SyberWork: host-run checks, signed records and human approval before anything ships.'],
   ['Design partnerships', 'For AI and developer-tool companies: we integrate your product into a working agent factory and measure what it is worth under controlled conditions.'],
 ];
 
@@ -101,7 +101,7 @@ export default function App() {
               <span className="home-products__cat">{p.category}</span>
               <span className="home-products__name">{p.name}</span>
               <span className="home-products__headline">{p.headline}</span>
-              <span className="home-products__status"><span className="home-products__dot" aria-hidden="true" />{p.status.label}</span>
+              <span className="home-products__status"><span className={`home-products__dot home-products__dot--${p.status.kind}`} aria-hidden="true" />{p.status.label}</span>
             </a>
           </li>)}
         </ol>
@@ -110,7 +110,7 @@ export default function App() {
         <div className="lab-identity__copy">
           <img className="lab-identity__emblem" src="/media/lab/syberlabs-emblem.webp" width="900" height="675" alt="" loading="lazy" decoding="async" />
           <p className="sy-eyebrow">SyberWork / The factory</p>
-          <h2 id="factory-title">Agents build. The factory checks. A person admits.</h2>
+          <h2 id="factory-title">Agents build. The host checks. A person admits.</h2>
           <p>SyberWork is the factory floor. Every change is a candidate on a side branch; nothing reaches your branch until it passes the host’s own checks and a person accepts it.</p>
           <ol className="factory-steps">
             {FACTORY_STEPS.map(([step, text]) => <li key={step} className={step === 'Admit' ? 'is-human' : undefined}><b>{step}</b><span>{text}</span></li>)}
@@ -147,8 +147,8 @@ export default function App() {
       <section id="services" className="home-services sy-wrap" aria-labelledby="services-title">
         <div className="home-services__head">
           <p className="sy-eyebrow">Consulting and partnerships</p>
-          <h2 id="services-title">Bring us the problem. We build the system that proves it is solved.</h2>
-          <p>The same factory that builds our products is available for your work. Every engagement starts with a short call and a fixed, written scope.</p>
+          <h2 id="services-title">Bring us the problem. We build the system, and the checks that show it works.</h2>
+          <p>The factory that builds SyberWork is available for your work. Every engagement starts with a short call and a written scope.</p>
           <p className="home-services__actions"><a className="sy-btn sy-btn--solid" href={CONSULT}>Book a consultation</a><a href="/services/">How engagements work <span aria-hidden="true">→</span></a></p>
         </div>
         <dl className="home-services__list">

@@ -19,16 +19,16 @@ await inject(resolve('dist/index.html'), /<div id="root"><\/div>/, html => html.
 await inject(resolve('dist/stack/index.html'), /<!-- stack:githits -->/, html => html.replace('<!-- stack:githits -->', renderGitHits()));
 await rm('dist-ssr', { recursive: true, force: true });
 
-const { projects, renderProject, renderSections } = await import(pathToFileURL(resolve('projects/project-template.js')).href);
+const { projects, renderProject, renderSections, others } = await import(pathToFileURL(resolve('projects/project-template.js')).href);
 for (const p of projects) {
   if (p.slug === 'rise') {
     // The RISE landing page is authored as static HTML; its sections below the hero come from the same data.
-    await inject(resolve('dist/projects/rise/index.html'), /<!-- rise:sections -->/, html => html.replace('<!-- rise:sections -->', renderSections(p)));
+    await inject(resolve('dist/projects/rise/index.html'), /<!-- rise:sections -->/, html => html.replace('<!-- rise:sections -->', renderSections(p) + others(p)));
     continue;
   }
   const page = renderProject(p);
   // The social preview tags carry the same title and description as the page, and the card from scripts/og-cards.mjs.
-  const image = `https://syberlabs.io/og/${p.slug}.png?v=1`;
+  const image = `https://syberlabs.io/og/${p.slug}.png?v=20261105`;
   await inject(resolve(`dist/projects/${p.slug}/index.html`), /<div id="app"><\/div>/, html => html
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(page.title)}</title>`)
     .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(page.description)}">`)

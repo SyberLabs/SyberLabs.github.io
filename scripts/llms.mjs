@@ -134,7 +134,9 @@ async function tail() {
     if (d) how.push(`- [${item?.label ?? href}](${abs(href)}): ${d}`);
   }
   return [
-    ...(await Promise.all(siteMap.map(async group => `## ${group.title}\n\n${(await linkList(group.items)).join('\n')}`))),
+    // A group whose links are all listed elsewhere (the products, listed above) gets no empty heading.
+    ...(await Promise.all(siteMap.map(async group => [group.title, await linkList(group.items)])))
+      .filter(([, links]) => links.length).map(([title, links]) => `## ${title}\n\n${links.join('\n')}`),
     `## Design system\n\n- [Atlas kit v2](${ORIGIN}/kit/v2/): ${await describe('/kit/v2/')}\n- [Kit README](${ORIGIN}/kit/v2/README.md): ${kitSections}.`,
     `## How we build\n\n${how.join('\n')}`,
     `## Full text\n\n- [Full text for agents](${ORIGIN}/llms-full.txt): Every project field in one file.`,
@@ -143,8 +145,8 @@ async function tail() {
 
 const rest = await tail();
 const outputs = {
-  'llms.txt': [head, whenTo, `## Projects\n\n${projects.map(projectSummary).join('\n')}`, rest].join('\n\n') + '\n',
-  'llms-full.txt': [head, whenTo, '# Projects', ...projects.map(projectFull), rest].join('\n\n') + '\n',
+  'llms.txt': [head, whenTo, `## Products\n\n${projects.map(projectSummary).join('\n')}`, rest].join('\n\n') + '\n',
+  'llms-full.txt': [head, whenTo, '# Products', ...projects.map(projectFull), rest].join('\n\n') + '\n',
 };
 
 const check = process.argv.includes('--check');
