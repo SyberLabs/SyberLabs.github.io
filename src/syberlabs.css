@@ -143,8 +143,6 @@ html.sy-field-live .sy-nebula, html.sy-field-live .sy-nebula--center { backgroun
 /* ---------- 3D tilt (vars set by src/site/motion.js) ---------- */
 .sy-tilt { transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transform-style: preserve-3d; will-change: transform; transition: transform 160ms var(--sy-ease); }
 .sy-tilt:hover { transition-duration: 60ms; }
-.sy-magnetic { transform: translate(var(--tx, 0px), var(--ty, 0px)); transition: transform 180ms var(--sy-ease), box-shadow var(--sy-t-enter) var(--sy-ease); }
-.sy-btn--solid.sy-magnetic:hover { transform: translate(var(--tx, 0px), calc(var(--ty, 0px) - 1px)); }
 
 /* ---------- reveal ---------- */
 html.sy-js .sy-reveal { opacity: 0; transform: translate3d(0, 28px, 0); filter: blur(6px); transition: opacity 700ms var(--sy-ease) var(--sy-delay, 0ms), transform 800ms var(--sy-ease) var(--sy-delay, 0ms), filter 700ms var(--sy-ease) var(--sy-delay, 0ms); }
@@ -433,3 +431,64 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
   .sy-header .sy-menu summary span { display:none; }
 }
 @media (max-width:360px) { .sy-header .sy-lockup { font-size:0; gap:0; } .sy-header .sy-menu { margin-left:8px; } }
+
+/* ======================================================================================================
+   Interaction layer (2026-11-05): every hover and press answers within one frame and nothing behind the
+   page competes for the GPU. The field renders one still frame (src/site/field.js `still`), so surfaces
+   over it need no live blur: a translucent solid reads the same and costs nothing per frame.
+   ====================================================================================================== */
+:root { --sy-t-hover: 100ms; --sy-t-enter: 160ms; --sy-t-press: 60ms; }
+a, button, summary, [role="button"], label, input, select, textarea { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+summary { cursor: pointer; }
+
+/* no backdrop blur over content that scrolls or moves */
+.sy-header, .sy-header.is-scrolled { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(2, 7, 10, .93); }
+.sy-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: linear-gradient(160deg, rgba(12,27,37,.94), rgba(2,7,10,.96)); }
+.sy-atlas__backdrop { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); background: rgba(2, 7, 10, .86); }
+
+/* reveal: quick, transform and opacity only (a filter transition repaints the whole element every frame) */
+html.sy-js .sy-reveal { transform: translate3d(0, 14px, 0); filter: none; transition: opacity 360ms var(--sy-ease) var(--sy-delay, 0ms), transform 420ms var(--sy-ease) var(--sy-delay, 0ms); }
+html.sy-js .sy-split .sy-word > span { transition: transform 520ms var(--sy-ease) calc(var(--i, 0) * 30ms); }
+
+/* buttons: lift on hover, press on click, both immediate */
+.sy-btn { transition: transform var(--sy-t-hover) var(--sy-ease), box-shadow var(--sy-t-hover) var(--sy-ease), border-color var(--sy-t-hover), color var(--sy-t-hover), background-color var(--sy-t-hover), filter var(--sy-t-hover); }
+@media (hover: hover) {
+  .sy-btn:hover { transform: translateY(-1px); }
+  .sy-btn--solid:hover { filter: brightness(1.08); box-shadow: 0 8px 24px -10px color-mix(in srgb, var(--sy-cantaloupe, #fc734d) 70%, transparent); }
+  .sy-btn--line:hover, .sy-btn--ghost:hover { border-color: var(--sy-ice); color: var(--sy-vellum); }
+}
+.sy-btn:active, .sy-nav__cta:active, .sy-menu summary:active, .sy-totop:active { transform: translateY(0) scale(.97); transition-duration: var(--sy-t-press); }
+.sy-nav ul a.sy-nav__cta { transition: filter var(--sy-t-hover), transform var(--sy-t-hover) var(--sy-ease); }
+
+/* links and rows: colour answers at once; underline-free hover gets a visible change */
+main a, .sy-footer a, .sy-atlas a, .sy-crumbs a { transition: color var(--sy-t-hover), background-color var(--sy-t-hover), border-color var(--sy-t-hover), opacity var(--sy-t-hover); }
+@media (hover: hover) {
+  .sy-footer a:hover, .sy-crumbs a:hover { color: var(--sy-vellum); }
+  .sy-atlas__group li a:hover { background: rgba(2, 151, 222, .08); }
+}
+.sy-project-row, .sy-card { transition-duration: var(--sy-t-enter); }
+main a:active, .sy-footer a:active, .sy-atlas a:active { opacity: .72; transition-duration: var(--sy-t-press); }
+
+/* keyboard focus is as fast and visible as hover */
+:is(a, button, summary, .sy-btn):focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; transition: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sy-btn:hover, .sy-btn:active, .sy-nav__cta:active { transform: none; }
+}
+
+/* every remaining control answers hover (found by an automated hover audit over all pages) */
+.sy-lockup, .sy-menu summary, .sy-totop, details > summary, .sy-link, .pitch-hero__motion { transition: color var(--sy-t-hover), background-color var(--sy-t-hover), border-color var(--sy-t-hover), opacity var(--sy-t-hover), transform var(--sy-t-hover) var(--sy-ease); }
+@media (hover: hover) {
+  .sy-lockup:hover { opacity: .78; }
+  .sy-menu summary:hover { border-color: var(--sy-ice); background: rgba(2, 151, 222, .08); }
+  .sy-totop:hover { border-color: var(--sy-ice); color: var(--sy-vellum); transform: translateY(-2px); }
+  main details > summary:hover { color: var(--sy-ice); }
+  main :is(p, li, dd, figcaption, td) a:not(.sy-btn):hover, main a.sy-link:hover, main [class*="__source"]:hover, main [class*="-links"] a:hover { color: var(--sy-vellum); text-decoration: underline; text-decoration-color: var(--sy-ice); text-underline-offset: 3px; }
+  .pitch-hero__motion:hover { border-color: var(--sy-ice); color: var(--sy-vellum); }
+  [role="tab"]:hover, .primitive-tab:hover { color: var(--sy-vellum); background: rgba(2, 151, 222, .06); }
+}
+
+/* page to page: a short crossfade instead of a blank flash (cross-document View Transitions; ignored where unsupported) */
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 160ms; animation-timing-function: var(--sy-ease); }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
