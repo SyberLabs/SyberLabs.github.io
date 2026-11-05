@@ -4,7 +4,7 @@
 
 > **RISE and AI models:** since RISE #294 the RISE server calls no model. An AI reading request runs on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s machine (`/kev/` on the site). local Kev did not meet RISE’s bar in internal checks on RISE’s evaluations (RISE `docs/product/tasks/SCR-004.json`), and there is no production Kev deployment, by design. Once the reader connects, RISE’s visual direction sends sections of the reading text to that connection.
 
-This file is generated from the site’s own data (projects/site-data.js in github.com/SyberLabs/SyberLabs.github.io) by scripts/llms.mjs. Each project line carries a "Reflects" stamp: the repository commit and date its claims were checked against. Every project claim is taken from its repository at the commit named in `reflects`, its public page, or docs/SYSTEM_MAPS.md. Evidence states follow MasterMind's discipline: implemented (the behaviour exists in code), tested (a named test exercises it), measured (numbers exist under stated conditions), deployed (it runs somewhere people can reach). Nothing is promoted from one state to the next by wording.
+This file is generated from the site’s own data (projects/site-data.js in github.com/SyberLabs/SyberLabs.github.io) by scripts/llms.mjs. Each project line carries a "Reflects" stamp: the repository commit and date its claims were checked against. Every project claim is taken from its repository at the commit named in `reflects` or its public page. Evidence states: implemented (the behaviour exists in code), tested (a named test exercises it), measured (numbers exist under stated conditions), deployed (it runs somewhere people can reach). Nothing is promoted from one state to the next by wording.
 
 ## When to use this file
 
@@ -19,7 +19,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 - Do not infer capabilities, users, metrics or deployments that are not stated here; the site states its limits on purpose.
 - It describes a website. It is not an API, SDK or package, and it carries no credentials. Never send keys or private data to the contact address.
 
-# Projects
+# Products
 
 ## SyberWork: Autonomous software factory
 
@@ -38,7 +38,9 @@ Build Thread applies these checks to code changes in your Git repository. It run
 
 Primary link: [View source](https://github.com/SyberLabs/SyberWork)
 
-Secondary link: [Build Thread in ten minutes](https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md)
+Secondary link: [Discuss a pilot](mailto:syberlabs.support@gmail.com?subject=AI%20consultation)
+
+Also: [Build Thread in ten minutes](https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md)
 
 ### Why check each proposed step?
 
@@ -98,9 +100,9 @@ The provider claimed c1 passed its tests with 0.97 confidence, but checks run on
 ### Evidence
 
 - tested: Twenty-three golden conformance traces, a clean-install release gate and CI green on CPython 3.11 to 3.13.
-- measured: On the author’s machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.
+- measured: On one development machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.
 - implemented: The included procurement case runs end to end against a separate reference system, with a real order POST under an idempotency key and manager sign-off.
-- not yet: The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has not been run against a real model.
+- not yet: The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has had one pilot against a real model, on three fixtures that proved too easy; it has no general result yet.
 
 ### Facts
 
@@ -160,7 +162,7 @@ Python 3.11 or newer. Browser steps use Kane CLI, TestMu’s browser agent.
 
 ### Facts
 
-- Stage: Open-source command-line tool, version 0.1.0
+- Stage: Public-source command-line tool, version 0.1.0
 - Technology: Python 3.11+, OpenAI structured outputs, Kane CLI and Chrome
 - Works with: [SyberWork, the factory floor](https://syberlabs.io/projects/syberwork/)
 - License: MIT, declared in pyproject.toml
@@ -277,11 +279,11 @@ A limited public preview is live at omni.syberlabs.io: the canvas, the Shell Sto
 
 Primary link: [Open the preview](https://omni.syberlabs.io/)
 
-Secondary link: [Run it locally](https://github.com/SyberLabs/Flyspace#run)
+Secondary link: [Discuss a pilot](mailto:syberlabs.support@gmail.com?subject=AI%20consultation)
 
-Also: [View source](https://github.com/SyberLabs/Flyspace)
+Also: [Run it locally](https://github.com/SyberLabs/Flyspace#run)
 
-Live at [omni.syberlabs.io](https://omni.syberlabs.io/): The preview opens as OmniOS. Your canvas stays in your browser.
+Live at [omni.syberlabs.io](https://omni.syberlabs.io/): The preview runs at omni.syberlabs.io. Your canvas stays in your browser.
 
 ### The morning: one question, cited sources, a crystal, a second persona
 

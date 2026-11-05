@@ -422,7 +422,7 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
    fold into the Menu below 1050px. */
 .sy-header .sy-nav { display:block; margin-left:auto; font-family:var(--sy-sans); }
 .sy-header .sy-nav ul { align-items:center; }
-.sy-nav ul a.sy-nav__cta { min-height:36px; padding:0 16px; border-radius:999px; background:var(--sy-cantaloupe, #fc734d); color:#02070a; font-weight:600; font-size:14px; }
+.sy-nav ul a.sy-nav__cta { white-space:nowrap; min-height:36px; padding:0 16px; border-radius:999px; background:var(--sy-cantaloupe, #fc734d); color:#02070a; font-weight:600; font-size:14px; }
 .sy-nav ul a.sy-nav__cta::after { display:none; }
 .sy-nav ul a.sy-nav__cta:hover { color:#02070a; filter:brightness(1.08); }
 .sy-header .sy-menu { margin-left:24px; }
@@ -432,3 +432,4 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
   .sy-header .sy-menu { margin-left:12px; }
   .sy-header .sy-menu summary span { display:none; }
 }
+@media (max-width:360px) { .sy-header .sy-lockup { font-size:0; gap:0; } .sy-header .sy-menu { margin-left:8px; } }

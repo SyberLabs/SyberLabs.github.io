@@ -237,7 +237,7 @@ export function projectRow(item, { intro = true } = {}) {
 
 // Every other project, closing the page: its one cross-project list. (The previous / next cards that used to follow
 // it named two of the same four projects again; the Menu holds the whole site map.)
-function others(p) {
+export function others(p) {
   return `
 <section class="pj-section sy-container" aria-labelledby="others-title">
   <div class="pj-others__head" data-reveal><h2 id="others-title" class="sy-eyebrow">Other products</h2></div>

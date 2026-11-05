@@ -366,7 +366,8 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .home-products__name { font:500 30px/1.1 var(--sy-sans); letter-spacing:-.03em; }
 .home-products__headline { color:var(--sy-mist); font-size:16px; line-height:1.5; }
 .home-products__status { display:inline-flex; align-items:center; gap:8px; color:var(--sy-mist); font-size:12px; }
-.home-products__dot { width:7px; height:7px; border-radius:50%; background:var(--sy-cantaloupe,#fc734d); box-shadow:0 0 10px var(--sy-cantaloupe,#fc734d); }
+.home-products__dot { width:7px; height:7px; border-radius:50%; background:var(--sy-dim); }
+.home-products__dot--live { background:var(--sy-cantaloupe,#fc734d); box-shadow:0 0 10px var(--sy-cantaloupe,#fc734d); }
 @media(max-width:1000px) { .home-products__list { grid-template-columns:repeat(2,minmax(0,1fr)); } .home-products__list li:nth-child(2n) { border-right:0; } .home-products__list li { border-bottom:1px solid var(--sy-rule); } }
 @media(max-width:600px) { .home-products { padding-block:64px 56px; } .home-products__list { grid-template-columns:1fr; } .home-products__list li { border-right:0; } .home-products__list a { padding:22px 0 24px; } }
 

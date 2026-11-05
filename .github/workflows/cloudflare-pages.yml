@@ -95,7 +95,7 @@ jobs:
           grep -Fq 'id="partners"' dist/index.html
           grep -Fq 'Book a consultation' dist/index.html
           # The site speaks for the company: no hiring pitch, résumé or personal contact may return to any public page.
-          if grep -rqiE 'Interview Mateo|View résumé|mateo_robles_resume|hello\.mateorobles|925-949-3105|Open to software engineering' dist --include='*.html' --include='*.js'; then echo 'Hiring copy returned'; exit 1; fi
+          if grep -rqiE 'mateo|robles|sykosyber|sdcarlson|automateon|mateo-site|hello\.mateorobles|925[-. ]?949[-. ]?3105|Interview Mateo|View résumé|Open to software engineering|job seekers' dist --include='*.html' --include='*.js' --include='*.json' --include='*.txt' --include='*.xml'; then echo 'Personal or hiring copy returned'; exit 1; fi
           test ! -e dist/mateo
           grep -Fxq '/mateo/* / 301' dist/_redirects
           grep -Fq 'build something useful together.' dist/index.html
@@ -151,7 +151,7 @@ jobs:
           test -s dist/plus/plus.css
           # /review/ is unpublished (internal operations records); old links 301 to the homepage via _redirects.
           test ! -e dist/review
-          test -s dist/impact/index.html
+          test ! -e dist/impact
           grep -Fq 'No payment is taken on this page' dist/plus/index.html
           for project in syberwork attest rise flyspace; do test -s "dist/projects/$project/index.html"; done
           test ! -e dist/projects/relay
