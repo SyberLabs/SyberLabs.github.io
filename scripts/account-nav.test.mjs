@@ -129,22 +129,20 @@ test('static chrome derives current navigation from routes, repairing missing an
   const { applyChrome } = await import('./site-chrome.mjs');
   const { header, footer } = await import('../projects/project-template.js');
   for (const [file, expected] of [
-    ['mateo/index.html', null], ['plus/index.html', null],
-    ['services/index.html', null], ['projects/rise/index.html', null],
-    ['projects/syberwork/index.html', '/#work'],
+    ['plus/index.html', null], ['factory/index.html', '/factory/'],
+    ['services/index.html', '/services/'], ['projects/rise/index.html', '/#products'],
+    ['projects/syberwork/index.html', '/#products'],
     ['research/index.html', null], ['404.html', null],
   ]) {
-    for (const prior of ['', 'services', 'mateo', 'plus', 'projects']) {
+    for (const prior of ['', 'services', 'factory', 'plus', 'products']) {
       const html = header(prior).replace('href="#main"', 'href="#content"') + '<main id="content"></main>' + footer();
       const generated = applyChrome(html, file);
       // The header row only; the Menu inside the header marks the page's own link separately (next test).
       const primary = generated.match(/<nav class="sy-nav"[\s\S]*?<\/nav>/)[0];
       const current = [...primary.matchAll(/<a href="([^"]+)" aria-current="page"/g)].map(match => match[1]);
       assert.deepEqual(current, expected ? [expected] : [], `${file} previously ${prior}`);
-      if (['mateo/index.html', 'services/index.html', 'projects/rise/index.html'].includes(file)) {
-        assert.match(primary, /href="mailto:hello\.mateorobles@gmail\.com\?subject=Interview%20with%20Mateo%20Robles">Interview<\/a>/);
-        assert.match(primary, /href="https:\/\/syberlabs\.space\/mateo-site\/#resumes">Résumé<\/a>/);
-      }
+      // The one conversion action stays in the header row on every page.
+      assert.match(primary, /class="sy-nav__cta" href="mailto:syberlabs\.support@gmail\.com\?subject=AI%20consultation">Book a consultation<\/a>/);
       assert.match(generated, /href="#content">Skip to content/);
       assert.equal(applyChrome(generated, file), generated, 'regeneration is idempotent');
     }
@@ -157,10 +155,10 @@ test('static chrome derives current navigation from routes, repairing missing an
 test('the selected Menu and footer preserve contact, subscriber and legal links', async () => {
   const { applyChrome } = await import('./site-chrome.mjs');
   const { header, footer } = await import('../projects/project-template.js');
-  const { siteMap, footerLinks, CONTACT, RESUME } = await import('../projects/site-data.js');
+  const { siteMap, footerLinks, CONTACT } = await import('../projects/site-data.js');
   for (const [file, marked] of [
     ['research/sybershoke/index.html', []],
-    ['mateo/index.html', []], // Meet Mateo now links to Mateo's own site, so nothing in the Menu is this page
+    ['services/index.html', ['/services/']],
     ['privacy/index.html', ['/privacy/']],
     ['404.html', []],
   ]) {
@@ -170,7 +168,7 @@ test('the selected Menu and footer preserve contact, subscriber and legal links'
     assert.deepEqual([...atlas.matchAll(/<a href="([^"]+)" aria-current="page"/g)].map(match => match[1]), marked, file);
     assert.doesNotMatch(html, /aria-expanded=/, `${file}: <details> reports its own state`);
     const foot = html.match(/<footer[\s\S]*?<\/footer>/)[0];
-    for (const href of [CONTACT, RESUME, '/privacy/']) assert.ok(foot.includes(`href="${href}"`), `${file}: footer links ${href}`);
+    for (const href of [CONTACT, '/services/', '/privacy/']) assert.ok(foot.includes(`href="${href}"`), `${file}: footer links ${href}`);
     assert.equal([...foot.matchAll(/<a /g)].length, footerLinks.length + 1, `${file}: footer is the mark and essential links, no duplicated site map`);
   }
 });

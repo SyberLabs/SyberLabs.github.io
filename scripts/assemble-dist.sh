@@ -4,10 +4,9 @@
 set -eu
 cd "$(dirname "$0")/.."
 test -d dist
-node scripts/check-mateo-video.mjs
 cp 404.html robots.txt sitemap.xml site.webmanifest _redirects \
   syber-mark.png syber-logo.png syber-logo.webp syber-logo-96.png \
-  og-image.png footer-orb.webp mateo_robles_resume.pdf \
+  og-image.png footer-orb.webp \
   favicon.ico favicon-32x32.png favicon-16x16.png \
   apple-touch-icon.png android-chrome-192x192.png \
   android-chrome-512x512.png dist/
@@ -20,7 +19,7 @@ mkdir -p dist/kit
 cp -r kit/v2 dist/kit/
 # social preview cards, one per page (regenerate with `node scripts/og-cards.mjs`)
 cp -r og dist/
-for dir in rise-demo omni-demo relay-demo projects approach factory jev kev research services privacy stack plus mateo impact; do
+for dir in rise-demo omni-demo media projects approach factory jev kev research services privacy stack plus impact; do
   cp -r "$dir" dist/
 done
 # "What changed" is staff-only (MasterMind RFC 0002): its source projects/latest.js is deleted, and nothing here removes

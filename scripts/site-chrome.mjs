@@ -9,7 +9,7 @@ import { pathToFileURL } from 'node:url';
 import { header, footer } from '../projects/project-template.js';
 import { nav } from '../projects/site-data.js';
 
-const pages = ['mateo/index.html', '404.html', 'approach/index.html', 'factory/index.html', 'stack/index.html', 'jev/index.html', 'kev/index.html', 'privacy/index.html',
+const pages = ['404.html', 'approach/index.html', 'factory/index.html', 'stack/index.html', 'jev/index.html', 'kev/index.html', 'privacy/index.html',
   'rise-demo/index.html', 'services/index.html', 'plus/index.html', 'research/index.html', 'research/jev-execution/index.html', 'research/sybershoke/index.html',
   'research/decision-arena/index.html',
   'projects/rise/index.html'];
@@ -25,7 +25,7 @@ export function applyChrome(html, file) {
   // own their route trees; Projects is anchored on the homepage and needs its own tree.
   const current = nav.find(item => item.href.startsWith('/') && !item.href.includes('#')
     && (self === item.href || self.startsWith(item.href)))?.id
-    || (self.startsWith('/projects/') ? 'projects' : '');
+    || (self.startsWith('/projects/') ? 'products' : '');
   return html
     .replace(HEADER, () => header(current, { here: self }).replace('href="#main"', `href="#${head[1]}"`))
     .replace(FOOTER, () => footer(self));

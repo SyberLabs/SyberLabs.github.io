@@ -1,23 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { HERO_MEDIA } from './hero-media.js';
-import { FRAME_ART, FRAME_DISC, earthRadius } from './frame-art.js';
-
-const pickNext = last => { const pool = FRAME_ART.map((_, i) => i).filter(i => i !== last); return pool[Math.floor(Math.random() * pool.length)]; };
 
 // onTime(seconds) reports the clip's own playback time, which the homepage reveal follows; onUnavailable() fires
 // when the clip cannot play here (reduced motion or a media error), so nothing waits on it.
-// Phones (600px and narrower) show the Gyre alone, full-bleed: no frame and no painting.
-// When the clip cannot move (reduced motion, a media error, or autoplay blocked, as iOS does in Low Power Mode), wide
-// screens show the clip's held frame with a painting laid in it; phones show the Gyre poster.
+// Phones (600px and narrower) play the portrait cut. When the clip cannot move (reduced motion, a media error, or
+// autoplay blocked, as iOS does in Low Power Mode), its poster stands in.
 // If autoplay was blocked, the visitor's first tap or key press starts the motion (a gesture lets iOS play it).
-// The Sophia frame: each pass of the clip shows one of FRAME_ART, chosen at random (never the same twice running).
-// Earth is in the clip; the picture is laid over Earth's disc and follows Earth's measured size frame by frame, fully
-// opaque and a little larger, so Earth is never seen.
-// onArt(id) reports the painting while it is visible in the frame, and null while it is not (the Gyre-only parts of
-// the loop, phones), so the credit line names a painting only while the painting is on screen.
-export default function BackgroundVideo({ pitchPlaying, onTime, onUnavailable, onArt }) {
-  const clip = useRef(null), art = useRef(null);
-  const [artIndex, setArtIndex] = useState(() => pickNext(-1));
+export default function BackgroundVideo({ pitchPlaying = false, onTime, onUnavailable }) {
+  const clip = useRef(null);
   const movie = useRef(null);
   const [mounted, setMounted] = useState(false);
   const [allowed, setAllowed] = useState(false);
@@ -35,50 +25,8 @@ export default function BackgroundVideo({ pitchPlaying, onTime, onUnavailable, o
     return () => { reduced.removeEventListener('change', update); narrow.removeEventListener('change', update); };
   }, []);
   const still = mounted && (!allowed || failed || blocked);
-  const framed = false; // the Gyre alone everywhere: the Sophia frame and its paintings are retired from the hero
   const src = portrait ? HERO_MEDIA.portrait : HERO_MEDIA.landscape;
-  const report = useRef({ onTime, onUnavailable, onArt }); report.current = { onTime, onUnavailable, onArt };
-  // still: the painting fills the frame the whole time; playing: the frame loop below reports it as it shows and hides
-  useEffect(() => { report.current.onArt?.(framed && still ? FRAME_ART[artIndex].id : null); }, [artIndex, framed, still]);
-  // fetch the paintings once, so a switch never waits on the network
-  useEffect(() => { if (framed) FRAME_ART.forEach(a => { const i = new Image(); i.decoding = 'async'; i.src = a.src; }); }, [framed]);
-  // Lay the painting's disc exactly over Earth's: the clip (and its still) are drawn object-fit: cover, so map the
-  // clip's disc through the same scale and offset whenever the stage changes size.
-  useEffect(() => {
-    const box = clip.current, layer = art.current;
-    if (!box || !layer) return;
-    const place = () => {
-      const d = portrait ? FRAME_DISC.portrait : FRAME_DISC.landscape, W = box.clientWidth, H = box.clientHeight;
-      const k = Math.max(W / d.w, H / d.h), ox = (W - d.w * k) / 2, oy = (H - d.h * k) / 2;
-      layer.style.setProperty('--disc-x', `${ox + d.x * k}px`); layer.style.setProperty('--disc-y', `${oy + d.y * k}px`); layer.style.setProperty('--disc-r', `${d.r * k}px`);
-    };
-    place();
-    const ro = 'ResizeObserver' in window ? new ResizeObserver(place) : null; ro?.observe(box);
-    return () => ro?.disconnect();
-  }, [portrait, mounted, allowed, failed, framed]);
-  // Follow the clip frame by frame: the picture grows in as Earth does and shrinks away as Earth leaves; each new
-  // pass of the clip (its time jumps back) draws the next choice. Still: the picture simply fills the frame.
-  useEffect(() => {
-    const video = movie.current, layer = art.current;
-    if (!layer) return;
-    if (still) { layer.style.opacity = '1'; layer.style.setProperty('--grow', '1'); return; }
-    if (!video) return;
-    let raf = 0, last = 0, index = artIndex, shown = null;
-    const frame = () => {
-      const t = video.currentTime;
-      if (t + 1 < last) { index = pickNext(index); setArtIndex(index); }
-      last = t;
-      const r = earthRadius(t); // a disc of Earth's circumradius covers its polygon; 6% more covers its anti-aliased edge
-      layer.style.opacity = r > 0 ? '1' : '0'; layer.style.setProperty('--grow', r > 0 ? Math.min(1, r * 1.06 + .03).toFixed(3) : '0');
-      const now = r > 0 ? FRAME_ART[index].id : null; // credit only what is on screen
-      if (now !== shown) { shown = now; report.current.onArt?.(now); }
-      raf = video.paused ? 0 : requestAnimationFrame(frame);
-    };
-    const go = () => { if (!raf) raf = requestAnimationFrame(frame); };
-    video.addEventListener('playing', go); video.addEventListener('seeked', frame); video.addEventListener('pause', frame);
-    frame(); go();
-    return () => { cancelAnimationFrame(raf); video.removeEventListener('playing', go); video.removeEventListener('seeked', frame); video.removeEventListener('pause', frame); };
-  }, [artIndex, still, src, mounted, allowed, failed, framed]); // re-attach whenever the video or the layer appears
+  const report = useRef({ onTime, onUnavailable }); report.current = { onTime, onUnavailable };
   // the reveal never waits on a clip that cannot move
   useEffect(() => { if (still) report.current.onUnavailable?.(); }, [still]);
   useEffect(() => {
@@ -106,12 +54,10 @@ export default function BackgroundVideo({ pitchPlaying, onTime, onUnavailable, o
     return () => { observer?.disconnect(); menu.disconnect(); document.removeEventListener('visibilitychange', sync); removeEventListener('pointerdown', gesture); removeEventListener('keydown', gesture); video.pause(); };
   }, [allowed, failed, blocked, paused, pitchPlaying, src]);
   if (!mounted) return null;
-  const pick = FRAME_ART[artIndex];
   return <>
     <div ref={clip} className={`pitch-hero__clip${still ? ' is-still' : ''}`} aria-hidden="true">
-      {still && <img className="pitch-hero__still" src={framed ? HERO_MEDIA.still : HERO_MEDIA.portraitPoster} width={framed ? 1280 : 720} height={framed ? 720 : 1280} alt="" decoding="async" />}
+      {still && <img className="pitch-hero__still" src={portrait ? HERO_MEDIA.portraitPoster : HERO_MEDIA.still} width={portrait ? 720 : 1280} height={portrait ? 1280 : 720} alt="" decoding="async" />}
       {allowed && !failed && <video ref={movie} className={`pitch-hero__background${ready && !blocked ? ' is-ready' : ''}`} src={src} autoPlay muted loop playsInline preload={blocked ? 'auto' : 'none'} tabIndex={-1} onLoadStart={() => setReady(false)} onPlaying={() => { setReady(true); setBlocked(false); }} onTimeUpdate={e => report.current.onTime?.(e.currentTarget.currentTime)} onError={() => setFailed(true)} />}
-      {framed && <div ref={art} className="pitch-hero__frame-art" style={{ opacity: still ? 1 : 0 }}><img src={pick.src} alt="" decoding="async" /></div>}
     </div>
     {allowed && !failed && !blocked && !pitchPlaying && <button className="pitch-hero__motion" type="button" aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? 'Play motion' : 'Pause motion'}</button>}
   </>;

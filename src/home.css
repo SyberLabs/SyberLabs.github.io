@@ -1,4 +1,4 @@
-/* Homepage: the lab (the Orb hero), its forms (Pointillism), then Mateo. Tokens and components come from the kit + syberlabs.css. */
+/* Homepage: hero, products, the factory, the GitHits partnership, services, a product demo and contact. Tokens and components come from the kit + syberlabs.css. */
 .home-chrome { display: contents; }
 
 /* ---------- hero: the promise and one call to action; the Orb beside it (src/site/orb.js) ---------- */
@@ -69,7 +69,7 @@
 @media (max-width: 640px) { .home-forms__stage { height: 420px; } .home-forms__now { bottom: 14px; padding: 0 14px; font-size: 19px; } .home-forms__chip { padding: 7px 12px; font-size: 12px; min-height: 36px; } .home-me { margin-top: 72px; } }
 
 
-/* Hiring-first cinematic stage. The still is an actual Gyre capture, not a product mockup. */
+/* Cinematic stage. The still is an actual Gyre capture, not a product mockup. */
 .pitch-hero { position:relative; min-height: min(100svh, 920px); height: max(720px, 95svh); isolation:isolate; overflow:hidden; background:var(--sy-ink); }
 .pitch-hero__art { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; }
 .pitch-hero::after { content:""; position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(0deg,rgba(2,7,10,.5) 0%,rgba(2,7,10,.1) 55%,rgba(2,7,10,.08) 100%); }
@@ -245,7 +245,7 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .pitch-hero__frame-art img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
 .pitch-hero__frame-art::after { content:""; position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle at 34% 28%,#ffffff2e 0,#ffffff00 32%),radial-gradient(circle,#0000 58%,rgba(2,7,10,.4) 82%,rgba(2,7,10,.9) 100%); }
 
-/* The lab: Mateo's own techy pieces carry the studio's identity below the hiring content. The emblem is a small
+/* The factory section: the emblem and the agent network carry the company's identity. The emblem is a small
    chrome seal over the heading; the agent network glows on the stage's black with no box around it. */
 .lab-identity { display:grid; grid-template-columns:.9fr 1.1fr; align-items:center; gap:clamp(32px,6vw,96px); padding-block:100px; border-top:1px solid var(--sy-rule); }
 .lab-identity__emblem { display:block; width:clamp(120px,13vw,190px); height:auto; margin-bottom:18px; mix-blend-mode:screen; } /* its black ground drops out on the stage */
@@ -307,7 +307,7 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .demo-work__links { display:flex; flex-wrap:wrap; gap:6px 24px; }
 
 /* Review fixes (#170): the name never re-runs its entrance when the client render replaces the prerendered hero, so
-   a slow script cannot blank it; from 601 to 800 px the copy clears the Meet Mateo button so the email stays clickable. */
+   a slow script cannot blank it; from 601 to 800 px the copy keeps clear of the hero's lower edge. */
 .sy-reveal .pitch-hero h1>.pitch-hero__name { animation:none; }
 @media(min-width:601px) and (max-width:800px) { .pitch-hero__copy { padding-bottom:164px; } }
 
@@ -352,3 +352,35 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 
 /* The factory's one human step: Admit is the person, so it is the warm one. */
 .factory-steps li.is-human::before, .factory-steps li.is-human b { color:var(--sy-cantaloupe); }
+
+/* Products: four rows, each one link to its product page. */
+.home-products { padding-block:100px 90px; }
+.home-products__head h2 { max-width:24ch; margin:18px 0 40px; font:500 clamp(32px,4vw,54px)/1.08 var(--sy-sans); letter-spacing:-.035em; }
+.home-products__list { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; margin:0; padding:0; list-style:none; border-top:1px solid var(--sy-rule); }
+.home-products__list li { border-right:1px solid var(--sy-rule); }
+.home-products__list li:last-child { border-right:0; }
+.home-products__list a { display:grid; grid-template-rows:auto auto auto 1fr auto; gap:10px; height:100%; padding:28px 24px 32px; color:var(--sy-vellum); text-decoration:none; transition:background var(--sy-t-hover); }
+.home-products__list a:hover { background:rgba(2,151,222,.06); text-decoration:none; }
+.home-products__n { color:var(--sy-dim); font:400 12px/1 var(--sy-mono); letter-spacing:.08em; }
+.home-products__cat { color:var(--sy-ice); font-size:13px; letter-spacing:.04em; }
+.home-products__name { font:500 30px/1.1 var(--sy-sans); letter-spacing:-.03em; }
+.home-products__headline { color:var(--sy-mist); font-size:16px; line-height:1.5; }
+.home-products__status { display:inline-flex; align-items:center; gap:8px; color:var(--sy-mist); font-size:12px; }
+.home-products__dot { width:7px; height:7px; border-radius:50%; background:var(--sy-cantaloupe,#fc734d); box-shadow:0 0 10px var(--sy-cantaloupe,#fc734d); }
+@media(max-width:1000px) { .home-products__list { grid-template-columns:repeat(2,minmax(0,1fr)); } .home-products__list li:nth-child(2n) { border-right:0; } .home-products__list li { border-bottom:1px solid var(--sy-rule); } }
+@media(max-width:600px) { .home-products { padding-block:64px 56px; } .home-products__list { grid-template-columns:1fr; } .home-products__list li { border-right:0; } .home-products__list a { padding:22px 0 24px; } }
+
+/* Consulting and partnerships: the offer, then the three ways to engage. */
+.home-services { display:grid; grid-template-columns:1fr 1fr; gap:clamp(36px,8vw,140px); padding-block:90px; border-top:1px solid var(--sy-rule); }
+.home-services h2 { margin:18px 0; font:500 clamp(32px,4vw,54px)/1.08 var(--sy-sans); letter-spacing:-.035em; }
+.home-services__head>p:not(.sy-eyebrow):not(.home-services__actions) { max-width:42ch; color:var(--sy-mist); font-size:18px; line-height:1.6; }
+.home-services__actions { display:flex; flex-wrap:wrap; align-items:center; gap:14px 24px; margin-top:28px; }
+.home-services__actions a:not(.sy-btn) { display:inline-flex; align-items:center; min-height:44px; color:var(--sy-ice); font-size:15px; }
+.home-services__actions .sy-btn, .home-contact .sy-btn { min-height:52px; padding:14px 24px; font-size:15px; border-radius:2px; letter-spacing:0; text-transform:none; }
+.home-services__list { display:grid; gap:0; margin:0; align-self:start; }
+.home-services__list div { padding:22px 0; border-bottom:1px solid var(--sy-rule); }
+.home-services__list div:first-child { border-top:1px solid var(--sy-rule); }
+.home-services__list dt { color:var(--sy-vellum); font-size:20px; font-weight:500; }
+.home-services__list dd { margin:8px 0 0; color:var(--sy-mist); font-size:16px; line-height:1.6; }
+@media(max-width:800px) { .home-services { grid-template-columns:1fr; gap:32px; padding-block:64px; } }
+.home-contact .sy-btn { color:var(--sy-ink); justify-content:center; }

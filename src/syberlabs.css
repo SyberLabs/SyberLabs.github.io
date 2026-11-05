@@ -418,12 +418,17 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
 .sy-input:focus { box-shadow: 0 0 0 3px rgba(2, 151, 222, .28); }
 .sy-project-row:hover { background: rgba(2, 151, 222, .05); }
 
-/* Immediate hiring routes on the recruiter-facing pages, including phones. */
-.sy-header--hiring .sy-nav { display:block; margin-left:auto; font-family:var(--sy-sans); }
-.sy-header--hiring .sy-menu { margin-left:24px; }
-@media(max-width:600px) {
-  .sy-header--hiring .sy-nav ul { gap:16px; }
-  .sy-header--hiring .sy-nav a { font-size:12px; }
-  .sy-header--hiring .sy-menu { margin-left:16px; }
-  .sy-header--hiring .sy-menu summary span { display:none; }
+/* The header's one conversion action, Book a consultation, stays in the row at every width; the section links
+   fold into the Menu below 1050px. */
+.sy-header .sy-nav { display:block; margin-left:auto; font-family:var(--sy-sans); }
+.sy-header .sy-nav ul { align-items:center; }
+.sy-nav ul a.sy-nav__cta { min-height:36px; padding:0 16px; border-radius:999px; background:var(--sy-cantaloupe, #fc734d); color:#02070a; font-weight:600; font-size:14px; }
+.sy-nav ul a.sy-nav__cta::after { display:none; }
+.sy-nav ul a.sy-nav__cta:hover { color:#02070a; filter:brightness(1.08); }
+.sy-header .sy-menu { margin-left:24px; }
+@media (max-width:1050px) { .sy-header .sy-nav li:not(.sy-nav__cta-item) { display:none; } }
+@media (max-width:600px) {
+  .sy-nav ul a.sy-nav__cta { font-size:12px; padding:0 12px; min-height:32px; }
+  .sy-header .sy-menu { margin-left:12px; }
+  .sy-header .sy-menu summary span { display:none; }
 }

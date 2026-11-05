@@ -21,3 +21,12 @@
 /review/* / 301
 /kit/v2 /kit/v2/demo.html 301
 /kit/v2/ /kit/v2/demo.html 301
+/mateo / 301
+/mateo/ / 301
+/mateo/* / 301
+/mateo_robles_resume.pdf / 301
+/projects/relay / 301
+/projects/relay/* / 301
+/projects/osahr / 301
+/projects/osahr/* / 301
+/relay-demo/* / 301

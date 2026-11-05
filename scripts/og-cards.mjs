@@ -40,8 +40,8 @@ const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 // One entry per page. `seed` names the sigil (projects use their slug, so the card carries the same
 // mark as the page); `line` is the single sentence under the headline.
 const pages = [
-  { slug: 'home', path: '/', eyebrow: 'SyberLabs · Founded by Mateo Robles', headline: 'The autonomous software factory.',
-    line: 'AI agents write, test and repair code on their own. The factory runs every check itself, keeps a signed record, and ships nothing until a person\u00a0admits\u00a0it.', seed: 'syberlabs', accent: ICE },
+  { slug: 'home', path: '/', eyebrow: 'SyberLabs · High-Fidelity Systems', headline: 'AI software that proves its work.',
+    line: 'SyberWork, Attest, RISE and FLYSPACE, plus custom AI consulting and design partnerships. Nothing ships until it is\u00a0checked.', seed: 'syberlabs', accent: ICE },
   { slug: 'factory', path: '/factory/', eyebrow: 'SyberLabs · The factory', headline: 'Agents build. The host checks. A person admits.',
     line: 'One change, step by step: candidates on side refs, checks on the exact tree, twenty-one ordered rules, a signed record of\u00a0each\u00a0step.', seed: 'syberwork', accent: ICE },
   ...projects.map(p => ({
@@ -61,14 +61,12 @@ const pages = [
     line: 'Establish what a system knows, design what a person can do with it, and verify that they can review and change the result.', seed: 'approach', accent: ICE },
   { slug: 'stack', path: '/stack/', eyebrow: 'SyberLabs · How we build', headline: 'Read the source, not the memory.',
     line: 'Our coding agents read open-source dependencies at the exact version a project uses, through GitHits.', seed: 'stack', accent: ICE },
-  { slug: 'services', path: '/services/', eyebrow: 'Work with SyberLabs · Mateo Robles', headline: 'Software engineering. Start with the work.',
-    line: 'AI tool integrations, interactive mathematical engines and product reliability. Discuss a role or a focused project.', seed: 'services', accent: ICE },
+  { slug: 'services', path: '/services/', eyebrow: 'SyberLabs · Consulting and partnerships', headline: 'AI that does real work, and proves it.',
+    line: 'AI consultations, custom agent systems and design partnerships, built with host-run checks, signed records and human\u00a0approval.', seed: 'services', accent: ICE },
   { slug: 'rise-demo', path: '/rise-demo/', eyebrow: 'Product demo · Audiovisual reader', headline: 'See RISE in motion.',
     line: 'A film edited from real RISE screen recordings, then the interactive sample to try yourself.', seed: 'rise', accent: RISE },
   { slug: 'plus', path: '/plus/', eyebrow: 'RISE Plus · Coming soon', headline: 'Your own reading, read aloud.',
     line: 'Give your short writing a voice. Planned: $8.99 a month for 60,000 characters of ElevenLabs narration. Free reading stays free.', seed: 'plus', accent: RISE },
-  { slug: 'mateo', path: '/mateo/', eyebrow: 'Mateo Robles · Software & Product Engineer · Available now', headline: 'AI developer tools. Interactive web products.',
-    line: 'Santa Clara CS 2026. Third place, Cline, Parallel & Composio Hackathon. GitHits design partnership. RISE\u00a0lead\u00a0development.', seed: 'mateo', accent: ICE },
   { slug: 'privacy', path: '/privacy/', eyebrow: 'SyberLabs · Privacy', headline: 'What this site does with your data.',
     line: 'A static site with no accounts, forms, cookies or analytics.', seed: 'privacy', accent: ICE },
 ];
