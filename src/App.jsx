@@ -27,7 +27,7 @@ const PRODUCTS = projects.map(p => ({ ...p, line: PRODUCT_LINES[p.slug] ?? p.int
 // What a customer can buy today. Details, process and the RISE pilot live on /services/.
 const SERVICES = [
   ['AI consultation', 'A focused working session on where AI agents can safely do real work in your product or operations: what to automate, what must be checked, and where a person has to approve.'],
-  ['Custom builds', 'Agent systems, integrations and internal tools, built with the discipline of our own products: host-run checks, signed records and human approval before anything ships.'],
+  ['Custom builds', 'Agent systems, integrations and internal tools, built the way we build SyberWork: host-run checks, signed records and human approval before anything ships.'],
   ['Design partnerships', 'For AI and developer-tool companies: we integrate your product into a working agent factory and measure what it is worth under controlled conditions.'],
 ];
 
@@ -147,8 +147,8 @@ export default function App() {
       <section id="services" className="home-services sy-wrap" aria-labelledby="services-title">
         <div className="home-services__head">
           <p className="sy-eyebrow">Consulting and partnerships</p>
-          <h2 id="services-title">Bring us the problem. We build the system that proves it is solved.</h2>
-          <p>The same factory that builds our products is available for your work. Every engagement starts with a short call and a fixed, written scope.</p>
+          <h2 id="services-title">Bring us the problem. We build the system, and the checks that show it works.</h2>
+          <p>The factory that builds SyberWork is available for your work. Every engagement starts with a short call and a written scope.</p>
           <p className="home-services__actions"><a className="sy-btn sy-btn--solid" href={CONSULT}>Book a consultation</a><a href="/services/">How engagements work <span aria-hidden="true">→</span></a></p>
         </div>
         <dl className="home-services__list">

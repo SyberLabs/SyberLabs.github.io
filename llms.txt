@@ -29,8 +29,8 @@ This file is generated from the site’s own data (projects/site-data.js in gith
   - Evidence, measured: On the author’s machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.
   - Evidence, implemented: The included procurement case runs end to end against a separate reference system, with a real order POST under an idempotency key and manager sign-off.
   - Evidence, not yet: The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has not been run against a real model.
-- [Attest](https://syberlabs.io/projects/attest/): Document and spec verification. Point Attest at a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the real app, in a real browser, and hands the document back with each step marked proven, stale, broken, unverifiable or skipped, with evidence behind every mark.
-  - Status: Open source · early
+- [Attest](https://syberlabs.io/projects/attest/): Document and spec verification. Point Attest at a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the real app (commands in a scratch directory, browser steps in a real Chrome) and hands the document back with each step marked proven, stale, broken, unverifiable or skipped, with evidence behind every mark.
+  - Status: Public source · early
   - Reflects: SyberLabs/attest@274b8e7 · verified 2026-11-05
   - Source: https://github.com/SyberLabs/attest
   - Evidence, measured: At Kane CLI Hack Day in San Francisco on 24 October 2026, Attest proved 9 documents across 23 turns, with 31 browser claims proven by Kane, each with a screenshot.
@@ -56,10 +56,6 @@ This file is generated from the site’s own data (projects/site-data.js in gith
   - Evidence, tested: Unit tests across the stores, services and capability engine, and six Playwright specs including the “morning” golden path: shell → question → cited sources → crystal → second persona.
   - Evidence, implemented: The capability compiler and the server-side broker are implemented and hardened against fixtures and stubbed transports.
   - Evidence, not yet: No third-party API or MCP server has been measured in production use. Speech is tested with typed transcripts; there is no live microphone measurement. The hosted identity boundary exists in code with no provisioned issuer.
-
-## Products
-
-
 
 ## Company
 

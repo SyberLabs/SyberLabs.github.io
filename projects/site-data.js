@@ -16,7 +16,7 @@ export const GITHUB = 'https://github.com/SyberLabs';            // the company'
 // Public tools and previews. Linked from the hero, the Atlas, the footer and each project page.
 export const RISE_APP = 'https://rise.syberlabs.io/';
 export const RISE_SAMPLE = 'https://rise.syberlabs.io/jev-scene-demo';
-// Legacy public sample retained for existing deep links; not the portfolio’s first-click journey.
+// Legacy public sample retained for existing deep links; not the site’s first-click journey.
 export const RISE_TRY = 'https://rise.syberlabs.io/try/';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
 export const SKETCH_APP = 'https://sketch.syberlabs.io/';
@@ -106,15 +106,15 @@ export const projects = [
     reflects: 'SyberLabs/attest@274b8e7 · verified 2026-11-05',
     pageTitle: 'Attest: Prove Every Promise Your Docs Make',
     headline: 'Prove every promise your docs make.',
-    intro: 'Point Attest at a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the real app, in a real browser, and hands the document back with each step marked proven, stale, broken, unverifiable or skipped, with evidence behind every mark.',
-    summary: 'Attest is the first station of the SyberLabs factory. Steps that fail go to an agent, SyberWork decides what that agent may change, and the browser check runs again. A case closes only when the fix is proven, and every case leaves a receipt.',
-    status: { kind: 'wip', label: 'Open source · early' },
+    intro: 'Point Attest at a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the real app (commands in a scratch directory, browser steps in a real Chrome) and hands the document back with each step marked proven, stale, broken, unverifiable or skipped, with evidence behind every mark.',
+    summary: 'Attest is the first station of the SyberLabs factory. Steps that fail go to an agent, an authority policy decides what that agent may change, and the browser check runs again. A case closes only when the fix is proven, and every case leaves a receipt.',
+    status: { kind: 'wip', label: 'Public source · early' },
     primary: { label: 'View source', href: 'https://github.com/SyberLabs/attest', external: true },
     secondary: { label: 'Discuss a pilot', href: CONSULT },
     why: { title: 'Why prove a document?',
       paragraphs: [
         'Docs, quickstarts and specs make promises: run this command, click this button, see this label. Products change underneath them, and the first person to notice is usually a frustrated customer.',
-        'Attest treats each step as a claim to be checked against the running product. A claim is proven only when a command passed or a browser saw the promised label, never because a model said so.',
+        'Attest treats each step as a claim to be checked against the running product. A claim is proven only when a command passed or the browser run observed the promised label; the verdict is a fixed rule, never a model’s say-so.',
       ] },
     use: { title: 'Four ways to use it', note: 'Python 3.11 or newer. Browser steps use Kane CLI, TestMu’s browser agent.',
       steps: [
@@ -141,7 +141,7 @@ export const projects = [
       ['Stage', 'Open-source command-line tool, version 0.1.0'],
       ['Technology', 'Python 3.11+, OpenAI structured outputs, Kane CLI and Chrome'],
       ['Works with', { label: 'SyberWork, the factory floor', href: '/projects/syberwork/' }],
-      ['License', 'MIT'],
+      ['License', 'MIT, declared in pyproject.toml'],
       ['Source', { label: 'github.com/SyberLabs/attest', href: 'https://github.com/SyberLabs/attest' }],
     ],
   },
