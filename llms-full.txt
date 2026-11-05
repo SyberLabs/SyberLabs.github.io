@@ -1,6 +1,6 @@
 # SyberLabs
 
-> SyberLabs is an autonomous software factory: AI agents write, test and repair code on their own, the factory runs every check itself and keeps a signed record, and nothing ships until a person admits it. Founded by Mateo Robles.
+> SyberLabs builds AI software that proves its work: SyberWork, an autonomous software factory; Attest, which proves every step your docs promise; RISE; and FLYSPACE. Custom AI consulting and design partnerships.
 
 > **RISE and AI models:** since RISE #294 the RISE server calls no model. An AI reading request runs on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s machine (`/kev/` on the site). local Kev did not meet RISE’s bar in internal checks on RISE’s evaluations (RISE `docs/product/tasks/SCR-004.json`), and there is no production Kev deployment, by design. Once the reader connects, RISE’s visual direction sends sections of the reading text to that connection.
 
@@ -20,6 +20,151 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 - It describes a website. It is not an API, SDK or package, and it carries no credentials. Never send keys or private data to the contact address.
 
 # Projects
+
+## SyberWork: Autonomous software factory
+
+Page: https://syberlabs.io/projects/syberwork/
+Status: Work in progress
+Reflects: SyberLabs/SyberWork@208eaf6 · verified 2026-10-05
+Source: https://github.com/SyberLabs/SyberWork
+
+The factory floor for AI agents that write, test and repair code. Every change is checked before it lands. Rules define the allowed steps, a named person approves the work, and a tamper-evident history records what was proposed, checked, approved and done.
+
+Page title: SyberWork: The Autonomous Software Factory
+
+Headline: Agents build. The host checks. A person admits.
+
+Build Thread applies these checks to code changes in your Git repository. It runs the checks itself before accepting a change, even if the model says the tests passed. Actions use unique keys to prevent duplicate execution, and their results are checked afterwards.
+
+Primary link: [View source](https://github.com/SyberLabs/SyberWork)
+
+Secondary link: [Build Thread in ten minutes](https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md)
+
+### Why check each proposed step?
+
+When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules controlled by the system running it.
+
+The rules define what may happen and who can approve it. If a proposal breaks a rule, SyberWork refuses it and records the reason and the rule used. The same checks can apply to a purchase order or a code change.
+
+### Build Thread: review one code change
+
+Python 3.11+ and git. No account, no model and no network required.
+
+- 01 / init, Name your real checks: syberlabs init writes a contract into .syberlabs/ and guesses the test command. When it cannot, it writes a check that fails until you name one, so an unchecked change never looks accepted.
+- 02 / start, Open a thread: A thread tracks one change to one repository and names the files it may affect. It records and checks the starting Git commit.
+- 03 / propose, Keep proposed edits separate: Your edit, a coding tool’s edit, or an automated search result is saved as a separate Git commit for review. It does not change your working files.
+- 04 / check, The host runs the checks: Checks run against the exact proposed files. The record keeps their exit codes, how long they took and hashes of their output.
+- 05 / accept and publish, Accept the change, then choose what to publish: Accept updates one branch only if it still points to the expected commit. Pushing code, opening a pull request and publishing each require a separate allowed action, with duplicate prevention and recovery checks.
+
+### A model’s claim is not a result.
+
+The repository’s own Build Thread example, run on 2026-10-05 from SyberWork@208eaf6 with Python 3.11 and git. No model, no network.
+
+```
+$ PYTHONPATH=. python examples/build_thread.py
+{
+  "context": ["tests/test_report.py:1-7", "src/report.py:1-2"],
+  "model": {
+    "candidate": "c1",
+    "claimed": { "tests": "passed", "confidence": 0.97 },
+    "verdict": "candidate_check_failed:tests",
+    "accept": "denied:candidate_check_failed:tests"
+  },
+  "patch": {
+    "candidate": "c2",
+    "verdict": "all_checks_passed",
+    "accept": "succeeded",
+    "branch": "refs/heads/syberlabs/e643ed26",
+    "commit": "7c606ae8f44f3f999c010799e1d2fdcee1166011"
+  },
+  "working_tree_and_main_untouched": true,
+  "resumed": { "status": "complete", "accepted": "c2", "events": 18, "chain_valid": true },
+  "replay_under_v2": ["candidate_check_missing:lint", "candidate_check_missing:lint"]
+}
+build-thread complete
+```
+
+The provider claimed c1 passed its tests with 0.97 confidence, but checks run on its exact files failed, so SyberWork rejected it. Candidate c2 passed all checks. It was accepted by updating one branch only after confirming the branch had not changed (compare-and-swap). The working files and main branch were untouched. The thread resumed from a valid 18-event history. Replaying that history with a new lint-check requirement shows both candidates would be rejected for the missing check.
+
+### How it is built
+
+- Separate the core from the app: The reusable syberlabs package defines the rules, proposal interface and in-memory Session. It uses a fixed JSON format and a hash-linked event history. The syberwork app adds storage, a web API, command-line tools, a console and connectors. The core never imports the app.
+- A chain you can verify: Every case event is hashed into a chain with a canonical-JSON digest and rule id beside it, an HMAC witness, an Ed25519 signature of the chain head, and an append-only transparency log kept in a separate file by a witness process that holds the key.
+- A fixed format for exchanging work records: Fifteen JSON schemas define work rules, observations, proposals, approval decisions, actions, outcome checks and rule changes. The protocol is sdk.syberlabs.space/v0alpha1, with a format checker and reference event sequences.
+- Plan checks and review rule changes: The compiler turns the work rules into ordered steps, approval checks, completion checks and form fields. Replay shows how changed rules would apply to recorded history without calling a model, changing a destination or fetching live data.
+- Separate proposals from execution: A planner receives the objective, allowed actions, work rules, history and completion criteria, then proposes one action. It cannot execute the action. It can run through an HTTPS service or a local loopback address.
+- Prevent duplicate writes: Executors send writes with unique request keys and conditions that prevent duplicates or outdated changes, then record the receipt. If the outcome is uncertain, it stays marked uncertain rather than being retried blindly.
+
+### Evidence
+
+- tested: Twenty-three golden conformance traces, a clean-install release gate and CI green on CPython 3.11 to 3.13.
+- measured: On the author’s machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.
+- implemented: The included procurement case runs end to end against a separate reference system, with a real order POST under an idempotency key and manager sign-off.
+- not yet: The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has not been run against a real model.
+
+### Facts
+
+- Stage: Open-source runtime and SDK, version 0.1.0, wheel verified
+- Technology: Python 3.11+ with no runtime dependencies, SQLite, pytest; Docker files for the console
+- License: Apache 2.0
+- Source: [github.com/SyberLabs/SyberWork](https://github.com/SyberLabs/SyberWork)
+
+## Attest: Document and spec verification
+
+Page: https://syberlabs.io/projects/attest/
+Status: Open source · early
+Reflects: SyberLabs/attest@274b8e7 · verified 2026-11-05
+Source: https://github.com/SyberLabs/attest
+
+Point Attest at a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the real app, in a real browser, and hands the document back with each step marked proven, stale, broken, unverifiable or skipped, with evidence behind every mark.
+
+Page title: Attest: Prove Every Promise Your Docs Make
+
+Headline: Prove every promise your docs make.
+
+Attest is the first station of the SyberLabs factory. Steps that fail go to an agent, SyberWork decides what that agent may change, and the browser check runs again. A case closes only when the fix is proven, and every case leaves a receipt.
+
+Primary link: [View source](https://github.com/SyberLabs/attest)
+
+Secondary link: [Discuss a pilot](mailto:syberlabs.support@gmail.com?subject=AI%20consultation)
+
+### Why prove a document?
+
+Docs, quickstarts and specs make promises: run this command, click this button, see this label. Products change underneath them, and the first person to notice is usually a frustrated customer.
+
+Attest treats each step as a claim to be checked against the running product. A claim is proven only when a command passed or a browser saw the promised label, never because a model said so.
+
+### Four ways to use it
+
+Python 3.11 or newer. Browser steps use Kane CLI, TestMu’s browser agent.
+
+- 01 / Prove, Prove a doc: Run attest prove on a Markdown document. Shell steps run in a scratch directory, browser steps run in Chrome, and the result is one page with a badge on every claim.
+- 02 / Repair, Fix drift in the doc: When a descriptive claim has gone stale, an agent writes a doc-only patch in a throwaway checkout and the browser proves it again before anything is applied.
+- 03 / Protect, Refuse to weaken a promise: A policy file marks promises the product must keep. Attest will not edit those to make a check pass; it issues an implementation handoff instead.
+- 04 / Spec, Build to a spec: In spec mode a failing claim becomes a ticket. A worker implements it in a candidate copy of the app, never the original, and the browser checks the copy. Applying it needs a person’s approval.
+
+### How it is built
+
+- Claims pinned to lines: One structured-output call turns the document into typed claims tied to exact line spans. Fenced command blocks become shell claims verbatim.
+- Verdicts by rule, not by model: Shell claims are judged on exit codes and promised output. Browser claims compare the expected label with the observed one, with guards for negation and changed numbers.
+- An authority gate: Each stale or broken claim is checked against the policy before an agent touches it. Descriptive text may be repaired; protected promises may not.
+- Receipts for every case: Each loop case writes an attest.receipt/v0 file: document hashes before and after, the claim, the authority decision, the patch hash and the evidence. SyberWork reads them as observations.
+- Bring your own agent: OpenAI is the default worker. Any command that reads a brief and prints a diff can take its place, so a team can plug in the agent it already uses.
+
+### Evidence
+
+- measured: At Kane CLI Hack Day in San Francisco on 24 October 2026, Attest proved 9 documents across 23 turns, with 31 browser claims proven by Kane, each with a screenshot.
+- measured: Real drift it caught that day: Vite’s starter page now reads “Get started”, not “Vite + React”, and GitHub’s “Security & analysis” is now “Advanced Security”.
+- tested: Unit tests and red-team cases cover forged approvals, attempts to weaken a protected promise and path-escape attacks on the apply step.
+- not yet: There is no hosted service; Attest runs locally as a command-line tool. Shell steps run on the host, not in a sandbox. No outside team runs it in production yet.
+
+### Facts
+
+- Stage: Open-source command-line tool, version 0.1.0
+- Technology: Python 3.11+, OpenAI structured outputs, Kane CLI and Chrome
+- Works with: [SyberWork, the factory floor](https://syberlabs.io/projects/syberwork/)
+- License: MIT
+- Source: [github.com/SyberLabs/attest](https://github.com/SyberLabs/attest)
 
 ## RISE: Interactive reading app
 
@@ -192,256 +337,17 @@ Text version of the interactive map: This map needs JavaScript.
 - License: No license file yet; the repository is public
 - Source: [github.com/SyberLabs/Flyspace](https://github.com/SyberLabs/Flyspace)
 
-## SyberWork: AI work review tools
+## Products
 
-Page: https://syberlabs.io/projects/syberwork/
-Status: Work in progress
-Reflects: SyberLabs/SyberWork@208eaf6 · verified 2026-10-05
-Source: https://github.com/SyberLabs/SyberWork
 
-Tools for checking and approving AI work before it makes changes. Rules define the allowed steps, a named person approves the work, and a tamper-evident history records what was proposed, checked, approved and done.
 
-Page title: SyberWork: Review and Approval Tools for AI Work
+## Company
 
-Headline: Check AI work before it changes anything.
+- [Consulting and partnerships](https://syberlabs.io/services/): Custom AI consulting, builds and design partnerships from SyberLabs. We design agent systems that check their own work: host-run checks, signed records and human approval before anything ships.
+- [Research](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: the technical reports and notes on this site, the RISE reader-owned AI status pages, the five working papers in SyberLabs/papers, the Instrument Panel and the OSAHR decision workbench. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
 
-Build Thread applies these checks to code changes in your Git repository. It runs the checks itself before accepting a change, even if the model says the tests passed. Actions use unique keys to prevent duplicate execution, and their results are checked afterwards.
+## Account
 
-Primary link: [View source](https://github.com/SyberLabs/SyberWork)
-
-Secondary link: [Build Thread in ten minutes](https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md)
-
-### Why check each proposed step?
-
-When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules controlled by the system running it.
-
-The rules define what may happen and who can approve it. If a proposal breaks a rule, SyberWork refuses it and records the reason and the rule used. The same checks can apply to a purchase order or a code change.
-
-### Build Thread: review one code change
-
-Python 3.11+ and git. No account, no model and no network required.
-
-- 01 / init, Name your real checks: syberlabs init writes a contract into .syberlabs/ and guesses the test command. When it cannot, it writes a check that fails until you name one, so an unchecked change never looks accepted.
-- 02 / start, Open a thread: A thread tracks one change to one repository and names the files it may affect. It records and checks the starting Git commit.
-- 03 / propose, Keep proposed edits separate: Your edit, a coding tool’s edit, or an automated search result is saved as a separate Git commit for review. It does not change your working files.
-- 04 / check, The host runs the checks: Checks run against the exact proposed files. The record keeps their exit codes, how long they took and hashes of their output.
-- 05 / accept and publish, Accept the change, then choose what to publish: Accept updates one branch only if it still points to the expected commit. Pushing code, opening a pull request and publishing each require a separate allowed action, with duplicate prevention and recovery checks.
-
-### A model’s claim is not a result.
-
-The repository’s own Build Thread example, run on 2026-10-05 from SyberWork@208eaf6 with Python 3.11 and git. No model, no network.
-
-```
-$ PYTHONPATH=. python examples/build_thread.py
-{
-  "context": ["tests/test_report.py:1-7", "src/report.py:1-2"],
-  "model": {
-    "candidate": "c1",
-    "claimed": { "tests": "passed", "confidence": 0.97 },
-    "verdict": "candidate_check_failed:tests",
-    "accept": "denied:candidate_check_failed:tests"
-  },
-  "patch": {
-    "candidate": "c2",
-    "verdict": "all_checks_passed",
-    "accept": "succeeded",
-    "branch": "refs/heads/syberlabs/e643ed26",
-    "commit": "7c606ae8f44f3f999c010799e1d2fdcee1166011"
-  },
-  "working_tree_and_main_untouched": true,
-  "resumed": { "status": "complete", "accepted": "c2", "events": 18, "chain_valid": true },
-  "replay_under_v2": ["candidate_check_missing:lint", "candidate_check_missing:lint"]
-}
-build-thread complete
-```
-
-The provider claimed c1 passed its tests with 0.97 confidence, but checks run on its exact files failed, so SyberWork rejected it. Candidate c2 passed all checks. It was accepted by updating one branch only after confirming the branch had not changed (compare-and-swap). The working files and main branch were untouched. The thread resumed from a valid 18-event history. Replaying that history with a new lint-check requirement shows both candidates would be rejected for the missing check.
-
-### How it is built
-
-- Separate the core from the app: The reusable syberlabs package defines the rules, proposal interface and in-memory Session. It uses a fixed JSON format and a hash-linked event history. The syberwork app adds storage, a web API, command-line tools, a console and connectors. The core never imports the app.
-- A chain you can verify: Every case event is hashed into a chain with a canonical-JSON digest and rule id beside it, an HMAC witness, an Ed25519 signature of the chain head, and an append-only transparency log kept in a separate file by a witness process that holds the key.
-- A fixed format for exchanging work records: Fifteen JSON schemas define work rules, observations, proposals, approval decisions, actions, outcome checks and rule changes. The protocol is sdk.syberlabs.space/v0alpha1, with a format checker and reference event sequences.
-- Plan checks and review rule changes: The compiler turns the work rules into ordered steps, approval checks, completion checks and form fields. Replay shows how changed rules would apply to recorded history without calling a model, changing a destination or fetching live data.
-- Separate proposals from execution: A planner receives the objective, allowed actions, work rules, history and completion criteria, then proposes one action. It cannot execute the action. It can run through an HTTPS service or a local loopback address.
-- Prevent duplicate writes: Executors send writes with unique request keys and conditions that prevent duplicates or outdated changes, then record the receipt. If the outcome is uncertain, it stays marked uncertain rather than being retried blindly.
-
-### Evidence
-
-- tested: Twenty-three golden conformance traces, a clean-install release gate and CI green on CPython 3.11 to 3.13.
-- measured: On the author’s machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.
-- implemented: The included procurement case runs end to end against a separate reference system, with a real order POST under an idempotency key and manager sign-off.
-- not yet: The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has not been run against a real model.
-
-### Facts
-
-- Stage: Open-source runtime and SDK, version 0.1.0, wheel verified
-- Technology: Python 3.11+ with no runtime dependencies, SQLite, pytest; Docker files for the console
-- License: Apache 2.0
-- Source: [github.com/SyberLabs/SyberWork](https://github.com/SyberLabs/SyberWork)
-
-## Relay: Job application workspace
-
-Page: https://syberlabs.io/projects/relay/
-Status: Early release
-Reflects: SyberLabs/relay@0000605 · verified 2026-10-05
-Source: https://github.com/SyberLabs/relay
-
-A workspace for job seekers who draft with AI assistants, with one record per job and human approval of the exact wording.
-
-Page title: Relay: Job Application Workspace for AI-Assisted Drafting
-
-Headline: Every application has a history.
-
-Relay works alongside ChatGPT, Codex, Claude, Grok and your notes in Notion or Obsidian. Each job keeps its research, confirmed facts and draft versions in one history. Relay never submits an employer form.
-
-Primary link: [View source](https://github.com/SyberLabs/relay)
-
-Secondary link: [Integration setup](https://github.com/SyberLabs/relay/blob/main/integrations/README.md)
-
-### Why keep one history per application?
-
-People already hunt for jobs with ChatGPT, Claude, Grok, Notion and Obsidian. The work falls apart in the gaps: a new chat forgets the last draft, a tracker overwrites a decision, an interview note resets an application’s status.
-
-Relay keeps research and draft history for each job. Approval applies to one exact draft. Returned work must match the job and its current version, so an old draft cannot silently replace newer reviewed work.
-
-### How a job moves through Relay
-
-Fictional example records ship with the app.
-
-- 01 / Import, Bring the research: Add a job from a title and posting URL, pull a public Greenhouse or Lever board, map a tracker CSV, or import notes from Notion or Obsidian. Matching URLs join the same record.
-- 02 / Facts, Confirm what is true: Confirm facts about your experience in a reusable list. Relay checks selected claim patterns in AI drafts against those facts and flags unsupported claims. These checks do not verify whether a fact is true.
-- 03 / Draft, Hand off to your assistant: Export the job’s research and drafting instructions for ChatGPT, Codex or Claude, then import the draft for the same job version. Browsers supporting WebMCP, a tool connection for browser assistants, can let an assistant place a draft directly in the review queue.
-- 04 / Accept, Approve the exact words: Acceptance records approval of one draft version. Change the text and it needs review again.
-- 05 / Send and record, You press submit: After a person uses Inspect Accept to approve the form details, Relay’s Chrome extension can fill the form once. You still press submit. The outcome is recorded with a receipt.
-
-### Screens: Four screens from a local build.
-
-Captured on 2026-10-05 from relay@0000605 built and run locally with its own migrations and the mocked local sign-in. Every company, role and fact shown is a fictional example record; no real applicant data.
-
-- Runtime with a fictional example job selected. Approve & send stays disabled until an agent prepares the application. (https://syberlabs.io/relay-demo/relay-runtime-20261005.jpg)
-- Review and approve one exact draft. Nothing is sent. (https://syberlabs.io/relay-demo/relay-accept-20261005.jpg)
-- Tracker. Three fictional jobs by status; imported submissions without a receipt stay visible but are excluded from reply rates. (https://syberlabs.io/relay-demo/relay-tracker-20261005.jpg)
-- The fact ledger. Two fictional facts confirmed by the user and available for agent citations; Relay records the confirmation and does not verify facts itself. (https://syberlabs.io/relay-demo/relay-facts-20261005.jpg)
-
-### What leaves Relay, and what comes back.
-
-Recorded by running the repository’s own modules: research sent to an assistant, the returned draft, checks of the job identity, version and claims, and five rejected examples that write nothing.
-
-Text version of the interactive map: This map needs JavaScript.
-
-### How it is built
-
-- One history per job: Posting observations are preserved as rows; rediscovery keeps an existing interview or submitted status instead of resetting it.
-- Reject outdated drafts: Research sent to an assistant and drafts returned for review carry the job identity and version. Relay rejects work based on an outdated version.
-- Claim checks: Relay compares words and numbers in a draft with the confirmed facts it cites. This is an approximate check and is labelled as such; it does not establish factual truth.
-- Edge deployment: TypeScript and React on Cloudflare Workers with Drizzle ORM, a Manifest V3 extension, and Playwright tests.
-
-### Evidence
-
-- tested: The domain, handoff and profile modules were executed under Node for the site’s recorded Relay map; the D1 acceptance write is reproduced as a rule.
-- implemented: Runtime, Tracker, the fact ledger, CSV and job-board import, and every integration listed in the repository.
-- not yet: No public deployment and no customer counts, hiring outcomes or throughput improvements are claimed. Autonomous hunting is not included.
-
-### Facts
-
-- Built by: SyberLabs
-- Technology: TypeScript, React, Vinext, Cloudflare Workers, D1, Drizzle ORM, Chrome extension (Manifest V3), Playwright
-- Boundary: Relay prepares and tracks application materials. It does not submit employer forms, host an MCP connection, or sync accounts in the background.
-- Source: [github.com/SyberLabs/relay](https://github.com/SyberLabs/relay)
-
-## OSAHR: Network simulation library
-
-Page: https://syberlabs.io/projects/osahr/
-Status: Research
-Reflects: SyberLabs/OSAHR_Cell@7293e27 · verified 2026-10-05
-Source: https://github.com/SyberLabs/OSAHR_Cell
-
-An open-source Python library for simulating networks whose connections change over time. Rules and probabilities determine each change, and recorded runs can be replayed and checked.
-
-Page title: OSAHR: Simulate Changing Networks in Python
-
-Headline: Replay a changing system.
-
-The simulator represents connections that can join several items at once, then changes them at random times using exact probabilities. Every public claim is graded Known, Measured, Inferred or Proposed.
-
-Primary link: [View source](https://github.com/SyberLabs/OSAHR_Cell)
-
-Secondary link: [Read the architecture](https://github.com/SyberLabs/OSAHR_Cell/blob/main/ARCHITECTURE.md)
-
-### Why simulate changing connections?
-
-Most simulators change the state of a fixed network. Many real systems change the network itself: a cell grows a connection, an organisation adds a role, an agent fleet forms a new channel. Modelling that exactly, with the right probabilities and a record you can replay, is the problem OSAHR takes on.
-
-The simulation core is small and has no external dependencies, making its rules easier to state and check. It is intended as a foundation for the lab’s work approval tools.
-
-### What you can do
-
-Install the Python package with pip, or download the source and run its examples.
-
-- 01 / Model, Define the network and its rules: Define the kinds of items and connections in the network, the patterns each rule can change, and how often those changes can occur. Rules can also update settings and memory.
-- 02 / Run, Choose a scheduler: Choose how the simulator schedules changes: Direct SSA, modified next-reaction or bounded thinning. All three preserve the exact probabilities. The faster pattern search is checked against a search of every possibility.
-- 03 / Replay, Reproduce every state: Use the same random seed to repeat a run. Replay can also apply each recorded change and verify the hash, a fingerprint of the simulation state, at every step.
-- 04 / Review, Review recorded experiments: The decision workbench packages recorded experiments for review with labels for their evidence level. GrokCell is a prototype for coordinating AI agents on the same simulation core.
-
-### Watch network connections change one event at a time.
-
-Recorded by running the adaptive-signal example and exported from the trace.
-
-Text version of the interactive map: This map needs JavaScript.
-
-### Twenty-five events, one hash to replay.
-
-The repository’s own example, run on 2026-10-05 from OSAHR_Cell@7293e27 with Python 3.11 in a fresh venv after python -m pip install -e . No dependencies, no network.
-
-```
-$ python examples/adaptive_signal.py
-events: 25
-simulation time: 10.000000
-agents: 2
-receiver: {'active': True, 'value': 2.5, 'responsiveness': 1.0}
-memory: {'received_count': 10, 'intensity_ema': 0.17478781247500003}
-state hash: 6d73af0a24684c9afc339e1bc59dddbd6ca42a08792fca5b8b7e123fc262a857
-```
-
-Complete output, unedited. With random seed 20260729, the simulation recorded 25 events in ten units of simulated time. Two agents exchanged ten received signals. The receiver’s value rose to 2.5 and its responsiveness rose from 0.1 to the limit of 1.0, through an external event at t = 3 and changes made by the rule itself. The state hash fingerprints the final state. A second run with the same seed prints the same lines.
-
-### How it is built
-
-- Changes with exact probabilities: Rules change network connections at random times while preserving their exact probabilities. The network is a typed directed hypergraph, whose connections can link several items at once. Its required properties are documented in the architecture guide.
-- Recheck only affected patterns: After a change, the simulator searches affected connections for rule matches. This incremental search is checked against a search of every possible match.
-- Adaptive parameters: Rules can update the model’s settings and memory, changing how it behaves as its connections change.
-- No runtime dependencies: The core runs on Python 3.11+ without extra packages. Recorded experiments document checks of that core.
-
-### Evidence
-
-- tested: A pytest suite of 41 test files across the kernel, experiments and workbench; the kernel suite (tests/) passed 127 of 128 on 2026-10-05, the one skip being the optional ontology probe. Replay of the site’s recorded trace reproduces every state hash.
-- implemented: Kernel, three schedulers, incremental matching, adaptive parameters, replay, the decision workbench and the GrokCell prototype.
-- not yet: Research models of mechanisms, not calibrated forecasts. No continuous integration is configured in the repository yet.
-
-### Facts
-
-- Stage: Open-source research library, version 0.2.1
-- Technology: Python 3.11+ (no runtime dependencies in the core library), pytest
-- License: Apache 2.0 in the LICENSE file; pyproject.toml’s metadata still says MIT
-- Source: [github.com/SyberLabs/OSAHR_Cell](https://github.com/SyberLabs/OSAHR_Cell)
-
-## Work
-
-- [GitHits integration](https://syberlabs.io/mateo/#githits): Code search for AI coding assistants
-- [PorchLight](https://syberlabs.io/mateo/#porchlight): Hackathon third place · cited city reports
-- [RISE](https://syberlabs.io/mateo/#rise): Interactive reading in your browser
-- [Engines](https://sykosyber.github.io/engines/works/gyre.html): Mathematical worlds · run Gyre
-
-## Connect
-
-- [Meet Mateo](https://syberlabs.space/mateo-site/): Projects, code and résumé
-- [Mateo on GitHub](https://github.com/sykosyber): github.com/sykosyber
-
-## More
-
-- [Work with us](https://syberlabs.io/services/): Work with Mateo Robles on software engineering. Explore his work on AI coding tools, interactive browser art and the RISE reading app, then discuss a role or focused project.
-- [Research archive](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: the technical reports and notes on this site, the RISE reader-owned AI status pages, the five working papers in SyberLabs/papers, the Instrument Panel and the OSAHR decision workbench. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
 - [Subscriber account](https://rise.syberlabs.io/plus/): Existing RISE subscribers
 - [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.
 

@@ -4,7 +4,7 @@
 // and footer into the static pages.
 // Case studies lead with project context and real evidence. Sigil helpers remain
 // available to the shared site chrome and project directory.
-import { projects, nav, footerLinks, siteMap, EMAIL, MATEO_EMAIL, RESUME } from './site-data.js?v=20261027b';
+import { projects, nav, footerLinks, siteMap, EMAIL, workWithUs } from './site-data.js?v=20261105';
 import { params as sigilParams } from '../kit/v2/syber-sigil.js';
 export { projects };
 
@@ -50,16 +50,14 @@ const navLinks = (current = '', here = '') => nav.map(item => `<li><a href="${it
 // JS, and src/site/nav.js keeps the attribute in step once it runs.
 // `sticky` (default) keeps the header in flow; the homepage passes false so it floats over the hero.
 // The customer subscription route is separate from staff sign-in in the footer.
-export const header = (current = '', { sticky = true, script = true, here = '', hiring = false } = {}) => {
-  hiring ||= ['/mateo/', '/services/', '/projects/rise/', '/research/', '/research/jev-execution/', '/research/decision-arena/', '/research/sybershoke/', '/rise-demo/', '/jev/', '/kev/'].includes(here);
-  return `<a class="sy-skip" href="#main">Skip to content</a>
+// The header row ends with the one conversion action, Book a consultation, which stays visible on phones too.
+export const header = (current = '', { sticky = true, script = true, here = '' } = {}) => `<a class="sy-skip" href="#main">Skip to content</a>
 <div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
-<header class="sy-header${sticky ? ' sy-header--sticky' : ''}${hiring ? ' sy-header--hiring' : ''}"><div class="sy-header__in">
+<header class="sy-header${sticky ? ' sy-header--sticky' : ''}"><div class="sy-header__in">
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
-  <nav class="sy-nav" aria-label="Primary"><ul>${hiring ? `<li><a href="mailto:${MATEO_EMAIL}?subject=Interview%20with%20Mateo%20Robles">Interview</a></li><li><a href="${RESUME}">Résumé</a></li>` : navLinks(current)}</ul></nav>
+  <nav class="sy-nav" aria-label="Primary"><ul>${navLinks(current)}<li class="sy-nav__cta-item"><a class="sy-nav__cta" href="${workWithUs.href}">${workWithUs.label}</a></li></ul></nav>
   <details class="sy-menu"><summary aria-label="Menu" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas(here)}</details>
-</div></header>${script ? '\n<script type="module" src="/syberlabs.js?v=20261027-nav"></script>' : ''}`;
-};
+</div></header>${script ? '\n<script type="module" src="/syberlabs.js?v=20261105"></script>' : ''}`;
 
 // The footer: one hairline bar of essential contact, account and legal links. Every contact
 // route is defined by projects/site-data.js footerLinks. The site map is not repeated here: it is the header's
@@ -69,7 +67,7 @@ export const footer = (current = '') => `<footer class="sy-footer">
   <div class="sy-footer__bar">
     <a class="sy-lockup" href="/"><img src="/syber-logo-96.png" alt="" width="18" height="20">SyberLabs</a>
     <nav aria-label="Footer">${footerLinks.map(link => `<a href="${link.href}"${link.href === current ? ' aria-current="page"' : ''}>${link.label}${link.external ? ' ' + icon('external', 14) : ''}</a>`).join('')}</nav>
-    <span class="sy-footer__copy">© 2026</span>
+    <span class="sy-footer__copy">© 2026 SyberLabs</span>
   </div>
 </div></footer>`;
 
@@ -242,7 +240,7 @@ export function projectRow(item, { intro = true } = {}) {
 function others(p) {
   return `
 <section class="pj-section sy-container" aria-labelledby="others-title">
-  <div class="pj-others__head" data-reveal><h2 id="others-title" class="sy-eyebrow">Other projects</h2></div>
+  <div class="pj-others__head" data-reveal><h2 id="others-title" class="sy-eyebrow">Other products</h2></div>
   <ul class="sy-project-rows pj-others" data-reveal-children>${projects.filter(item => item.slug !== p.slug).map(item => projectRow(item, { intro: false })).join('')}</ul>
 </section>`;
 }
@@ -251,11 +249,11 @@ export function renderProject(p) {
   return {
     title: `${p.pageTitle || p.name} | SyberLabs`,
     description: `${p.intro} ${p.summary || ''}`.trim(),
-    body: `${header('projects', { here: `/projects/${p.slug}/` })}
+    body: `${header('products', { here: `/projects/${p.slug}/` })}
 <main id="main" class="pj-page">
   <section class="pj-hero sy-container" aria-labelledby="project-title">
     <div class="pj-hero__copy">
-      ${crumbs([{ label: 'Work', href: '/#work' }, { label: p.name }])}
+      ${crumbs([{ label: 'Products', href: '/#products' }, { label: p.name }])}
       <p class="pj-eyebrow sy-eyebrow" data-reveal><span class="pj-number">${p.number}</span> / ${esc(p.category)}</p>
       <div class="pj-identity" data-reveal><span class="pj-name">${esc(p.name)}</span>${badge(p.status)}</div>
       <h1 id="project-title" class="sy-display pj-title" data-split>${esc(p.headline)}</h1>

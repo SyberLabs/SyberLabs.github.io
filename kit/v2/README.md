@@ -5,20 +5,20 @@ Files: `syber-atlas.css` (tokens + components), `syber-atmosphere.js` (Plate I e
 
 ## Current website direction: immersive mathematical media
 
-The approved Mateo concept refines this existing kit. It does not introduce a second kit or replace the vendored component API. For the SyberLabs website and Mateo portfolio, the direction below takes precedence over the legacy serif, spectrum and framed-plate presentation described later. Existing app consumers retain their current tokens and components.
+The current website direction refines this existing kit. It does not introduce a second kit or replace the vendored component API. For the SyberLabs website, the direction below takes precedence over the legacy serif, spectrum and framed-plate presentation described later. Existing app consumers retain their current tokens and components.
 
 - **Palette (Midnight theme, October 30, 2026):** Midnight Black `#02070A` surfaces, off-white text, quiet cool secondary text, Electric Blue `#0297DE` as the system's light (links, focus, structure, the wordmark and the graded Gyre) and Cantaloupe Orange `#FC734D` used a little, as heat: solid action buttons, live signals, the factory's Admit step and the warm horizon under the hero. Text on either colour fill is Midnight (6.3:1 on blue, 7.4:1 on orange; white on the blue fails). The website defines these once as scoped `--sy-*` overrides at the end of `src/syberlabs.css`; this kit file keeps its own tokens for vendored apps. Product artwork (the RISE hero, Midjourney pieces) keeps its own colours. Avoid rainbow emphasis, purple haze and competing accents on this surface.
 - **Typography:** Instrument Sans for headings and body copy, with clean bold names and titles and comfortable line spacing. Use 400/500/600 weights already supported by the kit. Serif and spectrum italics remain available to existing consumers but are not the website hero treatment. Reserve mono for occasional useful metadata.
 - **Composition:** mathematical motion fills the entire hero, including behind the copy. Use a subtle full-width or lower-edge tint and local text shadows for contrast, rather than an opaque left-half mask. Keep generous whitespace and a sparse left-aligned hierarchy. Keep headings, supporting copy and actions as real HTML. Do not recreate the composition as a flattened screenshot or a stack of bordered cards.
-- **Conversion:** the Mateo hero leads with his name and a concise software-engineer introduction, followed by `Interview Mateo` as the primary action and `View résumé` as the secondary action. Preserve those destinations and the résumé download. Avoid competing hero actions, unsupported seniority claims and fabricated customer logos, testimonials, usage statistics or product proof.
-- **Navigation:** keep the header visually quiet. Work and About may be prominent, while the existing menu, privacy and account routes must remain reachable and keyboard accessible at every breakpoint. Sparse presentation does not authorize removing functionality.
+- **Conversion:** the hero leads with the SyberLabs name, one line on what the company builds and its four products, followed by `Book a consultation` as the primary action and `Explore products` as the secondary action. The same action closes the page and stays in the header at every width. Avoid competing hero actions and fabricated customer logos, testimonials, usage statistics or product proof.
+- **Navigation:** keep the header visually quiet. Products, Factory and Services may be prominent, while the existing menu, privacy and account routes must remain reachable and keyboard accessible at every breakpoint. Sparse presentation does not authorize removing functionality.
 - **Responsive media:** choose the mobile crop deliberately so the mathematical subject remains legible and text has its own calm reading area. Use scoped `object-position` or canvas composition changes rather than shrinking the desktop scene wholesale. Let actions wrap or stack without clipping; keep navigation and media controls reachable.
-- **Video:** a genuine introduction uses a native `<video controls>` with an accessible name, an appropriate poster, captions for speech and a transcript. Keep native playback and keyboard controls. Show a play affordance only when a working video is available, and derive any duration from the actual asset. Decorative background motion stays muted, has a still fallback, respects reduced motion and can be paused when it runs for more than five seconds. It must never carry essential copy.
+- **Video:** a product film uses a native `<video controls>` with an accessible name, an appropriate poster, captions for speech and a transcript. Keep native playback and keyboard controls. Show a play affordance only when a working video is available, and derive any duration from the actual asset. Decorative background motion stays muted, has a still fallback, respects reduced motion and can be paused when it runs for more than five seconds. It must never carry essential copy.
 - **Selected work:** continue the same restrained palette and spatial rhythm into project rows. Use actual project information and imagery. Project media supports the work rather than posing as evidence of capabilities or results that have not been verified.
 
 Apply these choices through the website's existing stylesheet and page components, using scoped `--sy-*` overrides where needed. Do not globally retokenize shared app consumers merely to match one hero. No new framework, dependency or parallel design-system directory is required.
 
-Acceptance checks: inspect the rendered hero at laptop and mobile widths; verify copy and control contrast over the brightest frame, keyboard focus, menu routes, both conversion destinations, real video playback, reduced-motion behavior and the static fallback. A mockup establishes art direction, not evidence that those checks passed.
+Acceptance checks: inspect the rendered hero at laptop and mobile widths; verify copy and control contrast over the brightest frame, keyboard focus, menu routes, both hero destinations, real video playback, reduced-motion behavior and the static fallback. A mockup establishes art direction, not evidence that those checks passed.
 
 ## Vendoring
 Apps copy the files into their repo (e.g. `src/vendor/syber/`) unmodified, and never hot-link. Wrap the module format only if your bundler needs it. Load fonts yourself: Instrument Serif, Instrument Sans 400/500/600, JetBrains Mono 400/500 (Google Fonts on the website, self-hosted in apps). Tokens are `--sy-*` custom properties on `:root` and classes are `sy-*`. To map tokens onto existing variable names, write `--app-bg: var(--sy-ink)`.
@@ -54,56 +54,22 @@ drawAll(document);                     // canvas[data-sigil="relay"][data-color]
 5. The engine renders ≤1 texel per CSS px and at most 60 frames a second, pauses off-screen (IntersectionObserver) and while the tab is hidden, `pause()`/`resume()` hold the frame while something covers the plate (a full-screen menu), and `destroy()` cancels the RAF and loses the GL context.
 6. Status is always shown as dot + word, never as colour alone. Nothing is set below 12px, and serif is never used below 32px.
 
-The Mateo detail page and the other reading pages (projects, services, research, approach, stack, Jev, Kev, the RISE demo) share the homepage's Midnight surface; the earlier page-local ivory blocks were removed. The homepage keeps the cinematic motion stage. All use Instrument Sans, real project media and direct hiring actions.
+The reading pages (projects, services, research, approach, stack, Jev, Kev, the RISE demo) share the homepage's Midnight surface; the earlier page-local ivory blocks were removed. The homepage keeps the cinematic motion stage. All use Instrument Sans and real project media.
 
 ### Homepage first-visit reveal
 
-The hiring hero is one composition timed to one clip, `gyre-sophia-*.mp4`:
-Gyre motion, the RISE Sophia frame drawing itself, Earth held in the frame,
-then back to Gyre. On wide screens the clip sits right of the copy, scaled into
-a soft vignette so the frame and Earth are always whole and never under type;
-on phones it sits between the name and the panel.
+The hero is one composition over one muted, looping Gyre clip (`media/demos/gyre-full-*.mp4`), full-bleed on every
+screen, with a portrait cut on phones. The title is `SyberLabs` in chromatic blue: a chrome gradient clipped to
+Instrument Sans letters, built from stacked solid copies of the word, never an outline stroke (Instrument Sans draws
+letters from overlapping contours, and a stroke traces their inner joints as visible seams).
 
-The hero title is `SyberLabs` in chromatic blue: a chrome gradient clipped to
-Instrument Sans letters, a fine light bezel on their edges and an embossed lit top
-edge and shadow, with one slow sheen on arrival. Beneath it, "by" and Mateo's own
-signature (`mateo/brand/mateo-robles-signature.webp`, alt text "Mateo Robles"),
-which writes itself in from the left on the first visit.
+On the first visit in a tab the panel rises in step with the clip (`REVEAL` in `src/hero-media.js`). A slow or blocked
+clip, scrolling, reduced motion or a media error all end in the same full layout; return visits and script-free pages
+start there. If autoplay is refused, the poster shows and the first tap or key press starts the motion. Do not
+restore a permanent opaque half-screen mask.
 
-On phones (600px and narrower) the hero shows the Gyre alone, full-bleed and
-slightly dimmed, with no Sophia frame, Earth or painting (`gyre-full-portrait-v1`).
-If autoplay is refused (iOS Low Power Mode does this even for muted video), wide
-screens show the clip's held frame with a painting laid in it, phones show the
-Gyre poster, and the first tap or key press starts the motion.
-
-The Sophia frame holds a different picture on each pass of the clip, chosen at
-random without repeating, and it always holds something warm against the blue
-page: The Pink Cloud (Henri-Edmond Cross, CC0 at the Cleveland Museum of Art) or
-one of Mateo's own pieces. The clip's Earth is never seen: the picture appears
-with Earth's first frame and follows Earth's measured size until it has gone
-(`src/frame-art.js` holds the disc and the size over time). The credit line
-under the hero names every picture and highlights the one in the frame. Keep
-baked-in text out of the frame.
-
-The title's bezel is built from stacked solid copies of the word, never an
-outline stroke: Instrument Sans draws letters from overlapping contours, and a
-stroke traces their inner joints as visible seams.
-
-Mateo's own Midjourney pieces carry the lab's identity below the hiring content:
-the chrome emblem and the agent network in the lab section. Credit them as
-"Mateo Robles, made with Midjourney".
-
-On the first visit in a tab the page follows the clip's own playback time
-(`REVEAL` in `src/hero-media.js`): with the Gyre the name rises (readable within
-a second); as the frame draws, the role follows; once Earth is framed, at about
-5.7 seconds, the panel rises with the line, `Interview Mateo`, `View résumé` and
-availability. Interview and Résumé stay in the header throughout, and the panel
-is inert only while hidden. A slow or blocked clip, scrolling, playing the film,
-reduced motion or a media error all end in the same full layout; return visits
-and script-free pages start there. The clip keeps looping behind the settled
-page. Keep the panel beside
-or below Earth, never over it, and do not restore a permanent opaque half-screen
-mask.
+The factory section carries the company's identity with two Midjourney pieces, the chrome emblem and the agent
+network (`media/lab/`), credited "Illustration made with Midjourney".
 
 ### Editable brand assets
 

@@ -13,13 +13,16 @@ sparse actions. The theme is defined once, at the end of `src/syberlabs.css`;
 pages do not carry their own colour blocks. Apply scoped website overrides;
 preserve shared kit consumers and the existing framework.
 
-For Mateo's hero, keep `Interview Mateo` and `View résumé` as the two conversion
-actions. Keep copy as real HTML and provide native accessible video when a real
-asset exists. Preserve menu, privacy and account access on mobile and desktop.
-Inspect the actual approved reference pixels when available and verify the
-rendered result at laptop and mobile widths. Do not invent product proof,
-seniority claims, personal contact addresses or video metadata. Do not describe
-Mateo as junior. Use plain punctuation without em dashes in new public copy.
+The site is a company site: it sells SyberLabs' four products (SyberWork, Attest,
+RISE, FLYSPACE) and its consulting and design partnerships. Keep `Book a
+consultation` as the one conversion action (header, hero, services, contact) and
+the single company inbox in `projects/site-data.js` (`EMAIL`). The site speaks
+only as SyberLabs: do not name individuals, their employers, résumés, phone
+numbers, personal sites or hiring pitches on any public page (CI fails if hiring
+copy returns). Keep copy as real HTML. Preserve menu, privacy and account access
+on mobile and desktop. Verify the rendered result at laptop and mobile widths. Do
+not invent product proof, customers, prices, response times or availability. Use
+plain punctuation without em dashes in new public copy.
 
 ## Public dependency lookup (GitHits)
 

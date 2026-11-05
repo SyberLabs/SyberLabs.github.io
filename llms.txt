@@ -1,6 +1,6 @@
 # SyberLabs
 
-> SyberLabs is an autonomous software factory: AI agents write, test and repair code on their own, the factory runs every check itself and keeps a signed record, and nothing ships until a person admits it. Founded by Mateo Robles.
+> SyberLabs builds AI software that proves its work: SyberWork, an autonomous software factory; Attest, which proves every step your docs promise; RISE; and FLYSPACE. Custom AI consulting and design partnerships.
 
 > **RISE and AI models:** since RISE #294 the RISE server calls no model. An AI reading request runs on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s machine (`/kev/` on the site). local Kev did not meet RISE’s bar in internal checks on RISE’s evaluations (RISE `docs/product/tasks/SCR-004.json`), and there is no production Kev deployment, by design. Once the reader connects, RISE’s visual direction sends sections of the reading text to that connection.
 
@@ -21,6 +21,22 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 ## Projects
 
+- [SyberWork](https://syberlabs.io/projects/syberwork/): Autonomous software factory. The factory floor for AI agents that write, test and repair code. Every change is checked before it lands. Rules define the allowed steps, a named person approves the work, and a tamper-evident history records what was proposed, checked, approved and done.
+  - Status: Work in progress
+  - Reflects: SyberLabs/SyberWork@208eaf6 · verified 2026-10-05
+  - Source: https://github.com/SyberLabs/SyberWork
+  - Evidence, tested: Twenty-three golden conformance traces, a clean-install release gate and CI green on CPython 3.11 to 3.13.
+  - Evidence, measured: On the author’s machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.
+  - Evidence, implemented: The included procurement case runs end to end against a separate reference system, with a real order POST under an idempotency key and manager sign-off.
+  - Evidence, not yet: The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has not been run against a real model.
+- [Attest](https://syberlabs.io/projects/attest/): Document and spec verification. Point Attest at a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the real app, in a real browser, and hands the document back with each step marked proven, stale, broken, unverifiable or skipped, with evidence behind every mark.
+  - Status: Open source · early
+  - Reflects: SyberLabs/attest@274b8e7 · verified 2026-11-05
+  - Source: https://github.com/SyberLabs/attest
+  - Evidence, measured: At Kane CLI Hack Day in San Francisco on 24 October 2026, Attest proved 9 documents across 23 turns, with 31 browser claims proven by Kane, each with a screenshot.
+  - Evidence, measured: Real drift it caught that day: Vite’s starter page now reads “Get started”, not “Vite + React”, and GitHub’s “Security & analysis” is now “Advanced Security”.
+  - Evidence, tested: Unit tests and red-team cases cover forged approvals, attempts to weaken a protected promise and path-escape attacks on the apply step.
+  - Evidence, not yet: There is no hosted service; Attest runs locally as a command-line tool. Shell steps run on the host, not in a sandbox. No outside team runs it in production yet.
 - [RISE](https://syberlabs.io/projects/rise/): Interactive reading app. An interactive reading app that combines text, sound and moving visuals in your browser. Read words at a pace you choose, or switch to a page view.
   - Status: Live · open beta
   - Reflects: SyberLabs/RISE@998d725 · verified 2026-10-05
@@ -40,45 +56,18 @@ This file is generated from the site’s own data (projects/site-data.js in gith
   - Evidence, tested: Unit tests across the stores, services and capability engine, and six Playwright specs including the “morning” golden path: shell → question → cited sources → crystal → second persona.
   - Evidence, implemented: The capability compiler and the server-side broker are implemented and hardened against fixtures and stubbed transports.
   - Evidence, not yet: No third-party API or MCP server has been measured in production use. Speech is tested with typed transcripts; there is no live microphone measurement. The hosted identity boundary exists in code with no provisioned issuer.
-- [SyberWork](https://syberlabs.io/projects/syberwork/): AI work review tools. Tools for checking and approving AI work before it makes changes. Rules define the allowed steps, a named person approves the work, and a tamper-evident history records what was proposed, checked, approved and done.
-  - Status: Work in progress
-  - Reflects: SyberLabs/SyberWork@208eaf6 · verified 2026-10-05
-  - Source: https://github.com/SyberLabs/SyberWork
-  - Evidence, tested: Twenty-three golden conformance traces, a clean-install release gate and CI green on CPython 3.11 to 3.13.
-  - Evidence, measured: On the author’s machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.
-  - Evidence, implemented: The included procurement case runs end to end against a separate reference system, with a real order POST under an idempotency key and manager sign-off.
-  - Evidence, not yet: The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has not been run against a real model.
-- [Relay](https://syberlabs.io/projects/relay/): Job application workspace. A workspace for job seekers who draft with AI assistants, with one record per job and human approval of the exact wording.
-  - Status: Early release
-  - Reflects: SyberLabs/relay@0000605 · verified 2026-10-05
-  - Source: https://github.com/SyberLabs/relay
-  - Evidence, tested: The domain, handoff and profile modules were executed under Node for the site’s recorded Relay map; the D1 acceptance write is reproduced as a rule.
-  - Evidence, implemented: Runtime, Tracker, the fact ledger, CSV and job-board import, and every integration listed in the repository.
-  - Evidence, not yet: No public deployment and no customer counts, hiring outcomes or throughput improvements are claimed. Autonomous hunting is not included.
-- [OSAHR](https://syberlabs.io/projects/osahr/): Network simulation library. An open-source Python library for simulating networks whose connections change over time. Rules and probabilities determine each change, and recorded runs can be replayed and checked.
-  - Status: Research
-  - Reflects: SyberLabs/OSAHR_Cell@7293e27 · verified 2026-10-05
-  - Source: https://github.com/SyberLabs/OSAHR_Cell
-  - Evidence, tested: A pytest suite of 41 test files across the kernel, experiments and workbench; the kernel suite (tests/) passed 127 of 128 on 2026-10-05, the one skip being the optional ontology probe. Replay of the site’s recorded trace reproduces every state hash.
-  - Evidence, implemented: Kernel, three schedulers, incremental matching, adaptive parameters, replay, the decision workbench and the GrokCell prototype.
-  - Evidence, not yet: Research models of mechanisms, not calibrated forecasts. No continuous integration is configured in the repository yet.
 
-## Work
+## Products
 
-- [GitHits integration](https://syberlabs.io/mateo/#githits): Code search for AI coding assistants
-- [PorchLight](https://syberlabs.io/mateo/#porchlight): Hackathon third place · cited city reports
-- [RISE](https://syberlabs.io/mateo/#rise): Interactive reading in your browser
-- [Engines](https://sykosyber.github.io/engines/works/gyre.html): Mathematical worlds · run Gyre
 
-## Connect
 
-- [Meet Mateo](https://syberlabs.space/mateo-site/): Projects, code and résumé
-- [Mateo on GitHub](https://github.com/sykosyber): github.com/sykosyber
+## Company
 
-## More
+- [Consulting and partnerships](https://syberlabs.io/services/): Custom AI consulting, builds and design partnerships from SyberLabs. We design agent systems that check their own work: host-run checks, signed records and human approval before anything ships.
+- [Research](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: the technical reports and notes on this site, the RISE reader-owned AI status pages, the five working papers in SyberLabs/papers, the Instrument Panel and the OSAHR decision workbench. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
 
-- [Work with us](https://syberlabs.io/services/): Work with Mateo Robles on software engineering. Explore his work on AI coding tools, interactive browser art and the RISE reading app, then discuss a role or focused project.
-- [Research archive](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: the technical reports and notes on this site, the RISE reader-owned AI status pages, the five working papers in SyberLabs/papers, the Instrument Panel and the OSAHR decision workbench. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
+## Account
+
 - [Subscriber account](https://rise.syberlabs.io/plus/): Existing RISE subscribers
 - [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.
 

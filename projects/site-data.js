@@ -7,17 +7,11 @@
 // under stated conditions), deployed (it runs somewhere people can reach). Nothing is promoted
 // from one state to the next by wording.
 
-export const CONTACT = 'mailto:hello.mateorobles@gmail.com';
-export const EMAIL = 'hello.mateorobles@gmail.com';
-// Mateo's own address is the single contact everywhere (site, résumé, structured data): he asked for it on Oct 27
-// because the old lab inbox was flagged as spam during outreach.
-export const MATEO_EMAIL = 'hello.mateorobles@gmail.com';
-export const RESUME = 'https://syberlabs.space/mateo-site/#resumes';   // the three role-family résumés on Mateo's site
-export const LINKEDIN = 'https://www.linkedin.com/in/automateon/';
-export const GITHUB = 'https://github.com/SyberLabs';            // the lab's organisation
-// Mateo's own profiles, wherever he appears as a person (the hero's founder line, the founder card, structured data)
-export const MATEO_GITHUB = 'https://github.com/sykosyber';
-export const MATEO_SITE = 'https://syberlabs.space/mateo-site/';
+// One company inbox is the single contact everywhere (site, structured data, product pages). Change it here only.
+export const EMAIL = 'syberlabs.support@gmail.com';
+export const CONTACT = `mailto:${EMAIL}`;
+export const CONSULT = `${CONTACT}?subject=${encodeURIComponent('AI consultation')}`;
+export const GITHUB = 'https://github.com/SyberLabs';            // the company's organisation
 
 // Public tools and previews. Linked from the hero, the Atlas, the footer and each project page.
 export const RISE_APP = 'https://rise.syberlabs.io/';
@@ -26,7 +20,6 @@ export const RISE_SAMPLE = 'https://rise.syberlabs.io/jev-scene-demo';
 export const RISE_TRY = 'https://rise.syberlabs.io/try/';
 export const OMNI_PREVIEW = 'https://omni.syberlabs.io/';
 export const SKETCH_APP = 'https://sketch.syberlabs.io/';
-export const GYRE_APP = 'https://sykosyber.github.io/engines/works/gyre.html';
 
 // Customer entry point stays stable before and after sales open. The app owns checkout readiness.
 // Keep the marketing offer aligned with RISE's server-enforced plan; never infer paid availability from a merge.
@@ -37,23 +30,21 @@ export const RISE_PLUS = {
   href: 'https://rise.syberlabs.io/plus/',
   source: 'https://github.com/SyberLabs/RISE/pull/542',
 };
-export const MATEO_PORTFOLIO = '/mateo/';
-
-// Selected work and hiring paths. Research remains available through its archive.
+// The header row: products, the factory, services and one direct contact action.
 export const nav = [
+  { id: 'products', label: 'Products', href: '/#products' },
   { id: 'factory', label: 'Factory', href: '/factory/' },
-  { id: 'projects', label: 'Work', href: '/#work' },
-  { id: 'mateo', label: 'About', href: MATEO_PORTFOLIO },
+  { id: 'services', label: 'Services', href: '/services/' },
 ];
 
-export const workWithUs = { label: 'Work with us', href: '/services/' };
+export const workWithUs = { label: 'Book a consultation', href: CONSULT };
 
-// The footer carries a few essentials, every contact route and the legal page. It does not repeat the site map: the
-// selected menu (siteMap below) is the header's Menu (the Atlas), a <details> that opens and closes without JavaScript.
+// The footer carries a few essentials, the contact route and the legal page. It does not repeat the site map: the
+// menu (siteMap below) is the header's Menu (the Atlas), a <details> that opens and closes without JavaScript.
 export const footerLinks = [
   { label: 'Contact', href: CONTACT },
-  { label: '925-949-3105', href: 'tel:+19259493105' },
-  { label: 'Résumé', href: RESUME },
+  { label: 'Services', href: '/services/' },
+  { label: 'GitHub', href: GITHUB, external: true },
   { label: 'Privacy', href: '/privacy/' },
   { label: 'Subscriber account', href: RISE_PLUS.href, external: true },
   { label: 'Staff sign in', href: '/admin/' },
@@ -61,7 +52,101 @@ export const footerLinks = [
 
 export const projects = [
   {
-    slug: 'rise', number: '01', name: 'RISE', category: 'Interactive reading app', accent: '#0297de',
+    slug: 'syberwork', number: '01', name: 'SyberWork', category: 'Autonomous software factory', accent: '#0297de',
+    reflects: 'SyberLabs/SyberWork@208eaf6 · verified 2026-10-05',
+    pageTitle: 'SyberWork: The Autonomous Software Factory',
+    headline: 'Agents build. The host checks. A person admits.',
+    intro: 'The factory floor for AI agents that write, test and repair code. Every change is checked before it lands. Rules define the allowed steps, a named person approves the work, and a tamper-evident history records what was proposed, checked, approved and done.',
+    summary: 'Build Thread applies these checks to code changes in your Git repository. It runs the checks itself before accepting a change, even if the model says the tests passed. Actions use unique keys to prevent duplicate execution, and their results are checked afterwards.',
+    status: { kind: 'wip', label: 'Work in progress' },
+    primary: { label: 'View source', href: 'https://github.com/SyberLabs/SyberWork', external: true },
+    secondary: { label: 'Build Thread in ten minutes', href: 'https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md' },
+    why: { title: 'Why check each proposed step?',
+      paragraphs: [
+        'When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules controlled by the system running it.',
+        'The rules define what may happen and who can approve it. If a proposal breaks a rule, SyberWork refuses it and records the reason and the rule used. The same checks can apply to a purchase order or a code change.',
+      ] },
+    use: { title: 'Build Thread: review one code change', note: 'Python 3.11+ and git. No account, no model and no network required.',
+      steps: [
+        ['01 / init', 'Name your real checks', 'syberlabs init writes a contract into .syberlabs/ and guesses the test command. When it cannot, it writes a check that fails until you name one, so an unchecked change never looks accepted.'],
+        ['02 / start', 'Open a thread', 'A thread tracks one change to one repository and names the files it may affect. It records and checks the starting Git commit.'],
+        ['03 / propose', 'Keep proposed edits separate', 'Your edit, a coding tool’s edit, or an automated search result is saved as a separate Git commit for review. It does not change your working files.'],
+        ['04 / check', 'The host runs the checks', 'Checks run against the exact proposed files. The record keeps their exit codes, how long they took and hashes of their output.'],
+        ['05 / accept and publish', 'Accept the change, then choose what to publish', 'Accept updates one branch only if it still points to the expected commit. Pushing code, opening a pull request and publishing each require a separate allowed action, with duplicate prevention and recovery checks.'],
+      ] },
+    run: { title: 'A model’s claim is not a result.',
+      note: 'The repository’s own Build Thread example, run on 2026-10-05 from SyberWork@208eaf6 with Python 3.11 and git. No model, no network.',
+      command: 'PYTHONPATH=. python examples/build_thread.py',
+      output: '{\n  "context": ["tests/test_report.py:1-7", "src/report.py:1-2"],\n  "model": {\n    "candidate": "c1",\n    "claimed": { "tests": "passed", "confidence": 0.97 },\n    "verdict": "candidate_check_failed:tests",\n    "accept": "denied:candidate_check_failed:tests"\n  },\n  "patch": {\n    "candidate": "c2",\n    "verdict": "all_checks_passed",\n    "accept": "succeeded",\n    "branch": "refs/heads/syberlabs/e643ed26",\n    "commit": "7c606ae8f44f3f999c010799e1d2fdcee1166011"\n  },\n  "working_tree_and_main_untouched": true,\n  "resumed": { "status": "complete", "accepted": "c2", "events": 18, "chain_valid": true },\n  "replay_under_v2": ["candidate_check_missing:lint", "candidate_check_missing:lint"]\n}\nbuild-thread complete',
+      caption: 'The provider claimed c1 passed its tests with 0.97 confidence, but checks run on its exact files failed, so SyberWork rejected it. Candidate c2 passed all checks. It was accepted by updating one branch only after confirming the branch had not changed (compare-and-swap). The working files and main branch were untouched. The thread resumed from a valid 18-event history. Replaying that history with a new lint-check requirement shows both candidates would be rejected for the missing check.' },
+    design: { title: 'How it is built',
+      items: [
+        ['Separate the core from the app', 'The reusable syberlabs package defines the rules, proposal interface and in-memory Session. It uses a fixed JSON format and a hash-linked event history. The syberwork app adds storage, a web API, command-line tools, a console and connectors. The core never imports the app.'],
+        ['A chain you can verify', 'Every case event is hashed into a chain with a canonical-JSON digest and rule id beside it, an HMAC witness, an Ed25519 signature of the chain head, and an append-only transparency log kept in a separate file by a witness process that holds the key.'],
+        ['A fixed format for exchanging work records', 'Fifteen JSON schemas define work rules, observations, proposals, approval decisions, actions, outcome checks and rule changes. The protocol is sdk.syberlabs.space/v0alpha1, with a format checker and reference event sequences.'],
+        ['Plan checks and review rule changes', 'The compiler turns the work rules into ordered steps, approval checks, completion checks and form fields. Replay shows how changed rules would apply to recorded history without calling a model, changing a destination or fetching live data.'],
+        ['Separate proposals from execution', 'A planner receives the objective, allowed actions, work rules, history and completion criteria, then proposes one action. It cannot execute the action. It can run through an HTTPS service or a local loopback address.'],
+        ['Prevent duplicate writes', 'Executors send writes with unique request keys and conditions that prevent duplicates or outdated changes, then record the receipt. If the outcome is uncertain, it stays marked uncertain rather than being retried blindly.'],
+      ] },
+    evidence: [
+      ['tested', 'Twenty-three golden conformance traces, a clean-install release gate and CI green on CPython 3.11 to 3.13.'],
+      ['measured', 'On the author’s machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.'],
+      ['implemented', 'The included procurement case runs end to end against a separate reference system, with a real order POST under an idempotency key and manager sign-off.'],
+      ['not yet', 'The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has not been run against a real model.'],
+    ],
+    facts: [
+      ['Stage', 'Open-source runtime and SDK, version 0.1.0, wheel verified'],
+      ['Technology', 'Python 3.11+ with no runtime dependencies, SQLite, pytest; Docker files for the console'],
+      ['License', 'Apache 2.0'],
+      ['Source', { label: 'github.com/SyberLabs/SyberWork', href: 'https://github.com/SyberLabs/SyberWork' }],
+    ],
+  },
+  {
+    slug: 'attest', number: '02', name: 'Attest', category: 'Document and spec verification', accent: '#0297de',
+    reflects: 'SyberLabs/attest@274b8e7 · verified 2026-11-05',
+    pageTitle: 'Attest: Prove Every Promise Your Docs Make',
+    headline: 'Prove every promise your docs make.',
+    intro: 'Point Attest at a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the real app, in a real browser, and hands the document back with each step marked proven, stale, broken, unverifiable or skipped, with evidence behind every mark.',
+    summary: 'Attest is the first station of the SyberLabs factory. Steps that fail go to an agent, SyberWork decides what that agent may change, and the browser check runs again. A case closes only when the fix is proven, and every case leaves a receipt.',
+    status: { kind: 'wip', label: 'Open source · early' },
+    primary: { label: 'View source', href: 'https://github.com/SyberLabs/attest', external: true },
+    secondary: { label: 'Discuss a pilot', href: CONSULT },
+    why: { title: 'Why prove a document?',
+      paragraphs: [
+        'Docs, quickstarts and specs make promises: run this command, click this button, see this label. Products change underneath them, and the first person to notice is usually a frustrated customer.',
+        'Attest treats each step as a claim to be checked against the running product. A claim is proven only when a command passed or a browser saw the promised label, never because a model said so.',
+      ] },
+    use: { title: 'Four ways to use it', note: 'Python 3.11 or newer. Browser steps use Kane CLI, TestMu’s browser agent.',
+      steps: [
+        ['01 / Prove', 'Prove a doc', 'Run attest prove on a Markdown document. Shell steps run in a scratch directory, browser steps run in Chrome, and the result is one page with a badge on every claim.'],
+        ['02 / Repair', 'Fix drift in the doc', 'When a descriptive claim has gone stale, an agent writes a doc-only patch in a throwaway checkout and the browser proves it again before anything is applied.'],
+        ['03 / Protect', 'Refuse to weaken a promise', 'A policy file marks promises the product must keep. Attest will not edit those to make a check pass; it issues an implementation handoff instead.'],
+        ['04 / Spec', 'Build to a spec', 'In spec mode a failing claim becomes a ticket. A worker implements it in a candidate copy of the app, never the original, and the browser checks the copy. Applying it needs a person’s approval.'],
+      ] },
+    design: { title: 'How it is built',
+      items: [
+        ['Claims pinned to lines', 'One structured-output call turns the document into typed claims tied to exact line spans. Fenced command blocks become shell claims verbatim.'],
+        ['Verdicts by rule, not by model', 'Shell claims are judged on exit codes and promised output. Browser claims compare the expected label with the observed one, with guards for negation and changed numbers.'],
+        ['An authority gate', 'Each stale or broken claim is checked against the policy before an agent touches it. Descriptive text may be repaired; protected promises may not.'],
+        ['Receipts for every case', 'Each loop case writes an attest.receipt/v0 file: document hashes before and after, the claim, the authority decision, the patch hash and the evidence. SyberWork reads them as observations.'],
+        ['Bring your own agent', 'OpenAI is the default worker. Any command that reads a brief and prints a diff can take its place, so a team can plug in the agent it already uses.'],
+      ] },
+    evidence: [
+      ['measured', 'At Kane CLI Hack Day in San Francisco on 24 October 2026, Attest proved 9 documents across 23 turns, with 31 browser claims proven by Kane, each with a screenshot.'],
+      ['measured', 'Real drift it caught that day: Vite’s starter page now reads “Get started”, not “Vite + React”, and GitHub’s “Security & analysis” is now “Advanced Security”.'],
+      ['tested', 'Unit tests and red-team cases cover forged approvals, attempts to weaken a protected promise and path-escape attacks on the apply step.'],
+      ['not yet', 'There is no hosted service; Attest runs locally as a command-line tool. Shell steps run on the host, not in a sandbox. No outside team runs it in production yet.'],
+    ],
+    facts: [
+      ['Stage', 'Open-source command-line tool, version 0.1.0'],
+      ['Technology', 'Python 3.11+, OpenAI structured outputs, Kane CLI and Chrome'],
+      ['Works with', { label: 'SyberWork, the factory floor', href: '/projects/syberwork/' }],
+      ['License', 'MIT'],
+      ['Source', { label: 'github.com/SyberLabs/attest', href: 'https://github.com/SyberLabs/attest' }],
+    ],
+  },
+  {
+    slug: 'rise', number: '03', name: 'RISE', category: 'Interactive reading app', accent: '#0297de',
     reflects: 'SyberLabs/RISE@998d725 · verified 2026-10-05',
     pageTitle: 'RISE: Interactive Reading with Text, Sound and Visuals',
     headline: 'Read beyond the page.',
@@ -139,7 +224,7 @@ export const projects = [
     ],
   },
   {
-    slug: 'flyspace', number: '02', name: 'FLYSPACE', category: 'Visual data workspace', accent: '#0297de',
+    slug: 'flyspace', number: '04', name: 'FLYSPACE', category: 'Visual data workspace', accent: '#0297de',
     reflects: 'SyberLabs/Flyspace@e95ae73 · verified 2026-10-05',
     pageTitle: 'FLYSPACE: Connect Data Sources to AI Assistants',
     headline: 'See the sources behind an answer.',
@@ -193,181 +278,23 @@ export const projects = [
       ['Source', { label: 'github.com/SyberLabs/Flyspace', href: 'https://github.com/SyberLabs/Flyspace' }],
     ],
   },
-  {
-    slug: 'syberwork', number: '03', name: 'SyberWork', category: 'AI work review tools', accent: '#0297de',
-    reflects: 'SyberLabs/SyberWork@208eaf6 · verified 2026-10-05',
-    pageTitle: 'SyberWork: Review and Approval Tools for AI Work',
-    headline: 'Check AI work before it changes anything.',
-    intro: 'Tools for checking and approving AI work before it makes changes. Rules define the allowed steps, a named person approves the work, and a tamper-evident history records what was proposed, checked, approved and done.',
-    summary: 'Build Thread applies these checks to code changes in your Git repository. It runs the checks itself before accepting a change, even if the model says the tests passed. Actions use unique keys to prevent duplicate execution, and their results are checked afterwards.',
-    status: { kind: 'wip', label: 'Work in progress' },
-    primary: { label: 'View source', href: 'https://github.com/SyberLabs/SyberWork', external: true },
-    secondary: { label: 'Build Thread in ten minutes', href: 'https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md' },
-    why: { title: 'Why check each proposed step?',
-      paragraphs: [
-        'When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules controlled by the system running it.',
-        'The rules define what may happen and who can approve it. If a proposal breaks a rule, SyberWork refuses it and records the reason and the rule used. The same checks can apply to a purchase order or a code change.',
-      ] },
-    use: { title: 'Build Thread: review one code change', note: 'Python 3.11+ and git. No account, no model and no network required.',
-      steps: [
-        ['01 / init', 'Name your real checks', 'syberlabs init writes a contract into .syberlabs/ and guesses the test command. When it cannot, it writes a check that fails until you name one, so an unchecked change never looks accepted.'],
-        ['02 / start', 'Open a thread', 'A thread tracks one change to one repository and names the files it may affect. It records and checks the starting Git commit.'],
-        ['03 / propose', 'Keep proposed edits separate', 'Your edit, a coding tool’s edit, or an automated search result is saved as a separate Git commit for review. It does not change your working files.'],
-        ['04 / check', 'The host runs the checks', 'Checks run against the exact proposed files. The record keeps their exit codes, how long they took and hashes of their output.'],
-        ['05 / accept and publish', 'Accept the change, then choose what to publish', 'Accept updates one branch only if it still points to the expected commit. Pushing code, opening a pull request and publishing each require a separate allowed action, with duplicate prevention and recovery checks.'],
-      ] },
-    run: { title: 'A model’s claim is not a result.',
-      note: 'The repository’s own Build Thread example, run on 2026-10-05 from SyberWork@208eaf6 with Python 3.11 and git. No model, no network.',
-      command: 'PYTHONPATH=. python examples/build_thread.py',
-      output: '{\n  "context": ["tests/test_report.py:1-7", "src/report.py:1-2"],\n  "model": {\n    "candidate": "c1",\n    "claimed": { "tests": "passed", "confidence": 0.97 },\n    "verdict": "candidate_check_failed:tests",\n    "accept": "denied:candidate_check_failed:tests"\n  },\n  "patch": {\n    "candidate": "c2",\n    "verdict": "all_checks_passed",\n    "accept": "succeeded",\n    "branch": "refs/heads/syberlabs/e643ed26",\n    "commit": "7c606ae8f44f3f999c010799e1d2fdcee1166011"\n  },\n  "working_tree_and_main_untouched": true,\n  "resumed": { "status": "complete", "accepted": "c2", "events": 18, "chain_valid": true },\n  "replay_under_v2": ["candidate_check_missing:lint", "candidate_check_missing:lint"]\n}\nbuild-thread complete',
-      caption: 'The provider claimed c1 passed its tests with 0.97 confidence, but checks run on its exact files failed, so SyberWork rejected it. Candidate c2 passed all checks. It was accepted by updating one branch only after confirming the branch had not changed (compare-and-swap). The working files and main branch were untouched. The thread resumed from a valid 18-event history. Replaying that history with a new lint-check requirement shows both candidates would be rejected for the missing check.' },
-    design: { title: 'How it is built',
-      items: [
-        ['Separate the core from the app', 'The reusable syberlabs package defines the rules, proposal interface and in-memory Session. It uses a fixed JSON format and a hash-linked event history. The syberwork app adds storage, a web API, command-line tools, a console and connectors. The core never imports the app.'],
-        ['A chain you can verify', 'Every case event is hashed into a chain with a canonical-JSON digest and rule id beside it, an HMAC witness, an Ed25519 signature of the chain head, and an append-only transparency log kept in a separate file by a witness process that holds the key.'],
-        ['A fixed format for exchanging work records', 'Fifteen JSON schemas define work rules, observations, proposals, approval decisions, actions, outcome checks and rule changes. The protocol is sdk.syberlabs.space/v0alpha1, with a format checker and reference event sequences.'],
-        ['Plan checks and review rule changes', 'The compiler turns the work rules into ordered steps, approval checks, completion checks and form fields. Replay shows how changed rules would apply to recorded history without calling a model, changing a destination or fetching live data.'],
-        ['Separate proposals from execution', 'A planner receives the objective, allowed actions, work rules, history and completion criteria, then proposes one action. It cannot execute the action. It can run through an HTTPS service or a local loopback address.'],
-        ['Prevent duplicate writes', 'Executors send writes with unique request keys and conditions that prevent duplicates or outdated changes, then record the receipt. If the outcome is uncertain, it stays marked uncertain rather than being retried blindly.'],
-      ] },
-    evidence: [
-      ['tested', 'Twenty-three golden conformance traces, a clean-install release gate and CI green on CPython 3.11 to 3.13.'],
-      ['measured', 'On the author’s machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.'],
-      ['implemented', 'The included procurement case runs end to end against a separate reference system, with a real order POST under an idempotency key and manager sign-off.'],
-      ['not yet', 'The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has not been run against a real model.'],
-    ],
-    facts: [
-      ['Stage', 'Open-source runtime and SDK, version 0.1.0, wheel verified'],
-      ['Technology', 'Python 3.11+ with no runtime dependencies, SQLite, pytest; Docker files for the console'],
-      ['License', 'Apache 2.0'],
-      ['Source', { label: 'github.com/SyberLabs/SyberWork', href: 'https://github.com/SyberLabs/SyberWork' }],
-    ],
-  },
-  {
-    slug: 'relay', number: '04', name: 'Relay', category: 'Job application workspace', accent: '#0297de',
-    reflects: 'SyberLabs/relay@0000605 · verified 2026-10-05',
-    pageTitle: 'Relay: Job Application Workspace for AI-Assisted Drafting',
-    headline: 'Every application has a history.',
-    intro: 'A workspace for job seekers who draft with AI assistants, with one record per job and human approval of the exact wording.',
-    summary: 'Relay works alongside ChatGPT, Codex, Claude, Grok and your notes in Notion or Obsidian. Each job keeps its research, confirmed facts and draft versions in one history. Relay never submits an employer form.',
-    status: { kind: 'early', label: 'Early release' },
-    primary: { label: 'View source', href: 'https://github.com/SyberLabs/relay', external: true },
-    secondary: { label: 'Integration setup', href: 'https://github.com/SyberLabs/relay/blob/main/integrations/README.md' },
-    why: { title: 'Why keep one history per application?',
-      paragraphs: [
-        'People already hunt for jobs with ChatGPT, Claude, Grok, Notion and Obsidian. The work falls apart in the gaps: a new chat forgets the last draft, a tracker overwrites a decision, an interview note resets an application’s status.',
-        'Relay keeps research and draft history for each job. Approval applies to one exact draft. Returned work must match the job and its current version, so an old draft cannot silently replace newer reviewed work.',
-      ] },
-    use: { title: 'How a job moves through Relay', note: 'Fictional example records ship with the app.',
-      steps: [
-        ['01 / Import', 'Bring the research', 'Add a job from a title and posting URL, pull a public Greenhouse or Lever board, map a tracker CSV, or import notes from Notion or Obsidian. Matching URLs join the same record.'],
-        ['02 / Facts', 'Confirm what is true', 'Confirm facts about your experience in a reusable list. Relay checks selected claim patterns in AI drafts against those facts and flags unsupported claims. These checks do not verify whether a fact is true.'],
-        ['03 / Draft', 'Hand off to your assistant', 'Export the job’s research and drafting instructions for ChatGPT, Codex or Claude, then import the draft for the same job version. Browsers supporting WebMCP, a tool connection for browser assistants, can let an assistant place a draft directly in the review queue.'],
-        ['04 / Accept', 'Approve the exact words', 'Acceptance records approval of one draft version. Change the text and it needs review again.'],
-        ['05 / Send and record', 'You press submit', 'After a person uses Inspect Accept to approve the form details, Relay’s Chrome extension can fill the form once. You still press submit. The outcome is recorded with a receipt.'],
-      ] },
-    gallery: { eyebrow: 'Screens', title: 'Four screens from a local build.',
-      note: 'Captured on 2026-10-05 from relay@0000605 built and run locally with its own migrations and the mocked local sign-in. Every company, role and fact shown is a fictional example record; no real applicant data.',
-      items: [
-        { src: '/relay-demo/relay-runtime-20261005.jpg', alt: 'Relay Runtime with the fictional Northstar Example, Backend Engineer job selected: review queue on the left, exact answers and attachments panels, and a disabled Approve & send control.',
-          caption: 'Runtime with a fictional example job selected. Approve & send stays disabled until an agent prepares the application.' },
-        { src: '/relay-demo/relay-accept-20261005.jpg', alt: 'Relay draft review for the same fictional job: Save draft and Accept exact draft controls with the note that acceptance records approval of these exact words and nothing is sent.',
-          caption: 'Review and approve one exact draft. Nothing is sent.' },
-        { src: '/relay-demo/relay-tracker-20261005.jpg', alt: 'Relay Tracker listing three fictional jobs by status, with a notice that two imported applications arrived without a receipt and are excluded from reply rates.',
-          caption: 'Tracker. Three fictional jobs by status; imported submissions without a receipt stay visible but are excluded from reply rates.' },
-        { src: '/relay-demo/relay-facts-20261005.jpg', alt: 'Relay profile page, the candidate fact ledger, showing two confirmed fictional facts available for agent citations and a resume extraction box.',
-          caption: 'The fact ledger. Two fictional facts confirmed by the user and available for agent citations; Relay records the confirmation and does not verify facts itself.' },
-      ] },
-    map: { id: 'relay', title: 'What leaves Relay, and what comes back.',
-      note: 'Recorded by running the repository’s own modules: research sent to an assistant, the returned draft, checks of the job identity, version and claims, and five rejected examples that write nothing.',
-      fallback: 'This map needs JavaScript.' },
-    design: { title: 'How it is built',
-      items: [
-        ['One history per job', 'Posting observations are preserved as rows; rediscovery keeps an existing interview or submitted status instead of resetting it.'],
-        ['Reject outdated drafts', 'Research sent to an assistant and drafts returned for review carry the job identity and version. Relay rejects work based on an outdated version.'],
-        ['Claim checks', 'Relay compares words and numbers in a draft with the confirmed facts it cites. This is an approximate check and is labelled as such; it does not establish factual truth.'],
-        ['Edge deployment', 'TypeScript and React on Cloudflare Workers with Drizzle ORM, a Manifest V3 extension, and Playwright tests.'],
-      ] },
-    evidence: [
-      ['tested', 'The domain, handoff and profile modules were executed under Node for the site’s recorded Relay map; the D1 acceptance write is reproduced as a rule.'],
-      ['implemented', 'Runtime, Tracker, the fact ledger, CSV and job-board import, and every integration listed in the repository.'],
-      ['not yet', 'No public deployment and no customer counts, hiring outcomes or throughput improvements are claimed. Autonomous hunting is not included.'],
-    ],
-    facts: [
-      ['Built by', 'SyberLabs'],
-      ['Technology', 'TypeScript, React, Vinext, Cloudflare Workers, D1, Drizzle ORM, Chrome extension (Manifest V3), Playwright'],
-      ['Boundary', 'Relay prepares and tracks application materials. It does not submit employer forms, host an MCP connection, or sync accounts in the background.'],
-      ['Source', { label: 'github.com/SyberLabs/relay', href: 'https://github.com/SyberLabs/relay' }],
-    ],
-  },
-  {
-    slug: 'osahr', number: '05', name: 'OSAHR', category: 'Network simulation library', accent: '#0297de',
-    reflects: 'SyberLabs/OSAHR_Cell@7293e27 · verified 2026-10-05',
-    pageTitle: 'OSAHR: Simulate Changing Networks in Python',
-    headline: 'Replay a changing system.',
-    intro: 'An open-source Python library for simulating networks whose connections change over time. Rules and probabilities determine each change, and recorded runs can be replayed and checked.',
-    summary: 'The simulator represents connections that can join several items at once, then changes them at random times using exact probabilities. Every public claim is graded Known, Measured, Inferred or Proposed.',
-    status: { kind: 'research', label: 'Research' },
-    primary: { label: 'View source', href: 'https://github.com/SyberLabs/OSAHR_Cell', external: true },
-    secondary: { label: 'Read the architecture', href: 'https://github.com/SyberLabs/OSAHR_Cell/blob/main/ARCHITECTURE.md' },
-    why: { title: 'Why simulate changing connections?',
-      paragraphs: [
-        'Most simulators change the state of a fixed network. Many real systems change the network itself: a cell grows a connection, an organisation adds a role, an agent fleet forms a new channel. Modelling that exactly, with the right probabilities and a record you can replay, is the problem OSAHR takes on.',
-        'The simulation core is small and has no external dependencies, making its rules easier to state and check. It is intended as a foundation for the lab’s work approval tools.',
-      ] },
-    use: { title: 'What you can do', note: 'Install the Python package with pip, or download the source and run its examples.',
-      steps: [
-        ['01 / Model', 'Define the network and its rules', 'Define the kinds of items and connections in the network, the patterns each rule can change, and how often those changes can occur. Rules can also update settings and memory.'],
-        ['02 / Run', 'Choose a scheduler', 'Choose how the simulator schedules changes: Direct SSA, modified next-reaction or bounded thinning. All three preserve the exact probabilities. The faster pattern search is checked against a search of every possibility.'],
-        ['03 / Replay', 'Reproduce every state', 'Use the same random seed to repeat a run. Replay can also apply each recorded change and verify the hash, a fingerprint of the simulation state, at every step.'],
-        ['04 / Review', 'Review recorded experiments', 'The decision workbench packages recorded experiments for review with labels for their evidence level. GrokCell is a prototype for coordinating AI agents on the same simulation core.'],
-      ] },
-    map: { id: 'osahr', title: 'Watch network connections change one event at a time.',
-      note: 'Recorded by running the adaptive-signal example and exported from the trace.',
-      fallback: 'This map needs JavaScript.' },
-    run: { title: 'Twenty-five events, one hash to replay.',
-      note: 'The repository’s own example, run on 2026-10-05 from OSAHR_Cell@7293e27 with Python 3.11 in a fresh venv after python -m pip install -e . No dependencies, no network.',
-      command: 'python examples/adaptive_signal.py',
-      output: 'events: 25\nsimulation time: 10.000000\nagents: 2\nreceiver: {\'active\': True, \'value\': 2.5, \'responsiveness\': 1.0}\nmemory: {\'received_count\': 10, \'intensity_ema\': 0.17478781247500003}\nstate hash: 6d73af0a24684c9afc339e1bc59dddbd6ca42a08792fca5b8b7e123fc262a857',
-      caption: 'Complete output, unedited. With random seed 20260729, the simulation recorded 25 events in ten units of simulated time. Two agents exchanged ten received signals. The receiver’s value rose to 2.5 and its responsiveness rose from 0.1 to the limit of 1.0, through an external event at t = 3 and changes made by the rule itself. The state hash fingerprints the final state. A second run with the same seed prints the same lines.' },
-    design: { title: 'How it is built',
-      items: [
-        ['Changes with exact probabilities', 'Rules change network connections at random times while preserving their exact probabilities. The network is a typed directed hypergraph, whose connections can link several items at once. Its required properties are documented in the architecture guide.'],
-        ['Recheck only affected patterns', 'After a change, the simulator searches affected connections for rule matches. This incremental search is checked against a search of every possible match.'],
-        ['Adaptive parameters', 'Rules can update the model’s settings and memory, changing how it behaves as its connections change.'],
-        ['No runtime dependencies', 'The core runs on Python 3.11+ without extra packages. Recorded experiments document checks of that core.'],
-      ] },
-    evidence: [
-      ['tested', 'A pytest suite of 41 test files across the kernel, experiments and workbench; the kernel suite (tests/) passed 127 of 128 on 2026-10-05, the one skip being the optional ontology probe. Replay of the site’s recorded trace reproduces every state hash.'],
-      ['implemented', 'Kernel, three schedulers, incremental matching, adaptive parameters, replay, the decision workbench and the GrokCell prototype.'],
-      ['not yet', 'Research models of mechanisms, not calibrated forecasts. No continuous integration is configured in the repository yet.'],
-    ],
-    facts: [
-      ['Stage', 'Open-source research library, version 0.2.1'],
-      ['Technology', 'Python 3.11+ (no runtime dependencies in the core library), pytest'],
-      ['License', 'Apache 2.0 in the LICENSE file; pyproject.toml’s metadata still says MIT'],
-      ['Source', { label: 'github.com/SyberLabs/OSAHR_Cell', href: 'https://github.com/SyberLabs/OSAHR_Cell' }],
-    ],
-  },
 ];
 
-// The Menu selects useful work and contact routes. Existing archives and deep links remain published.
+// The Menu (the Atlas): every product, the company's ways of working with customers, and the account and legal routes.
 export const siteMap = [
-  { title: 'Work', items: [
+  { title: 'Products', items: [
+    { label: 'SyberWork', note: 'The autonomous software factory', href: '/projects/syberwork/' },
+    { label: 'Attest', note: 'Prove every promise your docs make', href: '/projects/attest/' },
+    { label: 'RISE', note: 'Interactive reading with sound and visuals', href: '/projects/rise/' },
+    { label: 'FLYSPACE', note: 'See which data feeds each AI answer', href: '/projects/flyspace/' },
+  ] },
+  { title: 'Company', items: [
+    { label: 'Consulting and partnerships', note: 'Custom AI systems, built and checked', href: '/services/' },
     { label: 'The factory', note: 'Agents build, the host checks, a person admits', href: '/factory/' },
-    { label: 'GitHits integration', note: 'Code search for AI coding assistants', href: '/mateo/#githits' },
-    { label: 'PorchLight', note: 'Hackathon third place · cited city reports', href: '/mateo/#porchlight' },
-    { label: 'RISE', note: 'Interactive reading in your browser', href: '/mateo/#rise' },
-    { label: 'Engines', note: 'Mathematical worlds · run Gyre', href: GYRE_APP, external: true },
-  ] },
-  { title: 'Connect', items: [
-    { label: 'Meet Mateo', note: 'Projects, code and résumé', href: MATEO_SITE, external: true },
+    { label: 'Research', note: 'Reports, evaluations and their evidence', href: '/research/' },
     { label: 'Email', note: EMAIL, href: CONTACT },
-    { label: 'Mateo on GitHub', note: 'github.com/sykosyber', href: MATEO_GITHUB, external: true },
   ] },
-  { title: 'More', items: [
-    { label: 'Work with us', note: 'Engineering roles and focused projects', href: '/services/' },
-    { label: 'Research archive', note: 'Past projects and research', href: '/research/' },
+  { title: 'Account', items: [
     { label: 'Subscriber account', note: 'Existing RISE subscribers', href: RISE_PLUS.href, external: true },
     { label: 'Privacy', note: 'Data and contact policy', href: '/privacy/' },
   ] },
