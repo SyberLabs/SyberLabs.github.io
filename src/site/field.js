@@ -199,7 +199,9 @@ const idle = (fn, timeout = 600) => ('requestIdleCallback' in window ? requestId
 const cancelIdle = id => ('cancelIdleCallback' in window ? cancelIdleCallback(id) : clearTimeout(id));
 
 export function mountField(canvas, opts = {}) {
-  const reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  // still: one frame (redrawn only on resize). The site uses it everywhere: a moving scene behind every page kept the
+  // GPU busy exactly while visitors hovered and scrolled, which made the whole UI feel slow.
+  const reduced = !!opts.still || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   const off = () => { if (canvas) canvas.style.display = 'none'; return { supported: false, pulse() {}, destroy() {} }; };
   if (!canvas) return off();
   // low-power: on dual-GPU laptops the field never wakes the discrete GPU
@@ -326,8 +328,8 @@ function runField(canvas, gl, opts, reduced) {
   const mo = new MutationObserver(() => { const p = document.documentElement.classList.contains('sy-atlas-open'); if (p !== paused) { paused = p; last = 0; go(); } });
   mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   const onLost = e => { e.preventDefault(); dead = true; };
-  addEventListener('scroll', onScroll, { passive: true });
-  if (matchMedia('(pointer:fine)').matches) addEventListener('pointermove', onPointer, { passive: true });
+  if (!reduced) addEventListener('scroll', onScroll, { passive: true });
+  if (!reduced && matchMedia('(pointer:fine)').matches) addEventListener('pointermove', onPointer, { passive: true });
   addEventListener('resize', onResize);
   document.addEventListener('visibilitychange', onVis);
   canvas.addEventListener('webglcontextlost', onLost, false);
@@ -352,7 +354,7 @@ function runField(canvas, gl, opts, reduced) {
    sigil3d(canvas, P, { color }) -> { destroy() }. Static (one spin ease-in) under reduced motion. */
 export function sigil3d(canvas, P, opts = {}) {
   if (!canvas) return { supported: false, destroy() {} };
-  const reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const reduced = !!opts.still || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   const gl = context(canvas, { alpha: true, antialias: false, depth: false, stencil: false, powerPreference: 'low-power', premultipliedAlpha: true });
   if (!gl) return { supported: false, destroy() {} };
   try { return runSigil(canvas, gl, P, opts, reduced); } catch (e) { lose(gl); return { supported: false, destroy() {} }; }

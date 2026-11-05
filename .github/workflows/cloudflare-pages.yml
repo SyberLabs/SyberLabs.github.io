@@ -157,7 +157,7 @@ jobs:
           test ! -e dist/projects/relay
           test ! -e dist/projects/osahr
           test -s dist/og/attest.png
-          test -s dist/media/demos/gyre-full-v1.mp4
+          test -s dist/media/demos/gyre-full-v2.mp4
           test -s dist/og/flyspace.png
           grep -Fq 'og:image' dist/projects/flyspace/index.html
           test ! -e dist/projects/omnios
