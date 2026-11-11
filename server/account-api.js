@@ -2,15 +2,23 @@
 import { loadSession } from './session.js';
 import { newId } from './crypto.js';
 import { identityName } from './authz.js';
+import { tag } from './telemetry.js';
 
 export const ACCOUNT_BASE = '/admin/api/v1';
 export const APP_ORIGINS = { omni: 'https://omni.syberlabs.io', rise: 'https://rise.syberlabs.io', sketch: 'https://sketch.syberlabs.io' };
 export const isAccountApi = pathname => pathname === ACCOUNT_BASE || pathname.startsWith(ACCOUNT_BASE + '/');
+// site.request's route for an API path: one of these three templates, never the path, which can carry a save id.
+export function accountRoute(pathname) {
+  const rest = isAccountApi(pathname) ? pathname.slice(ACCOUNT_BASE.length) : null;
+  if (rest === '/account' || rest === '/saves') return ACCOUNT_BASE + rest;
+  return /^\/saves\/[^/]+$/.test(rest) ? `${ACCOUNT_BASE}/saves/:id` : null;
+}
 const MAX_BYTES = 1048576;
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const json = (data, status = 200) => Response.json({ version: 1, ...data }, { status });
-const failure = (error, status) => json({ error }, status);
+// The error is also kept beside the response for site.request's code (telemetry.js tag).
+const failure = (error, status) => tag(json({ error }, status), error);
 const metadata = row => ({ id: row.id, app: row.app, name: row.name, createdAt: row.created_at, bytes: row.bytes });
 
 export function accountCors(res, request, env) {
