@@ -34,8 +34,8 @@ body.syber-factory { background:var(--sy-ink); }
 .factory-self-built { display:grid; grid-template-columns:1.05fr .95fr; gap:clamp(32px,6vw,90px); align-items:center; }
 .factory-self-built p { max-width:54ch; font-size:16px; line-height:1.65; }
 .factory-self-built figure { margin:0; }
-.factory-self-built img { display:block; width:100%; height:auto; mix-blend-mode:screen; -webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%); mask-image:radial-gradient(closest-side,#000 72%,transparent 100%); }
-.factory-self-built figcaption { padding-top:8px; text-align:center; color:var(--sy-dim); font-size:12px; }
+.factory-self-built img { display:block; width:100%; height:auto; mix-blend-mode:lighten; }
+.factory-self-built figcaption { max-width:52ch; margin-inline:auto; padding-top:8px; text-align:center; color:var(--sy-dim); font-size:12px; line-height:1.5; }
 
 .factory-limits ul { display:grid; gap:14px; max-width:70ch; margin:16px 0 0; padding:0; list-style:none; }
 .factory-limits li { position:relative; padding-left:20px; color:var(--sy-mist); font-size:15px; line-height:1.65; }

@@ -72,3 +72,7 @@ main :is(a,summary):focus-visible { outline:2px solid var(--sy-ice); outline-off
 .engagement-steps li { margin:0 0 12px; padding-left:4px; }
 .engagement-steps b { color:var(--sy-vellum); font-weight:500; }
 .service-scope + .service-scope { margin-top:12px; }
+/* The Civitas engine plate between the product links and the engagement steps. */
+.service-plate { max-width:calc(var(--content-max) + 2 * var(--gutter)); margin:0 auto; padding:40px var(--gutter) 0; }
+.service-plate img { display:block; width:100%; height:auto; max-height:440px; object-fit:cover; object-position:50% 62%; mix-blend-mode:lighten; }
+.service-plate figcaption { padding-top:8px; color:var(--text-2); font-size:12px; line-height:1.5; text-align:center; }

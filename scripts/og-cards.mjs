@@ -40,7 +40,7 @@ const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 // One entry per page. `seed` names the sigil (projects use their slug, so the card carries the same
 // mark as the page); `line` is the single sentence under the headline.
 const pages = [
-  { slug: 'home', path: '/', eyebrow: 'SyberLabs', headline: 'Software for checking AI’s work.',
+  { slug: 'home', path: '/', eyebrow: 'SyberLabs', headline: 'High-Fidelity Systems.',
     line: 'SyberWork, Attest, RISE and FLYSPACE, plus AI consulting, custom builds and design\u00a0partnerships.', seed: 'syberlabs', accent: ICE },
   { slug: 'factory', path: '/factory/', eyebrow: 'SyberLabs · The factory', headline: 'How SyberWork handles a code change.',
     line: 'An AI agent proposes a commit. SyberWork runs every check on it, twenty-one rules and a person approve it, and each step is logged in a signed\u00a0record.', seed: 'syberwork', accent: ICE },

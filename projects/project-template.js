@@ -4,7 +4,7 @@
 // and footer into the static pages.
 // Case studies lead with project context and real evidence. Sigil helpers remain
 // available to the shared site chrome and project directory.
-import { projects, nav, footerLinks, siteMap, EMAIL, workWithUs } from './site-data.js?v=20261113';
+import { projects, nav, footerLinks, siteMap, EMAIL, workWithUs } from './site-data.js?v=20261114';
 import { params as sigilParams } from '../kit/v2/syber-sigil.js';
 export { projects };
 
@@ -209,7 +209,7 @@ const sections = p => `${liveBar(p)}${videoSection(p)}${gallerySection(p)}${runS
 // authored by hand) can carry the same sections: scripts/prerender.mjs fills its marker at build time. That page
 // does not otherwise load experience-v7.js, so the sections bring it along to fill the dependency panel.
 export const renderSections = p => `${sections(p)}
-<script type="module" src="/projects/experience-v7.js?v=16"></script>`;
+<script type="module" src="/projects/experience-v7.js?v=17"></script>`;
 
 function facts(p) {
   const value = v => typeof v === 'string' ? esc(v) : `<a class="sy-link pj-facts__link" href="${v.href}">${esc(v.label)}${/^https?:/.test(v.href) ? icon('external', 16) : ''}</a>`;
@@ -245,13 +245,18 @@ export function others(p) {
 </section>`;
 }
 
+// The product's engine plate (site-data `plate`): a picture drawn by a SyberLabs engine, beside the hero copy on
+// wide screens and under it on phones. The caption names the engine and seed, so it never reads as a screenshot.
+const plateFigure = p => p.plate ? `
+    <figure class="pj-hero__plate" data-reveal><img src="${p.plate.src}.webp" srcset="${p.plate.src}-560.webp 560w, ${p.plate.src}.webp 1000w" sizes="(max-width: 900px) 320px, 420px" width="1000" height="1000" alt="${esc(p.plate.alt)}" decoding="async"><figcaption>${esc(p.plate.caption)}</figcaption></figure>` : '';
+
 export function renderProject(p) {
   return {
     title: `${p.pageTitle || p.name} | SyberLabs`,
     description: `${p.intro} ${p.summary || ''}`.trim(),
     body: `${header('products', { here: `/projects/${p.slug}/` })}
 <main id="main" class="pj-page">
-  <section class="pj-hero sy-container" aria-labelledby="project-title">
+  <section class="pj-hero${p.plate ? ' pj-hero--plate' : ''} sy-container" aria-labelledby="project-title">
     <div class="pj-hero__copy">
       ${crumbs([{ label: 'Products', href: '/#products' }, { label: p.name }])}
       <p class="pj-eyebrow sy-eyebrow" data-reveal><span class="pj-number">${p.number}</span> / ${esc(p.category)}</p>
@@ -260,7 +265,7 @@ export function renderProject(p) {
       <p class="sy-body-lg pj-intro" data-reveal>${esc(p.intro)}</p>
       ${p.summary ? `<p class="pj-summary" data-reveal>${esc(p.summary)}</p>` : ''}
       <div data-reveal>${actions(p)}</div>
-    </div>
+    </div>${plateFigure(p)}
   </section>
   ${sections(p)}
   ${others(p)}

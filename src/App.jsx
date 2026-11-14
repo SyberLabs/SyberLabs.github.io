@@ -69,7 +69,7 @@ export default function App() {
         <div className="pitch-hero__copy sy-wrap">
           <h1 id="hero-title" tabIndex={-1}>
             <span className="pitch-hero__brand" data-text="SyberLabs">SyberLabs</span>
-            <span className="sy-sr">: </span><span className="pitch-hero__tagline">Software for checking AI’s work</span>
+            <span className="sy-sr">: </span><span className="pitch-hero__tagline">High-Fidelity Systems</span>
           </h1>
           <div className="pitch-hero__panel">
             <p className="pitch-hero__line">AI agents write the code. Our software runs every check itself, logs each step in a signed record, and changes your branch only after a person approves. We make four products and build agent systems for clients.</p>
@@ -87,6 +87,7 @@ export default function App() {
         <ol className="home-products__list" role="list">
           {PRODUCTS.map(p => <li key={p.slug}>
             <a href={`/projects/${p.slug}/`}>
+              <img className="home-products__plate" src={`${p.plate.src}-560.webp`} width="560" height="560" alt="" loading="lazy" decoding="async" />
               <span className="home-products__n">{p.number}</span>
               <span className="home-products__cat">{p.category}</span>
               <span className="home-products__name">{p.name}</span>
@@ -109,8 +110,8 @@ export default function App() {
           <a href="/factory/">Each step in detail <span aria-hidden="true">→</span></a>
         </div>
         <figure className="lab-identity__art">
-          <img src="/media/lab/agent-network.webp" width="1100" height="921" alt="Glowing blue nodes joined by arcing links, like a network of agents." loading="lazy" decoding="async" />
-          <figcaption>Illustration made with Midjourney.</figcaption>
+          <img src="/media/engines/vestigia-factory.webp" srcSet="/media/engines/vestigia-factory-560.webp 560w, /media/engines/vestigia-factory.webp 1000w" sizes="(max-width: 800px) 90vw, 600px" width="1000" height="1000" alt="Several trees of blue light growing inward from separate roots. Faint abandoned branches surround the bright ones." loading="lazy" decoding="async" />
+          <figcaption>Drawn by Vestigia, a SyberLabs engine, from the seed FACTORY. Several roots grow toward the same points, and every branch they tried stays on the plate. The emblem was made with Midjourney.</figcaption>
         </figure>
       </section>
       <section id="partners" className="selected-work sy-wrap" aria-labelledby="partners-title">
