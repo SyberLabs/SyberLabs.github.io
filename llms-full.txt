@@ -1,6 +1,6 @@
 # SyberLabs
 
-> SyberLabs builds AI software that proves its work: SyberWork, an autonomous software factory; Attest, which proves every step your docs promise; RISE; and FLYSPACE. Custom AI consulting and design partnerships.
+> SyberLabs makes software for checking AI’s work. SyberWork tests AI-written code changes before a person approves them. Attest runs every step in your docs. RISE is a reading app. FLYSPACE shows which data fed each AI answer. Also: AI consulting, custom builds and design partnerships.
 
 > **RISE and AI models:** since RISE #294 the RISE server calls no model. An AI reading request runs on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s machine (`/kev/` on the site). local Kev did not meet RISE’s bar in internal checks on RISE’s evaluations (RISE `docs/product/tasks/SCR-004.json`), and there is no production Kev deployment, by design. Once the reader connects, RISE’s visual direction sends sections of the reading text to that connection.
 
@@ -21,20 +21,20 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 # Products
 
-## SyberWork: Autonomous software factory
+## SyberWork: Software factory
 
 Page: https://syberlabs.io/projects/syberwork/
 Status: Work in progress
 Reflects: SyberLabs/SyberWork@208eaf6 · verified 2026-10-05
 Source: https://github.com/SyberLabs/SyberWork
 
-The factory floor for AI agents that write, test and repair code. Every change is checked before it lands. Rules define the allowed steps, a named person approves the work, and a tamper-evident history records what was proposed, checked, approved and done.
+SyberWork is an open-source Python runtime for AI agents that write, test and repair code. It runs the checks on every change itself. Rules define the allowed steps, a named person approves the work, and a hash-chained log records what was proposed, checked, approved and done.
 
-Page title: SyberWork: The Autonomous Software Factory
+Page title: SyberWork: Tests Every AI-Written Code Change
 
-Headline: Agents build. The host checks. A person admits.
+Headline: Tests every AI-written code change before a person approves it.
 
-Build Thread applies these checks to code changes in your Git repository. It runs the checks itself before accepting a change, even if the model says the tests passed. Actions use unique keys to prevent duplicate execution, and their results are checked afterwards.
+Build Thread is the part that handles code changes in a Git repository. It runs the checks before accepting a change, whatever the model says about its own tests. Each action carries a unique key so it cannot run twice, and its result is checked afterwards.
 
 Primary link: [View source](https://github.com/SyberLabs/SyberWork)
 
@@ -52,13 +52,13 @@ The rules define what may happen and who can approve it. If a proposal breaks a 
 
 Python 3.11+ and git. No account, no model and no network required.
 
-- 01 / init, Name your real checks: syberlabs init writes a contract into .syberlabs/ and guesses the test command. When it cannot, it writes a check that fails until you name one, so an unchecked change never looks accepted.
+- 01 / init, Name your checks: syberlabs init writes a contract into .syberlabs/ and guesses the test command. When it cannot, it writes a check that fails until you name one, so an unchecked change never looks accepted.
 - 02 / start, Open a thread: A thread tracks one change to one repository and names the files it may affect. It records and checks the starting Git commit.
 - 03 / propose, Keep proposed edits separate: Your edit, a coding tool’s edit, or an automated search result is saved as a separate Git commit for review. It does not change your working files.
-- 04 / check, The host runs the checks: Checks run against the exact proposed files. The record keeps their exit codes, how long they took and hashes of their output.
+- 04 / check, SyberWork runs the checks: Checks run against the exact proposed files. The record keeps their exit codes, how long they took and hashes of their output.
 - 05 / accept and publish, Accept the change, then choose what to publish: Accept updates one branch only if it still points to the expected commit. Pushing code, opening a pull request and publishing each require a separate allowed action, with duplicate prevention and recovery checks.
 
-### A model’s claim is not a result.
+### The change claimed its tests passed. SyberWork ran them and they failed.
 
 The repository’s own Build Thread example, run on 2026-10-05 from SyberWork@208eaf6 with Python 3.11 and git. No model, no network.
 
@@ -91,7 +91,7 @@ The provider claimed c1 passed its tests with 0.97 confidence, but checks run on
 ### How it is built
 
 - Separate the core from the app: The reusable syberlabs package defines the rules, proposal interface and in-memory Session. It uses a fixed JSON format and a hash-linked event history. The syberwork app adds storage, a web API, command-line tools, a console and connectors. The core never imports the app.
-- A chain you can verify: Every case event is hashed into a chain with a canonical-JSON digest and rule id beside it, an HMAC witness, an Ed25519 signature of the chain head, and an append-only transparency log kept in a separate file by a witness process that holds the key.
+- A verifiable event chain: Every case event is hashed into a chain with a canonical-JSON digest and rule id beside it, an HMAC witness, an Ed25519 signature of the chain head, and an append-only transparency log kept in a separate file by a witness process that holds the key.
 - A fixed format for exchanging work records: Fifteen JSON schemas define work rules, observations, proposals, approval decisions, actions, outcome checks and rule changes. The protocol is sdk.syberlabs.space/v0alpha1, with a format checker and reference event sequences.
 - Plan checks and review rule changes: The compiler turns the work rules into ordered steps, approval checks, completion checks and form fields. Replay shows how changed rules would apply to recorded history without calling a model, changing a destination or fetching live data.
 - Separate proposals from execution: A planner receives the objective, allowed actions, work rules, history and completion criteria, then proposes one action. It cannot execute the action. It can run through an HTTPS service or a local loopback address.
@@ -111,75 +111,75 @@ The provider claimed c1 passed its tests with 0.97 confidence, but checks run on
 - License: Apache 2.0
 - Source: [github.com/SyberLabs/SyberWork](https://github.com/SyberLabs/SyberWork)
 
-## Attest: Document and spec verification
+## Attest: Documentation testing
 
 Page: https://syberlabs.io/projects/attest/
 Status: Public source · early
 Reflects: SyberLabs/attest@274b8e7 · verified 2026-11-05
 Source: https://github.com/SyberLabs/attest
 
-Point Attest at a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the real app (commands in a scratch directory, browser steps in a real Chrome) and hands the document back with each step marked proven, stale, broken, unverifiable or skipped, with evidence behind every mark.
+Give Attest a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the running app: commands in a scratch directory, browser steps in Chrome. It returns the document with each step marked proven, stale, broken, unverifiable or skipped, and the evidence for each mark.
 
-Page title: Attest: Prove Every Promise Your Docs Make
+Page title: Attest: Runs Every Step in Your Docs
 
-Headline: Prove every promise your docs make.
+Headline: Runs every step in your docs and marks the ones that fail.
 
-Attest is the first station of the SyberLabs factory. Steps that fail go to an agent, an authority policy decides what that agent may change, and the browser check runs again. A case closes only when the fix is proven, and every case leaves a receipt.
+A failed step goes to an agent. A policy file decides what the agent may change, then the browser check runs again. A case closes only when the fix passes. Each case writes a receipt file that SyberWork can read.
 
 Primary link: [View source](https://github.com/SyberLabs/attest)
 
 Secondary link: [Discuss a pilot](mailto:syberlabs.support@gmail.com?subject=AI%20consultation)
 
-### Why prove a document?
+### Why test a document?
 
-Docs, quickstarts and specs make promises: run this command, click this button, see this label. Products change underneath them, and the first person to notice is usually a frustrated customer.
+Docs, quickstarts and specs tell the reader to run a command, click a button or expect a label. The product changes, the document does not, and a customer is usually the first to find out.
 
-Attest treats each step as a claim to be checked against the running product. A claim is proven only when a command passed or the browser run observed the promised label; the verdict is a fixed rule, never a model’s say-so.
+Attest checks each step against the running product. A step is marked proven only when its command passed or the browser saw the expected label. The verdict comes from a fixed rule. No model judges it.
 
 ### Four ways to use it
 
 Python 3.11 or newer. Browser steps use Kane CLI, TestMu’s browser agent.
 
-- 01 / Prove, Prove a doc: Run attest prove on a Markdown document. Shell steps run in a scratch directory, browser steps run in Chrome, and the result is one page with a badge on every claim.
-- 02 / Repair, Fix drift in the doc: When a descriptive claim has gone stale, an agent writes a doc-only patch in a throwaway checkout and the browser proves it again before anything is applied.
-- 03 / Protect, Refuse to weaken a promise: A policy file marks promises the product must keep. Attest will not edit those to make a check pass; it issues an implementation handoff instead.
-- 04 / Spec, Build to a spec: In spec mode a failing claim becomes a ticket. A worker implements it in a candidate copy of the app, never the original, and the browser checks the copy. Applying it needs a person’s approval.
+- 01 / Prove, Test a doc: Run attest prove on a Markdown document. Shell steps run in a scratch directory and browser steps run in Chrome. The result is one page with a badge on every claim.
+- 02 / Repair, Fix an outdated doc: When a description is out of date, an agent writes a patch that changes only the doc, in a temporary checkout. The browser check runs again before the patch is applied.
+- 03 / Protect, Protect required behaviour: A policy file marks statements the product must satisfy. Attest will not edit those to make a check pass. It writes an implementation handoff instead.
+- 04 / Spec, Build to a spec: In spec mode a failing claim becomes a ticket. An agent implements it in a copy of the app, never the original, and the browser checks the copy. Applying the change needs a person’s approval.
 
 ### How it is built
 
-- Claims pinned to lines: One structured-output call turns the document into typed claims tied to exact line spans. Fenced command blocks become shell claims verbatim.
-- Verdicts by rule, not by model: Shell claims are judged on exit codes and promised output. Browser claims compare the expected label with the observed one, with guards for negation and changed numbers.
-- An authority gate: Each stale or broken claim is checked against the policy before an agent touches it. Descriptive text may be repaired; protected promises may not.
-- Receipts for every case: Each loop case writes an attest.receipt/v0 file: document hashes before and after, the claim, the authority decision, the patch hash and the evidence. SyberWork reads them as observations.
-- Bring your own agent: OpenAI is the default worker. Any command that reads a brief and prints a diff can take its place, so a team can plug in the agent it already uses.
+- Each claim is tied to exact lines: One structured-output model call splits the document into typed claims, each tied to an exact line range. Fenced command blocks become shell claims word for word.
+- Verdicts come from fixed rules: Shell claims are judged on exit code and expected output. Browser claims compare the expected label with the observed one, with extra checks for negation and changed numbers.
+- A policy check before any edit: Each stale or broken claim is checked against the policy file before an agent edits anything. Descriptive text may be repaired. Protected statements may not.
+- A receipt file for every case: Each loop case writes an attest.receipt/v0 file: document hashes before and after, the claim, the authority decision, the patch hash and the evidence. SyberWork reads them as observations.
+- Works with other agents: OpenAI is the default. Any command that reads a brief and prints a diff can replace it, so a team can use the agent it already has.
 
 ### Evidence
 
 - measured: At Kane CLI Hack Day in San Francisco on 24 October 2026, Attest proved 9 documents across 23 turns, with 31 browser claims proven by Kane, each with a screenshot.
-- measured: Real drift it caught that day: Vite’s starter page now reads “Get started”, not “Vite + React”, and GitHub’s “Security & analysis” is now “Advanced Security”.
+- measured: Outdated text it found that day: Vite’s starter page now reads “Get started”, not “Vite + React”, and GitHub’s “Security & analysis” is now “Advanced Security”.
 - tested: Unit tests and red-team cases cover forged approvals, attempts to weaken a protected promise and path-escape attacks on the apply step.
-- not yet: There is no hosted service; Attest runs locally as a command-line tool. Shell steps run on the host, not in a sandbox. No outside team runs it in production yet.
+- not yet: There is no hosted service. Attest runs locally as a command-line tool. Shell steps run directly on your machine, with no sandbox. No outside team runs it in production yet.
 
 ### Facts
 
 - Stage: Public-source command-line tool, version 0.1.0
 - Technology: Python 3.11+, OpenAI structured outputs, Kane CLI and Chrome
-- Works with: [SyberWork, the factory floor](https://syberlabs.io/projects/syberwork/)
+- Works with: [SyberWork](https://syberlabs.io/projects/syberwork/)
 - License: MIT, declared in pyproject.toml
 - Source: [github.com/SyberLabs/attest](https://github.com/SyberLabs/attest)
 
-## RISE: Interactive reading app
+## RISE: Reading app
 
 Page: https://syberlabs.io/projects/rise/
 Status: Live · open beta
 Reflects: SyberLabs/RISE@998d725 · verified 2026-10-05
 Source: https://github.com/SyberLabs/RISE
 
-An interactive reading app that combines text, sound and moving visuals in your browser. Read words at a pace you choose, or switch to a page view.
+A reading app that runs in your browser. Words appear over time at a pace you set, with sound and moving visuals, or you can switch to a page view.
 
-Page title: RISE: Interactive Reading with Text, Sound and Visuals
+Page title: RISE: Reading App with Timed Text, Sound and Visuals
 
-Headline: Read beyond the page.
+Headline: Shows text at a pace you set, with sound and moving visuals.
 
 Open beta at rise.syberlabs.io. Reading runs entirely in the browser, and the files and compositions you bring stay in browser storage. An optional AI reading request runs on the reader’s own model connection; once connected, visual direction also sends sections of the reading text there. The RISE server holds no model credential.
 
@@ -199,9 +199,9 @@ Edited from real RISE screen recordings, with an AI-generated narrator and portr
 
 ### Why combine reading with sound and visuals?
 
-RISE explores reading as an experience that unfolds over time. Readers can set the pace and combine the words with light and sound, or return to a page view.
+RISE presents a text over time instead of all at once. The reader sets the pace and adds visuals and sound, or switches back to a page view.
 
-The idea is to explore whether the presentation changes how people experience a text. RISE provides browser controls for that exploration. No reader study has established a preference for this approach.
+The open question is whether this changes how people experience a text. No reader study has been run, so we make no claim that readers prefer it.
 
 ### What you can do today
 
@@ -213,7 +213,7 @@ Five main areas, with related tools grouped inside each one.
 - 04 / Make, Compose your own: Create readings with text, sound and visuals using Workshop, Scriptorium and Visual Lab. Save them in your browser with the Vault.
 - 05 / Ask, A reading from your own model: Describe what you want to read. The model chooses a book and presentation only from the supplied catalog. Connect through OpenRouter, or run Kev-4B locally; model requests use your connection and are not billed to SyberLabs.
 
-### Rooms: The five rooms, as they open.
+### Rooms: RISE’s five main screens, which it calls rooms
 
 Screenshots of a local build of SyberLabs/RISE@998d725 taken on 2026-10-05 in headless Chromium at 1440×900, nothing mocked. The text in every shot is Rural Architecture, from Lyrical Ballads by Wordsworth and Coleridge, a public-domain work served from RISE’s own Library; the fields behind it are RISE’s procedural engines. A silent 25-second screen recording of the same build, Home → Begin → words arriving in Stream (with the few seconds of Preparing session the software renderer needs), is also available.
 
@@ -226,7 +226,7 @@ Recording: [Watch the screen recording (MP4, 25 s, no sound)](https://syberlabs.
 - 03 / Library: Library: curated public-domain works in named editions (the Epic shelf opens with Standard Ebooks translations of The Iliad and Metamorphoses), with Chapel, Rosary, Stations, Journeys, Keystones and Provenance as panes. (https://syberlabs.io/rise-demo/rooms/rise-library-20261005.webp)
 - 04 / Make: Make, opened from the Menu onto its Workshop pane with Vault, Scriptorium, Visual Lab and Visual Catalog alongside: a new, empty composition; the asset list is the build’s own procedural engines and sourced collections. (https://syberlabs.io/rise-demo/rooms/rise-make-20261005.webp)
 
-### What a model may choose, and what it may not.
+### How RISE checks a model’s suggestion
 
 How RISE checks an AI reading suggestion, using the rules at 998d725: the model makes one request through your connection and can choose only from the supplied options. Two examples show a suggestion being refused without opening a reading.
 
@@ -262,18 +262,18 @@ Text version of the interactive map: This map needs JavaScript.
 - RISE Plus: [Optional voice, your own reading read aloud: paid launch pending verification](https://syberlabs.io/plus/)
 - Source: [github.com/SyberLabs/RISE](https://github.com/SyberLabs/RISE)
 
-## FLYSPACE: Visual data workspace
+## FLYSPACE: Data canvas for AI assistants
 
 Page: https://syberlabs.io/projects/flyspace/
 Status: Live preview
 Reflects: SyberLabs/Flyspace@e95ae73 · verified 2026-10-05
 Source: https://github.com/SyberLabs/Flyspace
 
-A visual workspace where you connect data sources to AI assistants and see which sources feed each answer. AI answers require running FLYSPACE locally with your own model, for example through Ollama. Formerly OmniOS.
+FLYSPACE is a canvas where you connect data sources to AI assistants, and each answer lists the sources it used. AI answers require running FLYSPACE locally with your own model, for example through Ollama. Formerly OmniOS.
 
 Page title: FLYSPACE: Connect Data Sources to AI Assistants
 
-Headline: See the sources behind an answer.
+Headline: Shows which data sources fed each AI answer.
 
 A limited public preview is live at omni.syberlabs.io: the canvas, the Shell Store and every keyless public data source run in your browser. AI answers and keyed sources are switched off there.
 
@@ -291,7 +291,7 @@ Video: https://syberlabs.io/omni-demo/omnios-morning-20261005.mp4
 
 Recorded on 2026-10-05 from a local production build of OmniOS@e95ae73, following the “morning” journey specified by its acceptance test. The blocks and two AI answers use fixed test data, not live markets or a live model. The canvas, connections, source labels and answer history are the real interface. Silent, 30 seconds.
 
-### Why a canvas.
+### Why show the sources?
 
 FLYSPACE shows which data an AI assistant receives. A canvas displays the sources, their connections and whether they supplied any data.
 
@@ -302,14 +302,14 @@ Each answer records the source data used to produce it, including data passed th
 The first three steps work in the public preview. AI questions and voice controls require a local setup with a model connection.
 
 - 01 / Shell, Open a saved workspace: The Shell Store opens saved workspaces. The Investor workspace connects Polymarket, CoinGecko, World Bank and Hacker News to an Analyst assistant, then connects that assistant to a Strategist.
-- 02 / Blocks, Pull real numbers: Add blocks for prediction markets, crypto prices, economic series, research and news. Every built-in source is public and needs no key.
-- 03 / Wires, Say what feeds what: Connect a data block to an AI assistant. FLYSPACE checks that their input and output formats match. If they do not, it explains the mismatch and leaves the workspace unchanged.
+- 02 / Blocks, Add live data blocks: Add blocks for prediction markets, crypto prices, economic series, research and news. Every built-in source is public and needs no key.
+- 03 / Wires, Connect a source to an assistant: Connect a data block to an AI assistant. FLYSPACE checks that their input and output formats match. If they do not, it explains the mismatch and leaves the workspace unchanged.
 - 04 / Ask, Ask with your own model: Ask an assistant a question. Its answer cites only the sources connected to it. A record identifies the model provider, model, response time and source data used.
 - 05 / Talk, Spoken canvas control: Hold Talk and use a supported command such as “wire hacker news to the analyst”, “delete this” or “undo”. The app checks the request, previews deletion and asks for clearer names when a request is ambiguous.
 
-### Which sources reach an answer.
+### Which sources reach an answer
 
-The Investor shell, stepped through by rule: a feed fails, a feed goes stale, and the record says exactly which sources each answer used. Open any node to see who owns it.
+A step-through of the Investor workspace: one feed fails, one goes stale, and the record shows which sources each answer used. Open a node to see its owner.
 
 Text version of the interactive map: This map needs JavaScript.
 
@@ -341,8 +341,8 @@ Text version of the interactive map: This map needs JavaScript.
 
 ## Company
 
-- [Consulting and partnerships](https://syberlabs.io/services/): Custom AI consulting, builds and design partnerships from SyberLabs. We design agent systems that check their own work: host-run checks, signed records and human approval before anything ships.
-- [Research](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: the technical reports and notes on this site, the RISE reader-owned AI status pages, the five working papers in SyberLabs/papers, the Instrument Panel and the OSAHR decision workbench. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
+- [Consulting and partnerships](https://syberlabs.io/services/): AI consulting, custom builds and design partnerships from SyberLabs. We build agent systems in which software runs the checks, every step is logged in a signed record and a person approves before anything ships.
+- [Research](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: three reports and notes on this site, two RISE status pages and five working papers in SyberLabs/papers. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
 
 ## Account
 
@@ -356,7 +356,7 @@ Text version of the interactive map: This map needs JavaScript.
 
 ## How we build
 
-- [The factory](https://syberlabs.io/factory/): Inside SyberLabs' autonomous software factory: agents propose code as Git candidates, the host runs every check on the exact tree, ordered rules and a person admit each change, and every step is a signed record.
+- [The factory](https://syberlabs.io/factory/): How SyberWork handles one code change: an AI agent proposes it as a Git commit, SyberWork runs every check on that exact commit, rules and a person approve it, and each step is logged in a signed record.
 - [/approach/](https://syberlabs.io/approach/): How SyberLabs builds AI software: establish what a system knows, design what a person can do with it, and verify that they can review and change the result.
 - [/stack/](https://syberlabs.io/stack/): How SyberLabs’ coding agents read open-source dependencies at the exact version a project uses, through GitHits, and what that sends off our machines.
 
