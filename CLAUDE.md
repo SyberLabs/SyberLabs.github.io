@@ -7,7 +7,7 @@
 media", before changing the website. The direction is the Midnight theme:
 Midnight Black `#02070A` surfaces, off-white text, Electric Blue `#0297DE` for
 light, links and focus, and Cantaloupe Orange `#FC734D` used a little (solid
-action buttons, live signals, the Admit step, the hero's warm horizon), with
+action buttons, live signals, the Approve step, the hero's warm horizon), with
 full-bleed mathematical media, Instrument Sans headings, generous whitespace and
 sparse actions. The theme is defined once, at the end of `src/syberlabs.css`;
 pages do not carry their own colour blocks. Apply scoped website overrides;
@@ -23,6 +23,27 @@ copy returns). Keep copy as real HTML. Preserve menu, privacy and account access
 on mobile and desktop. Verify the rendered result at laptop and mobile widths. Do
 not invent product proof, customers, prices, response times or availability. Use
 plain punctuation without em dashes in new public copy.
+
+## Wording
+
+Every line of public copy states a fact a reader can check or act on. Before
+keeping a line, ask what it tells the reader that they could verify or do; if
+the answer is nothing, delete it.
+
+- No slogans, taglines or metaphors. Say what the thing does: "Tests every
+  AI-written code change before a person approves it", not a three-beat motto.
+- Name the actor. SyberWork runs the checks, a person approves, the client
+  logs the call. Never use the word "host" in public copy (`scripts/qa.mjs`
+  fails the build on it): write SyberWork, the application or the machine.
+- Use the reader's words: approve (not admit), proposed change (not
+  candidate), files in the commit (not tree), log or record (not trail).
+  A product term such as Build Thread or contract is defined where it first
+  appears on a page.
+- Say each thing once per page. A heading names its section; it does not
+  restate the paragraph under it.
+- No "X, not Y" constructions for effect, no intensifiers (real, truly,
+  focused), no claims about feelings or experience.
+- Keep limits and "not yet" statements. They are facts.
 
 ## Public dependency lookup (GitHits)
 

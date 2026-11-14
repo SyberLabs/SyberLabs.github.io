@@ -11,7 +11,8 @@
 //   - <a target="_blank"> without rel="noopener"
 //   - sitemap.xml URLs with no page, and pages (except 404.html and the kit demo) missing from the sitemap
 //   - files the CI workflow tests for (`test -s dist/...`) that are missing
-// Exits non-zero on broken internal links or missing files; everything else is a warning.
+//   - the word "host" in public copy (banned: CLAUDE.md)
+// Exits non-zero on broken internal links, missing files or the banned word; everything else is a warning.
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { existsSync, statSync } from 'node:fs';
 import { resolve, join, relative, posix } from 'node:path';
@@ -108,6 +109,16 @@ for (const [rel, { html, list }] of parsed) {
   const noindex = rel === '404.html' || list.some(t => t.name === 'meta' && (t.attrs.name || '').toLowerCase() === 'robots' && /\bnoindex\b/i.test(t.attrs.content || ''));
   if (!noindex && !list.some(t => t.name === 'meta' && (t.attrs.name || '').toLowerCase() === 'description' && t.attrs.content)) report(rel, 'no meta description');
   if (!noindex && !list.some(t => t.name === 'link' && /\bcanonical\b/i.test(t.attrs.rel || ''))) report(rel, 'no canonical link');
+
+  // Banned word: public copy never says "host" (CLAUDE.md). Checked in what a reader or a link preview sees: the page
+  // text with code and styles removed (JSON-LD kept), and the title, description, alt and label attributes.
+  // "hosted" and "hosting" are other words and pass. The design kit demo is not site copy.
+  if (!rel.startsWith('kit/')) {
+    const text = html.replace(/<script(?![^>]*application\/ld\+json)[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ');
+    const shown = [text, ...list.flatMap(t => ['content', 'alt', 'aria-label', 'title'].map(k => t.attrs[k] || ''))].join(' ');
+    const hit = /.{0,40}\bhosts?\b.{0,40}/i.exec(shown);
+    if (hit) report(rel, `public copy uses the word "host": ${hit[0].replace(/\s+/g, ' ').trim()}`, true);
+  }
 
   // Images without alt
   for (const t of list) if (t.name === 'img' && t.attrs.alt === undefined) report(rel, `img without alt: ${t.attrs.src || t.raw.slice(0, 80)}`);
