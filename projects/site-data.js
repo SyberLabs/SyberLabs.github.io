@@ -7,6 +7,9 @@
 // under stated conditions), deployed (it runs somewhere people can reach). Nothing is promoted
 // from one state to the next by wording.
 
+// Each project's `plate` is a picture drawn by one of the SyberLabs engines and graded into the site's blue
+// (scripts/engine-plates.mjs, docs/ENGINE_PLATES.md). `src` has no extension: the files are <src>.webp and <src>-560.webp.
+
 // One company inbox is the single contact everywhere (site, structured data, product pages). Change it here only.
 export const EMAIL = 'syberlabs.support@gmail.com';
 export const CONTACT = `mailto:${EMAIL}`;
@@ -59,6 +62,8 @@ export const projects = [
     intro: 'SyberWork is an open-source Python runtime for AI agents that write, test and repair code. It runs the checks on every change itself. Rules define the allowed steps, a named person approves the work, and a hash-chained log records what was proposed, checked, approved and done.',
     summary: 'Build Thread is the part that handles code changes in a Git repository. It runs the checks before accepting a change, whatever the model says about its own tests. Each action carries a unique key so it cannot run twice, and its result is checked afterwards.',
     status: { kind: 'wip', label: 'Work in progress' },
+    plate: { src: '/media/engines/vestigia-syberwork', alt: 'A tree of blue light branching upward from one root. Faint abandoned branches surround the bright ones.',
+      caption: 'Drawn by Vestigia, a SyberLabs engine, from the seed SYBERWORK. The growth keeps every branch it tried. The bright lines are the branches that survived.' },
     primary: { label: 'View source', href: 'https://github.com/SyberLabs/SyberWork', external: true },
     secondary: { label: 'Discuss a pilot', href: CONSULT },
     ghost: { label: 'Build Thread in ten minutes', href: 'https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md' },
@@ -110,6 +115,8 @@ export const projects = [
     intro: 'Give Attest a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the running app: commands in a scratch directory, browser steps in Chrome. It returns the document with each step marked proven, stale, broken, unverifiable or skipped, and the evidence for each mark.',
     summary: 'A failed step goes to an agent. A policy file decides what the agent may change, then the browser check runs again. A case closes only when the fix passes. Each case writes a receipt file that SyberWork can read.',
     status: { kind: 'wip', label: 'Public source · early' },
+    plate: { src: '/media/engines/interferentia-attest', alt: 'Fine blue contour lines sweeping in arcs around a small closed loop.',
+      caption: 'Drawn by Interferentia, a SyberLabs engine, from the seed ATTEST. Two fields are computed, and only the contours of their difference are drawn.' },
     primary: { label: 'View source', href: 'https://github.com/SyberLabs/attest', external: true },
     secondary: { label: 'Discuss a pilot', href: CONSULT },
     why: { title: 'Why test a document?',
@@ -154,6 +161,8 @@ export const projects = [
     intro: 'A reading app that runs in your browser. Words appear over time at a pace you set, with sound and moving visuals, or you can switch to a page view.',
     summary: 'Open beta at rise.syberlabs.io. Reading runs entirely in the browser, and the files and compositions you bring stay in browser storage. An optional AI reading request runs on the reader’s own model connection; once connected, visual direction also sends sections of the reading text there. The RISE server holds no model credential.',
     status: { kind: 'live', label: 'Live · open beta' },
+    plate: { src: '/media/engines/ostensoria-rise', alt: 'A symmetrical vessel of blue light, like a rose window.',
+      caption: 'Drawn by Ostensoria, a SyberLabs engine, from the seed RISE. One chaotic orbit is run millions of times and folded through mirror symmetry.' },
     primary: { label: 'Open RISE', href: RISE_APP },
     secondary: { label: 'Try the interactive sample', href: RISE_SAMPLE },
     ghost: { label: 'Watch the demo film', href: '/rise-demo/', icon: 'play' },
@@ -232,6 +241,8 @@ export const projects = [
     intro: 'FLYSPACE is a canvas where you connect data sources to AI assistants, and each answer lists the sources it used. AI answers require running FLYSPACE locally with your own model, for example through Ollama. Formerly OmniOS.',
     summary: 'A limited public preview is live at omni.syberlabs.io: the canvas, the Shell Store and every keyless public data source run in your browser. AI answers and keyed sources are switched off there.',
     status: { kind: 'live', label: 'Live preview' },
+    plate: { src: '/media/engines/sophia-flyspace', alt: 'Glowing nodes on a spiral mesh of blue lines around a bright centre.',
+      caption: 'Drawn by Sophia, a SyberLabs engine. Nodes sit on spiral field lines around one centre.' },
     primary: { label: 'Open the preview', href: OMNI_PREVIEW },
     secondary: { label: 'Discuss a pilot', href: CONSULT },
     ghost: { label: 'Run it locally', href: 'https://github.com/SyberLabs/Flyspace#run' },

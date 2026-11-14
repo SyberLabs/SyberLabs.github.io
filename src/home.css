@@ -253,8 +253,8 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .lab-identity__copy>p:not(.sy-eyebrow) { max-width:42ch; color:var(--sy-mist); font-size:18px; line-height:1.6; }
 .lab-identity__copy a { display:inline-flex; align-items:center; gap:6px; min-height:44px; color:var(--sy-ice); font-size:15px; }
 .lab-identity__art { margin:0; }
-.lab-identity__art img { display:block; width:100%; height:auto; mix-blend-mode:screen; -webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%); mask-image:radial-gradient(closest-side,#000 72%,transparent 100%); }
-.lab-identity__art figcaption { padding-top:8px; color:var(--sy-mist); font-size:12px; line-height:1.5; text-align:center; }
+.lab-identity__art img { display:block; width:100%; height:auto; mix-blend-mode:lighten; }
+.lab-identity__art figcaption { max-width:52ch; margin-inline:auto; padding-top:8px; color:var(--sy-mist); font-size:12px; line-height:1.5; text-align:center; }
 @media(max-width:800px) { .lab-identity { grid-template-columns:1fr; gap:24px; padding-block:64px; } }
 
 /* GitHits: the case in four engineering decisions, beside a short account and the path a lookup takes */
@@ -359,8 +359,10 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .home-products__list { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; margin:0; padding:0; list-style:none; border-top:1px solid var(--sy-rule); }
 .home-products__list li { border-right:1px solid var(--sy-rule); }
 .home-products__list li:last-child { border-right:0; }
-.home-products__list a { display:grid; grid-template-rows:auto auto auto 1fr auto; gap:10px; height:100%; padding:28px 24px 32px; color:var(--sy-vellum); text-decoration:none; transition:background var(--sy-t-hover); }
+.home-products__list a { display:grid; grid-template-rows:auto auto auto auto 1fr auto; gap:10px; height:100%; padding:28px 24px 32px; color:var(--sy-vellum); text-decoration:none; transition:background var(--sy-t-hover); }
 .home-products__list a:hover { background:rgba(2,151,222,.06); text-decoration:none; }
+/* Each product's engine plate (projects/site-data.js `plate`). Its ground is the page's ground, so it carries no frame. */
+.home-products__plate { display:block; width:100%; height:auto; aspect-ratio:1; margin:-8px 0 8px; mix-blend-mode:lighten; }
 .home-products__n { color:var(--sy-dim); font:400 12px/1 var(--sy-mono); letter-spacing:.08em; }
 .home-products__cat { color:var(--sy-ice); font-size:13px; letter-spacing:.04em; }
 .home-products__name { font:500 30px/1.1 var(--sy-sans); letter-spacing:-.03em; }
@@ -369,7 +371,8 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 .home-products__dot { width:7px; height:7px; border-radius:50%; background:var(--sy-dim); }
 .home-products__dot--live { background:var(--sy-cantaloupe,#fc734d); box-shadow:0 0 10px var(--sy-cantaloupe,#fc734d); }
 @media(max-width:1000px) { .home-products__list { grid-template-columns:repeat(2,minmax(0,1fr)); } .home-products__list li:nth-child(2n) { border-right:0; } .home-products__list li { border-bottom:1px solid var(--sy-rule); } }
-@media(max-width:600px) { .home-products { padding-block:64px 56px; } .home-products__list { grid-template-columns:1fr; } .home-products__list li { border-right:0; } .home-products__list a { padding:22px 0 24px; } }
+@media(max-width:1000px) { .home-products__plate { width:min(60%,260px); } }
+@media(max-width:600px) { .home-products__plate { width:148px; margin:0 0 4px -10px; } .home-products { padding-block:64px 56px; } .home-products__list { grid-template-columns:1fr; } .home-products__list li { border-right:0; } .home-products__list a { padding:22px 0 24px; } }
 
 /* Consulting and partnerships: the offer, then the three ways to engage. */
 .home-services { display:grid; grid-template-columns:1fr 1fr; gap:clamp(36px,8vw,140px); padding-block:90px; border-top:1px solid var(--sy-rule); }

@@ -68,8 +68,9 @@ clip, scrolling, reduced motion or a media error all end in the same full layout
 start there. If autoplay is refused, the poster shows and the first tap or key press starts the motion. Do not
 restore a permanent opaque half-screen mask.
 
-The factory section carries the company's identity with two Midjourney pieces, the chrome emblem and the agent
-network (`media/lab/`), credited "Illustration made with Midjourney".
+The factory section carries the company's identity with the chrome emblem (`media/lab/`, made with Midjourney and
+credited in the figure caption) and a plate drawn by the Vestigia engine (`media/engines/`). Each product also has an
+engine plate, graded into Electric Blue: see `docs/ENGINE_PLATES.md` in the website repository.
 
 ### Editable brand assets
 
