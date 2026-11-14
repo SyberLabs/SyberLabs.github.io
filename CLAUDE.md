@@ -30,7 +30,8 @@ Every line of public copy states a fact a reader can check or act on. Before
 keeping a line, ask what it tells the reader that they could verify or do; if
 the answer is nothing, delete it.
 
-- No slogans, taglines or metaphors. Say what the thing does: "Tests every
+- The one tagline is "High-Fidelity Systems", under the SyberLabs name. Apart
+  from it, no slogans or metaphors. Say what the thing does: "Tests every
   AI-written code change before a person approves it", not a three-beat motto.
 - Name the actor. SyberWork runs the checks, a person approves, the client
   logs the call. Never use the word "host" in public copy (`scripts/qa.mjs`

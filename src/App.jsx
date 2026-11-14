@@ -69,7 +69,7 @@ export default function App() {
         <div className="pitch-hero__copy sy-wrap">
           <h1 id="hero-title" tabIndex={-1}>
             <span className="pitch-hero__brand" data-text="SyberLabs">SyberLabs</span>
-            <span className="sy-sr">: </span><span className="pitch-hero__tagline">Software for checking AI’s work</span>
+            <span className="sy-sr">: </span><span className="pitch-hero__tagline">High-Fidelity Systems</span>
           </h1>
           <div className="pitch-hero__panel">
             <p className="pitch-hero__line">AI agents write the code. Our software runs every check itself, logs each step in a signed record, and changes your branch only after a person approves. We make four products and build agent systems for clients.</p>
