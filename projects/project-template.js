@@ -4,7 +4,7 @@
 // and footer into the static pages.
 // Case studies lead with project context and real evidence. Sigil helpers remain
 // available to the shared site chrome and project directory.
-import { projects, nav, footerLinks, siteMap, EMAIL, workWithUs } from './site-data.js?v=20261113';
+import { projects, nav, footerLinks, siteMap, EMAIL, workWithUs } from './site-data.js?v=20261114';
 import { params as sigilParams } from '../kit/v2/syber-sigil.js';
 export { projects };
 
@@ -209,7 +209,7 @@ const sections = p => `${liveBar(p)}${videoSection(p)}${gallerySection(p)}${runS
 // authored by hand) can carry the same sections: scripts/prerender.mjs fills its marker at build time. That page
 // does not otherwise load experience-v7.js, so the sections bring it along to fill the dependency panel.
 export const renderSections = p => `${sections(p)}
-<script type="module" src="/projects/experience-v7.js?v=16"></script>`;
+<script type="module" src="/projects/experience-v7.js?v=17"></script>`;
 
 function facts(p) {
   const value = v => typeof v === 'string' ? esc(v) : `<a class="sy-link pj-facts__link" href="${v.href}">${esc(v.label)}${/^https?:/.test(v.href) ? icon('external', 16) : ''}</a>`;
