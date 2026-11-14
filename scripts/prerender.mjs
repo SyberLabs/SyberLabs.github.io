@@ -28,7 +28,7 @@ for (const p of projects) {
   }
   const page = renderProject(p);
   // The social preview tags carry the same title and description as the page, and the card from scripts/og-cards.mjs.
-  const image = `https://syberlabs.io/og/${p.slug}.png?v=20261105`;
+  const image = `https://syberlabs.io/og/${p.slug}.png?v=20261113`;
   await inject(resolve(`dist/projects/${p.slug}/index.html`), /<div id="app"><\/div>/, html => html
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(page.title)}</title>`)
     .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(page.description)}">`)

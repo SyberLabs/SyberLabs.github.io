@@ -40,35 +40,35 @@ const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 // One entry per page. `seed` names the sigil (projects use their slug, so the card carries the same
 // mark as the page); `line` is the single sentence under the headline.
 const pages = [
-  { slug: 'home', path: '/', eyebrow: 'SyberLabs · High-Fidelity Systems', headline: 'AI software that proves its work.',
-    line: 'SyberWork, Attest, RISE and FLYSPACE, plus custom AI consulting and design partnerships. Nothing ships until it is\u00a0checked.', seed: 'syberlabs', accent: ICE },
-  { slug: 'factory', path: '/factory/', eyebrow: 'SyberLabs · The factory', headline: 'Agents build. The host checks. A person admits.',
-    line: 'One change, step by step: candidates on side refs, checks on the exact tree, twenty-one ordered rules, a signed record of\u00a0each\u00a0step.', seed: 'syberwork', accent: ICE },
+  { slug: 'home', path: '/', eyebrow: 'SyberLabs', headline: 'Software for checking AI’s work.',
+    line: 'SyberWork, Attest, RISE and FLYSPACE, plus AI consulting, custom builds and design\u00a0partnerships.', seed: 'syberlabs', accent: ICE },
+  { slug: 'factory', path: '/factory/', eyebrow: 'SyberLabs · The factory', headline: 'How SyberWork handles a code change.',
+    line: 'An AI agent proposes a commit. SyberWork runs every check on it, twenty-one rules and a person approve it, and each step is logged in a signed\u00a0record.', seed: 'syberwork', accent: ICE },
   ...projects.map(p => ({
     slug: p.slug, path: `/projects/${p.slug}/`, eyebrow: `Project ${p.number} · ${p.category}`, headline: p.headline,
     // the whole intro when it fits four lines, otherwise its first sentence
     line: p.intro.length > 200 ? p.intro.replace(/\.\s[\s\S]*$/, '.') : p.intro, seed: p.slug, accent: p.accent, badge: p.status, name: p.name,
   })),
-  { slug: 'jev-execution', path: '/research/jev-execution/', eyebrow: 'Research · Technical report · September 2026', headline: 'Beyond the typed decision.',
-    line: 'GrokCell Execution: a Python and SQLite execution layer for AI agents, with durable evidence and crash-recovery tests.', seed: 'jev-execution', accent: RESEARCH },
-  { slug: 'sybershoke', path: '/research/sybershoke/', eyebrow: 'Research · Research note · Revision 2', headline: 'Shock the run. Then count.',
+  { slug: 'jev-execution', path: '/research/jev-execution/', eyebrow: 'Research · Technical report · September 2026', headline: 'What runs after an AI model chooses.',
+    line: 'GrokCell Execution: a Python and SQLite prototype that enforces permissions and budgets after a model’s choice, with crash-recovery tests.', seed: 'jev-execution', accent: RESEARCH },
+  { slug: 'sybershoke', path: '/research/sybershoke/', eyebrow: 'Research · Research note · Revision 2', headline: 'Fault-injection tests for multi-agent systems.',
     line: 'Sybershoke: deterministic shock tests for multi-agent systems, with predictions written first and limits stated.', seed: 'sybershoke', accent: RESEARCH },
-  { slug: 'kev', path: '/kev/', eyebrow: 'RISE · Reader-owned AI', headline: 'Your model, your connection.',
-    line: 'RISE spends no shared inference: Jev runs on the reader’s OpenRouter account, Kev-4B on the reader’s own machine.', seed: 'kev', accent: RISE },
-  { slug: 'jev', path: '/jev/', eyebrow: 'RISE · AI integration · Case study', headline: 'AI decisions with clear limits.',
-    line: 'The earlier Jev integration in RISE, kept as historical evidence.', seed: 'jev', accent: RISE },
-  { slug: 'approach', path: '/approach/', eyebrow: 'SyberLabs · Approach', headline: 'Make the work observable.',
+  { slug: 'kev', path: '/kev/', eyebrow: 'RISE · Reader-owned AI', headline: 'RISE runs AI on the reader’s own connection.',
+    line: 'The RISE server calls no model. Jev runs on the reader’s OpenRouter account, Kev-4B on the reader’s own machine.', seed: 'kev', accent: RISE },
+  { slug: 'jev', path: '/jev/', eyebrow: 'RISE · AI integration · Case study', headline: 'Typed AI decisions, validated by code.',
+    line: 'A historical case study of the Jev integration in RISE. That integration path was retired in September 2026.', seed: 'jev', accent: RISE },
+  { slug: 'approach', path: '/approach/', eyebrow: 'SyberLabs · Approach', headline: 'Our approach: observe, design, verify.',
     line: 'Establish what a system knows, design what a person can do with it, and verify that they can review and change the result.', seed: 'approach', accent: ICE },
-  { slug: 'stack', path: '/stack/', eyebrow: 'SyberLabs · How we build', headline: 'Read the source, not the memory.',
+  { slug: 'stack', path: '/stack/', eyebrow: 'SyberLabs · How we build', headline: 'How our coding agents look up dependencies.',
     line: 'Our coding agents read open-source dependencies at the exact version a project uses, through GitHits.', seed: 'stack', accent: ICE },
-  { slug: 'services', path: '/services/', eyebrow: 'SyberLabs · Consulting and partnerships', headline: 'AI that does real work, and proves it.',
-    line: 'AI consultations, custom agent systems and design partnerships, built with host-run checks, signed records and human\u00a0approval.', seed: 'services', accent: ICE },
-  { slug: 'rise-demo', path: '/rise-demo/', eyebrow: 'Product demo · Audiovisual reader', headline: 'See RISE in motion.',
-    line: 'A film edited from real RISE screen recordings, then the interactive sample to try yourself.', seed: 'rise', accent: RISE },
+  { slug: 'services', path: '/services/', eyebrow: 'SyberLabs · Consulting and partnerships', headline: 'Consulting, custom builds and design partnerships.',
+    line: 'We work out what AI agents should automate, then build it with SyberWork: checks on every change, a signed record and human\u00a0approval.', seed: 'services', accent: ICE },
+  { slug: 'rise-demo', path: '/rise-demo/', eyebrow: 'Product demo · Audiovisual reader', headline: 'RISE demo film and interactive sample.',
+    line: 'A 62-second film edited from RISE screen recordings, and a sample you can run in the browser.', seed: 'rise', accent: RISE },
   { slug: 'plus', path: '/plus/', eyebrow: 'RISE Plus · Coming soon', headline: 'Your own reading, read aloud.',
-    line: 'Give your short writing a voice. Planned: $8.99 a month for 60,000 characters of ElevenLabs narration. Free reading stays free.', seed: 'plus', accent: RISE },
-  { slug: 'research', path: '/research/', eyebrow: 'SyberLabs · Research', headline: 'Every claim, with its evidence.',
-    line: 'Reports, notes and working papers, each with its claim, its evidence state, what it does not establish, and its\u00a0source.', seed: 'research', accent: RESEARCH },
+    line: 'An ElevenLabs voice for text you bring. Planned: $8.99 a month for 60,000 characters of narration. Reading without it stays free.', seed: 'plus', accent: RISE },
+  { slug: 'research', path: '/research/', eyebrow: 'SyberLabs · Research', headline: 'Reports, notes and working papers.',
+    line: 'Each card states the claim, the evidence state it has reached, what it does not establish, and its\u00a0source.', seed: 'research', accent: RESEARCH },
   { slug: 'privacy', path: '/privacy/', eyebrow: 'SyberLabs · Privacy', headline: 'What this site does with your data.',
     line: 'A static site with no accounts, forms, cookies or analytics.', seed: 'privacy', accent: ICE },
 ];
@@ -99,7 +99,7 @@ body { position: relative; color: var(--vellum); font: 400 17px/1.6 var(--sans);
 .lockup img { width: 26px; height: auto; }
 /* eyebrows longer than 48 characters step down a size so they stay on one line */
 .eyebrow { margin-top: 44px; font: 500 ${p.eyebrow.length > 48 ? 13 : 15}px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mist); }
-.headline { margin-top: 18px; font: 400 ${p.headline.length > 42 ? 58 : p.headline.length > 28 ? 64 : 76}px/1.02 var(--serif); letter-spacing: -.015em; color: var(--vellum); text-wrap: balance; }
+.headline { margin-top: 18px; font: 400 ${p.headline.length > 54 ? 50 : p.headline.length > 42 ? 58 : p.headline.length > 28 ? 64 : 76}px/1.02 var(--serif); letter-spacing: -.015em; color: var(--vellum); text-wrap: balance; }
 .line { margin-top: 22px; font: 400 22px/1.4 var(--sans); color: var(--body); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .foot { margin-top: auto; display: flex; align-items: center; gap: 18px; padding-top: 24px; }
 .badge { display: inline-flex; align-items: center; gap: 10px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule-2); background: rgba(2,7,10,.6);

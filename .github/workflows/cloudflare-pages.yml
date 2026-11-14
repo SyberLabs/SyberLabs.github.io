@@ -98,7 +98,7 @@ jobs:
           if grep -rqiE 'mateo|robles|sykosyber|sdcarlson|automateon|mateo-site|hello\.mateorobles|925[-. ]?949[-. ]?3105|Interview Mateo|View résumé|Open to software engineering|job seekers' dist --include='*.html' --include='*.js' --include='*.json' --include='*.txt' --include='*.xml'; then echo 'Personal or hiring copy returned'; exit 1; fi
           test ! -e dist/mateo
           grep -Fxq '/mateo/* / 301' dist/_redirects
-          grep -Fq 'build something useful together.' dist/index.html
+          grep -Fq 'id="contact"' dist/index.html
           if grep -Fq 'Try a one-minute reading' dist/index.html; then echo 'Retired homepage funnel returned'; exit 1; fi
           if grep -Fq 'RISE Plus' dist/index.html; then echo 'Unlaunched promotion returned'; exit 1; fi
           grep -Fq 'id="dependencies"' dist/stack/index.html
