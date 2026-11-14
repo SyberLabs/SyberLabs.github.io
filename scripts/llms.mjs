@@ -66,7 +66,7 @@ const fact = v => (typeof v === 'string' ? v : `[${v.label}](${abs(v.href)})`);
 
 // Every text field of a project. An unknown field fails the build rather than being dropped silently.
 const RENDER = {
-  slug: null, number: null, accent: null, name: null, category: null, reflects: null, status: null, intro: null,
+  slug: null, number: null, accent: null, name: null, category: null, reflects: null, status: null, intro: null, plate: null,
   pageTitle: v => `Page title: ${v}`,
   headline: v => `Headline: ${v}`,
   summary: v => v,

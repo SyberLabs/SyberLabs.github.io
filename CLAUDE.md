@@ -24,6 +24,12 @@ on mobile and desktop. Verify the rendered result at laptop and mobile widths. D
 not invent product proof, customers, prices, response times or availability. Use
 plain punctuation without em dashes in new public copy.
 
+Pictures of products and sections are engine plates: output of the SyberLabs
+procedural engines, seeded by name and graded into Electric Blue
+(`docs/ENGINE_PLATES.md`, `scripts/engine-plates.mjs`). Add a picture by
+rendering a plate, not by generating or sourcing an illustration. A caption
+names the engine and seed and never presents a plate as a product screenshot.
+
 ## Wording
 
 Every line of public copy states a fact a reader can check or act on. Before
