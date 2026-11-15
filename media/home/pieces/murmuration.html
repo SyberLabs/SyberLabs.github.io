@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<style>*{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
+<title>Murmuration</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Murmuration: a flock of starlings at dusk that flies to the music. Kicks send panic waves through the flock, snares turn it, the melody sets its altitude.">
+<style>
+  /* Layout: an open sky. The flock owns the frame; the field notes sit in the corners like an observer's log. */
+  :root{
+    --ink:#f1e8dc;
+    --ink-dim:#b3a594;
+    --ember:#f0a868;
+    --line:rgba(240,200,160,.24);
+    --panel:rgba(18,14,20,.62);
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+    color-scheme:dark;
+  }
+  html,body{height:100%;background:#0d0b14;color:var(--ink);overflow:hidden;}
+  body{font-family:var(--mono);-webkit-font-smoothing:antialiased;}
+  #stage{position:fixed;inset:0;width:100%;height:100%;display:block;}
+  .chrome{position:fixed;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;gap:16px;
+    padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+    padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(14px + env(safe-area-inset-bottom,0px));transition:opacity .4s;}
+  .chrome.off{opacity:0;}
+  .chrome.off *{pointer-events:none!important;}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+  .brand{font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--ember);}
+  h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,5.6vw,56px);letter-spacing:-.015em;line-height:.95;margin:.12em 0 0;text-wrap:balance;}
+  .sub{font-size:10.5px;letter-spacing:.04em;color:var(--ink-dim);margin-top:8px;max-width:32ch;line-height:1.6;}
+  .log{display:flex;flex-direction:column;align-items:flex-end;gap:5px;text-align:right;font-size:10.5px;letter-spacing:.06em;color:var(--ink-dim);line-height:1.5;font-variant-numeric:tabular-nums;}
+  .log b{color:var(--ink);font-weight:500;}
+  .log .big{font-family:var(--display);font-weight:500;font-size:clamp(26px,3.6vw,40px);color:var(--ink);letter-spacing:-.01em;line-height:1;}
+  .hits{display:flex;gap:6px;margin-top:2px;}
+  .hits span{--on:0;font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:3px 6px;border:1px solid var(--line);
+    background:color-mix(in srgb,var(--ember) calc(var(--on)*85%),transparent);color:color-mix(in srgb,#1a0f08 calc(var(--on)*100%),var(--ink-dim));}
+  .bottom{display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .bar{pointer-events:auto;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:100%;
+    background:var(--panel);border:1px solid var(--line);padding:8px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+  button{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--ink);
+    border:1px solid var(--line);padding:10px 12px;min-height:38px;cursor:pointer;transition:border-color .15s,background .15s,color .15s;}
+  button:hover{border-color:var(--ember);}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--ember);outline-offset:2px;}
+  button.primary{background:var(--ember);border-color:var(--ember);color:#1a0f08;font-weight:500;}
+  button.primary:hover{background:#f6bd88;}
+  button[aria-pressed="true"]{color:var(--ember);border-color:var(--ember);}
+  .glow{display:flex;align-items:center;gap:8px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);border:1px solid var(--line);padding:0 10px;min-height:38px;}
+  .glow input{-webkit-appearance:none;appearance:none;width:84px;height:2px;background:var(--line);margin:0;}
+  .glow input::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--ember);border:2px solid #1a0f08;cursor:pointer;}
+  .glow input::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--ember);border:2px solid #1a0f08;cursor:pointer;}
+  .hint{font-size:9.5px;letter-spacing:.08em;color:var(--ink-dim);text-align:center;}
+  .hint kbd{font-family:var(--mono);color:var(--ink);border:1px solid var(--line);padding:0 4px;}
+  .toast{position:fixed;left:50%;bottom:calc(120px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:min(440px,calc(100% - 32px));
+    font-size:11px;line-height:1.6;background:var(--panel);border:1px solid var(--line);padding:10px 14px;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;}
+  .toast.on{opacity:1;}
+  .drop{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(13,11,20,.55);
+    font-family:var(--display);font-size:clamp(22px,4vw,38px);color:var(--ember);opacity:0;pointer-events:none;transition:opacity .2s;}
+  .drop.on{opacity:1;}
+  @media (max-width:560px){ .log{align-items:flex-start;text-align:left;} .sub,.hint{display:none;} button{padding:9px 9px;font-size:10px;letter-spacing:.08em;} }
+</style>
+<meta name="robots" content="noindex">
+<style id="syb-embed">#chrome,#toast,#drop{display:none!important}html,body{overflow:hidden}
+#syb-sound{position:fixed;right:10px;bottom:10px;z-index:99;min-height:44px;padding:0 13px;border:1px solid rgba(140,200,235,.3);border-radius:2px;background:rgba(2,7,10,.6);color:#c3cfd6;font:500 10px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#syb-sound[aria-pressed=true]{color:#fd9273;border-color:#fc734d}</style></head>
+<body>
+<canvas id="stage" aria-label="Murmuration: a flock of starlings flying to the music"></canvas>
+<div class="chrome" id="chrome">
+  <div class="top">
+    <div>
+      <div class="brand">SyberLabs · Engines</div>
+      <h1>Murmuration</h1>
+      <div class="sub">Starlings at dusk. The kick is a falcon, the snare turns the flock, the melody lifts it.</div>
+    </div>
+    <div class="log" aria-live="off">
+      <div class="big" id="alt">E5</div>
+      <div id="altline">ALTITUDE FOLLOWS THE MELODY</div>
+      <div id="flock">FLOCK <b>16,000</b> STARLINGS</div>
+      <div id="src">SOURCE <b>Idle example</b></div>
+      <div class="hits" aria-hidden="true"><span id="ind-kick">Kick</span><span id="ind-snare">Snare</span><span id="ind-hat">Hats</span></div>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="bar" role="toolbar" aria-label="Sound">
+      <button class="primary" id="btnDemo" type="button">Play demo</button>
+      <button id="btnFile" type="button">Load track</button>
+      <button id="btnMic" type="button">Mic</button>
+      <label class="glow" for="glow">Glow <input type="range" id="glow" min="0.2" max="1.2" step="0.05" value="0.7"></label>
+      <button id="btnFull" type="button">Full</button>
+      <button id="btnHide" type="button">Hide</button>
+    </div>
+    <div class="hint">Drop an audio file anywhere · <kbd>Space</kbd> play or stop · <kbd>[</kbd> <kbd>]</kbd> glow · <kbd>H</kbd> hide · <kbd>F</kbd> fullscreen</div>
+  </div>
+</div>
+<input type="file" id="file" accept="audio/*" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="drop" id="drop">Release to play</div>
+
+<script>/* shared/audio-reactive.js, inlined by tools/bundle.mjs */
+/*
+ * SyberLabs audio-reactive base, shared by every piece in this repo.
+ *
+ * A piece supplies its visuals, its own analysis and its demo track. This base supplies the rest:
+ *   - the audio graph: demo, file and mic sources, named analysers, and a look-ahead delay so
+ *     visuals land on the sound (the speakers hear everything `lookahead` seconds after the analysers)
+ *   - kick, snare and hat detection, with hits queued to fire on the sound
+ *   - drum synths for demo tracks
+ *   - noteTracker (which notes are sounding) and levelMeter (how hard the music is pushing)
+ *   - the standard controls, by element id: btnDemo, btnFile, file, btnMic, btnFull, btnHide,
+ *     glow, chrome, toast, drop, ind-kick, ind-snare, ind-hat (any can be left out)
+ *   - a frame loop that survives a bad frame
+ *   - offline rendering: with ?offline=1 the page is driven frame by frame by render/ (see
+ *     window.AudioReactivePage below), randomness is seeded from ?seed=, and analysers are fed
+ *     data computed in Node exactly as an AnalyserNode would compute it
+ *
+ * Usage, in a piece:
+ *   const R = AudioReactive.create({
+ *     name: "cymatica",                          // storage key prefix
+ *     canvas,                                     // what offline capture records
+ *     analysers: { tone: {fftSize:4096, smoothing:0.25, needs:["freq"], lead:0.07} },
+ *     onsets: true,                               // built-in kick/snare/hat detection
+ *     lookahead: 0.1,
+ *     demo: (actx, dest, kit, R) => ({ stop(){} }),
+ *     onHit: (name, strength, now) => {},         // fired on the sound
+ *     step: (now, dt) => {},                      // every frame
+ *   });
+ *   R.mode is "idle" | "demo" | "file" | "mic"; R.an.tone is an AnalyserNode (or its offline stand-in).
+ */
+(function () {
+  "use strict";
+  const QS = new URLSearchParams(location.search);
+  const OFFLINE = QS.get("offline") === "1";
+
+  // ---------- seeded randomness ----------
+  function xmur3(str) {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+    return function () { h = Math.imul(h ^ (h >>> 16), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); h ^= h >>> 16; return h >>> 0; };
+  }
+  function mulberry32(a) {
+    return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  }
+  // offline renders must be repeatable, so every Math.random in the page is seeded before any piece code runs
+  if (OFFLINE) Math.random = mulberry32(xmur3("ar|" + (QS.get("seed") || "SYBER"))());
+
+  // ---------- small helpers every piece uses ----------
+  const clamp = (x, a, b) => (x < a ? a : x > b ? b : x);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const fract = (x) => x - Math.floor(x);
+  // soft ceiling: linear near zero, never exceeds max
+  const soft = (x, max) => (max <= 0 ? 0 : max * (1 - Math.exp(-Math.max(0, x) / max)));
+  const NOTE = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  const noteName = (m) => NOTE[((m % 12) + 12) % 12] + (Math.floor(m / 12) - 1);
+  const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+  const esc = (s) => String(s).replace(/[<>&"]/g, (m) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[m]));
+
+  // ---------- drum synths for demo tracks ----------
+  function drumKit(actx, dest) {
+    const noise = actx.createBuffer(1, actx.sampleRate, actx.sampleRate);
+    const nd = noise.getChannelData(0);
+    for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+    const env = (g, t, a, peak, rel) => { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + rel); };
+    return {
+      noise, env,
+      kick(t, v = 1) { const o = actx.createOscillator(), g = actx.createGain(); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); env(g, t, 0.004, v, 0.4); o.connect(g); g.connect(dest); o.start(t); o.stop(t + 0.5); },
+      snare(t, v = 0.4) {
+        const s = actx.createBufferSource(); s.buffer = noise; const bp = actx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 2600; bp.Q.value = 0.7;
+        const g = actx.createGain(); env(g, t, 0.002, v, 0.17); s.connect(bp); bp.connect(g); g.connect(dest); s.start(t); s.stop(t + 0.25);
+        const o = actx.createOscillator(), og = actx.createGain(); o.frequency.setValueAtTime(220, t); o.frequency.exponentialRampToValueAtTime(160, t + 0.08);
+        env(og, t, 0.002, v * 0.6, 0.1); o.connect(og); og.connect(dest); o.start(t); o.stop(t + 0.15);
+      },
+      hat(t, v = 0.1) { const s = actx.createBufferSource(); s.buffer = noise; const hp = actx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 7500; const g = actx.createGain(); env(g, t, 0.002, v, 0.06); s.connect(hp); hp.connect(g); g.connect(dest); s.start(t); s.stop(t + 0.1); },
+    };
+  }
+  // a step sequencer clock: calls schedule(n, t) for every step, slightly ahead of time
+  function sequencer(actx, stepSeconds, schedule) {
+    let n = 0, next = actx.currentTime + 0.12;
+    const timer = setInterval(() => { while (next < actx.currentTime + 0.15) { schedule(n, next); next += stepSeconds; n++; } }, 25);
+    return () => clearInterval(timer);
+  }
+
+  // ---------- kick / snare / hat detection ----------
+  // One detector per instrument class, each against its own rolling mean + k*sd, fired on the rising edge.
+  // Kick: loudness jump in the sub band, gated by real low-end level.
+  // Snare and hats: broadband noise, measured as the share of bins in the band that jump at once, so tonal
+  // notes (which light only a few bins) do not count; mid-heavy bursts are snares, top-heavy are hats.
+  function onsetDetector(an, sampleRate, emit) {
+    const DET = {
+      kick: { type: "flux", lo: 40, hi: 130, gate: 150, k: 1.4, floor: 8, ref: 150 },
+      snare: { type: "frac", lo: 1400, hi: 6000, jump: 15, gate: 55, k: 1.8, floor: 0.22, ref: 210 },
+      hat: { type: "frac", lo: 8500, hi: 16000, jump: 5, gate: 12, k: 1.5, floor: 0.045, ref: 70 },
+    };
+    for (const n in DET) Object.assign(DET[n], { h: new Float32Array(40), i: 0, prev: 0, last: -1e9 });
+    const FF = new Uint8Array(an.frequencyBinCount), FP = new Uint8Array(an.frequencyBinCount), bw = sampleRate / an.fftSize;
+    const measure = (D) => {
+      const i0 = Math.max(1, Math.round(D.lo / bw)), i1 = Math.min(FF.length - 1, Math.round(D.hi / bw));
+      let f = 0, lvl = 0;
+      for (let i = i0; i <= i1; i++) { const d = FF[i] - FP[i]; lvl += FF[i]; if (D.type === "flux") { if (d > 0) f += d; } else if (d > D.jump) f++; }
+      return { m: f / (i1 - i0 + 1), lvl: lvl / (i1 - i0 + 1) };
+    };
+    return {
+      DET,
+      detect(now) {
+        an.getByteFrequencyData(FF);
+        const M = {}; for (const n in DET) M[n] = measure(DET[n]);
+        const cMid = measure({ type: "flux", lo: 1400, hi: 6000 }).m, cHigh = measure({ type: "flux", lo: 8500, hi: 16000 }).m;
+        for (const name in DET) {
+          const D = DET[name], { m: fl, lvl } = M[name];
+          let mu = 0; for (let i = 0; i < D.h.length; i++) mu += D.h[i]; mu /= D.h.length;
+          let v = 0; for (let i = 0; i < D.h.length; i++) v += (D.h[i] - mu) * (D.h[i] - mu);
+          const sd = Math.sqrt(v / D.h.length), thr = Math.max(D.floor, mu + D.k * sd);
+          const shape = name === "snare" ? cMid > cHigh : name === "hat" ? cHigh > cMid * 1.3 : true;
+          const masked = name === "hat" && now - DET.snare.last < 45; // a snare's noise spills into the hat band
+          if (fl > thr && fl > D.prev && lvl > D.gate && now - D.last > D.ref && !masked && shape) { D.last = now; emit(name, clamp((fl - mu) / (sd * 3 + D.floor), 0.35, 1.4), now); }
+          D.prev = fl; D.h[D.i] = fl; D.i = (D.i + 1) % D.h.length;
+        }
+        FP.set(FF);
+      },
+    };
+  }
+
+  // ---------- which notes are sounding ----------
+  // Spectral peaks, then harmonic summation picks up to three fundamentals. A peak far louder than an
+  // overtone of an already-found voice would be is another note sitting on that harmonic (chord tones do
+  // this all the time), so it stays available. A note must sound in two consecutive frames to count.
+  // Returns [{f, midi, s}] strongest first. Feed it an analyser of about 4096 bins with light smoothing.
+  // Low candidates within 60 ms of a detected kick are ignored, so a kick's falling pitch never reads as bass.
+  function noteTracker(R, anName) {
+    let TD = null; const hist = new Map();
+    return function detect(now) {
+      const an = R.an[anName]; if (!TD || TD.length !== an.frequencyBinCount) TD = new Float32Array(an.frequencyBinCount);
+      an.getFloatFrequencyData(TD);
+      const bh = R.sampleRate / an.fftSize, k0 = Math.max(3, Math.ceil(38 / bh)), k1 = Math.min(TD.length - 3, Math.floor(4400 / bh));
+      let gmax = -200; for (let k = k0; k <= k1; k++) if (TD[k] > gmax) gmax = TD[k];
+      if (gmax < -74) { hist.clear(); return []; }
+      const thr = Math.max(-84, gmax - 36), peaks = [];
+      for (let k = k0 + 2; k <= k1 - 2; k++) {
+        const v = TD[k];
+        if (v > thr && v >= TD[k - 1] && v > TD[k + 1] && v >= TD[k - 2] && v > TD[k + 2]) {
+          const a = TD[k - 1], c = TD[k + 1], den = a - 2 * v + c, d = den !== 0 ? clamp((0.5 * (a - c)) / den, -0.5, 0.5) : 0;
+          peaks.push({ f: (k + d) * bh, a: Math.pow(10, (v - gmax) / 20) });
+        }
+      }
+      peaks.sort((p, q) => q.a - p.a); if (peaks.length > 32) peaks.length = 32;
+      const used = new Uint8Array(peaks.length), out = [];
+      const score = (f0) => {
+        let s = 0, fw = 0, ww = 0, a1 = 0;
+        for (let h = 1; h <= 10; h++) {
+          const t = f0 * h; let best = 0, bf = 0;
+          for (let i = 0; i < peaks.length; i++) if (!used[i] && Math.abs(peaks[i].f - t) < t * 0.025 && peaks[i].a > best) { best = peaks[i].a; bf = peaks[i].f; }
+          if (best > 0) { if (h === 1) a1 = best; const w = Math.min(best, ((a1 || best) * 1.3) / h) / Math.sqrt(h); s += w; fw += (bf / h) * w * h; ww += w * h; }
+        }
+        return [s, ww > 0 ? fw / ww : f0, a1];
+      };
+      let first = 0;
+      for (let v = 0; v < 3; v++) {
+        let bi = -1, bs = 0, bf = 0, ba = 0;
+        for (let i = 0; i < peaks.length; i++) { if (used[i] || peaks[i].f > 2200) continue; const [sc, f, a] = score(peaks[i].f); if (sc > bs) { bs = sc; bi = i; bf = f; ba = a; } }
+        if (bi < 0 || bs < 0.1 || (v > 0 && bs < first * 0.14)) break;
+        if (v === 0) first = bs;
+        const f0 = bf;
+        if (!(f0 < 130 && now - R.detectedAt.kick < 60)) out.push({ f: f0, s: bs, midi: 69 + 12 * Math.log2(f0 / 440) });
+        used[bi] = 1;
+        for (let i = 0; i < peaks.length; i++) {
+          if (used[i]) continue; const r = peaks[i].f / f0, h = Math.round(r);
+          if (h >= 2 && h <= 10 && Math.abs(r - h) < 0.025 * h && peaks[i].a <= (Math.max(ba, peaks[bi].a) * 1.3) / h) used[i] = 1;
+        }
+      }
+      const seen = new Map(), keep = [];
+      for (const v of out) { const m = Math.round(v.midi); seen.set(m, (hist.get(m) || 0) + 1); if ((hist.get(m) || 0) >= 1) keep.push(v); }
+      hist.clear(); for (const [m, c] of seen) hist.set(m, c);
+      return keep.sort((a, b) => b.s - a.s);
+    };
+  }
+
+  // ---------- how hard the music is pushing ----------
+  // RMS of an analyser's waveform, smoothed (fast up, slow down), and its ratio to the long-run level, so a
+  // piece can react to "louder than this track usually is" rather than to absolute volume.
+  function levelMeter(R, anName) {
+    let T = null, loud = 0, avg = 0.08;
+    return function update(dt) {
+      const an = R.an[anName]; if (!T || T.length !== an.fftSize) T = new Float32Array(an.fftSize);
+      an.getFloatTimeDomainData(T);
+      let s = 0; for (let i = 0; i < T.length; i++) s += T[i] * T[i];
+      const rms = Math.sqrt(s / T.length);
+      loud = lerp(loud, rms, rms > loud ? 0.5 : 0.12); avg = lerp(avg, loud, Math.min(1, dt * 0.25));
+      return { rms: loud, rel: loud / (avg + 0.01) };
+    };
+  }
+
+  // ---------- offline stand-in for an AnalyserNode ----------
+  // render/ sends the smoothed dB spectrum and the time-domain samples for each frame; the byte views are
+  // derived here exactly as the Web Audio spec derives them.
+  class OfflineAnalyser {
+    constructor(spec) {
+      this.fftSize = spec.fftSize; this.frequencyBinCount = spec.fftSize / 2;
+      this.smoothingTimeConstant = spec.smoothing; this.minDecibels = -100; this.maxDecibels = -30;
+      this.db = new Float32Array(this.frequencyBinCount).fill(-Infinity); this.time = new Float32Array(this.fftSize);
+    }
+    getFloatFrequencyData(a) { a.set(this.db.length > a.length ? this.db.subarray(0, a.length) : this.db); }
+    getByteFrequencyData(a) {
+      const sc = 255 / (this.maxDecibels - this.minDecibels), n = Math.min(a.length, this.db.length);
+      for (let i = 0; i < n; i++) { const b = Math.floor(sc * (this.db[i] - this.minDecibels)); a[i] = b < 0 ? 0 : b > 255 ? 255 : b; }
+    }
+    getFloatTimeDomainData(a) { a.set(this.time.length > a.length ? this.time.subarray(0, a.length) : this.time); }
+    getByteTimeDomainData(a) { const n = Math.min(a.length, this.time.length); for (let i = 0; i < n; i++) { const b = Math.floor(128 * (1 + this.time[i])); a[i] = b < 0 ? 0 : b > 255 ? 255 : b; } }
+  }
+  function b64ToFloat32(str, out) {
+    const bin = atob(str), n = Math.min(bin.length >> 2, out.length), bytes = new Uint8Array(n * 4);
+    for (let i = 0; i < bytes.length; i++) bytes[i] = bin.charCodeAt(i);
+    out.set(new Float32Array(bytes.buffer, 0, n));
+  }
+
+  // ---------- the piece runtime ----------
+  function create(opts) {
+    const $ = (id) => document.getElementById(id);
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const LOOK = opts.lookahead ?? 0.1, ONSET_LAG = opts.onsetLag ?? 28;
+    const specs = Object.entries(opts.analysers || {}).map(([name, s]) => ({ name, fftSize: s.fftSize || 2048, smoothing: s.smoothing ?? 0.8, needs: s.needs || ["freq"], lead: s.lead ?? 0.03 }));
+    if (opts.onsets && !specs.some((s) => s.name === "onset")) specs.push({ name: "onset", fftSize: 2048, smoothing: 0, needs: ["freq"], lead: 0.03 });
+
+    const R = {
+      offline: OFFLINE, reduce, mode: "idle", detectedAt: { kick: -1e9, snare: -1e9, hat: -1e9 }, actx: null, an: {}, sampleRate: 48000, trackName: "", glow: opts.glow?.value ?? 0.7,
+      demoName: opts.demoName || "Demo track",
+      sourceLabel() { return R.mode === "demo" ? R.demoName : R.mode === "file" ? R.trackName : R.mode === "mic" ? "Microphone" : (opts.idleName || "Idle example"); },
+    };
+    let bus = null, outGain = null, demo = null, micStream = null, micSrc = null, mediaSrc = null, onsets = null;
+    const audioEl = new Audio(); audioEl.loop = true;
+    const EVQ = [];
+
+    function ensureCtx() {
+      if (!R.actx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        const actx = (R.actx = new AC()); R.sampleRate = actx.sampleRate;
+        bus = actx.createGain(); outGain = actx.createGain();
+        const delay = actx.createDelay(1); delay.delayTime.value = LOOK;
+        const sink = actx.createGain(); sink.gain.value = 0; sink.connect(actx.destination);
+        for (const s of specs) { const a = actx.createAnalyser(); a.fftSize = s.fftSize; a.smoothingTimeConstant = s.smoothing; bus.connect(a); a.connect(sink); R.an[s.name] = a; }
+        bus.connect(delay); delay.connect(outGain); outGain.connect(actx.destination);
+        if (opts.onsets) onsets = onsetDetector(R.an.onset, R.sampleRate, hit);
+        opts.onAudio && opts.onAudio(R);
+      }
+      if (R.actx.state === "suspended") R.actx.resume();
+    }
+
+    // hits: detected early (thanks to the look-ahead), held until the matching sound reaches the speakers
+    function hit(name, str, now) {
+      R.detectedAt[name] = now;
+      if (!OFFLINE && (R.mode === "demo" || R.mode === "file")) EVQ.push({ name, str, at: now + LOOK * 1000 - ONSET_LAG });
+      else fire(name, str, now);
+    }
+    function fire(name, str, now) {
+      opts.onHit && opts.onHit(name, str, now);
+      const el = $("ind-" + name); if (el) el.style.setProperty("--on", Math.min(1, 0.4 + 0.6 * str).toFixed(2));
+    }
+    R.fire = fire;
+
+    // ---------- sources ----------
+    function stopAll() {
+      if (demo) { demo.stop(); demo = null; }
+      if (!audioEl.paused) audioEl.pause();
+      if (micStream) { micStream.getTracks().forEach((t) => t.stop()); micStream = null; }
+      if (micSrc) { try { micSrc.disconnect(); } catch (e) {} micSrc = null; }
+      if (outGain) outGain.gain.value = 1;
+      EVQ.length = 0;
+      setMode("idle");
+    }
+    function setMode(m) { R.mode = m; syncButtons(); opts.onSource && opts.onSource(m, R); }
+    function startDemo() {
+      ensureCtx(); stopAll();
+      const master = R.actx.createGain(); const comp = R.actx.createDynamicsCompressor();
+      comp.threshold.value = -16; comp.ratio.value = 3; master.connect(comp); comp.connect(bus);
+      master.gain.value = 0.0001; master.gain.setTargetAtTime(opts.demoGain ?? 0.8, R.actx.currentTime, 0.2);
+      const d = opts.demo(R.actx, master, drumKit(R.actx, master), R);
+      demo = { stop() { d && d.stop && d.stop(); master.gain.setTargetAtTime(0.0001, R.actx.currentTime, 0.08); setTimeout(() => { try { master.disconnect(); } catch (e) {} }, 600); } };
+      setMode("demo");
+    }
+    function playFile(file) {
+      if (!file) return;
+      if (!/^audio\//.test(file.type) && !/\.(mp3|wav|ogg|m4a|aac|flac|opus|webm)$/i.test(file.name)) { toast("That file is not audio. Try an MP3, WAV, M4A, OGG or FLAC."); return; }
+      ensureCtx(); stopAll();
+      if (audioEl.src) URL.revokeObjectURL(audioEl.src);
+      audioEl.src = URL.createObjectURL(file);
+      if (!mediaSrc) { mediaSrc = R.actx.createMediaElementSource(audioEl); mediaSrc.connect(bus); }
+      R.trackName = file.name.replace(/\.[^.]+$/, "");
+      audioEl.play().then(() => setMode("file")).catch(() => toast("This browser could not play that file. Try another format."));
+    }
+    async function startMic() {
+      ensureCtx(); stopAll();
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+        micSrc = R.actx.createMediaStreamSource(micStream); micSrc.connect(bus); outGain.gain.value = 0; setMode("mic");
+      } catch (e) { toast("The microphone isn't available in this view. Open the page directly in your browser to use the mic, or load a track."); }
+    }
+    Object.assign(R, { startDemo, playFile, startMic, stopAll, toast });
+
+    // ---------- controls ----------
+    function syncButtons() {
+      const d = $("btnDemo"); if (d) d.textContent = R.mode === "demo" ? "Stop demo" : R.mode === "idle" ? "Play demo" : "Stop";
+      const m = $("btnMic"); if (m) m.setAttribute("aria-pressed", R.mode === "mic" ? "true" : "false");
+      const f = $("btnFile"); if (f) f.setAttribute("aria-pressed", R.mode === "file" ? "true" : "false");
+    }
+    let toastT = 0;
+    function toast(msg) { const el = $("toast"); if (!el) return; el.textContent = msg; el.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("on"), 5200); }
+    const chrome = $("chrome");
+    const toggleChrome = (force) => chrome && chrome.classList.toggle("off", force !== undefined ? force : !chrome.classList.contains("off"));
+    function fullscreen() {
+      const d = document; if (d.fullscreenElement) { d.exitFullscreen && d.exitFullscreen().catch(() => {}); return; }
+      const el = d.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
+      if (!req) { toast("Fullscreen isn't available here."); return; }
+      try { const p = req.call(el); if (p && p.catch) p.catch(() => toast("Fullscreen isn't available here.")); } catch (e) { toast("Fullscreen isn't available here."); }
+    }
+    const G = Object.assign({ min: 0.2, max: 1.2, value: 0.7 }, opts.glow || {});
+    const glowEl = $("glow"), glowKey = (opts.name || "piece") + "-glow";
+    function setGlow(v, save) {
+      R.glow = clamp(+v, G.min, G.max); if (glowEl) glowEl.value = R.glow;
+      if (save) { try { localStorage.setItem(glowKey, String(R.glow)); } catch (e) {} }
+      G.onChange && G.onChange(R.glow);
+    }
+    R.setGlow = setGlow;
+
+    function bindControls() {
+      const on = (id, ev, fn) => { const el = $(id); if (el) el.addEventListener(ev, fn); };
+      on("btnDemo", "click", () => (R.mode === "idle" ? startDemo() : stopAll()));
+      on("btnFile", "click", () => $("file") && $("file").click());
+      on("file", "change", (e) => { playFile(e.target.files[0]); e.target.value = ""; });
+      on("btnMic", "click", () => (R.mode === "mic" ? stopAll() : startMic()));
+      on("btnFull", "click", fullscreen);
+      on("btnHide", "click", () => { toggleChrome(true); toast("Tap anywhere or press H to bring the controls back."); });
+      if (opts.canvas) opts.canvas.addEventListener("click", () => { if (chrome && chrome.classList.contains("off")) toggleChrome(false); });
+      if (glowEl) glowEl.addEventListener("input", () => setGlow(glowEl.value, true));
+      let saved = null;
+      try { saved = localStorage.getItem(glowKey); for (const k of opts.glowKeysLegacy || []) saved = saved ?? localStorage.getItem(k); } catch (e) {}
+      setGlow(saved !== null && isFinite(+saved) ? saved : G.value, false);
+      window.addEventListener("keydown", (e) => {
+        if (e.target.tagName === "SELECT" || e.metaKey || e.ctrlKey || e.altKey) return;
+        const k = e.key.toLowerCase();
+        if (k === "[" || k === "]") { setGlow(R.glow + (k === "]" ? 0.05 : -0.05), true); return; }
+        if (e.target.tagName === "INPUT" && k !== " ") return;
+        if (k === " ") { e.preventDefault(); R.mode === "idle" ? startDemo() : stopAll(); }
+        else if (k === "h") toggleChrome();
+        else if (k === "f") fullscreen();
+        else if (opts.keys && opts.keys[k]) opts.keys[k]();
+      });
+      const drop = $("drop"); let dragN = 0;
+      window.addEventListener("dragenter", (e) => { e.preventDefault(); dragN++; drop && drop.classList.add("on"); });
+      window.addEventListener("dragover", (e) => e.preventDefault());
+      window.addEventListener("dragleave", () => { if (--dragN <= 0) { dragN = 0; drop && drop.classList.remove("on"); } });
+      window.addEventListener("drop", (e) => { e.preventDefault(); dragN = 0; drop && drop.classList.remove("on"); const f = e.dataTransfer && e.dataTransfer.files[0]; if (f) playFile(f); });
+    }
+
+    // ---------- frame ----------
+    const IND = ["kick", "snare", "hat"].map((n) => $("ind-" + n)).filter(Boolean);
+    function tick(now, dt) {
+      if (R.mode !== "idle" && onsets) onsets.detect(now);
+      // fire anything due before the middle of this frame, so frame timing never pushes a hit late by a whole frame
+      const horizon = now + dt * 500;
+      while (EVQ.length && EVQ[0].at <= horizon) { const e = EVQ.shift(); fire(e.name, e.str, now); }
+      opts.step(now, dt);
+      for (const el of IND) { const v = +el.style.getPropertyValue("--on") || 0; if (v > 0) el.style.setProperty("--on", Math.max(0, v - dt * 5).toFixed(2)); }
+    }
+    let last = 0, warned = false;
+    function frame(now) {
+      requestAnimationFrame(frame); // schedule first, so one bad frame never stops the piece
+      const dt = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60); last = now;
+      try { tick(now, dt); } catch (e) { if (!warned) { warned = true; console.error(e); } }
+    }
+    R.start = function () {
+      if (OFFLINE) { if (chrome) chrome.hidden = true; return; }
+      bindControls(); syncButtons(); opts.onSource && opts.onSource(R.mode, R);
+      requestAnimationFrame(frame);
+    };
+
+    // ---------- offline driver, used by render/ ----------
+    if (OFFLINE) {
+      let fps = 30;
+      window.AudioReactivePage = {
+        specs: () => ({ name: opts.name, analysers: specs, palettes: opts.palettes || null }),
+        setup(cfg) {
+          fps = cfg.fps || 30; R.sampleRate = cfg.sampleRate || 48000;
+          R.actx = { sampleRate: R.sampleRate, currentTime: 0, state: "running" };
+          for (const s of specs) R.an[s.name] = new OfflineAnalyser(s);
+          if (opts.onsets) onsets = onsetDetector(R.an.onset, R.sampleRate, hit);
+          R.mode = "file"; R.trackName = cfg.title || "track";
+          if (cfg.glow != null) setGlow(cfg.glow, false); else setGlow(G.value, false);
+          const info = (opts.offlineSetup && opts.offlineSetup(cfg, R)) || {};
+          opts.onSource && opts.onSource(R.mode, R);
+          return info;
+        },
+        frame(i, payload) {
+          for (const s of specs) { const p = payload[s.name], a = R.an[s.name]; if (!p) continue; if (p.db) b64ToFloat32(p.db, a.db); if (p.time) b64ToFloat32(p.time, a.time); }
+          const now = (i * 1000) / fps; R.actx.currentTime = now / 1000;
+          tick(now, 1 / fps);
+        },
+        capture: (q) => (opts.canvas || document.querySelector("canvas")).toDataURL("image/jpeg", q || 0.92).slice(23),
+      };
+    }
+    return R;
+  }
+
+  window.AudioReactive = { create, drumKit, sequencer, onsetDetector, noteTracker, levelMeter, xmur3, mulberry32, clamp, lerp, fract, soft, noteName, hz, esc, OFFLINE };
+})();
+</script>
+<script>
+"use strict";
+(function(){
+  const $=id=>document.getElementById(id);
+  const cv=$("stage"), ctx=cv.getContext("2d");
+  const AR=window.AudioReactive, {clamp,lerp,soft,noteName,hz,fract}=AR;
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ======================================================================
+  // 1. The flock.  Real starlings each track a handful of neighbours: they
+  //    match their heading, keep a comfortable spacing, and stay near the
+  //    roost. Here every bird reads its neighbourhood from a smoothed grid of
+  //    the whole flock (local heading, local centre, local crowding), which
+  //    gives the same rolling, folding cloud at a cost that scales to tens of
+  //    thousands of birds.
+  //    Waves: a panic or a turn starts at one point and spreads through the
+  //    flock at a fixed speed. A bird reacts as the front reaches it, and
+  //    banks; banking birds turn their wings edge-on and catch the low sun,
+  //    so a wave shows as a bright band rolling through the dark cloud.
+  // ======================================================================
+  const minSide=Math.min(innerWidth,innerHeight);
+  const NMAX=minSide<700?9000:20000;
+  let nAct=minSide<700?7000:16000;
+  const X=new Float32Array(NMAX), Y=new Float32Array(NMAX), Z=new Float32Array(NMAX);
+  const VX=new Float32Array(NMAX), VY=new Float32Array(NMAX), VZ=new Float32Array(NMAX);
+  const BANK=new Float32Array(NMAX), PH=new Float32Array(NMAX), LW=new Int32Array(NMAX);
+
+  const BX=1.7, BY=1.0, BZ=1.0;                         // the patch of sky the flock lives in
+  const GX=26, GY=16, GZ=16, GC=GX*GY*GZ;               // neighbourhood grid
+  const gN=new Float32Array(GC), gX=new Float32Array(GC), gY=new Float32Array(GC), gZ=new Float32Array(GC);
+  const gU=new Float32Array(GC), gV=new Float32Array(GC), gW=new Float32Array(GC), tmp=new Float32Array(GC);
+  const cellOf=(x,y,z)=>{
+    let i=((x+BX)/(2*BX)*GX)|0, j=((y+BY)/(2*BY)*GY)|0, k=((z+BZ)/(2*BZ)*GZ)|0;
+    i=i<0?0:i>=GX?GX-1:i; j=j<0?0:j>=GY?GY-1:j; k=k<0?0:k>=GZ?GZ-1:k;
+    return (k*GY+j)*GX+i;
+  };
+  function blur(a){                                      // 1-2-1 along each axis
+    for(let pass=0;pass<3;pass++){
+      const sx=pass===0?1:pass===1?GX:GX*GY, n=pass===0?GX:pass===1?GY:GZ;
+      tmp.set(a);
+      for(let c=0;c<GC;c++){
+        const q=pass===0?c%GX:pass===1?((c/GX)|0)%GY:(c/(GX*GY))|0;
+        const l=q>0?tmp[c-sx]:tmp[c], r=q<n-1?tmp[c+sx]:tmp[c];
+        a[c]=(l+2*tmp[c]+r)*0.25;
+      }
+    }
+  }
+
+  function seedFlock(){
+    for(let i=0;i<NMAX;i++){
+      const u=Math.random()*Math.PI*2, v=Math.acos(2*Math.random()-1), r=Math.cbrt(Math.random());
+      X[i]=Math.cos(u)*Math.sin(v)*r*0.7; Y[i]=Math.cos(v)*r*0.3-0.1; Z[i]=Math.sin(u)*Math.sin(v)*r*0.45;
+      VX[i]=-Z[i]*0.6+(Math.random()-0.5)*0.1; VY[i]=(Math.random()-0.5)*0.05; VZ[i]=X[i]*0.6+(Math.random()-0.5)*0.1;
+      PH[i]=Math.random()*Math.PI*2; BANK[i]=0; LW[i]=0;
+    }
+  }
+
+  const WAVES=[]; let waveId=0;
+  const ROOST={x:0,y:0,z:0,ty:0};
+  let SPEED=0.5, DRIVE=0.3, HATS=0, FLOCK_CX=0, FLOCK_CY=0, FLOCK_CZ=0;
+
+  function wave(kind,str,now){
+    // the falcon comes from outside the flock: start the wave just beyond a random bird, away from the centre
+    const j=(Math.random()*nAct)|0;
+    let ox=X[j]-FLOCK_CX, oy=Y[j]-FLOCK_CY, oz=Z[j]-FLOCK_CZ; const l=Math.hypot(ox,oy,oz)||1;
+    WAVES.push({id:++waveId,kind,str,t:now,x:X[j]+ox/l*0.18,y:Y[j]+oy/l*0.18,z:Z[j]+oz/l*0.18,
+      speed:kind==="kick"?2.6:3.6, ang:(Math.random()<0.5?-1:1)*(0.45+0.35*str)});
+    if(WAVES.length>10) WAVES.shift();
+  }
+
+  function stepFlock(dt,now){
+    const n=nAct|0, t=now/1000;
+    gN.fill(0); gX.fill(0); gY.fill(0); gZ.fill(0); gU.fill(0); gV.fill(0); gW.fill(0);
+    let cx=0,cy=0,cz=0;
+    for(let i=0;i<n;i++){
+      const c=cellOf(X[i],Y[i],Z[i]);
+      gN[c]++; gX[c]+=X[i]; gY[c]+=Y[i]; gZ[c]+=Z[i]; gU[c]+=VX[i]; gV[c]+=VY[i]; gW[c]+=VZ[i];
+      cx+=X[i]; cy+=Y[i]; cz+=Z[i];
+    }
+    FLOCK_CX=cx/n; FLOCK_CY=cy/n; FLOCK_CZ=cz/n;
+    blur(gN); blur(gX); blur(gY); blur(gZ); blur(gU); blur(gV); blur(gW);
+    const rho0=n/(GC*0.07);                                // comfortable crowding: the flock fills about 7% of the sky box
+    const kA=2.4, kC=1.35, kS=2.6, kR=0.45+0.15*(1-DRIVE), kN=0.26+0.1*DRIVE;
+    const live=WAVES.filter(w=>(now-w.t)/1000*w.speed<4.5);
+    const hatP=HATS*0.05; HATS=0;
+    const bd=Math.exp(-dt*5.5), rel=Math.min(1,dt*2.2), m=reduce?0.4:1;
+    for(let i=0;i<n;i++){
+      let x=X[i], y=Y[i], z=Z[i], vx=VX[i], vy=VY[i], vz=VZ[i];
+      const c=cellOf(x,y,z), cn=gN[c]+1e-6;
+      const mx=gX[c]/cn, my=gY[c]/cn, mz=gZ[c]/cn, ux=gU[c]/cn, uy=gV[c]/cn, uz=gW[c]/cn;
+      // align with the neighbourhood, close in on it, but give way when crowded
+      const crowd=cn/rho0, pull=kC-(crowd>1?kS*(crowd-1):0);
+      let ax=kA*(ux-vx)+pull*(mx-x), ay=kA*(uy-vy)+pull*(my-y), az=kA*(uz-vz)+pull*(mz-z);
+      // the roost, and the air: a slow turbulent drift so the cloud keeps folding
+      ax+=kR*(ROOST.x-x)+kN*Math.sin(y*2.7+t*0.61+z*1.3);
+      ay+=kR*1.6*(ROOST.y-y)+kN*0.6*Math.sin(z*3.1-t*0.47);
+      az+=kR*(ROOST.z-z)+kN*Math.cos(x*2.3-t*0.53);
+      vx+=ax*dt; vy+=ay*dt; vz+=az*dt;
+      // waves reach this bird when their front passes it
+      for(let w=0;w<live.length;w++){
+        const W=live[w]; if(LW[i]>=W.id) continue;
+        const dx=x-W.x, dy=y-W.y, dz=z-W.z, d=Math.sqrt(dx*dx+dy*dy+dz*dz)+1e-4;
+        if(d>(now-W.t)/1000*W.speed) continue;
+        LW[i]=W.id;
+        if(W.kind==="kick"){ const a=W.str*0.55*m*Math.exp(-d*1.4)/d; vx+=dx*a; vy+=dy*a*0.7; vz+=dz*a; BANK[i]=Math.max(BANK[i],0.6+0.4*W.str); }
+        else { const a=W.ang*m, ca=Math.cos(a), sa=Math.sin(a), nx=vx*ca-vz*sa; vz=vx*sa+vz*ca; vx=nx; BANK[i]=Math.max(BANK[i],0.5+0.3*W.str); }
+      }
+      if(hatP>0 && Math.random()<hatP) BANK[i]=Math.max(BANK[i],0.45);
+      // cruising speed rises with the music
+      const sp=Math.sqrt(vx*vx+vy*vy+vz*vz)+1e-5, f=1+(SPEED/sp-1)*rel;
+      vx*=f; vy*=f; vz*=f;
+      x+=vx*dt; y+=vy*dt; z+=vz*dt;
+      if(x<-BX){x=-BX;vx=Math.abs(vx);} else if(x>BX){x=BX;vx=-Math.abs(vx);}
+      if(y<-BY){y=-BY;vy=Math.abs(vy);} else if(y>BY*0.62){y=BY*0.62;vy=-Math.abs(vy);}
+      if(z<-BZ){z=-BZ;vz=Math.abs(vz);} else if(z>BZ){z=BZ;vz=-Math.abs(vz);}
+      X[i]=x; Y[i]=y; Z[i]=z; VX[i]=vx; VY[i]=vy; VZ[i]=vz;
+      BANK[i]*=bd; PH[i]+=dt*(14+6*DRIVE);
+    }
+    while(WAVES.length && (now-WAVES[0].t)/1000*WAVES[0].speed>4.5) WAVES.shift();
+  }
+
+  // ======================================================================
+  // 2. Listening.  The shared base runs the audio graph and kick/snare/hat
+  //    detection; the shared note tracker reads the melody, the level meter
+  //    reads how hard the track is pushing.
+  // ======================================================================
+  let detectNotes=null, level=null, VOICES=[], lastToneAt=-1e9, kickN=0, HUE=0.5, FLASH=0;
+  function onHit(name,str,now){
+    if(name==="kick"){ kickN++; const down=kickN%4===1; wave("kick",clamp(str*(down?1.3:0.7),0.3,1.6),now); FLASH=Math.max(FLASH,str*(down?1:0.6)); }
+    else if(name==="snare") wave("snare",str,now);
+    else HATS+=str;
+  }
+  // the highest note sets the target altitude: low notes keep the flock near the trees, high notes lift it
+  const altitudeOf=midi=>clamp(0.3-(midi-50)/36*0.7,-0.36,0.32);
+  function analyse(dt,now){
+    if(R.mode==="idle"){ idleScript(now); return; }
+    DRIVE=clamp(0.15+0.6*clamp(level(dt).rel-0.5,0,1.5),0,1.1);
+    const v=detectNotes(now);
+    if(v.length){ VOICES=v; lastToneAt=now; }
+    else if(now-lastToneAt>2500) VOICES=[];
+  }
+  const IDLE=[69,76,81,74,64,72,79,67];
+  let idleStep=-1;
+  function idleScript(now){
+    DRIVE=0.25;
+    const st=Math.floor(now/1600);
+    if(st!==idleStep){
+      idleStep=st; const m=IDLE[st%IDLE.length];
+      VOICES=[{midi:m,f:hz(m),s:1},{midi:45,f:hz(45),s:0.7}];
+      if(st%2===0) R.fire("kick",0.7,now); else R.fire("snare",0.55,now);
+    }
+    const q=Math.floor(now/400); if(q!==idleScript.q){ idleScript.q=q; if(q%4===2) R.fire("hat",0.5,now); }
+  }
+
+  // ======================================================================
+  // 3. Demo: 124 bpm, a melody written to climb and dive across two octaves
+  //    so the flock's altitude has somewhere to go.
+  //    intro (bass + melody), groove (+ drums), lift (melody alone), drop.
+  // ======================================================================
+  function makeDemo(actx,master,kit){
+    const step=60/124/2;
+    const ROOTS=[45,41,48,43];                                           // A F C G
+    const MEL=[[57,64,69,76],[72,69,64,60],[60,67,72,79],[76,74,67,62],[69,76,81,84],[81,76,72,69],[67,72,79,86],[84,79,74,67]];
+    const SEC=[["intro",8],["groove",8],["lift",4],["drop",8]], LOOP=28;
+    const section=bar=>{ let b=bar%LOOP; for(const [nm,len] of SEC){ if(b<len) return nm; b-=len; } return "intro"; };
+    function bass(m,t,dur){
+      const lp=actx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=850; lp.Q.value=0.7;
+      const g=actx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.28,t+0.015); g.gain.setTargetAtTime(0.18,t+0.05,0.3); g.gain.setTargetAtTime(0.0001,t+dur,0.06);
+      lp.connect(g); g.connect(master);
+      const o=actx.createOscillator(); o.type="sawtooth"; o.frequency.value=hz(m); o.connect(lp); o.start(t); o.stop(t+dur+0.4);
+    }
+    function lead(m,t,dur,v){
+      const g=actx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(v,t+0.008); g.gain.setTargetAtTime(v*0.6,t+0.04,0.25); g.gain.setTargetAtTime(0.0001,t+dur,0.06);
+      g.connect(master);
+      const o=actx.createOscillator(); o.type="triangle"; o.frequency.value=hz(m); o.connect(g); o.start(t); o.stop(t+dur+0.3);
+      const o2=actx.createOscillator(); o2.type="sine"; o2.frequency.value=hz(m)*2; const g2=actx.createGain(); g2.gain.value=0.2; o2.connect(g2); g2.connect(g); o2.start(t); o2.stop(t+dur+0.3);
+    }
+    function schedule(n,t){
+      const bar=Math.floor(n/8), st=n%8, sec=section(bar), mel=MEL[bar%MEL.length];
+      if(st===0 && sec!=="lift") bass(ROOTS[bar%4],t,8*step*0.95);
+      if(st%2===0) lead(mel[st/2]+(sec==="drop"&&st>=4?0:0),t,(sec==="lift"?2:1.8)*step,sec==="lift"?0.14:0.11);
+      if(sec==="groove"||sec==="drop"){
+        if(st%2===0) kit.kick(t,1);
+        if(st===2||st===6) kit.snare(t,sec==="drop"?0.5:0.4);
+        if(st%2===1) kit.hat(t,sec==="drop"?0.12:0.09);
+        if(sec==="drop" && st%2===0) kit.hat(t+step*0.5,0.06);
+      }
+    }
+    return {stop:AR.sequencer(actx,step,schedule)};
+  }
+
+  // ======================================================================
+  // 4. The sky
+  // ======================================================================
+  let W=0,H=0,dpr=1, HILLS=null;
+  function resize(){
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    W=cv.width=Math.round(innerWidth*dpr); H=cv.height=Math.round(innerHeight*dpr);
+    HILLS=null;
+  }
+  window.addEventListener("resize",resize); resize();
+  function hills(){
+    // a treeline on the horizon, drawn once per size from the seeded random
+    const pts=[], n=240, hy=H*0.845, p1=Math.random()*6, p2=Math.random()*6;
+    let tree=0;
+    for(let i=0;i<=n;i++){
+      const u=i/n, roll=H*(0.012*Math.sin(u*5.3+p1)+0.008*Math.sin(u*13.7+p2));
+      tree=lerp(tree,Math.random()<0.35?H*(0.008+0.018*Math.random()):0,0.45);
+      pts.push([u*W,hy-roll-tree]);
+    }
+    return pts;
+  }
+  const hsl=(h,s,l,a)=>`hsla(${(((h%1)+1)%1*360).toFixed(1)},${(s*100).toFixed(1)}%,${(l*100).toFixed(1)}%,${a==null?1:a})`;
+
+  function draw(dt,now){
+    const t=now/1000, hz0=H*0.84, tint=(HUE-0.5)*0.16, G=R.glow;
+    ctx.setTransform(1,0,0,1,0,0); ctx.globalCompositeOperation="source-over"; ctx.globalAlpha=1;
+    // dusk: deep blue overhead, violet, then the burning band at the horizon
+    let g=ctx.createLinearGradient(0,0,0,hz0);
+    g.addColorStop(0,hsl(0.63+tint,0.45,0.08)); g.addColorStop(0.45,hsl(0.72+tint,0.28,0.17));
+    g.addColorStop(0.8,hsl(0.96+tint*0.5,0.42,0.34)); g.addColorStop(1,hsl(0.07,0.78,0.5));
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,hz0+2);
+    // the sun just under the horizon; it swells with the low end, inside the glow ceiling
+    const sx=W*(0.5+0.08*Math.sin(t*0.05)), sun=soft(0.35+0.45*DRIVE+0.4*FLASH,0.85*G);
+    g=ctx.createRadialGradient(sx,hz0,0,sx,hz0,H*0.55);
+    g.addColorStop(0,hsl(0.09,0.95,0.68,sun)); g.addColorStop(0.25,hsl(0.05,0.85,0.5,sun*0.45)); g.addColorStop(1,hsl(0.9,0.6,0.3,0));
+    ctx.globalCompositeOperation="lighter"; ctx.fillStyle=g; ctx.fillRect(0,0,W,hz0+2); ctx.globalCompositeOperation="source-over";
+    // ground
+    if(!HILLS) HILLS=hills();
+    ctx.fillStyle="#07060a"; ctx.beginPath(); ctx.moveTo(0,H);
+    for(const [x,y] of HILLS) ctx.lineTo(x,y);
+    ctx.lineTo(W,H); ctx.closePath(); ctx.fill();
+
+    // the flock, projected; three depth bands, near birds darker and larger, far birds lost in the haze
+    const camZ=3.9, f=Math.min(W*0.5*0.94*camZ/BX/1.12, H*0.5*0.9*camZ/BY/1.05), cy0=H*0.5, cx0=W*0.5, n=nAct|0;
+    const u=Math.max(W,H)/1600;
+    const bands=[[],[],[]], lit=[[],[],[]];
+    for(let i=0;i<n;i++){
+      const d=camZ+Z[i]; if(d<0.5) continue;
+      const s=f/d, px=cx0+X[i]*s, py=cy0+Y[i]*s;
+      if(px<-20||px>W+20||py<-20||py>H) continue;
+      // wings lie across the line of flight; a banking bird shows its wing edge-on, short and sunlit
+      let vx=VX[i]*s-X[i]*s*VZ[i]/d, vy=VY[i]*s-Y[i]*s*VZ[i]/d; const vl=Math.hypot(vx,vy)+1e-6; vx/=vl; vy/=vl;
+      const b=BANK[i], flap=0.72+0.28*Math.sin(PH[i]);
+      const span=(5.2+1.4*s/f*camZ)*u*(1-0.55*b)*flap*s/f*camZ*0.55;
+      const band=Z[i]<-0.33?0:Z[i]<0.33?1:2;
+      (b>0.4?lit:bands)[band].push(px-vy*span,py+vx*span,px+vy*span,py-vx*span);
+    }
+    const haze=[0.0,0.28,0.55];
+    for(let k=2;k>=0;k--){
+      ctx.lineCap="round";
+      // dark silhouettes, warmed slightly by the sky behind them
+      let P=bands[k];
+      if(P.length){ ctx.beginPath(); for(let j=0;j<P.length;j+=4){ ctx.moveTo(P[j],P[j+1]); ctx.lineTo(P[j+2],P[j+3]); }
+        ctx.strokeStyle=hsl(0.75+tint,0.25,0.04+haze[k]*0.22,0.9-haze[k]*0.35); ctx.lineWidth=Math.max(1,(1.9-k*0.45)*u*dpr*0.9); ctx.stroke(); }
+      // sunlit wings: the wave
+      P=lit[k];
+      if(P.length){ ctx.beginPath(); for(let j=0;j<P.length;j+=4){ ctx.moveTo(P[j],P[j+1]); ctx.lineTo(P[j+2],P[j+3]); }
+        ctx.strokeStyle=hsl(0.08,0.85,0.66-haze[k]*0.1,soft(0.95-haze[k]*0.3,0.55+0.45*G)); ctx.lineWidth=Math.max(1,(1.7-k*0.4)*u*dpr*0.9); ctx.stroke(); }
+    }
+  }
+
+  // ======================================================================
+  // 5. Frame, readout and wiring into the shared base
+  // ======================================================================
+  let lastText="";
+  function readout(){
+    const top=VOICES.length?VOICES.reduce((a,v)=>v.midi>a.midi?v:a,VOICES[0]):null;
+    const s=(top?noteName(Math.round(top.midi)):"—")+"|"+(nAct|0)+"|"+R.sourceLabel();
+    if(s===lastText) return; lastText=s;
+    $("alt").textContent=top?noteName(Math.round(top.midi)):"—";
+    $("flock").innerHTML="FLOCK <b>"+(Math.round(nAct/100)*100).toLocaleString("en-US")+"</b> STARLINGS";
+    $("src").innerHTML="SOURCE <b>"+AR.esc(R.sourceLabel())+"</b>";
+  }
+  function step(now,dt){
+    analyse(dt,now);
+    const t=now/1000;
+    const top=VOICES.length?VOICES.reduce((a,v)=>v.midi>a.midi?v:a,VOICES[0]):null;
+    if(top){ ROOST.ty=altitudeOf(top.midi); const pc=((Math.round(top.midi)%12)+12)%12, h=((pc*7)%12)/12; let d=h-HUE; d-=Math.round(d); HUE=fract(HUE+d*Math.min(1,dt*1.5)); }
+    else ROOST.ty=lerp(ROOST.ty,0,Math.min(1,dt*0.3));
+    ROOST.y=lerp(ROOST.y,ROOST.ty,Math.min(1,dt*2.4));
+    ROOST.x=0.55*Math.sin(t*0.093)+0.2*Math.sin(t*0.21); ROOST.z=0.25+0.3*Math.sin(t*0.071+1.3);
+    SPEED=0.42+0.5*DRIVE;
+    const w0=performance.now();
+    stepFlock(dt,now);
+    const work=performance.now()-w0;
+    if(!R.offline) nAct=clamp(nAct*(work>9?0.94:work<5?1.02:1),3000,NMAX);
+    draw(dt,now); readout();
+    FLASH*=Math.exp(-dt*6);
+  }
+
+  const R=AR.create({
+    name:"murmuration", canvas:cv, lookahead:0.1,
+    analysers:{
+      tone:{fftSize:4096,smoothing:0.25,needs:["freq"],lead:0.07},
+      level:{fftSize:2048,smoothing:0.6,needs:["time"]}
+    },
+    onsets:true, demo:makeDemo, demoName:"Demo track", demoGain:0.8,
+    glow:{min:0.2,max:1.2,value:0.7},
+    onHit, step,
+    onSource:()=>{ lastText=""; idleStep=-1; kickN=0; },
+    // offline renders use a fixed flock size, so the same seed always gives the same video
+    offlineSetup:(cfg)=>{ nAct=clamp(cfg.birds||NMAX,3000,NMAX); return {birds:nAct|0}; }
+  });
+  detectNotes=AR.noteTracker(R,"tone"); level=AR.levelMeter(R,"level");
+
+  // boot: let the flock settle into a cloud before the first frame, so the page opens complete
+  seedFlock();
+  const t0=R.offline?0:performance.now();
+  idleScript(t0); WAVES.length=0;
+  if(VOICES[0]) ROOST.y=ROOST.ty=altitudeOf(Math.max(...VOICES.map(v=>v.midi)));
+  for(let i=0;i<150;i++) stepFlock(1/30,t0-5000+i*33);
+  R.start();
+})();
+</script>
+<script>/* Homepage embed: the piece's own controls are hidden; one button starts or stops its built-in track. */
+(function(){var b=document.createElement('button');b.id='syb-sound';b.type='button';b.setAttribute('aria-pressed','false');b.textContent='Sound';
+b.addEventListener('click',function(){var d=document.getElementById('btnDemo');if(!d)return;d.click();var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));b.textContent=on?'Sound on':'Sound';});
+document.body.appendChild(b);
+function ready(){try{parent.postMessage({syb:'ready'},location.origin)}catch(e){}}
+if(document.readyState==='complete')setTimeout(ready,300);else addEventListener('load',function(){setTimeout(ready,300)});})();</script>
+</body>
+</html>

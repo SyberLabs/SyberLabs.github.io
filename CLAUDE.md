@@ -45,6 +45,21 @@ the answer is nothing, delete it.
   focused), no claims about feelings or experience.
 - Keep limits and "not yet" statements. They are facts.
 
+## Homepage
+
+Since November 15, 2026 the homepage (`src/App.jsx`) is mostly visual, by the owner's direction: the Gyre and the
+wordmark, then three sections named Factory, Studio and Liminal, then contact. For the homepage only, this overrides
+two rules above and in `kit/v2/README.md`:
+
+- The hero carries no paragraph and no buttons. `Book a consultation` stays in the header at every width and closes
+  the page.
+- The three section names and the one-word labels on the three canvas visuals (Proof, Resonance, Emergence) are
+  names, exempt from the Wording rules. Every other homepage line follows them.
+
+CI still requires `id="products"`, `id="partners"` and `id="contact"` on the homepage, and still fails the build on
+personal names, so homepage media must not link to personal sites. The pieces in `media/home/pieces/` are copies of
+the audio-reactive pieces with their own controls hidden; they are marked `noindex`.
+
 ## Public dependency lookup (GitHits)
 
 `.mcp.json` invokes the private MasterMind usage runtime. Install and load both

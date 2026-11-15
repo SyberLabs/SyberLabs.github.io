@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<style>*{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
+<title>Cymatica</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Cymatica: sound made visible. A virtual Chladni plate driven by the music, where every note sets its own resonance figure and every hit strikes the plate.">
+<style>
+  /* Layout: a lab bench at night. The plate owns the center; the instrument readout sits top right like a meter. */
+  :root{
+    --ground:#04050a;
+    --plate:#080a10;
+    --ink:#e6eaf1;
+    --ink-dim:#8791a2;
+    --accent:#a6dbea;
+    --line:rgba(166,219,234,.22);
+    --panel:rgba(7,9,14,.72);
+    --display:"Syne","Avenir Next","Segoe UI",sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+    color-scheme:dark;
+  }
+  html,body{height:100%;background:var(--ground);color:var(--ink);overflow:hidden;}
+  body{font-family:var(--mono);-webkit-font-smoothing:antialiased;}
+  #stage{position:fixed;inset:0;width:100%;height:100%;display:block;}
+
+  .chrome{position:fixed;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;gap:16px;
+    padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+    padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(14px + env(safe-area-inset-bottom,0px));transition:opacity .4s;}
+  .chrome.off{opacity:0;}
+  .chrome.off *{pointer-events:none!important;}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+  .brand{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--accent);}
+  h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,5.4vw,52px);letter-spacing:-.01em;line-height:.95;margin:.12em 0 0;text-wrap:balance;}
+  .sub{font-size:10px;letter-spacing:.08em;color:var(--ink-dim);margin-top:8px;max-width:30ch;line-height:1.6;}
+
+  .meter{display:flex;flex-direction:column;align-items:flex-end;gap:6px;text-align:right;font-variant-numeric:tabular-nums;}
+  .note{font-family:var(--display);font-weight:700;font-size:clamp(34px,5vw,54px);line-height:.9;letter-spacing:-.01em;}
+  .note small{font-size:.45em;color:var(--ink-dim);font-weight:500;margin-left:.2em;}
+  .read{font-size:10.5px;letter-spacing:.06em;color:var(--ink-dim);line-height:1.6;}
+  .read b{color:var(--ink);font-weight:400;}
+  .hits{display:flex;gap:6px;margin-top:2px;}
+  .hits span{--on:0;font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:3px 6px;border:1px solid var(--line);
+    background:color-mix(in srgb,var(--accent) calc(var(--on)*85%),transparent);
+    color:color-mix(in srgb,#061015 calc(var(--on)*100%),var(--ink-dim));}
+
+  .bottom{display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .bar{pointer-events:auto;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:100%;
+    background:var(--panel);border:1px solid var(--line);padding:8px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+  button{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--ink);
+    border:1px solid var(--line);padding:10px 12px;min-height:38px;cursor:pointer;transition:border-color .15s,background .15s,color .15s;}
+  button:hover{border-color:var(--accent);}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#061015;font-weight:600;}
+  button.primary:hover{background:#c3e9f3;}
+  button[aria-pressed="true"]{color:var(--accent);border-color:var(--accent);}
+  .glow{display:flex;align-items:center;gap:8px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);
+    border:1px solid var(--line);padding:0 10px;min-height:38px;}
+  .glow input{-webkit-appearance:none;appearance:none;width:84px;height:2px;background:var(--line);margin:0;}
+  .glow input::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--accent);border:2px solid var(--ground);cursor:pointer;}
+  .glow input::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--accent);border:2px solid var(--ground);cursor:pointer;}
+  .hint{font-size:9.5px;letter-spacing:.08em;color:var(--ink-dim);text-align:center;}
+  .hint kbd{font-family:var(--mono);color:var(--ink);border:1px solid var(--line);padding:0 4px;}
+  .toast{position:fixed;left:50%;bottom:calc(120px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:min(440px,calc(100% - 32px));
+    font-size:11px;line-height:1.6;background:var(--panel);border:1px solid var(--line);padding:10px 14px;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;}
+  .toast.on{opacity:1;}
+  .drop{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(4,5,10,.6);
+    font-family:var(--display);font-size:clamp(22px,4vw,38px);color:var(--accent);opacity:0;pointer-events:none;transition:opacity .2s;}
+  .drop.on{opacity:1;}
+  @media (max-width:560px){
+    .meter{align-items:flex-start;text-align:left;}
+    .sub,.hint{display:none;}
+    button{padding:9px 9px;font-size:10px;letter-spacing:.08em;}
+  }
+</style>
+
+<meta name="robots" content="noindex">
+<style id="syb-embed">#chrome,#toast,#drop{display:none!important}html,body{overflow:hidden}
+#syb-sound{position:fixed;right:10px;bottom:10px;z-index:99;min-height:44px;padding:0 13px;border:1px solid rgba(140,200,235,.3);border-radius:2px;background:rgba(2,7,10,.6);color:#c3cfd6;font:500 10px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#syb-sound[aria-pressed=true]{color:#fd9273;border-color:#fc734d}</style></head>
+<body>
+<canvas id="stage" aria-label="Cymatica: a Chladni plate driven by music"></canvas>
+<div class="chrome" id="chrome">
+  <div class="top">
+    <div>
+      <div class="brand">SyberLabs · Engines</div>
+      <h1>Cymatica</h1>
+      <div class="sub">A plate set ringing by the music. Each note sets its own figure. Each hit strikes the plate.</div>
+    </div>
+    <div class="meter" aria-live="off">
+      <div class="note" id="note">A2<small>110.0 Hz</small></div>
+      <div class="read" id="read">MODE <b>(5,2)</b></div>
+      <div class="read" id="voices">&nbsp;</div>
+      <div class="read" id="src">SOURCE <b>Idle example</b></div>
+      <div class="hits" aria-hidden="true"><span id="ind-kick">Kick</span><span id="ind-snare">Snare</span><span id="ind-hat">Hats</span></div>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="bar" role="toolbar" aria-label="Sound">
+      <button class="primary" id="btnDemo" type="button">Play demo</button>
+      <button id="btnFile" type="button">Load track</button>
+      <button id="btnMic" type="button">Mic</button>
+      <label class="glow" for="glow">Glow <input type="range" id="glow" min="0.2" max="1.2" step="0.05" value="0.65"></label>
+      <button id="btnFull" type="button">Full</button>
+      <button id="btnHide" type="button">Hide</button>
+    </div>
+    <div class="hint">Drop an audio file anywhere · <kbd>Space</kbd> play or stop · <kbd>[</kbd> <kbd>]</kbd> glow · <kbd>H</kbd> hide · <kbd>F</kbd> fullscreen</div>
+  </div>
+</div>
+<input type="file" id="file" accept="audio/*" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="drop" id="drop">Release to play</div>
+
+<script>/* shared/audio-reactive.js, inlined by tools/bundle.mjs */
+/*
+ * SyberLabs audio-reactive base, shared by every piece in this repo.
+ *
+ * A piece supplies its visuals, its own analysis and its demo track. This base supplies the rest:
+ *   - the audio graph: demo, file and mic sources, named analysers, and a look-ahead delay so
+ *     visuals land on the sound (the speakers hear everything `lookahead` seconds after the analysers)
+ *   - kick, snare and hat detection, with hits queued to fire on the sound
+ *   - drum synths for demo tracks
+ *   - noteTracker (which notes are sounding) and levelMeter (how hard the music is pushing)
+ *   - the standard controls, by element id: btnDemo, btnFile, file, btnMic, btnFull, btnHide,
+ *     glow, chrome, toast, drop, ind-kick, ind-snare, ind-hat (any can be left out)
+ *   - a frame loop that survives a bad frame
+ *   - offline rendering: with ?offline=1 the page is driven frame by frame by render/ (see
+ *     window.AudioReactivePage below), randomness is seeded from ?seed=, and analysers are fed
+ *     data computed in Node exactly as an AnalyserNode would compute it
+ *
+ * Usage, in a piece:
+ *   const R = AudioReactive.create({
+ *     name: "cymatica",                          // storage key prefix
+ *     canvas,                                     // what offline capture records
+ *     analysers: { tone: {fftSize:4096, smoothing:0.25, needs:["freq"], lead:0.07} },
+ *     onsets: true,                               // built-in kick/snare/hat detection
+ *     lookahead: 0.1,
+ *     demo: (actx, dest, kit, R) => ({ stop(){} }),
+ *     onHit: (name, strength, now) => {},         // fired on the sound
+ *     step: (now, dt) => {},                      // every frame
+ *   });
+ *   R.mode is "idle" | "demo" | "file" | "mic"; R.an.tone is an AnalyserNode (or its offline stand-in).
+ */
+(function () {
+  "use strict";
+  const QS = new URLSearchParams(location.search);
+  const OFFLINE = QS.get("offline") === "1";
+
+  // ---------- seeded randomness ----------
+  function xmur3(str) {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+    return function () { h = Math.imul(h ^ (h >>> 16), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); h ^= h >>> 16; return h >>> 0; };
+  }
+  function mulberry32(a) {
+    return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  }
+  // offline renders must be repeatable, so every Math.random in the page is seeded before any piece code runs
+  if (OFFLINE) Math.random = mulberry32(xmur3("ar|" + (QS.get("seed") || "SYBER"))());
+
+  // ---------- small helpers every piece uses ----------
+  const clamp = (x, a, b) => (x < a ? a : x > b ? b : x);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const fract = (x) => x - Math.floor(x);
+  // soft ceiling: linear near zero, never exceeds max
+  const soft = (x, max) => (max <= 0 ? 0 : max * (1 - Math.exp(-Math.max(0, x) / max)));
+  const NOTE = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  const noteName = (m) => NOTE[((m % 12) + 12) % 12] + (Math.floor(m / 12) - 1);
+  const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+  const esc = (s) => String(s).replace(/[<>&"]/g, (m) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[m]));
+
+  // ---------- drum synths for demo tracks ----------
+  function drumKit(actx, dest) {
+    const noise = actx.createBuffer(1, actx.sampleRate, actx.sampleRate);
+    const nd = noise.getChannelData(0);
+    for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+    const env = (g, t, a, peak, rel) => { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + rel); };
+    return {
+      noise, env,
+      kick(t, v = 1) { const o = actx.createOscillator(), g = actx.createGain(); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); env(g, t, 0.004, v, 0.4); o.connect(g); g.connect(dest); o.start(t); o.stop(t + 0.5); },
+      snare(t, v = 0.4) {
+        const s = actx.createBufferSource(); s.buffer = noise; const bp = actx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 2600; bp.Q.value = 0.7;
+        const g = actx.createGain(); env(g, t, 0.002, v, 0.17); s.connect(bp); bp.connect(g); g.connect(dest); s.start(t); s.stop(t + 0.25);
+        const o = actx.createOscillator(), og = actx.createGain(); o.frequency.setValueAtTime(220, t); o.frequency.exponentialRampToValueAtTime(160, t + 0.08);
+        env(og, t, 0.002, v * 0.6, 0.1); o.connect(og); og.connect(dest); o.start(t); o.stop(t + 0.15);
+      },
+      hat(t, v = 0.1) { const s = actx.createBufferSource(); s.buffer = noise; const hp = actx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 7500; const g = actx.createGain(); env(g, t, 0.002, v, 0.06); s.connect(hp); hp.connect(g); g.connect(dest); s.start(t); s.stop(t + 0.1); },
+    };
+  }
+  // a step sequencer clock: calls schedule(n, t) for every step, slightly ahead of time
+  function sequencer(actx, stepSeconds, schedule) {
+    let n = 0, next = actx.currentTime + 0.12;
+    const timer = setInterval(() => { while (next < actx.currentTime + 0.15) { schedule(n, next); next += stepSeconds; n++; } }, 25);
+    return () => clearInterval(timer);
+  }
+
+  // ---------- kick / snare / hat detection ----------
+  // One detector per instrument class, each against its own rolling mean + k*sd, fired on the rising edge.
+  // Kick: loudness jump in the sub band, gated by real low-end level.
+  // Snare and hats: broadband noise, measured as the share of bins in the band that jump at once, so tonal
+  // notes (which light only a few bins) do not count; mid-heavy bursts are snares, top-heavy are hats.
+  function onsetDetector(an, sampleRate, emit) {
+    const DET = {
+      kick: { type: "flux", lo: 40, hi: 130, gate: 150, k: 1.4, floor: 8, ref: 150 },
+      snare: { type: "frac", lo: 1400, hi: 6000, jump: 15, gate: 55, k: 1.8, floor: 0.22, ref: 210 },
+      hat: { type: "frac", lo: 8500, hi: 16000, jump: 5, gate: 12, k: 1.5, floor: 0.045, ref: 70 },
+    };
+    for (const n in DET) Object.assign(DET[n], { h: new Float32Array(40), i: 0, prev: 0, last: -1e9 });
+    const FF = new Uint8Array(an.frequencyBinCount), FP = new Uint8Array(an.frequencyBinCount), bw = sampleRate / an.fftSize;
+    const measure = (D) => {
+      const i0 = Math.max(1, Math.round(D.lo / bw)), i1 = Math.min(FF.length - 1, Math.round(D.hi / bw));
+      let f = 0, lvl = 0;
+      for (let i = i0; i <= i1; i++) { const d = FF[i] - FP[i]; lvl += FF[i]; if (D.type === "flux") { if (d > 0) f += d; } else if (d > D.jump) f++; }
+      return { m: f / (i1 - i0 + 1), lvl: lvl / (i1 - i0 + 1) };
+    };
+    return {
+      DET,
+      detect(now) {
+        an.getByteFrequencyData(FF);
+        const M = {}; for (const n in DET) M[n] = measure(DET[n]);
+        const cMid = measure({ type: "flux", lo: 1400, hi: 6000 }).m, cHigh = measure({ type: "flux", lo: 8500, hi: 16000 }).m;
+        for (const name in DET) {
+          const D = DET[name], { m: fl, lvl } = M[name];
+          let mu = 0; for (let i = 0; i < D.h.length; i++) mu += D.h[i]; mu /= D.h.length;
+          let v = 0; for (let i = 0; i < D.h.length; i++) v += (D.h[i] - mu) * (D.h[i] - mu);
+          const sd = Math.sqrt(v / D.h.length), thr = Math.max(D.floor, mu + D.k * sd);
+          const shape = name === "snare" ? cMid > cHigh : name === "hat" ? cHigh > cMid * 1.3 : true;
+          const masked = name === "hat" && now - DET.snare.last < 45; // a snare's noise spills into the hat band
+          if (fl > thr && fl > D.prev && lvl > D.gate && now - D.last > D.ref && !masked && shape) { D.last = now; emit(name, clamp((fl - mu) / (sd * 3 + D.floor), 0.35, 1.4), now); }
+          D.prev = fl; D.h[D.i] = fl; D.i = (D.i + 1) % D.h.length;
+        }
+        FP.set(FF);
+      },
+    };
+  }
+
+  // ---------- which notes are sounding ----------
+  // Spectral peaks, then harmonic summation picks up to three fundamentals. A peak far louder than an
+  // overtone of an already-found voice would be is another note sitting on that harmonic (chord tones do
+  // this all the time), so it stays available. A note must sound in two consecutive frames to count.
+  // Returns [{f, midi, s}] strongest first. Feed it an analyser of about 4096 bins with light smoothing.
+  // Low candidates within 60 ms of a detected kick are ignored, so a kick's falling pitch never reads as bass.
+  function noteTracker(R, anName) {
+    let TD = null; const hist = new Map();
+    return function detect(now) {
+      const an = R.an[anName]; if (!TD || TD.length !== an.frequencyBinCount) TD = new Float32Array(an.frequencyBinCount);
+      an.getFloatFrequencyData(TD);
+      const bh = R.sampleRate / an.fftSize, k0 = Math.max(3, Math.ceil(38 / bh)), k1 = Math.min(TD.length - 3, Math.floor(4400 / bh));
+      let gmax = -200; for (let k = k0; k <= k1; k++) if (TD[k] > gmax) gmax = TD[k];
+      if (gmax < -74) { hist.clear(); return []; }
+      const thr = Math.max(-84, gmax - 36), peaks = [];
+      for (let k = k0 + 2; k <= k1 - 2; k++) {
+        const v = TD[k];
+        if (v > thr && v >= TD[k - 1] && v > TD[k + 1] && v >= TD[k - 2] && v > TD[k + 2]) {
+          const a = TD[k - 1], c = TD[k + 1], den = a - 2 * v + c, d = den !== 0 ? clamp((0.5 * (a - c)) / den, -0.5, 0.5) : 0;
+          peaks.push({ f: (k + d) * bh, a: Math.pow(10, (v - gmax) / 20) });
+        }
+      }
+      peaks.sort((p, q) => q.a - p.a); if (peaks.length > 32) peaks.length = 32;
+      const used = new Uint8Array(peaks.length), out = [];
+      const score = (f0) => {
+        let s = 0, fw = 0, ww = 0, a1 = 0;
+        for (let h = 1; h <= 10; h++) {
+          const t = f0 * h; let best = 0, bf = 0;
+          for (let i = 0; i < peaks.length; i++) if (!used[i] && Math.abs(peaks[i].f - t) < t * 0.025 && peaks[i].a > best) { best = peaks[i].a; bf = peaks[i].f; }
+          if (best > 0) { if (h === 1) a1 = best; const w = Math.min(best, ((a1 || best) * 1.3) / h) / Math.sqrt(h); s += w; fw += (bf / h) * w * h; ww += w * h; }
+        }
+        return [s, ww > 0 ? fw / ww : f0, a1];
+      };
+      let first = 0;
+      for (let v = 0; v < 3; v++) {
+        let bi = -1, bs = 0, bf = 0, ba = 0;
+        for (let i = 0; i < peaks.length; i++) { if (used[i] || peaks[i].f > 2200) continue; const [sc, f, a] = score(peaks[i].f); if (sc > bs) { bs = sc; bi = i; bf = f; ba = a; } }
+        if (bi < 0 || bs < 0.1 || (v > 0 && bs < first * 0.14)) break;
+        if (v === 0) first = bs;
+        const f0 = bf;
+        if (!(f0 < 130 && now - R.detectedAt.kick < 60)) out.push({ f: f0, s: bs, midi: 69 + 12 * Math.log2(f0 / 440) });
+        used[bi] = 1;
+        for (let i = 0; i < peaks.length; i++) {
+          if (used[i]) continue; const r = peaks[i].f / f0, h = Math.round(r);
+          if (h >= 2 && h <= 10 && Math.abs(r - h) < 0.025 * h && peaks[i].a <= (Math.max(ba, peaks[bi].a) * 1.3) / h) used[i] = 1;
+        }
+      }
+      const seen = new Map(), keep = [];
+      for (const v of out) { const m = Math.round(v.midi); seen.set(m, (hist.get(m) || 0) + 1); if ((hist.get(m) || 0) >= 1) keep.push(v); }
+      hist.clear(); for (const [m, c] of seen) hist.set(m, c);
+      return keep.sort((a, b) => b.s - a.s);
+    };
+  }
+
+  // ---------- how hard the music is pushing ----------
+  // RMS of an analyser's waveform, smoothed (fast up, slow down), and its ratio to the long-run level, so a
+  // piece can react to "louder than this track usually is" rather than to absolute volume.
+  function levelMeter(R, anName) {
+    let T = null, loud = 0, avg = 0.08;
+    return function update(dt) {
+      const an = R.an[anName]; if (!T || T.length !== an.fftSize) T = new Float32Array(an.fftSize);
+      an.getFloatTimeDomainData(T);
+      let s = 0; for (let i = 0; i < T.length; i++) s += T[i] * T[i];
+      const rms = Math.sqrt(s / T.length);
+      loud = lerp(loud, rms, rms > loud ? 0.5 : 0.12); avg = lerp(avg, loud, Math.min(1, dt * 0.25));
+      return { rms: loud, rel: loud / (avg + 0.01) };
+    };
+  }
+
+  // ---------- offline stand-in for an AnalyserNode ----------
+  // render/ sends the smoothed dB spectrum and the time-domain samples for each frame; the byte views are
+  // derived here exactly as the Web Audio spec derives them.
+  class OfflineAnalyser {
+    constructor(spec) {
+      this.fftSize = spec.fftSize; this.frequencyBinCount = spec.fftSize / 2;
+      this.smoothingTimeConstant = spec.smoothing; this.minDecibels = -100; this.maxDecibels = -30;
+      this.db = new Float32Array(this.frequencyBinCount).fill(-Infinity); this.time = new Float32Array(this.fftSize);
+    }
+    getFloatFrequencyData(a) { a.set(this.db.length > a.length ? this.db.subarray(0, a.length) : this.db); }
+    getByteFrequencyData(a) {
+      const sc = 255 / (this.maxDecibels - this.minDecibels), n = Math.min(a.length, this.db.length);
+      for (let i = 0; i < n; i++) { const b = Math.floor(sc * (this.db[i] - this.minDecibels)); a[i] = b < 0 ? 0 : b > 255 ? 255 : b; }
+    }
+    getFloatTimeDomainData(a) { a.set(this.time.length > a.length ? this.time.subarray(0, a.length) : this.time); }
+    getByteTimeDomainData(a) { const n = Math.min(a.length, this.time.length); for (let i = 0; i < n; i++) { const b = Math.floor(128 * (1 + this.time[i])); a[i] = b < 0 ? 0 : b > 255 ? 255 : b; } }
+  }
+  function b64ToFloat32(str, out) {
+    const bin = atob(str), n = Math.min(bin.length >> 2, out.length), bytes = new Uint8Array(n * 4);
+    for (let i = 0; i < bytes.length; i++) bytes[i] = bin.charCodeAt(i);
+    out.set(new Float32Array(bytes.buffer, 0, n));
+  }
+
+  // ---------- the piece runtime ----------
+  function create(opts) {
+    const $ = (id) => document.getElementById(id);
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const LOOK = opts.lookahead ?? 0.1, ONSET_LAG = opts.onsetLag ?? 28;
+    const specs = Object.entries(opts.analysers || {}).map(([name, s]) => ({ name, fftSize: s.fftSize || 2048, smoothing: s.smoothing ?? 0.8, needs: s.needs || ["freq"], lead: s.lead ?? 0.03 }));
+    if (opts.onsets && !specs.some((s) => s.name === "onset")) specs.push({ name: "onset", fftSize: 2048, smoothing: 0, needs: ["freq"], lead: 0.03 });
+
+    const R = {
+      offline: OFFLINE, reduce, mode: "idle", detectedAt: { kick: -1e9, snare: -1e9, hat: -1e9 }, actx: null, an: {}, sampleRate: 48000, trackName: "", glow: opts.glow?.value ?? 0.7,
+      demoName: opts.demoName || "Demo track",
+      sourceLabel() { return R.mode === "demo" ? R.demoName : R.mode === "file" ? R.trackName : R.mode === "mic" ? "Microphone" : (opts.idleName || "Idle example"); },
+    };
+    let bus = null, outGain = null, demo = null, micStream = null, micSrc = null, mediaSrc = null, onsets = null;
+    const audioEl = new Audio(); audioEl.loop = true;
+    const EVQ = [];
+
+    function ensureCtx() {
+      if (!R.actx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        const actx = (R.actx = new AC()); R.sampleRate = actx.sampleRate;
+        bus = actx.createGain(); outGain = actx.createGain();
+        const delay = actx.createDelay(1); delay.delayTime.value = LOOK;
+        const sink = actx.createGain(); sink.gain.value = 0; sink.connect(actx.destination);
+        for (const s of specs) { const a = actx.createAnalyser(); a.fftSize = s.fftSize; a.smoothingTimeConstant = s.smoothing; bus.connect(a); a.connect(sink); R.an[s.name] = a; }
+        bus.connect(delay); delay.connect(outGain); outGain.connect(actx.destination);
+        if (opts.onsets) onsets = onsetDetector(R.an.onset, R.sampleRate, hit);
+        opts.onAudio && opts.onAudio(R);
+      }
+      if (R.actx.state === "suspended") R.actx.resume();
+    }
+
+    // hits: detected early (thanks to the look-ahead), held until the matching sound reaches the speakers
+    function hit(name, str, now) {
+      R.detectedAt[name] = now;
+      if (!OFFLINE && (R.mode === "demo" || R.mode === "file")) EVQ.push({ name, str, at: now + LOOK * 1000 - ONSET_LAG });
+      else fire(name, str, now);
+    }
+    function fire(name, str, now) {
+      opts.onHit && opts.onHit(name, str, now);
+      const el = $("ind-" + name); if (el) el.style.setProperty("--on", Math.min(1, 0.4 + 0.6 * str).toFixed(2));
+    }
+    R.fire = fire;
+
+    // ---------- sources ----------
+    function stopAll() {
+      if (demo) { demo.stop(); demo = null; }
+      if (!audioEl.paused) audioEl.pause();
+      if (micStream) { micStream.getTracks().forEach((t) => t.stop()); micStream = null; }
+      if (micSrc) { try { micSrc.disconnect(); } catch (e) {} micSrc = null; }
+      if (outGain) outGain.gain.value = 1;
+      EVQ.length = 0;
+      setMode("idle");
+    }
+    function setMode(m) { R.mode = m; syncButtons(); opts.onSource && opts.onSource(m, R); }
+    function startDemo() {
+      ensureCtx(); stopAll();
+      const master = R.actx.createGain(); const comp = R.actx.createDynamicsCompressor();
+      comp.threshold.value = -16; comp.ratio.value = 3; master.connect(comp); comp.connect(bus);
+      master.gain.value = 0.0001; master.gain.setTargetAtTime(opts.demoGain ?? 0.8, R.actx.currentTime, 0.2);
+      const d = opts.demo(R.actx, master, drumKit(R.actx, master), R);
+      demo = { stop() { d && d.stop && d.stop(); master.gain.setTargetAtTime(0.0001, R.actx.currentTime, 0.08); setTimeout(() => { try { master.disconnect(); } catch (e) {} }, 600); } };
+      setMode("demo");
+    }
+    function playFile(file) {
+      if (!file) return;
+      if (!/^audio\//.test(file.type) && !/\.(mp3|wav|ogg|m4a|aac|flac|opus|webm)$/i.test(file.name)) { toast("That file is not audio. Try an MP3, WAV, M4A, OGG or FLAC."); return; }
+      ensureCtx(); stopAll();
+      if (audioEl.src) URL.revokeObjectURL(audioEl.src);
+      audioEl.src = URL.createObjectURL(file);
+      if (!mediaSrc) { mediaSrc = R.actx.createMediaElementSource(audioEl); mediaSrc.connect(bus); }
+      R.trackName = file.name.replace(/\.[^.]+$/, "");
+      audioEl.play().then(() => setMode("file")).catch(() => toast("This browser could not play that file. Try another format."));
+    }
+    async function startMic() {
+      ensureCtx(); stopAll();
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+        micSrc = R.actx.createMediaStreamSource(micStream); micSrc.connect(bus); outGain.gain.value = 0; setMode("mic");
+      } catch (e) { toast("The microphone isn't available in this view. Open the page directly in your browser to use the mic, or load a track."); }
+    }
+    Object.assign(R, { startDemo, playFile, startMic, stopAll, toast });
+
+    // ---------- controls ----------
+    function syncButtons() {
+      const d = $("btnDemo"); if (d) d.textContent = R.mode === "demo" ? "Stop demo" : R.mode === "idle" ? "Play demo" : "Stop";
+      const m = $("btnMic"); if (m) m.setAttribute("aria-pressed", R.mode === "mic" ? "true" : "false");
+      const f = $("btnFile"); if (f) f.setAttribute("aria-pressed", R.mode === "file" ? "true" : "false");
+    }
+    let toastT = 0;
+    function toast(msg) { const el = $("toast"); if (!el) return; el.textContent = msg; el.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("on"), 5200); }
+    const chrome = $("chrome");
+    const toggleChrome = (force) => chrome && chrome.classList.toggle("off", force !== undefined ? force : !chrome.classList.contains("off"));
+    function fullscreen() {
+      const d = document; if (d.fullscreenElement) { d.exitFullscreen && d.exitFullscreen().catch(() => {}); return; }
+      const el = d.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
+      if (!req) { toast("Fullscreen isn't available here."); return; }
+      try { const p = req.call(el); if (p && p.catch) p.catch(() => toast("Fullscreen isn't available here.")); } catch (e) { toast("Fullscreen isn't available here."); }
+    }
+    const G = Object.assign({ min: 0.2, max: 1.2, value: 0.7 }, opts.glow || {});
+    const glowEl = $("glow"), glowKey = (opts.name || "piece") + "-glow";
+    function setGlow(v, save) {
+      R.glow = clamp(+v, G.min, G.max); if (glowEl) glowEl.value = R.glow;
+      if (save) { try { localStorage.setItem(glowKey, String(R.glow)); } catch (e) {} }
+      G.onChange && G.onChange(R.glow);
+    }
+    R.setGlow = setGlow;
+
+    function bindControls() {
+      const on = (id, ev, fn) => { const el = $(id); if (el) el.addEventListener(ev, fn); };
+      on("btnDemo", "click", () => (R.mode === "idle" ? startDemo() : stopAll()));
+      on("btnFile", "click", () => $("file") && $("file").click());
+      on("file", "change", (e) => { playFile(e.target.files[0]); e.target.value = ""; });
+      on("btnMic", "click", () => (R.mode === "mic" ? stopAll() : startMic()));
+      on("btnFull", "click", fullscreen);
+      on("btnHide", "click", () => { toggleChrome(true); toast("Tap anywhere or press H to bring the controls back."); });
+      if (opts.canvas) opts.canvas.addEventListener("click", () => { if (chrome && chrome.classList.contains("off")) toggleChrome(false); });
+      if (glowEl) glowEl.addEventListener("input", () => setGlow(glowEl.value, true));
+      let saved = null;
+      try { saved = localStorage.getItem(glowKey); for (const k of opts.glowKeysLegacy || []) saved = saved ?? localStorage.getItem(k); } catch (e) {}
+      setGlow(saved !== null && isFinite(+saved) ? saved : G.value, false);
+      window.addEventListener("keydown", (e) => {
+        if (e.target.tagName === "SELECT" || e.metaKey || e.ctrlKey || e.altKey) return;
+        const k = e.key.toLowerCase();
+        if (k === "[" || k === "]") { setGlow(R.glow + (k === "]" ? 0.05 : -0.05), true); return; }
+        if (e.target.tagName === "INPUT" && k !== " ") return;
+        if (k === " ") { e.preventDefault(); R.mode === "idle" ? startDemo() : stopAll(); }
+        else if (k === "h") toggleChrome();
+        else if (k === "f") fullscreen();
+        else if (opts.keys && opts.keys[k]) opts.keys[k]();
+      });
+      const drop = $("drop"); let dragN = 0;
+      window.addEventListener("dragenter", (e) => { e.preventDefault(); dragN++; drop && drop.classList.add("on"); });
+      window.addEventListener("dragover", (e) => e.preventDefault());
+      window.addEventListener("dragleave", () => { if (--dragN <= 0) { dragN = 0; drop && drop.classList.remove("on"); } });
+      window.addEventListener("drop", (e) => { e.preventDefault(); dragN = 0; drop && drop.classList.remove("on"); const f = e.dataTransfer && e.dataTransfer.files[0]; if (f) playFile(f); });
+    }
+
+    // ---------- frame ----------
+    const IND = ["kick", "snare", "hat"].map((n) => $("ind-" + n)).filter(Boolean);
+    function tick(now, dt) {
+      if (R.mode !== "idle" && onsets) onsets.detect(now);
+      // fire anything due before the middle of this frame, so frame timing never pushes a hit late by a whole frame
+      const horizon = now + dt * 500;
+      while (EVQ.length && EVQ[0].at <= horizon) { const e = EVQ.shift(); fire(e.name, e.str, now); }
+      opts.step(now, dt);
+      for (const el of IND) { const v = +el.style.getPropertyValue("--on") || 0; if (v > 0) el.style.setProperty("--on", Math.max(0, v - dt * 5).toFixed(2)); }
+    }
+    let last = 0, warned = false;
+    function frame(now) {
+      requestAnimationFrame(frame); // schedule first, so one bad frame never stops the piece
+      const dt = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60); last = now;
+      try { tick(now, dt); } catch (e) { if (!warned) { warned = true; console.error(e); } }
+    }
+    R.start = function () {
+      if (OFFLINE) { if (chrome) chrome.hidden = true; return; }
+      bindControls(); syncButtons(); opts.onSource && opts.onSource(R.mode, R);
+      requestAnimationFrame(frame);
+    };
+
+    // ---------- offline driver, used by render/ ----------
+    if (OFFLINE) {
+      let fps = 30;
+      window.AudioReactivePage = {
+        specs: () => ({ name: opts.name, analysers: specs, palettes: opts.palettes || null }),
+        setup(cfg) {
+          fps = cfg.fps || 30; R.sampleRate = cfg.sampleRate || 48000;
+          R.actx = { sampleRate: R.sampleRate, currentTime: 0, state: "running" };
+          for (const s of specs) R.an[s.name] = new OfflineAnalyser(s);
+          if (opts.onsets) onsets = onsetDetector(R.an.onset, R.sampleRate, hit);
+          R.mode = "file"; R.trackName = cfg.title || "track";
+          if (cfg.glow != null) setGlow(cfg.glow, false); else setGlow(G.value, false);
+          const info = (opts.offlineSetup && opts.offlineSetup(cfg, R)) || {};
+          opts.onSource && opts.onSource(R.mode, R);
+          return info;
+        },
+        frame(i, payload) {
+          for (const s of specs) { const p = payload[s.name], a = R.an[s.name]; if (!p) continue; if (p.db) b64ToFloat32(p.db, a.db); if (p.time) b64ToFloat32(p.time, a.time); }
+          const now = (i * 1000) / fps; R.actx.currentTime = now / 1000;
+          tick(now, 1 / fps);
+        },
+        capture: (q) => (opts.canvas || document.querySelector("canvas")).toDataURL("image/jpeg", q || 0.92).slice(23),
+      };
+    }
+    return R;
+  }
+
+  window.AudioReactive = { create, drumKit, sequencer, onsetDetector, noteTracker, levelMeter, xmur3, mulberry32, clamp, lerp, fract, soft, noteName, hz, esc, OFFLINE };
+})();
+</script>
+<script>
+"use strict";
+(function(){
+  const $=id=>document.getElementById(id);
+  const cv=$("stage"), ctx=cv.getContext("2d");
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const AR=window.AudioReactive, {clamp,lerp,soft,noteName,hz}=AR;
+
+  // ======================================================================
+  // 1. The plate.  A square plate clamped at its centre, free at its edges.
+  //    Its standing waves are f(x,y) = cos(nπx)cos(mπy) - cos(mπx)cos(nπy).
+  //    Sand gathers where the plate does not move: the nodal lines, f = 0.
+  //    Higher frequency rings higher modes, so every semitone gets the next
+  //    mode up in eigenvalue order (n²+m²): low notes make broad figures,
+  //    high notes make fine lace, and the same note always makes the same figure.
+  // ======================================================================
+  const MODES=[]; for(let n=1;n<=15;n++) for(let m=0;m<n;m++) MODES.push([n,m]);
+  MODES.sort((a,b)=>(a[0]*a[0]+a[1]*a[1])-(b[0]*b[0]+b[1]*b[1])||a[0]-b[0]);
+  const MIDI_LO=28;                                    // E1 rings the plate's first mode
+  const modeOf=midi=>clamp(Math.round(midi)-MIDI_LO,0,MODES.length-1);
+
+  const G=256, GM=G-1;                                 // field grid over the plate
+  const COS=new Float32Array(16*G);
+  for(let n=0;n<16;n++) for(let i=0;i<G;i++) COS[n*G+i]=Math.cos(n*Math.PI*(-1+2*i/GM));
+  const FG=new Float32Array(G*G), FXg=new Float32Array(G*G), FYg=new Float32Array(G*G);
+  const WM=new Map();                                  // mode index -> current weight
+  let TGT=new Map();                                   // mode index -> target weight
+
+  function buildField(){
+    FG.fill(0);
+    let tot=0; for(const w of WM.values()) tot+=w;
+    if(tot<1e-4) return;
+    for(const [idx,w0] of WM){
+      const w=w0/tot; if(w<0.003) continue;
+      const n=MODES[idx][0], m=MODES[idx][1], cn=n*G, cm=m*G;
+      for(let j=0;j<G;j++){
+        const cmj=COS[cm+j]*w, cnj=COS[cn+j]*w, row=j*G;
+        for(let i=0;i<G;i++) FG[row+i]+=COS[cn+i]*cmj-COS[cm+i]*cnj;
+      }
+    }
+    const s=GM/4;                                      // central differences, in plate units
+    for(let j=0;j<G;j++){
+      const row=j*G, up=(j>0?j-1:0)*G, dn=(j<GM?j+1:GM)*G, sy=(j>0&&j<GM)?s:s*2;
+      for(let i=0;i<G;i++){
+        const l=i>0?i-1:0, r=i<GM?i+1:GM, sx=(i>0&&i<GM)?s:s*2;
+        FXg[row+i]=(FG[row+r]-FG[row+l])*sx;
+        FYg[row+i]=(FG[dn+i]-FG[up+i])*sy;
+      }
+    }
+  }
+  function stepWeights(dt){
+    for(const k of TGT.keys()) if(!WM.has(k)) WM.set(k,0);
+    for(const [k,w] of WM){
+      const t=TGT.get(k)||0, r=t>w?1-Math.exp(-dt*24):1-Math.exp(-dt*7);
+      const nw=w+(t-w)*r;
+      if(nw<0.002&&t===0) WM.delete(k); else WM.set(k,nw);
+    }
+  }
+
+  // ======================================================================
+  // 2. The sand.  Each grain is drawn toward the nearest nodal line (a Newton
+  //    step on f), and kicked at random in proportion to how hard the plate
+  //    moves under it (|f| times the loudness). Grains on a node stay put.
+  //    Strikes are impulses: kick = the plate jumps and the sand bursts outward,
+  //    snare = grains race along their lines, hats = a scatter of twinkles.
+  // ======================================================================
+  const minSide=Math.min(innerWidth,innerHeight);
+  const NMAX=minSide<700?70000:160000;
+  let nAct=minSide<700?42000:95000;
+  const PX=new Float32Array(NMAX), PY=new Float32Array(NMAX), VX=new Float32Array(NMAX), VY=new Float32Array(NMAX);
+  for(let i=0;i<NMAX;i++){ PX[i]=Math.random()*2-1; PY[i]=Math.random()*2-1; }
+  const NT=new Float32Array(65536); for(let i=0;i<NT.length;i++) NT[i]=Math.random()*2-1;
+  const IMP={kick:0,snare:0,hat:0};
+  let DRIVE=0.3;
+
+  let P=0, COOL=null, HOT=null, pcan=null, pctx=null, pimg=null, b1=null, b2=null, b1x=null, b2x=null;
+  function allocPlate(size){
+    P=size; COOL=new Float32Array(P*P); HOT=new Float32Array(P*P);
+    pcan=document.createElement("canvas"); pcan.width=pcan.height=P; pctx=pcan.getContext("2d");
+    pimg=pctx.createImageData(P,P); for(let i=3;i<pimg.data.length;i+=4) pimg.data[i]=255;
+    b1=document.createElement("canvas"); b1.width=b1.height=Math.max(8,Math.round(P/4)); b1x=b1.getContext("2d");
+    b2=document.createElement("canvas"); b2.width=b2.height=Math.max(4,Math.round(P/12)); b2x=b2.getContext("2d");
+  }
+
+  function updateSand(dt,splat){
+    const n=nAct|0, kRel=1-Math.exp(-dt*9), RATE=7, LIM=0.05, M=65535;
+    const jit=DRIVE*0.0065*dt*60*(reduce?0.5:1);
+    const kI=IMP.kick, sI=IMP.snare, hI=IMP.hat; IMP.kick=IMP.snare=IMP.hat=0;
+    let no=(Math.random()*65536)|0;
+    const half=P*0.5, Pm=P-1;
+    for(let i=0;i<n;i++){
+      let x=PX[i], y=PY[i];
+      const gx=(x+1)*0.5*GM, gy=(y+1)*0.5*GM;
+      let ix=gx|0, iy=gy|0; if(ix>GM-1) ix=GM-1; if(iy>GM-1) iy=GM-1; if(ix<0) ix=0; if(iy<0) iy=0;
+      const ax=gx-ix, ay=gy-iy, o=iy*G+ix;
+      const w00=(1-ax)*(1-ay), w10=ax*(1-ay), w01=(1-ax)*ay, w11=ax*ay;
+      const f=FG[o]*w00+FG[o+1]*w10+FG[o+G]*w01+FG[o+G+1]*w11;
+      const dx=FXg[o]*w00+FXg[o+1]*w10+FXg[o+G]*w01+FXg[o+G+1]*w11;
+      const dy=FYg[o]*w00+FYg[o+1]*w10+FYg[o+G]*w01+FYg[o+G+1]*w11;
+      const g2=dx*dx+dy*dy+1e-3;
+      let sx=-f*dx/g2, sy=-f*dy/g2;
+      const sl=sx*sx+sy*sy; if(sl>LIM*LIM){ const r=LIM/Math.sqrt(sl); sx*=r; sy*=r; }
+      let vx=VX[i], vy=VY[i];
+      vx+=(sx*RATE-vx)*kRel; vy+=(sy*RATE-vy)*kRel;
+      const af=f<0?-f:f;
+      if(kI>0){
+        // the plate jumps: grains hop off their line to either side, then fall back
+        const gl=Math.sqrt(g2), sg=NT[no&M]<0?-1:1, a=kI*(0.55+0.45*(af>1?1:af));
+        vx+=(dx/gl*sg*0.85+NT[(no+1)&M]*0.45)*a; vy+=(dy/gl*sg*0.85+NT[(no+2)&M]*0.45)*a; no+=3;
+      }
+      if(sI>0){
+        const gl=Math.sqrt(g2), a=sI*((i&1)?1:-1)*(0.6+0.5*NT[no&M]); no++;
+        vx-=dy/gl*a; vy+=dx/gl*a;
+      }
+      if(hI>0 && (i%5)===0){
+        const gl=Math.sqrt(g2), a=hI*((i&2)?1:-1);
+        vx-=dy/gl*a; vy+=dx/gl*a;
+      }
+      const j=jit*af;
+      x+=vx*dt+NT[no&M]*j; y+=vy*dt+NT[(no+1)&M]*j; no+=2;
+      // sand that reaches the free edge falls off and is poured back somewhere on the plate
+      if(x<-0.995||x>0.995||y<-0.995||y>0.995){ x=NT[no&M]*0.97; y=NT[(no+7)&M]*0.97; vx=0; vy=0; no+=11; }
+      PX[i]=x; PY[i]=y; VX[i]=vx; VY[i]=vy;
+      if(splat){
+        let px=((x+1)*half)|0, py=((y+1)*half)|0; if(px>Pm) px=Pm; if(py>Pm) py=Pm;
+        const k=py*P+px, sp=vx*vx+vy*vy, h=sp>0.3?1:sp/0.3;
+        COOL[k]+=1-h; HOT[k]+=h;
+      }
+    }
+  }
+
+  // ======================================================================
+  // 3. Light.  Settled sand glows cool, tinted by the key (pitch class on the
+  //    circle of fifths); sand in flight burns in the complementary hue.
+  // ======================================================================
+  let EXPO=0.6, HUE=0.55, glow=0.65;
+  const COL={c:[0.8,0.9,1],h:[1,0.6,0.3]};
+  function hsl(h,s,l){
+    h=((h%1)+1)%1; const a=s*Math.min(l,1-l), f=k=>{ const t=(k+h*12)%12; return l-a*Math.max(-1,Math.min(t-3,9-t,1)); };
+    return [f(0),f(8),f(4)];
+  }
+  function develop(dt){
+    const N=P*P, dec=Math.exp(-dt*15), k=EXPO, kh=EXPO*1.25, data=pimg.data;
+    const cr=COL.c[0]*255, cg=COL.c[1]*255, cb=COL.c[2]*255, hr=COL.h[0]*255, hg=COL.h[1]*255, hb=COL.h[2]*255;
+    let sum=0, cnt=0;
+    for(let i=0,o=0;i<N;i++,o+=4){
+      const c=COOL[i], h=HOT[i];
+      if(c+h<0.01){ if(c!==0||h!==0){ COOL[i]=0; HOT[i]=0; data[o]=0; data[o+1]=0; data[o+2]=0; } else if(data[o]|data[o+1]|data[o+2]){ data[o]=0; data[o+1]=0; data[o+2]=0; } continue; }
+      sum+=c+h; cnt++;
+      const tc=c*k/(1+c*k), th=h*kh/(1+h*kh);
+      data[o]=tc*cr+th*hr; data[o+1]=tc*cg+th*hg; data[o+2]=tc*cb+th*hb;
+      COOL[i]=c*dec; HOT[i]=h*dec;
+    }
+    if(cnt>50){ const mean=sum/cnt; EXPO=lerp(EXPO,1.5/mean,0.12); }
+    pctx.putImageData(pimg,0,0);
+    b1x.clearRect(0,0,b1.width,b1.height); b1x.drawImage(pcan,0,0,b1.width,b1.height);
+    b2x.clearRect(0,0,b2.width,b2.height); b2x.drawImage(b1,0,0,b2.width,b2.height);
+  }
+
+  // ======================================================================
+  // 4. Listening.  The shared base runs the audio graph, the sources and
+  //    kick/snare/hat detection. This piece adds two analysers of its own:
+  //    tone  (4096 bins, light smoothing)  -> which notes are sounding
+  //    level (2048)                        -> how hard the plate is driven
+  // ======================================================================
+  // pitch: spectral peaks, then harmonic summation picks up to three fundamentals
+  // notes come from the shared note tracker, loudness from the shared level meter (wired in section 7)
+  let detectVoices=null, level=null;
+
+  let FLASH=0, SNAP=0;
+  function onHit(name,str,now){
+    const rm=reduce?0.35:1;
+    if(name==="kick"){ IMP.kick+=1.25*str*rm; FLASH=Math.max(FLASH,str); }
+    else if(name==="snare"){ IMP.snare+=1.1*str*rm; SNAP=Math.max(SNAP,str); }
+    else IMP.hat+=0.45*str*rm;
+  }
+
+  // what the plate is ringing at, for the readout and the colour
+  let VOICES=[], lastToneAt=-1e9;
+  function setTargets(voices){
+    const T=new Map(); let tot=0;
+    // the lowest voice is the plate's structure; higher voices embroider on top of it
+    const lowest=voices.reduce((a,v)=>v.midi<a.midi?v:a,voices[0]);
+    voices.forEach(v=>{ const w=v.s*(v===lowest?1.7:0.65); tot+=w; const k=modeOf(v.midi); T.set(k,(T.get(k)||0)+w); });
+    for(const [k,w] of T) T.set(k,w/tot);
+    TGT=T;
+  }
+  function analyse(dt,now){
+    if(R.mode==="idle"){ idleScript(now); return; }
+    DRIVE=0.18+0.55*clamp(level(dt).rel-0.5,0,1.6);
+    const v=detectVoices(now);
+    if(v.length){ VOICES=v; lastToneAt=now; setTargets(VOICES); }
+  }
+
+  // idle: a quiet example so the plate is alive before any music
+  const IDLE=[[45,69],[45,76],[41,72],[41,69],[48,76],[48,79],[43,74],[43,71]];
+  let idleStep=-1;
+  function idleScript(now){
+    DRIVE=0.22;
+    const st=Math.floor(now/1300);
+    if(st!==idleStep){
+      idleStep=st; const pr=IDLE[st%IDLE.length];
+      VOICES=[{midi:pr[0],f:hz(pr[0]),s:1},{midi:pr[1],f:hz(pr[1]),s:0.8}];
+      setTargets(VOICES);
+      if(st%2===0) R.fire("kick",0.55,now); else R.fire("snare",0.5,now);
+    }
+    const sub=Math.floor(now/325); if(sub!==idleScript.h){ idleScript.h=sub; if(sub%4) R.fire("hat",0.4,now); }
+  }
+
+  // ======================================================================
+  // 5. Demo: a 120 bpm track written so every voice is easy to read:
+  //    intro (bass + slow melody), groove (+ drums), breakdown (one long note
+  //    at a time, pure figures), drop (everything).
+  // ======================================================================
+  function makeDemo(actx,master,kit){
+    const CH=[{b:45,a:[69,72,76]},{b:41,a:[65,69,72]},{b:48,a:[67,72,76]},{b:43,a:[67,71,74]}];
+    const SEC=[["intro",8],["groove",8],["break",4],["drop",8]], LOOP=28;
+    const section=bar=>{ let b=bar%LOOP; for(const [nm,len] of SEC){ if(b<len) return nm; b-=len; } return "intro"; };
+    const step=0.25;
+    function bass(m,t,dur){
+      const lp=actx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=900; lp.Q.value=0.8;
+      const g=actx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.32,t+0.012); g.gain.setTargetAtTime(0.2,t+0.05,0.3); g.gain.setTargetAtTime(0.0001,t+dur,0.06);
+      lp.connect(g); g.connect(master);
+      const o=actx.createOscillator(); o.type="sawtooth"; o.frequency.value=hz(m); o.connect(lp); o.start(t); o.stop(t+dur+0.4);
+      const s=actx.createOscillator(); s.type="sine"; s.frequency.value=hz(m); const sg=actx.createGain(); sg.gain.value=0.6; s.connect(sg); sg.connect(g); s.start(t); s.stop(t+dur+0.4);
+    }
+    function lead(m,t,dur,v){
+      const g=actx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(v,t+0.006); g.gain.setTargetAtTime(v*0.55,t+0.03,0.2); g.gain.setTargetAtTime(0.0001,t+dur,0.05);
+      g.connect(master);
+      const o=actx.createOscillator(); o.type="triangle"; o.frequency.value=hz(m); o.connect(g); o.start(t); o.stop(t+dur+0.3);
+      const o2=actx.createOscillator(); o2.type="sine"; o2.frequency.value=hz(m+12); const g2=actx.createGain(); g2.gain.value=0.25; o2.connect(g2); g2.connect(g); o2.start(t); o2.stop(t+dur+0.3);
+    }
+    const ARP=[0,1,2,1,2,0,1,2];
+    function schedule(n,t){
+      const bar=Math.floor(n/8), st=n%8, sec=section(bar), ch=CH[bar%4];
+      if(st===0 && sec!=="break") bass(ch.b,t,8*step*0.96);
+      if(sec==="intro" && st%2===0) lead(ch.a[(st/2)%3],t,2*step*0.92,0.12);
+      if(sec==="groove") lead(ch.a[ARP[st]],t,step*0.88,0.1);
+      if(sec==="drop") lead(ch.a[ARP[st]]+(st>=4?12:0),t,step*0.88,0.1);
+      if(sec==="break" && st===0) lead(ch.a[bar%3]+12,t,8*step*0.96,0.14);
+      if(sec==="groove"||sec==="drop"){
+        if(st%2===0) kit.kick(t,1);
+        if(st===2||st===6) kit.snare(t,sec==="drop"?0.5:0.38);
+        if(sec==="groove" && st%2===1) kit.hat(t,0.1);
+        if(sec==="drop") kit.hat(t,st%2?0.12:0.07);
+      }
+    }
+    const stop=AR.sequencer(actx,step,schedule);
+    return {stop};
+  }
+
+  // ======================================================================
+  // 6. Frame
+  // ======================================================================
+  let W=0,H=0,dpr=1;
+  // the plate fits between the readout at the top and the controls at the bottom
+  const plateSize=()=>Math.min(W*0.86,H*(innerWidth<560?0.6:0.7));
+  function resize(){
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    W=cv.width=Math.round(innerWidth*dpr); H=cv.height=Math.round(innerHeight*dpr);
+    const want=clamp(Math.round(plateSize()),360,minSide<700?620:900);
+    if(want!==P) allocPlate(want);
+  }
+  window.addEventListener("resize",resize); resize();
+
+  function colours(dt){
+    const lead=VOICES[0];
+    if(lead){ const pc=((Math.round(lead.midi)%12)+12)%12, target=((pc*7)%12)/12;
+      let d=target-HUE; d-=Math.round(d); HUE=((HUE+d*Math.min(1,dt*5))%1+1)%1; }
+    COL.c=hsl(HUE,0.62,0.74); COL.h=hsl(HUE+0.47,0.95,0.6);
+  }
+
+  function draw(dt){
+    const S=plateSize(), x0=(W-S)/2, y0=(H-S)/2+(innerWidth<560?H*0.04:0), u=S/1000;
+    ctx.setTransform(1,0,0,1,0,0); ctx.globalCompositeOperation="source-over"; ctx.globalAlpha=1;
+    let g=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.hypot(W,H)*0.6);
+    g.addColorStop(0,"#0a0c13"); g.addColorStop(1,"#030407"); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    // plate
+    g=ctx.createLinearGradient(x0,y0,x0+S,y0+S); g.addColorStop(0,"#0b0e15"); g.addColorStop(1,"#06070c");
+    ctx.fillStyle=g; ctx.fillRect(x0,y0,S,S);
+    // sand
+    ctx.globalCompositeOperation="lighter"; ctx.imageSmoothingEnabled=true;
+    ctx.drawImage(pcan,x0,y0,S,S);
+    ctx.globalAlpha=soft(0.18+0.5*DRIVE+0.4*FLASH,0.55*glow); ctx.drawImage(b1,x0,y0,S,S);
+    ctx.globalAlpha=soft(0.12+0.35*DRIVE+0.5*FLASH,0.42*glow); ctx.drawImage(b2,x0-S*0.08,y0-S*0.08,S*1.16,S*1.16);
+    ctx.globalAlpha=1; ctx.globalCompositeOperation="source-over";
+    // frame: hairline edge that flashes on a strike, corner ticks, centre bolt
+    const c=COL.c.map(v=>Math.round(v*255)).join(",");
+    ctx.strokeStyle="rgba("+c+","+(0.22+0.6*FLASH).toFixed(3)+")"; ctx.lineWidth=Math.max(1,u*(1.2+3*FLASH)); ctx.strokeRect(x0,y0,S,S);
+    ctx.strokeStyle="rgba("+c+",0.55)"; ctx.lineWidth=Math.max(1,u*1.4); const t=u*22, o=u*10;
+    ctx.beginPath();
+    for(const [cx,cy,sx,sy] of [[x0,y0,-1,-1],[x0+S,y0,1,-1],[x0,y0+S,-1,1],[x0+S,y0+S,1,1]]){
+      ctx.moveTo(cx+sx*o,cy+sy*(o+t)); ctx.lineTo(cx+sx*o,cy+sy*o); ctx.lineTo(cx+sx*(o+t),cy+sy*o);
+    }
+    ctx.stroke();
+    const bx=x0+S/2, by=y0+S/2, br=u*9;
+    ctx.fillStyle="#141822"; ctx.beginPath(); ctx.arc(bx,by,br,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle="rgba("+c+",0.6)"; ctx.lineWidth=Math.max(1,u*1.3); ctx.stroke();
+    ctx.fillStyle="rgba("+c+",0.8)"; ctx.beginPath(); ctx.arc(bx,by,br*0.3,0,Math.PI*2); ctx.fill();
+    // engraved mode under the plate
+    const lead=VOICES[0];
+    if(lead){
+      const [n,m]=MODES[modeOf(lead.midi)];
+      ctx.font=Math.round(u*15)+"px "+getComputedStyle(document.body).fontFamily;
+      ctx.fillStyle="rgba("+c+",0.45)"; ctx.textAlign="left"; ctx.textBaseline="bottom";
+      ctx.fillText("n "+n+"  m "+m+"  λ "+(n*n+m*m),x0,y0-u*12);
+      ctx.textAlign="right"; ctx.fillText(lead.f.toFixed(1)+" Hz",x0+S,y0-u*12);
+    }
+  }
+
+  let lastReadout="";
+  function readout(){
+    const lead=VOICES[0];
+    let s="";
+    if(lead){
+      const m=Math.round(lead.midi), [n,mm]=MODES[modeOf(lead.midi)];
+      const others=VOICES.slice(1).map(v=>noteName(Math.round(v.midi))).join("  ");
+      const src=R.sourceLabel();
+      s=noteName(m)+"|"+lead.f.toFixed(1)+"|"+n+","+mm+"|"+others+"|"+src;
+      if(s!==lastReadout){
+        lastReadout=s;
+        $("note").innerHTML=noteName(m)+"<small>"+lead.f.toFixed(1)+" Hz</small>";
+        $("read").innerHTML="MODE <b>("+n+","+mm+")</b>";
+        $("voices").innerHTML=others?"WITH <b>"+others+"</b>":"&nbsp;";
+        $("src").innerHTML="SOURCE <b>"+src.replace(/[<>&]/g,"")+"</b>";
+      }
+    }
+  }
+
+  function step(now,dt){
+    analyse(dt,now);
+    stepWeights(dt); buildField();
+    const w0=performance.now();
+    updateSand(dt,true);
+    const work=performance.now()-w0;
+    if(!R.offline) nAct=clamp(nAct*(work>11?0.93:work<6?1.03:1),15000,NMAX);
+    colours(dt); develop(dt); draw(dt); readout();
+    FLASH*=Math.exp(-dt*9); SNAP*=Math.exp(-dt*9);
+  }
+
+  // ======================================================================
+  // 7. Wiring into the shared base
+  // ======================================================================
+  const R=AR.create({
+    name:"cymatica", canvas:cv, lookahead:0.1,
+    analysers:{
+      tone:{fftSize:4096,smoothing:0.25,needs:["freq"],lead:0.07},
+      level:{fftSize:2048,smoothing:0.6,needs:["time"]}
+    },
+    onsets:true, demo:makeDemo, demoName:"Demo track",
+    glow:{min:0.2,max:1.2,value:0.65,onChange:v=>{ glow=v; }},
+    onHit, step,
+    onSource:()=>{ lastReadout=""; idleStep=-1; },
+    // offline renders use a fixed grain count, so the same seed always gives the same video
+    offlineSetup:(cfg)=>{ nAct=clamp(cfg.particles||NMAX,15000,NMAX); return {particles:nAct|0}; }
+  });
+
+  // boot: let the sand settle into the first figure before the first frame, so the page opens complete
+  detectVoices=AR.noteTracker(R,"tone"); level=AR.levelMeter(R,"level");
+  idleScript(R.offline?0:performance.now()); IMP.kick=IMP.snare=IMP.hat=0;
+  for(const [k,w] of TGT) WM.set(k,w);
+  buildField();
+  for(let i=0;i<70;i++) updateSand(1/60,false);
+  R.start();
+})();
+</script>
+
+<script>/* Homepage embed: the piece's own controls are hidden; one button starts or stops its built-in track. */
+(function(){var b=document.createElement('button');b.id='syb-sound';b.type='button';b.setAttribute('aria-pressed','false');b.textContent='Sound';
+b.addEventListener('click',function(){var d=document.getElementById('btnDemo');if(!d)return;d.click();var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));b.textContent=on?'Sound on':'Sound';});
+document.body.appendChild(b);
+function ready(){try{parent.postMessage({syb:'ready'},location.origin)}catch(e){}}
+if(document.readyState==='complete')setTimeout(ready,300);else addEventListener('load',function(){setTimeout(ready,300)});})();</script>
+</body>
+</html>

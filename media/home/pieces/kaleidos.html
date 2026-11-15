@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<style>*{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
+<title>Kaleidos</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Kaleidos: a strange attractor folded through a kaleidoscope. Every note bends the attractor into a new figure, kicks turn the mirrors, snares change the fold count.">
+<style>
+  /* Layout: the mandala fills the screen; the chrome sits in the corners like an instrument's bezel. */
+  :root{
+    --ink:#ece9f5;
+    --ink-dim:#8d879e;
+    --prism:#c9b8ff;
+    --line:rgba(201,184,255,.22);
+    --panel:rgba(6,4,12,.7);
+    --display:"Unbounded","Avenir Next","Segoe UI",sans-serif;
+    --mono:"Space Mono",ui-monospace,Menlo,Consolas,monospace;
+    color-scheme:dark;
+  }
+  html,body{height:100%;background:#040308;color:var(--ink);overflow:hidden;}
+  body{font-family:var(--mono);-webkit-font-smoothing:antialiased;}
+  #stage{position:fixed;inset:0;width:100%;height:100%;display:block;}
+  .chrome{position:fixed;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;gap:16px;
+    padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+    padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(14px + env(safe-area-inset-bottom,0px));transition:opacity .4s;}
+  .chrome.off{opacity:0;}
+  .chrome.off *{pointer-events:none!important;}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+  .brand{font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-dim);}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(24px,3.6vw,40px);letter-spacing:.14em;line-height:1;margin:.3em 0 0;text-transform:uppercase;color:var(--prism);}
+  .sub{font-size:10px;letter-spacing:.03em;color:var(--ink-dim);margin-top:10px;max-width:34ch;line-height:1.7;}
+  .log{display:flex;flex-direction:column;align-items:flex-end;gap:5px;text-align:right;font-size:10px;letter-spacing:.1em;color:var(--ink-dim);line-height:1.5;font-variant-numeric:tabular-nums;text-transform:uppercase;}
+  .log b{color:var(--ink);font-weight:400;}
+  .log .big{font-family:var(--display);font-weight:300;font-size:clamp(20px,2.6vw,30px);color:var(--ink);letter-spacing:.08em;line-height:1;}
+  .hits{display:flex;gap:6px;margin-top:3px;}
+  .hits span{--on:0;font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--line);
+    background:color-mix(in srgb,var(--prism) calc(var(--on)*85%),transparent);color:color-mix(in srgb,#120a2a calc(var(--on)*100%),var(--ink-dim));}
+  .bottom{display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .bar{pointer-events:auto;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:100%;
+    background:var(--panel);border:1px solid var(--line);padding:8px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+  button{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--ink);
+    border:1px solid var(--line);padding:10px 12px;min-height:38px;cursor:pointer;transition:border-color .15s,background .15s,color .15s;}
+  button:hover{border-color:var(--prism);}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--prism);outline-offset:2px;}
+  button.primary{background:var(--prism);border-color:var(--prism);color:#120a2a;}
+  button.primary:hover{background:#dcd1ff;}
+  button[aria-pressed="true"]{color:var(--prism);border-color:var(--prism);}
+  .glow{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);border:1px solid var(--line);padding:0 10px;min-height:38px;}
+  .glow input{-webkit-appearance:none;appearance:none;width:84px;height:2px;background:var(--line);margin:0;}
+  .glow input::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--prism);border:2px solid #120a2a;cursor:pointer;}
+  .glow input::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--prism);border:2px solid #120a2a;cursor:pointer;}
+  .hint{font-size:9px;letter-spacing:.08em;color:var(--ink-dim);text-align:center;}
+  .hint kbd{font-family:var(--mono);color:var(--ink);border:1px solid var(--line);padding:0 4px;}
+  .toast{position:fixed;left:50%;bottom:calc(120px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:min(440px,calc(100% - 32px));
+    font-size:10.5px;line-height:1.6;background:var(--panel);border:1px solid var(--line);padding:10px 14px;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;}
+  .toast.on{opacity:1;}
+  .drop{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(4,3,8,.6);
+    font-family:var(--display);font-size:clamp(20px,3.6vw,34px);letter-spacing:.14em;text-transform:uppercase;color:var(--prism);opacity:0;pointer-events:none;transition:opacity .2s;}
+  .drop.on{opacity:1;}
+  @media (max-width:560px){ .log{align-items:flex-start;text-align:left;} .sub,.hint{display:none;} button{padding:9px 9px;font-size:9.5px;letter-spacing:.08em;} }
+</style>
+<meta name="robots" content="noindex">
+<style id="syb-embed">#chrome,#toast,#drop{display:none!important}html,body{overflow:hidden}
+#syb-sound{position:fixed;right:10px;bottom:10px;z-index:99;min-height:44px;padding:0 13px;border:1px solid rgba(140,200,235,.3);border-radius:2px;background:rgba(2,7,10,.6);color:#c3cfd6;font:500 10px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#syb-sound[aria-pressed=true]{color:#fd9273;border-color:#fc734d}</style></head>
+<body>
+<canvas id="stage" aria-label="Kaleidos: a strange attractor folded through a kaleidoscope, reacting to music"></canvas>
+<div class="chrome" id="chrome">
+  <div class="top">
+    <div>
+      <div class="brand">SyberLabs · Engines</div>
+      <h1>Kaleidos</h1>
+      <div class="sub">A strange attractor behind the mirrors. Every note bends it into a new figure, every kick turns the kaleidoscope, every snare changes the fold.</div>
+    </div>
+    <div class="log" aria-live="off">
+      <div class="big" id="fold">8 FOLD</div>
+      <div id="form">Form <b>Clifford I</b></div>
+      <div id="note">Note <b>—</b></div>
+      <div id="src">Source <b>Idle example</b></div>
+      <div class="hits" aria-hidden="true"><span id="ind-kick">Kick</span><span id="ind-snare">Snare</span><span id="ind-hat">Hats</span></div>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="bar" role="toolbar" aria-label="Sound">
+      <button class="primary" id="btnDemo" type="button">Play demo</button>
+      <button id="btnFile" type="button">Load track</button>
+      <button id="btnMic" type="button">Mic</button>
+      <label class="glow" for="glow">Glow <input type="range" id="glow" min="0.2" max="1.2" step="0.05" value="0.75"></label>
+      <button id="btnFull" type="button">Full</button>
+      <button id="btnHide" type="button">Hide</button>
+    </div>
+    <div class="hint">Drop an audio file anywhere · <kbd>Space</kbd> play or stop · <kbd>[</kbd> <kbd>]</kbd> glow · <kbd>H</kbd> hide · <kbd>F</kbd> fullscreen</div>
+  </div>
+</div>
+<input type="file" id="file" accept="audio/*" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="drop" id="drop">Release to play</div>
+
+<script>/* shared/audio-reactive.js, inlined by tools/bundle.mjs */
+/*
+ * SyberLabs audio-reactive base, shared by every piece in this repo.
+ *
+ * A piece supplies its visuals, its own analysis and its demo track. This base supplies the rest:
+ *   - the audio graph: demo, file and mic sources, named analysers, and a look-ahead delay so
+ *     visuals land on the sound (the speakers hear everything `lookahead` seconds after the analysers)
+ *   - kick, snare and hat detection, with hits queued to fire on the sound
+ *   - drum synths for demo tracks
+ *   - noteTracker (which notes are sounding) and levelMeter (how hard the music is pushing)
+ *   - the standard controls, by element id: btnDemo, btnFile, file, btnMic, btnFull, btnHide,
+ *     glow, chrome, toast, drop, ind-kick, ind-snare, ind-hat (any can be left out)
+ *   - a frame loop that survives a bad frame
+ *   - offline rendering: with ?offline=1 the page is driven frame by frame by render/ (see
+ *     window.AudioReactivePage below), randomness is seeded from ?seed=, and analysers are fed
+ *     data computed in Node exactly as an AnalyserNode would compute it
+ *
+ * Usage, in a piece:
+ *   const R = AudioReactive.create({
+ *     name: "cymatica",                          // storage key prefix
+ *     canvas,                                     // what offline capture records
+ *     analysers: { tone: {fftSize:4096, smoothing:0.25, needs:["freq"], lead:0.07} },
+ *     onsets: true,                               // built-in kick/snare/hat detection
+ *     lookahead: 0.1,
+ *     demo: (actx, dest, kit, R) => ({ stop(){} }),
+ *     onHit: (name, strength, now) => {},         // fired on the sound
+ *     step: (now, dt) => {},                      // every frame
+ *   });
+ *   R.mode is "idle" | "demo" | "file" | "mic"; R.an.tone is an AnalyserNode (or its offline stand-in).
+ */
+(function () {
+  "use strict";
+  const QS = new URLSearchParams(location.search);
+  const OFFLINE = QS.get("offline") === "1";
+
+  // ---------- seeded randomness ----------
+  function xmur3(str) {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+    return function () { h = Math.imul(h ^ (h >>> 16), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); h ^= h >>> 16; return h >>> 0; };
+  }
+  function mulberry32(a) {
+    return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  }
+  // offline renders must be repeatable, so every Math.random in the page is seeded before any piece code runs
+  if (OFFLINE) Math.random = mulberry32(xmur3("ar|" + (QS.get("seed") || "SYBER"))());
+
+  // ---------- small helpers every piece uses ----------
+  const clamp = (x, a, b) => (x < a ? a : x > b ? b : x);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const fract = (x) => x - Math.floor(x);
+  // soft ceiling: linear near zero, never exceeds max
+  const soft = (x, max) => (max <= 0 ? 0 : max * (1 - Math.exp(-Math.max(0, x) / max)));
+  const NOTE = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  const noteName = (m) => NOTE[((m % 12) + 12) % 12] + (Math.floor(m / 12) - 1);
+  const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+  const esc = (s) => String(s).replace(/[<>&"]/g, (m) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[m]));
+
+  // ---------- drum synths for demo tracks ----------
+  function drumKit(actx, dest) {
+    const noise = actx.createBuffer(1, actx.sampleRate, actx.sampleRate);
+    const nd = noise.getChannelData(0);
+    for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+    const env = (g, t, a, peak, rel) => { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + rel); };
+    return {
+      noise, env,
+      kick(t, v = 1) { const o = actx.createOscillator(), g = actx.createGain(); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); env(g, t, 0.004, v, 0.4); o.connect(g); g.connect(dest); o.start(t); o.stop(t + 0.5); },
+      snare(t, v = 0.4) {
+        const s = actx.createBufferSource(); s.buffer = noise; const bp = actx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 2600; bp.Q.value = 0.7;
+        const g = actx.createGain(); env(g, t, 0.002, v, 0.17); s.connect(bp); bp.connect(g); g.connect(dest); s.start(t); s.stop(t + 0.25);
+        const o = actx.createOscillator(), og = actx.createGain(); o.frequency.setValueAtTime(220, t); o.frequency.exponentialRampToValueAtTime(160, t + 0.08);
+        env(og, t, 0.002, v * 0.6, 0.1); o.connect(og); og.connect(dest); o.start(t); o.stop(t + 0.15);
+      },
+      hat(t, v = 0.1) { const s = actx.createBufferSource(); s.buffer = noise; const hp = actx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 7500; const g = actx.createGain(); env(g, t, 0.002, v, 0.06); s.connect(hp); hp.connect(g); g.connect(dest); s.start(t); s.stop(t + 0.1); },
+    };
+  }
+  // a step sequencer clock: calls schedule(n, t) for every step, slightly ahead of time
+  function sequencer(actx, stepSeconds, schedule) {
+    let n = 0, next = actx.currentTime + 0.12;
+    const timer = setInterval(() => { while (next < actx.currentTime + 0.15) { schedule(n, next); next += stepSeconds; n++; } }, 25);
+    return () => clearInterval(timer);
+  }
+
+  // ---------- kick / snare / hat detection ----------
+  // One detector per instrument class, each against its own rolling mean + k*sd, fired on the rising edge.
+  // Kick: loudness jump in the sub band, gated by real low-end level.
+  // Snare and hats: broadband noise, measured as the share of bins in the band that jump at once, so tonal
+  // notes (which light only a few bins) do not count; mid-heavy bursts are snares, top-heavy are hats.
+  function onsetDetector(an, sampleRate, emit) {
+    const DET = {
+      kick: { type: "flux", lo: 40, hi: 130, gate: 150, k: 1.4, floor: 8, ref: 150 },
+      snare: { type: "frac", lo: 1400, hi: 6000, jump: 15, gate: 55, k: 1.8, floor: 0.22, ref: 210 },
+      hat: { type: "frac", lo: 8500, hi: 16000, jump: 5, gate: 12, k: 1.5, floor: 0.045, ref: 70 },
+    };
+    for (const n in DET) Object.assign(DET[n], { h: new Float32Array(40), i: 0, prev: 0, last: -1e9 });
+    const FF = new Uint8Array(an.frequencyBinCount), FP = new Uint8Array(an.frequencyBinCount), bw = sampleRate / an.fftSize;
+    const measure = (D) => {
+      const i0 = Math.max(1, Math.round(D.lo / bw)), i1 = Math.min(FF.length - 1, Math.round(D.hi / bw));
+      let f = 0, lvl = 0;
+      for (let i = i0; i <= i1; i++) { const d = FF[i] - FP[i]; lvl += FF[i]; if (D.type === "flux") { if (d > 0) f += d; } else if (d > D.jump) f++; }
+      return { m: f / (i1 - i0 + 1), lvl: lvl / (i1 - i0 + 1) };
+    };
+    return {
+      DET,
+      detect(now) {
+        an.getByteFrequencyData(FF);
+        const M = {}; for (const n in DET) M[n] = measure(DET[n]);
+        const cMid = measure({ type: "flux", lo: 1400, hi: 6000 }).m, cHigh = measure({ type: "flux", lo: 8500, hi: 16000 }).m;
+        for (const name in DET) {
+          const D = DET[name], { m: fl, lvl } = M[name];
+          let mu = 0; for (let i = 0; i < D.h.length; i++) mu += D.h[i]; mu /= D.h.length;
+          let v = 0; for (let i = 0; i < D.h.length; i++) v += (D.h[i] - mu) * (D.h[i] - mu);
+          const sd = Math.sqrt(v / D.h.length), thr = Math.max(D.floor, mu + D.k * sd);
+          const shape = name === "snare" ? cMid > cHigh : name === "hat" ? cHigh > cMid * 1.3 : true;
+          const masked = name === "hat" && now - DET.snare.last < 45; // a snare's noise spills into the hat band
+          if (fl > thr && fl > D.prev && lvl > D.gate && now - D.last > D.ref && !masked && shape) { D.last = now; emit(name, clamp((fl - mu) / (sd * 3 + D.floor), 0.35, 1.4), now); }
+          D.prev = fl; D.h[D.i] = fl; D.i = (D.i + 1) % D.h.length;
+        }
+        FP.set(FF);
+      },
+    };
+  }
+
+  // ---------- which notes are sounding ----------
+  // Spectral peaks, then harmonic summation picks up to three fundamentals. A peak far louder than an
+  // overtone of an already-found voice would be is another note sitting on that harmonic (chord tones do
+  // this all the time), so it stays available. A note must sound in two consecutive frames to count.
+  // Returns [{f, midi, s}] strongest first. Feed it an analyser of about 4096 bins with light smoothing.
+  // Low candidates within 60 ms of a detected kick are ignored, so a kick's falling pitch never reads as bass.
+  function noteTracker(R, anName) {
+    let TD = null; const hist = new Map();
+    return function detect(now) {
+      const an = R.an[anName]; if (!TD || TD.length !== an.frequencyBinCount) TD = new Float32Array(an.frequencyBinCount);
+      an.getFloatFrequencyData(TD);
+      const bh = R.sampleRate / an.fftSize, k0 = Math.max(3, Math.ceil(38 / bh)), k1 = Math.min(TD.length - 3, Math.floor(4400 / bh));
+      let gmax = -200; for (let k = k0; k <= k1; k++) if (TD[k] > gmax) gmax = TD[k];
+      if (gmax < -74) { hist.clear(); return []; }
+      const thr = Math.max(-84, gmax - 36), peaks = [];
+      for (let k = k0 + 2; k <= k1 - 2; k++) {
+        const v = TD[k];
+        if (v > thr && v >= TD[k - 1] && v > TD[k + 1] && v >= TD[k - 2] && v > TD[k + 2]) {
+          const a = TD[k - 1], c = TD[k + 1], den = a - 2 * v + c, d = den !== 0 ? clamp((0.5 * (a - c)) / den, -0.5, 0.5) : 0;
+          peaks.push({ f: (k + d) * bh, a: Math.pow(10, (v - gmax) / 20) });
+        }
+      }
+      peaks.sort((p, q) => q.a - p.a); if (peaks.length > 32) peaks.length = 32;
+      const used = new Uint8Array(peaks.length), out = [];
+      const score = (f0) => {
+        let s = 0, fw = 0, ww = 0, a1 = 0;
+        for (let h = 1; h <= 10; h++) {
+          const t = f0 * h; let best = 0, bf = 0;
+          for (let i = 0; i < peaks.length; i++) if (!used[i] && Math.abs(peaks[i].f - t) < t * 0.025 && peaks[i].a > best) { best = peaks[i].a; bf = peaks[i].f; }
+          if (best > 0) { if (h === 1) a1 = best; const w = Math.min(best, ((a1 || best) * 1.3) / h) / Math.sqrt(h); s += w; fw += (bf / h) * w * h; ww += w * h; }
+        }
+        return [s, ww > 0 ? fw / ww : f0, a1];
+      };
+      let first = 0;
+      for (let v = 0; v < 3; v++) {
+        let bi = -1, bs = 0, bf = 0, ba = 0;
+        for (let i = 0; i < peaks.length; i++) { if (used[i] || peaks[i].f > 2200) continue; const [sc, f, a] = score(peaks[i].f); if (sc > bs) { bs = sc; bi = i; bf = f; ba = a; } }
+        if (bi < 0 || bs < 0.1 || (v > 0 && bs < first * 0.14)) break;
+        if (v === 0) first = bs;
+        const f0 = bf;
+        if (!(f0 < 130 && now - R.detectedAt.kick < 60)) out.push({ f: f0, s: bs, midi: 69 + 12 * Math.log2(f0 / 440) });
+        used[bi] = 1;
+        for (let i = 0; i < peaks.length; i++) {
+          if (used[i]) continue; const r = peaks[i].f / f0, h = Math.round(r);
+          if (h >= 2 && h <= 10 && Math.abs(r - h) < 0.025 * h && peaks[i].a <= (Math.max(ba, peaks[bi].a) * 1.3) / h) used[i] = 1;
+        }
+      }
+      const seen = new Map(), keep = [];
+      for (const v of out) { const m = Math.round(v.midi); seen.set(m, (hist.get(m) || 0) + 1); if ((hist.get(m) || 0) >= 1) keep.push(v); }
+      hist.clear(); for (const [m, c] of seen) hist.set(m, c);
+      return keep.sort((a, b) => b.s - a.s);
+    };
+  }
+
+  // ---------- how hard the music is pushing ----------
+  // RMS of an analyser's waveform, smoothed (fast up, slow down), and its ratio to the long-run level, so a
+  // piece can react to "louder than this track usually is" rather than to absolute volume.
+  function levelMeter(R, anName) {
+    let T = null, loud = 0, avg = 0.08;
+    return function update(dt) {
+      const an = R.an[anName]; if (!T || T.length !== an.fftSize) T = new Float32Array(an.fftSize);
+      an.getFloatTimeDomainData(T);
+      let s = 0; for (let i = 0; i < T.length; i++) s += T[i] * T[i];
+      const rms = Math.sqrt(s / T.length);
+      loud = lerp(loud, rms, rms > loud ? 0.5 : 0.12); avg = lerp(avg, loud, Math.min(1, dt * 0.25));
+      return { rms: loud, rel: loud / (avg + 0.01) };
+    };
+  }
+
+  // ---------- offline stand-in for an AnalyserNode ----------
+  // render/ sends the smoothed dB spectrum and the time-domain samples for each frame; the byte views are
+  // derived here exactly as the Web Audio spec derives them.
+  class OfflineAnalyser {
+    constructor(spec) {
+      this.fftSize = spec.fftSize; this.frequencyBinCount = spec.fftSize / 2;
+      this.smoothingTimeConstant = spec.smoothing; this.minDecibels = -100; this.maxDecibels = -30;
+      this.db = new Float32Array(this.frequencyBinCount).fill(-Infinity); this.time = new Float32Array(this.fftSize);
+    }
+    getFloatFrequencyData(a) { a.set(this.db.length > a.length ? this.db.subarray(0, a.length) : this.db); }
+    getByteFrequencyData(a) {
+      const sc = 255 / (this.maxDecibels - this.minDecibels), n = Math.min(a.length, this.db.length);
+      for (let i = 0; i < n; i++) { const b = Math.floor(sc * (this.db[i] - this.minDecibels)); a[i] = b < 0 ? 0 : b > 255 ? 255 : b; }
+    }
+    getFloatTimeDomainData(a) { a.set(this.time.length > a.length ? this.time.subarray(0, a.length) : this.time); }
+    getByteTimeDomainData(a) { const n = Math.min(a.length, this.time.length); for (let i = 0; i < n; i++) { const b = Math.floor(128 * (1 + this.time[i])); a[i] = b < 0 ? 0 : b > 255 ? 255 : b; } }
+  }
+  function b64ToFloat32(str, out) {
+    const bin = atob(str), n = Math.min(bin.length >> 2, out.length), bytes = new Uint8Array(n * 4);
+    for (let i = 0; i < bytes.length; i++) bytes[i] = bin.charCodeAt(i);
+    out.set(new Float32Array(bytes.buffer, 0, n));
+  }
+
+  // ---------- the piece runtime ----------
+  function create(opts) {
+    const $ = (id) => document.getElementById(id);
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const LOOK = opts.lookahead ?? 0.1, ONSET_LAG = opts.onsetLag ?? 28;
+    const specs = Object.entries(opts.analysers || {}).map(([name, s]) => ({ name, fftSize: s.fftSize || 2048, smoothing: s.smoothing ?? 0.8, needs: s.needs || ["freq"], lead: s.lead ?? 0.03 }));
+    if (opts.onsets && !specs.some((s) => s.name === "onset")) specs.push({ name: "onset", fftSize: 2048, smoothing: 0, needs: ["freq"], lead: 0.03 });
+
+    const R = {
+      offline: OFFLINE, reduce, mode: "idle", detectedAt: { kick: -1e9, snare: -1e9, hat: -1e9 }, actx: null, an: {}, sampleRate: 48000, trackName: "", glow: opts.glow?.value ?? 0.7,
+      demoName: opts.demoName || "Demo track",
+      sourceLabel() { return R.mode === "demo" ? R.demoName : R.mode === "file" ? R.trackName : R.mode === "mic" ? "Microphone" : (opts.idleName || "Idle example"); },
+    };
+    let bus = null, outGain = null, demo = null, micStream = null, micSrc = null, mediaSrc = null, onsets = null;
+    const audioEl = new Audio(); audioEl.loop = true;
+    const EVQ = [];
+
+    function ensureCtx() {
+      if (!R.actx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        const actx = (R.actx = new AC()); R.sampleRate = actx.sampleRate;
+        bus = actx.createGain(); outGain = actx.createGain();
+        const delay = actx.createDelay(1); delay.delayTime.value = LOOK;
+        const sink = actx.createGain(); sink.gain.value = 0; sink.connect(actx.destination);
+        for (const s of specs) { const a = actx.createAnalyser(); a.fftSize = s.fftSize; a.smoothingTimeConstant = s.smoothing; bus.connect(a); a.connect(sink); R.an[s.name] = a; }
+        bus.connect(delay); delay.connect(outGain); outGain.connect(actx.destination);
+        if (opts.onsets) onsets = onsetDetector(R.an.onset, R.sampleRate, hit);
+        opts.onAudio && opts.onAudio(R);
+      }
+      if (R.actx.state === "suspended") R.actx.resume();
+    }
+
+    // hits: detected early (thanks to the look-ahead), held until the matching sound reaches the speakers
+    function hit(name, str, now) {
+      R.detectedAt[name] = now;
+      if (!OFFLINE && (R.mode === "demo" || R.mode === "file")) EVQ.push({ name, str, at: now + LOOK * 1000 - ONSET_LAG });
+      else fire(name, str, now);
+    }
+    function fire(name, str, now) {
+      opts.onHit && opts.onHit(name, str, now);
+      const el = $("ind-" + name); if (el) el.style.setProperty("--on", Math.min(1, 0.4 + 0.6 * str).toFixed(2));
+    }
+    R.fire = fire;
+
+    // ---------- sources ----------
+    function stopAll() {
+      if (demo) { demo.stop(); demo = null; }
+      if (!audioEl.paused) audioEl.pause();
+      if (micStream) { micStream.getTracks().forEach((t) => t.stop()); micStream = null; }
+      if (micSrc) { try { micSrc.disconnect(); } catch (e) {} micSrc = null; }
+      if (outGain) outGain.gain.value = 1;
+      EVQ.length = 0;
+      setMode("idle");
+    }
+    function setMode(m) { R.mode = m; syncButtons(); opts.onSource && opts.onSource(m, R); }
+    function startDemo() {
+      ensureCtx(); stopAll();
+      const master = R.actx.createGain(); const comp = R.actx.createDynamicsCompressor();
+      comp.threshold.value = -16; comp.ratio.value = 3; master.connect(comp); comp.connect(bus);
+      master.gain.value = 0.0001; master.gain.setTargetAtTime(opts.demoGain ?? 0.8, R.actx.currentTime, 0.2);
+      const d = opts.demo(R.actx, master, drumKit(R.actx, master), R);
+      demo = { stop() { d && d.stop && d.stop(); master.gain.setTargetAtTime(0.0001, R.actx.currentTime, 0.08); setTimeout(() => { try { master.disconnect(); } catch (e) {} }, 600); } };
+      setMode("demo");
+    }
+    function playFile(file) {
+      if (!file) return;
+      if (!/^audio\//.test(file.type) && !/\.(mp3|wav|ogg|m4a|aac|flac|opus|webm)$/i.test(file.name)) { toast("That file is not audio. Try an MP3, WAV, M4A, OGG or FLAC."); return; }
+      ensureCtx(); stopAll();
+      if (audioEl.src) URL.revokeObjectURL(audioEl.src);
+      audioEl.src = URL.createObjectURL(file);
+      if (!mediaSrc) { mediaSrc = R.actx.createMediaElementSource(audioEl); mediaSrc.connect(bus); }
+      R.trackName = file.name.replace(/\.[^.]+$/, "");
+      audioEl.play().then(() => setMode("file")).catch(() => toast("This browser could not play that file. Try another format."));
+    }
+    async function startMic() {
+      ensureCtx(); stopAll();
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+        micSrc = R.actx.createMediaStreamSource(micStream); micSrc.connect(bus); outGain.gain.value = 0; setMode("mic");
+      } catch (e) { toast("The microphone isn't available in this view. Open the page directly in your browser to use the mic, or load a track."); }
+    }
+    Object.assign(R, { startDemo, playFile, startMic, stopAll, toast });
+
+    // ---------- controls ----------
+    function syncButtons() {
+      const d = $("btnDemo"); if (d) d.textContent = R.mode === "demo" ? "Stop demo" : R.mode === "idle" ? "Play demo" : "Stop";
+      const m = $("btnMic"); if (m) m.setAttribute("aria-pressed", R.mode === "mic" ? "true" : "false");
+      const f = $("btnFile"); if (f) f.setAttribute("aria-pressed", R.mode === "file" ? "true" : "false");
+    }
+    let toastT = 0;
+    function toast(msg) { const el = $("toast"); if (!el) return; el.textContent = msg; el.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("on"), 5200); }
+    const chrome = $("chrome");
+    const toggleChrome = (force) => chrome && chrome.classList.toggle("off", force !== undefined ? force : !chrome.classList.contains("off"));
+    function fullscreen() {
+      const d = document; if (d.fullscreenElement) { d.exitFullscreen && d.exitFullscreen().catch(() => {}); return; }
+      const el = d.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
+      if (!req) { toast("Fullscreen isn't available here."); return; }
+      try { const p = req.call(el); if (p && p.catch) p.catch(() => toast("Fullscreen isn't available here.")); } catch (e) { toast("Fullscreen isn't available here."); }
+    }
+    const G = Object.assign({ min: 0.2, max: 1.2, value: 0.7 }, opts.glow || {});
+    const glowEl = $("glow"), glowKey = (opts.name || "piece") + "-glow";
+    function setGlow(v, save) {
+      R.glow = clamp(+v, G.min, G.max); if (glowEl) glowEl.value = R.glow;
+      if (save) { try { localStorage.setItem(glowKey, String(R.glow)); } catch (e) {} }
+      G.onChange && G.onChange(R.glow);
+    }
+    R.setGlow = setGlow;
+
+    function bindControls() {
+      const on = (id, ev, fn) => { const el = $(id); if (el) el.addEventListener(ev, fn); };
+      on("btnDemo", "click", () => (R.mode === "idle" ? startDemo() : stopAll()));
+      on("btnFile", "click", () => $("file") && $("file").click());
+      on("file", "change", (e) => { playFile(e.target.files[0]); e.target.value = ""; });
+      on("btnMic", "click", () => (R.mode === "mic" ? stopAll() : startMic()));
+      on("btnFull", "click", fullscreen);
+      on("btnHide", "click", () => { toggleChrome(true); toast("Tap anywhere or press H to bring the controls back."); });
+      if (opts.canvas) opts.canvas.addEventListener("click", () => { if (chrome && chrome.classList.contains("off")) toggleChrome(false); });
+      if (glowEl) glowEl.addEventListener("input", () => setGlow(glowEl.value, true));
+      let saved = null;
+      try { saved = localStorage.getItem(glowKey); for (const k of opts.glowKeysLegacy || []) saved = saved ?? localStorage.getItem(k); } catch (e) {}
+      setGlow(saved !== null && isFinite(+saved) ? saved : G.value, false);
+      window.addEventListener("keydown", (e) => {
+        if (e.target.tagName === "SELECT" || e.metaKey || e.ctrlKey || e.altKey) return;
+        const k = e.key.toLowerCase();
+        if (k === "[" || k === "]") { setGlow(R.glow + (k === "]" ? 0.05 : -0.05), true); return; }
+        if (e.target.tagName === "INPUT" && k !== " ") return;
+        if (k === " ") { e.preventDefault(); R.mode === "idle" ? startDemo() : stopAll(); }
+        else if (k === "h") toggleChrome();
+        else if (k === "f") fullscreen();
+        else if (opts.keys && opts.keys[k]) opts.keys[k]();
+      });
+      const drop = $("drop"); let dragN = 0;
+      window.addEventListener("dragenter", (e) => { e.preventDefault(); dragN++; drop && drop.classList.add("on"); });
+      window.addEventListener("dragover", (e) => e.preventDefault());
+      window.addEventListener("dragleave", () => { if (--dragN <= 0) { dragN = 0; drop && drop.classList.remove("on"); } });
+      window.addEventListener("drop", (e) => { e.preventDefault(); dragN = 0; drop && drop.classList.remove("on"); const f = e.dataTransfer && e.dataTransfer.files[0]; if (f) playFile(f); });
+    }
+
+    // ---------- frame ----------
+    const IND = ["kick", "snare", "hat"].map((n) => $("ind-" + n)).filter(Boolean);
+    function tick(now, dt) {
+      if (R.mode !== "idle" && onsets) onsets.detect(now);
+      // fire anything due before the middle of this frame, so frame timing never pushes a hit late by a whole frame
+      const horizon = now + dt * 500;
+      while (EVQ.length && EVQ[0].at <= horizon) { const e = EVQ.shift(); fire(e.name, e.str, now); }
+      opts.step(now, dt);
+      for (const el of IND) { const v = +el.style.getPropertyValue("--on") || 0; if (v > 0) el.style.setProperty("--on", Math.max(0, v - dt * 5).toFixed(2)); }
+    }
+    let last = 0, warned = false;
+    function frame(now) {
+      requestAnimationFrame(frame); // schedule first, so one bad frame never stops the piece
+      const dt = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60); last = now;
+      try { tick(now, dt); } catch (e) { if (!warned) { warned = true; console.error(e); } }
+    }
+    R.start = function () {
+      if (OFFLINE) { if (chrome) chrome.hidden = true; return; }
+      bindControls(); syncButtons(); opts.onSource && opts.onSource(R.mode, R);
+      requestAnimationFrame(frame);
+    };
+
+    // ---------- offline driver, used by render/ ----------
+    if (OFFLINE) {
+      let fps = 30;
+      window.AudioReactivePage = {
+        specs: () => ({ name: opts.name, analysers: specs, palettes: opts.palettes || null }),
+        setup(cfg) {
+          fps = cfg.fps || 30; R.sampleRate = cfg.sampleRate || 48000;
+          R.actx = { sampleRate: R.sampleRate, currentTime: 0, state: "running" };
+          for (const s of specs) R.an[s.name] = new OfflineAnalyser(s);
+          if (opts.onsets) onsets = onsetDetector(R.an.onset, R.sampleRate, hit);
+          R.mode = "file"; R.trackName = cfg.title || "track";
+          if (cfg.glow != null) setGlow(cfg.glow, false); else setGlow(G.value, false);
+          const info = (opts.offlineSetup && opts.offlineSetup(cfg, R)) || {};
+          opts.onSource && opts.onSource(R.mode, R);
+          return info;
+        },
+        frame(i, payload) {
+          for (const s of specs) { const p = payload[s.name], a = R.an[s.name]; if (!p) continue; if (p.db) b64ToFloat32(p.db, a.db); if (p.time) b64ToFloat32(p.time, a.time); }
+          const now = (i * 1000) / fps; R.actx.currentTime = now / 1000;
+          tick(now, 1 / fps);
+        },
+        capture: (q) => (opts.canvas || document.querySelector("canvas")).toDataURL("image/jpeg", q || 0.92).slice(23),
+      };
+    }
+    return R;
+  }
+
+  window.AudioReactive = { create, drumKit, sequencer, onsetDetector, noteTracker, levelMeter, xmur3, mulberry32, clamp, lerp, fract, soft, noteName, hz, esc, OFFLINE };
+})();
+</script>
+<script>
+"use strict";
+(function(){
+  const $=id=>document.getElementById(id);
+  const cv=$("stage"), ctx=cv.getContext("2d");
+  const AR=window.AudioReactive, {clamp,lerp,soft,noteName,hz,fract}=AR;
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const TAU=Math.PI*2;
+  const hsl=(h,s,l,a)=>`hsla(${(fract(h)*360).toFixed(1)},${(s*100).toFixed(1)}%,${(l*100).toFixed(1)}%,${a==null?1:a})`;
+  const hueOf=midi=>fract(0.72+((((Math.round(midi)%12)+12)%12)*7%12)/12);   // circle of fifths; C sits at violet
+
+  // ======================================================================
+  // 1. The attractor.  Two families of two-dimensional strange attractors,
+  //    Clifford and de Jong, each a map from the plane to itself whose orbit
+  //    traces a figure that depends entirely on four numbers. Eight
+  //    well-behaved parameter sets are the forms; the music bends each form
+  //    with a nudge vector, and a form change crossfades between two maps.
+  // ======================================================================
+  const FORMS=[
+    {name:"Clifford I",  k:0, p:[-1.3,-1.3,-1.8,-1.9]},
+    {name:"de Jong I",   k:1, p:[ 1.4,-2.3, 2.4,-2.1]},
+    {name:"Clifford II", k:0, p:[ 1.7, 1.7, 0.6, 1.2]},
+    {name:"de Jong II",  k:1, p:[ 1.4, 1.56,1.4,-6.56]},
+    {name:"Clifford III",k:0, p:[ 2.0,-1.6, 1.1,-0.8]},
+    {name:"de Jong III", k:1, p:[ 2.01,-2.53,1.61,-0.33]},
+    {name:"Clifford IV", k:0, p:[-1.4, 1.6, 1.0, 0.7]},
+    {name:"de Jong IV",  k:1, p:[-2.7,-0.09,-0.86,-2.2]},
+  ];
+  function map(k,P,x,y,o){
+    if(k===0){ o[0]=Math.sin(P[0]*y)+P[2]*Math.cos(P[0]*x); o[1]=Math.sin(P[1]*x)+P[3]*Math.cos(P[1]*y); }
+    else      { o[0]=Math.sin(P[0]*y)-Math.cos(P[1]*x);      o[1]=Math.sin(P[2]*x)-Math.cos(P[3]*y); }
+  }
+  // A bent form can fall into a fixed point or a short cycle, and then there is nothing to see. So for
+  // every form and every pitch class we look, once, near the note's nominal bend for a bend whose orbit
+  // stays chaotic (it visits enough distinct cells of the plane), and notes jump between those.
+  const TRIALS=[[1,0],[1,0.25],[1,-0.25],[0.75,0],[0.75,0.4],[0.75,-0.4],[0.5,0],[0.5,0.6],[0.5,-0.6],[0.3,0],[0.3,1.0],[0,0]];
+  const VAR=FORMS.map(()=>[]), tmp=[0,0];
+  function cellsOf(k,P){
+    let x=0.1,y=0.1; for(let i=0;i<200;i++){ map(k,P,x,y,tmp); x=tmp[0]; y=tmp[1]; }
+    const seen=new Set();
+    for(let i=0;i<1200;i++){ map(k,P,x,y,tmp); x=tmp[0]; y=tmp[1]; if(!isFinite(x)||!isFinite(y)) return 0; seen.add((((x+4)*16)|0)*1000+(((y+4)*16)|0)); }
+    return seen.size;
+  }
+  for(let f=0;f<FORMS.length;f++) for(let pc=0;pc<12;pc++){
+    const a=pc/12*TAU; let best=FORMS[f].p;
+    for(const [amp,da] of TRIALS){
+      const P=[FORMS[f].p[0]+0.42*amp*Math.cos(a+da),FORMS[f].p[1]+0.42*amp*Math.sin(a+da),FORMS[f].p[2]+0.36*amp*Math.cos(2*a+1.1+da),FORMS[f].p[3]+0.36*amp*Math.sin(2*a+1.1+da)];
+      if(cellsOf(FORMS[f].k,P)>=260){ best=P; break; }
+    }
+    VAR[f][pc]=best;
+  }
+  let formA=0, formB=0, MIX=1, PC=9;
+  const PA=FORMS[0].p.slice(), PB=FORMS[0].p.slice();   // the two orbits' parameters this frame, easing toward their variants
+  const OA=[0.1,0.1], OB=[0.1,0.1];                      // the two orbits
+  function stepOrbit(O,k,P){ map(k,P,O[0],O[1],tmp); O[0]=tmp[0]; O[1]=tmp[1]; }
+  function changeForm(){ formA=formB; PA[0]=PB[0]; PA[1]=PB[1]; PA[2]=PB[2]; PA[3]=PB[3]; OA[0]=OB[0]; OA[1]=OB[1]; formB=(formB+1+((Math.random()*(FORMS.length-1))|0))%FORMS.length; MIX=0; }
+
+  // ======================================================================
+  // 2. Listening
+  // ======================================================================
+  let detectNotes=null, level=null, prevSet=new Set();
+  let ENERGY=0.3, PRESENCE=0.9, holdUntil=0, PUNCH=0, SEAM=0, SPARK=0;
+  let HUE=0.72, hueT=0.72, NOTE=null;
+  const FOLDS=[8,6,12,10,8,16,6,12], SPARKS=[];
+  let foldI=0, N=8, ROT=0, ROTV=0, kickDir=1, AROT=0, AROTV=0, lastKick=-1e9, kicksSince=0, lastForm=-1e9;
+  function noteOn(m,now){
+    NOTE=m; hueT=hueOf(m);
+    PC=((m%12)+12)%12;                                       // the figure follows the note's variant within a few frames
+    PRESENCE=Math.min(1,PRESENCE+0.1); holdUntil=Math.max(holdUntil,now+1800);
+  }
+  function onHit(name,str,now){
+    if(name==="kick"){
+      PUNCH=Math.max(PUNCH,str); kickDir=-kickDir; ROTV+=kickDir*(reduce?0.4:1.3)*str; AROTV-=kickDir*0.9*str;
+      kicksSince++;
+      if(now-lastForm>6000 && (now-lastKick>2400 || kicksSince>=32)){ changeForm(); kicksSince=0; lastForm=now; }
+      lastKick=now; PRESENCE=Math.min(1,PRESENCE+0.05); holdUntil=Math.max(holdUntil,now+1000);
+    }
+    else if(name==="snare"){ foldI=(foldI+1)%FOLDS.length; N=FOLDS[foldI]; SEAM=Math.max(SEAM,str); }
+    else { SPARK=Math.max(SPARK,str); for(let k=0;k<3;k++){ stepOrbit(OB,FORMS[formB].k,PB); SPARKS.push({x:OB[0],y:OB[1],t:now,s:str}); } while(SPARKS.length>36) SPARKS.shift(); }
+  }
+  function analyse(dt,now){
+    if(R.mode==="idle"){ idleScript(now); return; }
+    const lv=level(dt);
+    ENERGY=clamp(0.12+0.65*clamp(lv.rel-0.5,0,1.5),0,1.15);
+    if(lv.rms>0.012){ holdUntil=Math.max(holdUntil,now+700); PRESENCE=Math.min(1,PRESENCE+dt*0.8); }
+    const v=detectNotes(now), set=new Set();
+    for(const x of v){ const m=Math.round(x.midi); set.add(m); if(!prevSet.has(m) && ![-12,-24].some(o=>prevSet.has(m+o))) noteOn(m,now); }
+    prevSet=set;
+  }
+  const IDLE=[57,60,64,67,62,69,65,72];
+  let idleStep=-1;
+  function idleScript(now){
+    ENERGY=0.35;
+    const st=Math.floor(now/470), ph=((st%32)+32)%32;
+    if(st===idleStep) return; idleStep=st;
+    if(ph%2===0 && ph<28) R.fire("kick",0.8,now);
+    if(ph%8===4) R.fire("snare",0.6,now);
+    if(ph%2===1) R.fire("hat",0.4,now);
+    if(ph%2===0) noteOn(IDLE[(st>>1)%IDLE.length],now);
+  }
+
+  // ======================================================================
+  // 3. Demo: 128 bpm acid. A squelching bass line alone, then the kick,
+  //    a clap and offbeat hats, a lead on top, a breakdown on pads, a
+  //    snare build, and the drop with the lead an octave up.
+  // ======================================================================
+  function makeDemo(actx,master,kit){
+    const step=60/128/4;
+    const BASS=[45,45,57,45,48,45,43,57, 45,45,57,45,50,45,48,57], ACC=[1,0,1,0,1,0,0,1, 1,0,1,0,1,0,1,1];
+    const LEAD=[[69,72,76,79],[67,71,74,79],[65,69,72,77],[64,67,71,76]];
+    const PAD=[[57,60,64,67],[55,59,62,67],[53,57,60,65],[52,55,59,64]];
+    const SEC=[["intro",4],["groove",8],["lift",8],["break",4],["build",2],["drop",8]], LOOP=34;
+    const section=bar=>{ let b=bar%LOOP; for(const [nm,len] of SEC){ if(b<len) return nm; b-=len; } return "intro"; };
+    function acid(m,t,acc,cut){
+      const o=actx.createOscillator(), f=actx.createBiquadFilter(), g=actx.createGain(); o.type="sawtooth"; o.frequency.value=hz(m);
+      f.type="lowpass"; f.Q.value=acc?14:8; f.frequency.setValueAtTime(cut*(acc?2.6:1),t); f.frequency.exponentialRampToValueAtTime(140,t+(acc?0.3:0.16));
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(acc?0.26:0.18,t+0.005); g.gain.exponentialRampToValueAtTime(0.0001,t+step*0.95);
+      o.connect(f); f.connect(g); g.connect(master); o.start(t); o.stop(t+step+0.05);
+    }
+    function lead(m,t,v){
+      const g=actx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(v,t+0.004); g.gain.exponentialRampToValueAtTime(0.0001,t+0.2);
+      const f=actx.createBiquadFilter(); f.type="lowpass"; f.frequency.value=3200; f.connect(g); g.connect(master);
+      for(const d of [-0.07,0.07]){ const o=actx.createOscillator(); o.type="square"; o.frequency.value=hz(m+d); o.connect(f); o.start(t); o.stop(t+0.25); }
+    }
+    function pad(ms,t,dur){
+      const g=actx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.045,t+0.6); g.gain.setTargetAtTime(0.0001,t+dur,0.35); g.connect(master);
+      for(const m of ms) for(const d of [-0.05,0.05]){ const o=actx.createOscillator(); o.type="sawtooth"; o.frequency.value=hz(m+d);
+        const f=actx.createBiquadFilter(); f.type="lowpass"; f.frequency.value=900; o.connect(f); f.connect(g); o.start(t); o.stop(t+dur+2); }
+    }
+    function schedule(n,t){
+      const bar=Math.floor(n/16), st=n%16, sec=section(bar), ch=bar%4, b=bar%LOOP;
+      const cut=sec==="intro"?400+120*b:sec==="drop"?1600:1000;
+      if(sec!=="break" && sec!=="build") acid(BASS[st]+(sec==="drop"&&st%8===7?12:0),t,ACC[st],cut);
+      if(sec==="lift" && st%2===0) lead(LEAD[ch][(st/2)%4],t,0.05);
+      if(sec==="drop" && st%2===0) lead(LEAD[ch][(st/2)%4]+(st>=8?12:0),t,0.06);
+      if(sec==="break" && st===0) pad(PAD[ch],t,16*step);
+      if(sec==="break" && st%4===2) lead(PAD[ch][(st>>2)%4]+24,t,0.03);
+      if(sec==="build"){ const i=(b-22)*16+st; if(i%Math.max(1,4-(i>>3))===0) kit.snare(t,0.15+0.012*i); if(st%4===0) kit.kick(t,0.9); }
+      if(sec==="groove"||sec==="lift"||sec==="drop"){ if(st%4===0) kit.kick(t,1); if(st===4||st===12) kit.snare(t,0.45); if(st%4===2) kit.hat(t,0.11); if(sec==="drop" && st%2===1) kit.hat(t,0.05); }
+      if(sec==="intro" && st%4===2) kit.hat(t,0.07);
+    }
+    return {stop:AR.sequencer(actx,step,schedule)};
+  }
+
+  // ======================================================================
+  // 4. Drawing: the orbit is plotted into a field that keeps short trails,
+  //    then the field is cut into one wedge and mirrored N times round the
+  //    centre, so one slice of the attractor becomes the whole mandala.
+  // ======================================================================
+  let W=0,H=0,dpr=1;
+  const field=document.createElement("canvas"), fx=field.getContext("2d");
+  function resize(){ dpr=Math.min(window.devicePixelRatio||1,2); W=cv.width=Math.round(innerWidth*dpr); H=cv.height=Math.round(innerHeight*dpr); field.width=W; field.height=H; }
+  window.addEventListener("resize",resize); resize();
+  const NPTS=Math.min(innerWidth,innerHeight)<700?18000:46000;
+  const paths=[null,null,null,null];
+
+  function draw(dt,now){
+    const G=R.glow, cx=W/2, cy=H/2, u=Math.min(W,H)/1000;
+    // ---- the field: fade the trails, then plot this frame's orbit
+    // short trails: a fade strong enough that nothing lingers (a faint fade leaves a haze that never clears)
+    fx.setTransform(1,0,0,1,0,0); fx.globalCompositeOperation="destination-out";
+    fx.fillStyle=`rgba(0,0,0,${clamp(0.3+0.5*PUNCH,0.3,0.9)})`; fx.fillRect(0,0,W,H);
+    fx.globalCompositeOperation="lighter";
+    const S=Math.min(W,H)*(0.13+0.03*ENERGY)*(1+0.1*PUNCH), cr=Math.cos(AROT), sr=Math.sin(AROT);
+    const t=now/1000, offx=cx+S*0.6*Math.cos(t*0.071), offy=cy+S*0.6*Math.sin(t*0.053);
+    const n=Math.round(NPTS*(0.35+0.65*PRESENCE)*(0.7+0.5*ENERGY)), ps=Math.max(1,1.3*u*dpr);
+    for(let b=0;b<4;b++) paths[b]=new Path2D();
+    // the two orbits share the points: all on B once a form change has settled
+    const nA=Math.round(n*(1-MIX)), kA=FORMS[formA].k, kB=FORMS[formB].k;
+    // a whisper of noise, so an orbit sitting exactly on a fixed point of the old parameters cannot stay there
+    OA[0]+=(Math.random()-0.5)*1e-6; OB[0]+=(Math.random()-0.5)*1e-6;
+    for(let i=0;i<n;i++){
+      const O=i<nA?OA:OB, px=O[0], py=O[1];
+      stepOrbit(O,i<nA?kA:kB,i<nA?PA:PB);
+      const ox=O[0], oy=O[1], d=Math.hypot(ox-px,oy-py);
+      const X=offx+(ox*cr-oy*sr)*S, Y=offy+(ox*sr+oy*cr)*S;
+      paths[d<0.6?0:d<1.4?1:d<2.3?2:3].rect(X,Y,ps,ps);
+    }
+    const base=soft(0.7+0.3*ENERGY,1.0*G);
+    fx.fillStyle=hsl(HUE-0.06,0.9,0.52,base*0.7); fx.fill(paths[0]);
+    fx.fillStyle=hsl(HUE,0.95,0.62,base*0.85); fx.fill(paths[1]);
+    fx.fillStyle=hsl(HUE+0.07,0.9,0.74,base); fx.fill(paths[2]);
+    fx.fillStyle=hsl(HUE+0.12,0.6,0.92,base); fx.fill(paths[3]);
+    // sparks: points of the orbit caught and held for a moment
+    for(const sp of SPARKS){
+      const age=(now-sp.t)/1000; if(age>0.5) continue;
+      const X=offx+(sp.x*cr-sp.y*sr)*S, Y=offy+(sp.x*sr+sp.y*cr)*S, r=(2.5+6*sp.s)*u*dpr*(1-age/0.5);
+      const gg=fx.createRadialGradient(X,Y,0,X,Y,r*2); gg.addColorStop(0,hsl(HUE+0.1,0.5,0.97,soft(sp.s*(1-age/0.5)*1.4,0.95*G))); gg.addColorStop(1,hsl(HUE+0.1,0.8,0.8,0));
+      fx.fillStyle=gg; fx.fillRect(X-r*2,Y-r*2,r*4,r*4);
+    }
+    // ---- the mirrors
+    ctx.setTransform(1,0,0,1,0,0); ctx.globalCompositeOperation="source-over"; ctx.globalAlpha=1;
+    ctx.fillStyle=hsl(HUE,0.5,0.03); ctx.fillRect(0,0,W,H);
+    const Rr=Math.hypot(W,H)*0.5+4, w=TAU/N, cw=Math.cos(w), sw=Math.sin(w);
+    for(let k=0;k<N;k++){
+      ctx.save(); ctx.translate(cx,cy); ctx.rotate(ROT+k*w);
+      if(k&1) ctx.transform(cw,sw,sw,-cw,0,0);                   // mirror about the wedge's bisector
+      ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,Rr,-0.0015,w+0.0015); ctx.closePath(); ctx.clip();
+      ctx.drawImage(field,-cx,-cy);
+      ctx.restore();
+    }
+    ctx.globalCompositeOperation="lighter";
+    // the seams flash when the fold changes
+    if(SEAM>0.02){
+      ctx.beginPath();
+      for(let k=0;k<N;k++){ const a=ROT+k*w; ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(a)*Rr,cy+Math.sin(a)*Rr); }
+      const sg=ctx.createRadialGradient(cx,cy,0,cx,cy,Math.min(W,H)*0.5); sg.addColorStop(0,hsl(HUE+0.1,0.6,0.9,soft(SEAM,0.8*G))); sg.addColorStop(1,hsl(HUE+0.1,0.6,0.9,0));
+      ctx.strokeStyle=sg; ctx.lineWidth=Math.max(1,1.2*u*dpr); ctx.stroke();
+    }
+    // the core
+    const cr0=Math.min(W,H)*(0.03+0.05*PUNCH);
+    const g=ctx.createRadialGradient(cx,cy,0,cx,cy,cr0*4);
+    g.addColorStop(0,hsl(HUE+0.1,0.5,0.95,soft(0.25+0.4*PUNCH+0.15*ENERGY,0.85*G))); g.addColorStop(0.3,hsl(HUE,1,0.6,soft(0.15+0.3*PUNCH,0.6*G))); g.addColorStop(1,hsl(HUE,1,0.5,0));
+    ctx.fillStyle=g; ctx.fillRect(cx-cr0*4,cy-cr0*4,cr0*8,cr0*8);
+    ctx.globalCompositeOperation="source-over";
+    const v=ctx.createRadialGradient(cx,cy,Math.min(W,H)*0.3,cx,cy,Math.hypot(W,H)*0.55);
+    v.addColorStop(0,"rgba(0,0,0,0)"); v.addColorStop(1,"rgba(0,0,0,.7)"); ctx.fillStyle=v; ctx.fillRect(0,0,W,H);
+  }
+
+  // ======================================================================
+  // 5. The frame
+  // ======================================================================
+  let lastText="", frameN=0;
+  function readout(){
+    const th=NOTE!=null?noteName(NOTE):"—", fm=FORMS[formB].name;
+    const s=N+"|"+fm+"|"+th+"|"+R.sourceLabel(); if(s===lastText) return; lastText=s;
+    $("fold").textContent=N+" FOLD";
+    $("form").innerHTML="Form <b>"+fm+"</b>";
+    $("note").innerHTML="Note <b>"+th+"</b>";
+    $("src").innerHTML="Source <b>"+AR.esc(R.sourceLabel())+"</b>";
+  }
+  function step(now,dt){
+    frameN++;
+    analyse(dt,now);
+    if(now>holdUntil) PRESENCE*=Math.pow(0.995,dt*60);
+    // the parameters this frame: each orbit eases toward its form's variant for the current note
+    if(MIX<1) MIX=Math.min(1,MIX+dt/1.4);
+    const e=Math.min(1,dt*9), vA=VAR[formA][PC], vB=VAR[formB][PC];
+    for(let i=0;i<4;i++){ PA[i]=lerp(PA[i],vA[i],e); PB[i]=lerp(PB[i],vB[i],e); }
+    // the kaleidoscope turns: a slow drift, plus the notch each kick gives it
+    ROTV*=Math.exp(-dt*3.5); ROT+=(ROTV+(reduce?0.01:0.03+0.1*ENERGY))*dt;
+    AROTV*=Math.exp(-dt*4); AROT+=((reduce?0.005:0.02+0.04*ENERGY)+AROTV)*dt;
+    let d=hueT-HUE; d-=Math.round(d); HUE=fract(HUE+d*Math.min(1,dt*5));
+    for(let i=SPARKS.length-1;i>=0;i--) if(now-SPARKS[i].t>500) SPARKS.splice(i,1);
+    draw(dt,now);
+    PUNCH*=Math.exp(-dt*6); SEAM*=Math.exp(-dt*5); SPARK*=Math.exp(-dt*8);
+    if(frameN%6===0) readout();
+  }
+
+  const R=AR.create({
+    name:"kaleidos", canvas:cv, lookahead:0.1,
+    analysers:{ tone:{fftSize:4096,smoothing:0.25,needs:["freq"],lead:0.07}, level:{fftSize:2048,smoothing:0.6,needs:["time"]} },
+    onsets:true, demo:makeDemo, demoName:"Demo: acid", demoGain:0.85,
+    glow:{min:0.2,max:1.2,value:0.75},
+    onHit, step,
+    onSource:()=>{ lastText=""; idleStep=-1; prevSet=new Set(); kicksSince=0; },
+    offlineSetup:()=>({})
+  });
+  detectNotes=AR.noteTracker(R,"tone"); level=AR.levelMeter(R,"level");
+  const t0=R.offline?0:performance.now();
+  lastKick=t0; idleScript(t0); holdUntil=t0+4000;
+  R.start();
+})();
+</script>
+<script>/* Homepage embed: the piece's own controls are hidden; one button starts or stops its built-in track. */
+(function(){var b=document.createElement('button');b.id='syb-sound';b.type='button';b.setAttribute('aria-pressed','false');b.textContent='Sound';
+b.addEventListener('click',function(){var d=document.getElementById('btnDemo');if(!d)return;d.click();var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));b.textContent=on?'Sound on':'Sound';});
+document.body.appendChild(b);
+function ready(){try{parent.postMessage({syb:'ready'},location.origin)}catch(e){}}
+if(document.readyState==='complete')setTimeout(ready,300);else addEventListener('load',function(){setTimeout(ready,300)});})();</script>
+</body>
+</html>
