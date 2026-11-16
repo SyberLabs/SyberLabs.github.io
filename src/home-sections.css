@@ -91,14 +91,28 @@
 /* ---------- contact: one artwork, one sentence, the one action ---------- */
 .hv-contact { position: relative; min-height: 86vh; min-height: 86svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
   padding: 40px var(--sy-gutter) 72px; scroll-margin-top: 0; background: radial-gradient(42% 38% at 50% 34%, rgba(2, 151, 222, .12), #0000 72%), var(--sy-ink); }
-.hv-contact h2 { position: relative; margin: 0 0 14px; max-width: 14em; color: var(--sy-vellum); font: 500 clamp(34px, 5vw, 68px)/1.04 var(--sy-sans); letter-spacing: -.045em; text-wrap: balance; }
-.hv-contact .sy-small { margin: 0 0 30px; max-width: 44ch; color: var(--sy-mist); }
+.hv-contact__copy { position: relative; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.hv-contact h2 { margin: 0 0 14px; max-width: 14em; color: var(--sy-vellum); font: 500 clamp(34px, 5vw, 68px)/1.04 var(--sy-sans); letter-spacing: -.045em; text-wrap: balance; }
+.hv-contact .sy-small { margin: 0 0 30px; max-width: 44ch; color: var(--sy-mist); text-wrap: pretty; }
 .hv-contact__links { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 28px; margin: 22px 0 0; text-transform: none; letter-spacing: .06em; }
 .hv-contact__links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--sy-mist); overflow-wrap: anywhere; }
 .hv-contact__links a:hover { color: var(--sy-vellum); }
-/* The artwork sits on the ground with no frame: screen blending drops its black, and the mask fades its edges. */
-.hv-contact__art { display: block; width: min(100%, 620px); height: auto; aspect-ratio: 1; margin: 0 auto -8%; mix-blend-mode: screen; pointer-events: none;
+/* The artwork sits on the ground with no frame: screen blending drops its black, and the mask fades its edges.
+   Its width is also capped by the viewport height so the artwork and the copy fit one screen without overlapping. */
+.hv-contact__art { display: block; width: min(100%, 620px, 46svh); height: auto; aspect-ratio: 1; margin: 0 auto 8px; mix-blend-mode: screen; pointer-events: none;
   -webkit-mask-image: radial-gradient(closest-side, #000 60%, transparent 100%); mask-image: radial-gradient(closest-side, #000 60%, transparent 100%); }
+
+/* Desktop: copy on the left on the page's text edge, artwork on the right. Nothing sits on top of the artwork. */
+@media (min-width: 900px) {
+  .hv-contact { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); align-items: center; column-gap: clamp(28px, 4.5vw, 80px); text-align: left;
+    padding: 72px max(var(--sy-gutter), calc((100% - 1208px) / 2)) 88px;
+    background: radial-gradient(30% 44% at 74% 48%, rgba(2, 151, 222, .13), #0000 74%), var(--sy-ink); }
+  .hv-contact__copy { grid-column: 1; grid-row: 1; align-items: flex-start; }
+  .hv-contact h2 { max-width: 9.5em; font-size: clamp(40px, 4.6vw, 72px); margin-bottom: 20px; }
+  .hv-contact .sy-small { max-width: 40ch; margin-bottom: 34px; }
+  .hv-contact__links { justify-content: flex-start; margin-top: 26px; }
+  .hv-contact__art { grid-column: 2; grid-row: 1; width: min(100%, 640px, 72svh); margin: 0; justify-self: center; }
+}
 
 @media (max-width: 800px) {
   .hv-block { padding-top: 40px; padding-bottom: 64px; }
