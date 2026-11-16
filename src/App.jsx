@@ -26,23 +26,13 @@ const FACTORY_PRODUCTS = ['syberwork', 'attest'].map(bySlug);
 const STUDIO_PRODUCTS = ['rise', 'flyspace'].map(bySlug);
 const FORM_OF = { syberwork: 0, attest: 1, rise: 2, flyspace: 3 };   // each product's mark is one form of the Liminal piece's rule
 
-// Pieces that move to sound. Each tile shows a still until it is in view, then loads the piece itself.
+// Pieces that move to sound. Each tile shows a still; one tile at a time runs the piece itself.
 const PIECES = [
   ['cymatica', 'Cymatica', 'Each note sets its own figure.'],
   ['plutonian-core', 'Plutonian Core', 'The kick strikes the core.'],
   ['kaleidos', 'Kaleidos', 'One attractor, folded 6 to 16 times.'],
   ['murmuration', 'Murmuration', 'Up to 20,000 birds, one flock.'],
 ];
-// Still plates from the pattern engines.
-const PLATES = [
-  ['vestigia-01', 'Vestigia', 'Growth that keeps what it rejected.', 'A branching growth with its abandoned paths left visible.'],
-  ['ostensoria-01', 'Ostensoria', 'Each seed is one plate.', 'A symmetric figure built from the density of a strange attractor.'],
-  ['gyre-02', 'Gyre', 'One orbit, one thread of light.', 'One orbit of a strange attractor drawn as a thread of light.'],
-  ['interferentia-01', 'Interferentia', 'Only the difference is drawn.', 'Contour lines of the difference between two fields that are not shown.'],
-  ['sophia-01', 'Sophia', null, 'A woven disc with a central eye.'],
-  ['civitas-01', 'Civitas', 'A city seen as light.', 'Figures of light crossing a city at night.'],
-];
-
 function ProductRows({ items }) {
   return <ol className="hv-rows" role="list">
     {items.map(p => <li key={p.slug}>
@@ -54,10 +44,6 @@ function ProductRows({ items }) {
       </a>
     </li>)}
   </ol>;
-}
-
-function RailNav() {
-  return <div className="hv-railnav" aria-hidden="true"><button type="button" data-rail="-1" tabIndex={-1}>←</button><button type="button" data-rail="1" tabIndex={-1}>→</button></div>;
 }
 
 export default function App() {
@@ -127,7 +113,7 @@ export default function App() {
         </div>
       </section>
 
-      <section id="factory" className="hv-stratum" aria-labelledby="factory-title">
+      <section id="factory" className="hv-stratum hv-stratum--rise" aria-labelledby="factory-title">
         <canvas ref={factoryCanvas} role="img" aria-label="A machine reads a strand, copies it piece by piece, rejects the pieces that fail and releases two finished strands. Its stations are labelled Propose, Check, Review, Approve and Publish." />
         <div className="hv-cap sy-wrap">
           <p className="hv-mono hv-num">I</p>
@@ -145,33 +131,20 @@ export default function App() {
           <p className="hv-mono hv-num">II</p>
           <h2 id="studio-title" data-decode aria-label="Studio">Studio</h2>
           <ProductRows items={STUDIO_PRODUCTS} />
-        </div>
-        <div className="hv-railwrap">
-          <RailNav />
-          <ul className="hv-rail" role="list" aria-label="Pieces that move to sound">
+          <ul className="hv-pieces" role="list" aria-label="Pieces that move to sound">
             {PIECES.map(([slug, name, line]) => <li key={slug}>
               <figure className="hv-tile" data-piece={slug} data-name={name}>
                 <img src={`/media/home/posters/${slug}.jpg`} width="960" height="1200" alt="" loading="lazy" decoding="async" />
                 <div className="hv-tile__shield hv-tile__shield--a" /><div className="hv-tile__shield hv-tile__shield--b" />
                 <figcaption><b>{name}</b><span>{line}</span></figcaption>
-              </figure>
-            </li>)}
-          </ul>
-        </div>
-        <div className="hv-railwrap">
-          <RailNav />
-          <ul className="hv-rail" role="list" aria-label="Plates from the pattern engines">
-            {PLATES.map(([file, name, line, alt]) => <li key={file}>
-              <figure className="hv-tile hv-tile--plate">
-                <img src={`/media/home/plates/${file}.jpg`} alt={alt} loading="lazy" decoding="async" />
-                <figcaption><b>{name}</b>{line && <span>{line}</span>}</figcaption>
+                <button className="hv-tile__run hv-mono" type="button" aria-label={`Run ${name}`}>Run</button>
               </figure>
             </li>)}
           </ul>
         </div>
       </section>
 
-      <section id="liminal" className="hv-stratum" aria-labelledby="liminal-title">
+      <section id="liminal" className="hv-stratum hv-stratum--field" aria-labelledby="liminal-title">
         <canvas ref={fieldCanvas} role="img" aria-label="A field of coupled oscillators falls into step. The letters of SyberLabs appear as the strokes that stay a quarter turn out of phase." />
         <div className="hv-cap sy-wrap">
           <p className="hv-mono hv-num">III</p>
@@ -179,7 +152,7 @@ export default function App() {
           <p className="hv-mono"><span className="hv-tag">Resonance</span> / <span ref={fieldCount}>0</span> oscillators / <span ref={fieldState}>incoherent</span> / <b ref={fieldValue}>0.00</b></p>
         </div>
       </section>
-      <section className="hv-stratum" aria-label="Emergence">
+      <section className="hv-stratum hv-stratum--meld" aria-label="Emergence">
         <canvas ref={formsCanvas} role="img" aria-label="A branching form assembles itself from scattered dots, one fork at a time, lights up once, and returns to dots." />
         <div className="hv-cap sy-wrap">
           <p className="hv-mono"><span className="hv-tag">Emergence</span> / <span ref={formsRule} /> / <span ref={formsState}>latent</span> / <b ref={formsStep}>0</b></p>

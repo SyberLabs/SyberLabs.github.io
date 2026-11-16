@@ -820,7 +820,7 @@
 </script>
 <script>/* Homepage embed: the piece's own controls are hidden; one button starts or stops its built-in track. */
 (function(){var b=document.createElement('button');b.id='syb-sound';b.type='button';b.setAttribute('aria-pressed','false');b.textContent='Sound';
-b.addEventListener('click',function(){var d=document.getElementById('btnDemo');if(!d)return;d.click();var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));b.textContent=on?'Sound on':'Sound';});
+b.addEventListener('click',function(){var d=document.getElementById('btnDemo');if(!d)return;d.click();var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));b.textContent=on?'Sound on':'Sound';try{parent.postMessage({syb:'sound',on:on},location.origin)}catch(e){}});
 document.body.appendChild(b);
 function ready(){try{parent.postMessage({syb:'ready'},location.origin)}catch(e){}}
 if(document.readyState==='complete')setTimeout(ready,300);else addEventListener('load',function(){setTimeout(ready,300)});})();</script>

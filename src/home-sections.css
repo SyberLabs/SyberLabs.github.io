@@ -12,11 +12,26 @@
 .sy-reveal .hv-triad { animation: hero-rise 1.5s cubic-bezier(.16,.84,.24,1) .75s both; }
 
 /* ---------- a stratum: one full-height canvas visual with a caption at its foot ---------- */
-/* The header is a fixed bar, so a stratum is the viewport less the bar, and an anchor jump lands it flush under the bar. */
-.hv-stratum { position: relative; min-height: calc(100vh - var(--sy-header-h, 64px)); min-height: calc(100svh - var(--sy-header-h, 64px)); overflow: hidden;
-  scroll-margin-top: calc(-1 * var(--space-4, 16px));
-  background: radial-gradient(60% 55% at 50% 46%, rgba(2, 151, 222, .09), #0000 72%), var(--sy-ink); }
-.hv-stratum > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+/* The header is a fixed bar, so a stratum is the viewport less the bar, and an anchor jump lands it flush under the bar.
+   No stratum ends at an edge: its canvas fades into the page ground at the top and the foot. overflow is clip, not
+   hidden, so a stratum is not a scroll container and the scroll-linked arrivals below read the page's own scroll. */
+.hv-stratum { --hv-lap: 0px; position: relative; min-height: calc(100vh - var(--sy-header-h, 64px) + var(--hv-lap)); min-height: calc(100svh - var(--sy-header-h, 64px) + var(--hv-lap));
+  margin-top: calc(-1 * var(--hv-lap)); overflow: hidden; overflow: clip; scroll-margin-top: calc(-1 * var(--space-4, 16px) - var(--hv-lap));
+  background: radial-gradient(60% 55% at 50% 50%, rgba(2, 151, 222, .09), #0000 72%); }
+.hv-stratum > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 max(14%, var(--hv-lap) * 1.25), #000 84%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 max(14%, var(--hv-lap) * 1.25), #000 84%, transparent 100%); }
+/* Factory rises through the foot of the hero: the strand starts inside the Gyre's fading light. The stratum lets
+   presses through to the hero beneath it (its Pause motion button on phones); only the caption link takes them. */
+.hv-stratum--rise { --hv-lap: clamp(120px, 22svh, 240px); pointer-events: none; }
+/* Emergence starts inside the foot of the field above it, so strokes thin out as the dots gather. */
+.hv-stratum--meld { --hv-lap: clamp(110px, 20svh, 220px); }
+/* The field is the densest texture on the page, so it thins out over its whole lower third. */
+.hv-stratum--field > canvas { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 66%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 66%, transparent 100%); }
+/* The hero's media fades into the ground, and the homepage has no warm horizon: the seam is light giving way to dark. */
+.hv-hero::before { display: none; }
+.hv-hero .pitch-hero__art, .hv-hero .pitch-hero__clip { -webkit-mask-image: linear-gradient(180deg, #000 0, #000 56%, transparent 97%); mask-image: linear-gradient(180deg, #000 0, #000 56%, transparent 97%); }
+.hv-hero { overflow: hidden; overflow: clip; }
 .hv-cap { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding-bottom: 28px; pointer-events: none;
   text-shadow: 0 0 12px var(--sy-ink), 0 0 5px var(--sy-ink), 0 1px 2px var(--sy-ink); }
 .hv-cap h2, .hv-block h2 { margin: 0 0 6px; color: var(--sy-vellum); font: 500 clamp(30px, 4.4vw, 60px)/1 var(--sy-sans); letter-spacing: -.04em; }
@@ -29,7 +44,7 @@
 /* ---------- product rows; each mark is one form of the Liminal piece's rule ---------- */
 .hv-block { position: relative; padding-top: 72px; padding-bottom: 96px; scroll-margin-top: 40px; }
 .hv-block--tight { padding-top: 34px; }
-.hv-block--studio { padding-bottom: 40px; }
+.hv-block--studio { padding-bottom: 96px; }
 .hv-block h2 { margin-bottom: 34px; }
 .hv-rows { margin: 0; padding: 0; list-style: none; }
 .hv-rows li a { display: grid; grid-template-columns: 96px minmax(0, 1.1fr) minmax(0, 1fr) 210px; align-items: center; gap: 12px 36px;
@@ -51,30 +66,27 @@
 .hv-partner b { color: var(--sy-vellum); font-weight: 500; }
 .hv-partner a { color: var(--sy-vellum); text-decoration: underline; text-decoration-color: var(--sy-rule-2); text-underline-offset: 4px; white-space: nowrap; }
 
-/* ---------- rails: a row of tiles that scrolls sideways ---------- */
-.hv-railwrap { position: relative; padding: 56px 0 0; }
-.hv-railwrap + .hv-railwrap { padding-top: 14px; }
-.hv-block--studio .hv-railwrap:last-child { padding-bottom: 56px; }
-.hv-railnav { display: flex; justify-content: flex-end; gap: 6px; max-width: var(--sy-max); margin: 0 auto 10px; padding: 0 var(--sy-gutter); }
-.hv-railnav button { width: 44px; height: 44px; border: 1px solid var(--sy-rule); border-radius: 2px; background: none; color: var(--sy-mist); cursor: pointer; font: 400 16px/1 var(--sy-mono); }
-.hv-railnav button:hover { color: var(--sy-vellum); border-color: var(--sy-rule-2); }
-@media (hover: none) { .hv-railnav { display: none; } }
-.hv-rail { display: flex; gap: 14px; margin: 0; padding: 0 var(--sy-gutter); list-style: none; overflow-x: auto; scroll-snap-type: x mandatory;
-  scroll-padding: 0 var(--sy-gutter); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-.hv-rail::-webkit-scrollbar { display: none; }
-.hv-tile { position: relative; flex: 0 0 min(82vw, 62svh, 520px); width: min(82vw, 62svh, 520px); aspect-ratio: 4 / 5; margin: 0; overflow: hidden; scroll-snap-align: start;
-  border: 1px solid var(--sy-rule); border-radius: 2px; background: #010406; }
-.hv-tile > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+/* ---------- four pieces that move to sound, all in view at once; one runs at a time ---------- */
+.hv-pieces { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 56px 0 0; padding: 0; list-style: none; }
+.hv-tile { position: relative; aspect-ratio: 4 / 5; margin: 0; overflow: hidden; border: 1px solid var(--sy-rule); border-radius: 2px; background: #010406;
+  transition: border-color .4s ease; }
+.hv-tile > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: .74; transition: opacity .5s ease, transform 1.4s cubic-bezier(.16,.84,.24,1); }
+.hv-tile:hover > img, .hv-tile.is-waking > img, .hv-tile.is-live > img { opacity: 1; }
+.hv-tile.is-waking > img { transform: scale(1.03); }
+.hv-tile.is-live { border-color: var(--sy-electric, #0297de); }
 .hv-tile iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; opacity: 0; transition: opacity .9s ease; background: transparent; }
 .hv-tile iframe.is-ready { opacity: 1; }
 /* The shield lets the page scroll over a running piece. The corner it leaves open is the piece's own Sound button. */
-.hv-tile__shield { position: absolute; z-index: 2; left: 0; }
-.hv-tile__shield--a { top: 0; right: 0; bottom: 66px; }
-.hv-tile__shield--b { bottom: 0; height: 66px; right: 132px; }
-.hv-tile figcaption { position: absolute; z-index: 3; left: 14px; bottom: 14px; right: 140px; display: grid; gap: 4px; pointer-events: none; text-shadow: 0 0 10px #000, 0 1px 2px #000; }
-.hv-tile figcaption b { color: var(--sy-vellum); font: 500 19px/1.1 var(--sy-sans); letter-spacing: -.02em; }
+.hv-tile__shield { position: absolute; z-index: 2; left: 0; cursor: pointer; }
+.hv-tile__shield--a { top: 0; right: 0; bottom: 60px; }
+.hv-tile__shield--b { bottom: 0; height: 60px; right: 112px; }
+.hv-tile figcaption { position: absolute; z-index: 3; left: 14px; top: 13px; right: 14px; display: grid; gap: 4px; pointer-events: none; text-shadow: 0 0 10px #000, 0 1px 2px #000; }
+.hv-tile figcaption b { color: var(--sy-vellum); font: 500 18px/1.1 var(--sy-sans); letter-spacing: -.02em; }
 .hv-tile figcaption span { color: var(--sy-body); font: 400 13px/1.35 var(--sy-sans); }
-.hv-tile--plate figcaption { right: 14px; }
+.hv-tile__run { position: absolute; z-index: 4; right: 10px; bottom: 10px; min-height: 44px; padding: 0 13px; border: 1px solid var(--sy-rule-2); border-radius: 2px;
+  background: rgba(2, 7, 10, .6); color: var(--sy-body); cursor: pointer; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.hv-tile__run:hover { color: var(--sy-vellum); border-color: var(--sy-electric-hi, #4cc0f5); }
+.hv-tile.is-live .hv-tile__run { display: none; }
 
 /* ---------- contact: one artwork, one sentence, the one action ---------- */
 .hv-contact { position: relative; min-height: 86vh; min-height: 86svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
@@ -91,14 +103,17 @@
 @media (max-width: 800px) {
   .hv-block { padding-top: 40px; padding-bottom: 64px; }
   .hv-block--tight { padding-top: 24px; }
-  .hv-block--studio { padding-bottom: 24px; }
+  .hv-block--studio { padding-bottom: 64px; }
   .hv-rows li a { grid-template-columns: 64px minmax(0, 1fr); gap: 4px 18px; padding: 18px 0; }
   .hv-rows canvas { width: 64px; height: 64px; grid-row: 1 / span 3; align-self: start; margin-top: 2px; }
   .hv-rows__name { gap: 10px; }
   .hv-rows__line { font-size: 15px; }
   .hv-rows__status { justify-self: start; }
   .hv-partner { grid-template-columns: minmax(0, 1fr); gap: 6px; }
-  .hv-railwrap { padding-top: 40px; }
+  .hv-pieces { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 40px; }
+  .hv-tile figcaption { left: 11px; top: 10px; right: 11px; }
+  .hv-tile figcaption b { font-size: 16px; }
+  .hv-tile figcaption span { font-size: 12px; }
 }
 @media (max-width: 600px) {
   .hv-mono { font-size: 10px; letter-spacing: .16em; }
@@ -106,3 +121,19 @@
   .hv-triad a { font-size: 11px; letter-spacing: .18em; }
   .hv-triad li + li::before { margin: 0 9px 3px; }
 }
+
+/* ---------- motion: things arrive as they scroll into view, and the hero's words leave as it scrolls away ----------
+   Scroll-linked, so it runs forwards and backwards with the page and never plays on its own. Browsers without
+   scroll timelines, and readers who ask for less motion, get the finished state. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .hv-cap > *, .hv-block .hv-num, .hv-block h2, .hv-rows > li, .hv-partner, .hv-pieces > li {
+      animation: hv-arrive linear both; animation-timeline: view(); animation-range: entry 0% cover 18%; }
+    .hv-pieces > li:nth-child(2) { animation-range: entry 0% cover 22%; }
+    .hv-pieces > li:nth-child(3) { animation-range: entry 0% cover 26%; }
+    .hv-pieces > li:nth-child(4) { animation-range: entry 0% cover 30%; }
+    .hv-hero .pitch-hero__copy { animation: hv-leave linear both; animation-timeline: view(); animation-range: exit 0% exit 75%; }
+  }
+}
+@keyframes hv-arrive { from { opacity: 0; transform: translateY(28px); } }
+@keyframes hv-leave { to { opacity: 0; transform: translateY(-56px); } }
