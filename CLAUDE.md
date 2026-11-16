@@ -55,10 +55,12 @@ two rules above and in `kit/v2/README.md`:
   the page.
 - The three section names and the one-word labels on the three canvas visuals (Proof, Resonance, Emergence) are
   names, exempt from the Wording rules. Every other homepage line follows them.
+- The hero has no warm horizon. Its media fades into the page ground and the Factory visual rises through the
+  fade. No homepage section ends at a hard edge: each canvas fades at its top and foot.
 
 CI still requires `id="products"`, `id="partners"` and `id="contact"` on the homepage, and still fails the build on
 personal names, so homepage media must not link to personal sites. The pieces in `media/home/pieces/` are copies of
-the audio-reactive pieces with their own controls hidden; they are marked `noindex`.
+the audio-reactive pieces with their own controls hidden; they are marked `noindex`. One piece runs at a time.
 
 ## Public dependency lookup (GitHits)
 

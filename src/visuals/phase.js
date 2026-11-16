@@ -18,7 +18,7 @@ var FS = [
   '  float a = dot(f, dir); float b = dot(f, vec2(-dir.y, dir.x));',
   '  float d = length(vec2(max(abs(a) - hl, 0.0), b)) - th;',
   '  float aa = 1.0 / uCell;',
-  '  float m = smoothstep(aa, -aa, d);',
+  '  float m = 1.0 - smoothstep(-aa, aa, d);',   // edges in ascending order: GLSL ES leaves the reverse undefined
   '  float glow = exp(-max(d, 0.0) * 8.0) * 0.14 * c2;',
   '  float cr = dir.x * uPsi.x + dir.y * uPsi.y;',
   '  float sr = dir.y * uPsi.x - dir.x * uPsi.y;',

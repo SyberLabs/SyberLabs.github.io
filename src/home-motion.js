@@ -1,6 +1,5 @@
-// Homepage behaviours that are not the three canvas visuals: section titles that resolve out of glyphs, the rails'
-// arrow buttons, and the live tiles. A tile loads its piece (media/home/pieces/*.html) only while it is the one in
-// view, and unloads it when it leaves, so at most two or three pieces run at once and sound stops when you scroll on.
+// Homepage behaviours that are not the three canvas visuals: section titles that resolve out of glyphs, and the
+// row of four pieces. One tile at a time loads its piece (media/home/pieces/*.html); the others show stills.
 
 const GLYPHS = '∴∵∷⋮⋯◦○●◌·:+×';
 
@@ -27,43 +26,51 @@ export function initHomeMotion(root) {
     cleanups.push(() => seen.disconnect());
   }
 
-  for (const button of root.querySelectorAll('[data-rail]')) {
-    button.addEventListener('click', () => {
-      const rail = button.closest('.hv-railwrap').querySelector('.hv-rail'), tile = rail.querySelector('.hv-tile');
-      rail.scrollBy({ left: +button.dataset.rail * (tile.offsetWidth + 14), behavior: reduced ? 'auto' : 'smooth' });
-    });
-  }
-
-  const tiles = [...root.querySelectorAll('.hv-tile[data-piece]')];
-  const frames = new Map();   // tile -> iframe
-  const timers = new Map();
-  const wake = tile => {
-    if (frames.has(tile)) return;
-    const frame = document.createElement('iframe');
-    frame.title = `${tile.dataset.name}, live`;
+  // One piece runs at a time. The first starts when the row scrolls into view; pointing at a tile (mouse) or
+  // pressing it (touch, keyboard) moves the running piece there, except that pointing never interrupts a piece
+  // whose sound is on. Leaving the row stops the piece, and with it any sound.
+  const row = root.querySelector('.hv-pieces');
+  const tiles = row ? [...row.querySelectorAll('.hv-tile[data-piece]')] : [];
+  let frame = null, live = null, pending = 0, sounding = false;
+  const stop = () => {
+    clearTimeout(pending);
+    if (frame) frame.remove();
+    if (live) live.classList.remove('is-live', 'is-waking');
+    frame = live = null; sounding = false;
+  };
+  const run = tile => {
+    if (live === tile) return;
+    stop();
+    live = tile; tile.classList.add('is-waking');
+    frame = document.createElement('iframe');
+    frame.title = `${tile.dataset.name}, running`;
     frame.setAttribute('allow', 'autoplay');
     frame.src = `/media/home/pieces/${tile.dataset.piece}.html`;
     tile.insertBefore(frame, tile.querySelector('.hv-tile__shield'));
-    frames.set(tile, frame);
   };
-  const sleep = tile => { const frame = frames.get(tile); if (frame) { frame.remove(); frames.delete(tile); } };
   // A piece reports once it is drawing; until then (or if it never loads) its still image stays in place.
   const onMessage = event => {
-    if (event.origin !== location.origin || !event.data || event.data.syb !== 'ready') return;
-    for (const frame of frames.values()) if (frame.contentWindow === event.source) frame.classList.add('is-ready');
+    if (event.origin !== location.origin || !event.data || !frame || frame.contentWindow !== event.source) return;
+    if (event.data.syb === 'ready') { frame.classList.add('is-ready'); live.classList.replace('is-waking', 'is-live'); }
+    if (event.data.syb === 'sound') sounding = !!event.data.on;   // while a piece is playing sound, only a press moves on
   };
   addEventListener('message', onMessage);
-  cleanups.push(() => removeEventListener('message', onMessage));
-  if (!reduced && 'IntersectionObserver' in window) {
-    const live = new IntersectionObserver(entries => {
-      for (const e of entries) {
-        clearTimeout(timers.get(e.target));
-        if (e.intersectionRatio >= 0.6) timers.set(e.target, setTimeout(() => wake(e.target), 350));
-        else if (e.intersectionRatio < 0.25) sleep(e.target);
-      }
-    }, { threshold: [0, 0.25, 0.6, 1] });
-    for (const tile of tiles) live.observe(tile);
-    cleanups.push(() => { live.disconnect(); for (const tile of tiles) sleep(tile); });
+  cleanups.push(() => { removeEventListener('message', onMessage); stop(); });
+  for (const tile of tiles) {
+    tile.addEventListener('click', () => run(tile));
+    if (!reduced) {
+      // Only a mouse points without pressing; a finger's pointerenter is followed by its click.
+      tile.addEventListener('pointerenter', event => { if (event.pointerType !== 'mouse' || sounding) return; clearTimeout(pending); pending = setTimeout(() => run(tile), 220); });
+      tile.addEventListener('pointerleave', () => clearTimeout(pending));
+    }
+  }
+  if (row && 'IntersectionObserver' in window) {
+    const inView = new IntersectionObserver(([entry]) => {
+      if (entry.intersectionRatio < 0.1) stop();
+      else if (entry.intersectionRatio >= 0.5 && !live && !reduced) { clearTimeout(pending); pending = setTimeout(() => run(tiles[0]), 400); }
+    }, { threshold: [0, 0.1, 0.5, 1] });
+    inView.observe(row);
+    cleanups.push(() => inView.disconnect());
   }
   return () => { for (const fn of cleanups) fn(); };
 }
