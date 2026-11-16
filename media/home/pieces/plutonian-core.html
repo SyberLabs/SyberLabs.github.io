@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<style>*{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
+<title>Plutonian Core</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Plutonian Core: a music-reactive monstrance that throws lightning. A strange-attractor core inside a sunburst crown of rays, driven live by the music.">
+<style>
+  /* Layout: full-bleed altar. The monstrance owns the center; chrome sits at the corners like plate labels. */
+  :root{
+    --ground:#050507;
+    --ink:#ebe5d4;
+    --ink-dim:#8f8977;
+    --gold:#d3ad55;
+    --gold-deep:#7d6631;
+    --line:rgba(211,173,85,.26);
+    --panel:rgba(9,9,12,.66);
+    --display:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+    --mono:"Space Mono",ui-monospace,Menlo,Consolas,monospace;
+    color-scheme:dark;
+  }
+  html,body{height:100%;background:var(--ground);color:var(--ink);overflow:hidden;}
+  body{font-family:var(--display);-webkit-font-smoothing:antialiased;}
+  #stage{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:manipulation;}
+
+  .chrome{position:fixed;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;gap:16px;
+    padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+    padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(14px + env(safe-area-inset-bottom,0px));
+    transition:opacity .45s ease;}
+  .chrome.off{opacity:0;}
+  .chrome.off *{pointer-events:none!important;}
+
+  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+  .brand{font-family:var(--mono);font-size:10px;letter-spacing:.38em;text-transform:uppercase;color:var(--gold);}
+  h1{font-family:var(--display);font-weight:500;font-size:clamp(28px,5vw,46px);letter-spacing:.03em;line-height:1;margin:.14em 0 0;text-wrap:balance;}
+  h1 i{font-weight:400;color:var(--ink-dim);font-size:.62em;letter-spacing:.06em;}
+  .back{pointer-events:auto;display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim);text-decoration:none;padding:4px 0;margin-bottom:6px;}
+  .back:hover,.back:focus-visible{color:var(--ink);}
+  .back:focus-visible{outline:1px solid var(--gold);outline-offset:4px;}
+  .plate{font-family:var(--mono);font-size:10px;letter-spacing:.1em;line-height:1.7;color:var(--ink-dim);text-align:right;font-variant-numeric:tabular-nums;}
+  .plate b{color:var(--ink);font-weight:400;}
+  .plate-col{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+  .hits{display:flex;gap:6px;}
+  .hits span{--on:0;font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:3px 6px;
+    border:1px solid var(--line);color:var(--ink-dim);
+    background:color-mix(in srgb,var(--gold) calc(var(--on)*85%),transparent);
+    color:color-mix(in srgb,#17110a calc(var(--on)*100%),var(--ink-dim));}
+  @media (max-width:560px){ .plate-col{align-items:flex-start;} }
+
+  .bottom{display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .bar{pointer-events:auto;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:100%;
+    background:var(--panel);border:1px solid var(--line);padding:8px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+  button,select{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    background:transparent;color:var(--ink);border:1px solid var(--line);padding:10px 12px;cursor:pointer;min-height:38px;
+    transition:border-color .15s,color .15s,background .15s;}
+  button:hover,select:hover{border-color:var(--gold);}
+  button:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+  button.primary{background:var(--gold);border-color:var(--gold);color:#17110a;font-weight:700;}
+  button.primary:hover{background:#e0bd68;}
+  button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold);}
+  select{background:var(--ground);padding-right:8px;}
+  .glow{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-dim);border:1px solid var(--line);padding:0 10px;min-height:38px;}
+  .glow input{-webkit-appearance:none;appearance:none;width:84px;height:2px;background:var(--line);outline:none;margin:0;}
+  .glow input::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--ground);}
+  .glow input::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--ground);}
+  .glow input:focus-visible{outline:2px solid var(--gold);outline-offset:6px;}
+  .hint{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--ink-dim);text-align:center;}
+  .hint kbd{font-family:var(--mono);color:var(--ink);border:1px solid var(--line);padding:0 4px;}
+
+  .toast{position:fixed;left:50%;top:calc(50% + min(34vw,34vh));transform:translateX(-50%);max-width:min(440px,calc(100% - 32px));
+    font-family:var(--mono);font-size:11px;letter-spacing:.04em;line-height:1.6;color:var(--ink);background:var(--panel);
+    border:1px solid var(--line);padding:10px 14px;text-align:center;pointer-events:none;opacity:0;transition:opacity .3s;}
+  .toast.on{opacity:1;}
+
+  .drop{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .2s;
+    font-family:var(--display);font-style:italic;font-size:clamp(24px,4vw,40px);color:var(--gold);background:rgba(5,5,7,.55);}
+  .drop.on{opacity:1;}
+
+  @media (max-width:560px){
+    .plate{text-align:left;}
+    .hint{display:none;}
+    button,select{padding:9px 9px;font-size:10px;letter-spacing:.08em;}
+  }
+</style>
+
+<meta name="robots" content="noindex">
+<style id="syb-embed">#chrome,#toast,#drop{display:none!important}html,body{overflow:hidden}
+#syb-sound{position:fixed;right:10px;bottom:10px;z-index:99;min-height:44px;padding:0 13px;border:1px solid rgba(140,200,235,.3);border-radius:2px;background:rgba(2,7,10,.6);color:#c3cfd6;font:500 10px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#syb-sound[aria-pressed=true]{color:#fd9273;border-color:#fc734d}</style></head>
+<body>
+<canvas id="stage" aria-label="Plutonian Core: a music-reactive monstrance throwing lightning"></canvas>
+
+<div class="chrome" id="chrome">
+  <div class="top">
+    <div>
+      <div class="brand">SyberLabs · Engines</div>
+      <h1>Plutonian <i>Core</i></h1>
+    </div>
+    <div class="plate-col">
+      <div class="plate" id="plate"></div>
+      <div class="hits" aria-hidden="true"><span id="ind-kick">Kick</span><span id="ind-snare">Snare</span><span id="ind-hat">Hats</span></div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="bar" role="toolbar" aria-label="Sound and form">
+      <button class="primary" id="btnDemo" type="button">Play demo</button>
+      <button id="btnFile" type="button">Load track</button>
+      <button id="btnMic" type="button">Mic</button>
+      <button id="btnForm" type="button">New form</button>
+      <select id="palette" aria-label="Palette">
+        <option value="auto" selected>Auto (music)</option>
+        <option value="reliquary">Reliquary</option>
+        <option value="iris">Iris</option>
+        <option value="gold">Gold</option>
+        <option value="ember">Ember</option>
+        <option value="ice">Ice</option>
+        <option value="lilac">Lilac</option>
+        <option value="rose">Rose</option>
+        <option value="teal">Teal</option>
+        <option value="verdant">Verdant</option>
+        <option value="peacock">Peacock</option>
+        <option value="sepia">Sepia</option>
+      </select>
+      <label class="glow" for="glow">Glow <input type="range" id="glow" min="0.25" max="1.2" step="0.05" value="0.7"></label>
+      <button id="btnFull" type="button">Full</button>
+      <button id="btnHide" type="button">Hide</button>
+    </div>
+    <div class="hint">Drop an audio file anywhere · <kbd>Space</kbd> play or stop · <kbd>N</kbd> new form · <kbd>[</kbd> <kbd>]</kbd> glow · <kbd>H</kbd> hide · <kbd>F</kbd> fullscreen</div>
+  </div>
+</div>
+<input type="file" id="file" accept="audio/*" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="drop" id="drop">Release to play</div>
+
+<script>/* shared/audio-reactive.js, inlined by tools/bundle.mjs */
+/*
+ * SyberLabs audio-reactive base, shared by every piece in this repo.
+ *
+ * A piece supplies its visuals, its own analysis and its demo track. This base supplies the rest:
+ *   - the audio graph: demo, file and mic sources, named analysers, and a look-ahead delay so
+ *     visuals land on the sound (the speakers hear everything `lookahead` seconds after the analysers)
+ *   - kick, snare and hat detection, with hits queued to fire on the sound
+ *   - drum synths for demo tracks
+ *   - noteTracker (which notes are sounding) and levelMeter (how hard the music is pushing)
+ *   - the standard controls, by element id: btnDemo, btnFile, file, btnMic, btnFull, btnHide,
+ *     glow, chrome, toast, drop, ind-kick, ind-snare, ind-hat (any can be left out)
+ *   - a frame loop that survives a bad frame
+ *   - offline rendering: with ?offline=1 the page is driven frame by frame by render/ (see
+ *     window.AudioReactivePage below), randomness is seeded from ?seed=, and analysers are fed
+ *     data computed in Node exactly as an AnalyserNode would compute it
+ *
+ * Usage, in a piece:
+ *   const R = AudioReactive.create({
+ *     name: "cymatica",                          // storage key prefix
+ *     canvas,                                     // what offline capture records
+ *     analysers: { tone: {fftSize:4096, smoothing:0.25, needs:["freq"], lead:0.07} },
+ *     onsets: true,                               // built-in kick/snare/hat detection
+ *     lookahead: 0.1,
+ *     demo: (actx, dest, kit, R) => ({ stop(){} }),
+ *     onHit: (name, strength, now) => {},         // fired on the sound
+ *     step: (now, dt) => {},                      // every frame
+ *   });
+ *   R.mode is "idle" | "demo" | "file" | "mic"; R.an.tone is an AnalyserNode (or its offline stand-in).
+ */
+(function () {
+  "use strict";
+  const QS = new URLSearchParams(location.search);
+  const OFFLINE = QS.get("offline") === "1";
+
+  // ---------- seeded randomness ----------
+  function xmur3(str) {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+    return function () { h = Math.imul(h ^ (h >>> 16), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); h ^= h >>> 16; return h >>> 0; };
+  }
+  function mulberry32(a) {
+    return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  }
+  // offline renders must be repeatable, so every Math.random in the page is seeded before any piece code runs
+  if (OFFLINE) Math.random = mulberry32(xmur3("ar|" + (QS.get("seed") || "SYBER"))());
+
+  // ---------- small helpers every piece uses ----------
+  const clamp = (x, a, b) => (x < a ? a : x > b ? b : x);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const fract = (x) => x - Math.floor(x);
+  // soft ceiling: linear near zero, never exceeds max
+  const soft = (x, max) => (max <= 0 ? 0 : max * (1 - Math.exp(-Math.max(0, x) / max)));
+  const NOTE = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  const noteName = (m) => NOTE[((m % 12) + 12) % 12] + (Math.floor(m / 12) - 1);
+  const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+  const esc = (s) => String(s).replace(/[<>&"]/g, (m) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[m]));
+
+  // ---------- drum synths for demo tracks ----------
+  function drumKit(actx, dest) {
+    const noise = actx.createBuffer(1, actx.sampleRate, actx.sampleRate);
+    const nd = noise.getChannelData(0);
+    for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+    const env = (g, t, a, peak, rel) => { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + rel); };
+    return {
+      noise, env,
+      kick(t, v = 1) { const o = actx.createOscillator(), g = actx.createGain(); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); env(g, t, 0.004, v, 0.4); o.connect(g); g.connect(dest); o.start(t); o.stop(t + 0.5); },
+      snare(t, v = 0.4) {
+        const s = actx.createBufferSource(); s.buffer = noise; const bp = actx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 2600; bp.Q.value = 0.7;
+        const g = actx.createGain(); env(g, t, 0.002, v, 0.17); s.connect(bp); bp.connect(g); g.connect(dest); s.start(t); s.stop(t + 0.25);
+        const o = actx.createOscillator(), og = actx.createGain(); o.frequency.setValueAtTime(220, t); o.frequency.exponentialRampToValueAtTime(160, t + 0.08);
+        env(og, t, 0.002, v * 0.6, 0.1); o.connect(og); og.connect(dest); o.start(t); o.stop(t + 0.15);
+      },
+      hat(t, v = 0.1) { const s = actx.createBufferSource(); s.buffer = noise; const hp = actx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 7500; const g = actx.createGain(); env(g, t, 0.002, v, 0.06); s.connect(hp); hp.connect(g); g.connect(dest); s.start(t); s.stop(t + 0.1); },
+    };
+  }
+  // a step sequencer clock: calls schedule(n, t) for every step, slightly ahead of time
+  function sequencer(actx, stepSeconds, schedule) {
+    let n = 0, next = actx.currentTime + 0.12;
+    const timer = setInterval(() => { while (next < actx.currentTime + 0.15) { schedule(n, next); next += stepSeconds; n++; } }, 25);
+    return () => clearInterval(timer);
+  }
+
+  // ---------- kick / snare / hat detection ----------
+  // One detector per instrument class, each against its own rolling mean + k*sd, fired on the rising edge.
+  // Kick: loudness jump in the sub band, gated by real low-end level.
+  // Snare and hats: broadband noise, measured as the share of bins in the band that jump at once, so tonal
+  // notes (which light only a few bins) do not count; mid-heavy bursts are snares, top-heavy are hats.
+  function onsetDetector(an, sampleRate, emit) {
+    const DET = {
+      kick: { type: "flux", lo: 40, hi: 130, gate: 150, k: 1.4, floor: 8, ref: 150 },
+      snare: { type: "frac", lo: 1400, hi: 6000, jump: 15, gate: 55, k: 1.8, floor: 0.22, ref: 210 },
+      hat: { type: "frac", lo: 8500, hi: 16000, jump: 5, gate: 12, k: 1.5, floor: 0.045, ref: 70 },
+    };
+    for (const n in DET) Object.assign(DET[n], { h: new Float32Array(40), i: 0, prev: 0, last: -1e9 });
+    const FF = new Uint8Array(an.frequencyBinCount), FP = new Uint8Array(an.frequencyBinCount), bw = sampleRate / an.fftSize;
+    const measure = (D) => {
+      const i0 = Math.max(1, Math.round(D.lo / bw)), i1 = Math.min(FF.length - 1, Math.round(D.hi / bw));
+      let f = 0, lvl = 0;
+      for (let i = i0; i <= i1; i++) { const d = FF[i] - FP[i]; lvl += FF[i]; if (D.type === "flux") { if (d > 0) f += d; } else if (d > D.jump) f++; }
+      return { m: f / (i1 - i0 + 1), lvl: lvl / (i1 - i0 + 1) };
+    };
+    return {
+      DET,
+      detect(now) {
+        an.getByteFrequencyData(FF);
+        const M = {}; for (const n in DET) M[n] = measure(DET[n]);
+        const cMid = measure({ type: "flux", lo: 1400, hi: 6000 }).m, cHigh = measure({ type: "flux", lo: 8500, hi: 16000 }).m;
+        for (const name in DET) {
+          const D = DET[name], { m: fl, lvl } = M[name];
+          let mu = 0; for (let i = 0; i < D.h.length; i++) mu += D.h[i]; mu /= D.h.length;
+          let v = 0; for (let i = 0; i < D.h.length; i++) v += (D.h[i] - mu) * (D.h[i] - mu);
+          const sd = Math.sqrt(v / D.h.length), thr = Math.max(D.floor, mu + D.k * sd);
+          const shape = name === "snare" ? cMid > cHigh : name === "hat" ? cHigh > cMid * 1.3 : true;
+          const masked = name === "hat" && now - DET.snare.last < 45; // a snare's noise spills into the hat band
+          if (fl > thr && fl > D.prev && lvl > D.gate && now - D.last > D.ref && !masked && shape) { D.last = now; emit(name, clamp((fl - mu) / (sd * 3 + D.floor), 0.35, 1.4), now); }
+          D.prev = fl; D.h[D.i] = fl; D.i = (D.i + 1) % D.h.length;
+        }
+        FP.set(FF);
+      },
+    };
+  }
+
+  // ---------- which notes are sounding ----------
+  // Spectral peaks, then harmonic summation picks up to three fundamentals. A peak far louder than an
+  // overtone of an already-found voice would be is another note sitting on that harmonic (chord tones do
+  // this all the time), so it stays available. A note must sound in two consecutive frames to count.
+  // Returns [{f, midi, s}] strongest first. Feed it an analyser of about 4096 bins with light smoothing.
+  // Low candidates within 60 ms of a detected kick are ignored, so a kick's falling pitch never reads as bass.
+  function noteTracker(R, anName) {
+    let TD = null; const hist = new Map();
+    return function detect(now) {
+      const an = R.an[anName]; if (!TD || TD.length !== an.frequencyBinCount) TD = new Float32Array(an.frequencyBinCount);
+      an.getFloatFrequencyData(TD);
+      const bh = R.sampleRate / an.fftSize, k0 = Math.max(3, Math.ceil(38 / bh)), k1 = Math.min(TD.length - 3, Math.floor(4400 / bh));
+      let gmax = -200; for (let k = k0; k <= k1; k++) if (TD[k] > gmax) gmax = TD[k];
+      if (gmax < -74) { hist.clear(); return []; }
+      const thr = Math.max(-84, gmax - 36), peaks = [];
+      for (let k = k0 + 2; k <= k1 - 2; k++) {
+        const v = TD[k];
+        if (v > thr && v >= TD[k - 1] && v > TD[k + 1] && v >= TD[k - 2] && v > TD[k + 2]) {
+          const a = TD[k - 1], c = TD[k + 1], den = a - 2 * v + c, d = den !== 0 ? clamp((0.5 * (a - c)) / den, -0.5, 0.5) : 0;
+          peaks.push({ f: (k + d) * bh, a: Math.pow(10, (v - gmax) / 20) });
+        }
+      }
+      peaks.sort((p, q) => q.a - p.a); if (peaks.length > 32) peaks.length = 32;
+      const used = new Uint8Array(peaks.length), out = [];
+      const score = (f0) => {
+        let s = 0, fw = 0, ww = 0, a1 = 0;
+        for (let h = 1; h <= 10; h++) {
+          const t = f0 * h; let best = 0, bf = 0;
+          for (let i = 0; i < peaks.length; i++) if (!used[i] && Math.abs(peaks[i].f - t) < t * 0.025 && peaks[i].a > best) { best = peaks[i].a; bf = peaks[i].f; }
+          if (best > 0) { if (h === 1) a1 = best; const w = Math.min(best, ((a1 || best) * 1.3) / h) / Math.sqrt(h); s += w; fw += (bf / h) * w * h; ww += w * h; }
+        }
+        return [s, ww > 0 ? fw / ww : f0, a1];
+      };
+      let first = 0;
+      for (let v = 0; v < 3; v++) {
+        let bi = -1, bs = 0, bf = 0, ba = 0;
+        for (let i = 0; i < peaks.length; i++) { if (used[i] || peaks[i].f > 2200) continue; const [sc, f, a] = score(peaks[i].f); if (sc > bs) { bs = sc; bi = i; bf = f; ba = a; } }
+        if (bi < 0 || bs < 0.1 || (v > 0 && bs < first * 0.14)) break;
+        if (v === 0) first = bs;
+        const f0 = bf;
+        if (!(f0 < 130 && now - R.detectedAt.kick < 60)) out.push({ f: f0, s: bs, midi: 69 + 12 * Math.log2(f0 / 440) });
+        used[bi] = 1;
+        for (let i = 0; i < peaks.length; i++) {
+          if (used[i]) continue; const r = peaks[i].f / f0, h = Math.round(r);
+          if (h >= 2 && h <= 10 && Math.abs(r - h) < 0.025 * h && peaks[i].a <= (Math.max(ba, peaks[bi].a) * 1.3) / h) used[i] = 1;
+        }
+      }
+      const seen = new Map(), keep = [];
+      for (const v of out) { const m = Math.round(v.midi); seen.set(m, (hist.get(m) || 0) + 1); if ((hist.get(m) || 0) >= 1) keep.push(v); }
+      hist.clear(); for (const [m, c] of seen) hist.set(m, c);
+      return keep.sort((a, b) => b.s - a.s);
+    };
+  }
+
+  // ---------- how hard the music is pushing ----------
+  // RMS of an analyser's waveform, smoothed (fast up, slow down), and its ratio to the long-run level, so a
+  // piece can react to "louder than this track usually is" rather than to absolute volume.
+  function levelMeter(R, anName) {
+    let T = null, loud = 0, avg = 0.08;
+    return function update(dt) {
+      const an = R.an[anName]; if (!T || T.length !== an.fftSize) T = new Float32Array(an.fftSize);
+      an.getFloatTimeDomainData(T);
+      let s = 0; for (let i = 0; i < T.length; i++) s += T[i] * T[i];
+      const rms = Math.sqrt(s / T.length);
+      loud = lerp(loud, rms, rms > loud ? 0.5 : 0.12); avg = lerp(avg, loud, Math.min(1, dt * 0.25));
+      return { rms: loud, rel: loud / (avg + 0.01) };
+    };
+  }
+
+  // ---------- offline stand-in for an AnalyserNode ----------
+  // render/ sends the smoothed dB spectrum and the time-domain samples for each frame; the byte views are
+  // derived here exactly as the Web Audio spec derives them.
+  class OfflineAnalyser {
+    constructor(spec) {
+      this.fftSize = spec.fftSize; this.frequencyBinCount = spec.fftSize / 2;
+      this.smoothingTimeConstant = spec.smoothing; this.minDecibels = -100; this.maxDecibels = -30;
+      this.db = new Float32Array(this.frequencyBinCount).fill(-Infinity); this.time = new Float32Array(this.fftSize);
+    }
+    getFloatFrequencyData(a) { a.set(this.db.length > a.length ? this.db.subarray(0, a.length) : this.db); }
+    getByteFrequencyData(a) {
+      const sc = 255 / (this.maxDecibels - this.minDecibels), n = Math.min(a.length, this.db.length);
+      for (let i = 0; i < n; i++) { const b = Math.floor(sc * (this.db[i] - this.minDecibels)); a[i] = b < 0 ? 0 : b > 255 ? 255 : b; }
+    }
+    getFloatTimeDomainData(a) { a.set(this.time.length > a.length ? this.time.subarray(0, a.length) : this.time); }
+    getByteTimeDomainData(a) { const n = Math.min(a.length, this.time.length); for (let i = 0; i < n; i++) { const b = Math.floor(128 * (1 + this.time[i])); a[i] = b < 0 ? 0 : b > 255 ? 255 : b; } }
+  }
+  function b64ToFloat32(str, out) {
+    const bin = atob(str), n = Math.min(bin.length >> 2, out.length), bytes = new Uint8Array(n * 4);
+    for (let i = 0; i < bytes.length; i++) bytes[i] = bin.charCodeAt(i);
+    out.set(new Float32Array(bytes.buffer, 0, n));
+  }
+
+  // ---------- the piece runtime ----------
+  function create(opts) {
+    const $ = (id) => document.getElementById(id);
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const LOOK = opts.lookahead ?? 0.1, ONSET_LAG = opts.onsetLag ?? 28;
+    const specs = Object.entries(opts.analysers || {}).map(([name, s]) => ({ name, fftSize: s.fftSize || 2048, smoothing: s.smoothing ?? 0.8, needs: s.needs || ["freq"], lead: s.lead ?? 0.03 }));
+    if (opts.onsets && !specs.some((s) => s.name === "onset")) specs.push({ name: "onset", fftSize: 2048, smoothing: 0, needs: ["freq"], lead: 0.03 });
+
+    const R = {
+      offline: OFFLINE, reduce, mode: "idle", detectedAt: { kick: -1e9, snare: -1e9, hat: -1e9 }, actx: null, an: {}, sampleRate: 48000, trackName: "", glow: opts.glow?.value ?? 0.7,
+      demoName: opts.demoName || "Demo track",
+      sourceLabel() { return R.mode === "demo" ? R.demoName : R.mode === "file" ? R.trackName : R.mode === "mic" ? "Microphone" : (opts.idleName || "Idle example"); },
+    };
+    let bus = null, outGain = null, demo = null, micStream = null, micSrc = null, mediaSrc = null, onsets = null;
+    const audioEl = new Audio(); audioEl.loop = true;
+    const EVQ = [];
+
+    function ensureCtx() {
+      if (!R.actx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        const actx = (R.actx = new AC()); R.sampleRate = actx.sampleRate;
+        bus = actx.createGain(); outGain = actx.createGain();
+        const delay = actx.createDelay(1); delay.delayTime.value = LOOK;
+        const sink = actx.createGain(); sink.gain.value = 0; sink.connect(actx.destination);
+        for (const s of specs) { const a = actx.createAnalyser(); a.fftSize = s.fftSize; a.smoothingTimeConstant = s.smoothing; bus.connect(a); a.connect(sink); R.an[s.name] = a; }
+        bus.connect(delay); delay.connect(outGain); outGain.connect(actx.destination);
+        if (opts.onsets) onsets = onsetDetector(R.an.onset, R.sampleRate, hit);
+        opts.onAudio && opts.onAudio(R);
+      }
+      if (R.actx.state === "suspended") R.actx.resume();
+    }
+
+    // hits: detected early (thanks to the look-ahead), held until the matching sound reaches the speakers
+    function hit(name, str, now) {
+      R.detectedAt[name] = now;
+      if (!OFFLINE && (R.mode === "demo" || R.mode === "file")) EVQ.push({ name, str, at: now + LOOK * 1000 - ONSET_LAG });
+      else fire(name, str, now);
+    }
+    function fire(name, str, now) {
+      opts.onHit && opts.onHit(name, str, now);
+      const el = $("ind-" + name); if (el) el.style.setProperty("--on", Math.min(1, 0.4 + 0.6 * str).toFixed(2));
+    }
+    R.fire = fire;
+
+    // ---------- sources ----------
+    function stopAll() {
+      if (demo) { demo.stop(); demo = null; }
+      if (!audioEl.paused) audioEl.pause();
+      if (micStream) { micStream.getTracks().forEach((t) => t.stop()); micStream = null; }
+      if (micSrc) { try { micSrc.disconnect(); } catch (e) {} micSrc = null; }
+      if (outGain) outGain.gain.value = 1;
+      EVQ.length = 0;
+      setMode("idle");
+    }
+    function setMode(m) { R.mode = m; syncButtons(); opts.onSource && opts.onSource(m, R); }
+    function startDemo() {
+      ensureCtx(); stopAll();
+      const master = R.actx.createGain(); const comp = R.actx.createDynamicsCompressor();
+      comp.threshold.value = -16; comp.ratio.value = 3; master.connect(comp); comp.connect(bus);
+      master.gain.value = 0.0001; master.gain.setTargetAtTime(opts.demoGain ?? 0.8, R.actx.currentTime, 0.2);
+      const d = opts.demo(R.actx, master, drumKit(R.actx, master), R);
+      demo = { stop() { d && d.stop && d.stop(); master.gain.setTargetAtTime(0.0001, R.actx.currentTime, 0.08); setTimeout(() => { try { master.disconnect(); } catch (e) {} }, 600); } };
+      setMode("demo");
+    }
+    function playFile(file) {
+      if (!file) return;
+      if (!/^audio\//.test(file.type) && !/\.(mp3|wav|ogg|m4a|aac|flac|opus|webm)$/i.test(file.name)) { toast("That file is not audio. Try an MP3, WAV, M4A, OGG or FLAC."); return; }
+      ensureCtx(); stopAll();
+      if (audioEl.src) URL.revokeObjectURL(audioEl.src);
+      audioEl.src = URL.createObjectURL(file);
+      if (!mediaSrc) { mediaSrc = R.actx.createMediaElementSource(audioEl); mediaSrc.connect(bus); }
+      R.trackName = file.name.replace(/\.[^.]+$/, "");
+      audioEl.play().then(() => setMode("file")).catch(() => toast("This browser could not play that file. Try another format."));
+    }
+    async function startMic() {
+      ensureCtx(); stopAll();
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+        micSrc = R.actx.createMediaStreamSource(micStream); micSrc.connect(bus); outGain.gain.value = 0; setMode("mic");
+      } catch (e) { toast("The microphone isn't available in this view. Open the page directly in your browser to use the mic, or load a track."); }
+    }
+    Object.assign(R, { startDemo, playFile, startMic, stopAll, toast });
+
+    // ---------- controls ----------
+    function syncButtons() {
+      const d = $("btnDemo"); if (d) d.textContent = R.mode === "demo" ? "Stop demo" : R.mode === "idle" ? "Play demo" : "Stop";
+      const m = $("btnMic"); if (m) m.setAttribute("aria-pressed", R.mode === "mic" ? "true" : "false");
+      const f = $("btnFile"); if (f) f.setAttribute("aria-pressed", R.mode === "file" ? "true" : "false");
+    }
+    let toastT = 0;
+    function toast(msg) { const el = $("toast"); if (!el) return; el.textContent = msg; el.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("on"), 5200); }
+    const chrome = $("chrome");
+    const toggleChrome = (force) => chrome && chrome.classList.toggle("off", force !== undefined ? force : !chrome.classList.contains("off"));
+    function fullscreen() {
+      const d = document; if (d.fullscreenElement) { d.exitFullscreen && d.exitFullscreen().catch(() => {}); return; }
+      const el = d.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
+      if (!req) { toast("Fullscreen isn't available here."); return; }
+      try { const p = req.call(el); if (p && p.catch) p.catch(() => toast("Fullscreen isn't available here.")); } catch (e) { toast("Fullscreen isn't available here."); }
+    }
+    const G = Object.assign({ min: 0.2, max: 1.2, value: 0.7 }, opts.glow || {});
+    const glowEl = $("glow"), glowKey = (opts.name || "piece") + "-glow";
+    function setGlow(v, save) {
+      R.glow = clamp(+v, G.min, G.max); if (glowEl) glowEl.value = R.glow;
+      if (save) { try { localStorage.setItem(glowKey, String(R.glow)); } catch (e) {} }
+      G.onChange && G.onChange(R.glow);
+    }
+    R.setGlow = setGlow;
+
+    function bindControls() {
+      const on = (id, ev, fn) => { const el = $(id); if (el) el.addEventListener(ev, fn); };
+      on("btnDemo", "click", () => (R.mode === "idle" ? startDemo() : stopAll()));
+      on("btnFile", "click", () => $("file") && $("file").click());
+      on("file", "change", (e) => { playFile(e.target.files[0]); e.target.value = ""; });
+      on("btnMic", "click", () => (R.mode === "mic" ? stopAll() : startMic()));
+      on("btnFull", "click", fullscreen);
+      on("btnHide", "click", () => { toggleChrome(true); toast("Tap anywhere or press H to bring the controls back."); });
+      if (opts.canvas) opts.canvas.addEventListener("click", () => { if (chrome && chrome.classList.contains("off")) toggleChrome(false); });
+      if (glowEl) glowEl.addEventListener("input", () => setGlow(glowEl.value, true));
+      let saved = null;
+      try { saved = localStorage.getItem(glowKey); for (const k of opts.glowKeysLegacy || []) saved = saved ?? localStorage.getItem(k); } catch (e) {}
+      setGlow(saved !== null && isFinite(+saved) ? saved : G.value, false);
+      window.addEventListener("keydown", (e) => {
+        if (e.target.tagName === "SELECT" || e.metaKey || e.ctrlKey || e.altKey) return;
+        const k = e.key.toLowerCase();
+        if (k === "[" || k === "]") { setGlow(R.glow + (k === "]" ? 0.05 : -0.05), true); return; }
+        if (e.target.tagName === "INPUT" && k !== " ") return;
+        if (k === " ") { e.preventDefault(); R.mode === "idle" ? startDemo() : stopAll(); }
+        else if (k === "h") toggleChrome();
+        else if (k === "f") fullscreen();
+        else if (opts.keys && opts.keys[k]) opts.keys[k]();
+      });
+      const drop = $("drop"); let dragN = 0;
+      window.addEventListener("dragenter", (e) => { e.preventDefault(); dragN++; drop && drop.classList.add("on"); });
+      window.addEventListener("dragover", (e) => e.preventDefault());
+      window.addEventListener("dragleave", () => { if (--dragN <= 0) { dragN = 0; drop && drop.classList.remove("on"); } });
+      window.addEventListener("drop", (e) => { e.preventDefault(); dragN = 0; drop && drop.classList.remove("on"); const f = e.dataTransfer && e.dataTransfer.files[0]; if (f) playFile(f); });
+    }
+
+    // ---------- frame ----------
+    const IND = ["kick", "snare", "hat"].map((n) => $("ind-" + n)).filter(Boolean);
+    function tick(now, dt) {
+      if (R.mode !== "idle" && onsets) onsets.detect(now);
+      // fire anything due before the middle of this frame, so frame timing never pushes a hit late by a whole frame
+      const horizon = now + dt * 500;
+      while (EVQ.length && EVQ[0].at <= horizon) { const e = EVQ.shift(); fire(e.name, e.str, now); }
+      opts.step(now, dt);
+      for (const el of IND) { const v = +el.style.getPropertyValue("--on") || 0; if (v > 0) el.style.setProperty("--on", Math.max(0, v - dt * 5).toFixed(2)); }
+    }
+    let last = 0, warned = false;
+    function frame(now) {
+      requestAnimationFrame(frame); // schedule first, so one bad frame never stops the piece
+      const dt = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60); last = now;
+      try { tick(now, dt); } catch (e) { if (!warned) { warned = true; console.error(e); } }
+    }
+    R.start = function () {
+      if (OFFLINE) { if (chrome) chrome.hidden = true; return; }
+      bindControls(); syncButtons(); opts.onSource && opts.onSource(R.mode, R);
+      requestAnimationFrame(frame);
+    };
+
+    // ---------- offline driver, used by render/ ----------
+    if (OFFLINE) {
+      let fps = 30;
+      window.AudioReactivePage = {
+        specs: () => ({ name: opts.name, analysers: specs, palettes: opts.palettes || null }),
+        setup(cfg) {
+          fps = cfg.fps || 30; R.sampleRate = cfg.sampleRate || 48000;
+          R.actx = { sampleRate: R.sampleRate, currentTime: 0, state: "running" };
+          for (const s of specs) R.an[s.name] = new OfflineAnalyser(s);
+          if (opts.onsets) onsets = onsetDetector(R.an.onset, R.sampleRate, hit);
+          R.mode = "file"; R.trackName = cfg.title || "track";
+          if (cfg.glow != null) setGlow(cfg.glow, false); else setGlow(G.value, false);
+          const info = (opts.offlineSetup && opts.offlineSetup(cfg, R)) || {};
+          opts.onSource && opts.onSource(R.mode, R);
+          return info;
+        },
+        frame(i, payload) {
+          for (const s of specs) { const p = payload[s.name], a = R.an[s.name]; if (!p) continue; if (p.db) b64ToFloat32(p.db, a.db); if (p.time) b64ToFloat32(p.time, a.time); }
+          const now = (i * 1000) / fps; R.actx.currentTime = now / 1000;
+          tick(now, 1 / fps);
+        },
+        capture: (q) => (opts.canvas || document.querySelector("canvas")).toDataURL("image/jpeg", q || 0.92).slice(23),
+      };
+    }
+    return R;
+  }
+
+  window.AudioReactive = { create, drumKit, sequencer, onsetDetector, noteTracker, levelMeter, xmur3, mulberry32, clamp, lerp, fract, soft, noteName, hz, esc, OFFLINE };
+})();
+</script>
+<script>
+"use strict";
+(function(){
+  const $=id=>document.getElementById(id);
+  const cv=$("stage"), ctx=cv.getContext("2d");
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const AR=window.AudioReactive, {xmur3,mulberry32,clamp,fract,lerp,soft}=AR;
+  const QS=new URLSearchParams(location.search), OFFLINE=AR.OFFLINE;   // offline seeding happens in the shared base
+  // radial gradient that can never throw: radii are forced finite and non-negative
+  const fin=(v,d)=>Number.isFinite(v)?v:d;
+  function radial(x0,y0,r0,x1,y1,r1){
+    r0=Math.max(0,fin(r0,0)); r1=Math.max(r0+0.001,fin(r1,1));
+    return ctx.createRadialGradient(fin(x0,0),fin(y0,0),r0,fin(x1,0),fin(y1,0),r1);
+  }
+
+  // ---------- spectral ramps (from the plate engine) ----------
+  const RAMPS={
+    iris:[[0,[0,0,0]],[0.10,[0.13,0.05,0.55]],[0.27,[0.85,0.10,0.20]],[0.44,[1.0,0.45,0.06]],[0.59,[1.0,0.86,0.20]],[0.71,[0.45,0.90,0.40]],[0.83,[0.15,0.70,1.0]],[0.93,[0.45,0.30,0.90]],[1,[0,0,0]]],
+    reliquary:[[0,[0,0,0]],[0.18,[0.10,0.20,0.85]],[0.40,[0.55,0.80,1.0]],[0.50,[1,1,1]],[0.60,[1.0,0.80,0.40]],[0.80,[0.75,0.45,0.10]],[1,[0,0,0]]],
+    ember:[[0,[0,0,0]],[0.20,[0.55,0.05,0.10]],[0.42,[0.95,0.20,0.05]],[0.60,[1.0,0.55,0.10]],[0.76,[1.0,0.85,0.35]],[0.88,[1,1,0.85]],[1,[0,0,0]]],
+    ice:[[0,[0,0,0]],[0.22,[0.10,0.25,0.75]],[0.45,[0.20,0.65,1.0]],[0.62,[0.55,0.90,1.0]],[0.78,[0.90,0.98,1.0]],[0.90,[1,1,1]],[1,[0,0,0]]],
+    verdant:[[0,[0,0,0]],[0.16,[0.05,0.22,0.10]],[0.36,[0.10,0.55,0.20]],[0.54,[0.45,0.80,0.25]],[0.70,[0.80,0.95,0.45]],[0.85,[0.97,1.0,0.80]],[1,[0,0,0]]],
+    gold:[[0,[0,0,0]],[0.16,[0.35,0.18,0.02]],[0.36,[0.85,0.55,0.05]],[0.54,[1.0,0.80,0.15]],[0.70,[1.0,0.92,0.40]],[0.86,[1.0,1.0,0.85]],[1,[0,0,0]]],
+    lilac:[[0,[0,0,0]],[0.16,[0.20,0.12,0.38]],[0.36,[0.45,0.35,0.80]],[0.54,[0.65,0.55,0.95]],[0.70,[0.82,0.75,1.0]],[0.86,[0.95,0.92,1.0]],[1,[0,0,0]]],
+    rose:[[0,[0,0,0]],[0.16,[0.35,0.05,0.20]],[0.36,[0.85,0.15,0.45]],[0.54,[1.0,0.40,0.65]],[0.70,[1.0,0.68,0.82]],[0.86,[1.0,0.92,0.95]],[1,[0,0,0]]],
+    teal:[[0,[0,0,0]],[0.16,[0.02,0.22,0.24]],[0.36,[0.05,0.55,0.55]],[0.54,[0.20,0.80,0.75]],[0.70,[0.55,0.95,0.88]],[0.86,[0.90,1.0,0.97]],[1,[0,0,0]]],
+    sepia:[[0,[0,0,0]],[0.18,[0.25,0.15,0.08]],[0.40,[0.55,0.38,0.20]],[0.58,[0.80,0.62,0.40]],[0.76,[0.95,0.85,0.68]],[0.90,[1.0,0.98,0.92]],[1,[0,0,0]]],
+    peacock:[[0,[0,0,0]],[0.14,[0.05,0.20,0.15]],[0.32,[0.05,0.50,0.45]],[0.50,[0.10,0.55,0.85]],[0.66,[0.35,0.80,0.90]],[0.82,[0.75,0.95,0.85]],[0.92,[0.97,1.0,0.95]],[1,[0,0,0]]]
+  };
+  function buildLUT(anchors, sat){
+    const L=new Float32Array(256*3);
+    for(let i=0;i<256;i++){
+      const u=i/255; let j=0;
+      while(j<anchors.length-1 && u>anchors[j+1][0]) j++;
+      const a=anchors[j], b=anchors[Math.min(j+1,anchors.length-1)];
+      const span=(b[0]-a[0])||1, f=clamp((u-a[0])/span,0,1);
+      let r=a[1][0]+(b[1][0]-a[1][0])*f, g=a[1][1]+(b[1][1]-a[1][1])*f, bl=a[1][2]+(b[1][2]-a[1][2])*f;
+      const lum=0.299*r+0.587*g+0.114*bl;
+      L[i*3]=lum+(r-lum)*sat; L[i*3+1]=lum+(g-lum)*sat; L[i*3+2]=lum+(bl-lum)*sat;
+    }
+    return L;
+  }
+
+  // ---------- attractor families (from the plate engine), coefficient-driven ----------
+  const FAM={
+    clifford:{name:"Clifford",lo:[-2,-2,-2,-2],hi:[2,2,2,2]},
+    dejong:{name:"De Jong",lo:[-3,-3,-3,-3],hi:[3,3,3,3]},
+    svensson:{name:"Svensson",lo:[-3,-3,-3,-3],hi:[3,3,3,3]},
+    fractal:{name:"Fractal dream",lo:[-3,-3,-1.5,-1.5],hi:[3,3,1.5,1.5]}
+  };
+  const FALLBACK={clifford:[-1.4,1.6,1.0,0.7], dejong:[1.641,1.902,0.316,1.525], svensson:[1.5,-1.8,1.6,0.9], fractal:[-0.966918,2.879879,0.765145,0.744728]};
+  function stepper(kind,c){
+    const a=c[0],b=c[1],cc=c[2],d=c[3];
+    if(kind==="dejong")   return (x,y,o)=>{ o[0]=Math.sin(a*y)-Math.cos(b*x); o[1]=Math.sin(cc*x)-Math.cos(d*y); };
+    if(kind==="svensson") return (x,y,o)=>{ o[0]=d*Math.sin(a*x)-Math.sin(b*y); o[1]=cc*Math.cos(a*x)+Math.cos(b*y); };
+    if(kind==="fractal")  return (x,y,o)=>{ o[0]=Math.sin(y*b)+cc*Math.sin(x*b); o[1]=Math.sin(x*a)+d*Math.sin(y*a); };
+    return (x,y,o)=>{ o[0]=Math.sin(a*y)+cc*Math.cos(a*x); o[1]=Math.sin(b*x)+d*Math.cos(b*y); };
+  }
+  // keep only genuinely chaotic maps (positive Lyapunov exponent, real extent)
+  function qualify(kind,c,rnd){
+    const st=stepper(kind,c), o=[0,0], oe=[0,0];
+    let x=rnd()*2-1, y=rnd()*2-1;
+    for(let i=0;i<400;i++){ st(x,y,o); x=o[0]; y=o[1]; if(!isFinite(x)||!isFinite(y)) return false; }
+    const d0=1e-6; let xe=x+d0, ye=y, sum=0, n=0, minx=1e9,maxx=-1e9,miny=1e9,maxy=-1e9;
+    for(let i=0;i<3500;i++){
+      st(x,y,o); st(xe,ye,oe); x=o[0]; y=o[1];
+      if(!isFinite(x)||!isFinite(y)) return false;
+      if(x<minx)minx=x; if(x>maxx)maxx=x; if(y<miny)miny=y; if(y>maxy)maxy=y;
+      const dx=oe[0]-x, dy=oe[1]-y, dist=Math.hypot(dx,dy);
+      if(dist===0){ xe=x+d0; ye=y; continue; }
+      sum+=Math.log(dist/d0); n++; xe=x+d0*dx/dist; ye=y+d0*dy/dist;
+    }
+    const ly=sum/Math.max(n,1);
+    return isFinite(ly) && ly>0.06 && (maxx-minx)>0.15 && (maxy-miny)>0.15 && Math.max(maxx-minx,maxy-miny)>0.5;
+  }
+  // a chain of nearby chaotic forms, so the morph between neighbours stays alive
+  function buildForms(seed,kind){
+    const rnd=mulberry32(xmur3(seed+"|forms")()), F=FAM[kind], out=[];
+    let prev=null;
+    for(let k=0;k<7;k++){
+      let got=null;
+      for(let t=0;t<90&&!got;t++){
+        const c=[0,1,2,3].map(j=>{
+          if(!prev||t>55) return lerp(F.lo[j],F.hi[j],rnd());
+          return clamp(prev[j]+(rnd()-0.5)*0.8,F.lo[j],F.hi[j]);
+        });
+        if(qualify(kind,c,rnd)) got=c;
+      }
+      if(!got) got=FALLBACK[kind].map((v,j)=>v+(k?(rnd()-0.5)*0.05:0));
+      out.push(got); prev=got;
+    }
+    return out;
+  }
+
+  // ---------- state ----------
+  const WORDS=["CRISTO","REX","LUX","VERBUM","ROSA","STELLA","AVE","SPES","VIA","CORPUS","IGNIS","AURORA","NOX","EIDOLON","SIGNUM","VELUM","ARCA","SOL"];
+  const ORDERS=[2,4,6,8,3,12,4,6,8,2];
+  const S={seed:"",kind:"clifford",forms:null,formsBy:{},m:0,mT:0,order:6,oi:0,mirror:true,rot:0,rotT:0,hue:0,
+    palette:"auto",autoPal:true,palName:"reliquary",palT:1,glow:0.7,pitch:0,sg:[1,-1,1,-1],modGain:1,cov:1,collapseT:0,twDir:1,warpK:5,cut:1,bFast:0};
+  const PAL_ORDER=["reliquary","iris","ember","ice","lilac","gold","peacock","rose","teal","verdant","sepia"];
+  const minSide=Math.min(innerWidth,innerHeight);
+  const R=OFFLINE?clamp(+(QS.get("core")||(minSide>=900?560:400)),200,900):(minSide<520?300:400);   // vessel field resolution
+  const field=new Float32Array(R*R);
+  const vcan=document.createElement("canvas"); vcan.width=vcan.height=R;
+  const vctx=vcan.getContext("2d");
+  const vimg=vctx.createImageData(R,R);
+  for(let i=3;i<vimg.data.length;i+=4) vimg.data[i]=255;
+  const b1=document.createElement("canvas"); b1.width=b1.height=Math.round(R/5);
+  const b2=document.createElement("canvas"); b2.width=b2.height=Math.round(R/13);
+  const b1x=b1.getContext("2d"), b2x=b2.getContext("2d");
+
+  const NO=48; const ox=new Float64Array(NO), oy=new Float64Array(NO), osk=new Int32Array(NO);
+  for(let q=0;q<NO;q++){ ox[q]=Math.random()*2-1; oy[q]=Math.random()*2-1; osk[q]=16; }
+  let bcx=0,bcy=0,bspan=1,bInit=false, mxEMA=4, splatBudget=220000;
+  let LUT=null, rayRGB="214,176,92", rayHot="255,240,205", boltRGB="170,190,255";
+
+  // palettes crossfade: LUTA is where we came from, LUTB where we are going, LUT the blend this frame
+  let LUTA=buildLUT(RAMPS.reliquary,0.95), LUTB=LUTA;
+  LUT=new Float32Array(768);
+  function goPalette(name,seconds){
+    LUTA=Float32Array.from(LUT.some(v=>v>0)?LUT:LUTB); LUTB=buildLUT(RAMPS[name]||RAMPS.reliquary,0.95);
+    S.palName=name; S.palT=0; S.palDur=seconds||2.5;
+  }
+  function nextPalette(){ const i=PAL_ORDER.indexOf(S.palName); goPalette(PAL_ORDER[(i+1+((Math.random()*2)|0))%PAL_ORDER.length],2.2); }
+  function setPalette(name){
+    S.palette=name; S.autoPal=name==="auto";
+    if(!S.autoPal) goPalette(name,0.6);
+  }
+  function blendPalette(dt){
+    if(S.palT<1) S.palT=Math.min(1,S.palT+dt/S.palDur);
+    const f=S.palT*S.palT*(3-2*S.palT);
+    for(let i=0;i<768;i++) LUT[i]=LUTA[i]+(LUTB[i]-LUTA[i])*f;
+    paletteColors();
+  }
+  function paletteColors(){
+    // ray tone: the ramp's warm upper band, pulled toward altar gold
+    const i=Math.round(0.62*255)*3, gold=[0.85,0.68,0.33];
+    const c=[0,1,2].map(k=>Math.round(255*clamp(lerp(gold[k],LUT[i+k],0.45),0,1)));
+    rayRGB=c.join(",");
+    rayHot=c.map(v=>Math.round(lerp(v,255,0.65))).join(",");
+    const bi=Math.round(0.3*255)*3, tesla=[0.6,0.68,1.0];
+    boltRGB=[0,1,2].map(k=>Math.round(255*clamp(lerp(tesla[k],Math.max(LUT[bi+k],LUT[i+k]*0.6),0.4)+0.08,0,1))).join(",");
+  }
+
+  function newForm(seed){
+    S.seed=seed||(WORDS[(Math.random()*WORDS.length)|0]+"-"+Math.floor(Math.random()*9000+1000));
+    const r=mulberry32(xmur3(S.seed)());
+    const fams=Object.keys(FAM); S.kind=fams[Math.floor(r()*fams.length)];
+    // every family gets its own chain of forms up front, so the music can jump between them without a stall
+    fams.forEach(k=>{ S.formsBy[k]=buildForms(S.seed+"|"+k,k); });
+    S.forms=S.formsBy[S.kind];
+    S.oi=Math.floor(r()*ORDERS.length); S.order=ORDERS[S.oi];
+    S.mirror=r()>0.1; S.m=S.mT=0; S.hue=r();
+    S.sg=[0,1,2,3].map(()=>r()<0.5?-1:1); S.twDir=r()<0.5?-1:1; S.warpK=3+Math.floor(r()*5);
+    bInit=false; field.fill(0);
+    updatePlate();
+  }
+  // the music changes the function itself: jump to another attractor family
+  function switchFamily(){
+    const fams=Object.keys(FAM); let k=S.kind;
+    while(k===S.kind) k=fams[(Math.random()*fams.length)|0];
+    S.kind=k; S.forms=S.formsBy[k]; S.bFast=0.6; S.cut=0.4;
+    S.twDir=-S.twDir; S.warpK=3+Math.floor(Math.random()*5);
+  }
+  function nextOrder(){ S.oi=(S.oi+1+((Math.random()*2)|0))%ORDERS.length; S.order=ORDERS[S.oi]; S.cut=Math.min(S.cut,0.45); }
+  // beat grid: every hit pushes the form, bars click the kaleidoscope, phrases change symmetry, function and color
+  function formBeat(str,n){
+    S.mT+=n%4===0?1:0.2+0.25*str;
+    S.cut=Math.min(S.cut,0.85-0.2*str);
+    S.hue=fract(S.hue+0.03*str);
+    if(n%8===0) nextOrder();
+    if(n%8===4 && Math.random()<0.35) S.mirror=!S.mirror;
+    if(n%16===0) switchFamily();
+    if(n%16===8 && S.autoPal) nextPalette();
+  }
+  function switchSection(){
+    S.mT=Math.floor(S.mT)+2;
+    switchFamily(); if(S.autoPal) nextPalette();
+    S.oi=(S.oi+1)%ORDERS.length; S.order=ORDERS[S.oi];
+    A.kick=Math.max(A.kick,1.3);
+    HL.burst=1.8;
+    HL.zV+=2.4*(reduce?0.25:1); HL.pV+=0.8*(reduce?0.25:1);
+    updatePlate();
+  }
+  function coeffNow(t){
+    const K=S.forms.length, P=2*(K-1), pos=i=>i<K?i:P-i;
+    const p=((S.m%P)+P)%P, i=Math.floor(p), f0=p-i, f=f0*f0*(3-2*f0);
+    const a=S.forms[pos(i)], b=S.forms[pos((i+1)%P)];
+    // each coefficient is wired to a band, so the attractor's equation bends with the sound
+    const F=FAM[S.kind], sg=S.sg;
+    const g=S.modGain, mod=[0.07*g*A.bass, 0.06*g*A.mid*Math.sin(t*0.5), 0.05*g*Math.min(1,A.treble), 0.18*g*HL.punch];
+    return [0,1,2,3].map(j=>clamp(lerp(a[j],b[j],f)+sg[j]*mod[j]+0.05*A.mid*Math.sin(t*1.3+j*1.7),F.lo[j],F.hi[j]));
+  }
+
+  // ---------- the vessel: orbit accumulation with decay ----------
+  const rc=new Float64Array(12), rs=new Float64Array(12);
+  function accumulate(t){
+    const st=stepper(S.kind,coeffNow(t)), o=[0,0];
+    const order=S.order, mirror=S.mirror, copies=order*(mirror?2:1);
+    const per=Math.max(40,Math.ceil(splatBudget/copies/NO));
+    for(let k=0;k<order;k++){ const a=S.rot+2*Math.PI*k/order; rc[k]=Math.cos(a); rs[k]=Math.sin(a); }
+    const scale=(R*0.36)/bspan*(1+0.03*A.bass+0.2*HL.punch), C=R/2, F=field;
+    // space warp after the map: bass twists the form, treble ripples it into petals
+    const rm=reduce?0.3:1, Rf=R*0.36;
+    const twist=(0.35*A.bass+0.9*HL.punch)*S.twDir*rm/Rf, wv=(0.05*Math.min(1,A.treble)+0.03*A.mid+0.1*HL.snare)*rm, wk=S.warpK, wph=t*1.2;
+    const warp=twist!==0||wv>0.002;
+    let mnx=1e9,mxx=-1e9,mny=1e9,mxy=-1e9;
+    for(let q=0;q<NO;q++){
+      let x=ox[q], y=oy[q], sk=osk[q];
+      for(let i=0;i<per;i++){
+        st(x,y,o); x=o[0]; y=o[1];
+        if(x!==x||y!==y||x>1e5||x<-1e5||y>1e5||y<-1e5){ x=Math.random()*2-1; y=Math.random()*2-1; sk=16; continue; }
+        if(sk>0){ sk--; continue; }
+        if(x<mnx)mnx=x; if(x>mxx)mxx=x; if(y<mny)mny=y; if(y>mxy)mxy=y;
+        if(!bInit) continue;
+        let px=(x-bcx)*scale, py=(y-bcy)*scale;
+        if(warp){
+          const r=Math.sqrt(px*px+py*py);
+          if(r>0){ const th=Math.atan2(py,px)+twist*r, rr=r*(1+wv*Math.sin(th*wk+wph)); px=Math.cos(th)*rr; py=Math.sin(th)*rr; }
+        }
+        for(let k=0;k<order;k++){
+          const ax=px*rc[k]-py*rs[k], ay=px*rs[k]+py*rc[k];
+          const sy=(C+ay)|0; if(sy<0||sy>=R) continue;
+          let sx=(C+ax)|0; if(sx>=0&&sx<R) F[sy*R+sx]+=1;
+          if(mirror){ sx=(C-ax)|0; if(sx>=0&&sx<R) F[sy*R+sx]+=1; }
+        }
+      }
+      if(Math.random()<0.03){ x=Math.random()*2-1; y=Math.random()*2-1; sk=16; }
+      ox[q]=x; oy[q]=y; osk[q]=sk;
+    }
+    if(mxx>mnx){
+      const ncx=(mnx+mxx)/2, ncy=(mny+mxy)/2, ns=Math.max(mxx-mnx,mxy-mny,0.3)/2;
+      if(!bInit){ bcx=ncx; bcy=ncy; bspan=ns; bInit=true; }
+      else { const br=S.bFast>0?0.3:0.06; bcx=lerp(bcx,ncx,br); bcy=lerp(bcy,ncy,br); bspan=lerp(bspan,ns,br); }
+    }
+  }
+
+  function develop(dt){
+    const N=R*R, F=field, data=vimg.data, L=LUT;
+    const expo=0.85*(1+soft(0.25*A.bass+0.9*HL.punch,0.7*S.glow));
+    const gam=1.3+0.35*(1-clamp(S.glow,0,1))+0.35*(0.4-Math.min(0.8,A.mid));   // darker midtones keep the bands visible
+    const vg=0.55+0.35*clamp(S.glow,0,1.2);         // overall vessel level
+    const hotMax=0.15+0.4*clamp(S.glow,0,1.2);      // the core never goes fully white
+    const logMax=Math.log(1+Math.max(mxEMA,2)*expo);
+    // color banding follows the mids; trails are long in quiet passages and sharp when it hits
+    const bands=0.8+2.4*Math.min(1,A.mid)+0.6*A.kick, ph=S.hue;
+    const decay=Math.pow(lerp(0.93,0.84,clamp(A.energy*1.2,0,1)),dt*60)*S.cut; S.cut=1;
+    let lit=0;
+    let fmax=0;
+    // the white-hot core starts later when glow is turned down
+    const hotLo=0.95-0.06*clamp(S.glow,0,1), hotK=1/(1-hotLo);
+    for(let i=0,o=0;i<N;i++,o+=4){
+      const d=F[i];
+      if(d<0.03){ if(d!==0){F[i]=0;} data[o]=0; data[o+1]=0; data[o+2]=0; continue; }
+      if(d>fmax) fmax=d;
+      lit++;
+      let t=Math.log(1+d*expo)/logMax; if(t>1)t=1;
+      t=Math.pow(t,gam);
+      const o3=((fract(t*bands+ph)*255)|0)*3;
+      let e=t/0.11; e=e>1?1:e*e*(3-2*e);
+      let h=(t-hotLo)*hotK; h=h<0?0:h>1?1:h*h*(3-2*h); h*=hotMax;
+      let r=L[o3]*e, g=L[o3+1]*e, b=L[o3+2]*e;
+      r+=(1-r)*h; g+=(1-g)*h; b+=(1-b)*h;
+      data[o]=r*vg*255; data[o+1]=g*vg*255; data[o+2]=b*vg*255;
+      F[i]=d*decay;
+    }
+    S.cov=lit/N;
+    // rise fast so a sudden surge re-normalizes instead of blowing out to white
+    mxEMA=lerp(mxEMA,fmax,fmax>mxEMA?0.4:0.08);
+    vctx.putImageData(vimg,0,0);
+    b1x.clearRect(0,0,b1.width,b1.height); b1x.drawImage(vcan,0,0,b1.width,b1.height);
+    b2x.clearRect(0,0,b2.width,b2.height); b2x.drawImage(b1,0,0,b2.width,b2.height);
+  }
+
+  // ---------- audio ----------
+  const A={bass:0,mid:0,treble:0,energy:0,kick:0,kickEvent:0,bassAvg:0.1,lastKick:0,shortE:0,longE:0.15,lastSwitch:0};
+  // the shared base runs the audio graph, the sources and kick/snare/hat detection;
+  // this piece reads one smoothed analyser ("level") for its spectrum and waveform
+  let wave=new Uint8Array(2048).fill(128), freq=new Uint8Array(1024), binHz=23.4;
+  function bandAvg(lo,hi){
+    const i0=Math.max(1,Math.round(lo/binHz)), i1=Math.min(freq.length-1,Math.max(i0,Math.round(hi/binHz)));
+    let s=0; for(let i=i0;i<=i1;i++){ const x=freq[i]/255; s+=x*x; }
+    return Math.sqrt(s/(i1-i0+1));
+  }
+  // folded spectrum: k=0 is the deep end, k=1 the bright end
+  function spec(k,t){
+    if(RT.mode==="idle"){
+      return 0.2+0.13*Math.sin(t*0.9+k*9)+0.09*Math.sin(t*2.1-k*15)+0.08*Math.pow(0.5+0.5*Math.sin(t*1.7),6)*(1-k);
+    }
+    const f=45*Math.pow(260,k), c=f/binHz, w=Math.max(1,c*0.12);
+    const i0=Math.max(1,Math.floor(c-w)), i1=Math.min(freq.length-1,Math.ceil(c+w));
+    let s=0; for(let i=i0;i<=i1;i++) s+=freq[i];
+    const v=s/((i1-i0+1)*255);
+    return clamp(Math.pow(v,1.35)*(1.15+k*0.9),0,1);
+  }
+  // bass pitch class from the strongest low bin (parabolic peak), for the core's rotation
+  function bassPitch(){
+    const i0=Math.max(2,Math.round(45/binHz)), i1=Math.round(260/binHz);
+    let bi=i0, bv=0; for(let i=i0;i<=i1;i++) if(freq[i]>bv){ bv=freq[i]; bi=i; }
+    if(bv<150) return -1;
+    const a=freq[bi-1], b=freq[bi], c=freq[bi+1], d=(a-c)/(2*(a-2*b+c)||1);
+    const f=(bi+clamp(d,-0.5,0.5))*binHz;
+    return ((Math.round(12*Math.log2(f/32.703))%12)+12)%12;
+  }
+  function onHit(name,str,now){
+    if(name==="kick") onBeat(str,now);
+    else if(name==="snare"){ HL.snare=Math.max(HL.snare,str); ringOut("snare",str,now); }
+    else { HL.hat=Math.max(HL.hat,str); HL.hatN++; ringOut("hat",str,now); }
+  }
+  // sonar rings: each hit leaves the luna at a constant speed, so their spacing draws the rhythm
+  const RINGS=[];
+  function ringOut(kind,str,now){
+    const NP=kind==="kick"?320:kind==="snare"?240:110;
+    const pa=new Float32Array(NP), pr=new Float32Array(NP), pz=new Float32Array(NP);
+    for(let i=0;i<NP;i++){ pa[i]=Math.random()*Math.PI*2; pr[i]=(Math.random()+Math.random()+Math.random()-1.5)/1.5; pz[i]=0.4+Math.random()*0.9; }
+    const ph=[]; for(let i=0;i<40;i++) ph.push(Math.random()*Math.PI*2);
+    RINGS.push({kind,s:str,t:now,ph,pa,pr,pz,spin:(Math.random()-0.5)*0.4});
+    if(RINGS.length>60) RINGS.shift();
+  }
+  // a closed, wavering path: low harmonics bend it, high ones roughen it, and both churn as the ring ages
+  function roughRing(cx,cy,rr,amp,ph,age,lo,hi,rough,w){
+    const steps=220, o=(w||0)*6; ctx.beginPath();
+    const p0=ph[o%40],p1=ph[(o+1)%40],p2=ph[(o+2)%40],p3=ph[(o+3)%40],p4=ph[(o+4)%40],p5=ph[(o+5)%40];
+    for(let q=0;q<=steps;q++){
+      const th=q/steps*Math.PI*2;
+      let d=0.4*Math.sin(lo*th+p0+age*1.7)+0.25*Math.sin((lo+3)*th+p1-age*2.3);
+      d+=rough*(0.45*Math.sin(hi*th+p2+age*9)+0.35*Math.sin((hi*2+5)*th+p3-age*13)+0.25*Math.sin((hi*3+11)*th+p4+age*17)+0.15*Math.sin((hi*5+7)*th+p5-age*23));
+      const r=rr+d*amp, x=cx+Math.cos(th)*r, y=cy+Math.sin(th)*r;
+      q?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.closePath();
+  }
+  function ringDust(cx,cy,rr,spread,Rg,age,alpha,size,rgb){
+    if(alpha<0.01) return;
+    ctx.beginPath();
+    const n=Rg.pa.length, sz=Math.max(0.8,size);
+    for(let i=0;i<n;i++){
+      const th=Rg.pa[i]+Rg.spin*age*Rg.pz[i], r=rr+Rg.pr[i]*spread*Rg.pz[i];
+      const x=cx+Math.cos(th)*r, y=cy+Math.sin(th)*r, z=sz*Rg.pz[i];
+      ctx.rect(x-z/2,y-z/2,z,z);
+    }
+    ctx.fillStyle="rgba("+rgb+","+alpha.toFixed(3)+")"; ctx.fill();
+  }
+  function onBeat(str,now){
+    A.lastKick=now; A.beatN=(A.beatN||0)+1;
+    A.kick=clamp(A.kick+0.6*str,0,1.6); A.kickEvent=1;
+    HL.punch=Math.max(HL.punch,str); ringOut("kick",str,now);
+    HL.zV+=1.25*(0.35+str)*(reduce?0.25:1); HL.pV+=0.5*(0.3+str)*(reduce?0.25:1);
+    HL.burst=Math.max(HL.burst,str);
+    formBeat(str,A.beatN);
+  }
+  function analyse(dt,t,now){
+    let bass,mid,tre;
+    if(RT.mode==="idle"){
+      const pulse=Math.pow(0.5+0.5*Math.sin(t*1.6),8);
+      bass=0.22+0.25*pulse; mid=0.25+0.08*Math.sin(t*0.7); tre=0.18+0.06*Math.sin(t*1.9);
+    } else {
+      const an=RT.an.level; an.getByteFrequencyData(freq); an.getByteTimeDomainData(wave); binHz=RT.sampleRate/an.fftSize;
+      bass=bandAvg(36,170); mid=bandAvg(180,2200); tre=bandAvg(2200,12000);
+      const pc=bassPitch(); if(pc>=0) S.pitch=pc;
+    }
+    if(RT.mode==="idle"){
+      for(let i=0;i<wave.length;i++) wave[i]=128+(Math.sin(i*0.031+t*3)*18+Math.sin(i*0.113-t*5.3)*7)*(0.4+bass);
+      // 96 bpm example groove: kick on 1 and 3, snare on 2 and 4, hats on the eighths
+      const e8=Math.floor(now/312.5);
+      if(e8!==HL.idleStep){ HL.idleStep=e8; const st=e8%8;
+        if(st===0||st===4) RT.fire("kick",0.55,now);
+        if(st===2||st===6) RT.fire("snare",0.5,now);
+        RT.fire("hat",st%2?0.35:0.5,now);
+        if(st===0) S.pitch=(S.pitch+5)%12; }
+    }
+    const up=Math.min(1,dt*20), down=Math.min(1,dt*5);
+    A.bass=lerp(A.bass,bass,bass>A.bass?up:down);
+    A.mid=lerp(A.mid,mid,mid>A.mid?up:down);
+    A.treble=lerp(A.treble,tre*1.6,tre>A.treble?up:down);
+    A.energy=clamp(0.5*A.bass+0.35*A.mid+0.25*A.treble,0,1.2);
+    A.kick*=Math.exp(-dt*4.8);
+    // sections: a lift well above the recent level reshapes the vessel
+    A.shortE=lerp(A.shortE,A.energy,Math.min(1,dt*2.5));
+    A.longE=lerp(A.longE,A.energy,Math.min(1,dt*0.12));
+    if(RT.mode!=="idle" && A.shortE>A.longE*1.4 && A.shortE>0.22 && now-A.lastSwitch>9000){ A.lastSwitch=now; switchSection(); }
+  }
+
+  // procedural demo: a slow modal hymn with a pulse that comes and goes
+  function makeDemo(actx,master,kit){
+    const hz=AR.hz, env=kit.env;
+    const CH=[[57,60,64],[53,57,60],[48,52,55],[55,59,62]];
+    const step=60/96/2;
+    function pad(ch,t,dur){
+      const lp=actx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=950; lp.Q.value=0.6;
+      const g=actx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.06,t+1.1); g.gain.setValueAtTime(0.06,t+dur-0.2); g.gain.exponentialRampToValueAtTime(0.0001,t+dur+1.0);
+      lp.connect(g); g.connect(master);
+      ch.forEach(m=>{ [-7,7].forEach(dc=>{ const o=actx.createOscillator(); o.type="sawtooth"; o.frequency.value=hz(m); o.detune.value=dc; o.connect(lp); o.start(t); o.stop(t+dur+1.1); });
+        const s=actx.createOscillator(); s.type="sine"; s.frequency.value=hz(m+12); const sg=actx.createGain(); sg.gain.value=0.35; s.connect(sg); sg.connect(lp); s.start(t); s.stop(t+dur+1.1); });
+    }
+    function sub(m,t,dur){ const o=actx.createOscillator(), g=actx.createGain(); o.type="sine"; o.frequency.value=hz(m); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.22,t+0.05); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.connect(g); g.connect(master); o.start(t); o.stop(t+dur+0.05); }
+    function bell(m,t,v){ [[1,v,1.4],[2.76,v*0.3,0.5]].forEach(([mul,gv,rl])=>{ const o=actx.createOscillator(), g=actx.createGain(); o.type="triangle"; o.frequency.value=hz(m)*mul; env(g,t,0.003,gv,rl); o.connect(g); g.connect(master); o.start(t); o.stop(t+rl+0.1); }); }
+    const ARP=[0,1,2,1,2,0,1,2];
+    function schedule(n,t){
+      const sec=Math.floor(n/64)%4, ch=CH[Math.floor(n/8)%4];
+      if(n%8===0){ pad(ch,t,8*step); if(sec===1||sec===2) sub(ch[0]-24,t,8*step); }
+      if((sec===1||sec===2) && n%2===0) kit.kick(t,0.95);
+      if(sec===2 && n%16===7) kit.kick(t,0.95);
+      if(sec===2 && n%2===1) kit.hat(t,0.12);
+      if((sec===1||sec===2) && (n%8===2||n%8===6)) kit.snare(t,sec===2?0.5:0.35);
+      if(sec===1 && n%4===3) kit.hat(t,0.06);
+      const pb=sec===2?0.85:sec===0?0.45:sec===3?0.2:0.55;
+      if(((n*7919)%100)/100<pb) bell(ch[ARP[n%8]]+24+(sec===2&&n%8===5?12:0),t,sec===3?0.05:0.09);
+    }
+    const stop=AR.sequencer(actx,step,schedule);
+    return {stop};
+  }
+
+  // ---------- render ----------
+  let W=0,H=0,dpr=1,NR=0;
+  let rayVal,rayAvg,rayPeak,rayKick,rayLen,rayVel,tipX,tipY,tipA;
+  function allocRays(){
+    rayVal=new Float32Array(NR); rayAvg=new Float32Array(NR); rayPeak=new Float32Array(NR).fill(0.2);
+    rayKick=new Float32Array(NR); rayLen=new Float32Array(NR).fill(0.2); rayVel=new Float32Array(NR);
+    tipX=new Float32Array(NR); tipY=new Float32Array(NR); tipA=new Float32Array(NR);
+  }
+  function resize(){
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    W=cv.width=Math.round(innerWidth*dpr); H=cv.height=Math.round(innerHeight*dpr);
+    const n=Math.min(innerWidth,innerHeight)<560?96:128;
+    if(n!==NR){ NR=n; allocRays(); }
+  }
+  window.addEventListener("resize",resize); resize();
+
+  // halo physics: the crown swings like a censer on each beat; shockwaves climb the rays
+  // depth z: + toward the viewer, - away. pitch p: + the top tips toward the viewer
+  const HL={z:0,zV:0,p:0,pV:0,drift:0,phase:0,burst:0,pulses:[],flash:0,punch:0,snare:0,hat:0,hatN:0,idleStep:-1};
+  const GEO={cx:0,cy:0,luna:1,r0:1,Lmax:1,unit:1,step:1};
+  const PX=new Float32Array(24), PY=new Float32Array(24), LX=new Float32Array(24), LY=new Float32Array(24), RX=new Float32Array(24), RY=new Float32Array(24);
+
+  // the waveform drawn around a circle, folded so the seam disappears
+  function corona(cx,cy,r,amp,alpha,lw,shift,rot){
+    if(alpha<0.004) return;
+    const steps=260, n=wave.length;
+    ctx.beginPath();
+    for(let s=0;s<=steps;s++){
+      const f=s/steps, fold=f<0.5?f*2:(1-f)*2;
+      const smp=(wave[(shift+Math.floor(fold*900))%n]-128)/128;
+      const a=-Math.PI/2+f*2*Math.PI+rot, rr=r+smp*amp;
+      const x=cx+Math.cos(a)*rr, y=cy+Math.sin(a)*rr;
+      s?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle="rgba("+rayHot+","+alpha.toFixed(3)+")"; ctx.lineWidth=lw; ctx.stroke();
+  }
+
+  function render(t,dt){
+    const now=t*1000;
+    const Smin=Math.min(W,H), cx=W/2, cy=H/2;
+    const luna=Smin*0.2*(1+0.01*A.kick), r0=luna*1.13, Lmax=Smin*0.5-r0;
+    const E=A.energy, K=A.kick, G=S.glow, unit=Smin/1000;
+    const half=NR/2, wob=reduce?0.25:1, step=2*Math.PI/NR;
+    const cap=Math.min(1,G+0.25), rayCap=0.4+0.6*cap;
+    GEO.cx=cx; GEO.cy=cy; GEO.luna=luna; GEO.r0=r0; GEO.Lmax=Lmax; GEO.unit=unit; GEO.step=step;
+
+    // crown motion
+    // underdamped springs: a beat throws the crown forward, it recoils slightly behind rest, then settles
+    HL.zV+=(-HL.z*30-HL.zV*5.2)*dt; HL.z+=HL.zV*dt;
+    const pRest=reduce?0:0.05*Math.sin(t*0.31)*(0.4+A.mid);
+    HL.pV+=(-(HL.p-pRest)*22-HL.pV*4.2)*dt; HL.p+=HL.pV*dt;
+    HL.z=clamp(HL.z,-0.6,1.2); HL.p=clamp(HL.p,-0.35,0.45);
+    HL.phase+=dt*(2.2+9*E)*(reduce?0.3:1);
+    HL.drift=0;
+    // each layer sits at its own depth: nearer layers scale more with z and shift more with pitch (parallax);
+    // pitch also foreshortens the crown vertically, so a nod reads as the top tipping toward you
+    const Z=HL.z, PI2=HL.p;
+    function layer(d){
+      const sc=1+Z*0.075*(0.35+d), sy=sc*(1-0.16*Math.abs(Math.sin(PI2))*(0.4+d)), dy=-Math.sin(PI2)*Smin*0.045*d;
+      ctx.setTransform(sc,0,0,sy,cx-sc*cx,cy-sy*cy+dy);
+    }
+    const near=clamp(1+0.35*Z,0.7,1.45);   // brightness with nearness
+
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.globalCompositeOperation="source-over"; ctx.globalAlpha=1;
+    let g=radial(cx,cy,0,cx,cy,Math.hypot(W,H)*0.6);
+    g.addColorStop(0,"#0d0d12"); g.addColorStop(0.55,"#07070a"); g.addColorStop(1,"#030304");
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+    ctx.globalCompositeOperation="lighter";
+    layer(0.5);
+    const aur=soft(0.08+0.2*E+0.16*K,0.26*G);
+    g=radial(cx,cy,luna*0.9,cx,cy,Smin*0.62);
+    g.addColorStop(0,"rgba("+rayRGB+","+aur.toFixed(3)+")");
+    g.addColorStop(0.45,"rgba("+rayRGB+","+(aur*0.3).toFixed(3)+")");
+    g.addColorStop(1,"rgba("+rayRGB+",0)");
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    ctx.setTransform(1,0,0,1,0,0);
+
+    // treble filaments: hairlines that flicker in length
+    layer(0.6);
+    const fil=soft(0.05+0.85*HL.hat,0.6*cap), par=HL.hatN%2;
+    g=radial(cx,cy,r0,cx,cy,r0+Lmax*0.9);
+    g.addColorStop(0,"rgba("+rayHot+","+fil.toFixed(3)+")");
+    g.addColorStop(1,"rgba("+rayRGB+",0)");
+    ctx.beginPath();
+    for(let i=0;i<NR;i++){
+      const fl=Lmax*(0.1+0.62*HL.hat*((i+par)%2?0.45:1));
+      const a=-Math.PI/2+(i+0.5)*step, ab=a;
+      ctx.moveTo(cx+Math.cos(a)*r0,cy+Math.sin(a)*r0);
+      ctx.quadraticCurveTo(cx+Math.cos(a)*(r0+fl*0.5),cy+Math.sin(a)*(r0+fl*0.5),cx+Math.cos(ab)*(r0+fl),cy+Math.sin(ab)*(r0+fl));
+    }
+    ctx.strokeStyle=g; ctx.lineWidth=Math.max(0.5,0.45*dpr); ctx.stroke();
+
+    layer(0.75);
+    // rays. Each listens to its own band: level, auto-gain against its recent peak,
+    // and transients (spectral flux). Length follows an underdamped spring, so hits overshoot.
+    // tiers repeat every 8: major blade, flame, minor blade, flame, mid blade, flame, minor blade, flame
+    const TIER=[1,0.76,0.5,0.76,0.82,0.76,0.5,0.76];
+    const kS=260, cS=2*Math.sqrt(kS)*0.36;
+    for(let i=0;i<NR;i++){
+      const k=Math.min(i,NR-i)/half, sv=spec(k,t);
+      rayAvg[i]=lerp(rayAvg[i],sv,Math.min(1,dt*3));
+      rayPeak[i]=Math.max(sv,rayPeak[i]-dt*0.18);
+      const flux=Math.max(0,sv-rayAvg[i]-0.015);
+      rayKick[i]=Math.max(rayKick[i]*Math.exp(-dt*6),Math.min(1.4,flux*3.6));
+      const lev=lerp(sv,clamp(sv/Math.max(rayPeak[i],0.18),0,1),0.55);
+      rayVal[i]=lerp(rayVal[i],lev,Math.min(1,dt*(lev>rayVal[i]?22:6)));
+      const v=rayVal[i], rk=rayKick[i], blade=i%2===0, tier=TIER[i%8];
+      const tgt=tier*(0.14+0.5*v+0.4*rk+0.6*HL.snare+(tier===1?0.35*HL.punch:0));
+      rayVel[i]+=((tgt-rayLen[i])*kS-rayVel[i]*cS)*dt; rayLen[i]+=rayVel[i]*dt;
+      const len=Lmax*clamp(rayLen[i]*(1+0.16*Z+0.05*HL.zV*(blade?1:1.4)),0.04,1.18);
+      const a=-Math.PI/2+i*step;
+      const bend=blade?0:Math.sin(t*0.5+i*0.7)*0.025*wob;
+      const segs=blade?10:18, ph=HL.phase;
+      const amp=blade?0:unit*(2.5+11*(A.mid+rk))*wob;
+      const w0=blade?unit*(tier===1?3.6:tier>0.8?2.7:1.9)*(0.85+0.5*v+0.6*rk):unit*(1.3+1.6*v+1.3*rk);
+      for(let q=0;q<=segs;q++){
+        const f=q/segs, r=r0+len*f, ang=a+bend*f*f, c=Math.cos(ang), sn=Math.sin(ang);
+        const off=blade?0:Math.sin(f*Math.PI*3-ph+i*1.3)*amp*f*(1-0.35*f);
+        const px=cx+c*r-sn*off, py=cy+sn*r+c*off;
+        const w=blade?w0*Math.pow(1-f,1.5)+0.1*unit:w0*Math.pow(1-f,1.15)*(0.72+0.38*Math.sin(f*7-ph*1.7+i))+0.1*unit;
+        PX[q]=px; PY[q]=py; LX[q]=px-sn*w; LY[q]=py+c*w; RX[q]=px+sn*w; RY[q]=py-c*w;
+        if(q===segs){ tipX[i]=px; tipY[i]=py; tipA[i]=ang; }
+      }
+      const al=Math.min(rayCap,rayCap*(0.26+0.62*Math.min(1,v*1.2)+0.4*rk)*near);
+      const lg=ctx.createLinearGradient(PX[0],PY[0],PX[segs],PY[segs]);
+      lg.addColorStop(0,"rgba("+rayHot+","+al.toFixed(3)+")");
+      lg.addColorStop(0.3,"rgba("+rayRGB+","+(al*0.72).toFixed(3)+")");
+      lg.addColorStop(0.85,"rgba("+rayRGB+","+(al*0.14).toFixed(3)+")");
+      lg.addColorStop(1,"rgba("+rayRGB+",0)");
+      ctx.beginPath(); ctx.moveTo(LX[0],LY[0]);
+      for(let q=1;q<=segs;q++) ctx.lineTo(LX[q],LY[q]);
+      for(let q=segs;q>=0;q--) ctx.lineTo(RX[q],RY[q]);
+      ctx.closePath(); ctx.fillStyle=lg; ctx.fill();
+      if(HL.snare>0.04){ ctx.fillStyle="rgba(255,255,255,"+soft(HL.snare*0.45,0.5*cap).toFixed(3)+")"; ctx.fill(); }
+      if(blade){
+        ctx.beginPath(); ctx.moveTo(PX[0],PY[0]);
+        for(let q=1;q<=segs;q++) ctx.lineTo(PX[q],PY[q]);
+        ctx.strokeStyle=lg; ctx.lineWidth=Math.max(0.5,0.55*dpr); ctx.stroke();
+      }
+      // a small hard glint where a transient lands, set inside the visible part of the ray
+      const glint=rk-0.3;
+      if(glint>0){
+        const q=Math.round(segs*0.72), tx=PX[q], ty=PY[q], gr=unit*(0.9+2.2*glint), tg=radial(tx,ty,0,tx,ty,gr*2.2);
+        tg.addColorStop(0,"rgba("+rayHot+","+soft(al*glint*1.6,0.45*cap).toFixed(3)+")"); tg.addColorStop(1,"rgba("+rayRGB+",0)");
+        ctx.fillStyle=tg; ctx.fillRect(tx-gr*2.2,ty-gr*2.2,gr*4.4,gr*4.4);
+      }
+    }
+    HL.burst=0;
+
+    // waveform corona at the base of the rays, and a faint outer envelope
+    const crot=0;
+    layer(0.45);
+    corona(cx,cy,r0*1.005,unit*(5+24*A.mid+10*K)*wob,soft(0.1+0.35*A.mid+0.25*K,0.45*cap),Math.max(0.6,(0.7+1.4*A.bass)*dpr),0,crot);
+    corona(cx,cy,r0*1.03,unit*(8+34*A.mid)*wob,soft(0.05+0.2*A.mid,0.25*cap),Math.max(0.5,0.6*dpr),311,-crot);
+    layer(1.0);
+    corona(cx,cy,r0+Lmax*0.98,unit*(10+46*A.bass+20*K)*wob,soft(0.03+0.14*A.bass+0.1*K,0.18*cap),Math.max(0.5,0.6*dpr),617,crot*0.5);
+
+
+    // sonar rings as rough energy: a wavering haze, a broken bright core and a dust cloud that spreads as it travels.
+    // kick = broad gold haze, snare = crackling white haze, hat = a fine ring of dust
+    layer(0.85);
+    const speed=Smin*0.3, maxR=Math.hypot(W,H)*0.62;
+    ctx.lineJoin="round";
+    for(let k=RINGS.length-1;k>=0;k--){
+      const Rg=RINGS[k], age=(now-Rg.t)/1000, rr=luna*1.02+speed*age;
+      if(rr>maxR){ RINGS.splice(k,1); continue; }
+      const life=(rr-luna)/(maxR-luna), fade=Math.pow(1-life,1.3)*Math.min(1,age*30+0.3), sp=Rg.s;
+      if(Rg.kind==="kick"){
+        const a=soft(sp*fade,0.85*cap), amp=unit*(3+16*life)*(0.6+0.6*sp)*wob, band=unit*(3+26*life)*(0.7+0.5*sp);
+        // smoke: two wide, faint strokes give the band its body
+        for(let h=0;h<2;h++){
+          roughRing(cx,cy,rr,amp*1.4,Rg.ph,age+h,2,9,0.6,h+5);
+          ctx.strokeStyle="rgba("+rayRGB+","+(a*0.1).toFixed(3)+")"; ctx.lineWidth=band*(2.4-h)+unit*16; ctx.stroke();
+        }
+        // wisps: thin strands each on their own slice of turbulence, spread across the band
+        for(let w=0;w<6;w++){
+          const off=(w-2.5)/2.5*band;
+          roughRing(cx,cy,rr+off,amp,Rg.ph,age*(1+w*0.13),3,13,1.1+life,w);
+          ctx.strokeStyle="rgba("+(w%3===0?rayHot:rayRGB)+","+Math.min(1,a*(0.32-0.035*Math.abs(w-2.5))).toFixed(3)+")";
+          ctx.lineWidth=Math.max(0.6,unit*(1.6-life)*(w%3===0?1.4:0.9)); ctx.stroke();
+        }
+        ringDust(cx,cy,rr,band*1.6+unit*4,Rg,age,a*0.75,unit*(2-life),rayHot);
+      } else if(Rg.kind==="snare"){
+        const a=soft(sp*fade,0.9*cap), amp=unit*(2.5+12*life)*(0.6+0.6*sp)*wob, band=unit*(2+18*life);
+        roughRing(cx,cy,rr,amp*1.3,Rg.ph,age,4,17,0.9,5);
+        ctx.strokeStyle="rgba("+boltRGB+","+(a*0.11).toFixed(3)+")"; ctx.lineWidth=band*2+unit*14; ctx.stroke();
+        // crackle: broken white strands with fast, fine turbulence
+        for(let w=0;w<4;w++){
+          ctx.setLineDash([unit*(10+w*4+Rg.ph[w]*2),unit*(3+life*24+w*2),unit*(4+w),unit*(2+life*12)]);
+          roughRing(cx,cy,rr+(w-1.5)/1.5*band,amp*1.2,Rg.ph,age*(1.6+w*0.2),5,21,1.6+life,w);
+          ctx.strokeStyle="rgba(255,255,255,"+Math.min(1,a*(0.58-0.08*w)).toFixed(3)+")"; ctx.lineWidth=Math.max(0.6,unit*(1.1-0.4*life)); ctx.stroke();
+        }
+        ctx.setLineDash([]);
+        ringDust(cx,cy,rr,band*1.5+unit*3,Rg,age,a*0.7,unit*(1.6-0.7*life),"255,255,255");
+      } else {
+        const a=soft(sp*fade,0.7*cap);
+        ringDust(cx,cy,rr,unit*(3+30*life),Rg,age,a*0.75,unit*1.3,rayHot);
+        roughRing(cx,cy,rr,unit*(2+10*life)*wob,Rg.ph,age,4,20,0.8);
+        ctx.strokeStyle="rgba("+rayHot+","+(a*0.06).toFixed(3)+")"; ctx.lineWidth=unit*8; ctx.stroke();
+      }
+    }
+
+    layer(0.3);
+    // ornament ticks just outside the luna, lit by the treble
+    ctx.beginPath();
+    const TK=NR*2;
+    for(let i=0;i<TK;i++){ const a=i*2*Math.PI/TK, c1=Math.cos(a), s1=Math.sin(a), e2=1.065+(i%2?0:0.022);
+      ctx.moveTo(cx+c1*luna*1.035,cy+s1*luna*1.035); ctx.lineTo(cx+c1*luna*e2,cy+s1*luna*e2); }
+    ctx.strokeStyle="rgba("+rayRGB+","+soft(0.16+0.5*Math.min(1,A.treble),0.6).toFixed(3)+")"; ctx.lineWidth=Math.max(0.5,0.7*dpr); ctx.stroke();
+
+    // the luna window and the vessel inside it, set just behind the frame
+    layer(0.15);
+    ctx.globalCompositeOperation="source-over";
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx,cy,luna*0.985,0,Math.PI*2); ctx.clip();
+    ctx.fillStyle="rgba(4,4,6,0.88)"; ctx.fillRect(cx-luna,cy-luna,luna*2,luna*2);
+    ctx.globalCompositeOperation="lighter";
+    const D=(luna*0.93)/0.36, x0=cx-D/2, y0=cy-D/2;
+    ctx.imageSmoothingEnabled=true;
+    ctx.drawImage(vcan,x0,y0,D,D);
+    ctx.globalAlpha=soft(0.15+0.35*A.bass+0.25*K,0.32*G); ctx.drawImage(b1,x0,y0,D,D);
+    ctx.restore();
+    ctx.globalCompositeOperation="lighter";
+    ctx.globalAlpha=soft(0.1+0.25*A.bass+0.3*K,0.26*G);
+    ctx.drawImage(b2,x0-D*0.06,y0-D*0.06,D*1.12,D*1.12);
+    ctx.globalAlpha=1;
+
+    // rings
+    layer(0.3);
+    ctx.beginPath(); ctx.arc(cx,cy,luna,0,Math.PI*2);
+    ctx.strokeStyle="rgba("+rayHot+","+(0.6+soft(0.4*K,0.3)).toFixed(3)+")"; ctx.lineWidth=(1.2+soft(1.8*K,1.4))*dpr; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx,cy,luna*1.105,0,Math.PI*2);
+    ctx.strokeStyle="rgba("+rayRGB+",0.38)"; ctx.lineWidth=0.8*dpr; ctx.stroke();
+
+    // jewels on the outer ring, each listening to its own band
+    const JW=12;
+    for(let j=0;j<JW;j++){
+      const a=-Math.PI/2+(j+0.5)*2*Math.PI/JW, v=rayVal[Math.round((j+0.5)*NR/JW)%NR];
+      const jr=Smin*0.0048*(1+1.1*Math.max(0,v)), x=cx+Math.cos(a)*luna*1.105, y=cy+Math.sin(a)*luna*1.105;
+      const jg=radial(x,y,0,x,y,jr*3.2);
+      jg.addColorStop(0,"rgba("+rayHot+","+(0.55+0.45*v).toFixed(3)+")");
+      jg.addColorStop(0.35,"rgba("+rayRGB+","+(0.35*v+0.1).toFixed(3)+")");
+      jg.addColorStop(1,"rgba("+rayRGB+",0)");
+      ctx.fillStyle=jg; ctx.fillRect(x-jr*3.2,y-jr*3.2,jr*6.4,jr*6.4);
+    }
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.globalCompositeOperation="source-over";
+    ctx.setTransform(1,0,0,1,0,0);
+  }
+
+  // ---------- loop ----------
+  let plateTick=0;
+  function step(now,dt){
+    const t=now/1000;
+    analyse(dt,t,now);
+    // form never rests: the target drifts with energy, beats push it, and the form chases it
+    S.mT+=dt*(0.015+0.06*A.energy);
+    S.m+=(S.mT-S.m)*Math.min(1,dt*5); A.kickEvent=0;
+    // the bass note sets the core's angle: same note, same orientation
+    const pt=S.pitch*(2*Math.PI/12)/Math.max(1,S.order/2);
+    let dr=pt-S.rot%(2*Math.PI/S.order); dr=Math.atan2(Math.sin(dr*S.order),Math.cos(dr*S.order))/S.order;
+    S.rot+=dr*Math.min(1,dt*9);
+    HL.punch*=Math.exp(-dt*9); HL.snare*=Math.exp(-dt*8); HL.hat*=Math.exp(-dt*18);
+    S.hue=fract(S.hue+dt*0.006);
+    if(S.bFast>0) S.bFast-=dt;
+    // chaos guard: if the form collapses to a point or a short cycle, move on and ease off the modulation
+    S.collapseT=S.cov<0.008?S.collapseT+dt:0;
+    if(S.collapseT>0.2){ S.mT=Math.floor(S.mT)+1.5; S.modGain=0.15; S.bFast=0.5; S.collapseT=0; }
+    S.modGain=Math.min(1,S.modGain+dt*0.2);
+    if(S.autoPal && S.palT>=1 && RT.mode==="idle" && Math.random()<dt/18) nextPalette();
+    blendPalette(dt);
+    const w0=performance.now();
+    accumulate(t); develop(dt);
+    const work=performance.now()-w0;
+    if(!OFFLINE) splatBudget=clamp(splatBudget*(work>10?0.9:work<6?1.05:1),40000,700000);
+    render(t,dt);
+    if((plateTick+=dt)>0.5){ plateTick=0; updatePlate(); }
+  }
+
+  // ---------- chrome ----------
+  const esc=s=>String(s).replace(/[<>&"]/g,m=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[m]));
+  function updatePlate(){
+    const src=RT.sourceLabel();
+    $("plate").innerHTML="SEED <b>"+esc(S.seed)+"</b><br>"+esc(FAM[S.kind].name)+" · D"+S.order+(S.mirror?"·m":"")+" · "+esc(S.palName.toUpperCase())+"<br>SOURCE <b>"+esc(src)+"</b>";
+  }
+  $("btnForm").addEventListener("click",()=>newForm());
+  $("palette").addEventListener("change",e=>setPalette(e.target.value));
+
+  // ---------- wiring into the shared base, and boot ----------
+  goPalette("reliquary",0.01); S.palT=1; blendPalette(0); setPalette("auto");
+  const RT=AR.create({
+    name:"plutonian-core", canvas:cv, lookahead:0.05,
+    analysers:{ level:{fftSize:2048,smoothing:0.7,needs:["freq","time"]} },
+    onsets:true, demo:makeDemo, demoName:"Demo hymn", demoGain:0.55, idleName:"Idle, waiting for sound",
+    glow:{min:0.25,max:1.2,value:0.7,onChange:v=>{ S.glow=v; }}, glowKeysLegacy:["ostensoria-live-glow"],
+    palettes:["auto",...PAL_ORDER],
+    keys:{n:()=>newForm()},
+    onHit, step,
+    onSource:()=>{ A.lastSwitch=OFFLINE?0:performance.now(); if(S.forms) updatePlate(); },
+    offlineSetup:(cfg)=>{
+      splatBudget=cfg.splats||450000;
+      if(cfg.palette && cfg.palette!=="auto"){ setPalette(cfg.palette); $("palette").value=cfg.palette; }
+      newForm(cfg.seed||undefined);
+      return {seed:S.seed,family:FAM[S.kind].name,order:S.order,core:R};
+    }
+  });
+  if(!OFFLINE) newForm();
+  RT.start();
+})();
+</script>
+
+<script>/* Homepage embed: the piece's own controls are hidden; one button starts or stops its built-in track. */
+(function(){var b=document.createElement('button');b.id='syb-sound';b.type='button';b.setAttribute('aria-pressed','false');b.textContent='Sound';
+b.addEventListener('click',function(){var d=document.getElementById('btnDemo');if(!d)return;d.click();var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));b.textContent=on?'Sound on':'Sound';});
+document.body.appendChild(b);
+function ready(){try{parent.postMessage({syb:'ready'},location.origin)}catch(e){}}
+if(document.readyState==='complete')setTimeout(ready,300);else addEventListener('load',function(){setTimeout(ready,300)});})();</script>
+</body>
+</html>

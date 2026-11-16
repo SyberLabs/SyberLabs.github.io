@@ -1,0 +1,113 @@
+/* Homepage sections under the hero: Factory, Studio, Liminal and contact. Tokens come from the kit + syberlabs.css. */
+.hv-mono { font: 500 11px/1.5 var(--sy-mono); letter-spacing: .18em; text-transform: uppercase; }
+.hv-num { margin: 0 0 10px; color: var(--sy-cantaloupe, #fc734d); letter-spacing: .3em; }
+.hv-tag { color: var(--sy-vellum); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* ---------- hero: the three section names under the wordmark ---------- */
+.hv-triad { display: flex; flex-wrap: wrap; gap: 6px 0; margin: 18px 0 0; padding: 0 0 0 .3em; list-style: none; color: var(--sy-vellum); text-shadow: 0 1px 2px #000e, 0 0 14px #000c; }
+.hv-triad li + li::before { content: ""; display: inline-block; width: 3px; height: 3px; margin: 0 14px 3px; border-radius: 50%; background: var(--sy-cantaloupe, #fc734d); vertical-align: middle; }
+.hv-triad a { display: inline-flex; align-items: center; min-height: 44px; color: inherit; text-decoration: none; font: 500 13px/1 var(--sy-mono); letter-spacing: .22em; text-transform: uppercase; }
+.hv-triad a:hover { color: var(--sy-electric-hi, #4cc0f5); }
+.sy-reveal .hv-triad { animation: hero-rise 1.5s cubic-bezier(.16,.84,.24,1) .75s both; }
+
+/* ---------- a stratum: one full-height canvas visual with a caption at its foot ---------- */
+/* The header is a fixed bar, so a stratum is the viewport less the bar, and an anchor jump lands it flush under the bar. */
+.hv-stratum { position: relative; min-height: calc(100vh - var(--sy-header-h, 64px)); min-height: calc(100svh - var(--sy-header-h, 64px)); overflow: hidden;
+  scroll-margin-top: calc(-1 * var(--space-4, 16px));
+  background: radial-gradient(60% 55% at 50% 46%, rgba(2, 151, 222, .09), #0000 72%), var(--sy-ink); }
+.hv-stratum > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+.hv-cap { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding-bottom: 28px; pointer-events: none;
+  text-shadow: 0 0 12px var(--sy-ink), 0 0 5px var(--sy-ink), 0 1px 2px var(--sy-ink); }
+.hv-cap h2, .hv-block h2 { margin: 0 0 6px; color: var(--sy-vellum); font: 500 clamp(30px, 4.4vw, 60px)/1 var(--sy-sans); letter-spacing: -.04em; }
+.hv-cap p { margin: 0; color: var(--sy-mist); }
+.hv-cap p.hv-num { margin: 0 0 10px; color: var(--sy-cantaloupe, #fc734d); }
+.hv-cap p b { font-weight: 500; color: var(--sy-cantaloupe, #fc734d); }
+.hv-cap a { pointer-events: auto; color: var(--sy-vellum); text-decoration: underline; text-decoration-color: var(--sy-rule-2); text-underline-offset: 4px; }
+.hv-cap a:hover { text-decoration-color: currentColor; }
+
+/* ---------- product rows; each mark is one form of the Liminal piece's rule ---------- */
+.hv-block { position: relative; padding-top: 72px; padding-bottom: 96px; scroll-margin-top: 40px; }
+.hv-block--tight { padding-top: 34px; }
+.hv-block--studio { padding-bottom: 40px; }
+.hv-block h2 { margin-bottom: 34px; }
+.hv-rows { margin: 0; padding: 0; list-style: none; }
+.hv-rows li a { display: grid; grid-template-columns: 96px minmax(0, 1.1fr) minmax(0, 1fr) 210px; align-items: center; gap: 12px 36px;
+  padding: 22px 0; border-top: 1px solid var(--sy-rule); color: inherit; text-decoration: none; transition: background .3s ease; }
+.hv-rows li:last-child a { border-bottom: 1px solid var(--sy-rule); }
+.hv-rows canvas { width: 96px; height: 96px; display: block; opacity: .9; transition: opacity .3s ease, transform .6s cubic-bezier(.16,.84,.24,1); }
+.hv-rows__name { display: flex; align-items: baseline; gap: 16px; color: var(--sy-vellum); font: 500 clamp(30px, 4.6vw, 64px)/1 var(--sy-sans); letter-spacing: -.045em; }
+.hv-rows__name .hv-mono { color: var(--sy-dim); }
+.hv-rows__line { color: var(--sy-body); font-size: 16px; line-height: 1.45; max-width: 34ch; }
+.hv-rows__status { display: inline-flex; align-items: center; justify-self: end; gap: 8px; color: var(--sy-mist); white-space: nowrap; }
+.hv-rows__status i { width: 6px; height: 6px; border-radius: 50%; background: var(--sy-dim); }
+.hv-rows__status.is-live i { background: var(--sy-cantaloupe, #fc734d); box-shadow: 0 0 10px var(--sy-cantaloupe, #fc734d); }
+.hv-rows li a:hover { background: linear-gradient(90deg, rgba(2, 151, 222, .07), transparent 60%); }
+.hv-rows li a:hover .hv-rows__name { color: var(--sy-electric-hi, #4cc0f5); }
+.hv-rows li a:hover canvas { opacity: 1; transform: rotate(30deg); }
+.hv-partner { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px 36px; align-items: baseline; margin: 0; padding: 22px 0 0; color: var(--sy-body); font-size: 15px; line-height: 1.55; scroll-margin-top: 88px; }
+.hv-partner > .hv-mono { color: var(--sy-dim); letter-spacing: .12em; }
+.hv-partner > span + span { max-width: 68ch; }
+.hv-partner b { color: var(--sy-vellum); font-weight: 500; }
+.hv-partner a { color: var(--sy-vellum); text-decoration: underline; text-decoration-color: var(--sy-rule-2); text-underline-offset: 4px; white-space: nowrap; }
+
+/* ---------- rails: a row of tiles that scrolls sideways ---------- */
+.hv-railwrap { position: relative; padding: 56px 0 0; }
+.hv-railwrap + .hv-railwrap { padding-top: 14px; }
+.hv-block--studio .hv-railwrap:last-child { padding-bottom: 56px; }
+.hv-railnav { display: flex; justify-content: flex-end; gap: 6px; max-width: var(--sy-max); margin: 0 auto 10px; padding: 0 var(--sy-gutter); }
+.hv-railnav button { width: 44px; height: 44px; border: 1px solid var(--sy-rule); border-radius: 2px; background: none; color: var(--sy-mist); cursor: pointer; font: 400 16px/1 var(--sy-mono); }
+.hv-railnav button:hover { color: var(--sy-vellum); border-color: var(--sy-rule-2); }
+@media (hover: none) { .hv-railnav { display: none; } }
+.hv-rail { display: flex; gap: 14px; margin: 0; padding: 0 var(--sy-gutter); list-style: none; overflow-x: auto; scroll-snap-type: x mandatory;
+  scroll-padding: 0 var(--sy-gutter); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.hv-rail::-webkit-scrollbar { display: none; }
+.hv-tile { position: relative; flex: 0 0 min(82vw, 62svh, 520px); width: min(82vw, 62svh, 520px); aspect-ratio: 4 / 5; margin: 0; overflow: hidden; scroll-snap-align: start;
+  border: 1px solid var(--sy-rule); border-radius: 2px; background: #010406; }
+.hv-tile > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.hv-tile iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; opacity: 0; transition: opacity .9s ease; background: transparent; }
+.hv-tile iframe.is-ready { opacity: 1; }
+/* The shield lets the page scroll over a running piece. The corner it leaves open is the piece's own Sound button. */
+.hv-tile__shield { position: absolute; z-index: 2; left: 0; }
+.hv-tile__shield--a { top: 0; right: 0; bottom: 66px; }
+.hv-tile__shield--b { bottom: 0; height: 66px; right: 132px; }
+.hv-tile figcaption { position: absolute; z-index: 3; left: 14px; bottom: 14px; right: 140px; display: grid; gap: 4px; pointer-events: none; text-shadow: 0 0 10px #000, 0 1px 2px #000; }
+.hv-tile figcaption b { color: var(--sy-vellum); font: 500 19px/1.1 var(--sy-sans); letter-spacing: -.02em; }
+.hv-tile figcaption span { color: var(--sy-body); font: 400 13px/1.35 var(--sy-sans); }
+.hv-tile--plate figcaption { right: 14px; }
+
+/* ---------- contact: a seed, one sentence, the one action ---------- */
+.hv-contact { position: relative; min-height: 86vh; min-height: 86svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  padding: 96px var(--sy-gutter) 72px; scroll-margin-top: 0; background: radial-gradient(42% 38% at 50% 34%, rgba(2, 151, 222, .12), #0000 72%), var(--sy-ink); }
+.hv-contact h2 { margin: 0 0 14px; max-width: 14em; color: var(--sy-vellum); font: 500 clamp(34px, 5vw, 68px)/1.04 var(--sy-sans); letter-spacing: -.045em; text-wrap: balance; }
+.hv-contact .sy-small { margin: 0 0 30px; max-width: 44ch; color: var(--sy-mist); }
+.hv-contact__links { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 28px; margin: 22px 0 0; text-transform: none; letter-spacing: .06em; }
+.hv-contact__links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--sy-mist); overflow-wrap: anywhere; }
+.hv-contact__links a:hover { color: var(--sy-vellum); }
+.hv-seed { position: relative; width: 132px; height: 132px; margin-bottom: 40px; }
+.hv-seed i { position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px; border-radius: 50%; background: var(--sy-electric-hi, #4cc0f5);
+  transform: rotate(calc(var(--a) * 30deg)) translateY(-44px); animation: hv-orbit 5s ease-in-out calc(var(--a) * -.42s) infinite; }
+.hv-seed::before { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 12px; margin: -6px; border-radius: 50%; background: var(--sy-cantaloupe, #fc734d);
+  box-shadow: 0 0 22px var(--sy-cantaloupe, #fc734d), 0 0 60px rgba(252, 115, 77, .5); animation: hv-beat 2.4s ease-in-out infinite; }
+@keyframes hv-orbit { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+@keyframes hv-beat { 0%, 100% { transform: scale(.82); } 50% { transform: scale(1.15); } }
+
+@media (max-width: 800px) {
+  .hv-block { padding-top: 40px; padding-bottom: 64px; }
+  .hv-block--tight { padding-top: 24px; }
+  .hv-block--studio { padding-bottom: 24px; }
+  .hv-rows li a { grid-template-columns: 64px minmax(0, 1fr); gap: 4px 18px; padding: 18px 0; }
+  .hv-rows canvas { width: 64px; height: 64px; grid-row: 1 / span 3; align-self: start; margin-top: 2px; }
+  .hv-rows__name { gap: 10px; }
+  .hv-rows__line { font-size: 15px; }
+  .hv-rows__status { justify-self: start; }
+  .hv-partner { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .hv-railwrap { padding-top: 40px; }
+}
+@media (max-width: 600px) {
+  .hv-mono { font-size: 10px; letter-spacing: .16em; }
+  .hv-triad { margin-top: 12px; }
+  .hv-triad a { font-size: 11px; letter-spacing: .18em; }
+  .hv-triad li + li::before { margin: 0 9px 3px; }
+}
+@media (prefers-reduced-motion: reduce) { .hv-seed i, .hv-seed::before { animation: none; } }
