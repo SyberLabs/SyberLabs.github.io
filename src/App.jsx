@@ -187,7 +187,7 @@ export default function App() {
       </section>
 
       <section id="contact" className="hv-contact" aria-labelledby="contact-title">
-        <div className="hv-seed" aria-hidden="true">{Array.from({ length: 12 }, (_, a) => <i key={a} style={{ '--a': a }} />)}</div>
+        <img className="hv-contact__art" src="/media/home/contact.jpg" width="1024" height="1024" alt="" loading="lazy" decoding="async" />
         <h2 id="contact-title">Tell us what you are building.</h2>
         <p className="sy-small">Email a short outline of the problem and where AI should help. We reply with next steps.</p>
         <a className="sy-btn sy-btn--solid" href={CONSULT}>Book a consultation</a>

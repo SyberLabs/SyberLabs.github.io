@@ -76,21 +76,17 @@
 .hv-tile figcaption span { color: var(--sy-body); font: 400 13px/1.35 var(--sy-sans); }
 .hv-tile--plate figcaption { right: 14px; }
 
-/* ---------- contact: a seed, one sentence, the one action ---------- */
+/* ---------- contact: one artwork, one sentence, the one action ---------- */
 .hv-contact { position: relative; min-height: 86vh; min-height: 86svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-  padding: 96px var(--sy-gutter) 72px; scroll-margin-top: 0; background: radial-gradient(42% 38% at 50% 34%, rgba(2, 151, 222, .12), #0000 72%), var(--sy-ink); }
-.hv-contact h2 { margin: 0 0 14px; max-width: 14em; color: var(--sy-vellum); font: 500 clamp(34px, 5vw, 68px)/1.04 var(--sy-sans); letter-spacing: -.045em; text-wrap: balance; }
+  padding: 40px var(--sy-gutter) 72px; scroll-margin-top: 0; background: radial-gradient(42% 38% at 50% 34%, rgba(2, 151, 222, .12), #0000 72%), var(--sy-ink); }
+.hv-contact h2 { position: relative; margin: 0 0 14px; max-width: 14em; color: var(--sy-vellum); font: 500 clamp(34px, 5vw, 68px)/1.04 var(--sy-sans); letter-spacing: -.045em; text-wrap: balance; }
 .hv-contact .sy-small { margin: 0 0 30px; max-width: 44ch; color: var(--sy-mist); }
 .hv-contact__links { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 28px; margin: 22px 0 0; text-transform: none; letter-spacing: .06em; }
 .hv-contact__links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--sy-mist); overflow-wrap: anywhere; }
 .hv-contact__links a:hover { color: var(--sy-vellum); }
-.hv-seed { position: relative; width: 132px; height: 132px; margin-bottom: 40px; }
-.hv-seed i { position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px; border-radius: 50%; background: var(--sy-electric-hi, #4cc0f5);
-  transform: rotate(calc(var(--a) * 30deg)) translateY(-44px); animation: hv-orbit 5s ease-in-out calc(var(--a) * -.42s) infinite; }
-.hv-seed::before { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 12px; margin: -6px; border-radius: 50%; background: var(--sy-cantaloupe, #fc734d);
-  box-shadow: 0 0 22px var(--sy-cantaloupe, #fc734d), 0 0 60px rgba(252, 115, 77, .5); animation: hv-beat 2.4s ease-in-out infinite; }
-@keyframes hv-orbit { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
-@keyframes hv-beat { 0%, 100% { transform: scale(.82); } 50% { transform: scale(1.15); } }
+/* The artwork sits on the ground with no frame: screen blending drops its black, and the mask fades its edges. */
+.hv-contact__art { display: block; width: min(100%, 620px); height: auto; aspect-ratio: 1; margin: 0 auto -8%; mix-blend-mode: screen; pointer-events: none;
+  -webkit-mask-image: radial-gradient(closest-side, #000 60%, transparent 100%); mask-image: radial-gradient(closest-side, #000 60%, transparent 100%); }
 
 @media (max-width: 800px) {
   .hv-block { padding-top: 40px; padding-bottom: 64px; }
@@ -110,4 +106,3 @@
   .hv-triad a { font-size: 11px; letter-spacing: .18em; }
   .hv-triad li + li::before { margin: 0 9px 3px; }
 }
-@media (prefers-reduced-motion: reduce) { .hv-seed i, .hv-seed::before { animation: none; } }
