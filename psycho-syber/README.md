@@ -37,7 +37,8 @@ CI runs the first line. The browser checks need a built site (`pnpm build:site`)
 
 `flow` plays each scripted run inside the page, walks into each exit with a held key, and prints what every card shows.
 It then plays the last stage to its verdict and photographs the ending. `real` photographs the last stage and each
-answer of the machine. `ship` does the three roars at the great carved head and walks the command ship. `touch` opens
+answer of the machine. `ship` does the three roars at the great carved head and walks the command ship. `pick` shows the title's stage buttons and the
+last stage with all 21 marks found. `touch` opens
 the page as a phone, sideways then upright, and drives it with fingers sent through the browser's touch input: the
 stick, the three buttons, a tap to throw, and a cord that stays tied. `?touch` on the page's address shows the touch
 controls on any device.
