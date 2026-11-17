@@ -59,6 +59,8 @@ const S = {
   async flow() {
     await page.goto(BASE + '/psycho-syber/', { waitUntil: 'load' }); await wait(800);
     const n = await page.evaluate(() => window.__ps.STAGES.length);
+    // with keys, nothing written for touch may show: not the title line, the Pause list, the pad or the skip line
+    console.log('touch-only lines hidden with keys:', await page.evaluate(() => [...document.querySelectorAll('.ps-for-touch')].every(n => getComputedStyle(n).display === 'none') && [...document.querySelectorAll('.ps-for-keys')].every(n => getComputedStyle(n).display !== 'none') && document.getElementById('ps-pad').hidden));
     await page.click('#ps-start'); await wait(300);
     for (let i = 0; i < n; i++) {
       if (await page.evaluate(i => !!window.__ps.STAGES[i].real, i)) {

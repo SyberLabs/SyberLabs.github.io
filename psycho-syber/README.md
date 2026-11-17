@@ -26,6 +26,9 @@ say are in the repository's `CLAUDE.md`, under "PSYCHO SYBER". This file and `te
     node psycho-syber/test/run.mjs works --log  one stage, with the player's position after each script entry
     node psycho-syber/test/run.mjs machu:weaver one route of one stage
 
+Headless Chrome with a software GPU sometimes paints a plain bar over the picture, the size of the message at the
+top and mirrored to the bottom. It is the screenshot, and Chrome on a desktop does not show it.
+
 CI runs the first line. The browser checks need a built site (`pnpm build:site`), Playwright and Chrome:
 
     PW_REQUIRE_FROM=<dir>/package.json PW_EXECUTABLE=<chrome> node psycho-syber/test/browser.mjs <outDir> flow
