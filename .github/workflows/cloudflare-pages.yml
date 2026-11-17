@@ -161,6 +161,9 @@ jobs:
           grep -Fq '<!--email_off-->' dist/lacuna/index.html
           grep -Fq '<!--email_off-->' dist/lacuna/research/paracas-bundles/index.html
           grep -Fq 'href="/lacuna/"' dist/index.html
+          # The homepage's Lacuna section, and the header link every page carries.
+          grep -Fq 'id="lacuna"' dist/index.html
+          grep -Fq '<a href="/lacuna/">Lacuna</a>' dist/services/index.html
           # /privacy/ tells visitors the site has no forms: Lacuna's "Get new findings" is an email link.
           if grep -rqi '<form' dist/lacuna --include='*.html'; then echo 'form on a Lacuna page'; exit 1; fi
           # Atlas sources (src/lacuna/) are not published.

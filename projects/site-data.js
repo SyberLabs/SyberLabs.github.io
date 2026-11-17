@@ -31,10 +31,16 @@ export const RISE_PLUS = {
   source: 'https://github.com/SyberLabs/RISE/pull/542',
 };
 // The header row: products, the factory, services and one direct contact action.
+// Lacuna Institute is SyberLabs' research institute. Its pages are the lacuna/ directory, published at /lacuna/
+// (sources in src/lacuna/). lacunainstitute.org and lacunainstitute.com redirect there, path for path.
+export const LACUNA = '/lacuna/';
+export const LACUNA_PARACAS = '/lacuna/research/paracas-bundles/';
+
 export const nav = [
   { id: 'products', label: 'Products', href: '/#products' },
   { id: 'factory', label: 'Factory', href: '/factory/' },
   { id: 'services', label: 'Services', href: '/services/' },
+  { id: 'lacuna', label: 'Lacuna', href: LACUNA },
 ];
 
 export const workWithUs = { label: 'Book a consultation', href: CONSULT };
@@ -280,11 +286,6 @@ export const projects = [
     ],
   },
 ];
-
-// Lacuna Institute is SyberLabs' research institute. Its pages are the lacuna/ directory, published at /lacuna/
-// (sources in src/lacuna/). lacunainstitute.org and lacunainstitute.com redirect there, path for path.
-export const LACUNA = '/lacuna/';
-export const LACUNA_PARACAS = '/lacuna/research/paracas-bundles/';
 
 // The Menu (the Atlas): every product, the research, the company's ways of working with customers, and the account
 // and legal routes. A group title is one word: project-template.js builds an element id from it.

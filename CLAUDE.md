@@ -75,13 +75,18 @@ and Open Graph addresses on Lacuna pages are the `syberlabs.io/lacuna/` ones. Th
 ## Homepage
 
 Since November 15, 2026 the homepage (`src/App.jsx`) is mostly visual, by the owner's direction: the Gyre and the
-wordmark, then three sections named Factory, Studio and Liminal, then contact. For the homepage only, this overrides
-two rules above and in `kit/v2/README.md`:
+wordmark, then sections named Factory, Studio, Lacuna (added November 16) and Liminal, then contact. For the homepage
+only, this overrides two rules above and in `kit/v2/README.md`:
 
 - The hero carries no paragraph and no buttons. `Book a consultation` stays in the header at every width and closes
   the page.
-- The three section names and the one-word labels on the three canvas visuals (Proof, Resonance, Emergence) are
+- The four section names and the one-word labels on the four canvas visuals (Proof, Atlas, Resonance, Emergence) are
   names, exempt from the Wording rules. Every other homepage line follows them.
+- Lacuna Institute is linked from the header (`Lacuna`, on every page), from the section names under the wordmark and
+  from its own section: a globe (`src/visuals/atlas.js`) that marks the Atlas's sites and names each one in turn as
+  it comes round. The globe, the site name in the caption and the heading are links into `/lacuna/`. Its data
+  (`src/visuals/atlas-data.js`) is generated from the Atlas's site list by `node scripts/lacuna-home.mjs`; the build
+  fails when it is stale.
 - The hero has no warm horizon. Its media fades into the page ground and the Factory visual rises through the
   fade. No homepage section ends at a hard edge: each canvas fades at its top and foot.
 
