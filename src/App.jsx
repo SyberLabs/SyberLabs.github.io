@@ -174,6 +174,7 @@ export default function App() {
               </figure>
             </li>)}
           </ul>
+          <p className="hv-partner hv-game"><span className="hv-mono">Game</span><span><b>PSYCHO SYBER.</b> A side-scrolling game that runs in the browser. It has five stages: one for each of the four products and one for Lacuna Institute. It needs a keyboard and a mouse. <a href="/psycho-syber/">Play PSYCHO SYBER <span aria-hidden="true">→</span></a></span></p>
         </div>
       </section>
 

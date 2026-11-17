@@ -76,6 +76,7 @@
 .hv-partner > span + span { max-width: 68ch; }
 .hv-partner b { color: var(--sy-vellum); font-weight: 500; }
 .hv-partner a { color: var(--sy-vellum); text-decoration: underline; text-decoration-color: var(--sy-rule-2); text-underline-offset: 4px; white-space: nowrap; }
+.hv-game { padding-top: 44px; }
 
 /* ---------- four pieces that move to sound, all in view at once; one runs at a time ---------- */
 .hv-pieces { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 56px 0 0; padding: 0; list-style: none; }

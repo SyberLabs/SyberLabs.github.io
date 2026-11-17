@@ -1,0 +1,106 @@
+/* PSYCHO SYBER: the game page. The stage fills the first screen; the page's own copy follows on the site's Midnight
+   theme (src/syberlabs.css). The stage carries is-syber or is-psycho, and everything laid over the picture changes
+   with it: type, colour and motion. */
+.syber-play main { padding: 0; }
+.ps-stage { position: relative; display: grid; place-items: center; min-height: 320px; height: calc(100svh - var(--sy-header-h, 64px)); background: #02070a; overflow: hidden; -webkit-user-select: none; user-select: none; }
+.ps-stage:fullscreen { height: 100vh; }
+.ps-screen { position: relative; width: min(100%, calc((100svh - var(--sy-header-h, 64px)) * 16 / 9)); aspect-ratio: 16 / 9; container-type: inline-size; }
+.ps-stage:fullscreen .ps-screen { width: min(100vw, calc(100vh * 16 / 9)); }
+.ps-view { display: block; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; outline: none; touch-action: none; }
+.ps-stage.is-playing .ps-view { cursor: crosshair; }
+.ps-stage [hidden] { display: none !important; }
+
+/* what is laid over the picture */
+.ps-hud { position: absolute; inset: 0; pointer-events: none; margin: 0; font: 500 clamp(9px, 1.35cqw, 17px)/1.2 var(--sy-mono); letter-spacing: .1em; text-transform: uppercase; color: #e3f3fc; text-shadow: 0 1px 0 #02070a, 0 0 8px #02070a; }
+.ps-hud p { position: absolute; display: flex; gap: 1.2em; align-items: center; margin: 0; }
+.ps-hud__tl { left: 2.2%; top: 3.4%; }
+.ps-hud__tr { right: 2.2%; top: 3.4%; color: #9fc6da; }
+.ps-hud__bl { left: 2.2%; bottom: 3.4%; color: #9fc6da; font-size: .86em; }
+.ps-form { padding: .32em .8em; border: 1px solid currentColor; color: #4cc0f5; background: rgba(2, 7, 10, .6); box-shadow: 0 0 14px -2px rgba(2, 151, 222, .8); }
+.ps-hp { letter-spacing: .28em; color: #4cc0f5; }
+.ps-flag { color: #fc734d; }
+.ps-flag:empty { display: none; }
+.ps-hud__tc { left: 50%; top: 10%; transform: translateX(-50%); white-space: nowrap; }
+.ps-hud__tc .ps-flag { padding: .32em .8em; border: 1px solid currentColor; background: rgba(2, 7, 10, .6); }
+.ps-hud__tc .ps-flag.is-low { animation: ps-low .5s steps(2) infinite; }
+@keyframes ps-low { 50% { color: #fff2a8; } }
+.is-psycho .ps-hud { font-family: var(--sy-serif); font-style: italic; letter-spacing: .03em; text-transform: none; font-size: clamp(11px, 1.75cqw, 22px); color: #fff2a8; }
+.is-psycho .ps-hud__tr, .is-psycho .ps-hud__bl { color: #ffd9a0; }
+.is-psycho .ps-form { color: #1a0b2e; border-color: #fff2a8; background: linear-gradient(90deg, #ff5fa2, #ffb347, #fff2a8, #5dffb0, #4cc0f5, #b388ff, #ff5fa2); background-size: 300% 100%; animation: ps-flow 4s linear infinite; box-shadow: 0 0 18px -2px rgba(255, 95, 162, .9); text-shadow: none; font-weight: 400; }
+.is-psycho .ps-hp { color: #ff5fa2; }
+@keyframes ps-flow { to { background-position: 300% 0; } }
+
+.ps-hint { position: absolute; left: 50%; bottom: 9%; transform: translateX(-50%); width: max-content; max-width: 78%; margin: 0; padding: .55em 1.1em; text-align: center; pointer-events: none; opacity: 0; transition: opacity .25s;
+  font: 400 clamp(11px, 1.7cqw, 21px)/1.35 var(--sy-sans); color: #e3f3fc; background: rgba(2, 7, 10, .78); border: 1px solid rgba(76, 192, 245, .4); }
+.ps-hint.is-on { opacity: 1; }
+.ps-toast { position: absolute; left: 50%; top: 19%; transform: translateX(-50%); width: max-content; max-width: 82%; margin: 0; padding: .5em 1em; text-align: center; pointer-events: none; opacity: 0; transition: opacity .2s;
+  font: 500 clamp(10px, 1.45cqw, 18px)/1.35 var(--sy-sans); color: #02070a; background: #fc734d; }
+.ps-toast.is-on { opacity: 1; }
+.is-psycho .ps-toast { font-family: var(--sy-serif); font-style: italic; font-size: clamp(12px, 1.75cqw, 22px); color: #1a0b2e; background: #fff2a8; }
+.is-psycho .ps-hint { font-family: var(--sy-serif); font-size: clamp(13px, 2.05cqw, 25px); color: #fff2a8; background: rgba(26, 11, 46, .8); border-color: rgba(255, 95, 162, .6); }
+
+/* one word at a time, with one letter held at the centre */
+.ps-rsvp { position: absolute; left: 0; right: 0; top: 30%; z-index: 3; display: grid; grid-template-columns: 1fr auto 1fr; margin: 0; pointer-events: none;
+  font: 400 clamp(24px, 6.2cqw, 78px)/1 var(--sy-serif); color: #e3f3fc; text-shadow: 0 2px 30px #02070a, 0 0 4px #02070a; white-space: pre; }
+.ps-rsvp span:first-child { text-align: right; }
+.ps-rsvp b { font-weight: 400; color: #fc734d; }
+.is-psycho .ps-rsvp { font-style: italic; color: #fff2a8; }
+.is-psycho .ps-rsvp b { color: #ff5fa2; }
+
+.ps-panel { position: absolute; inset: 0; z-index: 2; display: grid; place-content: center; justify-items: center; gap: clamp(8px, 1.6cqw, 22px); padding: 4% 6%; text-align: center;
+  background: radial-gradient(90% 80% at 50% 45%, rgba(2, 7, 10, .5), rgba(2, 7, 10, .9)); color: #e3f3fc; }
+.ps-panel p, .ps-panel h1, .ps-panel h2, .ps-panel dl, .ps-panel ul { margin: 0; }
+.ps-panel--title { background: radial-gradient(70% 60% at 50% 42%, rgba(2, 7, 10, .1), rgba(2, 7, 10, .82)); }
+.ps-panel--card { align-content: end; padding-bottom: 7%; background: linear-gradient(0deg, rgba(2, 7, 10, .94), rgba(2, 7, 10, .2) 60%, rgba(2, 7, 10, 0)); }
+.ps-logo { font: 500 clamp(30px, 9.4cqw, 124px)/.9 var(--sy-mono); letter-spacing: .02em; }
+.ps-logo__p { font-family: var(--sy-serif); font-style: italic; font-weight: 400; letter-spacing: 0; background: linear-gradient(90deg, #ff5fa2, #ffb347, #fff2a8, #5dffb0, #b388ff, #ff5fa2); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: ps-flow 6s linear infinite; padding-right: .06em; }
+.ps-logo__s { color: #4cc0f5; text-shadow: 0 0 34px rgba(2, 151, 222, .9); }
+.ps-lede { font: 400 clamp(12px, 1.9cqw, 22px)/1.4 var(--sy-sans); color: #c8dbe6; max-width: 46ch; }
+.ps-keys, .ps-touch { font: 500 clamp(9px, 1.25cqw, 14px)/1.4 var(--sy-mono); letter-spacing: .12em; text-transform: uppercase; color: #9fc6da; }
+.ps-touch { color: #fc734d; max-width: 44ch; }
+.ps-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.ps-kicker { font: 500 clamp(9px, 1.25cqw, 14px)/1.4 var(--sy-mono); letter-spacing: .16em; text-transform: uppercase; color: #9fc6da; }
+.ps-card-title { font: 400 clamp(22px, 5.4cqw, 70px)/1 var(--sy-serif); letter-spacing: .01em; }
+.is-psycho .ps-card-title { font-style: italic; color: #fff2a8; }
+.ps-card-line { font: 400 clamp(11px, 1.6cqw, 19px)/1.45 var(--sy-sans); color: #c8dbe6; max-width: 62ch; }
+.ps-card-line b { font-weight: 600; color: #4cc0f5; }
+.ps-card-line a { color: #4cc0f5; }
+.ps-stats { display: flex; gap: clamp(14px, 3cqw, 40px); justify-content: center; }
+.ps-stats dt { font: 500 clamp(8px, 1.1cqw, 12px)/1.4 var(--sy-mono); letter-spacing: .14em; text-transform: uppercase; color: #9fc6da; }
+.ps-stats dd { margin: 0; font: 400 clamp(16px, 3cqw, 38px)/1.1 var(--sy-serif); }
+.ps-atlas { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, auto); gap: .1em 1.6em; justify-content: center; text-align: left; font: 400 clamp(8px, 1.15cqw, 14px)/1.35 var(--sy-sans); }
+.ps-atlas a { color: #9fc6da; text-decoration: none; }
+.ps-atlas a:hover, .ps-atlas a:focus-visible { text-decoration: underline; }
+.ps-atlas .is-found a { color: #fc734d; }
+.ps-atlas .is-found a::before { content: "◆ "; }
+.ps-atlas li:not(.is-found) a::before { content: "◇ "; }
+.ps-controls { list-style: none; padding: 0; display: grid; gap: .5em; font: 400 clamp(10px, 1.45cqw, 17px)/1.4 var(--sy-sans); color: #c8dbe6; }
+.ps-controls kbd, .ps-table kbd { font: 500 .86em var(--sy-mono); padding: .1em .45em; border: 1px solid var(--sy-rule-2, #2a4a5c); border-radius: 3px; color: #e3f3fc; }
+
+/* the page under the stage */
+.ps-about { padding-top: clamp(48px, 7vw, 96px); padding-bottom: clamp(56px, 8vw, 110px); display: grid; gap: clamp(40px, 5vw, 72px); }
+.ps-about section { max-width: 76ch; }
+.ps-about h2 { font: 400 clamp(28px, 3.2vw, 40px)/1.1 var(--sy-sans); letter-spacing: -.01em; margin: 0 0 18px; }
+.ps-about h3 { font: 600 17px/1.4 var(--sy-sans); margin: 0 0 4px; letter-spacing: .01em; }
+.ps-about p, .ps-about li, .ps-about dd, .ps-about td { color: var(--sy-body); }
+.ps-about p { margin: 0 0 14px; }
+.ps-forms { display: grid; gap: 18px; margin: 20px 0 0; }
+.ps-forms div { padding-left: 18px; border-left: 2px solid var(--sy-electric, #0297de); }
+.ps-forms div:last-child { border-left-color: var(--sy-cantaloupe, #fc734d); }
+.ps-forms dt { font: 500 13px/1.4 var(--sy-mono); letter-spacing: .14em; color: var(--sy-vellum); margin-bottom: 4px; }
+.ps-forms dd { margin: 0; }
+.ps-stages { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.ps-stages li { display: grid; grid-template-columns: 44px 1fr; gap: 8px; padding: 18px 0; border-top: 1px solid var(--sy-rule); }
+.ps-stages li:last-child { border-bottom: 1px solid var(--sy-rule); }
+.ps-stages__n { font: 500 13px/1.9 var(--sy-mono); color: var(--sy-mist); }
+.ps-stages p { margin: 0; }
+.ps-sites { list-style: none; margin: 18px 0 0; padding: 0; columns: 3 180px; column-gap: 28px; }
+.ps-about ul.ps-sites { display: block; padding-left: 0; }
+.ps-sites li { padding: 5px 0; break-inside: avoid; }
+.ps-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.ps-table th, .ps-table td { text-align: left; vertical-align: top; padding: 10px 14px 10px 0; border-top: 1px solid var(--sy-rule); }
+.ps-table thead th { font: 500 12px/1.4 var(--sy-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--sy-mist); border-top: 0; }
+.ps-table tbody th { font: 500 13px/1.6 var(--sy-mono); color: var(--sy-vellum); white-space: nowrap; }
+.ps-about ul { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+@media (max-width: 600px) { .ps-table { font-size: 14px; } .ps-table tbody th { white-space: normal; } }
+@media (prefers-reduced-motion: reduce) { .is-psycho .ps-form, .ps-logo__p, .ps-hud__tc .ps-flag.is-low { animation: none; } }

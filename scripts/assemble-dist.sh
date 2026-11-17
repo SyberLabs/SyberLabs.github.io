@@ -19,7 +19,7 @@ mkdir -p dist/kit
 cp -r kit/v2 dist/kit/
 # social preview cards, one per page (regenerate with `node scripts/og-cards.mjs`)
 cp -r og dist/
-for dir in rise-demo omni-demo media projects approach factory jev kev research services privacy stack plus; do
+for dir in rise-demo omni-demo media projects approach factory jev kev research services privacy stack plus psycho-syber; do
   cp -r "$dir" dist/
 done
 # Lacuna Institute: lacuna/ is published as it is at /lacuna/. Its first page (the Atlas) is generated from
@@ -35,5 +35,7 @@ node scripts/lacuna-home.mjs --check
 mkdir -p dist/githits
 cp data/githits/*.json dist/githits/
 # llms.txt / llms-full.txt are generated from projects/site-data.js; fails the build if stale (regenerate with `node scripts/llms.mjs`)
+# the game's Node tests are not part of the site
+rm -rf dist/psycho-syber/test dist/psycho-syber/README.md
 node scripts/llms.mjs --check; cp llms.txt llms-full.txt dist/
 node scripts/prerender.mjs

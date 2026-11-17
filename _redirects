@@ -32,3 +32,8 @@
 /relay-demo/* / 301
 /impact /projects/attest/ 301
 /impact/* /projects/attest/ 301
+/play /psycho-syber/ 301
+/game /psycho-syber/ 301
+/psychosyber /psycho-syber/ 301
+/psycho-cyber /psycho-syber/ 301
+/psycho-cyber/ /psycho-syber/ 301

@@ -4,7 +4,7 @@
 // and footer into the static pages.
 // Case studies lead with project context and real evidence. Sigil helpers remain
 // available to the shared site chrome and project directory.
-import { projects, nav, footerLinks, siteMap, EMAIL, workWithUs } from './site-data.js?v=20261116b';
+import { projects, nav, footerLinks, siteMap, EMAIL, workWithUs } from './site-data.js?v=20261117';
 import { params as sigilParams } from '../kit/v2/syber-sigil.js';
 export { projects };
 
