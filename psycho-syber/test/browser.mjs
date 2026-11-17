@@ -61,6 +61,17 @@ const S = {
     const n = await page.evaluate(() => window.__ps.STAGES.length);
     await page.click('#ps-start'); await wait(300);
     for (let i = 0; i < n; i++) {
+      if (await page.evaluate(i => !!window.__ps.STAGES[i].real, i)) {
+        console.log('card:', await page.evaluate(() => [document.getElementById('ps-card-kicker').textContent, document.getElementById('ps-card-title').textContent].join(' / ')));
+        await page.keyboard.press('Enter'); await wait(1500); await view('flow-real-play');
+        await page.evaluate(() => { window.__ps.g.realT = 37.5; }); await wait(1500); await view('flow-real-order');
+        await page.waitForFunction(() => window.__ps.state === 'meta', null, { timeout: 8000 });
+        for (const [ms, name] of [[900, 'meta-1'], [1300, 'meta-16'], [1500, 'meta-1024'], [3000, 'meta-read'], [5000, 'meta-read2']]) { await wait(ms); await shot('flow-' + name); }
+        await page.waitForFunction(() => !document.getElementById('ps-wake').hidden, null, { timeout: 12000 }); await wait(1500); await shot('flow-wake'); await wait(6200); await shot('flow-wake2');
+        console.log('  title while the page is dark:', await page.title());
+        await page.waitForFunction(() => window.__ps.state === 'end', null, { timeout: 15000 });
+        break;
+      }
       console.log('card:', await page.evaluate(() => [document.getElementById('ps-card-kicker').textContent, document.getElementById('ps-card-title').textContent].join(' / ')));
       await page.keyboard.press('Enter'); await wait(300);
       const r = await page.evaluate(async i => {
@@ -76,7 +87,8 @@ const S = {
       console.log('  cleared:', await page.evaluate(() => [...document.querySelectorAll('#ps-card-stats div')].map(d => d.textContent).join(' | ') + ' · go: ' + document.getElementById('ps-card-go').textContent + ' · link: ' + document.getElementById('ps-card-link').textContent + ' -> ' + document.getElementById('ps-card-link').getAttribute('href') + ' · atlas shown: ' + !document.getElementById('ps-card-atlas').hidden + ' found ' + document.querySelectorAll('#ps-card-atlas .is-found').length + '/' + document.querySelectorAll('#ps-card-atlas li').length));
       await page.click('#ps-card-go'); await wait(400);
     }
-    await wait(5200); await view('flow-end');
+    await wait(600); await view('flow-end');
+    console.log('title after:', await page.title());
     console.log('end:', await page.evaluate(() => window.__ps.state + ' · ' + [...document.querySelectorAll('#ps-end-stats div')].map(d => d.textContent).join(' | ')));
     await page.click('#ps-again'); await wait(500);
     console.log('again:', await page.evaluate(() => window.__ps.state + ' · continue shown: ' + !document.getElementById('ps-continue').hidden + ' · ' + document.getElementById('ps-continue').textContent));
@@ -108,10 +120,44 @@ const S = {
       p { margin: 0; font: 400 25px/1.3 "Instrument Sans", "DejaVu Sans", Arial, sans-serif; color: #c8dbe6; }
       .k { position: absolute; left: 64px; top: 44px; font: 500 20px/1 "JetBrains Mono", "DejaVu Sans Mono", monospace; letter-spacing: 5px; color: #e3f3fc; text-shadow: 0 0 12px #02070a, 0 0 4px #02070a; }
     </style><img class="f" src="data:image/png;base64,${frame}"><div class="s"></div><div class="k">SYBERLABS / GAME</div>
-    <div class="t"><h1><i>PSYCHO</i> <b>SYBER</b></h1><p>A browser game in five stages, one for each project. Shift changes your form.</p></div>`);
+    <div class="t"><h1><i>PSYCHO</i> <b>SYBER</b></h1><p>A browser game in six stages. Shift changes your form.</p></div>`);
     await card.waitForTimeout(300);
     await card.screenshot({ path: `${out}/psycho-syber.png` });
     await card.close();
+  },
+  // THE REAL BATTLE: the room in both looks, each answer of the machine, the picture of the Patron.
+  async real() {
+    await page.goto(`${BASE}/psycho-syber/?stage=6&go=1`, { waitUntil: 'load' }); await wait(2600);
+    await page.mouse.move(size[0] * 0.5, size[1] * 0.3); await view('real-0');
+    await page.mouse.down(); await wait(60); await page.mouse.up(); await wait(900); await view('real-glass');
+    await page.keyboard.down('d'); await wait(1400); await page.keyboard.up('d'); await page.keyboard.press('e'); await wait(700); await view('real-check');
+    await page.keyboard.press('Shift'); await wait(1200); await view('real-jaguar');
+    await page.keyboard.press('e'); await wait(900); await view('real-roar');
+    await page.evaluate(() => { const g = window.__ps.g; g.p.x = 26.5 * 16; g.p.y = 6 * 16; g.p.vx = g.p.vy = 0; }); await wait(700); await view('real-picture');
+    await page.keyboard.press('Shift'); await wait(400);
+    await page.evaluate(() => { const g = window.__ps.g; g.blind = 7; g.realT = 38.95; g.p.hp = 4; g.p.inv = 9; g.p.x = 200; g.p.y = 240; }); await wait(450); await view('real-order');
+    await wait(1200); await view('real-wall');
+    console.log('log:', await page.evaluate(() => JSON.stringify({ realT: window.__ps.g.realT.toFixed(1), orders: window.__ps.g.orders, hp: window.__ps.g.p.hp, state: window.__ps.state })));
+  },
+  // The way to the command ship: three roars at the great carved head, the three on the deck, and the way back.
+  async ship() {
+    await page.goto(`${BASE}/psycho-syber/?stage=1&go=1&form=psycho`, { waitUntil: 'load' }); await wait(600);
+    await page.evaluate(() => { const g = window.__ps.g; g.p.x = 13 * 16; g.p.y = 20 * 16; });
+    for (let i = 0; i < 3; i++) { await page.evaluate(() => { window.__ps.g.p.roarCd = 0; }); await page.keyboard.press('e'); await wait(700); await view('ship-omen' + (i + 1)); }
+    await wait(900); await view('ship-beam'); console.log('state during the beam:', await page.evaluate(() => window.__ps.state));
+    await page.waitForFunction(() => window.__ps.g.L.def.id === 'ship' && window.__ps.state === 'play', null, { timeout: 12000 }); await wait(800); await view('ship-deck');
+    await page.keyboard.down('d'); await wait(1100); await page.keyboard.up('d'); await wait(1500); await view('ship-talk1');
+    await page.keyboard.press('Shift'); await wait(900); await view('ship-deck-psycho'); await page.keyboard.press('Shift'); await wait(600);
+    await page.keyboard.down('d');
+    await page.waitForFunction(() => window.__ps.state === 'card', null, { timeout: 20000 });
+    await page.keyboard.up('d'); await wait(900); await view('ship-back');
+    console.log('back:', await page.evaluate(() => [window.__ps.state, document.getElementById('ps-card-title').textContent, localStorage.getItem('psycho-syber.ship'), window.__ps.g.p.maxHp, window.__ps.g.said].join(' · ')));
+  },
+  // The page's own copy, section by section, at the size given: SIZE=390x844 for a phone.
+  async copy() {
+    await page.goto(BASE + '/psycho-syber/', { waitUntil: 'load' }); await wait(1200);
+    for (const [name, sel] of [['game', '[aria-labelledby=game-title]'], ['forms', '[aria-labelledby=forms-title]'], ['stages', '#stages'], ['atlas', '#atlas'], ['real', '#real'], ['limits', '[aria-labelledby=limits-title]']]) await page.locator(sel).screenshot({ path: `${out}/copy-${name}-${size[0]}.png` });
+    console.log('overflow:', await page.evaluate(() => document.documentElement.scrollWidth - innerWidth));
   },
   async page() { await page.goto(BASE + '/psycho-syber/', { waitUntil: 'load' }); await wait(1200); await page.screenshot({ path: `${out}/page-full.png`, fullPage: true }); },
 };

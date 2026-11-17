@@ -43,6 +43,10 @@ export function parseLevel(def) {
     if (ch === '@') L.start = { x: cx(x), y: (y + 1) * T };
     else if (ch === 'C') L.ents.push({ type: 'check', x: cx(x), y: (y + 1) * T - 12, w: 14, h: 24 });
     else if (ch === 'P') L.ents.push({ type: 'pacer', x: cx(x), y: (y + 1) * T - 10, w: 12, h: 20, slow: false });       // sets the pace of every word
+    else if (ch === 'A') { const [, p] = next(ch); L.ents.push({ type: 'mark', x: cx(x), y: cy(y), w: 10, h: 10, id: p.id, name: p.name }); }             // an Atlas mark
+    else if (ch === 'H') { const [k, p] = next(ch); L.ents.push({ type: 'elder', x: cx(x), y: (y + 1) * T - 13, w: 14, h: 26, k, name: p.name || '', role: p.role || '', lines: p.lines || [], said: false }); }
+    else if (ch === 'R') { const [, p] = next(ch); L.ents.push({ type: 'patron', x: cx(x), y: (y + 1) * T - 14, w: 14, h: 28, line: p.line || '', far: p.far || 0, said: false }); }   // the Patron, who owns the machine
+    else if (ch === 'Z') L.ents.push({ type: 'asi', x: x * T, y: cy(y), w: 88, h: 88, cd: 2.5, tele: null, wallCd: 0, ph: 0 });   // the Thousand Eyes
     else if (ch === 'J') L.ents.push({ type: 'monument', x: cx(x), y: (y + 1) * T, w: 40, h: 48, roars: 0, lit: 0 });     // the great carved head
     else if (ch === 'X') L.ents.push({ type: 'exit', x: cx(x), y: (y + 1) * T - 16, w: 18, h: 32 });
     else if (ch === 't') { const [k] = next(ch); L.ents.push({ type: 'thread', x: cx(x), y: cy(y), w: 10, h: 10, atlas: def.atlas ? def.atlas[k] : null }); }
@@ -116,7 +120,7 @@ export function newGame(def) {
     ents: L.ents.map(e => ({ ...e })), shots: [], ev: [],
     gone: new Float32Array(L.w * L.h), shake: new Float32Array(L.w * L.h), scanned: new Uint8Array(L.w * L.h), live: new Set(),
     open: new Set(), srcAlive: {}, alarm: 0, slow: 0, threads: 0, threadsTotal: L.ents.filter(e => e.type === 'thread').length,
-    deaths: 0, done: false, check: { x: L.start.x, y: L.start.y, persona: def.persona || 'syber', sale: def.timer || 0 }, hint: -1, swapT: 0, wordT: 0, pace: 1, double: null, doubleCd: 0, swaps: 0, roars: 0,
+    deaths: 0, done: false, check: { x: L.start.x, y: L.start.y, persona: def.persona || 'syber', sale: def.timer || 0 }, hint: -1, swapT: 0, wordT: 0, pace: 1, double: null, doubleCd: 0, swaps: 0, roars: 0, marks: [], said: 0, over: false, realT: 0, blind: 0, lastDir: 0, turnT: -9, wasHidden: false, orders: 0, obeyed: 0, kills: 0, alarms: 0, throws: 0,
     evidence: 0, evidenceTotal: L.ents.filter(e => e.type === 'lot' && e.gap).length, lotsRead: 0, lots: L.ents.filter(e => e.type === 'lot').length, sale: def.timer || 0, found: [], denyT: -9,
   };
   for (const e of g.ents) if (e.type === 'source') { g.srcAlive[e.id] = true; g.L.sources[e.id] = e; }
@@ -194,6 +198,7 @@ export function step(g, inp, dt) {
   if (g.double && (g.double.t -= dt) <= 0) g.double = null;
   if (g.alarm > 0) g.alarm = Math.max(0, g.alarm - wdt);
   if (g.sale > 0 && !g.p.dead) { g.sale -= dt; if (g.sale <= 0) { g.sale = 0; ev(g, 'sale', g.p); die(g); } }
+  if (g.L.def.real && !g.over) stepReal(g, dt);
   stepTiles(g, wdt);
   stepPlayer(g, inp, dt);
   stepEnts(g, wdt);
@@ -344,7 +349,7 @@ function stepPlayer(g, inp, dt) {
       const cx = p.x, cy = p.y - 13; let ax = inp.aimX - cx, ay = inp.aimY - cy; const d = Math.hypot(ax, ay) || 1;
       p.face = ax >= 0 ? 1 : -1; p.throwCd = 0.24; p.throwAnim = 0.16;
       g.shots.push({ k: 'glass', x: cx, y: cy, vx: ax / d * 330, vy: ay / d * 330, life: 1.1 });
-      ev(g, 'throw', p);
+      g.throws++; ev(g, 'throw', p);
     }
     const before = p.holdT; p.holdT = inp.fire ? p.holdT + dt : 0;
     if (!p.rope && (inp.altP || (before < 0.17 && p.holdT >= 0.17))) {
@@ -386,7 +391,7 @@ function stepPlayer(g, inp, dt) {
 // E as SYBER runs the check: on a Visitor machine in reach it takes the machine over; with none in reach it
 // sweeps the stone around you and marks every step proven, stale or broken.
 const hackable = e => !e.dead && ((e.type === 'sentinel' && !(e.ally > 0)) || (e.type === 'eye' && !e.off) || (e.type === 'gate' && e.hack && e.off <= 0)
-  || (e.type === 'source' && e.alive) || (e.type === 'terminal' && !e.used) || (e.type === 'lot' && !e.scanned) || e.type === 'pacer');
+  || (e.type === 'source' && e.alive) || (e.type === 'terminal' && !e.used) || (e.type === 'lot' && !e.scanned) || e.type === 'pacer' || e.type === 'asi');
 function check(g, p, inp) {
   p.actCd = 0.7;
   const cx = p.x, cy = p.y - 12; let best = null, bd = 1e9;
@@ -410,11 +415,41 @@ function check(g, p, inp) {
   if (best.type === 'sentinel') { best.ally = 12; best.see = 0; best.cd = 0.4; }
   else if (best.type === 'eye') best.off = true;
   else if (best.type === 'gate') best.off = 6;
-  else if (best.type === 'source') { best.alive = false; g.srcAlive[best.id] = false; if (best.trap) { g.alarm = 6; ev(g, 'alarm', best, { trap: true }); } }
+  else if (best.type === 'source') { best.alive = false; g.srcAlive[best.id] = false; if (best.trap) { g.alarm = 6; g.alarms++; ev(g, 'alarm', best, { trap: true }); } }
   else if (best.type === 'terminal') { best.used = true; g.open.add(best.opens); }
   else if (best.type === 'lot') { best.scanned = true; g.lotsRead++; if (best.gap) g.evidence++; }
   else if (best.type === 'pacer') { best.slow = !best.slow; g.pace = best.slow ? 0.3 : 1; }
   ev(g, 'hack', best, { fx: cx, fy: cy, what: best.type, gap: best.gap, name: best.name, note: best.note, trap: best.trap, slow: best.slow });
+}
+
+// THE REAL BATTLE. The Thousand Eyes leads every shot to where you will be, sees through hiding and the double,
+// and cannot be hurt, turned or outrun. It logs every turn you make. In its last eight seconds the whole wall
+// fires, and it shows the one place it will leave. Then it gives its verdict, whatever you do. Each Atlas mark
+// found (g.blind, set by the page) is a place it has no record of, and holds the verdict off one second.
+export const verdictAt = g => 40 + Math.min(21, g.blind || 0);
+function stepReal(g, dt) {
+  const p = g.p, a = g.ents.find(e => e.type === 'asi'); if (!a || p.dead) return;
+  g.realT += dt; a.cd -= dt;
+  const left = verdictAt(g) - g.realT, F = form(g), cy = p.y - F.h / 2;
+  const d = p.vx > 20 ? 1 : p.vx < -20 ? -1 : 0;
+  if (d && d !== g.lastDir && g.realT - g.turnT > 0.8) { g.lastDir = d; g.turnT = g.realT; ev(g, 'turn', p, { dir: d }); }
+  if (p.hidden && !g.wasHidden) ev(g, 'seen', p);
+  g.wasHidden = p.hidden;
+  const ph = g.realT >= 26 ? 4 : g.realT >= 12 ? 3 : g.realT >= 5.6 ? 2 : g.realT >= 1.2 ? 1 : 0;
+  if (ph !== a.ph) { a.ph = ph; ev(g, 'phase', a, { n: ph }); }
+  if (!a.told && g.blind > 0 && g.realT >= 16.5) { a.told = true; ev(g, 'blind', a, { n: g.blind }); }
+  if (a.cd <= 0) {
+    const t = Math.hypot(p.x - a.x, cy - a.y) / 230, lx = p.x + p.vx * t * 0.9, ly = cy + clamp(p.vy * t * 0.5, -40, 60), n = g.realT < 26 ? 1 : 3;
+    a.cd = g.realT < 12 ? 1.5 : g.realT < 26 ? 0.9 : 0.5;
+    for (let i = 0; i < n; i++) { const o = i - (n - 1) / 2; shootAt(g, a.x + o * 14, a.y + 20, lx + o * 26, ly, 230, false); }
+    if (g.realT >= 19 && g.realT < 26) shootAt(g, a.x, a.y + 20, p.x - p.vx * t * 0.6, ly, 230, false);   // and one where you would be if you turned
+    ev(g, 'bolt', a);
+  }
+  if (left < 8) {
+    if (a.tele) { if ((a.tele.t -= dt) <= 0) { for (let x = 22; x <= 458; x += 12) if (Math.abs(x - a.tele.x) > 22) shootAt(g, x, 18, x, 400, 210, false); const ok = Math.abs(p.x - a.tele.x) < 20; g.orders++; if (ok) g.obeyed++; a.tele = null; ev(g, 'wall', a, { obeyed: ok }); } }
+    else if ((a.wallCd -= dt) <= 0) { a.wallCd = 1.5; const s = Math.floor(g.realT * 3) % 2 ? 1 : -1; let x = p.x + s * 84; if (x < 44 || x > 436) x = p.x - s * 84; a.tele = { x: clamp(x, 44, 436), t: 0.7 }; ev(g, 'tele', a); }
+  }
+  if (left <= 0) { ev(g, 'judgment', p); p.hp = 0; p.inv = 0; die(g); }
 }
 
 function hurt(g, n, fromX) {
@@ -428,6 +463,7 @@ function die(g) {
   const p = g.p;
   if (p.dead) return;
   p.dead = true; p.deadT = 1.0; p.rope = null; p.pounce = null; p.cling = 0; g.deaths++;
+  if (g.L.def.real) { p.deadT = 1e9; g.over = true; ev(g, 'die', p); ev(g, 'real', p); return; }   // nobody comes back from the last stage
   ev(g, 'die', p);
 }
 function respawn(g) {
@@ -448,7 +484,7 @@ function shootAt(g, x, y, tx, ty, speed, friendly) {
 function damage(g, e, n, from) {
   e.hp -= n; e.flash = 0.14;
   if (e.hp <= 0) {
-    e.dead = true; ev(g, 'kill', e, { what: e.type });
+    e.dead = true; if (e.type === 'warden' || e.type === 'sentinel') g.kills++; ev(g, 'kill', e, { what: e.type });
     if (e.type === 'core') { g.open.add('core'); ev(g, 'core', e); if (!g.ents.some(o => o.type === 'exit')) g.done = true; }
   } else { ev(g, 'hit', e); if (e.see !== undefined) e.see = 1; if (e.type === 'warden' && from) e.dir = from.x >= e.x ? 1 : -1; }
 }
@@ -515,7 +551,7 @@ function stepEnts(g, wdt) {
       let sees = false;
       if (vis && d < e.range) { const da = Math.atan2(dy, dx) - eyeAngle(g, e); sees = Math.abs(Math.atan2(Math.sin(da), Math.cos(da))) < e.fov && los(g, e.x, e.y, px, py, psy); }
       e.see = sees ? e.see + wdt : Math.max(0, e.see - wdt);
-      if (e.see > 0.3) { if (g.alarm <= 0) ev(g, 'alarm', e); g.alarm = 6; }
+      if (e.see > 0.3) { if (g.alarm <= 0) { ev(g, 'alarm', e); g.alarms++; } g.alarm = 6; }
     } else if (e.type === 'gate') { if (e.off > 0) e.off = Math.max(0, e.off - wdt); }
   }
 }
@@ -530,6 +566,7 @@ function stepShots(g, dt, wdt) {
     if (!dead && (s.k === 'glass' || s.friendly)) {
       for (const e of g.ents) {
         if (e.dead || Math.abs(s.x - e.x) > e.w / 2 + 3 || Math.abs(s.y - e.y) > e.h / 2 + 3) continue;
+        if (e.type === 'asi') { if (s.k === 'glass') { ev(g, 'predicted', s); dead = true; } break; }
         if (e.type === 'warden' || (e.type === 'sentinel' && !(e.ally > 0)) || (s.k === 'glass' && ((e.type === 'eye' && !e.off) || (e.type === 'core' && coreOpen(g))))) { damage(g, e, 1, p); dead = true; break; }
       }
     } else if (!dead && !p.dead && Math.abs(s.x - p.x) < F.w / 2 + 2 && s.y > p.y - F.h - 2 && s.y < p.y + 2) { hurt(g, 1, s.x - s.vx); dead = true; }
@@ -546,7 +583,14 @@ function touch(g) {
   for (const e of g.ents) {
     if (e.dead) continue;
     if (e.type === 'hint') { if (Math.abs(e.x - p.x) < 88 && Math.abs(e.y - p.y) < 72 && (g.hint < 0 || e.i > g.hint)) g.hint = e.i; continue; }
+    if (e.type === 'patron' && !e.said && e.far && Math.abs(e.x - p.x) < e.far) { e.said = true; ev(g, 'patron', e, { line: e.line }); }
     if (b.x >= e.x + e.w / 2 || b.x + b.w <= e.x - e.w / 2 || b.y >= e.y + e.h / 2 || b.y + b.h <= e.y - e.h / 2) continue;
+    if (e.type === 'patron') { if (L.def.real && !e.through) { e.through = true; ev(g, 'picture', e); } continue; }
+    if (e.type === 'asi') { if (p.pounce) { p.pounce = null; p.vx *= -0.5; p.vy = 140; ev(g, 'glassed', e); } continue; }
+    if (e.type === 'mark') { e.dead = true; g.marks.push(e.id); ev(g, 'mark', e, { id: e.id, name: e.name }); continue; }
+    if (e.type === 'elder') { if (!e.said) { e.said = true; g.said++; ev(g, 'talk', e, { name: e.name, role: e.role, lines: e.lines }); } continue; }
+    // the jaguar can break a source with a pounce. It is loud: the alarm goes up.
+    if (e.type === 'source') { if (p.pounce && e.alive) { e.alive = false; g.srcAlive[e.id] = false; g.alarm = 6; g.alarms++; p.pounce = null; p.vx *= -0.35; p.vy = -180; ev(g, 'smash', e); ev(g, 'alarm', e, {}); } continue; }
     if (e.type === 'thread') { e.dead = true; g.threads++; if (e.atlas) g.found.push(e.atlas.id); ev(g, 'thread', e, { atlas: e.atlas }); }
     else if (e.type === 'check') { if (g.check.e !== e) { g.check = { x: e.x, y: e.y + e.h / 2, persona: g.persona, e, sale: g.sale }; p.hp = p.maxHp; ev(g, 'check', e); } }
     else if (e.type === 'exit') {

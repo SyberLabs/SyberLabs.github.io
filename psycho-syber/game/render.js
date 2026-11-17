@@ -1,8 +1,8 @@
 // PSYCHO SYBER: drawing. Everything is drawn into a 480x270 frame and scaled up without smoothing.
 // There are two complete looks. SYBER (skin 0) is cold stone and Visitor circuitry at night. PSYCHO (skin 1) is
 // the same world as the jaguar sees it: a living Paracas textile. The same geometry is drawn twice, once per skin.
-import { T, C, tileAt, gateActive, eyeAngle, wordActive, wordFresh, coreOpen, HUM, JAG } from './sim.js?v=20261117b';
-import { text, textC, textW } from './font.js?v=20261117b';
+import { T, C, tileAt, gateActive, eyeAngle, wordActive, wordFresh, coreOpen, verdictAt, HUM, JAG } from './sim.js?v=20261117c';
+import { text, textC, textW } from './font.js?v=20261117c';
 export const VW = 480, VH = 270;
 const TAU = Math.PI * 2;
 const hash = (x, y, s = 0) => { let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(s | 0, 1274126177)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -142,6 +142,8 @@ function gear(c, x, y, r, a, sk, t) {
 function background(c, g, cam, t, sk) {
   const kind = g.L.def.bg || 'shore', oy = Math.round(-cam.y * 0.06);
   if (kind === 'ruins') { ruins(c, cam, t, sk); return; }
+  if (kind === 'eyes') { eyesBg(c, cam, t, sk, g); return; }
+  if (kind === 'ship') { shipBg(c, cam, t, sk); return; }
   if (kind === 'shore' || kind === 'desert' || kind === 'sky') {
     sky(c, cam, t, sk, kind === 'sky');
     if (kind === 'shore') {
@@ -226,6 +228,101 @@ function monument(c, e, x, y, t, sk) {
   }
   if (n > 0) ring(c, sk ? '#fff2a8' : 'rgba(252,115,77,.6)', x, y - 24, 26 + Math.sin(t * 4) * 2 + n * 3, 1);
 }
+function drawMark(c, e, x, y, t, sk) { const b = Math.round(Math.sin(t * 3 + e.x * 0.05) * 2), col = sk ? rb(e.x * 0.05 + t * 4) : '#fc734d'; ring(c, col, x + 0.5, y + b - 1, 3.5, 1); R(c, sk ? '#1a0b2e' : '#fff2a8', x, y + b - 2, 1, 2); R(c, col, x, y + b + 3, 1, 3); }
+// One of the three on the command ship: a robe and a tall hood, swept back.
+function elder(c, e, x, y, t, sk) {
+  const col = ['#fc734d', '#4cc0f5', '#f3e2c0'][e.k % 3], dark = sk ? '#2a0f4a' : '#0b1218';
+  for (let r = 0; r < 14; r++) R(c, r % 5 === 4 ? col : dark, x - 3 - (r >> 2), y - 1 + r, 6 + (r >> 2) * 2, 1);
+  for (let r = 0; r < 12; r++) { const w = r < 4 ? 2 + r : r < 9 ? 6 : 7; R(c, dark, x - (w >> 1) - (r < 6 ? 1 : 0), y - 13 + r, w, 1); }
+  R(c, col, x - 3, y - 2, 6, 1); R(c, sk ? rb(t * 3 + e.k) : col, x - 2, y - 5, 1, 1); R(c, sk ? rb(t * 3 + e.k) : col, x + 1, y - 5, 1, 1);
+  textC(c, e.name, x, y - 22, e.said ? col : 'rgba(159,198,218,.6)');
+}
+// The Patron: a cold-blooded Visitor in gold, on a seat that floats. In the last room he is only a picture.
+function patron(c, e, x, y, t, sk, g) {
+  const pic = g.L.def.real, sc = sk ? rb(t * 2) : '#3f8f5a', gold = sk ? '#fff2a8' : '#d9a520', hov = Math.round(Math.sin(t * 2) * 2);
+  if (pic) {
+    const cut = e.through ? 0.3 : 0.06;
+    if (hash(Math.floor(t * 9), 3) < cut) return;                                    // the picture drops out
+    c.fillStyle = sk ? 'rgba(255,242,168,.10)' : 'rgba(76,192,245,.10)'; c.beginPath(); c.moveTo(x - 2, y + 14); c.lineTo(x + 2, y + 14); c.lineTo(x + 12, y - 18); c.lineTo(x - 12, y - 18); c.fill();
+    c.globalAlpha = 0.55 + 0.25 * hash(Math.floor(t * 14), 5); x += hash(Math.floor(t * 6), 7) < 0.15 ? 2 : 0;
+  }
+  c.fillStyle = sk ? 'rgba(255,242,168,.25)' : 'rgba(217,165,32,.25)'; c.beginPath(); c.ellipse(x, y + 13, 11, 3, 0, 0, TAU); c.fill();
+  for (let r = 0; r < 12; r++) R(c, r % 3 === 2 ? gold : (sk ? '#2a0f4a' : '#10202a'), x - 4 - (r >> 2), y - 2 + r + hov, 8 + (r >> 2) * 2, 1);
+  R(c, gold, x - 5, y - 3 + hov, 10, 2);
+  R(c, sc, x - 3, y - 8 + hov, 6, 5); longSkull(c, x, y - 8 + hov, -1, sc, gold);
+  R(c, '#fff2a8', x - 3, y - 6 + hov, 2, 1); R(c, '#02070a', x - 2, y - 6 + hov, 1, 1);
+  for (let i = 0; i < 4; i++) R(c, sk ? '#1a0b2e' : '#2c6b43', x - 2 + (i * 2 + (i & 1)) % 5, y - 13 + i * 2 + hov, 1, 1);
+  if (pic) { c.globalAlpha = 1; for (let r = -22; r < 14; r += 2) R(c, sk ? 'rgba(18,5,31,.5)' : 'rgba(2,7,10,.5)', x - 12, y + r, 24, 1); }
+}
+// The Thousand Eyes: one great lens that turns to you, a ring of small ones, and its verdict clock.
+function asi(c, g, e, x, y, t, sk) {
+  const p = g.p, a = Math.atan2(p.y - 10 - e.y, p.x - e.x), red = sk ? '#ff5fa2' : '#ff5a4a', rim = sk ? '#f6e7c8' : '#16425a', dark = sk ? '#2a0f4a' : '#05090d';
+  for (const o of [-14, 0, 14]) R(c, rim, x + o, 0, 1, Math.max(0, y - 24));
+  c.fillStyle = dark; c.beginPath(); c.moveTo(x - 36, y - 24); c.lineTo(x + 36, y - 24); c.lineTo(x + 27, y + 22); c.lineTo(x - 27, y + 22); c.fill();
+  R(c, rim, x - 36, y - 24, 72, 1); R(c, rim, x - 27, y + 22, 54, 1);
+  for (let i = 0; i < 12; i++) {
+    const an = i * TAU / 12 + t * 0.2, ex = Math.round(x + Math.cos(an) * 25), ey = Math.round(y + Math.sin(an) * 17);
+    R(c, '#02070a', ex - 2, ey - 2, 5, 5);
+    if (hash(i, Math.floor(t * 2 + i * 0.37)) > 0.12) { R(c, sk ? rb(i + t * 3) : '#9bdcff', ex - 1, ey - 1, 3, 3); R(c, '#02070a', ex + Math.round(Math.cos(a)), ey + Math.round(Math.sin(a)), 1, 1); }
+  }
+  disc(c, '#02070a', x, y, 15); ring(c, red, x, y, 14, 2); ring(c, sk ? '#fff2a8' : '#5a1f1a', x, y, 10, 1);
+  disc(c, red, x + Math.cos(a) * 6, y + Math.sin(a) * 6, 6); disc(c, '#02070a', x + Math.cos(a) * 7, y + Math.sin(a) * 7, 3); disc(c, '#fff', x + Math.cos(a) * 5 - 1, y + Math.sin(a) * 5 - 2, 1.2);
+  const left = Math.max(0, verdictAt(g) - g.realT), low = left < 8, s = Math.ceil(left);
+  textC(c, 'VERDICT IN', x, y + 27, sk ? 'rgba(255,242,168,.7)' : 'rgba(255,90,74,.7)');
+  textC(c, `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`, x, y + 35, low && Math.floor(t * 2) % 2 ? '#fff' : red, 2);
+}
+// What the machine shows of you: its log of the run, its file on you, the frame where it has decided you will
+// be, the place it orders you to stand, and whatever it says.
+const stamp = s => `${String(Math.floor(s)).padStart(2, '0')}.${Math.floor(s * 10) % 10}`;
+function watchBack(c, g, fx, t, sk) {   // its panels are part of the wall: shots pass in front of them
+  const red = sk ? '#ff5fa2' : '#ff5a4a', dim = sk ? 'rgba(255,242,168,.6)' : 'rgba(155,220,255,.6)', back = sk ? 'rgba(18,5,31,.86)' : 'rgba(2,7,10,.86)', blind = g.blind || 0;
+  R(c, back, 19, 32, 126, 12 + fx.log.length * 7); R(c, dim, 19, 32, 1, 12 + fx.log.length * 7);
+  text(c, 'RECORD OF THE RUN', 23, 35, dim);
+  fx.log.forEach((l, i) => text(c, `${stamp(l.t)} ${l.s}`, 23, 44 + i * 7, i === fx.log.length - 1 ? red : dim));
+  R(c, back, 393, 32, 68, 27); R(c, dim, 460, 32, 1, 27);
+  text(c, 'SUBJECT 0001', 396, 35, dim); text(c, g.persona === 'psycho' ? 'FORM JAGUAR' : 'FORM WEAVER', 396, 43, dim); text(c, `LENSES DARK ${blind}`, 396, 51, blind ? '#fc734d' : dim);
+  if (fx.speak) { const k = Math.min(1, fx.speak.t * 2, (fx.speak.max - fx.speak.t) * 6), n = Math.ceil(fx.speak.s.length * Math.min(1, (fx.speak.max - fx.speak.t) * 2.2)), w = textW(fx.speak.s) + 12; c.globalAlpha = Math.max(0, k); R(c, back, Math.round(VW / 2 - w / 2), 111, w, 13); textC(c, fx.speak.s.slice(0, n), VW / 2, 115, sk ? '#fff2a8' : '#fff'); c.globalAlpha = 1; }
+}
+function watch(c, g, fx, ox, oy, t, sk) {
+  const p = g.p, e = g.ents.find(o => o.type === 'asi'); if (!e) return;
+  const red = sk ? '#ff5fa2' : '#ff5a4a', dim = sk ? 'rgba(255,242,168,.6)' : 'rgba(155,220,255,.6)', faint = sk ? 'rgba(255,95,162,.4)' : 'rgba(255,90,74,.4)';
+  if (!p.dead) {
+    const half = g.persona === 'psycho' ? 6 : 10, px = Math.round(p.x) + ox, py = Math.round(p.y) + oy, tt = Math.hypot(p.x - e.x, p.y - e.y) / 230;
+    const lx = Math.round(p.x + p.vx * tt * 0.9) + ox, ly = py - half, next = p.vy < -60 ? 'JUMP' : p.vx > 20 ? 'RIGHT' : p.vx < -20 ? 'LEFT' : p.hidden ? 'HIDE' : 'STAY';
+    for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { R(c, dim, px + sx * 9 - (sx > 0 ? 3 : 0), py - half + sy * 13, 4, 1); R(c, dim, px + sx * 9, py - half + sy * 13 - (sy > 0 ? 3 : 0), 1, 4); }
+    c.strokeStyle = red; c.lineWidth = 1; c.strokeRect(lx - 5.5, ly - 7.5, 11, 15); line(c, e.x + ox, e.y + oy + 16, lx, ly - 8, faint, 3);
+    textC(c, `NEXT: ${next}`, clamp(lx, 40, VW - 40), ly - 24, red);
+  }
+  if (e.tele) {   // the order: the whole wall will fire, and this is where it will not
+    const gx = Math.round(e.tele.x) + ox, on = Math.floor(t * 6) % 2;
+    for (let x = 22; x <= 458; x += 12) if (Math.abs(x - e.tele.x) > 22) R(c, faint, x + ox, 18, 1, 222);
+    R(c, '#fff', gx - 22, 60, 1, 180); R(c, '#fff', gx + 22, 60, 1, 180); R(c, on ? '#fff' : red, gx - 22, 238, 45, 2);
+    textC(c, 'STAND HERE', gx, 226, on ? '#fff' : red);
+  }
+  if (fx.flash > 0) { c.globalAlpha = Math.min(1, fx.flash); R(c, '#fff', 0, 0, VW, VH); c.globalAlpha = 1; }
+}
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+// A wall of lenses, each turned to you. A dark one with an ember in it is an Atlas mark you found: a place the
+// machine has no record of.
+function eyesBg(c, cam, t, sk, g) {
+  R(c, sk ? '#12051f' : '#02070a', 0, 0, VW, VH);
+  const p = g.p, blind = g.blind || 0;
+  for (let j = 0; j < 9; j++) for (let i = 0; i < 16; i++) {
+    const n = j * 16 + i, x = i * 30 + (j % 2) * 15 + 1, y = j * 26 + 8, k = ((n + 141) * 103) % 144;
+    R(c, sk ? '#2a0f4a' : '#07141c', x, y, 12, 9);
+    if (k < blind) { R(c, '#7a3a26', x, y, 12, 9); R(c, '#02070a', x + 1, y + 1, 10, 7); R(c, '#fc734d', x + 5, y + 4, 2, 1); continue; }
+    if (hash(i, j, Math.floor(t * 1.5 + i * 0.3 + j * 0.7)) < 0.1) continue;                // a blink
+    R(c, sk ? rb(i * 0.3 + j + t) : '#0b4a6e', x + 2, y + 2, 8, 5);
+    R(c, sk ? '#1a0b2e' : '#9bdcff', x + 5 + clamp(Math.round((p.x - cam.x - x - 6) / 70), -2, 2), y + 3 + clamp(Math.round((p.y - 10 - cam.y - y - 4) / 90), -1, 1), 2, 3);
+  }
+}
+function shipBg(c, cam, t, sk) {   // the deck's long window: two suns and a ringed world
+  R(c, sk ? '#12051f' : '#01040a', 0, 0, VW, VH);
+  for (const s of STARS) { const a = 0.4 + 0.6 * Math.abs(Math.sin(t * (0.3 + s.s) + s.p)); R(c, sk ? rb(s.p + t) : `rgba(220,235,255,${a.toFixed(2)})`, s.x % VW, s.y, 1, 1); }
+  disc(c, sk ? '#ff5fa2' : '#ffd9a0', 96, 60, 18); disc(c, sk ? '#fff2a8' : '#fff7e0', 96, 60, 12); disc(c, sk ? '#5dffb0' : '#9bdcff', 150, 44, 7);
+  disc(c, sk ? '#b388ff' : '#16425a', 330, 96, 34); c.strokeStyle = sk ? '#fff2a8' : '#6fa9c6'; c.lineWidth = 2; c.beginPath(); c.ellipse(330, 96, 58, 9, -0.3, 0, TAU); c.stroke(); disc(c, sk ? '#2e3192' : '#0b2330', 322, 88, 26);
+  R(c, sk ? '#2a0f4a' : '#07141c', 0, 150, VW, VH - 150); for (let i = 0; i < 12; i++) { R(c, sk ? PSB[i % 5] : '#0d2835', i * 40 + 6, 158, 28, 14); R(c, (Math.floor(t * 2 + i) % 3) ? (sk ? '#fff2a8' : '#0297de') : '#fc734d', i * 40 + 10, 162, 4, 2); }
+}
 function drawPacer(c, e, x, y, t, sk, g) {
   const a = Math.sin(g.wordT * 5.2) * 0.7, col = e.slow ? (sk ? '#5dffb0' : '#4cc0f5') : (sk ? '#ff5fa2' : '#fc734d'), ax = x + Math.sin(a) * 13, ay = y + 4 - Math.cos(a) * 13;
   R(c, sk ? '#2a0f4a' : '#0d1b26', x - 5, y + 4, 10, 6); R(c, sk ? '#f6e7c8' : '#16425a', x - 6, y + 9, 12, 1);
@@ -309,10 +406,30 @@ function sentinel(c, e, x, y, t, sk) {
 
 // ---------------------------------------------------------------- the frame
 // fx: particles and one-shot overlays, fed by the simulation's events (see feed()).
-export function makeFx() { return { parts: [], rings: [], beams: [], trail: [], shake: 0 }; }
+export function makeFx() { return { parts: [], rings: [], beams: [], trail: [], shake: 0, log: [], speak: null, flash: 0 }; }
 const burst = (fx, x, y, n, speed, life, color, grav = 0) => { for (let i = 0; i < n; i++) { const a = Math.random() * TAU, s = speed * (0.3 + Math.random() * 0.7); fx.parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life, max: life, color, grav }); } };
+// In the last stage the machine logs what you do, and answers it.
+const LOGS = { throw: 'GLASS THROWN', predicted: 'GLASS: PREDICTED', roar: 'ROAR: ON RECORD', pounce: 'POUNCE: PREDICTED', cord: 'CORD: LOGGED', scan: 'CHECK: NOTHING TO PROVE', seen: 'HIDING: SEEN', glassed: 'CLAWS ON GLASS', picture: 'TOUCHED THE PICTURE', tele: 'ORDER: STAND WHERE SHOWN', judgment: 'VERDICT: AS PREDICTED' };
+const SAYS = { predicted: 'I SAW THE GLASS BEFORE YOU THREW IT.', roar: 'YOUR ROAR IS ON RECORD.', seen: 'HIDING WORKS ON WARDENS. I HAVE YOUR RECORD.', glassed: 'GLASS. BEHIND IT, MORE GLASS.', picture: 'HE IS NOT HERE. HE NEVER IS.', swap: 'BOTH OF YOUR FORMS ARE ON RECORD.', asi: 'ACCESS DENIED. I APPROVE MYSELF.', tele: 'I AM CLOSING YOUR RECORD. STAND WHERE I SHOW YOU.', judgment: 'VERDICT: AS PREDICTED.' };
+const PHASE = ['', 'I HAVE WATCHED YOU SINCE THE SHORE.', 'THE RED FRAME IS WHERE YOU WILL BE.', 'I KNOW WHERE YOU WILL STEP.', 'I KNOW WHERE YOU WILL TURN.'];
+function logReal(fx, e, g) {
+  const k = e.k, log = s => { fx.log.push({ t: g.realT, s }); if (fx.log.length > 7) fx.log.shift(); }, say = (key, s) => { if (!fx.told[key] || key === 'judgment') { fx.told[key] = 1; fx.speak = { s, t: 4, max: 4 }; } };
+  fx.told = fx.told || {};
+  if (LOGS[k]) log(LOGS[k]); if (SAYS[k]) say(k, SAYS[k]);
+  if (k === 'turn') log(e.dir > 0 ? 'TURNS RIGHT' : 'TURNS LEFT');
+  else if (k === 'jump') { if (g.realT - (fx.jumpT || -9) > 1.5) { fx.jumpT = g.realT; log('JUMPS'); } }
+  else if (k === 'swap') log(e.to === 'psycho' ? 'FORM: JAGUAR. LOGGED' : 'FORM: WEAVER. LOGGED');
+  else if (k === 'hack' && e.what === 'asi') { log('CHECK: ACCESS DENIED'); say('asi', SAYS.asi); }
+  else if (k === 'hurt') log(`HIT. ${g.p.hp} LEFT`);
+  else if (k === 'die') log('SUBJECT DOWN');
+  else if (k === 'phase' && PHASE[e.n]) say('phase' + e.n, PHASE[e.n]);
+  else if (k === 'blind') say('blind', `${e.n} OF MY LENSES ARE DARK. YOU FOUND WHERE THE RECORD GOES QUIET.`);
+  else if (k === 'wall') { log(e.obeyed ? 'ORDER OBEYED' : 'ORDER IGNORED'); fx.shake = 0.2; }
+  if (k === 'judgment') { fx.flash = 1.6; fx.shake = 0.6; }
+}
 export function feed(fx, e, g) {
   const psy = g.persona === 'psycho', k = e.k;
+  if (g.L.def.real) logReal(fx, e, g);
   if (k === 'jump' || k === 'land') burst(fx, e.x, e.y, k === 'land' ? 7 : 4, 34, 0.3, psy ? '#ffb347' : '#7fa6bd');
   else if (k === 'spark') burst(fx, e.x, e.y, 5, 50, 0.25, e.glass ? '#e3f3fc' : '#fc734d');
   else if (k === 'kill') { burst(fx, e.x, e.y, 22, 80, 0.7, psy ? '#fff2a8' : '#9bdcff', -40); fx.rings.push({ x: e.x, y: e.y, t: 0, max: 0.4, r: 30, color: psy ? '#ff5fa2' : '#4cc0f5' }); fx.shake = 0.18; }
@@ -336,6 +453,8 @@ export function stepFx(fx, dt) {
   for (let i = fx.rings.length - 1; i >= 0; i--) { const r = fx.rings[i]; r.t += dt; if (r.t >= r.max) fx.rings.splice(i, 1); }
   for (let i = fx.beams.length - 1; i >= 0; i--) { const b = fx.beams[i]; b.t += dt; if (b.t >= b.max) fx.beams.splice(i, 1); }
   if (fx.shake > 0) fx.shake = Math.max(0, fx.shake - dt);
+  if (fx.speak && (fx.speak.t -= dt) <= 0) fx.speak = null;
+  if (fx.flash > 0) fx.flash = Math.max(0, fx.flash - dt * 0.8);
   if (fx.parts.length > 400) fx.parts.splice(0, fx.parts.length - 400);
 }
 
@@ -344,6 +463,7 @@ export function drawFrame(c, g, cam, t, sk, tiles, fx) {
   const L = g.L, p = g.p, ox = -Math.round(cam.x), oy = -Math.round(cam.y), psy = g.persona === 'psycho';
   background(c, g, cam, t, sk);
   c.drawImage(tiles, ox, oy);
+  if (L.def.real) watchBack(c, g, fx, t, sk);
   const x0 = Math.max(0, Math.floor(cam.x / T)), x1 = Math.min(L.w - 1, Math.floor((cam.x + VW) / T)), y0 = Math.max(0, Math.floor(cam.y / T)), y1 = Math.min(L.h - 1, Math.floor((cam.y + VH) / T));
   // steps: unverified until the check has run on them
   for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
@@ -371,6 +491,10 @@ export function drawFrame(c, g, cam, t, sk, tiles, fx) {
       case 'check': stela(c, x, y, t, sk, g.check.e === e); break;
       case 'monument': monument(c, e, x, y, t, sk); break;
       case 'pacer': drawPacer(c, e, x, y, t, sk, g); break;
+      case 'mark': if (!e.dead) drawMark(c, e, x, y, t, sk); break;
+      case 'elder': elder(c, e, x, y, t, sk); break;
+      case 'patron': patron(c, e, x, y, t, sk, g); break;
+      case 'asi': asi(c, g, e, x, y, t, sk); break;
       case 'exit': { for (let r = 0; r < 32; r++) { const hw = 9 - Math.floor(r * 3 / 32); R(c, sk ? PSB[(r >> 2) % 5] : '#2a4a5c', x - hw - 3, y + 16 - r, (hw + 3) * 2, 1); R(c, sk ? rb(r * 0.3 + t * 4) : `rgba(${20 + r * 3},${150 + r * 2},${222},${(0.5 + 0.4 * Math.sin(t * 3 + r * 0.3)).toFixed(2)})`, x - hw, y + 16 - r, hw * 2, 1); } R(c, sk ? '#f6e7c8' : '#6fa9c6', x - 12, y - 17, 24, 2); break; }
       case 'terminal': { if (!sk) { R(c, '#0d1b26', x - 5, y - 10, 10, 20); R(c, '#0297de', x - 5, y - 10, 10, 1); R(c, e.used ? '#0b3a55' : '#02070a', x - 3, y - 7, 6, 7); if (!e.used) for (let i = 0; i < 3; i++) R(c, '#fc734d', x - 2, y - 6 + i * 2, 1 + Math.floor(hash(i, Math.floor(t * 8)) * 4), 1); else { R(c, '#4cc0f5', x - 2, y - 4, 1, 1); R(c, '#4cc0f5', x - 1, y - 3, 1, 1); R(c, '#4cc0f5', x, y - 4, 1, 1); R(c, '#4cc0f5', x + 1, y - 5, 1, 1); } } else { R(c, '#3a1052', x - 5, y - 10, 10, 20); R(c, e.used ? '#5dffb0' : rb(t * 6), x - 3, y - 7, 6, 7); R(c, '#1a0b2e', x - 2, y - 5, 1, 2); R(c, '#1a0b2e', x + 1, y - 5, 1, 2); R(c, '#1a0b2e', x - 2, y - 2, 4, 1); } break; }
       case 'door': { const open = g.open.has(e.id), n = e.h / T; for (let j = 0; j < n; j++) { const py = y - e.h / 2 + j * T; if (open) { if (j === 0 || j === n - 1) R(c, sk ? '#f6e7c8' : '#16425a', x - 8, py + (j ? T - 3 : 0), T, 3); continue; } if (!sk) { R(c, '#0a141c', x - 8, py, T, T); R(c, '#12506f', x - 8, py, 1, T); R(c, '#12506f', x + 7, py, 1, T); R(c, '#fc734d', x - 5, py + 4, 10, 1); R(c, 'rgba(252,115,77,.4)', x - 5, py + 10, 10, 1); } else { R(c, PSB[(j + Math.floor(t * 3)) % 5], x - 8, py, T, T); motif(c, 2, x - 4, py + 4, '#f6e7c8'); } } break; }
@@ -414,6 +538,10 @@ export function drawFrame(c, g, cam, t, sk, tiles, fx) {
       if (sk) for (let i = 0; i < fx.trail.length - 1; i += 2) { const q = fx.trail[i]; if (Math.abs(q.x - p.x) + Math.abs(q.y - p.y) > 2) jaguar(c, q, Math.round(q.x) + ox, Math.round(q.y) + oy, t, 0.12 + i * 0.05, i + 1 + t * 4); }
       jaguar(c, p, x, y, t, p.hidden ? 0.45 : 1, 0);
     } else human(c, p, x, y, t, p.hidden);
+  } else if (g.over) {   // the last stage keeps the body in the picture: the record of where it ended
+    const x = Math.round(p.x) + ox, y = Math.round(p.y) + oy; c.globalAlpha = 0.5;
+    if (psy) jaguar(c, p, x, y, t, 0.5, 0); else human(c, p, x, y, t, false);
+    c.globalAlpha = 1; textC(c, 'SUBJECT DOWN', clamp(x, 40, VW - 40), y - (psy ? 22 : 30), sk ? '#ff5fa2' : '#ff5a4a');
   }
   // particles, rings, the check beam
   for (const q of fx.parts) { c.globalAlpha = Math.min(1, q.life / q.max * 1.5); R(c, q.color, q.x + ox, q.y + oy, 2, 2); } c.globalAlpha = 1;
@@ -421,6 +549,7 @@ export function drawFrame(c, g, cam, t, sk, tiles, fx) {
   for (const b of fx.beams) { const k = b.t / b.max; for (let i = 0; i < 9; i++) { const u = (k * 1.6 + i / 9) % 1, x = b.x0 + (b.x1 - b.x0) * u + ox, y = b.y0 + (b.y1 - b.y0) * u + oy; R(c, i % 2 ? '#fc734d' : '#9bdcff', x - 1, y - 1, 2 + (i % 3 === 0), 2); } }
   if (g.slow > 0) { c.globalAlpha = Math.min(1, g.slow) * 0.8; for (let i = 0; i < 70; i++) { const rx = (hash(i, 5) * (VW + 80) + t * 40 * (0.6 + hash(i, 7))) % (VW + 80) - 40, ry = (hash(i, 9) * VH + t * 230 * (0.7 + hash(i, 11) * 0.6)) % VH; c.fillStyle = sk ? rb(i * 0.4 + t) : '#9bdcff'; c.fillRect(rx | 0, ry | 0, 1, 5); } c.globalAlpha = 1; }
   if (g.alarm > 0 && Math.floor(t * 6) % 2) { R(c, 'rgba(252,115,77,.5)', 0, 0, VW, 2); R(c, 'rgba(252,115,77,.5)', 0, VH - 2, VW, 2); }
+  if (L.def.real) watch(c, g, fx, ox, oy, t, sk);
 }
 function thread(c, x0, y0, x1, y1, t) {
   const d = Math.hypot(x1 - x0, y1 - y0), n = Math.ceil(d / 2);
@@ -479,6 +608,7 @@ function drawLot(c, e, x, y, t, sk) {
   if (!e.scanned) { c.fillStyle = sk ? '#fff2a8' : '#6fa9c6'; for (let i = -6; i <= 6; i += 2) c.fillRect(x + i, ry, 1, 1); if (Math.sin(t * 4 + e.k) > 0) text(c, '?', x - 1, ry - 7, sk ? '#fff2a8' : '#9bdcff'); }
   else if (e.gap) { R(c, '#fc734d', x - 6, ry, 4, 1); R(c, '#fc734d', x + 3, ry, 4, 1); R(c, '#fc734d', x - 2, ry - 2, 1, 5); R(c, '#fc734d', x + 2, ry - 2, 1, 5); text(c, 'GAP', x - 5, ry - 8, '#fc734d'); }
   else { const col = sk ? '#5dffb0' : '#4cc0f5'; R(c, col, x - 6, ry, 13, 1); c.fillStyle = col; for (const [i, j] of [[-2, -5], [-1, -4], [0, -5], [1, -6], [2, -7]]) c.fillRect(x + i, ry + j, 1, 1); }
+  if (sk && !e.scanned) { const col = rb(e.k + t * 3); if (e.gap) { line(c, x, y - 13, x, y - 25, col, 2); if (Math.sin(t * 6 + e.k) > 0) ring(c, '#fc734d', x + 0.5, y - 41, 3, 1); } else { line(c, x, y - 13, x, y - 39, col, 2); disc(c, col, x + 0.5, y - 41, 2.5); } }
 }
 function drawWord(c, g, e, x, y, t, sk) {
   const on = wordActive(g, e), fresh = wordFresh(g, e), cx = x + e.w / 2;

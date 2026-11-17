@@ -97,6 +97,13 @@ export function makeAudio() {
     exit: () => [440, 554, 659, 880, 1108].forEach((f, i) => tone('triangle', f, f, 0.3, 0.08, sfx, i * 0.09)),
     core: () => { noise(1.6, 0.5, 'lowpass', 4000, 80, sfx); [220, 277, 330, 440, 554, 660, 880].forEach((f, i) => tone('triangle', f, f, 0.6, 0.09, sfx, i * 0.12)); },
     word: () => tone('sine', 880, 880, 0.05, 0.02, sfx),
+    predicted: () => { noise(0.05, 0.12, 'highpass', 4000, 6000, sfx); tone('square', 1320, 660, 0.08, 0.04, sfx); },
+    tele: () => [0, 1, 2].forEach(i => tone('square', 880, 880, 0.09, 0.06, sfx, i * 0.2)),
+    wall: () => { noise(0.5, 0.3, 'lowpass', 3000, 200, sfx); tone('sawtooth', 110, 55, 0.5, 0.2, sfx); },
+    glassed: () => { tone('sine', 1760, 1320, 0.2, 0.08, sfx); noise(0.06, 0.15, 'highpass', 5000, 5000, sfx); },
+    picture: () => noise(0.25, 0.12, 'bandpass', 3000, 800, sfx),
+    judgment: () => { noise(2.2, 0.5, 'lowpass', 6000, 60, sfx); [55, 82, 110].forEach((f, i) => tone('sawtooth', f, f * 0.5, 2, 0.2, sfx, i * 0.05)); },
+    mark: () => { tone('sine', 660, 660, 0.12, 0.07, sfx); tone('sine', 990, 990, 0.2, 0.06, sfx, 0.08); tone('sine', 1320, 1320, 0.3, 0.05, sfx, 0.16); },
   };
   return {
     start,
