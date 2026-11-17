@@ -7,6 +7,15 @@ import { play } from './bot.mjs';
 import { SCRIPTS } from './scripts.mjs';
 const [only, route] = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2].split(':') : [null], log = process.argv.includes('--log');
 let failed = 0;
+{ // every import between game modules, and the page's own two links, carry one and the same ?v= token:
+  // without it a returning browser pairs a new file with an old one it still has cached
+  const dir = new URL('../game/', import.meta.url), names = ['main.js', 'sim.js', 'levels.js', 'render.js', 'post.js', 'audio.js', 'font.js'];
+  const tokens = new Set(), bare = [];
+  for (const n of names) for (const m of readFileSync(new URL(n, dir), 'utf8').matchAll(/from '\.\/[a-z]+\.js(\?v=([0-9a-z]+))?'/g)) m[2] ? tokens.add(m[2]) : bare.push(n);
+  for (const m of readFileSync(new URL('../index.html', import.meta.url), 'utf8').matchAll(/(?:psycho-syber\.css|game\/main\.js)\?v=([0-9a-z]+)/g)) tokens.add(m[1]);
+  if (bare.length || tokens.size !== 1) { failed++; console.log(`FAIL: game modules must share one ?v= token (found ${[...tokens].join(', ') || 'none'}${bare.length ? '; unversioned imports in ' + bare.join(', ') : ''})`); }
+  else console.log(`version: every game import carries ?v=${[...tokens][0]}`);
+}
 { // the 21 marks carry the ids and names of the Lacuna Atlas
   const src = readFileSync(new URL('../../src/lacuna/atlas/sites.js', import.meta.url), 'utf8');
   const real = [...src.matchAll(/\bid: "([^"]+)", slug: "[^"]+", name: "([^"]+)"/g)].map(m => m[1] + '|' + m[2]), mine = ATLAS.map(a => a.id + '|' + a.name);

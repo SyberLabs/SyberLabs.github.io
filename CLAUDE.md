@@ -94,6 +94,9 @@ header (`nav` in `projects/site-data.js`), the Menu and one line in the homepage
   ships with a passing run. `psycho-syber/README.md` lists the files and the map characters.
 - The page's copy follows Wording. Lines inside the game (stage intros, hints, messages) are its fiction and its
   instructions: keep them plain, and the banned word stays banned there too.
+- Every import between the game's modules, and the page's links to `psycho-syber.css` and `game/main.js`, carry one
+  `?v=` token. Give all of them one new token whenever any game file changes: without it a returning browser pairs a
+  new module with an old one it still has cached. `node psycho-syber/test/run.mjs` fails if the tokens differ.
 - The game loads no third-party script, has no form and makes no network request. Sound is synthesised in the
   browser. Progress is one `localStorage` key. `psycho-syber/test/` and `psycho-syber/README.md` are not published.
 
