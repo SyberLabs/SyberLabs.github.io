@@ -75,22 +75,37 @@ and Open Graph addresses on Lacuna pages are the `syberlabs.io/lacuna/` ones. Th
 ## PSYCHO SYBER
 
 Since November 16, 2026 the site carries a game at `/psycho-syber/` (`psycho-syber/`): a side-scrolling stealth game
-with two forms, changed with Shift, and five stages, one for each product and one for Lacuna Institute. `Game` in the
-header (`nav` in `projects/site-data.js`), the Menu and one line in the homepage's Studio section link to it.
+with two forms, changed with Shift. Since November 17 it has six stages: one for each product, one for Lacuna
+Institute, and THE REAL BATTLE, which has no exit. `Game` in the header (`nav` in `projects/site-data.js`), the Menu,
+the line under the homepage's section names and one line in its Studio section link to it.
 
 - The story is fiction and the page says so under "What is real". It is set in an invented ancient Paracas. State
   nothing about the Paracas culture or about any Atlas site beyond a quotation from the Lacuna pages. No real person,
-  dealer, auction house or museum appears in the game: invented names only.
+  dealer, auction house, museum or company appears in the game: invented names only.
+- The one exception is the command ship, a hidden scene (`SHIP` in `levels.js`): three hooded figures named Martian
+  Mat (founder), Seth (lead engineer) and Ezel (creative director). They appear by those names only: no surname, no
+  employer, no likeness, nothing else about them. This is also the site's one exception to "do not name individuals",
+  and the name guard in CI still applies. The page says a hidden scene exists and does not say how to reach it.
+- The villain is the Patron: an invented Visitor in gold who owns the Works, the sale and the machine. The machine is
+  the Thousand Eyes. Neither is modelled on a real person, company or product, and neither carries the symbols of a
+  real group or of a conspiracy theory. Keep both that way.
+- Each of the first five stages can be finished without the jaguar's form, and a scripted run named `id:weaver`
+  proves it. A new obstacle for the jaguar ships with the weaver's way round it.
+- THE REAL BATTLE cannot be won: the stage ends at the machine's verdict or when health runs out, and the ending
+  follows. The ending covers the page and changes the tab's title for a few seconds; Enter or Escape skips it, and
+  reduced motion gets the text without the animation. It reads the device's clock and shows it. It sends nothing.
 - The jaguar's side borrows from ancient American traditions (the were-jaguar, the nagual, Tepeyollotl, the Maya
   night sun, Chavín). "What the jaguar borrows" on the page gives each idea one or two sourced sentences, in our own
   words, with a link to an encyclopedia, a university page or Smarthistory. Add nothing there without a source, and
   do not cite a museum, a dealer or an auction house. Stage 2 is MACHU PICCHU; the page says it is far later than Paracas.
-- The last stage, THE RECORD, stands for Lacuna Institute. The player reads the record of each lot, finds the gaps
+- The fifth stage, THE RECORD, stands for Lacuna Institute. The player reads the record of each lot, finds the gaps
   and delivers that evidence before a timer runs out. Nothing is taken and no one is fought in that stage.
-- The 21 marks in that stage are the 21 Atlas sites, and each links to `/lacuna/#<id>`. `ATLAS` in
-  `psycho-syber/game/levels.js` must match `src/lacuna/atlas/sites.js`; `node psycho-syber/test/run.mjs` fails if not.
-- The rules of play are `psycho-syber/game/sim.js`, which has no DOM. Every stage has a scripted run in
-  `psycho-syber/test/scripts.mjs` that plays it to the exit, and CI runs them. A change to a stage or to the physics
+- The 21 marks spread over the first five stages are the 21 Atlas sites, each once, and each links to
+  `/lacuna/#<id>`. `ATLAS` in `psycho-syber/game/levels.js` must match `src/lacuna/atlas/sites.js`;
+  `node psycho-syber/test/run.mjs` fails if not. In the last stage each mark found is a dark lens and delays the
+  verdict by one second.
+- The rules of play are `psycho-syber/game/sim.js`, which has no DOM. Every stage with an exit has scripted runs in
+  `psycho-syber/test/scripts.mjs` that play it to the exit, and CI runs them. A change to a stage or to the physics
   ships with a passing run. `psycho-syber/README.md` lists the files and the map characters.
 - The page's copy follows Wording. Lines inside the game (stage intros, hints, messages) are its fiction and its
   instructions: keep them plain, and the banned word stays banned there too.
@@ -98,7 +113,8 @@ header (`nav` in `projects/site-data.js`), the Menu and one line in the homepage
   `?v=` token. Give all of them one new token whenever any game file changes: without it a returning browser pairs a
   new module with an old one it still has cached. `node psycho-syber/test/run.mjs` fails if the tokens differ.
 - The game loads no third-party script, has no form and makes no network request. Sound is synthesised in the
-  browser. Progress is one `localStorage` key. `psycho-syber/test/` and `psycho-syber/README.md` are not published.
+  browser. Progress, the Atlas marks found, the story pace and the command ship's gift are `localStorage` keys that
+  begin `psycho-syber.`. `psycho-syber/test/` and `psycho-syber/README.md` are not published.
 
 ## Homepage
 

@@ -1,7 +1,7 @@
 // node psycho-syber/test/run.mjs [stage id] [--log]
 // Builds every stage (which checks the maps) and plays each scripted run to the exit.
 import { readFileSync } from 'node:fs';
-import { STAGES, ATLAS } from '../game/levels.js';
+import { STAGES, ATLAS, SHIP } from '../game/levels.js';
 import { newGame, step, T } from '../game/sim.js';
 import { play } from './bot.mjs';
 import { SCRIPTS } from './scripts.mjs';
@@ -76,6 +76,48 @@ if (!only) {
     const t0 = g.wordT; run(g, {}, 1); const dt = g.wordT - t0;
     run(g, { actP: true, aim: pc }, 0.1);
     rule('the pace setter slows every word until it is checked again', slow && dt < 0.4 && g.pace === 1);
+  }
+  { // the 21 Atlas marks are spread over the stages, each site once
+    const ids = STAGES.flatMap(d => of(newGame(d), 'mark').map(e => e.id));
+    rule('the stages hold each of the 21 Atlas marks once', ids.length === 21 && ATLAS.every(a => ids.filter(i => i === a.id).length === 1));
+  }
+  { // THE REAL BATTLE: nothing works on the Thousand Eyes, and nobody leaves
+    const g = stage('real'), a = of(g, 'asi')[0]; let predicted = 0;
+    for (let i = 0; i < 43 * 60 && !g.over; i++) { g.p.throwCd = 0; step(g, { ...idle, right: i % 240 < 120, left: i % 240 >= 120, jump: i % 50 < 20, fire: i % 30 === 0, fireP: i % 30 === 0, aimX: a.x, aimY: a.y }, 1 / 60); predicted += g.ev.filter(e => e.k === 'predicted').length; g.ev.length = 0; }
+    rule('the last stage cannot be won', g.over && !g.done && !a.dead && predicted > 0 && g.time <= 40.1);
+  }
+  { // each Atlas mark found is a place the machine has no record of: the verdict comes one second later for each.
+    // Standing still, the run ends by its shots first; with no health to lose, only the verdict ends it.
+    const end = blind => { const g = stage('real'); g.blind = blind; let orders = 0; for (let i = 0; i < 70 * 60 && !g.over; i++) { g.p.inv = 1; step(g, idle, 1 / 60); orders += g.ev.filter(e => e.k === 'tele').length; g.ev.length = 0; } return [g.time, orders, g.over && !g.done]; };
+    const [t0, o0, over0] = end(0), [t21, o21, over21] = end(21), [t99] = end(99);
+    rule('the verdict comes at 40 seconds, and one second later for each Atlas mark found', over0 && over21 && Math.abs(t0 - 40) < 0.1 && Math.abs(t21 - 61) < 0.1 && Math.abs(t99 - 61) < 0.1);
+    rule('the machine gives its order before the verdict', o0 >= 3 && o21 >= 3);
+  }
+  { // the Patron in the last room is a picture: the jaguar that reaches him passes through
+    const g = stage('real'), pt = of(g, 'patron')[0]; g.persona = 'psycho'; g.p.x = pt.x; g.p.y = pt.y + 14; g.p.inv = 9; let seen = 0;
+    for (let i = 0; i < 20; i++) { step(g, idle, 1 / 60); seen += g.ev.filter(e => e.k === 'picture').length; g.ev.length = 0; }
+    rule('the Patron in the last room is only a picture', seen === 1 && !g.done);
+  }
+  { // the Patron speaks once as you come to the end of the Works
+    const g = stage('works'), pt = of(g, 'patron')[0]; let lines = 0; g.p.x = pt.x - 400; g.p.y = 20 * T;
+    for (const x of [pt.x - 400, pt.x - 200, pt.x - 190]) { g.p.x = x; step(g, idle, 1 / 60); lines += g.ev.filter(e => e.k === 'patron' && e.line).length; g.ev.length = 0; }
+    rule('the Patron speaks once at the end of the Works', lines === 1);
+  }
+  { // the command ship: three figures speak, and the pad sets you down again
+    const g = newGame(SHIP); run(g, { right: true }, 12);
+    rule('the command ship has three who speak and a way back', g.said === 3 && g.done);
+  }
+  { // three roars at the great carved head call the ship
+    const g = stage('steps'), m = of(g, 'monument')[0]; let called = false, omens = 0;
+    g.persona = 'psycho'; g.p.x = m.x + 20; g.p.y = 20 * T;
+    for (let n = 0; n < 3; n++) { step(g, { ...idle, actP: true }, 1 / 60); for (let i = 0; i < 8.2 * 60; i++) { step(g, idle, 1 / 60); } omens += g.ev.filter(e => e.k === 'omen').length; called = called || g.ev.some(e => e.k === 'abduct'); g.ev.length = 0; }
+    rule('three roars at the great carved head call the ship', omens === 3 && called);
+  }
+  { // the jaguar can break a source with a pounce, and that raises the alarm
+    const g = stage('lines'), src = of(g, 'source')[2];
+    g.persona = 'psycho'; g.p.x = src.x - 34; g.p.y = 20 * T; run(g, {}, 0.1);
+    step(g, { ...idle, fire: true, fireP: true, aimX: src.x, aimY: src.y }, 1 / 60); run(g, {}, 0.4);
+    rule('a pounce breaks a source and raises the alarm', !src.alive && g.alarm > 0);
   }
   { // a source that feeds nothing here is watched
     const g = stage('lines'), trap = of(g, 'source').find(e => e.trap);

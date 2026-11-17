@@ -305,7 +305,7 @@ export const siteMap = [
   { title: 'Company', items: [
     { label: 'Consulting and partnerships', note: 'Services, engagement steps and pilots', href: '/services/' },
     { label: 'The factory', note: 'How a code change is written, tested and approved', href: '/factory/' },
-    { label: 'PSYCHO SYBER', note: 'Browser game: five stages, one for each project', href: '/psycho-syber/' },
+    { label: 'PSYCHO SYBER', note: 'Browser game: six stages, and the last has no exit', href: '/psycho-syber/' },
     { label: 'Email', note: EMAIL, href: CONTACT },
   ] },
   { title: 'Account', items: [
