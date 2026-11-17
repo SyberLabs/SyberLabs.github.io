@@ -1,8 +1,8 @@
 // PSYCHO SYBER: drawing. Everything is drawn into a 480x270 frame and scaled up without smoothing.
 // There are two complete looks. SYBER (skin 0) is cold stone and Visitor circuitry at night. PSYCHO (skin 1) is
 // the same world as the jaguar sees it: a living Paracas textile. The same geometry is drawn twice, once per skin.
-import { T, C, tileAt, gateActive, eyeAngle, wordActive, wordFresh, coreOpen, verdictAt, HUM, JAG } from './sim.js?v=20261117c';
-import { text, textC, textW } from './font.js?v=20261117c';
+import { T, C, tileAt, gateActive, eyeAngle, wordActive, wordFresh, coreOpen, verdictAt, HUM, JAG } from './sim.js?v=20261117d';
+import { text, textC, textW } from './font.js?v=20261117d';
 export const VW = 480, VH = 270;
 const TAU = Math.PI * 2;
 const hash = (x, y, s = 0) => { let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(s | 0, 1274126177)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };

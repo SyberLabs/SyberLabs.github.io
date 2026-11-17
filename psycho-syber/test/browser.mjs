@@ -153,6 +153,72 @@ const S = {
     await page.keyboard.up('d'); await wait(900); await view('ship-back');
     console.log('back:', await page.evaluate(() => [window.__ps.state, document.getElementById('ps-card-title').textContent, localStorage.getItem('psycho-syber.ship'), window.__ps.g.p.maxHp, window.__ps.g.said].join(' · ')));
   },
+  // Touch: a phone held sideways and upright. Fingers are sent through the browser's own touch input, so the
+  // page's pointer handlers are what is checked: the stick, the three buttons, a tap to throw, and a cord that
+  // stays tied after the finger lifts.
+  async touch() {
+    const land = process.env.SIZE ? size : [844, 390];
+    const tctx = await browser.newContext({ viewport: { width: land[0], height: land[1] }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+    const tp = await tctx.newPage(); tp.on('pageerror', e => errors.push('pageerror: ' + e.message));
+    const cdp = await tctx.newCDPSession(tp), W = ms => tp.waitForTimeout(ms), snap = name => tp.screenshot({ path: `${out}/touch-${name}.png` });
+    const finger = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts.map(([x, y, id]) => ({ x, y, id: id || 0 })) });
+    const center = sel => tp.evaluate(sel => { const r = document.querySelector(sel).getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, sel);
+    const tap = async sel => { const [x, y] = await center(sel); await finger('touchStart', [[x, y]]); await W(60); await finger('touchEnd', []); await W(120); };
+    const G = fn => tp.evaluate(fn);
+    await tp.goto(BASE + '/psycho-syber/', { waitUntil: 'load' }); await W(1200);
+    console.log('touch mode:', await G(() => window.__ps.touch), '· keys line shown:', await G(() => getComputedStyle(document.querySelector('.ps-for-keys')).display), '· touch line shown:', await G(() => getComputedStyle(document.querySelector('.ps-for-touch')).display));
+    await snap('title');
+    await finger('touchStart', [[land[0] * 0.2, land[1] * 0.3]]); await W(50); await finger('touchEnd', []); await W(900);
+    console.log('a tap on the title changed form to:', await G(() => window.__ps.g.persona)); await snap('title-psycho');
+    await finger('touchStart', [[land[0] * 0.2, land[1] * 0.3]]); await W(50); await finger('touchEnd', []); await W(700);
+    await tap('#ps-start'); await W(600); await snap('card');
+    console.log('card state:', await G(() => window.__ps.state), '· stage takes the screen:', await G(() => document.getElementById('ps-stage').classList.contains('is-immersive')));
+    await W(900); await tap('#ps-card-go'); await W(700);
+    console.log('play state:', await G(() => window.__ps.state), '· pad hidden:', await G(() => document.getElementById('ps-pad').hidden));
+    await snap('play');
+    // the stick: hold right
+    const [sx, sy] = await center('#ps-stick'), x0 = await G(() => window.__ps.g.p.x);
+    await finger('touchStart', [[sx, sy, 1]]); await W(40); await finger('touchMove', [[sx + 40, sy, 1]]); await W(1200); await snap('walk');
+    // a second finger on Jump while the first still holds the stick
+    const [jx, jy] = await center('#ps-b-jump'); await finger('touchMove', [[sx + 40, sy, 1], [jx, jy, 2]].slice(0, 1)); await finger('touchStart', [[sx + 40, sy, 1], [jx, jy, 2]]); await W(120);
+    const vy = await G(() => window.__ps.g.p.vy); await finger('touchEnd', [[sx + 40, sy, 1]]); await W(500); await finger('touchEnd', []); await W(300);
+    console.log('stick right moved the weaver by', Math.round(await G(() => window.__ps.g.p.x) - x0), 'px · jump while walking gave vy', Math.round(vy), '· pad after release:', JSON.stringify(await G(() => window.__ps.pad)));
+    await tap('#ps-b-form'); await W(700); console.log('Form ->', await G(() => window.__ps.g.persona));
+    await tap('#ps-b-act'); await W(500); console.log('E as the jaguar -> roars', await G(() => window.__ps.g.roars), '· button reads', await G(() => document.getElementById('ps-b-act-t').textContent)); await snap('jaguar');
+    await tap('#ps-b-form'); await W(900);
+    // a tap on the picture throws glass
+    const before = await G(() => window.__ps.g.throws); await finger('touchStart', [[land[0] * 0.6, land[1] * 0.35]]); await W(50); await finger('touchEnd', []); await W(300);
+    console.log('a tap on the picture threw', await G(() => window.__ps.g.throws) - before, 'glass');
+    // the cord: stand under the first ring, press and hold on it, lift the finger: it stays tied. A tap lets go.
+    await G(() => { const g = window.__ps.g; g.p.x = 51 * 16; g.p.y = 16 * 16; g.p.vx = g.p.vy = 0; }); await W(900);
+    const ring = await G(() => { const ps = window.__ps, e = ps.g.ents.find(e => e.type === 'ring'), r = document.getElementById('ps-view').getBoundingClientRect(); return [r.left + (e.x - ps.cam.x) / 480 * r.width, r.top + (e.y - ps.cam.y) / 270 * r.height, Math.round(e.x / 16), Math.round(e.y / 16), Math.round(ps.g.p.x / 16), Math.round(ps.g.p.y / 16)]; });
+    await finger('touchStart', [[ring[0], ring[1]]]); await W(450); const roped = await G(() => !!window.__ps.g.p.rope); await finger('touchEnd', []); await W(400);
+    console.log('ring at tile', ring.slice(2, 4).join(','), 'player at', ring.slice(4).join(','), '· held press tied the cord:', roped, '· still tied after the finger lifted:', await G(() => !!window.__ps.g.p.rope && window.__ps.tied)); await snap('cord');
+    await finger('touchStart', [[ring[0] + 30, ring[1] + 40]]); await W(50); await finger('touchEnd', []); await W(300);
+    console.log('a tap let it go:', await G(() => !window.__ps.g.p.rope && !window.__ps.tied));
+    await tap('#ps-b-pause'); await W(400); console.log('pause ->', await G(() => window.__ps.state)); await snap('pause');
+    await tap('#ps-resume'); await W(400);
+    // upright
+    await tp.setViewportSize({ width: land[1], height: land[0] }); await W(900); await snap('upright');
+    const box = await G(() => { const v = document.getElementById('ps-view').getBoundingClientRect(), j = document.getElementById('ps-b-jump').getBoundingClientRect(); return { view: [Math.round(v.left), Math.round(v.top), Math.round(v.width), Math.round(v.height)], jump: [Math.round(j.left), Math.round(j.top), Math.round(j.width)] }; });
+    console.log('upright:', JSON.stringify(box), '· sideways scroll:', await G(() => document.documentElement.scrollWidth - innerWidth));
+    await tap('#ps-b-pause'); await W(400); await snap('upright-pause'); await tap('#ps-resume'); await W(300);
+    // the card after THE RECORD, with the Atlas list, upright and sideways; then the last stage sideways
+    await tp.goto(BASE + '/psycho-syber/?stage=5&go=1', { waitUntil: 'load' }); await W(900);
+    await G(() => { const g = window.__ps.g, x = g.ents.find(e => e.type === 'exit'); g.evidence = g.evidenceTotal; g.p.x = x.x; g.p.y = x.y + 16; }); await W(1200); await snap('upright-card5');
+    await tp.setViewportSize({ width: land[0], height: land[1] }); await W(700); await snap('card5');
+    await tap('#ps-card-go'); await W(900); await tap('#ps-card-go'); await W(2600); await snap('real');
+    await G(() => { window.__ps.g.realT = 39.2; window.__ps.g.p.inv = 9; }); await W(1500); await snap('real-order');
+    await tp.waitForFunction(() => !document.getElementById('ps-wake').hidden, null, { timeout: 30000 }); await W(1700); await snap('wake');
+    await finger('touchStart', [[200, 200]]); await W(50); await finger('touchEnd', []); await W(700);
+    console.log('a tap skipped the last words ->', await G(() => window.__ps.state)); await snap('end');
+    await tp.setViewportSize({ width: land[1], height: land[0] }); await W(700); await snap('upright-end');
+    await tap('#ps-again'); await W(600);
+    await tp.goto(BASE + '/psycho-syber/', { waitUntil: 'load' }); await W(900); await tap('#ps-start'); await W(1500); await tap('#ps-card-go'); await W(600);
+    await tap('#ps-b-pause'); await W(300); await tap('#ps-quit'); await W(600);
+    console.log('title again:', await G(() => window.__ps.state), '· stage back in the page:', await G(() => !document.getElementById('ps-stage').classList.contains('is-immersive'))); await snap('upright-title');
+    await tctx.close();
+  },
   // The page's own copy, section by section, at the size given: SIZE=390x844 for a phone.
   async copy() {
     await page.goto(BASE + '/psycho-syber/', { waitUntil: 'load' }); await wait(1200);

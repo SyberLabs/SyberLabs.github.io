@@ -1,10 +1,10 @@
 // PSYCHO SYBER: the page's game loop. sim.js decides what happens, render.js draws it twice (one look per form),
 // post.js puts it on screen, audio.js plays it. This file wires them to the keyboard, the mouse and the page.
-import { STAGES, ATLAS, SHIP } from './levels.js?v=20261117c';
-import { newGame, step, T } from './sim.js?v=20261117c';
-import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117c';
-import { makePost } from './post.js?v=20261117c';
-import { makeAudio } from './audio.js?v=20261117c';
+import { STAGES, ATLAS, SHIP } from './levels.js?v=20261117d';
+import { newGame, step, T } from './sim.js?v=20261117d';
+import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117d';
+import { makePost } from './post.js?v=20261117d';
+import { makeAudio } from './audio.js?v=20261117d';
 
 const $ = id => document.getElementById(id);
 const stage = $('ps-stage'), view = $('ps-view'), hud = $('ps-hud'), hintEl = $('ps-hint'), rsvpEl = $('ps-rsvp'), toastEl = $('ps-toast'), wakeEl = $('ps-wake'), wakeWord = $('ps-wake-word');
@@ -13,7 +13,7 @@ const frames = [0, 1].map(() => { const c = document.createElement('canvas'); c.
 const ctxs = frames.map(c => c.getContext('2d', { alpha: false }));
 const post = makePost(view), audio = makeAudio();
 const calm = matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 0;
-const DT = 1 / 60, KEY = 'psycho-syber.stage';
+const DT = 1 / 60, KEY = 'psycho-syber.stage', q = new URLSearchParams(location.search);
 const store = { get() { try { return Math.min(STAGES.length - 1, Math.max(0, parseInt(localStorage.getItem(KEY) || '0', 10) || 0)); } catch { return 0; } }, set(i) { try { if (i > this.get()) localStorage.setItem(KEY, String(i)); } catch { /* private window: progress is not kept */ } } };
 
 let state = 'title', si = 0, g = null, tiles = null, fx = makeFx(), cam = { x: 0, y: 0 }, wipe = 1, t = 0, acc = 0, last = 0, hurtT = 0, toastT = 0, shown = {}, total = { time: 0, deaths: 0, threads: 0, of: 0 };
@@ -44,7 +44,7 @@ function load(i, persona, def) {
 }
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 function skin(persona) { stage.classList.toggle('is-psycho', persona === 'psycho'); stage.classList.toggle('is-syber', persona !== 'psycho'); audio.swap(persona); }
-function show(name) { for (const k in panels) panels[k].hidden = k !== name; hud.hidden = !(state === 'play' || state === 'pause'); stage.classList.toggle('is-playing', state === 'play'); if (state !== 'play') { toastT = 0; toastEl.classList.remove('is-on'); hintEl.classList.remove('is-on'); shown.hint = ''; } }
+function show(name) { for (const k in panels) panels[k].hidden = k !== name; hud.hidden = !(state === 'play' || state === 'pause'); stage.classList.toggle('is-playing', state === 'play'); paintPad(); if (state !== 'play') { toastT = 0; toastEl.classList.remove('is-on'); hintEl.classList.remove('is-on'); shown.hint = ''; } }
 function toast(text) { if (g && g.L.def.real) return;   // in the last room the machine does the talking, inside the picture
   toastEl.textContent = text; toastEl.classList.add('is-on'); toastT = Math.max(3.6, text.split(' ').length * 0.34); }
 
@@ -201,12 +201,14 @@ function pause(on) {
 
 // ---------------------------------------------------------------- input
 const CODES = { left: ['KeyA', 'ArrowLeft'], right: ['KeyD', 'ArrowRight'], up: ['KeyW', 'ArrowUp'], down: ['KeyS', 'ArrowDown'], jump: ['Space', 'KeyW', 'ArrowUp'] };
-const held = name => CODES[name].some(c => keys.has(c));
+const pad = { left: false, right: false, up: false, down: false, jump: false };   // what the touch controls hold
+const held = name => pad[name] || CODES[name].some(c => keys.has(c));
 addEventListener('keydown', e => {
   if (e.target instanceof HTMLElement && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
   const c = e.code, live = state === 'play';
   if (live && (c === 'Space' || c.startsWith('Arrow'))) e.preventDefault();
   if (e.repeat) return;
+  if (touch && !coarse && !q.has('touch')) setTouch(false);   // a laptop with a touch screen goes back to keys when one is pressed
   keys.add(c);
   if (state === 'title') {
     if (c === 'Enter') begin(0);
@@ -229,18 +231,71 @@ addEventListener('keydown', e => {
   if (c === 'KeyF') { if (document.fullscreenElement) document.exitFullscreen(); else stage.requestFullscreen?.().catch(() => {}); }
 });
 addEventListener('keyup', e => keys.delete(e.code));
-addEventListener('blur', () => { keys.clear(); mouse.fire = mouse.alt = false; pause(true); });
+addEventListener('blur', () => { keys.clear(); mouse.fire = mouse.alt = false; tied = false; for (const k in pad) pad[k] = false; pause(true); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) { pause(true); audio.suspend(); } else audio.resume(); });
 function point(e) { const r = view.getBoundingClientRect(); mouse.x = clamp((e.clientX - r.left) / r.width, 0, 1) * VW; mouse.y = clamp((e.clientY - r.top) / r.height, 0, 1) * VH; }
 view.addEventListener('pointermove', point);
 view.addEventListener('pointerdown', e => {
   point(e); audio.start(); view.focus({ preventScroll: true });
+  if (e.pointerType === 'touch' && !touch) setTouch(true);
   if (state !== 'play') return;
   e.preventDefault(); view.setPointerCapture?.(e.pointerId);
+  if (e.pointerType === 'touch' && tied) { tied = false; mouse.fire = false; return; }   // a tap lets a tied cord go
   if (e.button === 2) { mouse.alt = true; edge.altP = true; } else if (e.button === 0) { mouse.fire = true; edge.fireP = true; }
 });
-view.addEventListener('pointerup', e => { if (e.button === 2) mouse.alt = false; else if (e.button === 0) mouse.fire = false; });
-view.addEventListener('pointercancel', () => { mouse.fire = mouse.alt = false; });
+view.addEventListener('pointerup', e => {
+  if (e.button === 2) mouse.alt = false;
+  else if (e.button === 0) { if (e.pointerType === 'touch' && g && g.p.rope && state === 'play') tied = true; else mouse.fire = false; }   // on touch the cord stays tied when the finger lifts
+});
+view.addEventListener('pointercancel', () => { mouse.fire = mouse.alt = false; tied = false; });
+
+// ---------------------------------------------------------------- touch
+// A stick under the left thumb, which starts wherever the thumb lands; Jump, Form and E under the right; and a tap
+// on the picture to aim. A tap throws glass or pounces. A press that is held throws the cord, and on touch the
+// cord stays tied when the finger lifts, so the thumb is free: the next tap, or Jump, lets it go.
+const padEl = $('ps-pad'), stickEl = $('ps-stick'), ringEl = $('ps-stick-ring'), knobEl = $('ps-stick-knob');
+const coarse = matchMedia('(hover: none) and (pointer: coarse)').matches;
+let touch = false, tied = false, stickId = null, stickAt = null;
+function setTouch(on) { touch = on; stage.classList.toggle('is-touch', on); paintPad(); }
+function paintPad() {
+  padEl.hidden = !(touch && state === 'play');
+  stage.classList.toggle('is-immersive', touch && state !== 'title');   // the page's header is back at the title
+  if (padEl.hidden) { for (const k in pad) pad[k] = false; stickId = null; ringEl.classList.remove('is-on'); ringEl.style.transform = knobEl.style.transform = ''; }
+}
+function moveStick(e) {
+  let dx = e.clientX - stickAt.x, dy = e.clientY - stickAt.y; const d = Math.hypot(dx, dy), R = 44;
+  if (d > R) { stickAt.x += dx * (1 - R / d); stickAt.y += dy * (1 - R / d); dx *= R / d; dy *= R / d; }   // the ring follows a thumb that drags past its rim
+  pad.left = dx < -12; pad.right = dx > 12; pad.up = dy < -24; pad.down = dy > 24;
+  const r = stickEl.getBoundingClientRect();
+  ringEl.classList.add('is-on'); ringEl.style.transform = `translate(${stickAt.x - r.left}px, ${stickAt.y - r.top}px)`; knobEl.style.transform = `translate(${dx}px, ${dy}px)`;
+}
+stickEl.addEventListener('pointerdown', e => { if (stickId !== null) return; e.preventDefault(); audio.start(); stickId = e.pointerId; stickEl.setPointerCapture?.(e.pointerId); stickAt = { x: e.clientX, y: e.clientY }; moveStick(e); });
+stickEl.addEventListener('pointermove', e => { if (e.pointerId === stickId) moveStick(e); });
+const endStick = e => { if (e.pointerId !== stickId) return; stickId = null; pad.left = pad.right = pad.up = pad.down = false; ringEl.classList.remove('is-on'); ringEl.style.transform = knobEl.style.transform = ''; };
+stickEl.addEventListener('pointerup', endStick); stickEl.addEventListener('pointercancel', endStick);
+function button(id, down, up) {
+  const b = $(id), end = () => { b.classList.remove('is-down'); if (up) up(); };
+  b.addEventListener('pointerdown', e => { e.preventDefault(); audio.start(); b.setPointerCapture?.(e.pointerId); b.classList.add('is-down'); down(); });
+  b.addEventListener('pointerup', end); b.addEventListener('pointercancel', end); b.addEventListener('contextmenu', e => e.preventDefault());
+}
+button('ps-b-jump', () => { pad.jump = true; if (state === 'play') { edge.jumpP = true; edge.spaceP = true; } }, () => { pad.jump = false; });
+button('ps-b-act', () => { if (state === 'play') edge.actP = true; });
+button('ps-b-form', () => { if (state === 'play') edge.swapP = true; });
+button('ps-b-pause', () => pause(state === 'play'));
+wakeEl.addEventListener('pointerdown', () => endMeta());   // a tap skips the last words, as Enter does
+panels.title.addEventListener('pointerdown', e => {   // on the title a tap on the picture changes form, as Shift does
+  if (e.pointerType !== 'touch') return;
+  if (!touch) setTouch(true);
+  if (e.target.closest('button, a')) return;
+  audio.start(); g.persona = g.persona === 'psycho' ? 'syber' : 'psycho'; wipe = 0; skin(g.persona);
+});
+// What the hints say for keys, said for touch.
+const TOUCH_WORDS = [['A and D walk. W or Space jumps.', 'The stick on the left walks. JUMP jumps.'],
+  ['Hold the mouse button on a ring or on stone to throw the cord. W reels in. Let go to drop.', 'Press and hold on a ring or on stone to throw the cord. It stays tied. Stick up reels in. Tap again to drop.'],
+  ['Space lets go with a kick', 'JUMP lets go with a kick'], ['Click throws glass', 'A tap on the picture throws glass'], ['Hold S to hide', 'Hold the stick down to hide'],
+  ['Shift changes you into the jaguar. Q does the same.', 'FORM changes you into the jaguar.'], ['hold W to climb. Space leaps off', 'hold the stick up to climb. JUMP leaps off'],
+  ['Click to pounce', 'Tap the picture to pounce'], ['Shift back', 'FORM back'], ['Shift:', 'FORM:']];
+const forTouch = s => { for (const [a, b] of TOUCH_WORDS) s = s.replace(a, b); return s; };
 view.addEventListener('contextmenu', e => e.preventDefault());
 $('ps-start').onclick = () => begin(0);
 $('ps-continue').onclick = () => begin(store.get());
@@ -295,6 +350,7 @@ function frame(now) {
       if (g.done) { clear(); break; }
     }
     audio.slow(g.slow > 0);
+    if (tied && !g.p.rope) { tied = false; mouse.fire = false; }   // the cord came off some other way
   } else if (state === 'title') {
     p.x = 60 + (Math.sin(t * 0.12 - 1.5) * 0.5 + 0.5) * (g.L.w * T - VW - 120) + VW / 2; p.y = 320; p.run += dt * 60; p.onGround = true; g.wt += dt; g.wordT += dt; g.t += dt;
   }
@@ -304,7 +360,8 @@ function frame(now) {
   if (wipeHold !== null) wipe = wipeHold; else if (wipe < 1) wipe = Math.min(1, wipe + dt / 0.55);
   // camera: follows the player and leans toward the cursor
   const psy = g.persona === 'psycho', live = state === 'play';
-  const tx = clamp(p.x - VW / 2 + (live ? clamp((mouse.x - VW / 2) * 0.22, -46, 46) : 0), 0, g.L.w * T - VW), ty = clamp(p.y - VH * 0.62 + (live ? clamp((mouse.y - VH / 2) * 0.18, -24, 24) : 0), 0, g.L.h * T - VH);
+  const lean = live && !touch;   // with a mouse the view leans toward the pointer; a finger has no resting place to lean to
+  const tx = clamp(p.x - VW / 2 + (lean ? clamp((mouse.x - VW / 2) * 0.22, -46, 46) : live ? p.face * 26 : 0), 0, g.L.w * T - VW), ty = clamp(p.y - VH * 0.62 + (lean ? clamp((mouse.y - VH / 2) * 0.18, -24, 24) : 0), 0, g.L.h * T - VH);
   const k = state === 'title' ? 1 : 1 - Math.exp(-dt * 9);
   cam.x += (tx - cam.x) * k; cam.y += (ty - cam.y) * k;
   const sh = fx.shake > 0 && !calm ? fx.shake * 10 : 0, view2 = { x: cam.x + (Math.random() - 0.5) * sh, y: cam.y + (Math.random() - 0.5) * sh };
@@ -330,14 +387,14 @@ function paintHud() {
   set('ps-a3', p.hidden ? 'Hidden' : g.alarm > 0 ? 'Alarm' : '');
   set('ps-sale', d.timer ? `Sale closes in ${clock(Math.ceil(g.sale))} · evidence ${g.evidence}/${g.evidenceTotal}` : '');
   if (d.timer) $('ps-sale').classList.toggle('is-low', g.sale < 30);
-  const h = (g.hint >= 0 && g.L.hints[g.hint]) || '';
+  const h0 = (g.hint >= 0 && g.L.hints[g.hint]) || '', h = touch ? forTouch(h0) : h0;
   if (shown.hint !== h) { shown.hint = h; hintEl.textContent = h; hintEl.classList.toggle('is-on', !!h); }
+  if (touch) set('ps-b-act-t', psy ? (p.roarCd > 0 ? String(Math.ceil(p.roarCd)) : 'roar') : 'check');
 }
 
 // A hook for the browser tests: read the game, start a stage, feed input.
-window.__ps = { get g() { return g; }, get state() { return state; }, begin, play, STAGES, atlas, endMeta, keys, mouse, get edge() { return edge; }, set edge(v) { edge = v; }, set wipe(v) { wipeHold = v; }, cam, webgl: post.webgl };
-const q = new URLSearchParams(location.search);
+window.__ps = { get g() { return g; }, get state() { return state; }, begin, play, STAGES, atlas, endMeta, pad, get tied() { return tied; }, get touch() { return touch; }, keys, mouse, get edge() { return edge; }, set edge(v) { edge = v; }, set wipe(v) { wipeHold = v; }, cam, webgl: post.webgl };
 toTitle(); resize();
 if (q.has('stage')) { begin(clamp(parseInt(q.get('stage'), 10) - 1 || 0, 0, STAGES.length - 1)); if (q.has('go')) play(); if (q.get('form') === 'psycho') { g.persona = 'psycho'; skin('psycho'); } }
-if (matchMedia('(hover: none) and (pointer: coarse)').matches) $('ps-touch').hidden = false;
+if (coarse || q.has('touch')) setTouch(true);   // ?touch shows the touch controls on any device
 requestAnimationFrame(frame);

@@ -15,7 +15,7 @@ say are in the repository's `CLAUDE.md`, under "PSYCHO SYBER". This file and `te
 | `game/render.js`, `game/font.js` | Draws one 480 x 270 frame per look into a 2D canvas |
 | `game/post.js` | Puts the frame on screen with WebGL: the ring that spreads on a change of form, and the jaguar's distortion. Falls back to 2D |
 | `game/audio.js` | All sound, synthesised with Web Audio: one stem per form |
-| `game/main.js` | The loop, the keyboard and mouse, the panels, the words shown one at a time, the ending |
+| `game/main.js` | The loop, the keyboard, mouse and touch controls, the panels, the words shown one at a time, the ending |
 | `test/run.mjs`, `test/scripts.mjs`, `test/bot.mjs` | A scripted run per stage, played in Node |
 | `test/probe.mjs` | Measures how high and far each form jumps |
 | `test/browser.mjs` | Opens the built page in headless Chrome: screenshots, a full play-through, the social card |
@@ -34,7 +34,10 @@ CI runs the first line. The browser checks need a built site (`pnpm build:site`)
 
 `flow` plays each scripted run inside the page, walks into each exit with a held key, and prints what every card shows.
 It then plays the last stage to its verdict and photographs the ending. `real` photographs the last stage and each
-answer of the machine. `ship` does the three roars at the great carved head and walks the command ship.
+answer of the machine. `ship` does the three roars at the great carved head and walks the command ship. `touch` opens
+the page as a phone, sideways then upright, and drives it with fingers sent through the browser's touch input: the
+stick, the three buttons, a tap to throw, and a cord that stays tied. `?touch` on the page's address shows the touch
+controls on any device.
 
 ## What each form clears
 
@@ -86,6 +89,14 @@ one second for each Atlas mark found (`g.blind`, set by `main.js`). Death there 
 and emits `real`, and `main.js` plays the ending (`meta()`): the picture splits into 1, 4, 16 ... 1,024 feeds, the
 run is read back, and a full-page layer (`#ps-wake`) shows the last four lines. `endMeta()` restores the page. What
 the machine says and logs inside the picture is `LOGS`, `SAYS` and `PHASE` in `render.js`.
+
+## Touch
+
+`main.js` turns touch on for a device with a coarse pointer and no hover, or at the first finger on the picture. The
+stick and the buttons write to `pad` and to `edge`, the same places the keys write to, so `sim.js` knows nothing of
+it. While a stage is on, `.is-immersive` fixes the stage over the whole screen, the header included; the title is
+back in the page. A held press on the picture throws the cord and `tied` keeps it after the finger lifts. The
+hints are written for keys, and `TOUCH_WORDS` says the same things for touch.
 
 ## The command ship
 
