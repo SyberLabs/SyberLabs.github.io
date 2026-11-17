@@ -1,10 +1,10 @@
 // PSYCHO SYBER: the page's game loop. sim.js decides what happens, render.js draws it twice (one look per form),
 // post.js puts it on screen, audio.js plays it. This file wires them to the keyboard, the mouse and the page.
-import { STAGES, ATLAS, SHIP } from './levels.js?v=20261117h';
-import { newGame, step, T, verdictAt } from './sim.js?v=20261117h';
-import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117h';
-import { makePost } from './post.js?v=20261117h';
-import { makeAudio } from './audio.js?v=20261117h';
+import { STAGES, ATLAS, SHIP } from './levels.js?v=20261117i';
+import { newGame, step, T, verdictAt } from './sim.js?v=20261117i';
+import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117i';
+import { makePost } from './post.js?v=20261117i';
+import { makeAudio } from './audio.js?v=20261117i';
 
 const $ = id => document.getElementById(id);
 const stage = $('ps-stage'), view = $('ps-view'), hud = $('ps-hud'), hintEl = $('ps-hint'), rsvpEl = $('ps-rsvp'), toastEl = $('ps-toast'), wakeEl = $('ps-wake'), wakeWord = $('ps-wake-word');
@@ -45,25 +45,38 @@ function load(i, persona, def) {
 }
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 function skin(persona) { stage.classList.toggle('is-psycho', persona === 'psycho'); stage.classList.toggle('is-syber', persona !== 'psycho'); audio.swap(persona); }
-function show(name) { for (const k in panels) panels[k].hidden = k !== name; hud.hidden = !(state === 'play' || state === 'pause'); stage.classList.toggle('is-playing', state === 'play'); paintPad(); if (state !== 'play') { toastT = 0; toastEl.classList.remove('is-on'); hintEl.classList.remove('is-on'); shown.hint = ''; } }
+function show(name) { for (const k in panels) panels[k].hidden = k !== name; stage.classList.toggle('is-card', name === 'card'); hud.hidden = !(state === 'play' || state === 'pause'); stage.classList.toggle('is-playing', state === 'play'); paintPad(); if (state !== 'play') { toastT = 0; toastEl.classList.remove('is-on'); hintEl.classList.remove('is-on'); shown.hint = ''; } }
 function toast(text) { if (g && g.L.def.real) return;   // in the last room the machine does the talking, inside the picture
   toastEl.textContent = text; toastEl.classList.add('is-on'); toastT = Math.max(3.6, text.split(' ').length * 0.34); }
 
-// ---------------------------------------------------------------- words, one at a time, as RISE shows them
+// ---------------------------------------------------------------- the story, a phrase at a time, at a pace you set
+// A line is cut into phrases where its author put a bar (or, with no bar, into runs of about 26 letters). One phrase
+// shows at a time, in the middle. It is laid out whole from the start, so it never moves; its words arrive in turn.
 let rsvpTimer = 0, wpm = 220;
 try { wpm = Math.min(480, Math.max(120, +localStorage.getItem('psycho-syber.wpm') || 220)); } catch { /* storage is optional */ }
 function setWpm(v) { wpm = Math.min(480, Math.max(120, v)); try { localStorage.setItem('psycho-syber.wpm', String(wpm)); } catch { /* optional */ } paintPace(); }
 function paintPace() { const n = $('ps-pace'); if (n) n.textContent = `Story pace: ${wpm} words a minute. [ and ] change it.`; }
+function phrases(line) {
+  if (line.includes(' | ')) return line.split(' | ');
+  const out = []; let cur = '';
+  for (const w of line.split(' ')) { if (cur && cur.length + w.length + 1 > 26) { out.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w; }
+  if (cur) out.push(cur);
+  return out;
+}
 function rsvp(lines, done, node = rsvpEl) {
   clearTimeout(rsvpTimer);
-  const words = []; for (const l of lines) { const w = l.split(' '); w.forEach((x, i) => words.push([x, i === w.length - 1])); }
-  let i = 0;
+  const list = []; for (const l of lines) { const ps = phrases(l); ps.forEach((p, i) => list.push([p.split(' '), i === ps.length - 1])); }
+  let pi = 0, wi = 0, spans = [];
   const next = () => {
-    if (i >= words.length) { node.hidden = true; node.textContent = ''; if (done) done(); return; }
-    const [w, end] = words[i++], k = Math.min(w.length - 1, Math.max(0, Math.floor((w.replace(/[.,!?:]/g, '').length - 1) * 0.36)));
-    node.hidden = false; node.replaceChildren(span(w.slice(0, k)), el('b', w[k]), span(w.slice(k + 1)));
+    if (pi >= list.length) { node.hidden = true; node.textContent = ''; if (done) done(); return; }
+    const [words, last] = list[pi];
+    if (wi === 0) { spans = words.map(w => span(w)); node.hidden = false; node.replaceChildren(...spans.flatMap((s, i) => i ? [document.createTextNode(' '), s] : [s])); }
+    if (calm) wi = words.length - 1;   // with reduced motion the phrase shows whole
+    spans.forEach((s, i) => { s.classList.toggle('is-on', i <= wi); s.classList.toggle('is-new', i === wi && !calm); });
     audio.play('word');
-    rsvpTimer = setTimeout(next, (calm ? 420 : 210 + w.length * 22 + (end ? 380 : 0)) * 220 / wpm);
+    const end = wi === words.length - 1; let ms = calm ? 420 * words.length : 190 + words[wi].length * 22;
+    if (end) { ms += last ? 640 : 300; pi++; wi = 0; } else wi++;
+    rsvpTimer = setTimeout(next, ms * 220 / wpm);
   };
   next();
 }

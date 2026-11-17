@@ -15,7 +15,7 @@ say are in the repository's `CLAUDE.md`, under "PSYCHO SYBER". This file and `te
 | `game/render.js`, `game/font.js` | Draws one 480 x 270 frame per look into a 2D canvas |
 | `game/post.js` | Puts the frame on screen with WebGL: the ring that spreads on a change of form, and the jaguar's distortion. Falls back to 2D |
 | `game/audio.js` | All sound, synthesised with Web Audio: one stem per form |
-| `game/main.js` | The loop, the keyboard, mouse and touch controls, the panels, the words shown one at a time, the ending |
+| `game/main.js` | The loop, the keyboard, mouse and touch controls, the panels, the story shown a phrase at a time, the ending |
 | `test/run.mjs`, `test/scripts.mjs`, `test/bot.mjs` | A scripted run per stage, played in Node |
 | `test/probe.mjs` | Measures how high and far each form jumps |
 | `test/browser.mjs` | Opens the built page in headless Chrome: screenshots, a full play-through, the social card |

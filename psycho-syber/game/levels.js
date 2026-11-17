@@ -296,9 +296,9 @@ function ship() {
   const m = grid(32, 17);
   m.box(0, 13, 31, 16, 'M').box(0, 0, 0, 12, 'M').box(31, 0, 31, 12, 'M');
   m.put(3, 12, '@').hint(5, 11, 'The command ship. Walk up to each of the three.');
-  m.put(11, 12, 'H', { name: 'Martian Mat', role: 'founder', lines: ['You found the command ship.', 'Nothing leaves this deck until a person approves it.', 'That is SyberWork.'] });
-  m.put(16, 12, 'H', { name: 'Seth', role: 'lead engineer', lines: ['I run every step before I trust it.', 'Attest does that to your docs.', 'FLYSPACE shows which sources fed an answer.'] });
-  m.put(21, 12, 'H', { name: 'Ezel', role: 'creative director', lines: ['RISE shows you words at the pace you set.', 'Lacuna keeps the Atlas of what is missing.', 'Take a fifth life down with you.'] });
+  m.put(11, 12, 'H', { name: 'Martian Mat', role: 'founder', lines: ['You found | the command ship.', 'Nothing leaves this deck | until a person approves it.', 'That is SyberWork.'] });
+  m.put(16, 12, 'H', { name: 'Seth', role: 'lead engineer', lines: ['I run every step | before I trust it.', 'Attest does that | to your docs.', 'FLYSPACE shows | which sources | fed an answer.'] });
+  m.put(21, 12, 'H', { name: 'Ezel', role: 'creative director', lines: ['RISE shows you words | at the pace you set.', 'Lacuna keeps the Atlas | of what is missing.', 'Take a fifth life | down with you.'] });
   m.put(28, 12, 'X');
   return m.done();
 }
@@ -308,7 +308,7 @@ export const STAGES = [
   {
     id: 'steps', name: 'THE STEPS', project: 'Attest', href: '/projects/attest/',
     line: 'Runs every step in your docs and marks the ones that fail.',
-    intro: ['You are a weaver of a noble house.', 'You drank what the old ones drank, and a jaguar came with you.', 'The Visitors built a stair to their gate.', 'They say every step holds.', 'Run each one.'],
+    intro: ['You are a weaver | of a noble house.', 'You drank | what the old ones drank, | and a jaguar | came with you.', 'The Visitors built a stair | to their gate.', 'They say | every step holds.', 'Run each one.'],   // a bar ends a phrase: the story shows one phrase at a time
     bg: 'shore', persona: 'syber', map: steps,
     props: { A: [mark('paracas'), mark('rapanui'), mark('nanmadol')], D: [...Array.from({ length: 6 }, () => ({ id: 'wall' })), { id: 'top' }], T: [{ opens: 'wall' }, { opens: 'top' }] },
     hints: [
@@ -327,31 +327,31 @@ export const STAGES = [
   {
     id: 'machu', name: 'MACHU PICCHU', project: 'RISE', href: '/projects/rise/',
     line: 'Shows text at a pace you set, with sound and moving visuals.',
-    intro: ['The road climbs to Machu Picchu.', 'The Visitors keep their words in the ruins.', 'One word shows at a time.', 'Climb at the pace you set.'],
+    intro: ['The road climbs | to Machu Picchu.', 'The Visitors keep their words | in the ruins.', 'One word shows | at a time.', 'Climb | at the pace you set.'],
     bg: 'ruins', persona: 'syber', order: 'up', words: { text: 'WORDS RISE AT THE PACE YOU SET', beat: 0.9 }, ...machu(),
   },
   {
     id: 'lines', name: 'THE LINES', project: 'FLYSPACE', href: '/projects/flyspace/',
     line: 'Shows which data sources fed each AI answer.',
-    intro: ['Lines cross the desert floor.', 'Each gate is fed by a source somewhere else.', 'Find which one.'],
+    intro: ['Lines cross | the desert floor.', 'Each gate is fed | by a source | somewhere else.', 'Find which one.'],
     bg: 'desert', persona: 'syber', ...lines(),
   },
   {
     id: 'works', name: 'THE WORKS', project: 'SyberWork', href: '/projects/syberwork/',
     line: 'Tests every AI-written code change before a person approves it.',
-    intro: ['Here the Visitors decide who is born.', 'The Patron owns the Works.', 'Each birth is proposed, checked and reviewed.', 'A machine approves.', 'Put a person there.'],
+    intro: ['Here the Visitors decide | who is born.', 'The Patron owns the Works.', 'Each birth is proposed, | checked and reviewed.', 'A machine approves.', 'Put a person there.'],
     bg: 'works', persona: 'syber', ...works(),
   },
   {
     id: 'record', name: 'THE RECORD', project: 'Lacuna Institute', href: '/lacuna/',
     line: 'An atlas of places where the historical record goes quiet.',
-    intro: ['The Patron is selling what the Visitors collected.', 'The viewing is open.', 'Each lot has a record.', 'Find what the records leave out before the sale closes.'],
+    intro: ['The Patron is selling | what the Visitors collected.', 'The viewing is open.', 'Each lot has a record.', 'Find what the records leave out | before the sale closes.'],
     bg: 'vault', persona: 'syber', timer: 240, needs: 'evidence', ...record(),
   },
   {
     id: 'real', name: 'THE REAL BATTLE', project: 'SyberLabs', href: '/#products',
     line: 'Makes software for checking AI\'s work.',
-    intro: ['The Patron owns the Works, the sale and the machine.', 'The machine is called the Thousand Eyes.', 'It has every camera and every record.', 'It saw you coming.'],   // what it says in the room is in render.js
+    intro: ['The Patron owns the Works, | the sale | and the machine.', 'The machine is called | the Thousand Eyes.', 'It has every camera | and every record.', 'It saw you coming.'],   // what it says in the room is in render.js
     bg: 'eyes', persona: 'syber', real: true, ...real(),
   },
 ];
