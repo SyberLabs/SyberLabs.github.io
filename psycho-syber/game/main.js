@@ -1,10 +1,10 @@
 // PSYCHO SYBER: the page's game loop. sim.js decides what happens, render.js draws it twice (one look per form),
 // post.js puts it on screen, audio.js plays it. This file wires them to the keyboard, the mouse and the page.
-import { STAGES, ATLAS, SHIP } from './levels.js?v=20261117f';
-import { newGame, step, T } from './sim.js?v=20261117f';
-import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117f';
-import { makePost } from './post.js?v=20261117f';
-import { makeAudio } from './audio.js?v=20261117f';
+import { STAGES, ATLAS, SHIP } from './levels.js?v=20261117g';
+import { newGame, step, T, verdictAt } from './sim.js?v=20261117g';
+import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117g';
+import { makePost } from './post.js?v=20261117g';
+import { makeAudio } from './audio.js?v=20261117g';
 
 const $ = id => document.getElementById(id);
 const stage = $('ps-stage'), view = $('ps-view'), hud = $('ps-hud'), hintEl = $('ps-hint'), rsvpEl = $('ps-rsvp'), toastEl = $('ps-toast'), wakeEl = $('ps-wake'), wakeWord = $('ps-wake-word');
@@ -39,6 +39,7 @@ function load(i, persona, def) {
   if (gift) g.p.maxHp = g.p.hp = 5;
   tiles = [buildTiles(g.L, 0), buildTiles(g.L, 1)];
   fx = makeFx(); wipe = 1; acc = 0; edge = {}; shown = {};
+  audio.scene(g.L.def.id);
   cam.x = clamp(g.p.x - VW / 2, 0, g.L.w * T - VW); cam.y = clamp(g.p.y - VH * 0.62, 0, g.L.h * T - VH);
   skin(g.persona);
 }
@@ -75,7 +76,7 @@ paintPace();
 // Which Atlas marks each stage holds, for the stage buttons on the title.
 const MARKS = STAGES.map(d => newGame(d).ents.filter(e => e.type === 'mark').map(e => e.id));
 function toTitle() {
-  state = 'title'; load(0); show('title');
+  state = 'title'; load(0); audio.scene('title'); show('title');
   const c = store.get(), pick = $('ps-pick');
   $('ps-continue').hidden = c < 1; if (c >= 1) $('ps-continue').textContent = `Continue at ${STAGES[c].name}`;
   pick.hidden = c < 1;   // once a stage is finished, every stage reached can be started from here
@@ -166,7 +167,7 @@ function tunnel() {
 const count = (n, one, many) => `${n} ${n === 1 ? one : many || one + 's'}`;
 function meta() {
   if (state === 'meta') return;
-  state = 'meta'; show('none'); stopRsvp(); talkQ.length = 0; talking = false;
+  state = 'meta'; show('none'); stopRsvp(); talkQ.length = 0; talking = false; audio.scene('end');
   total.time += g.time; total.threads += g.threads;
   const box = $('ps-meta'), term = $('ps-meta-lines'), now = new Date(), two = n => String(n).padStart(2, '0');
   const lines = ['> run recorded', `> ${count(Math.round(g.time), 'second')}. ${count(g.swaps, 'change of form', 'changes of form')}. ${count(g.throws, 'throw')}. ${count(g.roars, 'roar')}.`,
@@ -233,7 +234,7 @@ addEventListener('keydown', e => {
   if (state === 'meta') { if (c === 'Enter' || c === 'Escape') endMeta(); return; }
   if (state === 'cut') return;
   if (state === 'end') { if ((c === 'Enter' || c === 'Escape') && panels.end.hidden) { stopRsvp(); show('end'); $('ps-again').focus({ preventScroll: true }); } return; }
-  if (c === 'KeyM') { $('ps-mute').textContent = audio.mute() ? 'Sound off' : 'Sound on'; return; }
+  if (c === 'KeyM') { sound(); return; }
   if (c === 'Escape' || c === 'KeyP') { pause(state === 'play'); return; }
   if (!live) return;
   if (CODES.jump.includes(c)) edge.jumpP = true;
@@ -244,9 +245,14 @@ addEventListener('keydown', e => {
   if (c === 'KeyF') { if (document.fullscreenElement) document.exitFullscreen(); else stage.requestFullscreen?.().catch(() => {}); }
 });
 addEventListener('keyup', e => keys.delete(e.code));
+for (const type of ['pointerup', 'touchend', 'click', 'keydown']) addEventListener(type, () => audio.start(), { capture: true, passive: true });   // a phone lets sound start only inside these
 addEventListener('blur', () => { keys.clear(); mouse.fire = mouse.alt = false; tied = false; for (const k in pad) pad[k] = false; pause(true); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) { pause(true); audio.suspend(); } else audio.resume(); });
-function point(e) { const r = view.getBoundingClientRect(); mouse.x = clamp((e.clientX - r.left) / r.width, 0, 1) * VW; mouse.y = clamp((e.clientY - r.top) / r.height, 0, 1) * VH; }
+// Where a pointer is in the picture. Sideways, the screen's down is the picture's right and its left is the picture's down.
+function point(e) {
+  const r = view.getBoundingClientRect(), u = turned ? (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width, v = turned ? (r.right - e.clientX) / r.width : (e.clientY - r.top) / r.height;
+  mouse.x = clamp(u, 0, 1) * VW; mouse.y = clamp(v, 0, 1) * VH;
+}
 view.addEventListener('pointermove', point);
 view.addEventListener('pointerdown', e => {
   point(e); audio.start(); view.focus({ preventScroll: true });
@@ -268,33 +274,47 @@ view.addEventListener('pointercancel', () => { mouse.fire = mouse.alt = false; t
 // cord stays tied when the finger lifts, so the thumb is free: the next tap, or Jump, lets it go.
 const padEl = $('ps-pad'), stickEl = $('ps-stick'), ringEl = $('ps-stick-ring'), knobEl = $('ps-stick-knob');
 const coarse = matchMedia('(hover: none) and (pointer: coarse)').matches;
-let touch = false, tied = false, stickId = null, stickAt = null;
+let touch = false, tied = false, stickId = null, stickAt = null, turned = false, upright = false;
+try { upright = localStorage.getItem('psycho-syber.upright') === '1'; } catch { /* storage is optional */ }
 function setTouch(on) { touch = on; stage.classList.toggle('is-touch', on); paintPad(); }
+// On a touch device a stage takes the whole screen (the page's header is back at the title). On a phone held
+// upright the stage is drawn sideways along the long edge, so the picture is three times the size: the player
+// turns the phone, whether or not the phone's own rotation is locked. Pause has a button for playing upright.
 function paintPad() {
-  padEl.hidden = !(touch && state === 'play');
-  stage.classList.toggle('is-immersive', touch && state !== 'title');   // the page's header is back at the title
+  const im = touch && state !== 'title', tall = innerHeight > innerWidth;
+  padEl.hidden = !(touch && state === 'play'); turned = im && tall && !upright;
+  stage.classList.toggle('is-immersive', im); stage.classList.toggle('is-turned', turned); stage.classList.toggle('is-upright', im && tall && upright);
+  $('ps-turn').hidden = !(touch && tall); $('ps-turn').textContent = upright ? 'Play sideways' : 'Play upright';
+  $('ps-b-sound').classList.toggle('is-off', audio.muted);
   if (padEl.hidden) { for (const k in pad) pad[k] = false; stickId = null; ringEl.classList.remove('is-on'); ringEl.style.transform = knobEl.style.transform = ''; }
 }
 function moveStick(e) {
-  let dx = e.clientX - stickAt.x, dy = e.clientY - stickAt.y; const d = Math.hypot(dx, dy), R = 44;
-  if (d > R) { stickAt.x += dx * (1 - R / d); stickAt.y += dy * (1 - R / d); dx *= R / d; dy *= R / d; }   // the ring follows a thumb that drags past its rim
+  let sx = e.clientX - stickAt.x, sy = e.clientY - stickAt.y; const d = Math.hypot(sx, sy), R = 44;
+  if (d > R) { stickAt.x += sx * (1 - R / d); stickAt.y += sy * (1 - R / d); sx *= R / d; sy *= R / d; }   // the ring follows a thumb that drags past its rim
+  const dx = turned ? sy : sx, dy = turned ? -sx : sy, r = stickEl.getBoundingClientRect();
   pad.left = dx < -12; pad.right = dx > 12; pad.up = dy < -24; pad.down = dy > 24;
-  const r = stickEl.getBoundingClientRect();
-  ringEl.classList.add('is-on'); ringEl.style.transform = `translate(${stickAt.x - r.left}px, ${stickAt.y - r.top}px)`; knobEl.style.transform = `translate(${dx}px, ${dy}px)`;
+  ringEl.classList.add('is-on'); ringEl.style.transform = `translate(${turned ? stickAt.y - r.top : stickAt.x - r.left}px, ${turned ? r.right - stickAt.x : stickAt.y - r.top}px)`; knobEl.style.transform = `translate(${dx}px, ${dy}px)`;
 }
 stickEl.addEventListener('pointerdown', e => { if (stickId !== null) return; e.preventDefault(); audio.start(); stickId = e.pointerId; stickEl.setPointerCapture?.(e.pointerId); stickAt = { x: e.clientX, y: e.clientY }; moveStick(e); });
 stickEl.addEventListener('pointermove', e => { if (e.pointerId === stickId) moveStick(e); });
 const endStick = e => { if (e.pointerId !== stickId) return; stickId = null; pad.left = pad.right = pad.up = pad.down = false; ringEl.classList.remove('is-on'); ringEl.style.transform = knobEl.style.transform = ''; };
 stickEl.addEventListener('pointerup', endStick); stickEl.addEventListener('pointercancel', endStick);
+// A thumb that starts at the edge of the screen must not become the browser's own swipe back to the last page.
+const own = el => el.addEventListener('touchstart', e => { if (state === 'play') e.preventDefault(); }, { passive: false });
+own(stickEl); own(view);
 function button(id, down, up) {
   const b = $(id), end = () => { b.classList.remove('is-down'); if (up) up(); };
   b.addEventListener('pointerdown', e => { e.preventDefault(); audio.start(); b.setPointerCapture?.(e.pointerId); b.classList.add('is-down'); down(); });
-  b.addEventListener('pointerup', end); b.addEventListener('pointercancel', end); b.addEventListener('contextmenu', e => e.preventDefault());
+  b.addEventListener('pointerup', end); b.addEventListener('pointercancel', end); b.addEventListener('contextmenu', e => e.preventDefault()); own(b);
 }
 button('ps-b-jump', () => { pad.jump = true; if (state === 'play') { edge.jumpP = true; edge.spaceP = true; } }, () => { pad.jump = false; });
 button('ps-b-act', () => { if (state === 'play') edge.actP = true; });
 button('ps-b-form', () => { if (state === 'play') edge.swapP = true; });
 button('ps-b-pause', () => pause(state === 'play'));
+const sound = () => { audio.start(); const off = audio.mute(); $('ps-mute').textContent = off ? 'Sound off' : 'Sound on'; $('ps-b-sound').classList.toggle('is-off', off); };
+$('ps-b-sound').addEventListener('click', sound);   // a click, because a phone lets sound start only inside one
+$('ps-turn').onclick = () => { upright = !upright; try { localStorage.setItem('psycho-syber.upright', upright ? '1' : '0'); } catch { /* optional */ } paintPad(); resize(); };
+addEventListener('resize', () => { paintPad(); resize(); });
 wakeEl.addEventListener('pointerdown', () => endMeta());   // a tap skips the last words, as Enter does
 panels.title.addEventListener('pointerdown', e => {   // on the title a tap on the picture changes form, as Shift does
   if (e.pointerType !== 'touch') return;
@@ -316,12 +336,12 @@ $('ps-resume').onclick = () => pause(false);
 $('ps-restart').onclick = () => { begin(si); };
 $('ps-quit').onclick = toTitle;
 $('ps-again').onclick = () => { total = { time: 0, deaths: 0, threads: 0, of: 0 }; stopRsvp(); toTitle(); };
-$('ps-mute').onclick = () => { audio.start(); $('ps-mute').textContent = audio.mute() ? 'Sound off' : 'Sound on'; };
+$('ps-mute').onclick = sound;
 
 // ---------------------------------------------------------------- the loop
-function resize() {
-  const r = view.parentElement.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
-  const k = Math.max(1, Math.floor(Math.min(r.width * dpr / VW, r.height * dpr / VH)));
+function resize() {   // the layout size, which a sideways stage does not change
+  const el = view.parentElement, dpr = Math.min(devicePixelRatio || 1, 2);
+  const k = Math.min(4, Math.max(1, Math.floor(Math.min(el.offsetWidth * dpr / VW, el.offsetHeight * dpr / VH))));
   if (view.width !== VW * k) { view.width = VW * k; view.height = VH * k; }
 }
 new ResizeObserver(resize).observe(view.parentElement);
@@ -363,6 +383,7 @@ function frame(now) {
       if (g.done) { clear(); break; }
     }
     audio.slow(g.slow > 0);
+    if (g.L.def.real) audio.urgency(g.realT / verdictAt(g));
     if (tied && !g.p.rope) { tied = false; mouse.fire = false; }   // the cord came off some other way
   } else if (state === 'title') {
     p.x = 60 + (Math.sin(t * 0.12 - 1.5) * 0.5 + 0.5) * (g.L.w * T - VW - 120) + VW / 2; p.y = 320; p.run += dt * 60; p.onGround = true; g.wt += dt; g.wordT += dt; g.t += dt;
@@ -406,7 +427,7 @@ function paintHud() {
 }
 
 // A hook for the browser tests: read the game, start a stage, feed input.
-window.__ps = { get g() { return g; }, get state() { return state; }, begin, play, STAGES, atlas, endMeta, pad, get tied() { return tied; }, get touch() { return touch; }, keys, mouse, get edge() { return edge; }, set edge(v) { edge = v; }, set wipe(v) { wipeHold = v; }, cam, webgl: post.webgl };
+window.__ps = { get g() { return g; }, get state() { return state; }, begin, play, STAGES, atlas, endMeta, pad, audio, get tied() { return tied; }, get touch() { return touch; }, get turned() { return turned; }, keys, mouse, get edge() { return edge; }, set edge(v) { edge = v; }, set wipe(v) { wipeHold = v; }, cam, webgl: post.webgl };
 toTitle(); resize();
 if (q.has('stage')) { begin(clamp(parseInt(q.get('stage'), 10) - 1 || 0, 0, STAGES.length - 1)); if (q.has('go')) play(); if (q.get('form') === 'psycho') { g.persona = 'psycho'; skin('psycho'); } }
 if (coarse || q.has('touch')) setTouch(true);   // ?touch shows the touch controls on any device

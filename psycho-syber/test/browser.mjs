@@ -200,25 +200,42 @@ const S = {
     console.log('a tap let it go:', await G(() => !window.__ps.g.p.rope && !window.__ps.tied));
     await tap('#ps-b-pause'); await W(400); console.log('pause ->', await G(() => window.__ps.state)); await snap('pause');
     await tap('#ps-resume'); await W(400);
-    // upright
-    await tp.setViewportSize({ width: land[1], height: land[0] }); await W(900); await snap('upright');
+    // a phone held upright: the stage is drawn sideways along the long edge. The screen's down is the picture's right.
+    await tp.setViewportSize({ width: land[1], height: land[0] }); await W(900); await snap('turned');
+    const vr = await G(() => { const v = document.getElementById('ps-view').getBoundingClientRect(); return [Math.round(v.left), Math.round(v.top), Math.round(v.width), Math.round(v.height)]; });
+    console.log('upright phone: drawn sideways:', await G(() => window.__ps.turned), '· picture on screen', JSON.stringify(vr), '· sideways scroll:', await G(() => document.documentElement.scrollWidth - innerWidth));
+    await G(() => { const g = window.__ps.g; g.p.x = 4 * 16; g.p.y = 20 * 16; g.p.vx = g.p.vy = 0; }); await W(300);
+    const [tx, ty] = await center('#ps-stick'), x1 = await G(() => window.__ps.g.p.x);
+    await finger('touchStart', [[tx, ty, 1]]); await W(40); await finger('touchMove', [[tx, ty + 40, 1]]); await W(900);
+    const walked = Math.round(await G(() => window.__ps.g.p.x) - x1); await finger('touchMove', [[tx - 40, ty, 1]]); await W(120);
+    const down = await G(() => window.__ps.pad.down && !window.__ps.pad.right); await finger('touchEnd', []); await W(200);
+    console.log('  finger down the screen walked right by', walked, 'px · finger to the screen\'s left is the stick down:', down);
+    // a tap three quarters along the picture and two fifths down it: on the screen that is down from the top, and in from the right
+    await finger('touchStart', [[vr[0] + vr[2] * (1 - 0.4), vr[1] + vr[3] * 0.75]]); await W(50); await finger('touchEnd', []); await W(200);
+    console.log('  a tap landed at', await G(() => [Math.round(window.__ps.mouse.x), Math.round(window.__ps.mouse.y)].join(',')), 'of 480,270 (aimed for 360,108)');
+    await tap('#ps-b-pause'); await W(400); await snap('turned-pause');
+    await tap('#ps-turn'); await W(500); console.log('  Play upright ->', await G(() => [window.__ps.turned, document.getElementById('ps-stage').className, document.getElementById('ps-turn').textContent].join(' · ')));
+    await tap('#ps-resume'); await W(500); await snap('upright');
     const box = await G(() => { const v = document.getElementById('ps-view').getBoundingClientRect(), j = document.getElementById('ps-b-jump').getBoundingClientRect(); return { view: [Math.round(v.left), Math.round(v.top), Math.round(v.width), Math.round(v.height)], jump: [Math.round(j.left), Math.round(j.top), Math.round(j.width)] }; });
     console.log('upright:', JSON.stringify(box), '· sideways scroll:', await G(() => document.documentElement.scrollWidth - innerWidth));
-    await tap('#ps-b-pause'); await W(400); await snap('upright-pause'); await tap('#ps-resume'); await W(300);
+    await tap('#ps-b-pause'); await W(400); await snap('upright-pause'); await tap('#ps-turn'); await W(300); await tap('#ps-resume'); await W(300);
+    console.log('  Play sideways ->', await G(() => window.__ps.turned));
     // the card after THE RECORD, with the Atlas list, upright and sideways; then the last stage sideways
     await tp.goto(BASE + '/psycho-syber/?stage=5&go=1', { waitUntil: 'load' }); await W(900);
-    await G(() => { const g = window.__ps.g, x = g.ents.find(e => e.type === 'exit'); g.evidence = g.evidenceTotal; g.p.x = x.x; g.p.y = x.y + 16; }); await W(1200); await snap('upright-card5');
+    await G(() => { const g = window.__ps.g, x = g.ents.find(e => e.type === 'exit'); g.evidence = g.evidenceTotal; g.p.x = x.x; g.p.y = x.y + 16; }); await W(1200); await snap('turned-card5');
     await tp.setViewportSize({ width: land[0], height: land[1] }); await W(700); await snap('card5');
     await tap('#ps-card-go'); await W(900); await tap('#ps-card-go'); await W(2600); await snap('real');
     await G(() => { window.__ps.g.realT = 39.2; window.__ps.g.p.inv = 9; }); await W(1500); await snap('real-order');
     await tp.waitForFunction(() => !document.getElementById('ps-wake').hidden, null, { timeout: 30000 }); await W(1700); await snap('wake');
     await finger('touchStart', [[200, 200]]); await W(50); await finger('touchEnd', []); await W(700);
     console.log('a tap skipped the last words ->', await G(() => window.__ps.state)); await snap('end');
-    await tp.setViewportSize({ width: land[1], height: land[0] }); await W(700); await snap('upright-end');
+    await tp.setViewportSize({ width: land[1], height: land[0] }); await W(700); await snap('turned-end');
     await tap('#ps-again'); await W(600);
-    await tp.goto(BASE + '/psycho-syber/', { waitUntil: 'load' }); await W(900); await tap('#ps-start'); await W(1500); await tap('#ps-card-go'); await W(600);
+    await tp.goto(BASE + '/psycho-syber/', { waitUntil: 'load' }); await W(1200); await snap('upright-title');
+    await tap('#ps-start'); await W(1500); await snap('turned-card'); await tap('#ps-card-go'); await W(600);
+    await tap('#ps-b-sound'); await W(200); console.log('sound button -> muted', await G(() => window.__ps.audio.muted)); await tap('#ps-b-sound'); await W(200);
     await tap('#ps-b-pause'); await W(300); await tap('#ps-quit'); await W(600);
-    console.log('title again:', await G(() => window.__ps.state), '· stage back in the page:', await G(() => !document.getElementById('ps-stage').classList.contains('is-immersive'))); await snap('upright-title');
+    console.log('title again:', await G(() => window.__ps.state), '· stage back in the page:', await G(() => !document.getElementById('ps-stage').classList.contains('is-immersive') && !window.__ps.turned));
     await tctx.close();
   },
   // The title once stages are finished: a button for each stage reached, with its Atlas marks. SIZE=390x844 for a phone.
