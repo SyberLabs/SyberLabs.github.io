@@ -238,6 +238,21 @@ const S = {
     console.log('title again:', await G(() => window.__ps.state), '· stage back in the page:', await G(() => !document.getElementById('ps-stage').classList.contains('is-immersive') && !window.__ps.turned));
     await tctx.close();
   },
+  // The story text on a stage's card: every phrase must sit in the middle of the picture and stay where it is while
+  // its words arrive. STAGE=n picks the stage. Prints each phrase with how far its middle is from the picture's.
+  async story() {
+    await page.goto(`${BASE}/psycho-syber/?stage=${process.env.STAGE || 1}`, { waitUntil: 'load' }); await wait(150);
+    const seen = new Map(); let shots = 0;
+    for (let i = 0; i < 400; i++) {
+      const r = await page.evaluate(() => { const n = document.getElementById('ps-rsvp'), v = document.getElementById('ps-view').getBoundingClientRect(); if (n.hidden || !n.firstChild) return null; const g = document.createRange(); g.selectNodeContents(n); const b = g.getBoundingClientRect(); return { text: n.textContent, on: n.querySelectorAll('.is-on').length, of: n.children.length, off: +((b.left + b.right) / 2 - (v.left + v.right) / 2).toFixed(1), left: Math.round(b.left), width: Math.round(b.width), size: parseFloat(getComputedStyle(n).fontSize), lines: Math.round(b.height / (parseFloat(getComputedStyle(n).fontSize) * 1.08)) }; });
+      if (!r) { if (seen.size && i > 40) break; await wait(40); continue; }
+      const e = seen.get(r.text) || { ...r, moved: false, first: r.on }; if (e.left !== r.left || e.width !== r.width) e.moved = true; e.last = r.on; seen.set(r.text, e);
+      if (r.on === r.of && !e.shot && shots < 3 && (seen.size === 2 || seen.size === 4 || seen.size === 7)) { e.shot = true; shots++; await view(`story-${size[0]}-${shots}`); }
+      await wait(40);
+    }
+    for (const [text, e] of seen) console.log(`${e.off === 0 && !e.moved ? 'ok ' : 'BAD'} "${text}" · ${e.of} words · middle off by ${e.off} px · ${e.moved ? 'MOVED' : 'did not move'} · ${e.lines} line${e.lines > 1 ? 's' : ''} · ${e.size}px`);
+    console.log(`${seen.size} phrases, ${[...seen.values()].filter(e => Math.abs(e.off) > 1 || e.moved).length} off centre or moved`);
+  },
   // The title once stages are finished: a button for each stage reached, with its Atlas marks. SIZE=390x844 for a phone.
   async pick() {
     await page.goto(BASE + '/psycho-syber/', { waitUntil: 'load' }); await wait(500);
