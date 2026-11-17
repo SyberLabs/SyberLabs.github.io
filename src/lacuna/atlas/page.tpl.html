@@ -1,0 +1,1274 @@
+<title>Lacuna Atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Lacuna Institute: an atlas of places where the historical record goes quiet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: dark;
+  --void:#07080b; --veil:#12131a; --veil-2:#0d0e14;
+  --bone:#e4dac8; --bone-2:#cfc4b0; --ash:#8b8577; --dust:#4d4a43;
+  --ochre:#a8743f; --ember:#d9a066; --halo:#7f97a6;
+  --line-faint:rgba(228,218,200,.08); --line:rgba(228,218,200,.16);
+  --glass:rgba(11,12,17,.78);
+  --display:"Marcellus","Trajan Pro",serif;
+  --serif:"Cormorant Garamond",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --gutter-l:max(24px, env(safe-area-inset-left,0px));
+  --gutter-r:max(24px, env(safe-area-inset-right,0px));
+  --index-w:300px; --panel-w:440px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--void);color:var(--bone)}
+body{
+  font-family:var(--serif);font-size:17px;line-height:1.5;overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(ellipse 70% 55% at 72% 18%, rgba(127,151,166,.10), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 12% 88%, rgba(168,116,63,.09), transparent 60%),
+    radial-gradient(ellipse 120% 90% at 50% 50%, #0b0c12 0%, var(--void) 70%);
+}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+a{color:var(--ember);text-decoration:none;border-bottom:1px solid rgba(217,160,102,.35)}
+a:hover{border-bottom-color:var(--ember)}
+:focus-visible{outline:1px solid var(--ember);outline-offset:3px;border-radius:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+#stage{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab;opacity:0;transition:opacity 1.6s var(--ease)}
+#stage.on{opacity:1}
+#stage.dragging{cursor:grabbing}
+#stage.pointing{cursor:pointer}
+
+/* film grain */
+.grain{position:fixed;inset:-50%;pointer-events:none;z-index:50;opacity:.055;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation:grain 1.4s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-4%)}60%{transform:translate(-4%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse 85% 80% at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%)}
+
+/* header */
+.brand{position:fixed;top:max(22px,env(safe-area-inset-top,0px));left:var(--gutter-l);z-index:20;display:flex;align-items:center;gap:14px;pointer-events:none}
+.brand svg{width:38px;height:38px;flex:none;color:var(--bone)}
+.brand svg .gap-ring{animation:turn 60s linear infinite;transform-origin:20px 20px}
+@keyframes turn{to{transform:rotate(360deg)}}
+.brand h1{margin:0;font-family:var(--display);font-weight:400;font-size:15px;letter-spacing:.34em;line-height:1.2}
+.brand p{margin:3px 0 0;font-style:italic;font-size:15px;color:var(--ash);letter-spacing:.01em}
+.brand .org{margin:6px 0 0;font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.brand .org a{pointer-events:auto;color:var(--ash);border-bottom-color:rgba(139,133,119,.35)}
+.brand .org a:hover,.brand .org a:focus-visible{color:var(--bone);border-bottom-color:var(--bone-2)}
+
+.controls{position:fixed;top:max(24px,env(safe-area-inset-top,0px));right:var(--gutter-r);z-index:20;display:flex;gap:10px;align-items:center}
+.seg{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:rgba(7,8,11,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.seg button{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:7px 14px;border-radius:999px;color:var(--ash);transition:color .3s,background .3s}
+.seg button[aria-checked="true"]{color:var(--void);background:var(--bone)}
+.seg button:not([aria-checked="true"]):hover{color:var(--bone)}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:9px 14px;border:1px solid var(--line);border-radius:999px;color:var(--bone-2);background:rgba(7,8,11,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:border-color .3s,color .3s}
+.pill:hover,.pill[aria-expanded="true"]{border-color:rgba(217,160,102,.6);color:var(--bone)}
+.why-btn{width:34px;height:34px;padding:0;display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:17px;letter-spacing:0;text-transform:none}
+.index-btn{display:none}
+
+.why-pop{position:fixed;z-index:30;top:calc(max(24px,env(safe-area-inset-top,0px)) + 50px);right:var(--gutter-r);width:min(380px,calc(100vw - 32px));padding:20px 22px;background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:4px;font-size:16px;line-height:1.55;color:var(--bone-2);opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .35s var(--ease),transform .35s var(--ease)}
+.why-pop.open{opacity:1;transform:none;pointer-events:auto}
+.why-pop h2{margin:0 0 8px;font-family:var(--display);font-weight:400;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--bone)}
+.why-pop p{margin:0 0 10px}
+.why-pop p:last-child{margin:0;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ash)}
+
+/* index */
+.index{position:fixed;z-index:15;left:var(--gutter-l);top:118px;bottom:100px;width:calc(var(--index-w) - 40px);display:flex;flex-direction:column;opacity:0;transform:translateX(-10px);transition:opacity 1.2s var(--ease) .6s,transform 1.2s var(--ease) .6s}
+.ready .index{opacity:1;transform:none}
+.index .eyebrow{margin:0 0 8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ochre)}
+.index h2{margin:0 0 18px;font-weight:400;font-size:26px;line-height:1.12;letter-spacing:.005em;color:var(--bone)}
+.index h2 em{color:var(--ash)}
+.index ol{list-style:none;margin:0;padding:0 6px 0 0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--dust) transparent;mask-image:linear-gradient(to bottom,#000 calc(100% - 28px),transparent)}
+.index li button{display:flex;align-items:baseline;gap:12px;width:100%;text-align:left;padding:5px 0;color:rgba(228,218,200,.66);transition:color .25s}
+.index li button:hover,.index li button.active{color:var(--bone)}
+.index .num{font-family:var(--mono);font-size:10.5px;color:var(--dust);width:20px;flex:none;transition:color .25s}
+.index li button:hover .num,.index li button.active .num{color:var(--ember)}
+.index .nm{font-size:18.5px;line-height:1.25}
+.mk{width:7px;height:7px;border-radius:50%;flex:none;align-self:center;margin-left:auto}
+.mk.lacuna{background:var(--ember);box-shadow:0 0 8px rgba(217,160,102,.8)}
+.mk.watch{border:1px solid var(--bone-2)}
+
+.legend{position:fixed;z-index:12;left:calc(50% + var(--mapcx,0px));bottom:max(22px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:22px;align-items:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ash);white-space:nowrap;opacity:0;transition:opacity 1.2s var(--ease) 1s}
+.ready .legend{opacity:1}
+.legend span{display:flex;align-items:center;gap:8px}
+.legend .mk{margin:0}
+.legend .hint{color:var(--dust)}
+.zoom{position:fixed;z-index:12;right:var(--gutter-r);bottom:max(20px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;border:1px solid var(--line);border-radius:999px;background:rgba(7,8,11,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:right .6s var(--ease)}
+.zoom button{width:34px;height:34px;display:grid;place-items:center;color:var(--ash);font-size:18px;font-family:var(--mono)}
+.zoom button:hover{color:var(--bone)}
+.panel-open .zoom{right:calc(var(--panel-w) + 20px)}
+
+/* hover card */
+.hcard{position:fixed;z-index:25;left:0;top:0;width:250px;pointer-events:none;opacity:0;transform:translate3d(0,0,0) scale(.97);transition:opacity .22s var(--ease);background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:3px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.55)}
+.hcard.show{opacity:1}
+.hcard .himg{height:132px;background:#0b0c10 center/cover no-repeat;position:relative}
+.hcard .himg.contain{background-size:contain}
+.hcard .himg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,transparent 45%,rgba(11,12,17,.9))}
+.hcard .hb{padding:2px 14px 13px;margin-top:-22px;position:relative}
+.hcard .hn{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ember);text-transform:uppercase}
+.hcard .ht{font-family:var(--display);font-size:17px;line-height:1.2;margin:3px 0 4px;letter-spacing:.02em}
+.hcard .hg{font-size:15px;font-style:italic;color:var(--ash);line-height:1.35}
+
+/* panel */
+.panel{position:fixed;z-index:40;top:0;right:0;bottom:0;width:var(--panel-w);max-width:100vw;background:var(--glass);backdrop-filter:blur(22px) saturate(1.1);-webkit-backdrop-filter:blur(22px) saturate(1.1);border-left:1px solid var(--line-faint);transform:translateX(102%);transition:transform .7s var(--ease);display:flex;flex-direction:column;overscroll-behavior:contain}
+.panel.open{transform:none}
+.panel .scroll{overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--dust) transparent}
+.panel .close{position:absolute;z-index:3;top:14px;right:14px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(7,8,11,.6);border:1px solid var(--line);color:var(--bone-2);font-size:20px;line-height:1;transition:border-color .3s}
+.panel .close:hover{border-color:var(--ember);color:var(--bone)}
+.panel .grab{display:none}
+.fig{margin:0;position:relative;height:280px;background:#0a0b0f;overflow:hidden}
+.fig.light{background:#d9d3c7}
+.fig img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transform:scale(1.04);transition:opacity .9s var(--ease),transform 2.4s var(--ease)}
+.fig.contain img{object-fit:contain}
+.fig img.loaded{opacity:1;transform:none}
+.fig::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(7,8,11,.15),transparent 30%,transparent 60%,rgba(11,12,17,.96))}
+.credit{padding:8px 28px 0;font-family:var(--mono);font-size:10px;line-height:1.5;letter-spacing:.03em;color:var(--dust)}
+.credit a{color:var(--ash);border-bottom-color:rgba(139,133,119,.35)}
+.pb{padding:16px 28px 36px}
+.coords{margin:0 0 10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--ochre);text-transform:uppercase}
+.pb h2{margin:0;font-family:var(--display);font-weight:400;font-size:34px;line-height:1.08;letter-spacing:.015em}
+.pb .sub{margin:6px 0 0;font-style:italic;font-size:19px;color:var(--bone-2)}
+.meta{margin:10px 0 0;font-size:15.5px;color:var(--ash)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;border-radius:999px;border:1px solid var(--line);color:var(--bone-2)}
+.tag.gap{border-color:rgba(217,160,102,.5);color:var(--ember)}
+.tag.kind{display:flex;align-items:center;gap:7px}
+.note{margin:16px 0 0;padding:10px 14px;border-left:2px solid var(--halo);background:rgba(127,151,166,.07);font-size:16px;color:var(--bone-2)}
+.lede{margin:20px 0 0;font-size:22px;line-height:1.38;font-style:italic;color:var(--bone)}
+.sec{margin:24px 0 0}
+.signup{flex:none;margin:18px 0 0;padding:14px 0 0;border-top:1px solid var(--line-faint)}
+.su-h{display:block;margin:0 0 8px;font-family:var(--mono);font-weight:500;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ember)}
+.su-row{display:flex;gap:8px;margin:0}
+.su-mail{flex:none;display:inline-block;padding:9px 14px;border:1px solid rgba(217,160,102,.45);border-radius:999px;background:rgba(168,116,63,.12);color:var(--bone);font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s,border-color .2s}
+.su-mail:hover,.su-mail:focus-visible{background:rgba(168,116,63,.26);border-color:var(--ember)}
+.su-note{margin:7px 0 0;font-size:14px;line-height:1.35;color:var(--ash)}
+.su-sec .signup{margin:0;padding:16px 0 0}
+.sec h3{margin:0 0 6px;font-family:var(--mono);font-weight:500;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ash)}
+.sec p{margin:0;color:rgba(228,218,200,.86)}
+.sec.q{padding:18px 20px;border:1px solid rgba(217,160,102,.32);background:linear-gradient(135deg,rgba(168,116,63,.12),rgba(168,116,63,.02));border-radius:3px}
+.sec.q h3{color:var(--ember)}
+.sec.q p{font-size:20px;line-height:1.38;color:var(--bone)}
+.sec.hyp{padding:16px 20px;border-left:2px solid var(--ember);background:rgba(168,116,63,.08)}
+.sec.hyp h3{color:var(--ember)}
+.sec.hyp p{font-size:18px;line-height:1.42;color:var(--bone);font-style:italic}
+#pleg p+p{margin-top:12px}
+#pleg strong{color:var(--bone);font-weight:600}
+.sec.spec{padding:14px 18px;border:1px dashed rgba(139,133,119,.5);border-radius:3px}
+.sec.spec h3::before{content:"";display:inline-block;width:6px;height:6px;margin-right:8px;border:1px solid var(--ash);transform:rotate(45deg) translateY(-1px)}
+.sec.work p{color:var(--bone)}
+.acts{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}
+.earth{display:inline-flex;align-items:center;gap:8px;margin:0;cursor:pointer;padding:9px 14px;border:1px solid rgba(217,160,102,.45);border-radius:999px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--bone);text-decoration:none;background:rgba(168,116,63,.08);transition:background .2s,border-color .2s}
+.earth:hover,.earth:focus-visible{background:rgba(168,116,63,.22);border-color:var(--ember)}
+.sec.work a{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.sec.src ul{list-style:none;margin:0;padding:0}
+.sec.src li{font-family:var(--mono);font-size:11px;line-height:1.55;color:var(--ash);padding:4px 0;border-top:1px solid var(--line-faint)}
+.pn{display:flex;align-items:center;justify-content:space-between;margin:28px 0 0;padding-top:16px;border-top:1px solid var(--line-faint);font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--ash);text-transform:uppercase}
+.pn button{padding:8px 0;color:var(--bone-2);transition:color .25s}
+.pn button:hover{color:var(--ember)}
+
+.foot{position:fixed;z-index:12;left:var(--gutter-l);bottom:max(22px,env(safe-area-inset-bottom,0px));font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--dust);opacity:0;transition:opacity 1.2s var(--ease) 1.2s;max-width:260px;line-height:1.5}
+.ready .foot{opacity:1}
+
+
+/* time slider */
+.chrono{position:fixed;z-index:13;left:calc(50% + var(--mapcx,0px));bottom:calc(max(22px,env(safe-area-inset-bottom,0px)) + 30px);transform:translateX(-50%);width:min(560px,calc(100vw - 48px));padding:12px 18px 6px;border:1px solid var(--line-faint);border-radius:14px;background:rgba(9,10,14,.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;transition:opacity 1.2s var(--ease) 1.1s}
+.ready .chrono{opacity:1}
+.panel-open .chrono{width:min(560px,calc(100vw - var(--panel-w) - 48px))}
+@media (min-width:1100px){.panel-open .chrono{width:min(560px,calc(100vw - var(--panel-w) - var(--index-w) - 48px))}}
+@media (min-width:1100px) and (max-width:1219px),(max-width:999px){.panel-open .chrono{opacity:0;pointer-events:none;transition-delay:0s}}
+.cr-top{display:flex;align-items:center;gap:14px}
+.cr-play{width:34px;height:34px;flex:none;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--bone-2);transition:border-color .3s,color .3s}
+.cr-play:hover{border-color:rgba(217,160,102,.6);color:var(--bone)}
+.cr-play svg{width:12px;height:12px;fill:currentColor}
+.cr-play .i-pause{display:none}
+.cr-play.on .i-play{display:none}
+.cr-play.on .i-pause{display:block}
+.cr-read{flex:1;min-width:0}
+.cr-yr{display:block;font-family:var(--display);font-size:17px;letter-spacing:.12em;line-height:1.25;color:var(--bone);white-space:nowrap}
+.cr-per{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ash);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cr-src{padding:7px 11px;font-size:10px;flex:none}
+.cr-track{position:relative;margin:10px 0 0;height:48px}
+.cr-track input{position:absolute;left:0;right:0;top:0;width:100%;height:22px;margin:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer;touch-action:pan-y}
+.cr-track input::-webkit-slider-runnable-track{height:2px;border-radius:1px;background:linear-gradient(90deg,rgba(180,205,220,.55),rgba(228,218,200,.22) 60%,rgba(217,160,102,.55))}
+.cr-track input::-moz-range-track{height:2px;border-radius:1px;background:linear-gradient(90deg,rgba(180,205,220,.55),rgba(228,218,200,.22) 60%,rgba(217,160,102,.55))}
+.cr-track input::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-7px;border-radius:50%;background:var(--ember);border:2px solid #f3e3c8;box-shadow:0 0 0 5px rgba(217,160,102,.16),0 0 18px rgba(217,160,102,.7)}
+.cr-track input::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--ember);border:2px solid #f3e3c8;box-shadow:0 0 0 5px rgba(217,160,102,.16),0 0 18px rgba(217,160,102,.7)}
+.cr-track input:focus-visible{outline:none}
+.cr-track input:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 2px var(--void),0 0 0 3px var(--ember),0 0 18px rgba(217,160,102,.7)}
+.cr-tick{position:absolute;top:13px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 4px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--dust);white-space:nowrap;transition:color .25s}
+.cr-tick::before{content:"";width:1px;height:6px;background:rgba(228,218,200,.3)}
+.cr-tick.b span{margin-top:12px}
+.cr-tick:hover,.cr-tick.on{color:var(--bone-2)}
+.cr-tick.edge-l{transform:none;align-items:flex-start;padding-left:0}
+.cr-tick.edge-r{transform:translateX(-100%);align-items:flex-end;padding-right:0}
+.tpop{position:fixed;z-index:30;left:calc(50% + var(--mapcx,0px));bottom:calc(max(22px,env(safe-area-inset-bottom,0px)) + 158px);width:min(440px,calc(100vw - 32px));padding:20px 22px;background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:4px;font-size:15.5px;line-height:1.5;color:var(--bone-2);opacity:0;transform:translate(-50%,6px);pointer-events:none;transition:opacity .35s var(--ease),transform .35s var(--ease);max-height:60vh;overflow-y:auto}
+.tpop.open{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.tpop h2{margin:0 0 8px;font-family:var(--display);font-weight:400;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--bone)}
+.tpop p{margin:0 0 10px}
+.tpop p:last-child{margin:0;font-family:var(--mono);font-size:11px;letter-spacing:.04em;line-height:1.55;color:var(--ash)}
+
+.scrim{display:none}
+.scrim.on{display:block;position:fixed;inset:0;z-index:14;background:rgba(0,0,0,.35)}
+
+/* tablet: index becomes a drawer */
+@media (max-width:1099px){
+  .scrim.on{z-index:34}
+  .index{z-index:35;top:0;bottom:0;left:0;width:min(340px,86vw);padding:96px 24px 24px var(--gutter-l);background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid var(--line-faint);transform:translateX(-102%);opacity:1;transition:transform .6s var(--ease)}
+  .ready .index{transform:translateX(-102%)}
+  .index.open,.ready .index.open{transform:none}
+  .index-btn{display:inline-block}
+  .foot{display:none}
+}
+/* phone */
+@media (max-width:719px){
+  :root{--gutter-l:max(16px, env(safe-area-inset-left,0px));--gutter-r:max(16px, env(safe-area-inset-right,0px))}
+  body{font-size:16px}
+  .brand{gap:10px;top:max(16px,env(safe-area-inset-top,0px))}
+  .brand svg{width:30px;height:30px}
+  .brand h1{font-size:12px;letter-spacing:.28em}
+  .brand p{font-size:13px;max-width:200px}
+  .controls{top:auto;bottom:max(58px,calc(env(safe-area-inset-bottom,0px) + 54px));right:auto;left:50%;transform:translateX(-50%)}
+  .seg button{padding:7px 12px;font-size:10px;white-space:nowrap}
+  .pill{padding:8px 12px;font-size:10px}
+  .why-pop{top:auto;bottom:112px;left:50%;right:auto;transform:translate(-50%,6px)}
+  .why-pop.open{transform:translate(-50%,0)}
+  .legend{gap:14px;font-size:9.5px;bottom:max(18px,env(safe-area-inset-bottom,0px))}
+  .legend .hint{display:none}
+  .zoom{display:none}
+  .chrono{width:calc(100vw - 32px);bottom:calc(max(18px,env(safe-area-inset-bottom,0px)) + 104px);padding:10px 14px 4px;border-radius:12px}
+  .panel-open .chrono{opacity:0;pointer-events:none;transition-delay:0s}
+  .cr-top{gap:10px}
+  .cr-yr{font-size:15px}
+  .cr-per{font-size:9px}
+  .cr-track{height:26px;margin-top:6px}
+  .cr-tick span{display:none}
+  .tpop{bottom:calc(max(18px,env(safe-area-inset-bottom,0px)) + 204px)}
+  .index{width:100vw;top:auto;height:74vh;border-right:0;border-top:1px solid var(--line);border-radius:14px 14px 0 0;padding:24px var(--gutter-r) 24px var(--gutter-l);transform:translateY(102%)}
+  .ready .index{transform:translateY(102%)}
+  .index h2{font-size:22px}
+  .panel{top:auto;height:64vh;width:100vw;border-left:0;border-top:1px solid var(--line);border-radius:14px 14px 0 0;transform:translateY(102%);overflow:hidden}
+  .panel .grab{display:block;position:absolute;z-index:3;top:8px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:rgba(228,218,200,.35)}
+  .fig{height:220px}
+  .pb{padding:14px var(--gutter-r) 32px var(--gutter-l)}
+  .credit{padding:8px var(--gutter-r) 0 var(--gutter-l)}
+  .pb h2{font-size:28px}
+  .lede{font-size:20px}
+  .hcard{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .grain,.brand svg .gap-ring{animation:none}
+  *,*::before,*::after{transition-duration:.01s!important;transition-delay:0s!important}
+}
+</style>
+
+<div id="app">
+  <canvas id="stage" role="img" aria-label="Globe showing twenty-one research sites. Use the index to open each one."></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="brand">
+    <svg viewBox="0 0 40 40" aria-hidden="true">
+      <g class="gap-ring"><circle cx="20" cy="20" r="15.5" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="81 16.4" opacity=".85"/></g>
+      <circle cx="20" cy="20" r="9" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
+      <circle cx="20" cy="20" r="2.2" fill="#d9a066"/>
+    </svg>
+    <div>
+      <h1>LACUNA INSTITUTE</h1>
+      <p>Finding the history that fell out of the record.</p>
+      <p class="org"><a href="/">Part of SyberLabs</a></p>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="seg" role="radiogroup" aria-label="Map view">
+      <button role="radio" aria-checked="true" data-mode="globe">Globe</button>
+      <button role="radio" aria-checked="false" data-mode="flat">Flat map</button>
+    </div>
+    <button class="pill why-btn" aria-expanded="false" aria-controls="why" title="Why this projection?"><span aria-hidden="true">i</span><span class="sr">Why this projection?</span></button>
+    <button class="pill index-btn" aria-expanded="false" aria-controls="index">Index</button>
+  </div>
+
+  <div class="why-pop" id="why" role="dialog" aria-label="About the map projection">
+    <h2>Why a globe</h2>
+    <p>No flat map can be true everywhere: a sphere can't be flattened without stretching it, which Gauss proved in 1827. So the default view is the globe itself, which shows true shapes at the centre of view.</p>
+    <p>The flat view uses Equal Earth (Šavrič, Patterson &amp; Jenny, 2018). It keeps every region's true area, so Africa and the Amazon aren't shrunk next to Europe as they are on Mercator.</p>
+    <p>Orthographic ⇄ Equal Earth · Natural Earth coastlines</p>
+  </div>
+
+  <nav class="index" id="index" aria-label="Research sites">
+    <p class="eyebrow">An atlas of lacunae</p>
+    <h2>Twenty-one places where the record <em>goes quiet</em></h2>
+    <ol id="list"></ol>
+    <div class="signup">
+      <p class="su-h">Get new findings</p>
+      <p class="su-row"><a class="su-mail" href="mailto:contact@lacunainstitute.org?subject=Add%20me%20to%20Lacuna%20findings">Email us to join the list</a></p>
+      <p class="su-note">Opens your email app. Only for Lacuna findings.</p>
+    </div>
+  </nav>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="legend" aria-hidden="true">
+    <span><i class="mk lacuna"></i>Lacuna investigation</span>
+    <span><i class="mk watch"></i>Open question</span>
+    <span class="hint" id="hint">Drag to turn · scroll to zoom</span>
+  </div>
+  <section class="chrono" id="chrono" aria-label="Time">
+    <div class="cr-top">
+      <button class="cr-play" id="crplay" aria-label="Play 25,000 years forward to today"><svg class="i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.6 6z"/></svg><svg class="i-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.4 1.4h2.6v9.2H2.4zM7 1.4h2.6v9.2H7z"/></svg></button>
+      <div class="cr-read" aria-live="polite"><span class="cr-yr" id="cryr">Today</span><span class="cr-per" id="crper">Drag back through 25,000 years</span></div>
+      <button class="pill cr-src" id="crsrc" aria-expanded="false" aria-controls="tpop">Sources</button>
+    </div>
+    <div class="cr-track" id="crtrack">
+      <input type="range" id="crange" min="0" max="25000" step="100" value="25000" aria-label="Time, from 25,000 years ago to today">
+    </div>
+  </section>
+  <div class="tpop" id="tpop" role="dialog" aria-label="About the time view">
+    <h2>How the past is drawn</h2>
+    <p>Past coastlines come from today's land and seafloor heights, flooded to the global sea level of each moment after Lambeck et al. 2014 (PNAS). Land that has risen or sunk since then is not corrected for, so treat the edges as approximate.</p>
+    <p>Ice sheets are simplified outlines after Dyke 2004 (North America) and Hughes et al. 2016, DATED-1 (Eurasia), shrunk along their dated retreat. They are sketches, not survey lines.</p>
+    <p>The Green Sahara follows the timing in Tierney, Pausata &amp; deMenocal 2017 (Science Advances), and Lake Mega-Chad the shorelines in Drake &amp; Bristow 2006 (The Holocene). Their extents are schematic.</p>
+    <p>Why 25,000 years: across that span the continents sat where they are now, so what changed the human world was ice and water. Terrain: Mapzen terrain tiles on AWS Open Data (ETOPO1, GEBCO, SRTM and others).</p>
+  </div>
+  <div class="zoom">
+    <button id="zin" aria-label="Zoom in">+</button>
+    <button id="zout" aria-label="Zoom out">−</button>
+  </div>
+  <p class="foot">Images via Wikimedia Commons, credited on each card. Coastlines: Natural Earth. Past coasts and ice: see Sources on the time bar.</p>
+
+  <div class="hcard" id="hcard" aria-hidden="true">
+    <div class="himg" id="himg"></div>
+    <div class="hb"><div class="hn" id="hn"></div><div class="ht" id="ht"></div><div class="hg" id="hg"></div></div>
+  </div>
+
+  <aside class="panel" id="panel" aria-label="Site details" aria-hidden="true">
+    <span class="grab" aria-hidden="true"></span>
+    <button class="close" id="close" aria-label="Close">×</button>
+    <div class="scroll" id="pscroll">
+      <figure class="fig" id="fig"><img id="pimg" alt=""></figure>
+      <div class="credit" id="pcredit"></div>
+      <div class="pb">
+        <p class="coords" id="pcoords"></p>
+        <h2 id="ptitle" tabindex="-1"></h2>
+        <p class="sub" id="psub"></p>
+        <p class="meta" id="pmeta"></p>
+        <div class="tags" id="ptags"></div>
+        <p class="note" id="pnote"></p>
+        <p class="lede" id="plede"></p>
+        <div class="acts"><a class="earth" id="pearth" target="_blank" rel="noopener"><span aria-hidden="true">◎</span> Explore in Google Earth ↗</a><button class="earth" id="pshare" type="button"><span aria-hidden="true">↗</span> <span id="pshare-t">Share</span></button></div>
+        <section class="sec"><h3>What's known</h3><p id="pknown"></p></section>
+        <section class="sec"><h3>What's missing</h3><p id="pmissing"></p></section>
+        <section class="sec q"><h3>The open question</h3><p id="pq"></p></section>
+        <section class="sec hyp" id="phyps"><h3>Lacuna's hypothesis</h3><p id="phyp"></p></section>
+        <section class="sec spec" id="plegs"><h3>Legends &amp; theories</h3><div id="pleg"></div></section>
+        <section class="sec spec" id="pspecs"><h3>Speculation, flagged as such</h3><p id="pspec"></p></section>
+        <section class="sec work" id="pworks"><h3>Lacuna's work</h3><p id="pwork"></p><a id="plink" target="_blank" rel="noopener"></a></section>
+        <section class="sec src"><h3>Sources</h3><ul id="psrc"></ul></section>
+        <section class="sec su-sec">
+          <div class="signup">
+            <p class="su-h">Get new findings</p>
+            <p class="su-row"><a class="su-mail" href="mailto:contact@lacunainstitute.org?subject=Add%20me%20to%20Lacuna%20findings">Email us to join the list</a></p>
+            <p class="su-note">Opens your email app. Only for Lacuna findings.</p>
+          </div>
+        </section>
+        <nav class="pn" aria-label="Browse sites"><button id="prev">← Prev</button><span id="pcount"></span><button id="next">Next →</button></nav>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script src="vendor/d3-7.9.0.min.js"></script>
+<script src="vendor/topojson-client-3.1.0.min.js"></script>
+<script>
+/*__SITES__*/
+const TOPO_C = /*__TOPO_C__*/;
+const TOPO_L = /*__TOPO_L__*/;
+const PALEO = /*__PALEO__*/;
+const GRID_B64 = "/*__GRID__*/";
+const SITE_URL = "/*__SITE_URL__*/";
+</script>
+<script>
+(function(){
+"use strict";
+const $ = id => document.getElementById(id);
+const app = $("app"), canvas = $("stage"), ctx = canvas.getContext("2d");
+const buf = document.createElement("canvas"), bctx = buf.getContext("2d");
+const rmq = matchMedia("(prefers-reduced-motion: reduce)");
+let RM = rmq.matches; try{ rmq.addEventListener("change", e => RM = e.matches); }catch(_){}
+const fineQ = matchMedia("(hover: hover) and (pointer: fine)");
+
+const RAD = Math.PI/180, DEG = 180/Math.PI;
+const EE_X = 2.7066297, EE_Y = 1.3173627;   // Equal Earth raw extents
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const lerp = (a,b,t) => a + (b-a)*t;
+const ease = t => t<.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+
+// ---------- geography ----------
+const landLo = topojson.feature(TOPO_C, TOPO_C.objects.land);
+const landHi = topojson.feature(TOPO_L, TOPO_L.objects.land);
+const borders = topojson.mesh(TOPO_C, TOPO_C.objects.countries, (a,b) => a !== b);
+const grat = d3.geoGraticule().step([15,15])();
+const SPHERE = {type:"Sphere"};
+
+// ---------- deep time: sea level, ice, Green Sahara ----------
+const TMAX = 25000;
+// Global (ice-volume equivalent) sea level, metres vs today, by thousands of years ago. Simplified after Lambeck et al. 2014.
+const SEA = [[0,0],[3,-.5],[5,-1],[6,-2],[6.5,-3],[7,-6],[7.5,-10],[8.2,-16],[8.5,-20],[9,-27],[10,-38],[10.5,-42],[11.3,-48],[11.6,-55],[12,-60],[13,-68],[14.2,-78],[14.6,-96],[15,-100],[16,-105],[17,-112],[19,-126],[20,-132],[21,-134],[22,-130],[25,-122]];
+// African Humid Period strength 0..1, after Tierney et al. 2017 (onset ~14.8 ka, Younger Dryas dip, end ~5-4.5 ka)
+const GREEN = [[0,0],[3,0],[4,.03],[4.5,.12],[5,.3],[5.5,.55],[6,.8],[7,.95],[9,1],[11,.85],[11.7,.3],[12.9,.25],[13,.5],[14.5,.45],[15,0],[25,0]];
+function interp(tab, x){
+  if (x <= tab[0][0]) return tab[0][1];
+  for (let i = 1; i < tab.length; i++){
+    if (x <= tab[i][0]){ const [x0,y0] = tab[i-1], [x1,y1] = tab[i]; return y0 + (y1-y0)*(x-x0)/(x1-x0); }
+  }
+  return tab[tab.length-1][1];
+}
+PALEO.ice.forEach(sh => { sh.s = sh.s.slice().sort((a,b) => a[0]-b[0]); });
+const SAHARA = {type:"Polygon", coordinates:[PALEO.sahara]};
+const MEGACHAD = {type:"MultiPolygon", coordinates: PALEO.megachad};
+// Antarctica keeps its ice throughout; take its outline from the coastline data.
+function southIce(fc){
+  const polys = [];
+  for (const f of (fc.features || [fc])){
+    const g = f.geometry || f;
+    const list = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
+    for (const poly of list) if (poly[0].every(p => p[1] < -58)) polys.push(poly);
+  }
+  return {type:"MultiPolygon", coordinates: polys};
+}
+const antHi = southIce(landHi), antLo = southIce(landLo);
+
+let T = 0, playing = false, tGlide = null;
+const kaNow = () => T/1000;
+const seaNow = () => interp(SEA, kaNow());
+
+// ice sheets: each outline shrinks toward its last dome along its dated area fraction
+let iceKey = "", iceGeom = null;
+function iceFor(ka){
+  const key = ka.toFixed(2);
+  if (key === iceKey) return iceGeom;
+  const polys = [];
+  for (const sh of PALEO.ice){
+    const a = interp(sh.s, ka);
+    sh.a = a;
+    if (a <= 0.002) continue;
+    const k = Math.sqrt(a), [c0, c1] = sh.c;
+    polys.push([sh.ring.map(([lo, la]) => {
+      const d = ((lo - c0) % 360 + 540) % 360 - 180;
+      return [c0 + d*k, c1 + (la - c1)*k];
+    })]);
+  }
+  iceKey = key; iceGeom = {type:"MultiPolygon", coordinates: polys};
+  return iceGeom;
+}
+
+// seafloor grid (1024 x 484 cells, 85N-85S); byte = (elevation + 140 m) / 0.6, inland basins zeroed
+const GW = 1024, GH = 484, GLAT = 85;
+let gridHi = null, gridLo = null;
+const shelfCache = new Map(), hiKeys = [];
+let hiTimer = 0, hiWant = null;
+async function loadGrid(){
+  try {
+    if (typeof DecompressionStream === "undefined" || !GRID_B64 || GRID_B64.length < 100) return;
+    const bin = Uint8Array.from(atob(GRID_B64), c => c.charCodeAt(0));
+    const ds = new DecompressionStream("deflate");
+    const w = ds.writable.getWriter(); w.write(bin); w.close();
+    const rd = ds.readable.getReader(), parts = []; let n = 0;
+    for (;;){ const {done, value} = await rd.read(); if (done) break; parts.push(value); n += value.length; }
+    if (n !== GW*GH) return;
+    const g = new Float32Array(n); let o = 0;
+    for (const part of parts) for (let i = 0; i < part.length; i++) g[o++] = part[i];
+    const W2 = GW/2, H2 = GH/2, lo = new Float32Array(W2*H2);
+    for (let y = 0; y < H2; y++) for (let x = 0; x < W2; x++){
+      const i = 2*y*GW + 2*x;
+      lo[y*W2 + x] = Math.max(g[i], g[i+1], g[i+GW], g[i+GW+1]);
+    }
+    gridHi = g; gridLo = lo; forceMap = true;
+    // warm the coarse levels in the background so the slider never stutters
+    let L = -2;
+    const warm = () => { if (L < -136) return; shelfGeom(L, false); L -= 2; setTimeout(warm, 24); };
+    setTimeout(warm, 800);
+  } catch(_){ gridHi = gridLo = null; }
+}
+function shelfGeom(Lq, hi){
+  const key = (hi ? "h" : "l") + Lq;
+  if (shelfCache.has(key)) return shelfCache.get(key);
+  const grid = hi ? gridHi : gridLo;
+  if (!grid) return null;
+  const w = hi ? GW : GW/2, h = hi ? GH : GH/2, st = 360/w;
+  const mp = d3.contours().size([w, h]).contour(grid, (Lq + 140)/0.6);
+  // grid rings come out wound the opposite way to d3-geo's convention, so flip them
+  const coords = mp.coordinates.map(poly => poly.map(ring => {
+    const out = new Array(ring.length);
+    for (let i = ring.length - 1, j = 0; i >= 0; i--, j++){
+      const q = ring[i];
+      out[j] = [clamp(-180 + q[0]*st, -179.9999, 179.9999), GLAT - q[1]*st];
+    }
+    return out;
+  }));
+  const geo = {type:"MultiPolygon", coordinates: coords};
+  shelfCache.set(key, geo);
+  if (hi){ hiKeys.push(key); if (hiKeys.length > 12) shelfCache.delete(hiKeys.shift()); }
+  return geo;
+}
+function shelfFor(L, hi){
+  if (L > -1.5 || !gridLo) return null;
+  const Lq = Math.max(-136, Math.round(L/2)*2);
+  if (hi && !shelfCache.has("h" + Lq)){
+    if (hiWant !== Lq){
+      hiWant = Lq; clearTimeout(hiTimer);
+      hiTimer = setTimeout(() => { hiWant = null; if (Math.max(-136, Math.round(seaNow()/2)*2) === Lq){ shelfGeom(Lq, true); forceMap = true; } }, playing ? 600 : 160);
+    }
+    return shelfGeom(Lq, false);
+  }
+  return shelfGeom(Lq, hi);
+}
+const PLABELS = [
+  {t:"Beringia", at:[-168,61.5], kind:"land", a:L => clamp((-L-45)/30,0,1)},
+  {t:"Sundaland", at:[107,3], kind:"land", a:L => clamp((-L-40)/30,0,1)},
+  {t:"Sahul", at:[136,-10.5], kind:"land", a:L => clamp((-L-40)/30,0,1)},
+  {t:"Doggerland", at:[5.5,57.4], kind:"land", a:L => clamp((-L-22)/16,0,1)},
+];
+
+function morphProjection(raw0, raw1){
+  const mutate = d3.geoProjectionMutator(t => (x, y) => {
+    const a = raw0(x, y), b = raw1(x, y);
+    return [a[0] + t*(b[0]-a[0]), a[1] + t*(b[1]-a[1])];
+  });
+  let t = 0;
+  const p = mutate(t);
+  p.alpha = function(_){ return arguments.length ? (mutate(t = +_), p) : t; };
+  return p;
+}
+const proj = morphProjection(d3.geoOrthographicRaw, d3.geoEqualEarthRaw).precision(.6);
+const bpath = d3.geoPath(proj, bctx);
+
+// ---------- state ----------
+const V = { lam: 40, phi: -14, k: 1, kT: 1, ty: 0, e: 0, cx: 0, cxT: 0, cy: 0, cyT: 0, intro: 0 };
+let W = 0, H = 0, DPR = 1, R = 300, S1 = 100;
+let hover = null, listHover = null, sel = null, mode = "globe";
+let lastInteract = -1e9, fly = null, morph = null, introT0 = 0;
+let vel = {x:0, y:0}, drag = null, pinch = null;
+const ptrs = new Map();
+let mapKey = "", useHi = true, slowFrames = 0, settleTimer = 0, lowMove = false, forceMap = false;
+let isWide = false, isPhone = false;
+
+SITES.forEach((s,i) => { s.n = i+1; s.phase = (i*0.37) % 1; s.sx = null; s.sy = null; s.vis = 0; });
+
+// ---------- layout ----------
+function resize(){
+  W = innerWidth; H = innerHeight;
+  DPR = Math.min(2, devicePixelRatio || 1);
+  for (const c of [canvas, buf]) { c.width = Math.round(W*DPR); c.height = Math.round(H*DPR); }
+  canvas.style.width = W+"px"; canvas.style.height = H+"px";
+  isWide = W >= 1100; isPhone = W < 720;
+  const leftInset = isWide ? 300 : 0;
+  const availW = W - leftInset;
+  R = isPhone ? Math.min(W*0.44, H*0.31) : Math.min(availW*0.40, H*0.36);
+  S1 = isPhone ? Math.min(W*0.96/(2*EE_X), H*0.46/(2*EE_Y)) : Math.min(availW*0.92/(2*EE_X), H*0.66/(2*EE_Y));
+  layoutTargets(true);
+  mapKey = "";
+}
+function layoutTargets(snap){
+  const L = isWide ? 300 : 0;
+  const Rr = (sel && !isPhone) ? Math.min(440, W) : 0;
+  V.cxT = isPhone ? 0 : (L - Rr)/2;
+  V.cyT = isPhone ? (sel ? -H*0.31 : -H*0.07) : -H*0.035;
+  if (snap) { V.cx = V.cxT; V.cy = V.cyT; }
+}
+
+function applyProj(){
+  const e = V.e;
+  const s = lerp(R, S1, e) * V.k * (0.86 + 0.14*ease(V.intro));
+  proj.alpha(e).scale(s)
+      .translate([W/2 + V.cx, H/2 + V.cy + V.ty*e])
+      .rotate([V.lam, V.phi*(1-e), 0]);
+  const c = clipDeg(e);
+  if (c < 179.9) proj.clipAngle(c); else proj.clipAngle(null);
+}
+// Keep the globe's hemisphere clip until the flat shape dominates, so the far side never folds over the near side.
+function clipDeg(e){ if (e >= 0.72) return 180; const u = clamp((e - 0.4)/0.32, 0, 1); return 90 + 80*(u*u*(3 - 2*u)); }
+
+// ---------- stars ----------
+const stars = Array.from({length: 420}, () => ({
+  x: Math.random(), y: Math.random(),
+  r: Math.random() < .93 ? Math.random()*0.9 + 0.25 : Math.random()*1.2 + 0.9,
+  a: Math.random()*0.55 + 0.12, tw: Math.random()*6.28, sp: Math.random()*1.4 + 0.3,
+  warm: Math.random() < .18
+}));
+function drawStars(t){
+  const ox = ((V.lam*1.6) % W + W) % W, oy = V.phi*1.2;
+  for (const s of stars){
+    let x = (s.x*W + ox) % W, y = ((s.y*H + oy) % H + H) % H;
+    const tw = RM ? 1 : 0.65 + 0.35*Math.sin(t*0.001*s.sp + s.tw);
+    ctx.globalAlpha = s.a*tw*(0.35 + 0.65*V.intro);
+    ctx.fillStyle = s.warm ? "#e8c9a0" : "#dfe6ee";
+    ctx.beginPath(); ctx.arc(x, y, s.r, 0, 6.2832); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+// ---------- map layer (cached) ----------
+function renderMap(){
+  const e = V.e, g = 1 - e;
+  const [cx, cy] = proj.translate(), r = proj.scale();
+  bctx.setTransform(DPR,0,0,DPR,0,0);
+  bctx.clearRect(0,0,W,H);
+  // atmosphere
+  if (g > 0.01){
+    const h = bctx.createRadialGradient(cx,cy,r*0.98,cx,cy,r*1.5);
+    h.addColorStop(0, `rgba(170,198,214,${0.62*g})`);
+    h.addColorStop(0.07, `rgba(140,168,186,${0.32*g})`);
+    h.addColorStop(0.28, `rgba(110,136,156,${0.11*g})`);
+    h.addColorStop(0.6, `rgba(168,116,63,${0.05*g})`);
+    h.addColorStop(1, "rgba(0,0,0,0)");
+    bctx.fillStyle = h; bctx.beginPath(); bctx.arc(cx,cy,r*1.5,0,6.2832); bctx.fill();
+  }
+  // ocean
+  bctx.beginPath(); bpath(SPHERE);
+  if (g > 0.01){
+    const o = bctx.createRadialGradient(cx - r*0.38, cy - r*0.42, r*0.05, cx, cy, r*1.02);
+    o.addColorStop(0, "#222837"); o.addColorStop(0.5, "#121620"); o.addColorStop(0.9, "#0a0c12"); o.addColorStop(1, "#11161e");
+    bctx.fillStyle = o; bctx.globalAlpha = g; bctx.fill();
+  }
+  if (e > 0.01){ bctx.globalAlpha = e; bctx.fillStyle = "#0e1017"; bctx.fill(); }
+  bctx.globalAlpha = 1;
+  // graticule
+  bctx.beginPath(); bpath(grat);
+  bctx.strokeStyle = "rgba(190,205,215,0.065)"; bctx.lineWidth = 0.6; bctx.stroke();
+  // the past: land exposed by lower seas
+  const ka = kaNow(), L = seaNow(), G = interp(GREEN, ka);
+  const low = clamp(-L/40, 0, 1);
+  const shelf = shelfFor(L, useHi);
+  if (shelf){
+    bctx.beginPath(); bpath(shelf);
+    bctx.fillStyle = "rgba(214,168,108,0.14)"; bctx.fill();
+  }
+  // land
+  bctx.beginPath(); bpath(useHi ? landHi : landLo);
+  bctx.fillStyle = "rgba(222,206,180,0.15)"; bctx.fill();
+  bctx.strokeStyle = `rgba(236,222,198,${0.55 - 0.22*low})`; bctx.lineWidth = 0.65; bctx.stroke();
+  // borders
+  bctx.beginPath(); bpath(borders);
+  bctx.strokeStyle = `rgba(228,218,200,${0.09*(1 - 0.6*low)})`; bctx.lineWidth = 0.45; bctx.stroke();
+  // Green Sahara and Lake Mega-Chad
+  if (G > 0.01){
+    bctx.beginPath(); bpath(SAHARA);
+    if (useHi){
+      bctx.save();
+      bctx.translate(-10000, 0);
+      bctx.beginPath(); bpath(SAHARA);
+      bctx.shadowColor = `rgba(120,168,98,${0.5*G})`; bctx.shadowBlur = 26*DPR*Math.min(1.6, r/300);
+      bctx.shadowOffsetX = 10000*DPR; bctx.fillStyle = "#000"; bctx.fill();
+      bctx.restore();
+    } else { bctx.fillStyle = `rgba(120,168,98,${0.32*G})`; bctx.fill(); }
+    bctx.beginPath(); bpath(MEGACHAD);
+    bctx.fillStyle = `rgba(104,150,176,${0.62*G})`; bctx.fill();
+    bctx.strokeStyle = `rgba(170,205,225,${0.55*G})`; bctx.lineWidth = 0.6; bctx.stroke();
+  }
+  // ice
+  bctx.beginPath(); bpath(useHi ? antHi : antLo); bpath(iceFor(ka));
+  bctx.fillStyle = "rgba(214,228,238,0.30)"; bctx.fill();
+  bctx.strokeStyle = "rgba(232,242,250,0.5)"; bctx.lineWidth = 0.6; bctx.stroke();
+  // light & limb shading
+  if (g > 0.01){
+    bctx.beginPath(); bpath(SPHERE);
+    const sh = bctx.createRadialGradient(cx - r*0.45, cy - r*0.5, 0, cx, cy, r*1.0);
+    sh.addColorStop(0, `rgba(255,238,214,${0.09*g})`);
+    sh.addColorStop(0.45, "rgba(255,238,214,0)");
+    sh.addColorStop(0.8, `rgba(0,0,0,${0.16*g})`);
+    sh.addColorStop(0.97, `rgba(0,0,0,${0.42*g})`);
+    sh.addColorStop(1, `rgba(120,150,170,${0.25*g})`);
+    bctx.fillStyle = sh; bctx.fill();
+  }
+  // names for what the past reveals
+  drawPaleoLabels(ka, L, G);
+  // rim / outline
+  bctx.beginPath(); bpath(SPHERE);
+  bctx.strokeStyle = `rgba(${Math.round(lerp(170,228,e))},${Math.round(lerp(196,218,e))},${Math.round(lerp(210,200,e))},${lerp(0.42,0.2,e)})`;
+  bctx.lineWidth = lerp(1, 0.7, e); bctx.stroke();
+}
+
+
+function ptVisible(ll){
+  const c = clipDeg(V.e);
+  if (c >= 179.9) return 1;
+  return clamp((c*RAD - d3.geoDistance(ll, centerLL()))/0.15, 0, 1);
+}
+function paleoLabel(text, ll, a, rgb){
+  if (a <= 0.02) return;
+  a *= ptVisible(ll);
+  if (a <= 0.02) return;
+  const p = proj(ll); if (!p) return;
+  bctx.globalAlpha = a;
+  bctx.fillStyle = `rgb(${rgb})`;
+  bctx.fillText(text.toUpperCase(), p[0], p[1]);
+  bctx.globalAlpha = 1;
+}
+function drawPaleoLabels(ka, L, G){
+  bctx.save();
+  bctx.font = '500 9.5px "IBM Plex Mono", ui-monospace, monospace';
+  bctx.textAlign = "center"; bctx.textBaseline = "middle";
+  if ("letterSpacing" in bctx) bctx.letterSpacing = "2px";
+  bctx.shadowColor = "rgba(0,0,0,.85)"; bctx.shadowBlur = 5*DPR;
+  for (const lb of PLABELS) paleoLabel(lb.t, lb.at, 0.8*lb.a(L), "236,204,160");
+  paleoLabel("Green Sahara", [10,23.5], 0.85*clamp((G-0.15)/0.3,0,1), "176,214,156");
+  paleoLabel("Lake Mega-Chad", [17.5,12.2], 0.8*clamp((G-0.5)/0.3,0,1), "176,212,232");
+  for (const sh of PALEO.ice){
+    if (!sh.label) continue;
+    iceFor(ka);
+    paleoLabel(sh.label, sh.at, 0.8*clamp((sh.a - 0.25)/0.25, 0, 1), "226,238,246");
+  }
+  bctx.restore();
+}
+
+// ---------- sites ----------
+function centerLL(){ return [-V.lam, -V.phi*(1-V.e)]; }
+function siteVisibility(s){
+  const c = clipDeg(V.e);
+  if (c >= 179.9) return 1;
+  const lim = c*RAD;
+  const d = d3.geoDistance([s.lon, s.lat], centerLL());
+  return clamp((lim - d)/0.12, 0, 1);
+}
+function drawSites(t){
+  const k = V.k;
+  const showAll = k >= 1.9 && !isPhone;
+  for (const s of SITES){
+    const v = siteVisibility(s);
+    const appear = RM ? 1 : clamp((t - introT0 - 1400 - s.n*85)/700, 0, 1);
+    s.vis = v*appear;
+    if (s.vis <= 0.01){ s.sx = null; continue; }
+    const p = proj([s.lon, s.lat]);
+    if (!p){ s.sx = null; continue; }
+    s.sx = p[0]; s.sy = p[1];
+    const x = p[0], y = p[1], a = s.vis;
+    const L = s.kind === "lacuna";
+    const isSel = sel === s, isHov = hover === s || listHover === s;
+    const col = L ? "217,160,102" : "228,218,200";
+    // glow
+    const gr = isSel || isHov ? 26 : 16;
+    const gg = ctx.createRadialGradient(x,y,0,x,y,gr);
+    gg.addColorStop(0, `rgba(${col},${(L?0.5:0.32)*a})`); gg.addColorStop(1, `rgba(${col},0)`);
+    ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(x,y,gr,0,6.2832); ctx.fill();
+    // pulse rings
+    if (!RM){
+      for (let j=0;j<2;j++){
+        const ph = ((t*0.00042 + s.phase + j*0.5) % 1);
+        ctx.strokeStyle = `rgba(${col},${(1-ph)*(L?0.55:0.35)*a})`;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.arc(x,y,3 + ph*(L?17:13),0,6.2832); ctx.stroke();
+      }
+    }
+    // core
+    if (L){
+      ctx.fillStyle = `rgba(240,196,140,${a})`;
+      ctx.beginPath(); ctx.arc(x,y,isSel?4.2:3.2,0,6.2832); ctx.fill();
+    } else {
+      ctx.strokeStyle = `rgba(228,218,200,${0.95*a})`; ctx.lineWidth = 1.1;
+      ctx.beginPath(); ctx.arc(x,y,isSel?4.6:3.6,0,6.2832); ctx.stroke();
+      ctx.fillStyle = `rgba(240,234,222,${a})`;
+      ctx.beginPath(); ctx.arc(x,y,1.2,0,6.2832); ctx.fill();
+    }
+    // selection reticle
+    if (isSel || isHov){
+      const rr = isSel ? 13 + (RM?0:Math.sin(t*0.003)*1.2) : 11;
+      ctx.strokeStyle = `rgba(217,160,102,${0.9*a})`; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(x,y,rr,0,6.2832); ctx.stroke();
+      if (isSel){
+        ctx.beginPath();
+        for (const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+          ctx.moveTo(x+dx*(rr+4), y+dy*(rr+4)); ctx.lineTo(x+dx*(rr+12), y+dy*(rr+12));
+        }
+        ctx.stroke();
+      }
+    }
+    // label
+    if (isSel || (isHov && !fineQ.matches) || showAll || (listHover === s)){
+      ctx.globalAlpha = a;
+      ctx.font = '500 15px "Cormorant Garamond", Georgia, serif';
+      ctx.fillStyle = "#e4dac8";
+      ctx.shadowColor = "rgba(0,0,0,.9)"; ctx.shadowBlur = 6;
+      const lx = x + (isSel?20:12), ly = y + 4;
+      ctx.fillText(s.name, lx, ly);
+      ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+    }
+  }
+}
+
+// ---------- frame loop ----------
+let last = performance.now(), lastCx = null;
+function frame(t){
+  const dt = Math.min(64, t - last); last = t;
+  let changed = false;
+
+  // intro
+  if (V.intro < 1){
+    V.intro = RM ? 1 : clamp((t - introT0)/2600, 0, 1);
+    changed = true;
+  }
+  const introE = ease(V.intro);
+  // morph
+  if (morph){
+    const p = morph.dur ? clamp((t - morph.t0)/morph.dur, 0, 1) : 1;
+    V.e = lerp(morph.from, morph.to, ease(p));
+    if (morph.to === 0) V.ty = lerp(morph.ty0, 0, ease(p));
+    if (p >= 1) morph = null;
+    changed = true;
+  }
+  // fly
+  if (fly){
+    const p = fly.dur ? clamp((t - fly.t0)/fly.dur, 0, 1) : 1, q = ease(p);
+    V.lam = lerp(fly.from.lam, fly.to.lam, q);
+    V.phi = lerp(fly.from.phi, fly.to.phi, q);
+    V.ty = lerp(fly.from.ty, fly.to.ty, q);
+    V.kT = V.k = lerp(fly.from.k, fly.to.k, q);
+    if (p >= 1) fly = null;
+    changed = true;
+  }
+  // inertia
+  if (!drag && !fly && (Math.abs(vel.x) > 0.002 || Math.abs(vel.y) > 0.002)){
+    applyDrag(vel.x*dt, vel.y*dt);
+    const f = Math.pow(0.93, dt/16); vel.x *= f; vel.y *= f;
+    changed = true;
+  }
+  // auto-rotate
+  const idle = t - lastInteract;
+  if (!RM && mode === "globe" && !morph && !fly && !drag && !sel && !hover && !listHover && idle > 3500 && V.intro >= 1){
+    V.lam += dt * 0.0032 * clamp((idle - 3500)/2500, 0, 1);
+    changed = true;
+  }
+  if (!RM && V.intro < 1){ V.lam = lerp(160, 40, introE); }
+  // time
+  if (playing){
+    setT(T - dt*TMAX/22000);
+    if (T <= 0){ playing = false; syncPlay(); }
+    changed = true;
+  } else if (tGlide){
+    const p = tGlide.dur ? clamp((t - tGlide.t0)/tGlide.dur, 0, 1) : 1;
+    setT(lerp(tGlide.from, tGlide.to, ease(p)));
+    if (p >= 1) tGlide = null;
+    changed = true;
+  }
+  // zoom smoothing
+  if (Math.abs(V.kT - V.k) > 0.0005){ V.k += (V.kT - V.k)*Math.min(1, dt/110); changed = true; }
+  // layout smoothing
+  for (const [a,b] of [["cx","cxT"],["cy","cyT"]]){
+    if (Math.abs(V[b] - V[a]) > 0.3){ V[a] += (V[b] - V[a])*Math.min(1, dt/(RM?1:140)); changed = true; }
+    else V[a] = V[b];
+  }
+
+  applyProj();
+  const key = [V.lam.toFixed(3), V.phi.toFixed(3), proj.scale().toFixed(2), V.cx.toFixed(1), V.cy.toFixed(1), V.ty.toFixed(1), V.e.toFixed(4), W, H, Math.round(T)].join("|");
+  if (key !== mapKey || forceMap){
+    // while the view moves, slow devices draw the coarse coastline; the fine one returns when it settles
+    const movingNow = key !== mapKey;
+    useHi = !(movingNow && lowMove);
+    const t0 = performance.now();
+    renderMap();
+    const cost = performance.now() - t0;
+    if (useHi && movingNow){ if (cost > 11){ if (++slowFrames > 6) lowMove = true; } else slowFrames = 0; }
+    mapKey = key; forceMap = false;
+    if (movingNow && lowMove){ clearTimeout(settleTimer); settleTimer = setTimeout(() => { forceMap = true; }, 200); }
+  }
+
+  if (V.cx !== lastCx){ lastCx = V.cx; app.style.setProperty("--mapcx", V.cx.toFixed(1) + "px"); }
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.clearRect(0,0,W,H);
+  drawStars(t);
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.drawImage(buf, 0, 0);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  drawSites(t);
+  placeCard();
+  requestAnimationFrame(frame);
+}
+
+// ---------- interaction ----------
+function touch(){ lastInteract = performance.now(); }
+function applyDrag(dx, dy){
+  const s = proj.scale();
+  if (V.e < 0.5){
+    V.lam += dx * DEG / s;
+    V.phi = clamp(V.phi - dy * DEG / s, -82, 82);
+  } else {
+    V.lam += dx * DEG / (s*0.8615);
+    const lim = Math.max(0, EE_Y*s - H*0.32);
+    V.ty = clamp(V.ty + dy, -lim, lim);
+  }
+}
+function hit(x, y, rad){
+  let best = null, bd = rad*rad;
+  for (const s of SITES){
+    if (s.sx == null || s.vis < 0.4) continue;
+    const d = (s.sx-x)**2 + (s.sy-y)**2;
+    if (d < bd){ bd = d; best = s; }
+  }
+  return best;
+}
+canvas.addEventListener("pointerdown", e => {
+  canvas.setPointerCapture(e.pointerId);
+  ptrs.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  fly = null; touch();
+  if (ptrs.size === 1){
+    drag = {x0:e.clientX, y0:e.clientY, x:e.clientX, y:e.clientY, t:performance.now(), moved:false, type:e.pointerType};
+    vel = {x:0, y:0};
+  } else if (ptrs.size === 2){
+    const [a,b] = [...ptrs.values()];
+    pinch = {d: Math.hypot(a.x-b.x, a.y-b.y), k: V.kT};
+    if (drag) drag.moved = true;
+  }
+});
+canvas.addEventListener("pointermove", e => {
+  if (ptrs.has(e.pointerId)) ptrs.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  if (pinch && ptrs.size === 2){
+    const [a,b] = [...ptrs.values()];
+    V.kT = V.k = clamp(pinch.k * Math.hypot(a.x-b.x, a.y-b.y)/pinch.d, 0.7, 8);
+    touch(); return;
+  }
+  if (drag && ptrs.has(e.pointerId)){
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.moved && Math.hypot(e.clientX-drag.x0, e.clientY-drag.y0) > 4){ drag.moved = true; canvas.classList.add("dragging"); setHover(null); }
+    if (drag.moved){
+      applyDrag(dx, dy);
+      const now = performance.now(), dt = Math.max(8, now - drag.t);
+      vel = {x: lerp(vel.x, dx/dt, 0.5), y: lerp(vel.y, dy/dt, 0.5)};
+      drag.t = now;
+    }
+    drag.x = e.clientX; drag.y = e.clientY; touch();
+    return;
+  }
+  if (e.pointerType === "mouse"){
+    const s = hit(e.clientX, e.clientY, 16);
+    setHover(s);
+  }
+});
+function endPointer(e){
+  const wasDrag = drag;
+  ptrs.delete(e.pointerId);
+  if (ptrs.size < 2) pinch = null;
+  if (ptrs.size === 0){
+    canvas.classList.remove("dragging");
+    if (wasDrag && !wasDrag.moved && e.type === "pointerup"){
+      const s = hit(e.clientX, e.clientY, wasDrag.type === "mouse" ? 16 : 28);
+      if (s) select(s, true); else if (sel) closePanel();
+      vel = {x:0,y:0};
+    } else if (wasDrag && performance.now() - wasDrag.t > 80){ vel = {x:0,y:0}; }
+    drag = null; touch();
+  }
+}
+canvas.addEventListener("pointerup", endPointer);
+canvas.addEventListener("pointercancel", endPointer);
+canvas.addEventListener("pointerleave", e => { if (e.pointerType === "mouse" && !drag) setHover(null); });
+canvas.addEventListener("wheel", e => {
+  e.preventDefault(); fly = null; touch();
+  V.kT = clamp(V.kT * Math.exp(-e.deltaY * 0.0016), 0.7, 8);
+}, {passive:false});
+$("zin").onclick = () => { touch(); V.kT = clamp(V.kT*1.4, 0.7, 8); };
+$("zout").onclick = () => { touch(); V.kT = clamp(V.kT/1.4, 0.7, 8); };
+
+// ---------- hover card ----------
+const hcard = $("hcard");
+function setHover(s){
+  if (hover === s) return;
+  hover = s;
+  canvas.classList.toggle("pointing", !!s);
+  if (s && fineQ.matches){
+    $("himg").style.backgroundImage = `url("img/${s.img.key}.jpg")`;
+    $("himg").className = "himg" + (s.img.fit === "contain" ? " contain" : "");
+    $("hn").textContent = `No. ${String(s.n).padStart(2,"0")} · ${s.gap}`;
+    $("ht").textContent = s.name;
+    $("hg").textContent = s.question;
+    hcard.classList.add("show");
+  } else hcard.classList.remove("show");
+}
+function placeCard(){
+  if (!hover || hover.sx == null){ if (hover && hover.sx == null) hcard.classList.remove("show"); return; }
+  const cw = 250, ch = hcard.offsetHeight || 230;
+  let x = hover.sx + 22, y = hover.sy - ch/2;
+  if (x + cw > W - 16) x = hover.sx - 22 - cw;
+  y = clamp(y, 16, H - ch - 16);
+  hcard.style.transform = `translate3d(${x}px,${y}px,0)`;
+}
+
+// ---------- index ----------
+const list = $("list");
+SITES.forEach(s => {
+  const li = document.createElement("li");
+  const b = document.createElement("button");
+  b.type = "button"; b.dataset.id = s.id;
+  b.innerHTML = `<span class="num"></span><span class="nm"></span><i class="mk ${s.kind}" aria-hidden="true"></i>`;
+  b.querySelector(".num").textContent = String(s.n).padStart(2,"0");
+  b.querySelector(".nm").textContent = s.name;
+  b.setAttribute("aria-label", `${s.name}, ${s.place}. ${s.kind === "lacuna" ? "Lacuna investigation" : "Open question"}`);
+  b.addEventListener("click", () => { select(s, true); if (!isWide) toggleIndex(false); });
+  b.addEventListener("mouseenter", () => { listHover = s; touch(); });
+  b.addEventListener("mouseleave", () => { listHover = null; });
+  b.addEventListener("focus", () => { listHover = s; });
+  b.addEventListener("blur", () => { listHover = null; });
+  li.appendChild(b); list.appendChild(li);
+  s.btn = b;
+});
+const indexEl = $("index"), indexBtn = document.querySelector(".index-btn"), scrim = $("scrim");
+function toggleIndex(open){
+  open = open ?? !indexEl.classList.contains("open");
+  indexEl.classList.toggle("open", open);
+  indexBtn.setAttribute("aria-expanded", open);
+  scrim.classList.toggle("on", open && !isWide);
+}
+indexBtn.addEventListener("click", () => toggleIndex());
+scrim.addEventListener("click", () => toggleIndex(false));
+
+// ---------- projection toggle ----------
+const segBtns = [...document.querySelectorAll(".seg button")];
+function setMode(m){
+  if (m === mode) return;
+  mode = m; touch(); fly = null; vel = {x:0,y:0};
+  segBtns.forEach(b => b.setAttribute("aria-checked", b.dataset.mode === m));
+  morph = {from: V.e, to: m === "flat" ? 1 : 0, t0: performance.now(), dur: RM ? 0 : 1500, ty0: V.ty};
+  $("hint").textContent = m === "flat" ? "Drag to pan · scroll to zoom" : "Drag to turn · scroll to zoom";
+  if (sel) setTimeout(() => flyTo(sel), RM ? 0 : 1500);
+}
+segBtns.forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode)));
+const whyBtn = document.querySelector(".why-btn"), why = $("why");
+whyBtn.addEventListener("click", () => {
+  const o = !why.classList.contains("open");
+  why.classList.toggle("open", o); whyBtn.setAttribute("aria-expanded", o);
+});
+
+
+// ---------- time bar ----------
+const crange = $("crange"), crplay = $("crplay"), cryr = $("cryr"), crper = $("crper"), crtrack = $("crtrack");
+const crsrc = $("crsrc"), tpop = $("tpop");
+const EVENTS = [
+  {ka:21, t:"Glacial maximum", row:"a"},
+  {ka:14.7, t:"Meltwater pulse", row:"b"},
+  {ka:12.9, t:"Younger Dryas", row:"a"},
+  {ka:8.2, t:"Doggerland drowns", row:"b"},
+  {ka:5.5, t:"Sahara dries", row:"a"},
+  {ka:0, t:"Today", row:"b"},
+];
+EVENTS.forEach(ev => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "cr-tick " + ev.row;
+  const f = 1 - ev.ka*1000/TMAX;
+  b.style.left = (f*100) + "%";
+  if (f > 0.97) b.classList.add("edge-r");
+  b.innerHTML = "<span></span>";
+  b.querySelector("span").textContent = ev.t;
+  b.setAttribute("aria-label", ev.ka ? `${ev.t}, ${(ev.ka*1000).toLocaleString("en-US")} years ago` : "Today");
+  b.addEventListener("click", () => glideT(ev.ka*1000));
+  crtrack.appendChild(b); ev.el = b;
+});
+function period(ka){
+  if (ka < 0.05) return "Today";
+  if (ka < 4.2) return "Late Holocene";
+  if (ka < 8.2) return "Middle Holocene";
+  if (ka < 11.7) return "Early Holocene";
+  if (ka < 12.9) return "Younger Dryas cold snap";
+  if (ka < 14.7) return "Bølling–Allerød warming";
+  if (ka < 19) return "Deglaciation";
+  if (ka < 22.5) return "Last Glacial Maximum";
+  return "Late Ice Age";
+}
+let readKey = "";
+function readout(){
+  const r = T >= 1000 ? Math.round(T/100)*100 : Math.round(T/10)*10;
+  const L = seaNow(), ka = kaNow();
+  const key = r + "|" + Math.round(L);
+  if (key === readKey) return; readKey = key;
+  if (r < 50){
+    cryr.textContent = "Today";
+    crper.textContent = "Drag back through 25,000 years";
+    crange.setAttribute("aria-valuetext", "Today");
+  } else {
+    cryr.textContent = r.toLocaleString("en-US") + " years ago";
+    const sea = L > -1 ? "sea level as today" : `sea ${Math.round(-L)} m lower`;
+    crper.textContent = `${period(ka)} · ${sea}`;
+    crange.setAttribute("aria-valuetext", `${r.toLocaleString("en-US")} years ago, ${period(ka)}, ${sea}`);
+  }
+  let near = null, nd = 1e9;
+  for (const ev of EVENTS){ const d = Math.abs(ev.ka*1000 - T); if (d < nd){ nd = d; near = ev; } }
+  EVENTS.forEach(ev => ev.el.classList.toggle("on", ev === near && nd < 400));
+}
+function setT(v){
+  T = clamp(v, 0, TMAX);
+  crange.value = String(TMAX - Math.round(T/100)*100);
+  readout();
+}
+function glideT(to){
+  playing = false; syncPlay(); touch();
+  tGlide = {from: T, to, t0: performance.now(), dur: RM ? 0 : clamp(Math.abs(to - T)*0.09, 350, 1600)};
+}
+function syncPlay(){
+  crplay.classList.toggle("on", playing);
+  crplay.setAttribute("aria-label", playing ? "Pause" : "Play 25,000 years forward to today");
+}
+crange.addEventListener("input", () => {
+  playing = false; tGlide = null; syncPlay(); touch();
+  T = TMAX - Number(crange.value); readout();
+});
+crplay.addEventListener("click", () => {
+  tGlide = null; touch();
+  if (playing){ playing = false; }
+  else { if (T < 100) setT(TMAX); playing = true; }
+  syncPlay();
+});
+crsrc.addEventListener("click", () => {
+  const o = !tpop.classList.contains("open");
+  tpop.classList.toggle("open", o); crsrc.setAttribute("aria-expanded", o);
+});
+readout();
+
+// ---------- fly ----------
+function flyTo(s){
+  const flat = mode === "flat";
+  const d = ((-s.lon - V.lam) % 360 + 540) % 360 - 180;
+  const kTo = flat ? Math.max(V.kT, 1.7) : Math.max(V.kT, isPhone ? 1.1 : 1.2);
+  let tyTo = 0;
+  if (flat){
+    const yraw = d3.geoEqualEarthRaw(0, s.lat*RAD)[1];
+    tyTo = yraw * S1 * kTo;
+  }
+  const from = {lam:V.lam, phi:V.phi, ty:V.ty, k:V.kT};
+  const to = {lam: V.lam + d, phi: flat ? V.phi : clamp(-s.lat, -70, 70), ty: tyTo, k: kTo};
+  const dist = Math.hypot(d, to.phi - from.phi);
+  fly = {from, to, t0: performance.now(), dur: RM ? 0 : clamp(700 + dist*6, 800, 1700)};
+  vel = {x:0,y:0};
+}
+
+// ---------- panel ----------
+const panel = $("panel"), pimg = $("pimg"), fig = $("fig");
+function fmtLL(lat, lon){
+  return `${Math.abs(lat).toFixed(2)}° ${lat<0?"S":"N"} · ${Math.abs(lon).toFixed(2)}° ${lon<0?"W":"E"}`;
+}
+function credit(img){
+  const el = $("pcredit"); el.textContent = "";
+  el.append(document.createTextNode(img.caption + ". Photo: "));
+  const a = document.createElement("a");
+  a.href = "https://commons.wikimedia.org/wiki/File:" + img.file; a.target = "_blank"; a.rel = "noopener";
+  a.textContent = img.credit; el.append(a);
+  if (LIC[img.lic]){
+    el.append(document.createTextNode(", "));
+    const l = document.createElement("a"); l.href = LIC[img.lic]; l.target = "_blank"; l.rel = "noopener"; l.textContent = img.lic;
+    el.append(l);
+  } else el.append(document.createTextNode(", " + img.lic.toLowerCase()));
+  el.append(document.createTextNode(". Resized."));
+}
+let lastFocus = null;
+function select(s, fromUser){
+  if (!s) return;
+  if (sel !== s){ lastFocus = document.activeElement; }
+  sel = s; setHover(null); touch();
+  SITES.forEach(x => x.btn.classList.toggle("active", x === s));
+  // fill
+  fig.className = "fig" + (s.img.fit === "contain" ? " contain" : "") + (s.img.light ? " light" : "");
+  pimg.classList.remove("loaded");
+  pimg.onload = () => pimg.classList.add("loaded");
+  pimg.src = `img/${s.img.key}.jpg`; pimg.alt = s.img.alt;
+  if (pimg.complete && pimg.naturalWidth) requestAnimationFrame(() => pimg.classList.add("loaded"));
+  credit(s.img);
+  $("pcoords").textContent = `No. ${String(s.n).padStart(2,"0")} · ${fmtLL(s.lat, s.lon)}`;
+  $("ptitle").textContent = s.name;
+  $("psub").textContent = s.sub || ""; $("psub").hidden = !s.sub;
+  $("pmeta").textContent = `${s.place} · ${s.era}`;
+  const tags = $("ptags"); tags.textContent = "";
+  const t1 = document.createElement("span"); t1.className = "tag gap"; t1.textContent = s.gap; tags.append(t1);
+  const t2 = document.createElement("span"); t2.className = "tag kind";
+  t2.innerHTML = `<i class="mk ${s.kind}" aria-hidden="true"></i>`; t2.append(s.kind === "lacuna" ? "Lacuna investigation" : "Open question");
+  tags.append(t2);
+  $("pnote").textContent = s.note || ""; $("pnote").hidden = !s.note;
+  $("plede").textContent = s.lede;
+  $("pknown").textContent = s.known;
+  $("pmissing").textContent = s.missing;
+  $("pq").textContent = s.question;
+  $("phyp").textContent = s.hyp || ""; $("phyps").hidden = !s.hyp;
+  const lg = $("pleg"); lg.textContent = "";
+  (s.legends || []).forEach(x => { const p = document.createElement("p"); const b = document.createElement("strong"); b.textContent = x.h + ". "; p.append(b, x.p); lg.append(p); });
+  $("plegs").hidden = !(s.legends && s.legends.length);
+  $("pspec").textContent = s.spec || ""; $("pspecs").hidden = !s.spec;
+  $("pwork").textContent = s.work || ""; $("pworks").hidden = !s.work;
+  const ge = s.earth || [s.lat, s.lon, 0, 20000, 0, 45];
+  $("pearth").href = `https://earth.google.com/web/@${ge[0]},${ge[1]},${ge[2]}a,${ge[3]}d,35y,${ge[4]}h,${ge[5]}t,0r`;
+  $("pearth").setAttribute("aria-label", `Explore ${s.name} in Google Earth (opens in a new tab)`);
+  shareSite = s;
+  const pl = $("plink");
+  if (s.link){ pl.href = s.link.href; pl.textContent = s.link.text + " ↗"; pl.hidden = false; } else pl.hidden = true;
+  const src = $("psrc"); src.textContent = "";
+  s.sources.forEach(x => { const li = document.createElement("li"); li.textContent = x; src.append(li); });
+  $("pcount").textContent = `${String(s.n).padStart(2,"0")} / ${SITES.length}`;
+  $("pscroll").scrollTop = 0;
+  panel.classList.add("open"); panel.setAttribute("aria-hidden","false");
+  app.classList.add("panel-open");
+  layoutTargets(false);
+  flyTo(s);
+  try { history.replaceState(null, "", "#" + s.id); } catch(_){}
+  if (fromUser) setTimeout(() => $("ptitle").focus({preventScroll:true}), RM ? 0 : 350);
+}
+let shareSite = null;
+$("pshare").addEventListener("click", async () => {
+  const s = shareSite; if (!s) return;
+  const url = SITE_URL + "sites/" + s.slug + "/";
+  const label = $("pshare-t");
+  const done = msg => { label.textContent = msg; setTimeout(() => { label.textContent = "Share"; }, 2200); };
+  if (navigator.share && matchMedia("(pointer:coarse)").matches){
+    try { await navigator.share({ title: s.name + " · Lacuna Institute", text: s.lede, url }); } catch(_){}
+    return;
+  }
+  try { await navigator.clipboard.writeText(url); done("Link copied"); }
+  catch(_){
+    const ta = document.createElement("textarea"); ta.value = url; ta.setAttribute("readonly", "");
+    ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.append(ta); ta.select();
+    let ok = false; try { ok = document.execCommand("copy"); } catch(_){}
+    ta.remove(); done(ok ? "Link copied" : url);
+  }
+});
+function closePanel(){
+  sel = null;
+  SITES.forEach(x => x.btn.classList.remove("active"));
+  panel.classList.remove("open"); panel.setAttribute("aria-hidden","true");
+  app.classList.remove("panel-open");
+  layoutTargets(false); touch();
+  try { history.replaceState(null, "", location.pathname + location.search); } catch(_){}
+  if (lastFocus && lastFocus.focus && document.contains(lastFocus)) lastFocus.focus({preventScroll:true});
+}
+$("close").addEventListener("click", closePanel);
+$("prev").addEventListener("click", () => select(SITES[(sel.n - 2 + SITES.length) % SITES.length]));
+$("next").addEventListener("click", () => select(SITES[sel.n % SITES.length]));
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape"){
+    if (tpop.classList.contains("open")){ tpop.classList.remove("open"); crsrc.setAttribute("aria-expanded", false); }
+    else if (why.classList.contains("open")){ why.classList.remove("open"); whyBtn.setAttribute("aria-expanded", false); }
+    else if (sel) closePanel();
+    else if (indexEl.classList.contains("open")) toggleIndex(false);
+  }
+  if (sel && (e.key === "ArrowRight" || e.key === "ArrowLeft") && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)){
+    e.preventDefault();
+    select(SITES[(sel.n - 1 + (e.key === "ArrowRight" ? 1 : -1) + SITES.length) % SITES.length]);
+  }
+});
+// swipe down to dismiss the phone sheet from its top area
+(function(){
+  let y0 = null;
+  panel.addEventListener("touchstart", e => { if ($("pscroll").scrollTop <= 0) y0 = e.touches[0].clientY; else y0 = null; }, {passive:true});
+  panel.addEventListener("touchmove", e => { if (y0 != null && e.touches[0].clientY - y0 > 90){ y0 = null; closePanel(); } }, {passive:true});
+})();
+
+// ---------- boot ----------
+addEventListener("resize", resize);
+loadGrid();
+resize();
+introT0 = performance.now();
+requestAnimationFrame(t => { canvas.classList.add("on"); requestAnimationFrame(frame); });
+setTimeout(() => app.classList.add("ready"), RM ? 0 : 300);
+// warm the image cache once things settle
+setTimeout(() => SITES.forEach(s => { const i = new Image(); i.src = `img/${s.img.key}.jpg`; }), 3500);
+// deep link
+const h = (location.hash || "").slice(1);
+const fromHash = SITES.find(s => s.id === h);
+if (fromHash) setTimeout(() => select(fromHash, false), RM ? 0 : 2400);
+})();
+</script>
