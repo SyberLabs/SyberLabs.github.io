@@ -10,17 +10,17 @@
   <meta property="og:title" content="PSYCHO SYBER | SyberLabs">
   <meta property="og:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
   <meta property="og:url" content="https://syberlabs.io/psycho-syber/">
-  <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117f">
+  <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117g">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="PSYCHO SYBER | SyberLabs">
   <meta name="twitter:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
-  <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117f">
+  <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117g">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="/syberlabs.css?v=20261105">
-  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261117f">
+  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261117g">
   <title>PSYCHO SYBER | SyberLabs</title>
 </head>
 <body class="syber-play">
@@ -60,7 +60,7 @@
           <p class="ps-actions"><button class="sy-btn sy-btn--solid" id="ps-start" type="button">Play</button><button class="sy-btn sy-btn--line" id="ps-continue" type="button" hidden>Continue</button></p>
           <ol class="ps-pick" id="ps-pick" aria-label="Start from a stage you have reached" hidden></ol>
           <p class="ps-keys ps-for-keys">Shift changes your form. Try it here.</p>
-          <p class="ps-keys ps-for-touch">Tap the picture to change form. Turn a phone sideways for a larger picture.</p>
+          <p class="ps-keys ps-for-touch">Tap the picture to change form. The game plays sideways: turn your phone when it starts.</p>
         </div>
 
         <div class="ps-panel ps-panel--card" id="ps-card" hidden>
@@ -88,7 +88,7 @@
             <li>PSYCHO: click pounces · push into stone to climb · <kbd>E</kbd> roars</li>
             <li><kbd>Esc</kbd> pause · <kbd>R</kbd> back to the last stone · <kbd>F</kbd> full screen · <kbd>M</kbd> sound</li>
           </ul>
-          <p class="ps-actions"><button class="sy-btn sy-btn--solid" id="ps-resume" type="button">Resume</button><button class="sy-btn sy-btn--line" id="ps-restart" type="button">Restart stage</button><button class="sy-btn sy-btn--line" id="ps-mute" type="button">Sound on</button><button class="sy-btn sy-btn--line" id="ps-quit" type="button">Title</button></p>
+          <p class="ps-actions"><button class="sy-btn sy-btn--solid" id="ps-resume" type="button">Resume</button><button class="sy-btn sy-btn--line" id="ps-restart" type="button">Restart stage</button><button class="sy-btn sy-btn--line" id="ps-mute" type="button">Sound on</button><button class="sy-btn sy-btn--line" id="ps-turn" type="button" hidden>Play upright</button><button class="sy-btn sy-btn--line" id="ps-quit" type="button">Title</button></p>
         </div>
 
         <div class="ps-panel ps-panel--end" id="ps-end" hidden>
@@ -105,6 +105,7 @@
         <button class="ps-pad__b ps-pad__b--act" id="ps-b-act" type="button" aria-label="E: check, or roar as the jaguar"><b>E</b><span id="ps-b-act-t">check</span></button>
         <button class="ps-pad__b ps-pad__b--jump" id="ps-b-jump" type="button" aria-label="Jump">Jump</button>
         <button class="ps-pad__b ps-pad__b--pause" id="ps-b-pause" type="button" aria-label="Pause"><span aria-hidden="true">II</span></button>
+        <button class="ps-pad__b ps-pad__b--sound" id="ps-b-sound" type="button" aria-label="Sound on or off"><span aria-hidden="true">♪</span></button>
       </div>
       <div class="ps-wake" id="ps-wake" hidden><p class="ps-wake__word" id="ps-wake-word" aria-hidden="true" hidden></p><p class="ps-wake__skip ps-for-keys">Enter skips</p><p class="ps-wake__skip ps-for-touch">Tap to skip</p></div>
     </section>
@@ -184,13 +185,16 @@
           </tbody>
         </table>
         <h3 class="ps-sub">On a phone or tablet</h3>
-        <p>Touch controls show while a stage is on, and the stage takes the whole screen. Pause has a button back to the title, where this page's header returns.</p>
+        <p>Touch controls show while a stage is on, and the stage takes the whole screen. On a phone held upright the stage is drawn sideways along the long edge, which makes the picture about three times the size: turn the phone to play. This works whether or not the phone's rotation is locked. Pause has a button to play upright instead, and a button back to the title, where this page's header returns.</p>
         <ul>
           <li>The stick on the left walks. Up reels in the cord or climbs. Down hides, and with Jump drops through a beam.</li>
           <li>Jump, Form and E are buttons on the right. E runs the check, or roars as the jaguar.</li>
           <li>A tap on the picture throws glass, or pounces as the jaguar, toward the place you tapped.</li>
           <li>Press and hold on a ring or on stone to throw the cord. It stays tied when you lift your finger. A tap or Jump lets it go.</li>
+          <li>The note button switches the sound off and on.</li>
         </ul>
+        <h3 class="ps-sub">Music</h3>
+        <p>Music starts at your first tap or key. Both forms play one tune: the weaver hears it plucked, over a kick, a bass and an arpeggio, and the jaguar hears it on a pipe that echoes, over a bombo drum and shakers. Changing form crossfades between them without restarting the tune. Each stage sets its own key and pace, the fifth stage has no drums, and in the last stage the pace rises as the verdict nears.</p>
       </section>
 
       <section id="real" aria-labelledby="real-title">
@@ -216,15 +220,16 @@
       <section aria-labelledby="limits-title">
         <h2 id="limits-title">Limits</h2>
         <ul>
-          <li>The touch controls are checked in Chrome's phone emulation, sideways and upright. No one has played the game on a phone or tablet yet.</li>
-          <li>On a phone held upright the picture is small, and the words drawn inside the last stage's picture are hard to read. Sideways it is larger.</li>
+          <li>The touch controls are checked in Chrome's phone emulation, sideways and upright, and the game has been opened on one iPhone. It has not been played through on a phone or tablet.</li>
+          <li>If you choose to play upright on a phone, the picture is small and the words drawn inside the last stage's picture are hard to read.</li>
+          <li>On an iPhone the game asks to play its sound with the ringer switch off, which stops other apps' audio while the sound is on. This has not been checked on a phone. Before iOS 16.4 the ringer switch silences the game.</li>
           <li>The story pace has no touch control. On a phone the story text runs at 220 words a minute.</li>
           <li>Checked in Chrome on a desktop. Firefox and Safari have not been checked.</li>
           <li>Each of the first five stages has two <a href="https://github.com/SyberLabs/SyberLabs.github.io/tree/main/psycho-syber/test" rel="noopener">scripted runs</a> that play it to the exit: one that takes the jaguar's form and one that never does. A third check plays the last stage and confirms that it ends without an exit.</li>
           <li>The ending covers the whole page and changes this tab's title for about ten seconds. Enter or Escape skips it. With reduced motion set on your device it shows its text and no animation.</li>
           <li>The ending reads the time from your device's clock and shows it to you. The game's code makes no network request, so what it reads stays on your device.</li>
           <li>Your progress, the Atlas marks you have found and your story pace are kept in this browser's storage. Clearing site data resets them.</li>
-          <li>All sound is synthesised in the browser. M switches it off.</li>
+          <li>All sound is synthesised in the browser. Its level has been measured in Chrome. No one has checked it by ear.</li>
         </ul>
       </section>
     </div>
@@ -237,6 +242,6 @@
     <span class="sy-footer__copy">© 2026 SyberLabs</span>
   </div>
 </div></footer>
-  <script type="module" src="/psycho-syber/game/main.js?v=20261117f"></script>
+  <script type="module" src="/psycho-syber/game/main.js?v=20261117g"></script>
 </body>
 </html>

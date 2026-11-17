@@ -99,8 +99,21 @@ the machine says and logs inside the picture is `LOGS`, `SAYS` and `PHASE` in `r
 `main.js` turns touch on for a device with a coarse pointer and no hover, or at the first finger on the picture. The
 stick and the buttons write to `pad` and to `edge`, the same places the keys write to, so `sim.js` knows nothing of
 it. While a stage is on, `.is-immersive` fixes the stage over the whole screen, the header included; the title is
-back in the page. A held press on the picture throws the cord and `tied` keeps it after the finger lifts. The
+back in the page. On a screen taller than it is wide the stage is also `.is-turned`: laid along the long edge and
+rotated a quarter turn, so the player turns the phone and the picture is about three times the size. It does not
+depend on the phone's own rotation, which is often locked. `point()` and `moveStick()` turn pointer positions to
+match, and `resize()` reads layout sizes, which a rotation does not change. Pause has `Play upright`
+(`.is-upright`: the picture at the top, the controls under it). A held press on the picture throws the cord and `tied` keeps it after the finger lifts. The
 hints are written for keys, and `TOUCH_WORDS` says the same things for touch.
+
+## Music
+
+`audio.js` plays two stems in step and crossfades them when the form changes. `SCENES` gives each stage its key,
+pace and layers; `main.js` calls `audio.scene(id)` when a stage loads and `audio.urgency()` in the last stage. The
+tune sits between 300 Hz and 2 kHz because a phone's speaker gives little below that. On an iPhone the page sets
+`navigator.audioSession.type` to `playback` while the sound is on, so the ringer switch does not silence it, and
+sound starts only inside `pointerup`, `touchend`, `click` or `keydown`. The level and the spread across four bands
+can be measured in headless Chrome by tapping what reaches the output with an `AnalyserNode`.
 
 ## The command ship
 
