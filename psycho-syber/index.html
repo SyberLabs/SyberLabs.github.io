@@ -4,23 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#02070a">
-  <meta name="description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse.">
+  <meta name="description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
   <link rel="canonical" href="https://syberlabs.io/psycho-syber/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="PSYCHO SYBER | SyberLabs">
-  <meta property="og:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse.">
+  <meta property="og:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
   <meta property="og:url" content="https://syberlabs.io/psycho-syber/">
-  <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117c">
+  <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117d">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="PSYCHO SYBER | SyberLabs">
-  <meta name="twitter:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse.">
-  <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117c">
+  <meta name="twitter:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
+  <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117d">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="/syberlabs.css?v=20261105">
-  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261117c">
+  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261117d">
   <title>PSYCHO SYBER | SyberLabs</title>
 </head>
 <body class="syber-play">
@@ -42,7 +42,7 @@
   <main class="ps" id="main">
     <section class="ps-stage is-syber" id="ps-stage" aria-label="PSYCHO SYBER, the game">
       <div class="ps-screen">
-        <canvas class="ps-view" id="ps-view" width="960" height="540" tabindex="0" aria-label="Game view. The game needs a keyboard and a mouse."></canvas>
+        <canvas class="ps-view" id="ps-view" width="960" height="540" tabindex="0" aria-label="Game view. The game plays with a keyboard and a mouse, or with touch."></canvas>
         <div class="ps-hud" id="ps-hud" hidden>
           <p class="ps-hud__tl"><span class="ps-form" id="ps-form">SYBER</span><span class="ps-hp" id="ps-hp" aria-label="Health"></span><span class="ps-flag" id="ps-a3"></span></p>
           <p class="ps-hud__tr"><span id="ps-stage-name"></span><span id="ps-threads"></span><span id="ps-time"></span></p>
@@ -58,8 +58,8 @@
           <h1 class="ps-logo"><span class="ps-logo__p">PSYCHO</span> <span class="ps-logo__s">SYBER</span></h1>
           <p class="ps-lede">A browser game from SyberLabs. Six stages: one for each project, and a last one with no exit.</p>
           <p class="ps-actions"><button class="sy-btn sy-btn--solid" id="ps-start" type="button">Play</button><button class="sy-btn sy-btn--line" id="ps-continue" type="button" hidden>Continue</button></p>
-          <p class="ps-keys">Shift changes your form. Try it here.</p>
-          <p class="ps-touch" id="ps-touch" hidden>This game needs a keyboard and a mouse. Touch controls are not built yet.</p>
+          <p class="ps-keys ps-for-keys">Shift changes your form. Try it here.</p>
+          <p class="ps-keys ps-for-touch">Tap the picture to change form. Turn a phone sideways for a larger picture.</p>
         </div>
 
         <div class="ps-panel ps-panel--card" id="ps-card" hidden>
@@ -74,7 +74,13 @@
 
         <div class="ps-panel ps-panel--pause" id="ps-pause" hidden>
           <h2 class="ps-card-title">Paused</h2>
-          <ul class="ps-controls">
+          <ul class="ps-controls ps-for-touch">
+            <li>The stick on the left walks. Up reels in the cord or climbs. Down hides, and with JUMP drops through a beam.</li>
+            <li>JUMP jumps · FORM changes form · E runs the check, or roars as the jaguar</li>
+            <li>SYBER: a tap on the picture throws glass · press and hold throws the cord, which stays tied until you tap again or jump</li>
+            <li>PSYCHO: a tap on the picture pounces toward it · push the stick into stone and up to climb</li>
+          </ul>
+          <ul class="ps-controls ps-for-keys">
             <li><kbd>A</kbd> <kbd>D</kbd> walk · <kbd>W</kbd> or <kbd>Space</kbd> jump · hold <kbd>S</kbd> to hide</li>
             <li><kbd>Shift</kbd> change form (<kbd>Q</kbd> does the same)</li>
             <li>SYBER: click throws glass · hold the button for the cord · <kbd>E</kbd> runs the check</li>
@@ -92,7 +98,14 @@
           <p class="ps-actions"><a class="sy-btn sy-btn--solid" href="/#products">See what SyberLabs makes</a><button class="sy-btn sy-btn--line" id="ps-again" type="button">Play again</button><a class="sy-btn sy-btn--line" href="/lacuna/">Open the Lacuna Atlas</a></p>
         </div>
       </div>
-      <div class="ps-wake" id="ps-wake" hidden><p class="ps-wake__word" id="ps-wake-word" aria-hidden="true" hidden></p><p class="ps-wake__skip">Enter skips</p></div>
+      <div class="ps-pad" id="ps-pad" hidden>
+        <div class="ps-pad__stick" id="ps-stick" aria-hidden="true"><span class="ps-pad__ring" id="ps-stick-ring"><span class="ps-pad__knob" id="ps-stick-knob"></span></span></div>
+        <button class="ps-pad__b ps-pad__b--form" id="ps-b-form" type="button" aria-label="Change form">Form</button>
+        <button class="ps-pad__b ps-pad__b--act" id="ps-b-act" type="button" aria-label="E: check, or roar as the jaguar"><b>E</b><span id="ps-b-act-t">check</span></button>
+        <button class="ps-pad__b ps-pad__b--jump" id="ps-b-jump" type="button" aria-label="Jump">Jump</button>
+        <button class="ps-pad__b ps-pad__b--pause" id="ps-b-pause" type="button" aria-label="Pause"><span aria-hidden="true">II</span></button>
+      </div>
+      <div class="ps-wake" id="ps-wake" hidden><p class="ps-wake__word" id="ps-wake-word" aria-hidden="true" hidden></p><p class="ps-wake__skip ps-for-keys">Enter skips</p><p class="ps-wake__skip ps-for-touch">Tap to skip</p></div>
     </section>
 
     <div class="ps-about sy-wrap">
@@ -169,6 +182,14 @@
             <tr><th scope="row">Esc, R, F, M</th><td colspan="2">Pause, return to the last standing stone, full screen, sound</td></tr>
           </tbody>
         </table>
+        <h3 class="ps-sub">On a phone or tablet</h3>
+        <p>Touch controls show while a stage is on, and the stage takes the whole screen. Pause has a button back to the title, where this page's header returns.</p>
+        <ul>
+          <li>The stick on the left walks. Up reels in the cord or climbs. Down hides, and with Jump drops through a beam.</li>
+          <li>Jump, Form and E are buttons on the right. E runs the check, or roars as the jaguar.</li>
+          <li>A tap on the picture throws glass, or pounces as the jaguar, toward the place you tapped.</li>
+          <li>Press and hold on a ring or on stone to throw the cord. It stays tied when you lift your finger. A tap or Jump lets it go.</li>
+        </ul>
       </section>
 
       <section id="real" aria-labelledby="real-title">
@@ -194,7 +215,9 @@
       <section aria-labelledby="limits-title">
         <h2 id="limits-title">Limits</h2>
         <ul>
-          <li>Keyboard and mouse only. Touch controls are not built yet.</li>
+          <li>The touch controls are checked in Chrome's phone emulation, sideways and upright. No one has played the game on a phone or tablet yet.</li>
+          <li>On a phone held upright the picture is small, and the words drawn inside the last stage's picture are hard to read. Sideways it is larger.</li>
+          <li>The story pace has no touch control. On a phone the story text runs at 220 words a minute.</li>
           <li>Checked in Chrome on a desktop. Firefox and Safari have not been checked.</li>
           <li>Each of the first five stages has two <a href="https://github.com/SyberLabs/SyberLabs.github.io/tree/main/psycho-syber/test" rel="noopener">scripted runs</a> that play it to the exit: one that takes the jaguar's form and one that never does. A third check plays the last stage and confirms that it ends without an exit.</li>
           <li>The ending covers the whole page and changes this tab's title for about ten seconds. Enter or Escape skips it. With reduced motion set on your device it shows its text and no animation.</li>
@@ -213,6 +236,6 @@
     <span class="sy-footer__copy">© 2026 SyberLabs</span>
   </div>
 </div></footer>
-  <script type="module" src="/psycho-syber/game/main.js?v=20261117c"></script>
+  <script type="module" src="/psycho-syber/game/main.js?v=20261117d"></script>
 </body>
 </html>

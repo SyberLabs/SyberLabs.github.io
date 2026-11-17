@@ -112,6 +112,10 @@ the line under the homepage's section names and one line in its Studio section l
 - Every import between the game's modules, and the page's links to `psycho-syber.css` and `game/main.js`, carry one
   `?v=` token. Give all of them one new token whenever any game file changes: without it a returning browser pairs a
   new module with an old one it still has cached. `node psycho-syber/test/run.mjs` fails if the tokens differ.
+- On a touch device the game shows a stick and three buttons, and while a stage is on the stage covers the whole
+  screen, the header included. The title is in the page with the header, and Pause has a button back to it: keep
+  menu, privacy and account access one tap from Pause. A hint that names a key gets its touch wording in
+  `TOUCH_WORDS` in `main.js`.
 - The game loads no third-party script, has no form and makes no network request. Sound is synthesised in the
   browser. Progress, the Atlas marks found, the story pace and the command ship's gift are `localStorage` keys that
   begin `psycho-syber.`. `psycho-syber/test/` and `psycho-syber/README.md` are not published.

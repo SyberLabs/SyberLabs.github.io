@@ -77,11 +77,61 @@
 .ps-meta { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .ps-meta canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
 .ps-meta__lines { position: absolute; left: 4%; bottom: 6%; margin: 0; font: 500 clamp(9px, 1.5cqw, 18px)/1.5 var(--sy-mono); color: #9bdcff; text-shadow: 0 0 8px #02070a, 0 1px 0 #02070a; white-space: pre-wrap; }
+/* touch: a stick under the left thumb, three buttons under the right, and a tap on the picture to aim.
+   While a stage is on, the stage takes the whole screen of a touch device: the page's header comes back at the
+   title and at the last panel, and Pause has a way to the title. */
+.ps-for-touch, .is-touch .ps-for-keys { display: none; }
+.is-touch .ps-for-touch { display: block; }
+.is-touch ul.ps-for-touch { display: grid; }
+.is-touch .ps-hud__bl, .is-touch #ps-pace { display: none; }
+.ps-stage.is-immersive { position: fixed; inset: 0; z-index: 3000; height: 100dvh; touch-action: none; -webkit-touch-callout: none; }
+.ps-stage.is-immersive .ps-screen { width: min(100%, calc(100dvh * 16 / 9)); }
+.ps-pad { position: absolute; inset: 0; z-index: 1; pointer-events: none; font: 500 12px/1 var(--sy-mono); letter-spacing: .12em; text-transform: uppercase; }
+.ps-pad > * { pointer-events: auto; touch-action: none; -webkit-tap-highlight-color: transparent; }
+.ps-pad__stick { position: absolute; left: 0; bottom: 0; width: 30%; height: 60%; }
+.ps-pad__ring { position: absolute; left: calc(50% - 46px); bottom: calc(34% - 46px); width: 92px; height: 92px; border-radius: 50%; border: 1px solid rgba(227, 243, 252, .38); background: rgba(2, 7, 10, .28); }
+.ps-pad__ring.is-on { left: -46px; top: -46px; bottom: auto; border-color: rgba(76, 192, 245, .9); }
+.ps-pad__knob { position: absolute; left: 25px; top: 25px; width: 40px; height: 40px; border-radius: 50%; background: rgba(227, 243, 252, .5); }
+.ps-pad__b { position: absolute; display: grid; place-content: center; justify-items: center; gap: 3px; padding: 0; border-radius: 50%; border: 1px solid rgba(227, 243, 252, .5); background: rgba(2, 7, 10, .42); color: #e3f3fc; font: inherit; -webkit-user-select: none; user-select: none; }
+.ps-pad__b.is-down { background: rgba(76, 192, 245, .45); border-color: #4cc0f5; }
+.ps-pad__b b { font-weight: 500; font-size: 17px; letter-spacing: 0; }
+.ps-pad__b span { font-size: 9px; letter-spacing: .08em; }
+.ps-pad__b--jump { right: max(3%, 14px); bottom: max(9%, 18px); width: 84px; height: 84px; font-size: 13px; }
+.ps-pad__b--act { right: calc(max(3%, 14px) + 96px); bottom: max(5%, 12px); width: 68px; height: 68px; }
+.ps-pad__b--form { right: max(3%, 14px); bottom: calc(max(9%, 18px) + 96px); width: 68px; height: 68px; font-size: 11px; }
+.ps-pad__b--pause { right: max(1.5%, 8px); top: max(2.5%, 8px); width: 40px; height: 40px; font-size: 11px; letter-spacing: 0; }
+.is-touch.is-playing .ps-hud__tr { right: calc(max(1.5%, 8px) + 52px); }
+.is-psycho .ps-pad__b { border-color: rgba(255, 242, 168, .6); color: #fff2a8; }
+.is-psycho .ps-pad__b.is-down { background: rgba(255, 95, 162, .5); border-color: #ff5fa2; }
+@container (max-width: 560px) { #ps-stage-name { display: none; } }
+@media (orientation: portrait) {
+  .ps-stage.is-immersive { place-items: start center; }
+  .ps-stage.is-immersive .ps-panel { bottom: auto; height: 100dvh; align-content: center; padding: 8% 7%; gap: 16px; background: linear-gradient(180deg, rgba(2, 7, 10, .25), rgba(2, 7, 10, .95) 30%); }
+  .ps-stage.is-immersive .ps-card-title { font-size: 34px; }
+  .ps-stage.is-immersive .ps-card-line, .ps-stage.is-immersive .ps-controls { font-size: 15px; }
+  .ps-stage.is-immersive .ps-kicker, .ps-stage.is-immersive .ps-keys { font-size: 11px; }
+  .ps-stage.is-immersive .ps-stats { flex-wrap: wrap; row-gap: 12px; }
+  .ps-stage.is-immersive .ps-stats dt { font-size: 10px; }
+  .ps-stage.is-immersive .ps-stats dd { font-size: 24px; }
+  .ps-stage.is-immersive .ps-atlas { grid-template-columns: repeat(2, auto); font-size: 12px; }
+  .ps-stage.is-immersive .ps-hint { top: calc(100% + 60px); bottom: auto; max-width: 92%; font-size: 15px; }
+  .is-psycho.ps-stage.is-immersive .ps-hint { font-size: 17px; }
+  .ps-stage.is-immersive .ps-pad { top: calc(100vw * 9 / 16); }
+  .ps-stage.is-immersive .ps-pad__stick { width: 50%; height: 100%; }
+  .ps-stage.is-immersive .ps-pad__ring:not(.is-on) { bottom: calc(40% - 46px); }
+  .ps-stage.is-immersive .ps-pad__b--jump { bottom: 30%; }
+  .ps-stage.is-immersive .ps-pad__b--act { bottom: calc(30% - 20px); }
+  .ps-stage.is-immersive .ps-pad__b--form { bottom: calc(30% + 96px); }
+  .ps-stage.is-immersive.is-playing .ps-hud__tr { right: 2.2%; }
+}
 /* the last words take the whole page, not only the game's frame */
 .ps-wake { position: fixed; inset: 0; z-index: 4000; display: grid; place-items: center; background: #000; animation: ps-wake-in .5s ease-out both; }
 .ps-wake.is-out { animation: ps-wake-out .9s ease-in both; }
 .ps-wake__word { margin: 0; padding: 0 6vw; text-align: center; text-wrap: balance; font: 400 clamp(34px, 8.6vw, 132px)/1.05 var(--sy-serif); color: #f3f6f8; }
 .ps-wake__word.is-last { font-size: clamp(54px, 15vw, 230px); color: #fc734d; }
+.ps-wake__skip.ps-for-touch { display: none; }
+.is-touch .ps-wake__skip.ps-for-keys { display: none; }
+.is-touch .ps-wake__skip.ps-for-touch { display: block; }
 .ps-wake__skip { position: absolute; left: 0; right: 0; bottom: 5vh; margin: 0; text-align: center; font: 500 11px/1.4 var(--sy-mono); letter-spacing: .16em; text-transform: uppercase; color: #3b5564; }
 @keyframes ps-wake-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes ps-wake-out { to { opacity: 0; } }
@@ -98,6 +148,7 @@
 .ps-about section { max-width: 76ch; }
 .ps-about h2 { font: 400 clamp(28px, 3.2vw, 40px)/1.1 var(--sy-sans); letter-spacing: -.01em; margin: 0 0 18px; }
 .ps-about h3 { font: 600 17px/1.4 var(--sy-sans); margin: 0 0 4px; letter-spacing: .01em; }
+.ps-about h3.ps-sub { margin: 28px 0 10px; }
 .ps-about p, .ps-about li, .ps-about dd, .ps-about td { color: var(--sy-body); }
 .ps-about p { margin: 0 0 14px; }
 .ps-forms { display: grid; gap: 18px; margin: 20px 0 0; }
