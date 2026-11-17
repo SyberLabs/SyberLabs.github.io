@@ -1,10 +1,10 @@
 // PSYCHO SYBER: the page's game loop. sim.js decides what happens, render.js draws it twice (one look per form),
 // post.js puts it on screen, audio.js plays it. This file wires them to the keyboard, the mouse and the page.
-import { STAGES, ATLAS, SHIP } from './levels.js?v=20261117g';
-import { newGame, step, T, verdictAt } from './sim.js?v=20261117g';
-import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117g';
-import { makePost } from './post.js?v=20261117g';
-import { makeAudio } from './audio.js?v=20261117g';
+import { STAGES, ATLAS, SHIP } from './levels.js?v=20261117h';
+import { newGame, step, T, verdictAt } from './sim.js?v=20261117h';
+import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117h';
+import { makePost } from './post.js?v=20261117h';
+import { makeAudio } from './audio.js?v=20261117h';
 
 const $ = id => document.getElementById(id);
 const stage = $('ps-stage'), view = $('ps-view'), hud = $('ps-hud'), hintEl = $('ps-hint'), rsvpEl = $('ps-rsvp'), toastEl = $('ps-toast'), wakeEl = $('ps-wake'), wakeWord = $('ps-wake-word');

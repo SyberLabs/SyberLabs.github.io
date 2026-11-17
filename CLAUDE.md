@@ -118,8 +118,10 @@ the line under the homepage's section names and one line in its Studio section l
   the page with the header, and Pause has a button back to it: keep menu, privacy and account access one tap from
   Pause. A hint that names a key gets its touch wording in
   `TOUCH_WORDS` in `main.js`.
-- The game has music, by the owner's direction. Keep the tune loud enough between 300 Hz and 2 kHz for a phone's
-  speaker; `psycho-syber/README.md` says how to measure it.
+- The game has music, by the owner's direction, and he asked that it be dark, ancient and psychedelic and not
+  joyful: slow, a held ground note with a fifth and no third, a minor pentatonic tune, no major chords and no dance
+  beat. Keep every voice loud enough between 300 Hz and 2 kHz for a phone's speaker; `psycho-syber/README.md` says
+  how to measure it. The page describes the game's sounds and makes no claim about any people's music.
 - The game loads no third-party script, has no form and makes no network request. Sound is synthesised in the
   browser. Progress, the Atlas marks found, the story pace and the command ship's gift are `localStorage` keys that
   begin `psycho-syber.`. `psycho-syber/test/` and `psycho-syber/README.md` are not published.
