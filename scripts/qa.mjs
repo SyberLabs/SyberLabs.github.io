@@ -9,7 +9,7 @@
 //   - external links that do not parse as http(s) URLs (syntax only; nothing is fetched)
 //   - pages without <title>, meta description, canonical or an html lang (404.html and noindex pages skip the last two)
 //   - <a target="_blank"> without rel="noopener"
-//   - sitemap.xml URLs with no page, and pages (except 404.html and the kit demo) missing from the sitemap
+//   - sitemap.xml URLs with no page, and pages (except 404.html, the kit demo and Lacuna's share pages) missing from the sitemap
 //   - files the CI workflow tests for (`test -s dist/...`) that are missing
 //   - the word "host" in public copy (banned: CLAUDE.md)
 // Exits non-zero on broken internal links, missing files or the banned word; everything else is a warning.
@@ -20,6 +20,8 @@ import { resolve, join, relative, posix } from 'node:path';
 const root = resolve(process.argv[2] || 'dist');
 const ORIGIN = 'https://syberlabs.io';
 const SITEMAP_EXEMPT = new Set(['404.html', 'kit/v2/demo.html']);
+// lacuna/sites/<slug>/ pages carry a link preview and forward to that site on the Lacuna Atlas; the Atlas is the sitemap page.
+const sitemapExempt = rel => SITEMAP_EXEMPT.has(rel) || rel.startsWith('lacuna/sites/');
 
 async function walk(dir) {
   const out = [];
@@ -174,7 +176,9 @@ for (const [rel, { html, list }] of parsed) {
       let target = path.startsWith('/') ? path.slice(1) : posix.join(posix.dirname(rel), path);
       if (target.endsWith('/') || target === '') target += 'index.html';
       const targetIds = ids.get(target);
-      if (targetIds && !targetIds.has(hash)) report(rel, `fragment #${hash} not found on ${target}`);
+      // The Lacuna Atlas opens a site from "#<site id>" in script, so an id in its embedded site list is a valid fragment.
+      const atlasSite = target === 'lacuna/index.html' && parsed.get(target).html.includes(`id: "${hash}"`);
+      if (targetIds && !targetIds.has(hash) && !atlasSite) report(rel, `fragment #${hash} not found on ${target}`);
     }
   }
 }
@@ -186,7 +190,7 @@ if (existsSync(sitemapFile)) {
   const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1].trim());
   for (const loc of locs) if (!pageUrls.has(loc)) report('sitemap.xml', `sitemap URL has no page: ${loc}`, true);
   for (const [rel] of parsed) {
-    if (SITEMAP_EXEMPT.has(rel) || !rel.endsWith('index.html')) continue;
+    if (sitemapExempt(rel) || !rel.endsWith('index.html')) continue;
     const url = `${ORIGIN}/${rel.slice(0, -'index.html'.length)}`;
     if (!locs.includes(url)) report('sitemap.xml', `page missing from sitemap: ${url}`);
   }
