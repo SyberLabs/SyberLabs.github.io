@@ -10,17 +10,17 @@
   <meta property="og:title" content="PSYCHO SYBER | SyberLabs">
   <meta property="og:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
   <meta property="og:url" content="https://syberlabs.io/psycho-syber/">
-  <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117i">
+  <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117j">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="PSYCHO SYBER | SyberLabs">
   <meta name="twitter:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
-  <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117i">
+  <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117j">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="/syberlabs.css?v=20261105">
-  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261117i">
+  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261117j">
   <title>PSYCHO SYBER | SyberLabs</title>
 </head>
 <body class="syber-play">
@@ -195,6 +195,7 @@
         </ul>
         <h3 class="ps-sub">Music</h3>
         <p>Music starts at your first tap or key. It is slow, at 56 to 96 beats a minute. One low note is held under everything with a fifth over it and no third, and over that a tune in A minor pentatonic moves in long notes. The jaguar hears the tune on two pipes tuned a few cents apart, over a drum that beats like a heart, seed rattles and a conch horn. The weaver hears it struck on stone, over the clack of a loom. Changing form crossfades between the two without restarting the tune. Each stage sets its own pitch and pace, the fifth stage has no drum, and in the last stage the pace rises as the verdict nears.</p>
+        <!-- narrator: written by psycho-syber/test/voice.mjs --><!-- /narrator -->
       </section>
 
       <section id="real" aria-labelledby="real-title">
@@ -223,13 +224,13 @@
           <li>The touch controls are checked in Chrome's phone emulation, sideways and upright, and the game has been opened on one iPhone. It has not been played through on a phone or tablet.</li>
           <li>If you choose to play upright on a phone, the picture is small and the words drawn inside the last stage's picture are hard to read.</li>
           <li>On an iPhone the game asks to play its sound with the ringer switch off, which stops other apps' audio while the sound is on. This has not been checked on a phone. Before iOS 16.4 the ringer switch silences the game.</li>
-          <li>The story pace has no touch control. On a phone the story text runs at 220 words a minute.</li>
+          <li>The story pace has no touch control. On a phone it is set to 220 words a minute.</li>
           <li>Checked in Chrome on a desktop. Firefox and Safari have not been checked.</li>
           <li>Each of the first five stages has two <a href="https://github.com/SyberLabs/SyberLabs.github.io/tree/main/psycho-syber/test" rel="noopener">scripted runs</a> that play it to the exit: one that takes the jaguar's form and one that never does. A third check plays the last stage and confirms that it ends without an exit.</li>
           <li>The ending covers the whole page and changes this tab's title for about ten seconds. Enter or Escape skips it. With reduced motion set on your device it shows its text and no animation.</li>
-          <li>The ending reads the time from your device's clock and shows it to you. The game's code makes no network request, so what it reads stays on your device.</li>
+          <li>The ending reads the time from your device's clock and shows it to you. The game sends nothing: the only requests it makes are for its own files on this site, so what it reads stays on your device.</li>
           <li>Your progress, the Atlas marks you have found and your story pace are kept in this browser's storage. Clearing site data resets them.</li>
-          <li>All sound is synthesised in the browser. Its level has been measured in Chrome. No one has checked it by ear.</li>
+          <li>The music and the effects are synthesised in the browser. Their level was set by measurement in Chrome, without listening.</li>
         </ul>
       </section>
     </div>
@@ -242,6 +243,6 @@
     <span class="sy-footer__copy">© 2026 SyberLabs</span>
   </div>
 </div></footer>
-  <script type="module" src="/psycho-syber/game/main.js?v=20261117i"></script>
+  <script type="module" src="/psycho-syber/game/main.js?v=20261117j"></script>
 </body>
 </html>

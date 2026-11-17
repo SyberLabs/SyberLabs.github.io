@@ -26,6 +26,9 @@ const SCENES = {
 const rnd = n => { let h = Math.imul(n | 0, 374761393) ^ 0x9e3779b9; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
 export function makeAudio() {
   const LEVEL = { syber: 1.15, psycho: 1 };
+  const clips = new Map(), ready = new Map();   // the narrator's recordings, fetched and decoded once
+  const SPOKEN = 0.17;   // the level every recording is brought to (the mean of its voiced part), whatever voice made it
+  let voiceBus, speaking = 0, ducked = false, hold = 0;
   let ac = null, master, music, sfx, lp, stem = {}, noiseBuf, echo, echoS, timer = 0, stepN = 0, nextT = 0, lastKick = -1, muted = false, persona = 'syber', sc = SCENES.title, urge = 0;
   const step = () => 60 / (sc.bpm + (sc.dread ? urge * 34 : 0)) / 4;   // a sixteenth
   // On an iPhone, sound made this way is silenced by the ringer switch unless the page says it is playing audio.
@@ -43,6 +46,7 @@ export function makeAudio() {
     lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 18000; lp.connect(master);
     music = ac.createGain(); music.gain.value = 0.9; music.connect(lp);
     sfx = ac.createGain(); sfx.gain.value = 0.8; sfx.connect(master);
+    voiceBus = ac.createGain(); voiceBus.gain.value = 1; voiceBus.connect(master);
     for (const k of ['syber', 'psycho']) { stem[k] = ac.createGain(); stem[k].gain.value = k === persona ? LEVEL[k] : 0; stem[k].connect(music); }
     // each stem's echo: the jaguar's comes back darker each time and its length drifts, the weaver's comes back thinner
     const loop = (to, fbk, type, hz, drift) => {
@@ -58,6 +62,15 @@ export function makeAudio() {
     nextT = ac.currentTime + 0.08;
     timer = setInterval(schedule, 50);
   }
+  // How much to turn a recording up or down so that its voiced part sits at SPOKEN, without its loudest moment clipping.
+  const fit = buf => {
+    const d = buf.getChannelData(0); let sq = 0, n = 0, peak = 0;
+    for (let i = 0; i < d.length; i++) { const v = Math.abs(d[i]); if (v > peak) peak = v; if (v > 0.012) { sq += v * v; n++; } }
+    return n ? Math.min(SPOKEN / Math.sqrt(sq / n), 0.97 / peak, 6) : 1;
+  };
+  // The music's level: lower while the game is paused, and 9 dB lower under the narrator, which leaves the music
+  // about 13 dB under the voice overall (measured with stand-in recordings; the README says how).
+  const level = () => { if (ac) music.gain.setTargetAtTime(0.9 * (ducked ? 0.33 : 1) * (speaking ? 0.35 : 1), ac.currentTime, speaking ? 0.2 : 0.5); };
   function tone(type, f0, f1, dur, gain, dest, when = 0, attack = 0.004) {
     const t = ac.currentTime + when, o = ac.createOscillator(), g = ac.createGain();
     o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
@@ -199,7 +212,24 @@ export function makeAudio() {
       if (ac.state === 'running') { noise(0.45, 0.22, 'bandpass', to === 'psycho' ? 300 : 5000, to === 'psycho' ? 5000 : 300, sfx, 0, 3); for (const n of (to === 'psycho' ? [12, 19, 24, 31] : [24, 19, 12, 7])) tone(to === 'psycho' ? 'triangle' : 'square', NOTE(n), NOTE(n), 0.3, to === 'psycho' ? 0.06 : 0.03, sfx); }
     },
     slow(on) { if (ac) lp.frequency.setTargetAtTime(on ? 520 : 18000, ac.currentTime, 0.12); },
-    duck(on) { if (ac) music.gain.setTargetAtTime(on ? 0.3 : 0.9, ac.currentTime, 0.2); },
+    duck(on) { ducked = !!on; level(); },
+    now() { return ac ? ac.currentTime : 0; },
+    // The narrator. load() fetches and decodes a recording, has() says whether it is ready, and say() plays it and
+    // returns the moment it starts on the sound clock, so the words on the picture can keep step with it.
+    load(url) {
+      if (!ac) return Promise.resolve(null);
+      if (!clips.has(url)) clips.set(url, fetch(url).then(r => r.ok ? r.arrayBuffer() : Promise.reject(new Error(String(r.status)))).then(b => new Promise((ok, no) => ac.decodeAudioData(b, ok, no)))
+        .then(buf => { ready.set(url, { buf, gain: fit(buf) }); return buf; }).catch(() => { clips.delete(url); return null; }));   // a failed fetch is tried again the next time the line comes up
+      return clips.get(url);
+    },
+    has(url) { return ready.has(url); },
+    say(url) {
+      const c = ready.get(url); if (!ac || ac.state !== 'running' || !c) return null;
+      const s = ac.createBufferSource(), g = ac.createGain(), at = ac.currentTime + 0.06; let on = true;
+      const end = () => { if (on) { on = false; speaking = Math.max(0, speaking - 1); clearTimeout(hold); hold = setTimeout(level, 1600); } };   // the music stays down between the lines of one telling
+      s.buffer = c.buf; g.gain.value = c.gain; s.connect(g); g.connect(voiceBus); s.onended = end; s.start(at); clearTimeout(hold); speaking++; level();
+      return { at, dur: c.buf.duration, stop() { g.gain.setTargetAtTime(0, ac.currentTime, 0.025); try { s.stop(ac.currentTime + 0.14); } catch { /* it had ended */ } end(); } };   // cut off with a short fade, without a click
+    },
     mute(m) { muted = m ?? !muted; session(); if (ac) master.gain.setTargetAtTime(muted ? 0 : 0.9, ac.currentTime, 0.03); return muted; },
     suspend() { if (ac && ac.state === 'running') ac.suspend(); },
     resume() { if (ac && ac.state !== 'running') wake(); },
