@@ -19,6 +19,7 @@ const store = { get() { try { return Math.min(STAGES.length - 1, Math.max(0, par
 let state = 'title', si = 0, g = null, tiles = null, fx = makeFx(), cam = { x: 0, y: 0 }, wipe = 1, t = 0, acc = 0, last = 0, hurtT = 0, toastT = 0, shown = {}, total = { time: 0, deaths: 0, threads: 0, of: 0 };
 const keys = new Set(), mouse = { x: VW * 0.7, y: VH * 0.45, fire: false, alt: false };
 let edge = {};   // presses since the last simulated step
+const said = {};        // messages shown only the first times
 let cardAt = 0;          // when the card appeared: a key or button still held from play must not answer it
 const go = fn => { $('ps-card-go').onclick = () => { if (performance.now() - cardAt > 700) fn(); }; };
 let wipeHold = null;   // the tests can hold the change of form half done, to photograph both looks at once
@@ -37,7 +38,10 @@ function show(name) { for (const k in panels) panels[k].hidden = k !== name; hud
 function toast(text) { toastEl.textContent = text; toastEl.classList.add('is-on'); toastT = 3.6; }
 
 // ---------------------------------------------------------------- words, one at a time, as RISE shows them
-let rsvpTimer = 0;
+let rsvpTimer = 0, wpm = 220;
+try { wpm = Math.min(480, Math.max(120, +localStorage.getItem('psycho-syber.wpm') || 220)); } catch { /* storage is optional */ }
+function setWpm(v) { wpm = Math.min(480, Math.max(120, v)); try { localStorage.setItem('psycho-syber.wpm', String(wpm)); } catch { /* optional */ } paintPace(); }
+function paintPace() { const n = $('ps-pace'); if (n) n.textContent = `Story pace: ${wpm} words a minute. [ and ] change it.`; }
 function rsvp(lines, done) {
   clearTimeout(rsvpTimer);
   const words = []; for (const l of lines) { const w = l.split(' '); w.forEach((x, i) => words.push([x, i === w.length - 1])); }
@@ -47,13 +51,14 @@ function rsvp(lines, done) {
     const [w, end] = words[i++], k = Math.min(w.length - 1, Math.max(0, Math.floor((w.replace(/[.,!?:]/g, '').length - 1) * 0.36)));
     rsvpEl.hidden = false; rsvpEl.replaceChildren(span(w.slice(0, k)), el('b', w[k]), span(w.slice(k + 1)));
     audio.play('word');
-    rsvpTimer = setTimeout(next, calm ? 420 : 210 + w.length * 22 + (end ? 380 : 0));
+    rsvpTimer = setTimeout(next, (calm ? 420 : 210 + w.length * 22 + (end ? 380 : 0)) * 220 / wpm);
   };
   next();
 }
 const el = (tag, text, cls) => { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n; };
 const span = text => el('span', text);
 function stopRsvp() { clearTimeout(rsvpTimer); rsvpEl.hidden = true; }
+paintPace();
 
 // ---------------------------------------------------------------- flow
 function toTitle() { state = 'title'; load(0); show('title'); const c = store.get(); $('ps-continue').hidden = c < 1; if (c >= 1) $('ps-continue').textContent = `Continue at ${STAGES[c].name}`; }
@@ -112,6 +117,7 @@ addEventListener('keydown', e => {
     else if (c === 'ShiftLeft' || c === 'ShiftRight' || c === 'KeyQ') { audio.start(); g.persona = g.persona === 'psycho' ? 'syber' : 'psycho'; wipe = 0; skin(g.persona); }
     return;
   }
+  if (c === 'BracketLeft' || c === 'BracketRight') { setWpm(wpm + (c === 'BracketRight' ? 40 : -40)); return; }
   if (state === 'card' && c === 'Enter') { e.preventDefault(); $('ps-card-go').click(); return; }
   if (state === 'end') { if ((c === 'Enter' || c === 'Escape') && panels.end.hidden) { stopRsvp(); show('end'); $('ps-again').focus({ preventScroll: true }); } return; }
   if (c === 'KeyM') { $('ps-mute').textContent = audio.mute() ? 'Sound off' : 'Sound on'; return; }
@@ -160,6 +166,9 @@ function drain() {
     feed(fx, e, g); audio.play(e.k, psy);
     if (e.k === 'swap') { wipe = 0; skin(e.to); }
     else if (e.k === 'hurt' || e.k === 'die') hurtT = 0.5;
+    if (e.k === 'swap' && e.double && (said.double = (said.double || 0) + 1) <= 2) toast('The form you left stays behind as a double. A Visitor who sees it watches it, and not you.');
+    else if (e.k === 'hack' && e.what === 'pacer') toast(e.slow ? 'Pace set to slow. Every word stays lit longer.' : 'Pace set to fast.');
+    else if (e.k === 'omen') toast(e.n === 1 ? 'The carved head opens its eyes.' : e.n === 2 ? 'The carved head opens its mouth.' : 'The carved head answers.');
     else if (e.k === 'thread' && e.atlas) toast(`Atlas mark ${g.found.length} of ${ATLAS.length}: ${e.atlas.name}`);
     else if (e.k === 'hack' && e.what === 'lot') toast(e.gap ? `${e.name}. ${e.note}. Evidence ${g.evidence} of ${g.evidenceTotal}.` : `${e.name}. Its record is complete.`);
     else if (e.k === 'hack' && e.what === 'source' && e.trap) toast('That source fed nothing here. It was watched.');
@@ -184,7 +193,7 @@ function frame(now) {
     }
     audio.slow(g.slow > 0);
   } else if (state === 'title') {
-    p.x = 60 + (Math.sin(t * 0.12 - 1.5) * 0.5 + 0.5) * (g.L.w * T - VW - 120) + VW / 2; p.y = 320; p.run += dt * 60; p.onGround = true; g.wt += dt; g.t += dt;
+    p.x = 60 + (Math.sin(t * 0.12 - 1.5) * 0.5 + 0.5) * (g.L.w * T - VW - 120) + VW / 2; p.y = 320; p.run += dt * 60; p.onGround = true; g.wt += dt; g.wordT += dt; g.t += dt;
   }
   stepFx(fx, dt);
   if (hurtT > 0) hurtT = Math.max(0, hurtT - dt);

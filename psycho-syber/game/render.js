@@ -108,7 +108,7 @@ function sky(c, cam, t, sk, low) {
     for (let k = 30; k >= 1; k--) disc(c, PSB[((k - k0) % 5 + 5) % 5], mx, my, k * 14 + ph);
     disc(c, '#f6e7c8', mx, my, 15); c.fillStyle = '#1a0b2e'; c.beginPath(); c.ellipse(mx, my, 3 + Math.sin(t * 2) * 1.5, 11, 0, 0, TAU); c.fill();
     R(c, 'rgba(26,11,46,.55)', 0, 0, VW, VH);
-    for (const s of STARS) { const x = ((s.x - cam.x * 0.03) % 560 + 560) % 560 - 40, a = Math.abs(Math.sin(t * (0.8 + s.s) + s.p)); if (a > 0.5) { c.fillStyle = rb(s.p * 3 + t); c.fillRect(Math.round(x), Math.round(s.y + oy * 0.5) - 1, 1, 3); c.fillRect(Math.round(x) - 1, Math.round(s.y + oy * 0.5), 3, 1); } }
+    for (const s of STARS) { const x = ((s.x - cam.x * 0.03) % 560 + 560) % 560 - 40, a = Math.abs(Math.sin(t * (0.8 + s.s) + s.p)); if (s.s > 0.62) { const y = Math.round(s.y + oy * 0.5); ring(c, rb(s.p * 3 + t), Math.round(x) + 0.5, y + 0.5, 2.6 + a, 1); c.fillStyle = '#1a0b2e'; c.fillRect(Math.round(x), y, 1, 1); } else if (a > 0.5) { c.fillStyle = rb(s.p * 3 + t); c.fillRect(Math.round(x), Math.round(s.y + oy * 0.5) - 1, 1, 3); c.fillRect(Math.round(x) - 1, Math.round(s.y + oy * 0.5), 3, 1); } }
     const sx = 150 - cam.x * 0.05 + Math.sin(t * 0.13) * 18, sy = 74 + oy + Math.sin(t * 0.21) * 3;
     c.fillStyle = '#f6e7c8'; c.beginPath(); c.ellipse(sx, sy, 52, 7, -0.06, 0, TAU); c.fill(); c.beginPath(); c.ellipse(sx + 30, sy - 4, 20, 8, -0.3, 0, TAU); c.fill();
     for (let i = 0; i < 5; i++) { disc(c, '#2a0f4a', sx - 30 + i * 15, sy, 3); disc(c, rb(i + t * 2), sx - 30 + i * 15, sy, 1.5); }
@@ -141,6 +141,7 @@ function gear(c, x, y, r, a, sk, t) {
 }
 function background(c, g, cam, t, sk) {
   const kind = g.L.def.bg || 'shore', oy = Math.round(-cam.y * 0.06);
+  if (kind === 'ruins') { ruins(c, cam, t, sk); return; }
   if (kind === 'shore' || kind === 'desert' || kind === 'sky') {
     sky(c, cam, t, sk, kind === 'sky');
     if (kind === 'shore') {
@@ -173,6 +174,10 @@ function background(c, g, cam, t, sk) {
 }
 
 // ---------------------------------------------------------------- the two forms
+// A long head, bound from infancy: in this story the mark of a noble house. It sweeps back from the brow.
+function longSkull(c, x, brow, f, skin, band) {
+  [[6, 0], [6, 1], [5, 1], [5, 2], [4, 2], [3, 3], [2, 3]].forEach(([w, back], i) => R(c, i === 1 || i === 4 ? band : skin, f > 0 ? x - 3 - back : x + 3 + back - w, brow - 1 - i, w, 1));
+}
 function human(c, p, x, y, t, hidden) {
   const f = p.face, air = !p.onGround, sw = Math.sin(p.run * 0.42), l1 = air ? 2 : Math.round(sw * 2), l2 = air ? -1 : -Math.round(sw * 2);
   const bob = p.crouch ? 4 : 0;
@@ -180,10 +185,60 @@ function human(c, p, x, y, t, hidden) {
   R(c, '#0b1218', x - 2 + l1, y - 6 + (bob ? 2 : 0), 2, 6 - (bob ? 2 : 0)); R(c, '#0b1218', x + l2, y - 6 + (bob ? 2 : 0), 2, 6 - (bob ? 2 : 0));
   R(c, '#1b6f96', x - 3, y - 14 + bob, 6, 9); R(c, '#f3e2c0', x - 3, y - 7 + bob, 6, 1); R(c, '#0d4a66', x - 3, y - 11 + bob, 6, 1);
   for (let i = 0; i < 3; i++) R(c, '#f3e2c0', x - 3 + i * 2, y - 10 + bob, 1, 1);
-  R(c, '#c98e62', x - 3, y - 20 + bob, 6, 6); R(c, '#0b1218', x - 3, y - 20 + bob, 6, 2); R(c, '#0b1218', x - 3 - (f > 0 ? 1 : -6), y - 19 + bob, 1, 5);
-  R(c, '#0297de', x - 3, y - 18 + bob, 6, 1); R(c, '#9bdcff', x + (f > 0 ? 2 : -3), y - 18 + bob, 1, 1);          // the circlet
-  R(c, '#0b1218', x + (f > 0 ? 1 : -2), y - 16 + bob, 1, 1);
+  R(c, '#c98e62', x - 3, y - 19 + bob, 6, 5); longSkull(c, x, y - 19 + bob, f, '#c98e62', '#f3e2c0');
+  R(c, '#0297de', x - 3, y - 19 + bob, 6, 1); R(c, '#9bdcff', x + (f > 0 ? 2 : -3), y - 19 + bob, 1, 1);          // the circlet, at the brow
+  R(c, '#0b1218', x + (f > 0 ? 1 : -2), y - 17 + bob, 1, 1);
   if (p.throwAnim > 0 || p.rope) R(c, '#c98e62', x + f * 3, y - 13 + bob, f * 3 || 3, 2); else R(c, '#c98e62', x - f * 3 - (f > 0 ? 1 : 0), y - 12 + bob, 1, 5);
+}
+// The form between: a person's body under the jaguar's head. It shows for a moment at every change.
+function were(c, p, x, y, t) {
+  const f = p.face, gold = '#f2a623', dark = '#2a0f4a';
+  R(c, '#0b1218', x - 3, y - 5, 2, 5); R(c, '#0b1218', x + 1, y - 5, 2, 5);
+  R(c, gold, x - 4, y - 13, 8, 8); R(c, dark, x - 2, y - 11, 2, 2); R(c, dark, x + 1, y - 8, 2, 2);
+  R(c, gold, x - 4 + (f > 0 ? 1 : 0), y - 20, 7, 7); R(c, gold, x - 3, y - 22, 2, 2); R(c, gold, x + 1, y - 22, 2, 2);
+  R(c, '#fff2a8', x + (f > 0 ? 1 : -2), y - 18, 2, 1);
+  R(c, '#1a0b2e', x + (f > 0 ? 0 : -3), y - 15, 4, 1); R(c, '#fff', x + (f > 0 ? 0 : -3), y - 15, 1, 2); R(c, '#fff', x + (f > 0 ? 3 : 0), y - 15, 1, 2);
+  R(c, gold, x + f * 4, y - 12, 2, 2); R(c, gold, x - f * 5, y - 12, 2, 2);
+  line(c, x - f * 4, y - 6, x - f * 8, y - 9 + Math.sin(t * 9) * 2, gold);
+}
+// A standing stone carved with the cleft head: slanted eyes, a downturned mouth. When it is yours, maize grows
+// from the cleft.
+function stela(c, x, y, t, sk, on) {
+  const body = sk ? (on ? '#fff2a8' : '#b388ff') : (on ? '#2a566e' : '#1f3d50'), edge = sk ? '#ff5fa2' : '#35607a', mark = on ? (sk ? '#1a0b2e' : '#9bdcff') : (sk ? '#3a1052' : '#2f5266');
+  R(c, body, x - 5, y - 10, 10, 22); R(c, edge, x - 5, y - 10, 10, 1); R(c, 'rgba(0,0,0,.3)', x + 4, y - 9, 1, 21);
+  R(c, body, x - 5, y - 12, 4, 2); R(c, body, x + 1, y - 12, 4, 2);
+  R(c, mark, x - 4, y - 6, 3, 1); R(c, mark, x - 3, y - 5, 2, 1); R(c, mark, x + 1, y - 6, 3, 1); R(c, mark, x + 1, y - 5, 2, 1);
+  R(c, mark, x - 1, y - 3, 2, 2);
+  R(c, mark, x - 3, y + 1, 6, 1); R(c, mark, x - 4, y + 2, 1, 2); R(c, mark, x + 3, y + 2, 1, 2); R(c, mark, x - 2, y + 2, 4, 1);
+  if (on) { const s = Math.round(Math.sin(t * 2)), leaf = sk ? '#5dffb0' : '#7fd69b'; R(c, leaf, x, y - 16, 1, 6); R(c, leaf, x - 2 + s, y - 17, 2, 1); R(c, leaf, x + 1 - s, y - 15, 2, 1); R(c, sk ? '#ff5fa2' : '#f2c14e', x - 1, y - 19, 2, 3); }
+}
+// The great carved head. Its eyes open at the first roar it hears and its mouth at the second.
+const MASK = ['......##..##......', '.....###..###.....', '....####..####....', '...#####..#####...', '..######..######..', '..######oo######..', '.################.', '.################.',
+  '.##oooo####oooo##.', '.#ooeeoo##ooeeoo#.', '.##ooee####eeoo##.', '.######oooo######.', '.#####oo##oo#####.', '.################.', '.##oooooooooooo##.', '.#oommmmmmmmmmoo#.',
+  '.#omfmmmmmmmmfmo#.', '.#oommmmmmmmmmoo#.', '.##oo########oo##.', '..##############..', '..##############..', '.################.'];
+function monument(c, e, x, y, t, sk) {
+  const n = e.roars, x0 = x - 18, y0 = y - 44;
+  for (let r = 0; r < MASK.length; r++) for (let i = 0; i < 18; i++) {
+    const ch = MASK[r][i]; if (ch === '.') continue;
+    c.fillStyle = ch === '#' ? (sk ? PSB[(r + (i >> 2)) % 5] : (r + i) % 7 ? '#2b5368' : '#3a6a82') : ch === 'o' ? (sk ? '#1a0b2e' : '#061219')
+      : ch === 'e' ? (n > 0 ? (sk ? '#5dffb0' : '#fc734d') : (sk ? '#3a1052' : '#2f5266')) : ch === 'f' ? (sk ? '#fff' : '#cfe6f2') : (n > 1 ? (sk ? '#ff5fa2' : '#fc734d') : (sk ? '#b8233f' : '#02070a'));
+    c.fillRect(x0 + i * 2, y0 + r * 2, 2, 2);
+  }
+  if (n > 0) ring(c, sk ? '#fff2a8' : 'rgba(252,115,77,.6)', x, y - 24, 26 + Math.sin(t * 4) * 2 + n * 3, 1);
+}
+function drawPacer(c, e, x, y, t, sk, g) {
+  const a = Math.sin(g.wordT * 5.2) * 0.7, col = e.slow ? (sk ? '#5dffb0' : '#4cc0f5') : (sk ? '#ff5fa2' : '#fc734d'), ax = x + Math.sin(a) * 13, ay = y + 4 - Math.cos(a) * 13;
+  R(c, sk ? '#2a0f4a' : '#0d1b26', x - 5, y + 4, 10, 6); R(c, sk ? '#f6e7c8' : '#16425a', x - 6, y + 9, 12, 1);
+  line(c, x, y + 4, ax, ay, col); disc(c, col, ax, ay, 2); textC(c, e.slow ? 'SLOW' : 'FAST', x, y - 18, col);
+}
+// Machu Picchu: a sugarloaf peak behind the ridge, terraces across the slope, cloud below the summit.
+function ruins(c, cam, t, sk) {
+  sky(c, cam, t, sk, true);
+  const oy = Math.round(-cam.y * 0.1), px = -cam.x * 0.08;
+  const peak = (x0, w, h, col) => { c.fillStyle = col; c.beginPath(); c.moveTo(x0 - w, VH); c.quadraticCurveTo(x0 - w * 0.35, VH - h * 0.55 + oy, x0 - w * 0.12, VH - h + oy + 6); c.quadraticCurveTo(x0, VH - h + oy - 6, x0 + w * 0.14, VH - h + oy + 8); c.quadraticCurveTo(x0 + w * 0.4, VH - h * 0.5 + oy, x0 + w, VH); c.fill(); };
+  peak(330 + px, 130, 250, sk ? '#5b2a8c' : '#081a25'); peak(120 + px, 190, 170, sk ? '#3a1052' : '#06131b'); peak(470 + px, 150, 140, sk ? '#2e3192' : '#051018');
+  for (let i = 0; i < 9; i++) { const y = VH + 46 - i * 16 + Math.round(oy * 1.5); if (y > VH || y < 90) continue; R(c, sk ? PSB[i % 5] : '#0e2a39', 0, y, VW, 2); R(c, sk ? 'rgba(26,11,46,.6)' : 'rgba(2,7,10,.5)', 0, y + 2, VW, 14); }
+  for (let i = 0; i < 4; i++) { const cx = ((i * 190 + t * (6 + i * 2) - cam.x * 0.05) % 700 + 700) % 700 - 110, cy = 70 + i * 34 + oy; c.fillStyle = sk ? 'rgba(255,242,168,.16)' : 'rgba(155,200,220,.10)'; c.beginPath(); c.ellipse(cx, cy, 70, 7, 0, 0, TAU); c.fill(); c.beginPath(); c.ellipse(cx + 40, cy + 5, 50, 5, 0, 0, TAU); c.fill(); }
 }
 function jaguar(c, p, x, y, t, a, hue) {
   const f = p.face, run = p.run * 0.3, air = !p.onGround;
@@ -213,7 +268,7 @@ function jaguar(c, p, x, y, t, a, hue) {
 function villager(c, x, y, seed, t) {
   const tun = ['#8a5a3c', '#a0522d', '#6b7b3a', '#7a4a6e'][seed % 4], b = Math.round(Math.sin(t * 1.3 + seed) * 0.6);
   R(c, '#2a1a12', x - 2, y + 5, 2, 6); R(c, '#2a1a12', x, y + 5, 2, 6); R(c, tun, x - 3, y - 4 + b, 6, 10); R(c, '#f3e2c0', x - 3, y + 1 + b, 6, 1);
-  R(c, '#c98e62', x - 3, y - 10 + b, 6, 6); R(c, '#1a100a', x - 3, y - 10 + b, 6, 2); R(c, '#b8233f', x - 3, y - 8 + b, 6, 1);
+  R(c, '#c98e62', x - 3, y - 9 + b, 6, 5); longSkull(c, x, y - 9 + b, seed % 2 ? 1 : -1, '#c98e62', '#b8233f'); R(c, '#1a100a', x + (seed % 2 ? 1 : -2), y - 7 + b, 1, 1);
 }
 function warden(c, e, x, y, t, sk, g) {
   const d = e.dir, alert = e.see >= 0.75, stun = e.stun > 0;
@@ -262,11 +317,12 @@ export function feed(fx, e, g) {
   else if (k === 'spark') burst(fx, e.x, e.y, 5, 50, 0.25, e.glass ? '#e3f3fc' : '#fc734d');
   else if (k === 'kill') { burst(fx, e.x, e.y, 22, 80, 0.7, psy ? '#fff2a8' : '#9bdcff', -40); fx.rings.push({ x: e.x, y: e.y, t: 0, max: 0.4, r: 30, color: psy ? '#ff5fa2' : '#4cc0f5' }); fx.shake = 0.18; }
   else if (k === 'hit') burst(fx, e.x, e.y, 8, 60, 0.3, '#fff');
+  else if (k === 'omen') { fx.rings.push({ x: e.x, y: e.y - 24, t: 0, max: 0.9, r: 120, color: '#fc734d', w: 2 }); fx.shake = 0.25; }
   else if (k === 'thread') { burst(fx, e.x, e.y, 10, 45, 0.5, psy ? '#5dffb0' : '#4cc0f5', -30); }
   else if (k === 'swap') { fx.rings.push({ x: e.x, y: e.y - 10, t: 0, max: 0.55, r: 150, color: e.to === 'psycho' ? '#ff5fa2' : '#4cc0f5', w: 3 }); burst(fx, e.x, e.y - 10, 26, 110, 0.6, e.to === 'psycho' ? '#ffb347' : '#9bdcff'); }
   else if (k === 'scan') fx.rings.push({ x: e.x, y: e.y, t: 0, max: 0.6, r: 120, color: '#4cc0f5', w: 1, scan: true });
   else if (k === 'hack') { fx.beams.push({ x0: e.fx, y0: e.fy, x1: e.x, y1: e.y, t: 0, max: 0.45 }); burst(fx, e.x, e.y, 12, 55, 0.45, '#fc734d'); }
-  else if (k === 'roar') { for (let i = 0; i < 3; i++) fx.rings.push({ x: e.x, y: e.y - 6, t: -i * 0.09, max: 0.6, r: 104, color: rb(i * 2), w: 2 }); fx.shake = 0.3; }
+  else if (k === 'roar') { for (let i = 0; i < 3; i++) fx.rings.push({ x: e.x, y: e.y - 6, t: -i * 0.09, max: 0.6, r: 104, color: rb(i * 2), w: 2 }); for (let i = 0; i < 3; i++) fx.rings.push({ x: e.x, y: e.y - 6, t: -0.7 - i * 0.5, max: 1.2, r: 330, color: rb(i * 2 + 1), w: 1 }); fx.shake = 0.3; }   // the mountain answers, three times
   else if (k === 'pounce') burst(fx, e.x, e.y - 6, 8, 40, 0.3, '#ff5fa2');
   else if (k === 'hurt' || k === 'die') { burst(fx, e.x, e.y - 10, k === 'die' ? 30 : 12, 90, 0.6, '#fc734d', 120); fx.shake = k === 'die' ? 0.4 : 0.2; }
   else if (k === 'crumble' || k === 'crack') burst(fx, e.x, e.y, k === 'crumble' ? 10 : 3, 30, 0.5, psy ? '#d98f1f' : '#6fa9c6', 200);
@@ -312,7 +368,9 @@ export function drawFrame(c, g, cam, t, sk, tiles, fx) {
     switch (e.type) {
       case 'thread': if (!e.dead) { const b = Math.round(Math.sin(t * 3 + e.x * 0.05) * 2); if (e.atlas) { const col = sk ? rb(e.x * 0.05 + t * 4) : '#fc734d'; ring(c, col, x + 0.5, y + b - 1, 3.5, 1); R(c, sk ? '#1a0b2e' : '#fff2a8', x, y + b - 2, 1, 2); R(c, col, x, y + b + 3, 1, 3); } else if (!sk) { R(c, '#4cc0f5', x - 1, y - 3 + b, 3, 7); R(c, '#4cc0f5', x - 3, y - 1 + b, 7, 3); R(c, '#e3f3fc', x, y - 1 + b, 1, 3); } else for (let i = 0; i < 6; i++) R(c, rb(i + t * 6), x + Math.cos(t * 4 + i) * 3, y + b + Math.sin(t * 4 + i) * 3, 2, 2); } break;
       case 'ring': { const near = !psy && Math.hypot(e.x - p.x, e.y - (p.y - 12)) < 150; if (!sk) { R(c, near ? '#e3f3fc' : '#5d93ad', x - 3, y - 3, 6, 1); R(c, near ? '#e3f3fc' : '#5d93ad', x - 3, y + 2, 6, 1); R(c, near ? '#e3f3fc' : '#5d93ad', x - 3, y - 3, 1, 6); R(c, near ? '#e3f3fc' : '#5d93ad', x + 2, y - 3, 1, 6); R(c, '#16303f', x, y - 8, 1, 5); if (near) ring(c, 'rgba(76,192,245,.35)', x, y, 6 + Math.sin(t * 5) * 1.5); } else { ring(c, 'rgba(246,231,200,.4)', x, y, 3); } break; }
-      case 'check': { const on = g.check.e === e; if (!sk) { R(c, '#1f3d50', x - 4, y - 8, 8, 20); R(c, '#35607a', x - 3, y - 11, 6, 3); motif(c, 1, x - 3, y - 6, on ? '#4cc0f5' : '#2f5266'); if (on) { R(c, '#9bdcff', x - 1, y - 15 - Math.round(Math.abs(Math.sin(t * 6)) * 2), 2, 4); } } else { R(c, on ? '#d98f1f' : '#5b2a8c', x - 4, y - 8, 8, 20); motif(c, 1, x - 3, y - 6, '#f6e7c8'); if (on) for (let i = 0; i < 6; i++) R(c, rb(i + t * 5), x + Math.cos(t * 3 + i) * 7, y - 14 + Math.sin(t * 3 + i) * 4, 2, 2); } break; }
+      case 'check': stela(c, x, y, t, sk, g.check.e === e); break;
+      case 'monument': monument(c, e, x, y, t, sk); break;
+      case 'pacer': drawPacer(c, e, x, y, t, sk, g); break;
       case 'exit': { for (let r = 0; r < 32; r++) { const hw = 9 - Math.floor(r * 3 / 32); R(c, sk ? PSB[(r >> 2) % 5] : '#2a4a5c', x - hw - 3, y + 16 - r, (hw + 3) * 2, 1); R(c, sk ? rb(r * 0.3 + t * 4) : `rgba(${20 + r * 3},${150 + r * 2},${222},${(0.5 + 0.4 * Math.sin(t * 3 + r * 0.3)).toFixed(2)})`, x - hw, y + 16 - r, hw * 2, 1); } R(c, sk ? '#f6e7c8' : '#6fa9c6', x - 12, y - 17, 24, 2); break; }
       case 'terminal': { if (!sk) { R(c, '#0d1b26', x - 5, y - 10, 10, 20); R(c, '#0297de', x - 5, y - 10, 10, 1); R(c, e.used ? '#0b3a55' : '#02070a', x - 3, y - 7, 6, 7); if (!e.used) for (let i = 0; i < 3; i++) R(c, '#fc734d', x - 2, y - 6 + i * 2, 1 + Math.floor(hash(i, Math.floor(t * 8)) * 4), 1); else { R(c, '#4cc0f5', x - 2, y - 4, 1, 1); R(c, '#4cc0f5', x - 1, y - 3, 1, 1); R(c, '#4cc0f5', x, y - 4, 1, 1); R(c, '#4cc0f5', x + 1, y - 5, 1, 1); } } else { R(c, '#3a1052', x - 5, y - 10, 10, 20); R(c, e.used ? '#5dffb0' : rb(t * 6), x - 3, y - 7, 6, 7); R(c, '#1a0b2e', x - 2, y - 5, 1, 2); R(c, '#1a0b2e', x + 1, y - 5, 1, 2); R(c, '#1a0b2e', x - 2, y - 2, 4, 1); } break; }
       case 'door': { const open = g.open.has(e.id), n = e.h / T; for (let j = 0; j < n; j++) { const py = y - e.h / 2 + j * T; if (open) { if (j === 0 || j === n - 1) R(c, sk ? '#f6e7c8' : '#16425a', x - 8, py + (j ? T - 3 : 0), T, 3); continue; } if (!sk) { R(c, '#0a141c', x - 8, py, T, T); R(c, '#12506f', x - 8, py, 1, T); R(c, '#12506f', x + 7, py, 1, T); R(c, '#fc734d', x - 5, py + 4, 10, 1); R(c, 'rgba(252,115,77,.4)', x - 5, py + 10, 10, 1); } else { R(c, PSB[(j + Math.floor(t * 3)) % 5], x - 8, py, T, T); motif(c, 2, x - 4, py + 4, '#f6e7c8'); } } break; }
@@ -342,10 +400,17 @@ export function drawFrame(c, g, cam, t, sk, tiles, fx) {
     }
     R(c, '#9bdcff', p.rope.pts[0].x + ox - 1, p.rope.pts[0].y + oy - 1, 3, 3);
   } else if (p.cordMiss) line(c, p.x + ox, p.y - 13 + oy, p.cordMiss.x + ox, p.cordMiss.y + oy, 'rgba(227,243,252,.4)', 2);
+  // the double: the form you left, standing where you changed
+  if (g.double) {
+    const D = g.double, dx = Math.round(D.x) + ox, dy = Math.round(D.y) + oy, a = Math.min(1, D.t) * (0.4 + 0.15 * Math.sin(t * 18)), still = { face: D.face, run: 0, onGround: true };
+    if (D.persona === 'psycho') jaguar(c, still, dx, dy, t, a, 3 + t * 2); else { c.globalAlpha = a; human(c, still, dx, dy, t, false); c.globalAlpha = 1; }
+    ring(c, sk ? '#fff2a8' : '#9bdcff', dx, dy - 10, 13 + Math.sin(t * 6) * 2, 1);
+  }
   // the player
   if (!p.dead && !(p.inv > 0 && Math.floor(t * 20) % 2)) {
     const x = Math.round(p.x) + ox, y = Math.round(p.y) + oy;
-    if (psy) {
+    if (g.swapT > 0.24) were(c, p, x, y, t);
+    else if (psy) {
       if (sk) for (let i = 0; i < fx.trail.length - 1; i += 2) { const q = fx.trail[i]; if (Math.abs(q.x - p.x) + Math.abs(q.y - p.y) > 2) jaguar(c, q, Math.round(q.x) + ox, Math.round(q.y) + oy, t, 0.12 + i * 0.05, i + 1 + t * 4); }
       jaguar(c, p, x, y, t, p.hidden ? 0.45 : 1, 0);
     } else human(c, p, x, y, t, p.hidden);
@@ -354,6 +419,7 @@ export function drawFrame(c, g, cam, t, sk, tiles, fx) {
   for (const q of fx.parts) { c.globalAlpha = Math.min(1, q.life / q.max * 1.5); R(c, q.color, q.x + ox, q.y + oy, 2, 2); } c.globalAlpha = 1;
   for (const r of fx.rings) { if (r.t < 0) continue; const k = r.t / r.max; c.globalAlpha = 1 - k; ring(c, r.color, r.x + ox, r.y + oy, r.r * (1 - (1 - k) * (1 - k)), r.w || 2); c.globalAlpha = 1; }
   for (const b of fx.beams) { const k = b.t / b.max; for (let i = 0; i < 9; i++) { const u = (k * 1.6 + i / 9) % 1, x = b.x0 + (b.x1 - b.x0) * u + ox, y = b.y0 + (b.y1 - b.y0) * u + oy; R(c, i % 2 ? '#fc734d' : '#9bdcff', x - 1, y - 1, 2 + (i % 3 === 0), 2); } }
+  if (g.slow > 0) { c.globalAlpha = Math.min(1, g.slow) * 0.8; for (let i = 0; i < 70; i++) { const rx = (hash(i, 5) * (VW + 80) + t * 40 * (0.6 + hash(i, 7))) % (VW + 80) - 40, ry = (hash(i, 9) * VH + t * 230 * (0.7 + hash(i, 11) * 0.6)) % VH; c.fillStyle = sk ? rb(i * 0.4 + t) : '#9bdcff'; c.fillRect(rx | 0, ry | 0, 1, 5); } c.globalAlpha = 1; }
   if (g.alarm > 0 && Math.floor(t * 6) % 2) { R(c, 'rgba(252,115,77,.5)', 0, 0, VW, 2); R(c, 'rgba(252,115,77,.5)', 0, VH - 2, VW, 2); }
 }
 function thread(c, x0, y0, x1, y1, t) {
@@ -420,5 +486,5 @@ function drawWord(c, g, e, x, y, t, sk) {
   if (!sk) { R(c, fresh ? '#e3f3fc' : 'rgba(227,243,252,.45)', x, y, e.w, fresh ? 3 : 2); R(c, fresh ? 'rgba(2,151,222,.5)' : 'rgba(2,151,222,.2)', x, y + (fresh ? 3 : 2), e.w, 3); }
   else for (let i = 0; i < e.w; i += 2) { c.fillStyle = rb(i * 0.15 + t * 5); c.globalAlpha = fresh ? 1 : 0.5; c.fillRect(x + i, y + Math.round(Math.sin(i * 0.3 + t * 6) * (fresh ? 1 : 0)), 2, 4); c.globalAlpha = 1; }
   textC(c, e.text, cx, y - 9, fresh ? (sk ? '#fff2a8' : '#e3f3fc') : (sk ? 'rgba(255,242,168,.5)' : 'rgba(227,243,252,.5)'), 1);
-  if (fresh) { const k = (g.wt / e.beat) % 1; R(c, sk ? '#ff5fa2' : '#fc734d', cx - 1 - Math.round(textW(e.text) / 2) + Math.floor(e.text.length / 3) * 4, y - 3, 3, 1); R(c, sk ? '#ff5fa2' : '#fc734d', x, y + 6, Math.round(e.w * (1 - k)), 1); }
+  if (fresh) { const k = (g.wordT / e.beat) % 1; R(c, sk ? '#ff5fa2' : '#fc734d', cx - 1 - Math.round(textW(e.text) / 2) + Math.floor(e.text.length / 3) * 4, y - 3, 3, 1); R(c, sk ? '#ff5fa2' : '#fc734d', x, y + 6, Math.round(e.w * (1 - k)), 1); }
 }

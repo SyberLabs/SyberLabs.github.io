@@ -81,6 +81,10 @@ header (`nav` in `projects/site-data.js`), the Menu and one line in the homepage
 - The story is fiction and the page says so under "What is real". It is set in an invented ancient Paracas. State
   nothing about the Paracas culture or about any Atlas site beyond a quotation from the Lacuna pages. No real person,
   dealer, auction house or museum appears in the game: invented names only.
+- The jaguar's side borrows from ancient American traditions (the were-jaguar, the nagual, Tepeyollotl, the Maya
+  night sun, Chavín). "What the jaguar borrows" on the page gives each idea one or two sourced sentences, in our own
+  words, with a link to an encyclopedia, a university page or Smarthistory. Add nothing there without a source, and
+  do not cite a museum, a dealer or an auction house. Stage 2 is MACHU PICCHU; the page says it is far later than Paracas.
 - The last stage, THE RECORD, stands for Lacuna Institute. The player reads the record of each lot, finds the gaps
   and delivers that evidence before a timer runs out. Nothing is taken and no one is fought in that stage.
 - The 21 marks in that stage are the 21 Atlas sites, and each links to `/lacuna/#<id>`. `ATLAS` in
@@ -100,7 +104,8 @@ wordmark, then sections named Factory, Studio, Lacuna (added November 16) and Li
 only, this overrides two rules above and in `kit/v2/README.md`:
 
 - The hero carries no paragraph and no buttons. `Book a consultation` stays in the header at every width and closes
-  the page.
+  the page. Since November 17, 2026 one line under the section names links to the game (`PSYCHO SYBER`, `Play the
+  game`), so the game shows in the first screen on a phone and on a laptop.
 - The four section names and the one-word labels on the four canvas visuals (Proof, Atlas, Resonance, Emergence) are
   names, exempt from the Wording rules. Every other homepage line follows them.
 - Lacuna Institute is linked from the header (`Lacuna`, on every page), from the section names under the wordmark and

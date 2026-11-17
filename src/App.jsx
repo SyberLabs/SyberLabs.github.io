@@ -143,6 +143,7 @@ export default function App() {
           <ul className="hv-triad" aria-label="Sections of this page">
             <li><a href="#factory">Factory</a></li><li><a href="#studio">Studio</a></li><li><a href="#lacuna">Lacuna</a></li><li><a href="#liminal">Liminal</a></li>
           </ul>
+          <p className="hv-play"><a href="/psycho-syber/" aria-label="Play PSYCHO SYBER, a browser game"><span className="hv-play__p">PSYCHO</span><span className="hv-play__s">SYBER</span><span className="hv-play__t">Play the game <span aria-hidden="true">→</span></span></a></p>
         </div>
       </section>
 

@@ -22,7 +22,7 @@ const rep = (row, n) => Array.from({ length: n }, () => row);
 const steps = wide(24, [
   [ // A · the shore
     R(' ', 18),
-    '   @    ?     t   ',
+    '   @    ?  J  t   ',
     ...base(18),
   ],
   [ // B · first hops and a shallow pit
@@ -116,24 +116,32 @@ function grid(w, h) {
   return m;
 }
 
-// ------------------------------------------------------------------ 2 · THE RISING (RISE)
-// A climb, 56 x 44. Part A: seven words light in turn, two tiles apart. Part B: four words flash together, too
-// briefly to cross unless the roar slows them. Part C: five words three tiles apart, which only the jaguar clears.
-function rising() {
+// ------------------------------------------------------------------ 2 · MACHU PICCHU (RISE)
+// A climb through Inca ruins, 56 x 44, in three parts. Each part has a way on words and a way on stone.
+// A: seven words light in turn, two tiles apart. Or: the stair inside the wall.
+// B: four words flash together, too briefly to cross. The jaguar's roar slows them. Or: the weaver checks the
+//    pace setter in the ravine (E), which slows every word until it is checked again, and climbs back out.
+// C: five words three tiles apart, which only the jaguar clears. Or: the stone stair on the right.
+function machu() {
   const m = grid(56, 44);
-  m.box(0, 41, 55, 43);                                  // the ground
-  m.box(16, 25, 24, 40).col(16, 26, 40, 'M');            // the block under the first ledge; its face cannot be climbed
-  m.box(25, 34, 40, 40);                                 // the pit under part B
-  m.box(41, 26, 55, 40).col(41, 26, 33, 'M');            // the far ledge
+  m.box(0, 41, 55, 43);                                  // the lowest terrace
+  m.box(16, 25, 24, 40).col(16, 26, 40, 'M');            // the wall under the first terrace; its face cannot be climbed
+  m.box(16, 39, 17, 40, ' ').box(18, 26, 20, 40, ' ');   // a doorway at its foot, and the stairwell behind it
+  for (let y = 39; y >= 25; y -= 2) m.put(18, y, '===');
+  m.box(25, 34, 40, 40);                                 // the ravine under part B
+  for (const y of [32, 30, 28, 26]) m.put(25, y, '==');  // the way back out of it
+  m.box(41, 26, 55, 40).col(41, 26, 33, 'M');            // the far terrace
+  for (let y = 24; y >= 10; y -= 2) m.put(53, y, '==='); // the stone stair
   m.box(49, 9, 55, 9, '=');                              // the top: a beam, so a jump from below passes through it
-  m.put(3, 40, '@').hint(6, 39, 'Words light one at a time. Jump to the next one while it is lit.');
+  m.put(3, 40, '@').hint(6, 39, 'Words light one at a time. Jump to the next while it is lit. Or take the stair inside the wall.');
   for (let k = 0; k < 7; k++) m.put(k % 2 ? 8 : 12, 39 - k * 2, 'WWWW');
-  m.put(18, 24, 'C').hint(21, 23, 'These four flash too fast to cross. Shift, then roar (E) while they are lit, and run.');
+  m.put(22, 24, 'C').hint(21, 23, 'These four flash too fast to cross. As the jaguar, roar (E) while they are lit and run. As the weaver, check the pace setter in the ravine.');
   ['TOO', 'FAST', 'TO', 'READ'].forEach((text, k) => m.put(25 + k * 4, 25, 'WWWW', { i: 0, n: 6, beat: 0.6, text, w: 4 }));
-  m.put(43, 25, 'C').hint(44, 24, 'The jaguar jumps three tiles. Leave each word before it goes dark.');
+  m.put(32, 33, 'P').hint(30, 33, 'E sets the pace of every word: fast or slow. It stays until you check it again.');
+  m.put(43, 25, 'C').hint(44, 24, 'The jaguar jumps three tiles from word to word. The stone stair on the right takes longer.');
   ['ONE', 'WORD', 'AT', 'A', 'TIME'].forEach((text, k) => m.put(k % 2 ? 49 : 45, 23 - k * 3, 'WWWW', { i: k, n: 5, beat: 0.7, text }));
   m.put(53, 8, 'X');
-  for (const [x, y] of [[13, 37], [9, 35], [14, 29], [32, 29], [32, 33], [46, 21], [50, 12], [54, 24]]) m.put(x, y, 't');
+  for (const [x, y] of [[13, 37], [9, 35], [14, 29], [32, 29], [35, 33], [46, 21], [50, 12], [54, 17]]) m.put(x, y, 't');
   return m.done();
 }
 
@@ -254,14 +262,14 @@ export const STAGES = [
   {
     id: 'steps', name: 'THE STEPS', project: 'Attest', href: '/projects/attest/',
     line: 'Runs every step in your docs and marks the ones that fail.',
-    intro: ['The Visitors built a stair to their gate.', 'They say every step holds.', 'Run each one.'],
+    intro: ['You are a weaver of a noble house.', 'You drank what the old ones drank, and a jaguar came with you.', 'The Visitors built a stair to their gate.', 'They say every step holds.', 'Run each one.'],
     bg: 'shore', persona: 'syber', map: steps,
     hints: [
       'A and D walk. W or Space jumps.',
       'Hold the mouse button on a ring or on stone to throw the cord. W reels in. Let go to drop.',
       'Cord the ring and swing across. Space lets go with a kick.',
       'Click throws glass. Two hits drop a warden. Hold S to hide.',
-      'Shift changes you into the jaguar. Q does the same. It fits where you do not.',
+      'Shift changes you into the jaguar. Q does the same. It fits where you do not. The form you leave stays behind as a double.',
       'Push into stone and hold W to climb. Space leaps off.',
       'The jaguar walks on what you cannot see.',
       'Click to pounce. One pounce drops a warden.',
@@ -270,10 +278,10 @@ export const STAGES = [
     ],
   },
   {
-    id: 'rising', name: 'THE RISING', project: 'RISE', href: '/projects/rise/',
+    id: 'machu', name: 'MACHU PICCHU', project: 'RISE', href: '/projects/rise/',
     line: 'Shows text at a pace you set, with sound and moving visuals.',
-    intro: ['Above the gate the Visitors keep their words.', 'One word shows at a time.', 'Climb at the pace you set.'],
-    bg: 'sky', persona: 'syber', order: 'up', words: { text: 'WORDS RISE AT THE PACE YOU SET', beat: 0.9 }, ...rising(),
+    intro: ['The road climbs to Machu Picchu.', 'The Visitors keep their words in the ruins.', 'One word shows at a time.', 'Climb at the pace you set.'],
+    bg: 'ruins', persona: 'syber', order: 'up', words: { text: 'WORDS RISE AT THE PACE YOU SET', beat: 0.9 }, ...machu(),
   },
   {
     id: 'lines', name: 'THE LINES', project: 'FLYSPACE', href: '/projects/flyspace/',
