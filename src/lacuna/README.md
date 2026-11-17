@@ -20,6 +20,9 @@ Rules, a single dynamic redirect, status 301, query string preserved):
 | `lacunainstitute.org/*`, `www.lacunainstitute.org/*` | `concat("https://syberlabs.io/lacuna", http.request.uri.path)` |
 | `lacunainstitute.com/*`, `www.lacunainstitute.com/*` | `concat("https://syberlabs.io/lacuna", http.request.uri.path)` |
 
+Both rules are in place since 2026-11-16, each named "All requests to syberlabs.io/lacuna" and set to
+"All incoming requests", so every name under either domain is covered.
+
 So `lacunainstitute.org/sites/paracas/` opens `syberlabs.io/lacuna/sites/paracas/`, and `lacunainstitute.org/#paracas`
 opens that site on the Atlas (browsers keep the `#` part across a redirect). The rules act on web requests only:
 the mail records of `lacunainstitute.org` (MX, SPF, DKIM, DMARC) are not part of them and stay as they are.
