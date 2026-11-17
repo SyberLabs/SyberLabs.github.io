@@ -1,4 +1,5 @@
-// Scripted play-throughs, one per stage: proof that each stage can be finished, run by test/run.mjs.
+// Scripted play-throughs: proof that each stage can be finished, run by test/run.mjs. A key is a stage id, or
+// 'id:route' for another way through the same stage. A route named 'weaver' must never take the jaguar's form.
 import { T, wordFresh, wordActive, gateActive } from '../game/sim.js';
 import { past, before, grounded, all } from './bot.mjs';
 const ent = (g, type, k = 0) => g.ents.filter(e => e.type === type)[k];
@@ -10,6 +11,8 @@ const leap = (fromX, hold = 'R') => [[hold, past(fromX)], [hold + 'J', 0.34], [h
 // a short hop from standing: `t` seconds of push, then drift
 const hop = (t, dir = 'R') => [[dir + 'J', t], ['J', 0.34 - t], ['', grounded, { max: 2 }]];
 const fresh = k => g => wordFresh(g, ent(g, 'word', k));
+// jump straight up n times: a stair of beams two tiles apart
+const climb = n => Array.from({ length: n }, () => [['J', 0.34], ['', grounded, { max: 2 }]]).flat();
 // aim a thrown glass at a walking target: lead it by the flight time and lift for the fall
 const lead = (type, k = 0) => g => { const e = ent(g, type, k), t = Math.hypot(e.x - g.p.x, e.y - (g.p.y - 13)) / 330; return [e.x + (e.vx || 0) * t, e.y - 55 * t * t]; };
 // a blinking gate that has just gone dark
@@ -56,7 +59,7 @@ export const SCRIPTS = {
     ['R', past(250.5)], ['E', 0.1, { aim: aimAt('terminal', 0) }],
     ['R', () => false, { max: 6 }],
   ],
-  rising: [
+  machu: [
     // A: seven words, one per beat
     ['R', past(11.4)], ['', fresh(0), { max: 8 }], ['RJ', 0.34], ['R', grounded, { max: 2 }],
     ...[1, 2, 3, 4, 5, 6].flatMap(k => [['', fresh(k), { max: 8 }], [(k % 2 ? 'L' : 'R') + 'J', 0.34], [k % 2 ? 'L' : 'R', grounded, { max: 2 }]]),
@@ -140,5 +143,16 @@ export const SCRIPTS = {
     // E: the last lot, then the far door
     ['R', past(138)], ['E', 0.1, { aim: aimAt('lot', 6) }],
     ['R', () => false, { max: 8 }],
+  ],
+  'machu:weaver': [
+    // A: the stair inside the wall
+    ['R', past(19)], ...climb(8),
+    // B: off the terrace, down the ravine, set the pace to slow, back up the ladder
+    ['R', all(grounded, past(30)), { max: 8 }], ['E', 0.1, { aim: aimAt('pacer', 0) }],
+    ['L', before(26.4)], ...climb(4), ['LJ', 0.34], ['L', all(grounded, before(24.6)), { max: 2 }],
+    ['', fresh(7), { max: 14 }], ['R', all(grounded, past(42)), { max: 7 }],
+    // C: the stone stair
+    ['R', past(54)], ...climb(9),
+    ['L', () => false, { max: 3 }],
   ],
 };

@@ -5,7 +5,7 @@ import { STAGES, ATLAS } from '../game/levels.js';
 import { newGame, step, T } from '../game/sim.js';
 import { play } from './bot.mjs';
 import { SCRIPTS } from './scripts.mjs';
-const only = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : null, log = process.argv.includes('--log');
+const [only, route] = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2].split(':') : [null], log = process.argv.includes('--log');
 let failed = 0;
 { // the 21 marks carry the ids and names of the Lacuna Atlas
   const src = readFileSync(new URL('../../src/lacuna/atlas/sites.js', import.meta.url), 'utf8');
@@ -19,11 +19,15 @@ for (const def of STAGES) {
   const kinds = {}; for (const e of g.ents) kinds[e.type] = (kinds[e.type] || 0) + 1;
   console.log(`${def.id}: ${g.L.w}x${g.L.h} tiles · ${Object.entries(kinds).map(([k, n]) => `${k} ${n}`).join(' · ')}`);
   const blank = g.L.hints.filter(h => !h).length + ((kinds.hint || 0) - g.L.hints.length); if (blank || (def.hints && def.hints.length !== (kinds.hint || 0))) { console.log(`  FAIL: ${kinds.hint || 0} hint markers, ${blank} without text`); failed++; }
-  const s = SCRIPTS[def.id];
-  if (!s) { console.log('  (no script)'); continue; }
-  const r = play(g, s, { log });
-  if (r.ok) console.log(`  finished in ${(g.time).toFixed(1)} s of play · threads ${g.threads}/${g.threadsTotal} · hp ${g.p.hp} · deaths ${g.deaths}${def.timer ? ` · evidence ${g.evidence}/${g.evidenceTotal} · ${g.sale.toFixed(0)} s left of ${def.timer}` : ''}`);
-  else { failed++; console.log(`  FAIL: ${r.why} at x ${r.x?.toFixed(2)} y ${r.y?.toFixed(2)} (${g.persona}, hp ${g.p.hp}, deaths ${g.deaths})`); }
+  const routes = Object.keys(SCRIPTS).filter(k => k === def.id || k.startsWith(def.id + ':'));
+  if (!routes.length) { console.log('  (no script)'); continue; }
+  for (const key of routes) {
+    if (route && key !== def.id + ':' + route) continue;
+    const g = newGame(def), name = key.split(':')[1] || 'main', r = play(g, SCRIPTS[key], { log });
+    const bad = r.ok && name === 'weaver' && g.swaps > 0 ? 'the weaver route took the jaguar\'s form' : r.ok && g.deaths > 0 ? 'the run died on the way' : '';
+    if (r.ok && !bad) console.log(`  ${name}: finished in ${(g.time).toFixed(1)} s of play · threads ${g.threads}/${g.threadsTotal} · hp ${g.p.hp} · changes of form ${g.swaps}${def.timer ? ` · evidence ${g.evidence}/${g.evidenceTotal} · ${g.sale.toFixed(0)} s left of ${def.timer}` : ''}`);
+    else { failed++; console.log(`  ${name}: FAIL: ${bad || r.why} at x ${r.x?.toFixed(2)} y ${r.y?.toFixed(2)} (${g.persona}, hp ${g.p.hp}, deaths ${g.deaths})`); }
+  }
 }
 // Rules that no scripted run exercises, because a clean run never trips them.
 if (!only) {
@@ -48,6 +52,21 @@ if (!only) {
     const held = max < gate.x && g.p.hp < 4;
     g.srcAlive[gate.src] = false; g.p.hp = 4; g.p.dead = false; g.p.x = gate.x - 40; g.p.y = 20 * T; run(g, { right: true }, 2);
     rule('a lit gate is a barrier until its source is cut', held && g.p.x > gate.x + 20);
+  }
+  { // the double: a warden that can see the form you left watches it, and the double fades after three seconds
+    const g = stage('lines'), w = of(g, 'warden')[0];
+    g.p.x = w.x - 90; g.p.y = 20 * T; w.dir = -1; run(g, {}, 0.05);
+    step(g, { ...idle, swapP: true }, 1 / 60); const made = !!g.double;
+    g.p.x = w.x + 300; run(g, {}, 0.2); const lured = w.lured === true;
+    run(g, {}, 3.2);
+    rule('a warden watches the double you leave behind', made && lured && !g.double && !w.lured);
+  }
+  { // the pace setter slows the words until it is checked again
+    const g = stage('machu'), pc = of(g, 'pacer')[0];
+    g.p.x = pc.x - 20; g.p.y = 34 * T; run(g, { actP: true, aim: pc }, 0.1); const slow = g.pace < 1 && pc.slow;
+    const t0 = g.wordT; run(g, {}, 1); const dt = g.wordT - t0;
+    run(g, { actP: true, aim: pc }, 0.1);
+    rule('the pace setter slows every word until it is checked again', slow && dt < 0.4 && g.pace === 1);
   }
   { // a source that feeds nothing here is watched
     const g = stage('lines'), trap = of(g, 'source').find(e => e.trap);

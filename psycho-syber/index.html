@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="/syberlabs.css?v=20261105">
-  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261116">
+  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261117">
   <title>PSYCHO SYBER | SyberLabs</title>
 </head>
 <body class="syber-play">
@@ -65,6 +65,7 @@
           <p class="ps-kicker" id="ps-card-kicker"></p>
           <h2 class="ps-card-title" id="ps-card-title"></h2>
           <p class="ps-card-line" id="ps-card-line"></p>
+          <p class="ps-keys" id="ps-pace"></p>
           <dl class="ps-stats" id="ps-card-stats" hidden></dl>
           <ul class="ps-atlas" id="ps-card-atlas" aria-label="The 21 Atlas marks. Each opens its entry in the Lacuna Atlas." hidden></ul>
           <p class="ps-actions"><button class="sy-btn sy-btn--solid" id="ps-card-go" type="button">Begin</button><a class="sy-btn sy-btn--line" id="ps-card-link" href="/" target="_blank" rel="noopener" hidden></a></p>
@@ -97,15 +98,15 @@
         <p class="sy-eyebrow">SyberLabs / Game</p>
         <h2 id="game-title">The game</h2>
         <p>PSYCHO SYBER is a side-scrolling stealth game that runs in this page. It has five stages. Each stage stands for one project and takes its rule from what that project does.</p>
-        <p>It is set in an invented ancient Paracas, on the south coast of Peru. Long-skulled Visitors live among the people and run the Works, where a machine approves which births may go ahead. You play a weaver who stole one of their circlets.</p>
+        <p>It is set in an invented ancient Paracas, on the south coast of Peru. In this story a long head marks a noble house, and the Visitors who live among the people wear the same shape. The Visitors run the Works, where a machine approves which births may go ahead. You play a noble weaver who stole one of their circlets and drank what the old ones drank. A jaguar came with you.</p>
       </section>
 
       <section aria-labelledby="forms-title">
         <h2 id="forms-title">Two forms</h2>
-        <p>Shift changes your form. The picture, the music and what you can do change with it.</p>
+        <p>Shift changes your form. The picture, the music and what you can do change with it. For a moment at each change you are both: a person's body under the jaguar's head. The form you leave stays behind as a double for three seconds, at most once every eight. A Visitor who can see the double watches it and loses you.</p>
         <dl class="ps-forms">
           <div><dt>SYBER</dt><dd>The weaver, wearing the circlet. Throws glass, swings on a knotted cord and runs the check with E. On a Visitor machine the check takes the machine over. On stone it marks each step proven, stale or broken. On a lot in the last stage it reads the record.</dd></div>
-          <div><dt>PSYCHO</dt><dd>The jaguar. It runs faster, climbs stone, fits through low tunnels and pounces. E is a roar that slows everything else for about three seconds. It stands on spirit paths the weaver falls through. It sees which source feeds each gate and which villagers are Visitors.</dd></div>
+          <div><dt>PSYCHO</dt><dd>The jaguar. It runs faster, climbs stone, fits through low tunnels and pounces. E is a roar: the mountain echoes it three times, rain falls, and everything else slows for about three seconds. It stands on spirit paths the weaver falls through. It sees which source feeds each gate and which villagers are Visitors.</dd></div>
         </dl>
       </section>
 
@@ -113,7 +114,7 @@
         <h2 id="stages-title">Five stages, five projects</h2>
         <ol class="ps-stages">
           <li><span class="ps-stages__n">01</span><div><h3>THE STEPS · <a href="/projects/attest/">Attest</a></h3><p>A stair where some steps are stale and some are missing. The check marks each one. Attest runs every step in your docs and marks the ones that fail.</p></div></li>
-          <li><span class="ps-stages__n">02</span><div><h3>THE RISING · <a href="/projects/rise/">RISE</a></h3><p>A climb on words that light one at a time. The roar slows them. RISE shows text at a pace you set, with sound and moving visuals.</p></div></li>
+          <li><span class="ps-stages__n">02</span><div><h3>MACHU PICCHU · <a href="/projects/rise/">RISE</a></h3><p>A climb through Inca ruins on words that light one at a time. You set their pace: the jaguar's roar slows them for a moment, and a pace setter in the ravine slows them until you check it again. Each part of the climb also has a stair of stone that needs no jaguar. RISE shows text at a pace you set, with sound and moving visuals.</p></div></li>
           <li><span class="ps-stages__n">03</span><div><h3>THE LINES · <a href="/projects/flyspace/">FLYSPACE</a></h3><p>Gates on the desert floor, each fed by a source somewhere else. The jaguar sees the line between them. FLYSPACE shows which data sources fed each AI answer.</p></div></li>
           <li><span class="ps-stages__n">04</span><div><h3>THE WORKS · <a href="/projects/syberwork/">SyberWork</a></h3><p>The Visitors' factory, with stations named Propose, Check, Review, Approve and Publish. At Approve a machine decides alone until you cut its three sources. SyberWork tests every AI-written code change before a person approves it.</p></div></li>
           <li><span class="ps-stages__n">05</span><div><h3>THE RECORD · <a href="/lacuna/">Lacuna Institute</a></h3><p>A viewing hall before a sale. Seven lots stand on plinths. E reads the record of a lot, and five of the records have a gap. You deliver that evidence at the far door before the sale timer runs out. Nothing is taken and no one is fought. Lacuna Institute describes its work as “Finding the history that fell out of the record.”</p></div></li>
@@ -159,6 +160,7 @@
             <tr><th scope="row">Shift or Q</th><td colspan="2">Change form</td></tr>
             <tr><th scope="row">Mouse</th><td>Click throws glass. Hold the button, or right-click, to throw the cord at stone, a beam or a ring.</td><td>Click pounces toward the pointer</td></tr>
             <tr><th scope="row">E</th><td>Run the check</td><td>Roar</td></tr>
+            <tr><th scope="row">[ and ]</th><td colspan="2">Slow down or speed up the story text, from 120 to 480 words a minute</td></tr>
             <tr><th scope="row">Esc, R, F, M</th><td colspan="2">Pause, return to the last standing stone, full screen, sound</td></tr>
           </tbody>
         </table>
@@ -169,6 +171,19 @@
         <p>The story is invented: the Visitors, the Works, the sale and every lot in it. No person, dealer, auction house or museum in the game is real.</p>
         <p>Paracas is real. The Lacuna Atlas entry on it begins: “The elongated skulls of Paracas are real. So is the paperwork gap around where some of the burials went.” The same entry says: “Shaping an infant's skull with boards and bindings was a deliberate cultural practice, not a mystery of biology.”</p>
         <p><a href="/lacuna/#paracas">Paracas in the Lacuna Atlas</a> · <a href="/lacuna/research/paracas-bundles/">The Paracas bundles dataset</a></p>
+        <p>Machu Picchu is real and much later. It was built in the mid-1400s as an estate for the Inka emperor Pachacuti, with terraces, fitted stone and trapezoid doorways. The game puts it on the same road as Paracas. <a href="https://smarthistory.org/?p=1631" rel="noopener">Smarthistory: Machu Picchu</a></p>
+      </section>
+
+      <section id="borrows" aria-labelledby="borrows-title">
+        <h2 id="borrows-title">What the jaguar borrows</h2>
+        <p>The jaguar's side of the game takes ideas from several ancient American traditions. They belong to different peoples and centuries, and the game mixes them freely.</p>
+        <ul class="ps-borrows">
+          <li><b>The half form and the standing stones.</b> Olmec carvings from Mexico show a face with a cleft head, slanted almond eyes and a downturned open mouth, known as the were-jaguar. Researchers disagree about what it shows, and some link it to an Olmec rain deity. The game shows a half form at each change, carves the cleft head on its standing stones, and has the roar bring rain. <a href="https://en.wikipedia.org/wiki/Werejaguar" rel="noopener">Wikipedia: Werejaguar</a></li>
+          <li><b>The double.</b> In Mesoamerican belief a nagual is a guardian spirit that lives in an animal such as a deer, a jaguar or a bird. In some places it is the animal a powerful person can turn into. The game leaves a double behind when you change. <a href="https://www.britannica.com/topic/nagual" rel="noopener">Britannica: nagual</a></li>
+          <li><b>The roar.</b> The Aztec god Tepeyollotl, whose name means heart of the mountain, is a jaguar tied to caves, echoes and earthquakes. <a href="https://en.wikipedia.org/wiki/Tep%C4%93y%C5%8Dll%C5%8Dtl" rel="noopener">Wikipedia: Tepeyollotl</a></li>
+          <li><b>The paths only the jaguar walks.</b> Maya art has a jaguar god that scholars have read as the night sun: the sun on its way through the underworld. <a href="https://en.wikipedia.org/wiki/Maya_jaguar_gods" rel="noopener">Wikipedia: Maya jaguar gods</a></li>
+          <li><b>The drink.</b> At Chavín de Huántar in the Peruvian highlands, carvings around the Circular Plaza show a figure with feline and human traits holding a San Pedro cactus. The cactus is thought to be the source of the drug used in rituals there. <a href="https://web.stanford.edu/~johnrick/chavin_wrap/chavin/galleries2.html" rel="noopener">Stanford: Chavín de Huántar</a></li>
+        </ul>
       </section>
 
       <section aria-labelledby="limits-title">
@@ -191,6 +206,6 @@
     <span class="sy-footer__copy">© 2026 SyberLabs</span>
   </div>
 </div></footer>
-  <script type="module" src="/psycho-syber/game/main.js?v=20261116"></script>
+  <script type="module" src="/psycho-syber/game/main.js?v=20261117"></script>
 </body>
 </html>

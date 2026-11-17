@@ -24,6 +24,7 @@ for each product and one for Lacuna Institute. The rules for what the game may s
 
     node psycho-syber/test/run.mjs              every stage to its exit, and the Atlas list against src/lacuna/atlas/sites.js
     node psycho-syber/test/run.mjs works --log  one stage, with the player's position after each script entry
+    node psycho-syber/test/run.mjs machu:weaver one route of one stage
 
 CI runs the first line. The browser checks need a built site (`pnpm build:site`), Playwright and Chrome:
 
@@ -50,6 +51,7 @@ Measured by `test/probe.mjs`. Design inside these numbers.
 `@` start · `C` standing stone (checkpoint) · `X` exit · `t` thread, or an Atlas mark when the stage has `atlas` ·
 `o` ring · `?` hint · `L` sign · `v` villager · `w` warden · `s` sentinel · `e` eye · `T` terminal · `S` source ·
 `K` the Approver · `G` `O` a lot whose record has a gap, or is complete · `W` a word (a row) ·
+`P` a pace setter (E slows or speeds every word) · `J` the great carved head ·
 gates down a column `|` lit, `!` blinking, `i` lit by the alarm, `f` fed by a source · the same along a row `-` `~` `a` `g`.
 
 Settings go with the character: `m.put(x, y, 'S', { id: 'a' })`. `parseLevel` in `sim.js` lists every setting.
@@ -57,7 +59,9 @@ Settings go with the character: `m.put(x, y, 'S', { id: 'a' })`. `parseLevel` in
 ## Adding or changing a stage
 
 1. Plot it in `levels.js` with `grid(w, h)`. Stage 1 is the only one drawn as text.
-2. Write its run in `test/scripts.mjs`. An entry is `[keys, until, options]`; `bot.mjs` lists the keys.
+2. Write its run in `test/scripts.mjs`. An entry is `[keys, until, options]`; `bot.mjs` lists the keys. A second way
+   through a stage gets its own run under the key `id:route`. A route named `weaver` fails if it ever takes the
+   jaguar's form.
 3. Run `node psycho-syber/test/run.mjs <id> --log` until it finishes with no deaths.
 4. Look at it: `browser.mjs <outDir> stage`, in both forms.
 

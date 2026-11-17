@@ -94,6 +94,8 @@
 .ps-stages li:last-child { border-bottom: 1px solid var(--sy-rule); }
 .ps-stages__n { font: 500 13px/1.9 var(--sy-mono); color: var(--sy-mist); }
 .ps-stages p { margin: 0; }
+.ps-about ul.ps-borrows { padding-left: 0; list-style: none; gap: 14px; }
+.ps-borrows b { color: var(--sy-vellum); font-weight: 600; }
 .ps-sites { list-style: none; margin: 18px 0 0; padding: 0; columns: 3 180px; column-gap: 28px; }
 .ps-about ul.ps-sites { display: block; padding-left: 0; }
 .ps-sites li { padding: 5px 0; break-inside: avoid; }
