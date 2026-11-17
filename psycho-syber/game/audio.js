@@ -22,8 +22,9 @@ export function makeAudio() {
   const step = () => 60 / (sc.bpm + (sc.dread ? urge * 30 : 0)) / 4;   // a sixteenth
   // On an iPhone, sound made this way is silenced by the ringer switch unless the page says it is playing audio.
   const session = () => { try { if (navigator.audioSession) navigator.audioSession.type = muted ? 'ambient' : 'playback'; } catch { /* not every browser has it */ } };
+  const wake = () => { try { const r = ac.resume(); if (r && r.catch) r.catch(() => {}); } catch { /* an old browser's resume gives nothing back */ } };
   function start() {
-    if (ac) { if (ac.state !== 'running') ac.resume().catch(() => {}); return; }
+    if (ac) { if (ac.state !== 'running') wake(); return; }
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
     session();
@@ -39,7 +40,7 @@ export function makeAudio() {
     echo = loop(stem.psycho, 0.42); echoS = loop(stem.syber, 0.3);
     noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     const hush = ac.createBufferSource(); hush.buffer = ac.createBuffer(1, 1, 22050); hush.connect(ac.destination); hush.start(0);   // the first sound has to start inside a tap
-    if (ac.state !== 'running') ac.resume().catch(() => {});
+    if (ac.state !== 'running') wake();
     nextT = ac.currentTime + 0.08;
     timer = setInterval(schedule, 50);
   }
@@ -149,7 +150,7 @@ export function makeAudio() {
     duck(on) { if (ac) music.gain.setTargetAtTime(on ? 0.3 : 0.9, ac.currentTime, 0.2); },
     mute(m) { muted = m ?? !muted; session(); if (ac) master.gain.setTargetAtTime(muted ? 0 : 0.9, ac.currentTime, 0.03); return muted; },
     suspend() { if (ac && ac.state === 'running') ac.suspend(); },
-    resume() { if (ac && ac.state !== 'running') ac.resume().catch(() => {}); },
+    resume() { if (ac && ac.state !== 'running') wake(); },
     // each stage has its own key, pace and layers; the last stage quickens as its verdict nears (urgency, 0 to 1)
     scene(id) { sc = SCENES[id] || SCENES.steps; urge = 0; if (ac) for (const d of [echo, echoS]) d.delayTime.setTargetAtTime(Math.min(0.95, step() * 3), ac.currentTime, 0.05); },
     urgency(u) { urge = Math.max(0, Math.min(1, u)); },
