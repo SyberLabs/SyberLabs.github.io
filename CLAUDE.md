@@ -45,6 +45,33 @@ the answer is nothing, delete it.
   focused), no claims about feelings or experience.
 - Keep limits and "not yet" statements. They are facts.
 
+## Lacuna Institute
+
+Since November 16, 2026 Lacuna Institute is part of SyberLabs: its research institute, beside the four products. Its
+pages are the `lacuna/` directory, published as it is at `/lacuna/`: the Lacuna Atlas (`lacuna/index.html`), one share
+page per Atlas site (`lacuna/sites/<slug>/`) and the Paracas bundles dataset (`lacuna/research/paracas-bundles/`).
+`lacunainstitute.org` and `lacunainstitute.com` are short addresses for the section: one redirect rule in each
+Cloudflare zone sends them to `https://syberlabs.io/lacuna/`, path for path (`src/lacuna/README.md` has the rule), and
+`lacunainstitute.org` stays the institute's email domain. Canonical
+and Open Graph addresses on Lacuna pages are the `syberlabs.io/lacuna/` ones. The share cards and the dataset's
+"How to cite" line keep `lacunainstitute.org`.
+
+- Anything that lists what SyberLabs does (the Menu in `projects/site-data.js`, `llms.txt`, the research index, a demo
+  or a game) includes Lacuna Institute next to the products.
+- The Atlas page and the share pages are generated. Edit `src/lacuna/atlas/sites.js` or `page.tpl.html`, then run
+  `python3 src/lacuna/atlas/build.py` and `python3 src/lacuna/atlas/share.py --pages` (`src/lacuna/atlas/README.md`).
+  The build fails if `lacuna/index.html` is stale. The dataset page is plain HTML, edited by hand.
+- Lacuna pages keep their own look (near-black ground, bone text, ember accent; Cormorant Garamond, Marcellus and IBM
+  Plex Mono) and their own voice. The Midnight theme, the shared header and footer and the "no slogans" rule stop at
+  `lacuna/`. The banned word in Wording, the ban on third-party scripts and the personal-name guard apply there too.
+  Each Lacuna page links to the homepage with "Part of SyberLabs".
+- Lacuna copy states only what a source shows. Quote sources as written, label speculation as speculation, and make no
+  claim about a living person, a dealer or an auction house beyond what a cited public record states. Scholars are named
+  where their published work, or a quotation they approved, is cited.
+- Lacuna pages publish `contact@lacunainstitute.org`. Every other page keeps the one company inbox.
+- Visitors get no forms (`/privacy/`), so "Get new findings" is an email link. CI fails if a form appears in `lacuna/`.
+- This repository is public. Unpublished Lacuna material (case notes, screening results, drafts, runbooks) stays out of it.
+
 ## Homepage
 
 Since November 15, 2026 the homepage (`src/App.jsx`) is mostly visual, by the owner's direction: the Gyre and the

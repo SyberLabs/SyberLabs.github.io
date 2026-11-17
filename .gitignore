@@ -4,3 +4,4 @@ dist-ssr/
 .dev.vars
 .wrangler/
 .private-githits/
+src/lacuna/atlas/preview.html

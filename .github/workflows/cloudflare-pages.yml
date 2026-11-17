@@ -146,6 +146,22 @@ jobs:
           test -s dist/research/decision-arena/data/replay.json
           test -s dist/services/index.html
           test -s dist/services/services.css
+          # Lacuna Institute (/lacuna/): the Atlas and its two libraries, a share page and card, the dataset page and its CSV.
+          test -s dist/lacuna/index.html
+          test -s dist/lacuna/vendor/d3-7.9.0.min.js
+          test -s dist/lacuna/vendor/topojson-client-3.1.0.min.js
+          test -s dist/lacuna/sites/paracas/index.html
+          test -s dist/lacuna/share/paracas.jpg
+          test -s dist/lacuna/research/paracas-bundles/index.html
+          test -s dist/lacuna/research/research.css
+          test -s dist/lacuna/data/paracas-exported-bundles-v1.0.csv
+          grep -Fq 'Part of SyberLabs' dist/lacuna/index.html
+          grep -Fq 'Part of SyberLabs' dist/lacuna/research/paracas-bundles/index.html
+          grep -Fq 'href="/lacuna/"' dist/index.html
+          # /privacy/ tells visitors the site has no forms: Lacuna's "Get new findings" is an email link.
+          if grep -rqi '<form' dist/lacuna --include='*.html'; then echo 'form on a Lacuna page'; exit 1; fi
+          # Atlas sources (src/lacuna/) are not published.
+          test ! -e dist/src
           test -s dist/privacy/index.html
           test -s dist/plus/index.html
           test -s dist/plus/plus.css

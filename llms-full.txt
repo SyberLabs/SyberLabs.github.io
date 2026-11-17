@@ -339,10 +339,15 @@ Text version of the interactive map: This map needs JavaScript.
 - License: No license file yet; the repository is public
 - Source: [github.com/SyberLabs/Flyspace](https://github.com/SyberLabs/Flyspace)
 
+## Research
+
+- [Research index](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: three reports and notes on this site, two RISE status pages, five working papers in SyberLabs/papers and two Lacuna Institute pages. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
+- [Lacuna Institute](https://syberlabs.io/lacuna/): Lacuna Institute, part of SyberLabs: an atlas of places where the historical record goes quiet.
+- [Paracas bundles](https://syberlabs.io/lacuna/research/paracas-bundles/): A census of the Paracas Necropolis (Wari Kayan) mummy bundles that published sources show leaving Peru, with destinations, current holders and graded sources. Version 1.0.
+
 ## Company
 
 - [Consulting and partnerships](https://syberlabs.io/services/): AI consulting, custom builds and design partnerships from SyberLabs. We build agent systems in which software runs the checks, every step is logged in a signed record and a person approves before anything ships.
-- [Research](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: three reports and notes on this site, two RISE status pages and five working papers in SyberLabs/papers. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
 
 ## Account
 

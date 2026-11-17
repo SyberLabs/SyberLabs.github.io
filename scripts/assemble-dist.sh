@@ -22,6 +22,10 @@ cp -r og dist/
 for dir in rise-demo omni-demo media projects approach factory jev kev research services privacy stack plus; do
   cp -r "$dir" dist/
 done
+# Lacuna Institute: lacuna/ is published as it is at /lacuna/. Its first page (the Atlas) is generated from
+# src/lacuna/atlas/; this fails the build if that page is stale (regenerate with `python3 src/lacuna/atlas/build.py`)
+python3 src/lacuna/atlas/build.py --check
+cp -r lacuna dist/
 # "What changed" is staff-only (MasterMind RFC 0002): its source projects/latest.js is deleted, and nothing here removes
 # a re-added copy, so the workflow's `test ! -e dist/projects/latest.js` guard fails the build instead.
 # GitHits dependency snapshots (regenerate with `node scripts/githits-snapshot.mjs`)

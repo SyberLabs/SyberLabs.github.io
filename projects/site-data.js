@@ -281,7 +281,13 @@ export const projects = [
   },
 ];
 
-// The Menu (the Atlas): every product, the company's ways of working with customers, and the account and legal routes.
+// Lacuna Institute is SyberLabs' research institute. Its pages are the lacuna/ directory, published at /lacuna/
+// (sources in src/lacuna/). lacunainstitute.org and lacunainstitute.com redirect there, path for path.
+export const LACUNA = '/lacuna/';
+export const LACUNA_PARACAS = '/lacuna/research/paracas-bundles/';
+
+// The Menu (the Atlas): every product, the research, the company's ways of working with customers, and the account
+// and legal routes. A group title is one word: project-template.js builds an element id from it.
 export const siteMap = [
   { title: 'Products', items: [
     { label: 'SyberWork', note: 'Tests AI-written code before a person approves it', href: '/projects/syberwork/' },
@@ -289,10 +295,14 @@ export const siteMap = [
     { label: 'RISE', note: 'Reading app with timed text, sound and visuals', href: '/projects/rise/' },
     { label: 'FLYSPACE', note: 'Shows which data fed each AI answer', href: '/projects/flyspace/' },
   ] },
+  { title: 'Research', items: [
+    { label: 'Research index', note: 'Reports, notes and working papers', href: '/research/' },
+    { label: 'Lacuna Institute', note: 'Atlas of 21 research sites, with sources', href: LACUNA },
+    { label: 'Paracas bundles', note: 'Dataset: 13 mummy bundles that left Peru', href: LACUNA_PARACAS },
+  ] },
   { title: 'Company', items: [
     { label: 'Consulting and partnerships', note: 'Services, engagement steps and pilots', href: '/services/' },
     { label: 'The factory', note: 'How a code change is written, tested and approved', href: '/factory/' },
-    { label: 'Research', note: 'Reports, notes and working papers', href: '/research/' },
     { label: 'Email', note: EMAIL, href: CONTACT },
   ] },
   { title: 'Account', items: [
