@@ -39,6 +39,9 @@ jobs:
         run: node --test 'server/test/**/*.test.js'
       - name: Check shared header and footer
         run: node scripts/site-chrome.mjs --check
+      - name: Play every PSYCHO SYBER stage to its exit
+        # A scripted run per stage (psycho-syber/test/scripts.mjs) and a check that the 21 Atlas marks match src/lacuna/atlas/sites.js.
+        run: node psycho-syber/test/run.mjs
       - name: Refresh dependency panel targets
         run: |
           node scripts/githits-snapshot.mjs --targets || echo "githits: keeping committed targets.json"
@@ -168,6 +171,15 @@ jobs:
           if grep -rqi '<form' dist/lacuna --include='*.html'; then echo 'form on a Lacuna page'; exit 1; fi
           # Atlas sources (src/lacuna/) are not published.
           test ! -e dist/src
+          # PSYCHO SYBER (/psycho-syber/): the page, the game, its card, and the homepage's link to it. Its tests are not published.
+          test -s dist/psycho-syber/index.html
+          test -s dist/psycho-syber/game/main.js
+          test -s dist/psycho-syber/game/levels.js
+          test -s dist/og/psycho-syber.png
+          test ! -e dist/psycho-syber/test
+          grep -Fq 'href="/psycho-syber/"' dist/index.html
+          grep -Fq 'href="/lacuna/#paracas"' dist/psycho-syber/index.html
+          if grep -rqi '<form' dist/psycho-syber --include='*.html'; then echo 'form on the game page'; exit 1; fi
           test -s dist/privacy/index.html
           test -s dist/plus/index.html
           test -s dist/plus/plus.css

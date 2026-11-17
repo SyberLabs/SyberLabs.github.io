@@ -72,6 +72,27 @@ and Open Graph addresses on Lacuna pages are the `syberlabs.io/lacuna/` ones. Th
 - Visitors get no forms (`/privacy/`), so "Get new findings" is an email link. CI fails if a form appears in `lacuna/`.
 - This repository is public. Unpublished Lacuna material (case notes, screening results, drafts, runbooks) stays out of it.
 
+## PSYCHO SYBER
+
+Since November 16, 2026 the site carries a game at `/psycho-syber/` (`psycho-syber/`): a side-scrolling stealth game
+with two forms, changed with Shift, and five stages, one for each product and one for Lacuna Institute. `Game` in the
+header (`nav` in `projects/site-data.js`), the Menu and one line in the homepage's Studio section link to it.
+
+- The story is fiction and the page says so under "What is real". It is set in an invented ancient Paracas. State
+  nothing about the Paracas culture or about any Atlas site beyond a quotation from the Lacuna pages. No real person,
+  dealer, auction house or museum appears in the game: invented names only.
+- The last stage, THE RECORD, stands for Lacuna Institute. The player reads the record of each lot, finds the gaps
+  and delivers that evidence before a timer runs out. Nothing is taken and no one is fought in that stage.
+- The 21 marks in that stage are the 21 Atlas sites, and each links to `/lacuna/#<id>`. `ATLAS` in
+  `psycho-syber/game/levels.js` must match `src/lacuna/atlas/sites.js`; `node psycho-syber/test/run.mjs` fails if not.
+- The rules of play are `psycho-syber/game/sim.js`, which has no DOM. Every stage has a scripted run in
+  `psycho-syber/test/scripts.mjs` that plays it to the exit, and CI runs them. A change to a stage or to the physics
+  ships with a passing run. `psycho-syber/README.md` lists the files and the map characters.
+- The page's copy follows Wording. Lines inside the game (stage intros, hints, messages) are its fiction and its
+  instructions: keep them plain, and the banned word stays banned there too.
+- The game loads no third-party script, has no form and makes no network request. Sound is synthesised in the
+  browser. Progress is one `localStorage` key. `psycho-syber/test/` and `psycho-syber/README.md` are not published.
+
 ## Homepage
 
 Since November 15, 2026 the homepage (`src/App.jsx`) is mostly visual, by the owner's direction: the Gyre and the

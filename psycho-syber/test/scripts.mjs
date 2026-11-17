@@ -1,0 +1,144 @@
+// Scripted play-throughs, one per stage: proof that each stage can be finished, run by test/run.mjs.
+import { T, wordFresh, wordActive, gateActive } from '../game/sim.js';
+import { past, before, grounded, all } from './bot.mjs';
+const ent = (g, type, k = 0) => g.ents.filter(e => e.type === type)[k];
+const aimAt = (type, k = 0) => g => { const e = ent(g, type, k); return [e.x, e.y]; };
+const gone = (type, k = 0) => g => ent(g, type, k).dead;
+const rising = g => g.p.vy >= 0;
+// run to the takeoff point, jump, land
+const leap = (fromX, hold = 'R') => [[hold, past(fromX)], [hold + 'J', 0.34], [hold, grounded, { max: 2 }]];
+// a short hop from standing: `t` seconds of push, then drift
+const hop = (t, dir = 'R') => [[dir + 'J', t], ['J', 0.34 - t], ['', grounded, { max: 2 }]];
+const fresh = k => g => wordFresh(g, ent(g, 'word', k));
+// aim a thrown glass at a walking target: lead it by the flight time and lift for the fall
+const lead = (type, k = 0) => g => { const e = ent(g, type, k), t = Math.hypot(e.x - g.p.x, e.y - (g.p.y - 13)) / 330; return [e.x + (e.vx || 0) * t, e.y - 55 * t * t]; };
+// a blinking gate that has just gone dark
+const dark = k => g => { const e = ent(g, 'gate', k), ph = (g.wt + e.ph) % e.period; return !gateActive(g, e) && ph < e.duty * e.period + 0.3; };
+const near = (type, k, d) => g => { const e = ent(g, type, k); return Math.hypot(e.x - g.p.x, e.y - (g.p.y - 12)) < d; };
+
+export const SCRIPTS = {
+  steps: [
+    ...leap(21.6), ['R', past(29.4)], ...leap(29.5), ['R', all(grounded, past(34.7))],
+    ...leap(35.5), ['R', past(49)],
+    // C: cord to the ring, reel up over the wall
+    ['A', g => !!g.p.rope, { aim: [53, 11], max: 1 }],
+    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 52.4 * T, { aim: [53, 11], max: 5 }],
+    ['R', all(grounded, past(54))], ['R', past(62.5)], ['R', all(grounded, past(63))],
+    // D: swing over the thorns
+    ['R', past(76.4)],
+    ['RA', g => !!g.p.rope, { aim: [81, 13], max: 1 }],
+    ['RA', past(86.6), { aim: [81, 13], max: 5 }],
+    ['R', all(grounded, past(87))],
+    // E: the warden behind the crate
+    ['R', past(107.4)], ...leap(107.5), ['R', all(grounded, past(111.4))],
+    ['R', g => Math.abs(ent(g, 'warden', 0).x - g.p.x) < 96, { max: 6 }],
+    ...Array.from({ length: 8 }, () => [['F', 0.05, { aim: aimAt('warden', 0) }], ['', 0.22]]).flat(),
+    ['', gone('warden', 0), { max: 0.1 }],
+    ['R', past(126.4)], ...leap(126.5), ['R', all(grounded, past(131))],
+    // F: jaguar under the wall and up the cliff
+    ['R', past(137)], ['X', 0.1], ['R', past(149.8)],
+    ['RJ', 0.3], ['RU', g => g.p.onGround && g.p.y <= 12 * T + 1, { max: 8 }],
+    // G: over the spirit bridge and down the terraces
+    ['R', past(183.5)], ['R', all(grounded, past(196.6))],
+    // H: pounce the warden
+    ['R', g => Math.abs(ent(g, 'warden', 1).x - g.p.x) < 80, { max: 4 }],
+    ['RF', 0.3, { aim: aimAt('warden', 1) }], ['', gone('warden', 1), { max: 0.1 }],
+    ['R', past(214.4)], ...leap(214.5), ['R', all(grounded, past(219.5))],
+    // I: back to yourself, run the check, climb the steps
+    ['X', 0.1], ['E', 0.1], ['R', past(222.4)],
+    ['RJ', 0.34], ['R', grounded, { max: 2 }], ['', 0.05],                        // tread 0
+    ...hop(0.2), ...hop(0.2),                                                    // treads 1, 2 (stale)
+    ...hop(0.2),                                                                 // tread 3
+    ['L', g => g.p.x <= 230.6 * T, { max: 1 }], ...leap(231.7),                  // over broken tread 4 to tread 5
+    ['', 0.05], ...hop(0.2), ...hop(0.2),                                        // treads 6 (stale), 7
+    ['L', g => g.p.x <= 238.6 * T, { max: 1 }], ...leap(239.7),                  // over broken tread 8 to tread 9
+    ['', 0.05], ...hop(0.2), ...hop(0.2), ...hop(0.25),                          // treads 10, 11, the landing
+    ['R', past(250.5)], ['E', 0.1, { aim: aimAt('terminal', 0) }],
+    ['R', () => false, { max: 6 }],
+  ],
+  rising: [
+    // A: seven words, one per beat
+    ['R', past(11.4)], ['', fresh(0), { max: 8 }], ['RJ', 0.34], ['R', grounded, { max: 2 }],
+    ...[1, 2, 3, 4, 5, 6].flatMap(k => [['', fresh(k), { max: 8 }], [(k % 2 ? 'L' : 'R') + 'J', 0.34], [k % 2 ? 'L' : 'R', grounded, { max: 2 }]]),
+    ['R', past(15.2)], ['RJ', 0.34], ['R', all(grounded, past(17)), { max: 2 }],
+    // B: roar while the four words are lit, and run
+    ['R', past(23.6)], ['X', 0.1], ['', fresh(7), { max: 8 }], ['E', 0.05], ['R', all(grounded, past(42)), { max: 5 }],
+    // C: five words, three tiles apart
+    ['R', past(43.9)],
+    ...[0, 1, 2, 3, 4].flatMap(k => [['', fresh(11 + k), { max: 8 }], ...hop(0.2, k === 0 || k % 2 ? 'R' : 'L')]),
+    ['RJ', 0.34], ['R', all(grounded, past(50)), { max: 3 }],
+    ['R', () => false, { max: 4 }],
+  ],
+  lines: [
+    // A: cord to the ring, onto the column, check the source, walk through the dead gate
+    ['R', past(13)], ['A', g => !!g.p.rope, { aim: [17, 11], max: 1 }],
+    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 16.4 * T, { aim: [17, 11], max: 5 }],
+    ['R', all(grounded, past(17.5)), { max: 3 }], ['E', 0.1, { aim: aimAt('source', 0) }],
+    ['R', all(grounded, past(36)), { max: 8 }],
+    // B: the Visitor among the villagers
+    ['R', past(42.4)], ...leap(42.5), ['R', all(grounded, past(46.4))],
+    ['R', g => Math.abs(ent(g, 'warden', 0).x - g.p.x) < 96, { max: 6 }],
+    ...Array.from({ length: 8 }, () => [['F', 0.05, { aim: aimAt('warden', 0) }], ['', 0.22]]).flat(),
+    ['', gone('warden', 0), { max: 0.1 }],
+    ['R', past(62.4)], ...leap(62.5), ['R', all(grounded, past(70))],
+    // C: up the tower as the jaguar, check the source as the weaver, glass the Visitor from above
+    ['X', 0.1], ['R', past(75.8)], ['RJ', 0.3], ['RU', g => g.p.onGround && g.p.y <= 8 * T + 1, { max: 10 }],
+    ['X', 0.1], ['E', 0.1, { aim: aimAt('source', 1) }], ['R', past(84)], ['', 0.3],
+    ...Array.from({ length: 10 }, () => [['F', 0.05, { aim: lead('warden', 1) }], ['', 0.3]]).flat(),
+    ['', gone('warden', 1), { max: 0.1 }],
+    ['R', all(grounded, past(106)), { max: 12 }],
+    // D: the two sources with lines; the one on the crate is watched
+    ['R', past(110)], ['E', 0.1, { aim: aimAt('source', 3) }],
+    ['R', past(114.4)], ...leap(114.5), ['R', all(grounded, past(119))], ['', 0.3],
+    ['E', 0.1, { aim: aimAt('source', 5) }],
+    ['R', () => false, { max: 10 }],
+  ],
+  works: [
+    // PROPOSE: through each gate as it goes dark
+    ['R', past(11.5)], ['', dark(0), { max: 4 }], ['R', past(19.5)], ['', dark(1), { max: 4 }], ['R', past(33.5)],
+    // CHECK: turn the sentinel, let it drop the Visitor, cross the hall
+    ['', near('sentinel', 0, 128), { max: 14 }], ['E', 0.1, { aim: aimAt('sentinel', 0) }],
+    ['', gone('warden', 0), { max: 10 }],
+    ['R', past(42.4)], ...leap(42.5), ['R', all(grounded, past(46.4))],
+    ['R', past(58.4)], ...leap(58.5), ['R', all(grounded, past(70))],
+    // REVIEW: break the eye from outside its reach, then under the bulkhead as the jaguar
+    ...Array.from({ length: 4 }, () => [['F', 0.05, { aim: lead('eye', 0) }], ['', 0.3]]).flat(),
+    ['', gone('eye', 0), { max: 0.1 }],
+    ['R', past(94.3)], ['X', 0.1], ['R', past(104.5)],
+    // APPROVE: the source on the floor, the one on the block, the one under the dais
+    ['X', 0.1], ['R', past(107.5)], ['E', 0.1, { aim: aimAt('source', 0) }],
+    ['R', past(113)], ['A', g => !!g.p.rope, { aim: [117, 11], max: 1 }],
+    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 116.4 * T, { aim: [117, 11], max: 5 }],
+    ['R', all(grounded, past(117.5)), { max: 3 }], ['E', 0.1, { aim: aimAt('source', 1) }],
+    ['R', all(grounded, past(123)), { max: 4 }], ['X', 0.1], ['R', past(136.5), { max: 4 }],
+    ['X', 0.1], ['E', 0.1, { aim: aimAt('source', 2) }], ['', 0.2],
+    ['X', 0.1], ['L', before(127.4), { max: 4 }], ['LJ', 0.34], ['L', all(grounded, before(125)), { max: 2 }],
+    // the Approver is open: break it, cross the dais, approve at the terminal, publish
+    ['X', 0.1], ['', 0.2],
+    ...Array.from({ length: 3 }, () => [['F', 0.05, { aim: lead('core', 0) }], ['', 0.4]]).flat(),
+    ['', gone('core', 0), { max: 0.1 }],
+    ['R', past(125.1)], ['RJ', 0.34], ['R', grounded, { max: 2 }],
+    ['R', past(130.4)], ...leap(130.5), ['R', all(grounded, past(148.5)), { max: 6 }],
+    ['E', 0.1, { aim: aimAt('terminal', 0) }],
+    ['R', () => false, { max: 8 }],
+  ],
+  record: [
+    // A: read the first two lots
+    ['R', past(10)], ['E', 0.1, { aim: aimAt('lot', 0) }], ['R', past(20)], ['', 0.3], ['E', 0.1, { aim: aimAt('lot', 1) }],
+    // B: cord to the ring, read the lot on the wall
+    ['R', past(37)], ['A', g => !!g.p.rope, { aim: [41, 11], max: 1 }],
+    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 40.4 * T, { aim: [41, 11], max: 5 }],
+    ['R', all(grounded, past(43)), { max: 3 }], ['E', 0.1, { aim: aimAt('lot', 2) }],
+    ['R', all(grounded, past(51)), { max: 6 }],
+    // C: under the wall as the jaguar, read; up the cliff, read
+    ['R', past(66)], ['X', 0.1], ['R', past(77.5)], ['X', 0.1], ['E', 0.1, { aim: aimAt('lot', 3) }], ['', 0.2],
+    ['X', 0.1], ['R', past(83.8)], ['RJ', 0.3], ['RU', g => g.p.onGround && g.p.y <= 12 * T + 1, { max: 8 }],
+    ['R', past(88)], ['X', 0.1], ['E', 0.1, { aim: aimAt('lot', 4) }], ['', 0.2], ['X', 0.1],
+    // D: over the spirit bridge, read, down the terraces
+    ['R', all(grounded, past(108.5)), { max: 5 }], ['X', 0.1], ['E', 0.1, { aim: aimAt('lot', 5) }],
+    ['R', all(grounded, past(128)), { max: 10 }],
+    // E: the last lot, then the far door
+    ['R', past(138)], ['E', 0.1, { aim: aimAt('lot', 6) }],
+    ['R', () => false, { max: 8 }],
+  ],
+};

@@ -66,6 +66,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 ## Company
 
 - [Consulting and partnerships](https://syberlabs.io/services/): AI consulting, custom builds and design partnerships from SyberLabs. We build agent systems in which software runs the checks, every step is logged in a signed record and a person approves before anything ships.
+- [PSYCHO SYBER](https://syberlabs.io/psycho-syber/): PSYCHO SYBER is a browser game from SyberLabs. Five stages, one for each project: Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute. Keyboard and mouse.
 
 ## Account
 

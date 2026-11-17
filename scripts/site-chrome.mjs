@@ -12,7 +12,7 @@ import { nav } from '../projects/site-data.js';
 const pages = ['404.html', 'approach/index.html', 'factory/index.html', 'stack/index.html', 'jev/index.html', 'kev/index.html', 'privacy/index.html',
   'rise-demo/index.html', 'services/index.html', 'plus/index.html', 'research/index.html', 'research/jev-execution/index.html', 'research/sybershoke/index.html',
   'research/decision-arena/index.html',
-  'projects/rise/index.html'];
+  'projects/rise/index.html', 'psycho-syber/index.html'];
 
 const HEADER = /<a class="sy-skip" href="#(\w+)">Skip to content<\/a>\s*(?:<div class="sy-field-host"[\s\S]*?<\/div>\s*)?<header class="sy-header[\s\S]*?<\/header>(?:\s*<script type="module" src="\/syberlabs\.js(?:\?[^\"]*)?"><\/script>)?/;
 const FOOTER = /<footer class="sy-footer[\s\S]*?<\/footer>/;
