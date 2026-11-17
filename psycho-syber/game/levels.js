@@ -302,6 +302,8 @@ function ship() {
   m.put(28, 12, 'X');
   return m.done();
 }
+// What the narrator says outside the stage intros: when the ship comes, and after the last stage. A bar ends a phrase.
+export const TOLD = { abduct: ['The carved head answers.', 'The ship comes down.'], end: ['This is not a game.', 'This is real life.', 'You are in the arena.', 'Wake up.'] };
 export const SHIP = { id: 'ship', name: 'THE COMMAND SHIP', project: 'SyberLabs', href: '/', line: 'The command ship, in another star system.', intro: [], bg: 'ship', persona: 'syber', ...ship() };
 
 export const STAGES = [

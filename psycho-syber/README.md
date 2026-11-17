@@ -14,15 +14,17 @@ say are in the repository's `CLAUDE.md`, under "PSYCHO SYBER". This file and `te
 | `game/levels.js` | The six stages, the command ship and the 21 Atlas marks |
 | `game/render.js`, `game/font.js` | Draws one 480 x 270 frame per look into a 2D canvas |
 | `game/post.js` | Puts the frame on screen with WebGL: the ring that spreads on a change of form, and the jaguar's distortion. Falls back to 2D |
-| `game/audio.js` | All sound, synthesised with Web Audio: one stem per form |
-| `game/main.js` | The loop, the keyboard, mouse and touch controls, the panels, the story shown a phrase at a time, the ending |
+| `game/audio.js` | The music and the effects, synthesised with Web Audio (one stem per form), and the playing of the narrator's recordings |
+| `game/main.js` | The loop, the keyboard, mouse and touch controls, the panels, the story shown a phrase at a time and kept in step with the narrator, the ending |
+| `game/voice.js`, `voice/` | Written by `test/voice.mjs`: the list of narrated lines with each word's time, and the recordings. The list is empty and the folder absent while there are none |
 | `test/run.mjs`, `test/scripts.mjs`, `test/bot.mjs` | A scripted run per stage, played in Node |
 | `test/probe.mjs` | Measures how high and far each form jumps |
 | `test/browser.mjs` | Opens the built page in headless Chrome: screenshots, a full play-through, the social card |
+| `test/voice.mjs` | Makes the narrator's recordings with ElevenLabs. See "The narrator" |
 
 ## Checks
 
-    node psycho-syber/test/run.mjs              every stage to its exit, and the Atlas list against src/lacuna/atlas/sites.js
+    node psycho-syber/test/run.mjs              every stage to its exit, the Atlas list against src/lacuna/atlas/sites.js, and the narrator's recordings against the story
     node psycho-syber/test/run.mjs works --log  one stage, with the player's position after each script entry
     node psycho-syber/test/run.mjs machu:weaver one route of one stage
 
@@ -41,7 +43,8 @@ answer of the machine. `ship` does the three roars at the great carved head and 
 last stage with all 21 marks found. `touch` opens
 the page as a phone, sideways then upright, and drives it with fingers sent through the browser's touch input: the
 stick, the three buttons, a tap to throw, and a cord that stays tied. `?touch` on the page's address shows the touch
-controls on any device.
+controls on any device. `story` prints where each phrase of a stage's introduction sat on the picture. `narrate` is
+described under "The narrator".
 
 ## What each form clears
 
@@ -118,6 +121,48 @@ the last stage. Every voice has something between 300 Hz and 2 kHz because a pho
 `navigator.audioSession.type` to `playback` while the sound is on, so the ringer switch does not silence it, and
 sound starts only inside `pointerup`, `touchend`, `click` or `keydown`. The level and the spread across four bands
 can be measured in headless Chrome by tapping what reaches the output with an `AnalyserNode`.
+
+## The narrator
+
+Thirty-one lines of the story can be spoken: the introduction to each stage, the two lines when the ship comes
+(`TOLD.abduct` in `levels.js`) and the four lines of the ending (`TOLD.end`). What the three on the ship say is not
+narrated. `test/voice.mjs` makes one recording for each line with ElevenLabs text to speech, using the request that
+answers with the audio and the time of every character:
+
+    node psycho-syber/test/voice.mjs --list     every line and the character count (940); calls nothing
+    ELEVENLABS_API_KEY=... ELEVENLABS_VOICE_ID=... node psycho-syber/test/voice.mjs
+    ... voice.mjs --all | --only steps | --mock | --clear
+
+The key is read from the environment and written nowhere. Keep it out of files, commits and workflow logs.
+Publishing what the service makes needs one of its paid plans and a voice whose terms allow it. The script writes
+`voice/<line>.mp3`, fills `game/voice.js` (for each line its file, a mark of the words it speaks, and when each word
+starts and ends), writes the "Narrator" paragraph into `index.html` between its two comment markers, and gives the
+game one new `?v=` token. `--clear` undoes all of it. A line whose words change in `levels.js` is recorded again by
+the next plain run. `run.mjs` fails when a recording speaks words its line no longer has, when a stage is narrated
+in part, when `voice/` holds a file no line uses, or when recordings and the page's paragraph are not there together.
+
+In the page (`rsvp()` in `main.js`) a line that has a recording is spoken when the sound is on, and then the voice is
+the clock: each word is shown when the sound clock reaches the start of that word. `audio.js` brings every recording
+to one loudness (`SPOKEN`), lowers the music by 9 dB from the first line of a telling until 1.6 seconds after its
+last, and fades a line that is cut off. When the sound clock stops in a hidden tab the words wait for it. When it
+stays stopped with the page in view, or a recording has not arrived within 1.4 seconds, the telling goes on at the
+reader's pace, and a telling that opened without the voice stays without it. With the sound off no recording is
+fetched. While `VOICE` is empty the game asks for no file.
+
+    ... browser.mjs <outDir> narrate     STAGE=1 adds the checks of a cut line, a stopped clock, a hidden tab, sound off and missing recordings; STAGE=6 adds the ending
+
+As of November 17, 2026 the list is empty and no request has been made to ElevenLabs. The page was run with the
+stand-ins that `--mock` makes (a murmur between 300 Hz and 3.4 kHz with made-up word times) and the script with a
+local stand-in for the service that answers in its documented shape. With those, every word was shown within 80 ms
+of the voice reaching it, and the voice stood 17 to 22 dB over the music between 300 Hz and 3.4 kHz and about 13 dB
+over it in all. A voice has less of its sound in that band than the stand-in, so expect a few dB less. No one has
+heard a recording in the page.
+
+Choose or design the narrator by the sound of his voice: old, low, slow. A regional accent of a living language may
+be named plainly (Peruvian Spanish, say) and should sound natural. Do not ask the service for the voice of a people
+("Native American", "Incan", an "indigenous elder"): there is no record of how anyone at Paracas spoke, and a
+machine's version of such a voice is a stereotype. The page says the voice is synthetic and makes no claim about any
+people.
 
 ## The command ship
 

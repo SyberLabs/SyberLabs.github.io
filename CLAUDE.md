@@ -122,8 +122,17 @@ the line under the homepage's section names and one line in its Studio section l
   joyful: slow, a held ground note with a fifth and no third, a minor pentatonic tune, no major chords and no dance
   beat. Keep every voice loud enough between 300 Hz and 2 kHz for a phone's speaker; `psycho-syber/README.md` says
   how to measure it. The page describes the game's sounds and makes no claim about any people's music.
-- The game loads no third-party script, has no form and makes no network request. Sound is synthesised in the
-  browser. Progress, the Atlas marks found, the story pace and the command ship's gift are `localStorage` keys that
+- The story lines can be spoken by a narrator: an old man's voice, low and slow. `psycho-syber/test/voice.mjs` makes
+  the recordings with ElevenLabs and reads the key from the environment. Never put the key in a file, a commit or a
+  workflow log, and publish recordings only from a paid plan and a voice whose terms allow it. The script also writes
+  the page's paragraph that says the voice is synthetic; `node psycho-syber/test/run.mjs` fails if recordings and that
+  paragraph are not there together, or if a line has changed since it was recorded. Choose the voice by its sound
+  and, if wanted, a regional accent named plainly (Peruvian Spanish, say). Never ask the service for the voice of a
+  people ("Native American", "Incan"): the page makes no claim about any people. `psycho-syber/README.md`
+  ("The narrator") has the rest.
+- The game loads no third-party script, has no form and sends nothing. The only requests it makes are for its own
+  files on this site: its modules and, when there are recordings, the narrator's lines in `psycho-syber/voice/`.
+  Music and effects are synthesised in the browser. Progress, the Atlas marks found, the story pace and the command ship's gift are `localStorage` keys that
   begin `psycho-syber.`. `psycho-syber/test/` and `psycho-syber/README.md` are not published.
 
 ## Homepage

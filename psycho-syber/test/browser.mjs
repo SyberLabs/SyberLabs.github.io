@@ -10,7 +10,7 @@ const require = createRequire(process.env.PW_REQUIRE_FROM || import.meta.url);
 const { chromium } = require('playwright');
 const root = resolve('.'), out = process.argv[2] || 'shots', scenario = process.argv[3] || 'title';
 mkdirSync(out, { recursive: true });
-const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.json': 'application/json', '.svg': 'image/svg+xml', '.ico': 'image/x-icon' };
+const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.json': 'application/json', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.mp3': 'audio/mpeg', '.wav': 'audio/wav' };
 const server = createServer(async (req, res) => {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
   if (p.endsWith('/')) p += 'index.html';
@@ -252,6 +252,99 @@ const S = {
     }
     for (const [text, e] of seen) console.log(`${e.off === 0 && !e.moved ? 'ok ' : 'BAD'} "${text}" · ${e.of} words · middle off by ${e.off} px · ${e.moved ? 'MOVED' : 'did not move'} · ${e.lines} line${e.lines > 1 ? 's' : ''} · ${e.size}px`);
     console.log(`${seen.size} phrases, ${[...seen.values()].filter(e => Math.abs(e.off) > 1 || e.moved).length} off centre or moved`);
+  },
+  // The narrator: needs recordings (voice.mjs, or voice.mjs --mock for stand-ins). Plays a stage's card and prints how
+  // loud the voice is against the music, and how far each word's arrival on the picture was from the moment the
+  // recording reaches it. STAGE=6 goes on to the ending. On stage 1 it then checks what happens when the voice cannot
+  // carry the story: Begin pressed mid-line, a stopped sound clock, the sound off, and recordings that fail or never
+  // arrive. With no recordings it reports that the game asked for none.
+  async narrate() {
+    const init = () => {
+      window.__marks = []; window.__psMark = (line, word, now, at) => window.__marks.push([line, word, now, at, performance.now()]);
+      // two taps, found by how audio.js wires its nodes: the music bus (the gain that feeds the 18 kHz low-pass) and
+      // the voice bus (the gain of 1 that feeds the master gain). __mix compares them while a line is being spoken.
+      const connect = AudioNode.prototype.connect, T = {}, tap = ac => { const a = ac.createAnalyser(); a.fftSize = 8192; a.smoothingTimeConstant = 0; return a; };
+      AudioNode.prototype.connect = function (dest, ...rest) {
+        if (this instanceof GainNode && dest instanceof DynamicsCompressorNode) T.master = this;
+        if (this instanceof GainNode && dest instanceof BiquadFilterNode && dest.type === 'lowpass' && Math.abs(dest.frequency.value - 18000) < 1 && !T.music) { T.music = tap(this.context); connect.call(this, T.music); }
+        if (this instanceof GainNode && dest === T.master && Math.abs(this.gain.value - 1) < 1e-6 && !T.voice) { T.voice = tap(this.context); connect.call(this, T.voice); }
+        return connect.call(this, dest, ...rest);
+      };
+      window.__mix = async secs => {
+        const { music, voice } = T; if (!music || !voice) return null;
+        const hz = music.context.sampleRate / music.fftSize, fm = new Float32Array(music.frequencyBinCount), fv = new Float32Array(voice.frequencyBinCount), tm = new Float32Array(music.fftSize), tv = new Float32Array(voice.fftSize);
+        const band = f => { let p = 0; for (let k = Math.ceil(300 / hz); k < 3400 / hz; k++) p += Math.pow(10, f[k] / 10); return p; }, power = t => { let x = 0; for (const v of t) x += v * v; return x / t.length; };
+        let bm = 0, bv = 0, am = 0, av = 0, n = 0; const t0 = performance.now();
+        while (performance.now() - t0 < secs * 1000) {
+          voice.getFloatTimeDomainData(tv);
+          if (power(tv) > 1e-6) { music.getFloatFrequencyData(fm); voice.getFloatFrequencyData(fv); music.getFloatTimeDomainData(tm); bm += band(fm); bv += band(fv); am += power(tm); av += power(tv); n++; }
+          await new Promise(r => setTimeout(r, 110));
+        }
+        const db = (a, b) => +(10 * Math.log10((a + 1e-15) / (b + 1e-15))).toFixed(1);
+        return n ? { n, band: db(bv, bm), all: db(av, am) } : null;
+      };
+    };
+    await page.addInitScript(init);
+    const asked = []; page.on('request', r => { if (r.url().includes('/psycho-syber/voice/')) asked.push(r.url()); });
+    await page.goto(`${BASE}/psycho-syber/?stage=${process.env.STAGE || 1}`, { waitUntil: 'load' });
+    const info = await page.evaluate(() => ({ n: Object.keys(window.__ps.VOICE).length, id: window.__ps.g.L.def.id, lines: window.__ps.g.L.def.intro.length }));
+    if (!info.n) { await wait(2500); console.log(`no recordings: the story is shown without a voice · ${await page.evaluate(() => window.__marks.length)} words shown · ${asked.length} recordings asked for`); return; }
+    await page.waitForFunction(() => window.__ps.told, null, { timeout: 8000 }).catch(() => {});
+    const mix = await page.evaluate(() => window.__mix(5));
+    console.log(mix ? `while a line is spoken the voice is ${mix.band} dB over the music between 300 Hz and 3.4 kHz, and ${mix.all} dB over it in all (${mix.n} samples)` : 'the voice and the music could not be told apart: has audio.js changed how it wires them?');
+    await page.waitForFunction(() => document.getElementById('ps-rsvp').hidden && window.__marks.length > 3, null, { timeout: 90000 });
+    const marks = await page.evaluate(() => window.__marks), voice = await page.evaluate(id => Object.entries(window.__ps.VOICE).filter(([k]) => k.startsWith(id + '.')).map(([, v]) => v.words), info.id);
+    let worst = 0, sum = 0, total = 0; const spoken = new Set();
+    for (const [line, word, now, at] of marks) { if (at === null) continue; spoken.add(line); const late = (now - at - voice[line][word][0]) * 1000; worst = Math.max(worst, Math.abs(late)); sum += late; total++; }
+    console.log(`${info.id}: ${spoken.size} of ${info.lines} lines spoken · ${total} of ${voice.flat().length} words shown with the voice · on average ${(sum / Math.max(1, total)).toFixed(0)} ms after the voice reached them · the furthest ${worst.toFixed(0)} ms`);
+    const say = (ok, text) => console.log(`${ok ? 'ok ' : 'BAD'} ${text}`);
+    if (info.id === 'real') {   // the last stage: let the verdict fall and time the four lines of the ending the same way
+      await page.evaluate(() => { window.__marks.length = 0; window.__ps.play(); const g = window.__ps.g; g.realT = 39.2; g.p.inv = 9; });
+      await page.waitForFunction(() => window.__ps.state === 'end', null, { timeout: 90000 });
+      const m = (await page.evaluate(() => window.__marks)).filter(x => String(x[0]).startsWith('end.')), ends = await page.evaluate(() => Object.entries(window.__ps.VOICE).filter(([k]) => k.startsWith('end.')).map(([, v]) => v.words));
+      let w2 = 0, n2 = 0; for (const [line, word, now, at] of m) { if (at === null) continue; n2++; w2 = Math.max(w2, Math.abs((now - at - ends[+line.slice(4)][word][0]) * 1000)); }
+      say(n2 === ends.flat().length && w2 < 120, `the ending: ${n2} of ${ends.flat().length} words shown with the voice · the furthest ${w2.toFixed(0)} ms · the tab's title is back to "${await page.title()}"`);
+      return;
+    }
+    if (process.env.STAGE && process.env.STAGE !== '1') return;
+    const again = async i => { await page.evaluate(i => { window.__marks.length = 0; window.__ps.begin(i); }, i); await page.waitForFunction(() => window.__ps.told, null, { timeout: 8000 }); await wait(600); };
+    const count = () => page.evaluate(() => window.__marks.length);
+    // Begin pressed while a line is being spoken
+    await again(0);
+    const cut = await page.evaluate(() => { window.__ps.play(); return { told: !!window.__ps.told, hidden: document.getElementById('ps-rsvp').hidden, state: window.__ps.state }; });
+    say(!cut.told && cut.hidden && cut.state === 'play', `Begin cuts the line off and play starts (voice ${cut.told ? 'still on' : 'stopped'}, story ${cut.hidden ? 'hidden' : 'showing'})`);
+    // the sound clock stops while the page is in view: the voice is dropped and the story goes on
+    await again(0);
+    await page.evaluate(() => window.__ps.audio.suspend()); await wait(2800);
+    const st = await page.evaluate(() => ({ told: !!window.__ps.told, silent: window.__marks.filter(m => m[3] === null).length }));
+    await page.evaluate(() => window.__ps.audio.resume());
+    const ended = await page.waitForFunction(() => document.getElementById('ps-rsvp').hidden, null, { timeout: 60000 }).then(() => true, () => false);
+    say(!st.told && st.silent > 0 && ended, `a stopped sound clock in view: the voice is dropped, ${st.silent} words went on without it, and the story ${ended ? 'reached its end' : 'HUNG'}`);
+    // the clock stops because the tab is hidden: the words wait, and go on with the voice when it comes back
+    await again(0);
+    await page.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, get: () => true }); window.__ps.audio.suspend(); });
+    await wait(300); const n0 = await count(); await wait(2600); const n1 = await count(), kept = await page.evaluate(() => !!window.__ps.told);
+    await page.evaluate(() => { delete document.hidden; window.__ps.audio.resume(); }); await wait(1800);
+    const after = await page.evaluate(() => ({ n: window.__marks.length, all: window.__marks.every(m => m[3] !== null) }));
+    say(n1 === n0 && kept && after.n > n1 && after.all, `a hidden tab: ${n1 - n0} words shown while hidden, the voice kept, ${after.n - n1} more words with the voice after it came back`);
+    // the sound off: no voice, and no recording asked for
+    const before = asked.length;
+    await page.evaluate(() => { window.__ps.audio.mute(true); window.__marks.length = 0; window.__ps.begin(1); }); await wait(2600);
+    const mu = await page.evaluate(() => ({ n: window.__marks.length, voiced: window.__marks.filter(m => m[3] !== null).length }));
+    await page.evaluate(() => { window.__ps.audio.mute(false); window.__ps.play(); });
+    say(mu.n > 0 && !mu.voiced && asked.length === before, `sound off: ${mu.n} words shown without the voice, ${asked.length - before} recordings asked for`);
+    // recordings that fail, and recordings that never arrive
+    for (const [name, handler, test] of [
+      ['recordings that fail', r => r.abort(), m => m.length > 3 && m.every(x => x[3] === null) && m[0][4] < 900],
+      ['recordings that never arrive', () => {}, m => { const second = m.find(x => x[0] === 1), last0 = m.filter(x => x[0] === 0).pop(); return m.length > 3 && m.every(x => x[3] === null) && m[0][4] > 1300 && second && second[4] - last0[4] < 1300; }],
+    ]) {
+      const p2 = await ctx.newPage(); await p2.addInitScript(init); await p2.route('**/psycho-syber/voice/**', handler);
+      await p2.goto(`${BASE}/psycho-syber/?stage=1`, { waitUntil: 'load' });
+      await p2.waitForFunction(() => window.__marks.some(m => m[0] === 1), null, { timeout: 30000 }).catch(() => {});
+      const m = await p2.evaluate(() => { const t0 = performance.timeOrigin; return window.__marks.map(x => [x[0], x[1], x[2], x[3], x[4]]); });
+      say(test(m), `${name}: the story is shown without the voice · first word ${m.length ? Math.round(m[0][4]) : '?'} ms after the page opened · ${m.length} words by the second line`);
+      await p2.close();
+    }
   },
   // The title once stages are finished: a button for each stage reached, with its Atlas marks. SIZE=390x844 for a phone.
   async pick() {

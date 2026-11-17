@@ -1,7 +1,9 @@
 // node psycho-syber/test/run.mjs [stage id] [--log]
 // Builds every stage (which checks the maps) and plays each scripted run to the exit.
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { STAGES, ATLAS, SHIP } from '../game/levels.js';
+import { VOICE } from '../game/voice.js';
+import { LINES, ABOUT, said } from './voice.mjs';
 import { newGame, step, T } from '../game/sim.js';
 import { play } from './bot.mjs';
 import { SCRIPTS } from './scripts.mjs';
@@ -9,7 +11,7 @@ const [only, route] = process.argv[2] && !process.argv[2].startsWith('--') ? pro
 let failed = 0;
 { // every import between game modules, and the page's own two links, carry one and the same ?v= token:
   // without it a returning browser pairs a new file with an old one it still has cached
-  const dir = new URL('../game/', import.meta.url), names = ['main.js', 'sim.js', 'levels.js', 'render.js', 'post.js', 'audio.js', 'font.js'];
+  const dir = new URL('../game/', import.meta.url), names = ['main.js', 'sim.js', 'levels.js', 'render.js', 'post.js', 'audio.js', 'font.js', 'voice.js'];
   const tokens = new Set(), bare = [];
   for (const n of names) for (const m of readFileSync(new URL(n, dir), 'utf8').matchAll(/from '\.\/[a-z]+\.js(\?v=([0-9a-z]+))?'/g)) m[2] ? tokens.add(m[2]) : bare.push(n);
   for (const m of readFileSync(new URL('../index.html', import.meta.url), 'utf8').matchAll(/(?:psycho-syber\.css|game\/main\.js)\?v=([0-9a-z]+)/g)) tokens.add(m[1]);
@@ -21,6 +23,26 @@ let failed = 0;
   const real = [...src.matchAll(/\bid: "([^"]+)", slug: "[^"]+", name: "([^"]+)"/g)].map(m => m[1] + '|' + m[2]), mine = ATLAS.map(a => a.id + '|' + a.name);
   if (real.length !== 21 || real.join('\n') !== mine.join('\n')) { failed++; console.log('FAIL: ATLAS in levels.js differs from src/lacuna/atlas/sites.js\n  ' + real.filter(r => !mine.includes(r)).concat(mine.filter(r => !real.includes(r))).join('\n  ')); }
   else console.log(`atlas: ${mine.length} sites match src/lacuna/atlas/sites.js`);
+}
+{ // The narrator. Every recording speaks the words its line has now, a stage is narrated whole or not at all, no
+  // stray file is published, and the page says the voice is synthetic exactly while there are recordings.
+  const dir = new URL('../voice/', import.meta.url), html = readFileSync(new URL('../index.html', import.meta.url), 'utf8'), bad = [];
+  const byId = new Map(LINES.map(l => [l.id, l])), files = existsSync(dir) ? readdirSync(dir) : [], used = new Set();
+  for (const [id, e] of Object.entries(VOICE)) {
+    const l = byId.get(id), file = String(e.src).split('?')[0]; used.add(file);
+    if (!l) { bad.push(`${id}: a recording for a line that is not in the story`); continue; }
+    if (e.said !== said(l.text) || e.words.length !== l.text.split(' ').length) bad.push(`${id}: the line has changed since it was recorded`);
+    if (!files.includes(file)) bad.push(`${id}: ${file} is missing from psycho-syber/voice/`);
+    if (e.words.some(([a, b], i) => !(a >= 0 && b > a) || (i && a < e.words[i - 1][0]))) bad.push(`${id}: its word times are out of order`);
+  }
+  for (const key of new Set(LINES.map(l => l.key))) { const all = LINES.filter(l => l.key === key), n = all.filter(l => VOICE[l.id]).length; if (n && n < all.length) bad.push(`${key}: ${n} of ${all.length} lines have a recording`); }
+  for (const f of files) if (!used.has(f)) bad.push(`${f}: a file in psycho-syber/voice/ that no line uses`);
+  const n = Object.keys(VOICE).length, told = html.includes(ABOUT);
+  if (!html.includes('<!-- narrator: written by psycho-syber/test/voice.mjs -->') || !html.includes('<!-- /narrator -->')) bad.push('the page has lost its narrator markers');
+  if (n && !told) bad.push('there are recordings and the page does not say the voice is synthetic');
+  if (!n && /<h3[^>]*>Narrator<\/h3>/.test(html)) bad.push('the page describes a narrator and there are no recordings');
+  if (bad.length) { failed++; console.log('FAIL: the narrator (run psycho-syber/test/voice.mjs to put it right)\n  ' + bad.join('\n  ')); }
+  else console.log(n ? `narrator: ${n} of ${LINES.length} lines have a recording, and the page says the voice is synthetic` : 'narrator: no recordings, and the page describes no voice');
 }
 for (const def of STAGES) {
   if (only && def.id !== only) continue;

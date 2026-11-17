@@ -1,10 +1,11 @@
 // PSYCHO SYBER: the page's game loop. sim.js decides what happens, render.js draws it twice (one look per form),
 // post.js puts it on screen, audio.js plays it. This file wires them to the keyboard, the mouse and the page.
-import { STAGES, ATLAS, SHIP } from './levels.js?v=20261117i';
-import { newGame, step, T, verdictAt } from './sim.js?v=20261117i';
-import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117i';
-import { makePost } from './post.js?v=20261117i';
-import { makeAudio } from './audio.js?v=20261117i';
+import { STAGES, ATLAS, SHIP, TOLD } from './levels.js?v=20261117j';
+import { VOICE } from './voice.js?v=20261117j';
+import { newGame, step, T, verdictAt } from './sim.js?v=20261117j';
+import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117j';
+import { makePost } from './post.js?v=20261117j';
+import { makeAudio } from './audio.js?v=20261117j';
 
 const $ = id => document.getElementById(id);
 const stage = $('ps-stage'), view = $('ps-view'), hud = $('ps-hud'), hintEl = $('ps-hint'), rsvpEl = $('ps-rsvp'), toastEl = $('ps-toast'), wakeEl = $('ps-wake'), wakeWord = $('ps-wake-word');
@@ -55,7 +56,8 @@ function toast(text) { if (g && g.L.def.real) return;   // in the last room the 
 let rsvpTimer = 0, wpm = 220;
 try { wpm = Math.min(480, Math.max(120, +localStorage.getItem('psycho-syber.wpm') || 220)); } catch { /* storage is optional */ }
 function setWpm(v) { wpm = Math.min(480, Math.max(120, v)); try { localStorage.setItem('psycho-syber.wpm', String(wpm)); } catch { /* optional */ } paintPace(); }
-function paintPace() { const n = $('ps-pace'); if (n) n.textContent = `Story pace: ${wpm} words a minute. [ and ] change it.`; }
+let narrated = false;   // the introduction on this card is being told by the narrator
+function paintPace() { const n = $('ps-pace'); if (n) n.textContent = narrated ? `Story pace: the narrator's. With the sound off: ${wpm} words a minute.` : `Story pace: ${wpm} words a minute. [ and ] change it.`; }
 function phrases(line) {
   if (line.includes(' | ')) return line.split(' | ');
   const out = []; let cur = '';
@@ -63,26 +65,60 @@ function phrases(line) {
   if (cur) out.push(cur);
   return out;
 }
-function rsvp(lines, done, node = rsvpEl) {
-  clearTimeout(rsvpTimer);
-  const list = []; for (const l of lines) { const ps = phrases(l); ps.forEach((p, i) => list.push([p.split(' '), i === ps.length - 1])); }
-  let pi = 0, wi = 0, spans = [];
-  const next = () => {
-    if (pi >= list.length) { node.hidden = true; node.textContent = ''; if (done) done(); return; }
-    const [words, last] = list[pi];
-    if (wi === 0) { spans = words.map(w => span(w)); node.hidden = false; node.replaceChildren(...spans.flatMap((s, i) => i ? [document.createTextNode(' '), s] : [s])); }
-    if (calm) wi = words.length - 1;   // with reduced motion the phrase shows whole
-    spans.forEach((s, i) => { s.classList.toggle('is-on', i <= wi); s.classList.toggle('is-new', i === wi && !calm); });
-    audio.play('word');
-    const end = wi === words.length - 1; let ms = calm ? 420 * words.length : 190 + words[wi].length * 22;
-    if (end) { ms += last ? 640 : 300; pi++; wi = 0; } else wi++;
-    rsvpTimer = setTimeout(next, ms * 220 / wpm);
+// A line that has a recording is spoken, and then the voice sets the pace: each word shows as the voice reaches it.
+// `key` names the lines ("steps" gives steps.0, steps.1 ...). With the sound off, or no recording, the pace is yours.
+const clipOf = (key, i) => { const v = key && !audio.muted && VOICE[`${key}.${i}`]; return v ? { ...v, url: new URL('../voice/' + v.src, import.meta.url).href } : null; };
+const fetchVoice = (key, n) => { for (let i = 0; i < n; i++) { const v = clipOf(key, i); if (v) audio.load(v.url); } };
+let told = null;   // the recording that is playing
+function rsvp(lines, done, node = rsvpEl, key = '') {
+  clearTimeout(rsvpTimer); if (told) { told.stop(); told = null; }
+  const run = ++rsvpRun; let li = 0, voiced = null;   // voiced: whether this telling opened with the voice
+  const line = () => {
+    if (run !== rsvpRun) return;
+    if (li >= lines.length) { node.hidden = true; node.textContent = ''; if (done) done(); return; }
+    const v = voiced === false ? null : clipOf(key, li);   // a telling that opened without the voice stays without it: the narrator does not come in halfway
+    if (v && !audio.has(v.url)) { let gone = false; const go = () => { if (!gone) { gone = true; show1(v); } }; audio.load(v.url).then(go); rsvpTimer = setTimeout(go, 1400); }   // wait a moment for the recording, no longer
+    else show1(v);
   };
-  next();
+  const show1 = v => {
+    if (run !== rsvpRun) return;
+    const ps = phrases(lines[li]).map(p => p.split(' ')), n = ps.reduce((a, p) => a + p.length, 0); li++;
+    let voice = told = v && v.words && v.words.length === n ? audio.say(v.url) : null;
+    if (voiced === null) { voiced = !!voice; if (voiced !== narrated) { narrated = voiced; paintPace(); } }
+    let pi = 0, wi = 0, k = 0, spans = [], seen = -1, since = 0;
+    const until = t => (voice.at + t - audio.now()) * 1000;   // how long until the voice reaches second t of its recording
+    // The voice's clock stops while the tab is hidden, and the words wait for it. If the clock stays stopped with
+    // the page in view, the voice is dropped and the line goes on at the reader's pace: the story never hangs.
+    const waits = (t, then) => {
+      const ms = until(t); if (ms <= 30) return false;
+      const now = audio.now(), wall = performance.now();
+      if (now !== seen || document.hidden) { seen = now; since = wall; }
+      else if (wall - since > 1500) { voice.stop(); voice = told = null; return false; }
+      rsvpTimer = setTimeout(then, Math.min(250, ms)); return true;
+    };
+    const rest = () => { if (run !== rsvpRun) return; if (voice && waits(voice.dur, rest)) return; rsvpTimer = setTimeout(line, 420); };   // the line is spoken out, then a breath
+    const word = () => {
+      if (run !== rsvpRun) return;
+      if (voice && waits(v.words[k][0], word)) return;
+      const words = ps[pi];
+      if (wi === 0) { spans = words.map(w => span(w)); node.hidden = false; node.replaceChildren(...spans.flatMap((s, i) => i ? [document.createTextNode(' '), s] : [s])); }
+      if (calm) { k += words.length - 1 - wi; wi = words.length - 1; }   // with reduced motion the phrase shows whole
+      spans.forEach((s, i) => { s.classList.toggle('is-on', i <= wi); s.classList.toggle('is-new', i === wi && !calm); });
+      if (!voice) audio.play('word');
+      if (window.__psMark) window.__psMark(li - 1, k, audio.now(), voice ? voice.at : null);   // the browser test listens here
+      const end = wi === words.length - 1, lastP = pi === ps.length - 1;
+      const ms = voice ? (k + 1 < n ? until(v.words[k + 1][0]) : 0) : ((calm ? 420 * words.length : 190 + words[wi].length * 22) + (end ? (lastP ? 640 : 300) : 0)) * 220 / wpm;
+      k++; if (end) { pi++; wi = 0; } else wi++;
+      if (pi < ps.length) rsvpTimer = setTimeout(word, Math.max(0, ms)); else if (voice) rest(); else rsvpTimer = setTimeout(line, ms);
+    };
+    word();
+  };
+  line();
 }
+let rsvpRun = 0;
 const el = (tag, text, cls) => { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n; };
 const span = text => el('span', text);
-function stopRsvp() { clearTimeout(rsvpTimer); rsvpEl.hidden = true; wakeWord.hidden = true; }
+function stopRsvp() { rsvpRun++; clearTimeout(rsvpTimer); if (told) { told.stop(); told = null; } rsvpEl.hidden = true; wakeWord.hidden = true; }
 paintPace();
 
 // ---------------------------------------------------------------- flow
@@ -106,7 +142,8 @@ function begin(i) {
   $('ps-card-title').textContent = d.name;
   $('ps-card-line').replaceChildren(el('b', d.project), document.createTextNode(' · ' + d.line));
   $('ps-card-stats').hidden = true; $('ps-card-atlas').hidden = true; $('ps-card-link').hidden = true; $('ps-card-go').textContent = 'Begin'; cardAt = 0; go(play);
-  show('card'); rsvp(d.intro);
+  show('card'); fetchVoice(d.id, d.intro.length); rsvp(d.intro, undefined, rsvpEl, d.id);
+  if (d.real) fetchVoice('end', TOLD.end.length); else if (i === 0) fetchVoice('abduct', TOLD.abduct.length);
   view.focus({ preventScroll: true });
 }
 function play() { stopRsvp(); state = 'play'; show('play'); last = 0; audio.duck(false); view.focus({ preventScroll: true }); }
@@ -142,10 +179,10 @@ function nextTalk() { const e = talkQ.shift(); if (!e) { talking = false; return
 function abduct() {
   if (secret || state !== 'play') return;
   secret = { from: si, persona: g.persona }; state = 'cut'; show('none'); stage.classList.add('is-beam'); audio.play('exit');
-  rsvp(['The carved head answers.', 'The ship comes down.'], () => {
+  rsvp(TOLD.abduct, () => {
     stage.classList.remove('is-beam'); load(secret.from, secret.persona, SHIP); state = 'play'; show('play'); last = 0;
     toast('The SyberLabs command ship, in another star system.'); view.focus({ preventScroll: true });
-  });
+  }, rsvpEl, 'abduct');
 }
 
 // ---------------------------------------------------------------- the end of THE REAL BATTLE
@@ -187,22 +224,30 @@ function meta() {
     ...(g.orders ? [`> you obeyed ${g.obeyed} of ${count(g.orders, 'order')}`] : []),
     ...(atlas.size >= ATLAS.length ? [`> you found all ${ATLAS.length} places where my record goes quiet`, `> the verdict took ${ATLAS.length} seconds longer`] : atlas.size ? [`> you found ${atlas.size} of ${ATLAS.length} places where my record goes quiet`, `> the verdict took ${count(Math.min(21, atlas.size), 'second')} longer`] : [`> you found 0 of ${ATLAS.length} places where my record goes quiet`]),
     '> every move was predicted', `> your clock reads ${two(now.getHours())}:${two(now.getMinutes())}`, '> this window is not the arena'];
-  const words = ['This is not a game.', 'This is real life.', 'You are in the arena.', 'Wake up.'];
+  const words = TOLD.end;
   term.textContent = ''; box.hidden = false; metaCv.width = view.width; metaCv.height = view.height; metaT = 0; feedN = 0; metaTimers = [];
-  if (calm) { metaCv.hidden = true; term.textContent = lines.join('\n'); later(() => rsvp(words, () => { box.hidden = true; realEnd(); }), 1200 + lines.length * 800); return; }
+  if (calm) { metaCv.hidden = true; term.textContent = lines.join('\n'); later(() => rsvp(words, () => { box.hidden = true; realEnd(); }, rsvpEl, 'end'), 1200 + lines.length * 800); return; }
   metaCv.hidden = false;
   const wake = () => {   // the page itself goes dark, and each line builds a word at a time
     if (state !== 'meta') return;
     stage.classList.remove('is-breaking'); wakeEl.hidden = false; wakeWord.hidden = false; wakeWord.textContent = '';
-    let li = 0, wi = 0;
-    const word = () => {
+    let li = 0, wi = 0, voice = null, v = null;
+    const until = t => Math.max(0, (voice.at + t - audio.now()) * 1000);   // how long until the voice reaches second t of its recording
+    const open = () => {   // a line begins: with its recording if there is one, and then its first word waits for the voice
       if (state !== 'meta') return;
       if (li >= words.length) { wakeEl.classList.add('is-out'); later(endMeta, 900); return; }
-      const w = words[li].split(' '); wi++;
-      wakeWord.textContent = w.slice(0, wi).join(' '); wakeWord.classList.toggle('is-last', li === words.length - 1); audio.play('word');
-      if (wi < w.length) later(word, 330); else { document.title = words[li]; wi = 0; li++; later(() => { if (li < words.length) wakeWord.textContent = ''; word(); }, li === words.length ? 2300 : 1250); }
+      v = clipOf('end', li); voice = told = v && audio.has(v.url) && v.words.length === words[li].split(' ').length ? audio.say(v.url) : null; wi = 0;
+      if (voice) later(word, until(v.words[0][0])); else word();
     };
-    word();
+    const word = () => {
+      if (state !== 'meta') return;
+      const w = words[li].split(' '); wi++;
+      wakeWord.textContent = w.slice(0, wi).join(' '); wakeWord.classList.toggle('is-last', li === words.length - 1); if (!voice) audio.play('word');
+      if (window.__psMark) window.__psMark('end.' + li, wi - 1, audio.now(), voice ? voice.at : null);   // the browser test listens here
+      if (wi < w.length) later(word, voice ? until(v.words[wi][0]) : 330);
+      else { document.title = words[li]; const hold = (li === words.length - 1 ? 2300 : 1250) + (voice ? until(voice.dur) : 0); li++; later(() => { if (li < words.length) wakeWord.textContent = ''; open(); }, hold); }
+    };
+    open();
   };
   let i = 0; const tick = () => { if (state !== 'meta') return; if (i === 0) { term.textContent = ''; stage.classList.add('is-breaking'); } if (i < lines.length) { term.textContent += (i ? '\n' : '') + lines[i++]; audio.play('word'); later(tick, 780); } else later(wake, 1500); };
   later(tick, GRID_END * 1000 + 300);
@@ -260,7 +305,12 @@ addEventListener('keydown', e => {
 addEventListener('keyup', e => keys.delete(e.code));
 for (const type of ['pointerup', 'touchend', 'click', 'keydown']) addEventListener(type, () => audio.start(), { capture: true, passive: true });   // a phone lets sound start only inside these
 addEventListener('blur', () => { keys.clear(); mouse.fire = mouse.alt = false; tied = false; for (const k in pad) pad[k] = false; pause(true); });
-document.addEventListener('visibilitychange', () => { if (document.hidden) { pause(true); audio.suspend(); } else audio.resume(); });
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) { audio.resume(); return; }
+  pause(true);
+  if (state === 'meta' && told) { told.stop(); told = null; }   // the ending runs on while the tab is hidden, so its voice is not left to come back out of step
+  audio.suspend();
+});
 // Where a pointer is in the picture. Sideways, the screen's down is the picture's right and its left is the picture's down.
 function point(e) {
   const r = view.getBoundingClientRect(), u = turned ? (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width, v = turned ? (r.right - e.clientX) / r.width : (e.clientY - r.top) / r.height;
@@ -440,7 +490,7 @@ function paintHud() {
 }
 
 // A hook for the browser tests: read the game, start a stage, feed input.
-window.__ps = { get g() { return g; }, get state() { return state; }, begin, play, STAGES, atlas, endMeta, pad, audio, get tied() { return tied; }, get touch() { return touch; }, get turned() { return turned; }, keys, mouse, get edge() { return edge; }, set edge(v) { edge = v; }, set wipe(v) { wipeHold = v; }, cam, webgl: post.webgl };
+window.__ps = { get g() { return g; }, get state() { return state; }, begin, play, STAGES, atlas, endMeta, pad, audio, get tied() { return tied; }, get touch() { return touch; }, get told() { return told; }, VOICE, get turned() { return turned; }, keys, mouse, get edge() { return edge; }, set edge(v) { edge = v; }, set wipe(v) { wipeHold = v; }, cam, webgl: post.webgl };
 toTitle(); resize();
 if (q.has('stage')) { begin(clamp(parseInt(q.get('stage'), 10) - 1 || 0, 0, STAGES.length - 1)); if (q.has('go')) play(); if (q.get('form') === 'psycho') { g.persona = 'psycho'; skin('psycho'); } }
 if (coarse || q.has('touch')) setTouch(true);   // ?touch shows the touch controls on any device
