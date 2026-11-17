@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CONTACT, CONSULT, EMAIL, GITHUB, projects } from '../projects/site-data.js';
+import { CONTACT, CONSULT, EMAIL, GITHUB, LACUNA, LACUNA_PARACAS, projects } from '../projects/site-data.js';
 import { header, footer } from '../projects/project-template.js';
 import { drawAll } from '../kit/v2/syber-sigil.js';
 import { boot } from './site/site.js';
@@ -8,18 +8,20 @@ import { HERO_MEDIA, REVEAL } from './hero-media.js';
 import { mount as mountFactory } from './visuals/factory.js';
 import { mount as mountField } from './visuals/phase.js';
 import { mount as mountForms, sigil as drawForm } from './visuals/elan.js';
+import { mount as mountAtlas, coords, first as FIRST_SITE, sites as ATLAS_SITES } from './visuals/atlas.js';
 import { initHomeMotion } from './home-motion.js';
 import '../kit/v2/syber-atlas.css';
 import './syberlabs.css';
 import './home.css';
 import './home-sections.css';
 
-// The homepage is mostly visual. Under the Gyre and the wordmark it has three sections, named for the three things
-// SyberLabs is: Factory (the software that checks AI's work), Studio (creative software and generative pieces) and
-// Liminal (research visuals). Each product is described once, by its headline in projects/site-data.js.
+// The homepage is mostly visual. Under the Gyre and the wordmark it has four sections, named for the four things
+// SyberLabs is: Factory (the software that checks AI's work), Studio (creative software and generative pieces),
+// Lacuna (Lacuna Institute, its research institute) and Liminal (research visuals). Each product is described once,
+// by its headline in projects/site-data.js.
 // Book a consultation stays in the header and closes the page. No individual is named: the site speaks for the company.
-// Wording: the three section names and the one-word labels on the three canvas visuals (Proof, Resonance, Emergence)
-// are names (CLAUDE.md, "Homepage"). Every other line states a fact a reader can check or act on.
+// Wording: the four section names and the one-word labels on the four canvas visuals (Proof, Atlas, Resonance,
+// Emergence) are names (CLAUDE.md, "Homepage"). Every other line states a fact a reader can check or act on.
 
 const bySlug = slug => projects.find(p => p.slug === slug);
 const FACTORY_PRODUCTS = ['syberwork', 'attest'].map(bySlug);
@@ -33,6 +35,30 @@ const PIECES = [
   ['kaleidos', 'Kaleidos', 'One attractor, folded 6 to 16 times.'],
   ['murmuration', 'Murmuration', 'Up to 20,000 birds, one flock.'],
 ];
+// Lacuna Institute's two published works. The counts are the pages' own: the Atlas lists its sites in
+// src/lacuna/atlas/sites.js, and the dataset page counts 13 bundles.
+const LACUNA_ROWS = [
+  { href: LACUNA, name: 'Lacuna Atlas', line: `A globe of ${ATLAS_SITES.length} places where the historical record has a gap. Each has its sources and one open question.`, status: 'Live', live: true },
+  { href: LACUNA_PARACAS, name: 'Paracas bundles', line: 'A census of the 13 Paracas mummy bundles recorded leaving Peru. Every claim carries a grade beside its source.', status: 'Dataset · version 1.0' },
+];
+// Lacuna Institute's own mark: a ring with a gap.
+const LacunaMark = () => <svg viewBox="0 0 40 40" aria-hidden="true">
+  <circle cx="20" cy="20" r="15.5" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="81 16.4" opacity=".85" />
+  <circle cx="20" cy="20" r="9" fill="none" stroke="currentColor" strokeWidth=".6" opacity=".35" />
+  <circle cx="20" cy="20" r="2.2" fill="#fc734d" />
+</svg>;
+function LacunaRows() {
+  return <ol className="hv-rows" role="list">
+    {LACUNA_ROWS.map(r => <li key={r.href}>
+      <a href={r.href}>
+        <LacunaMark />
+        <span className="hv-rows__name">{r.name}</span>
+        <span className="hv-rows__line">{r.line}</span>
+        <span className={`hv-rows__status hv-mono${r.live ? ' is-live' : ''}`}><i aria-hidden="true" />{r.status}</span>
+      </a>
+    </li>)}
+  </ol>;
+}
 function ProductRows({ items }) {
   return <ol className="hv-rows" role="list">
     {items.map(p => <li key={p.slug}>
@@ -72,12 +98,19 @@ export default function App() {
   };
   useEffect(() => { const sigils = drawAll(document); boot(document); return () => sigils.disconnect(); }, []);
 
-  // The three canvas visuals write their readouts straight into these nodes, so a frame never re-renders the page.
+  // The canvas visuals write their readouts straight into these nodes, so a frame never re-renders the page.
   const main = useRef(null), factoryCanvas = useRef(null), fieldCanvas = useRef(null), formsCanvas = useRef(null);
+  const atlasCanvas = useRef(null), atlasGlobe = useRef(null), atlasSite = useRef(null), atlasCoords = useRef(null);
   const fieldCount = useRef(null), fieldState = useRef(null), fieldValue = useRef(null);
   const formsRule = useRef(null), formsState = useRef(null), formsStep = useRef(null);
   useEffect(() => {
     mountFactory(factoryCanvas.current);
+    // The globe names each site in turn; the caption and both links follow it, so a press opens the site named.
+    mountAtlas(atlasCanvas.current, { onSite: s => {
+      atlasSite.current.textContent = s.name; atlasSite.current.href = `${LACUNA}#${s.id}`;
+      atlasCoords.current.textContent = coords(s.lat, s.lon);
+      atlasGlobe.current.href = `${LACUNA}#${s.id}`; atlasGlobe.current.setAttribute('aria-label', `Open ${s.name} on the Lacuna Atlas`);
+    } });
     const field = mountField(fieldCanvas.current, {
       onCount: n => { fieldCount.current.textContent = n.toLocaleString('en-US'); },
       onState: s => { fieldState.current.textContent = s; },
@@ -108,7 +141,7 @@ export default function App() {
             <span className="pitch-hero__brand" data-text="SyberLabs">SyberLabs</span>
           </h1>
           <ul className="hv-triad" aria-label="Sections of this page">
-            <li><a href="#factory">Factory</a></li><li><a href="#studio">Studio</a></li><li><a href="#liminal">Liminal</a></li>
+            <li><a href="#factory">Factory</a></li><li><a href="#studio">Studio</a></li><li><a href="#lacuna">Lacuna</a></li><li><a href="#liminal">Liminal</a></li>
           </ul>
         </div>
       </section>
@@ -144,10 +177,24 @@ export default function App() {
         </div>
       </section>
 
+      <section id="lacuna" className="hv-stratum hv-stratum--atlas" aria-labelledby="lacuna-title">
+        <canvas ref={atlasCanvas} role="img" aria-label={`The Earth drawn in dots, turning. The ${ATLAS_SITES.length} research sites of the Lacuna Atlas are marked on it and named one at a time.`} />
+        <a ref={atlasGlobe} className="hv-globe" href={`${LACUNA}#${FIRST_SITE.id}`} aria-label={`Open ${FIRST_SITE.name} on the Lacuna Atlas`} />
+        <div className="hv-cap sy-wrap">
+          <p className="hv-mono hv-num">III</p>
+          <h2 id="lacuna-title" aria-label="Lacuna"><a href={LACUNA} aria-label="Lacuna Institute" data-decode>Lacuna</a></h2>
+          <p className="hv-mono"><span className="hv-tag">Atlas</span> / {ATLAS_SITES.length} sites / <a ref={atlasSite} href={`${LACUNA}#${FIRST_SITE.id}`}>{FIRST_SITE.name}</a> / <b ref={atlasCoords}>{coords(FIRST_SITE.lat, FIRST_SITE.lon)}</b> / <a href={LACUNA}>open the atlas</a></p>
+        </div>
+      </section>
+      <div className="hv-block hv-block--tight sy-wrap">
+        <LacunaRows />
+        <p className="hv-partner"><span className="hv-mono">Research institute</span><span><b>Lacuna Institute</b> is part of SyberLabs. It studies places and objects where the historical record has a gap, and publishes what is known, what is missing and its sources.</span></p>
+      </div>
+
       <section id="liminal" className="hv-stratum hv-stratum--field" aria-labelledby="liminal-title">
         <canvas ref={fieldCanvas} role="img" aria-label="A field of coupled oscillators falls into step. The letters of SyberLabs appear as the strokes that stay a quarter turn out of phase." />
         <div className="hv-cap sy-wrap">
-          <p className="hv-mono hv-num">III</p>
+          <p className="hv-mono hv-num">IV</p>
           <h2 id="liminal-title" data-decode aria-label="Liminal">Liminal</h2>
           <p className="hv-mono"><span className="hv-tag">Resonance</span> / <span ref={fieldCount}>0</span> oscillators / <span ref={fieldState}>incoherent</span> / <b ref={fieldValue}>0.00</b></p>
         </div>

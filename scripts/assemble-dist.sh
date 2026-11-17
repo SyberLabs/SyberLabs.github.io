@@ -26,6 +26,9 @@ done
 # src/lacuna/atlas/; this fails the build if that page is stale (regenerate with `python3 src/lacuna/atlas/build.py`)
 python3 src/lacuna/atlas/build.py --check
 cp -r lacuna dist/
+# The homepage's Lacuna visual draws the Atlas's own site list; this fails the build if its data file is stale
+# (regenerate with `node scripts/lacuna-home.mjs`)
+node scripts/lacuna-home.mjs --check
 # "What changed" is staff-only (MasterMind RFC 0002): its source projects/latest.js is deleted, and nothing here removes
 # a re-added copy, so the workflow's `test ! -e dist/projects/latest.js` guard fails the build instead.
 # GitHits dependency snapshots (regenerate with `node scripts/githits-snapshot.mjs`)
