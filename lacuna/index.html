@@ -20,9 +20,11 @@
 <meta name="twitter:description" content="An atlas of places where the historical record goes quiet. Turn back the clock 25,000 years and see the Earth as it was.">
 <meta name="twitter:image" content="https://syberlabs.io/lacuna/share/lacuna.jpg">
 <link rel="canonical" href="https://syberlabs.io/lacuna/">
+<!--email_off-->
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"ResearchOrganization","@id":"https://syberlabs.io/lacuna/#org","name":"Lacuna Institute","url":"https://syberlabs.io/lacuna/","email":"contact@lacunainstitute.org","parentOrganization":{"@type":"Organization","@id":"https://syberlabs.io/#org","name":"SyberLabs","url":"https://syberlabs.io/"}}
 </script>
+<!--/email_off-->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&family=Marcellus&display=swap" rel="stylesheet">
@@ -288,6 +290,7 @@ a:hover{border-bottom-color:var(--ember)}
 </style>
 </head>
 <body>
+<!--email_off-->
 <div id="app">
   <canvas id="stage" role="img" aria-label="Globe showing twenty-one research sites. Use the index to open each one."></canvas>
   <div class="vignette" aria-hidden="true"></div>
@@ -1560,5 +1563,6 @@ const fromHash = SITES.find(s => s.id === h);
 if (fromHash) setTimeout(() => select(fromHash, false), RM ? 0 : 2400);
 })();
 </script>
+<!--/email_off-->
 </body>
 </html>

@@ -52,9 +52,11 @@ HEAD = """<!doctype html>
 <meta name="twitter:description" content="An atlas of places where the historical record goes quiet. Turn back the clock 25,000 years and see the Earth as it was.">
 <meta name="twitter:image" content="https://syberlabs.io/lacuna/share/lacuna.jpg">
 <link rel="canonical" href="https://syberlabs.io/lacuna/">
+<!--email_off-->
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"ResearchOrganization","@id":"https://syberlabs.io/lacuna/#org","name":"Lacuna Institute","url":"https://syberlabs.io/lacuna/","email":"contact@lacunainstitute.org","parentOrganization":{"@type":"Organization","@id":"https://syberlabs.io/#org","name":"SyberLabs","url":"https://syberlabs.io/"}}
 </script>
+<!--/email_off-->
 """
 
 def site():
@@ -64,8 +66,10 @@ def site():
     keep = [l for l in head.split("\n")
             if not l.startswith("<title>") and "claude:viewport" not in l
             and not l.startswith('<meta name="description"')]
-    return (HEAD + "\n".join(keep) + "\n</head>\n<body>\n"
-            + body.strip("\n") + "\n</body>\n</html>\n")
+    # email_off: Cloudflare rewrites email addresses in served HTML unless they sit between these comments
+    # (the site's contact pages do the same), so the address is in the page as written.
+    return (HEAD + "\n".join(keep) + "\n</head>\n<body>\n<!--email_off-->\n"
+            + body.strip("\n") + "\n<!--/email_off-->\n</body>\n</html>\n")
 
 if __name__ == "__main__":
     if "--fragment" in sys.argv:

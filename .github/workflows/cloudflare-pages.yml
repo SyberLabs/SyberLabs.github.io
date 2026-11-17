@@ -157,6 +157,9 @@ jobs:
           test -s dist/lacuna/data/paracas-exported-bundles-v1.0.csv
           grep -Fq 'Part of SyberLabs' dist/lacuna/index.html
           grep -Fq 'Part of SyberLabs' dist/lacuna/research/paracas-bundles/index.html
+          # Lacuna's address stays as written: Cloudflare rewrites email addresses outside these comments.
+          grep -Fq '<!--email_off-->' dist/lacuna/index.html
+          grep -Fq '<!--email_off-->' dist/lacuna/research/paracas-bundles/index.html
           grep -Fq 'href="/lacuna/"' dist/index.html
           # /privacy/ tells visitors the site has no forms: Lacuna's "Get new findings" is an email link.
           if grep -rqi '<form' dist/lacuna --include='*.html'; then echo 'form on a Lacuna page'; exit 1; fi
