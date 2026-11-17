@@ -108,9 +108,13 @@ hints are written for keys, and `TOUCH_WORDS` says the same things for touch.
 
 ## Music
 
-`audio.js` plays two stems in step and crossfades them when the form changes. `SCENES` gives each stage its key,
-pace and layers; `main.js` calls `audio.scene(id)` when a stage loads and `audio.urgency()` in the last stage. The
-tune sits between 300 Hz and 2 kHz because a phone's speaker gives little below that. On an iPhone the page sets
+`audio.js` plays two stems in step and crossfades them when the form changes. The score is slow and modal, by the
+owner's direction that it be dark, ancient and psychedelic and never cheerful: `ROOT` is the note held under each bar
+(a fifth over it, no third), `TUNE` is eight bars in A minor pentatonic with one flattened second. The jaguar's stem
+is a ground that opens and closes like a throat, a heart drum, rattles, a conch horn and the tune on two pipes a few
+cents apart. The weaver's is a still ground, a loom, small high lights and the tune struck on stone. `SCENES` gives
+each stage its pitch, pace and layers; `main.js` calls `audio.scene(id)` when a stage loads and `audio.urgency()` in
+the last stage. Every voice has something between 300 Hz and 2 kHz because a phone's speaker gives little below that. On an iPhone the page sets
 `navigator.audioSession.type` to `playback` while the sound is on, so the ringer switch does not silence it, and
 sound starts only inside `pointerup`, `touchend`, `click` or `keydown`. The level and the spread across four bands
 can be measured in headless Chrome by tapping what reaches the output with an `AnalyserNode`.
