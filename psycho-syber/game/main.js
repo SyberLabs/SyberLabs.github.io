@@ -1,10 +1,10 @@
 // PSYCHO SYBER: the page's game loop. sim.js decides what happens, render.js draws it twice (one look per form),
 // post.js puts it on screen, audio.js plays it. This file wires them to the keyboard, the mouse and the page.
-import { STAGES, ATLAS, SHIP } from './levels.js?v=20261117e';
-import { newGame, step, T } from './sim.js?v=20261117e';
-import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117e';
-import { makePost } from './post.js?v=20261117e';
-import { makeAudio } from './audio.js?v=20261117e';
+import { STAGES, ATLAS, SHIP } from './levels.js?v=20261117f';
+import { newGame, step, T } from './sim.js?v=20261117f';
+import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117f';
+import { makePost } from './post.js?v=20261117f';
+import { makeAudio } from './audio.js?v=20261117f';
 
 const $ = id => document.getElementById(id);
 const stage = $('ps-stage'), view = $('ps-view'), hud = $('ps-hud'), hintEl = $('ps-hint'), rsvpEl = $('ps-rsvp'), toastEl = $('ps-toast'), wakeEl = $('ps-wake'), wakeWord = $('ps-wake-word');
@@ -72,7 +72,19 @@ function stopRsvp() { clearTimeout(rsvpTimer); rsvpEl.hidden = true; wakeWord.hi
 paintPace();
 
 // ---------------------------------------------------------------- flow
-function toTitle() { state = 'title'; load(0); show('title'); const c = store.get(); $('ps-continue').hidden = c < 1; if (c >= 1) $('ps-continue').textContent = `Continue at ${STAGES[c].name}`; }
+// Which Atlas marks each stage holds, for the stage buttons on the title.
+const MARKS = STAGES.map(d => newGame(d).ents.filter(e => e.type === 'mark').map(e => e.id));
+function toTitle() {
+  state = 'title'; load(0); show('title');
+  const c = store.get(), pick = $('ps-pick');
+  $('ps-continue').hidden = c < 1; if (c >= 1) $('ps-continue').textContent = `Continue at ${STAGES[c].name}`;
+  pick.hidden = c < 1;   // once a stage is finished, every stage reached can be started from here
+  if (c >= 1) pick.replaceChildren(...STAGES.map((d, i) => {
+    const li = el('li'), b = el('button', String(i + 1), 'ps-pick__b'), ids = MARKS[i], got = ids.filter(id => atlas.has(id)).length, open = i <= c;
+    b.type = 'button'; b.disabled = !open; b.title = open ? `${d.name}${ids.length ? `: ${got} of ${ids.length} Atlas marks found` : ''}` : 'Not reached yet'; b.setAttribute('aria-label', `Stage ${i + 1}. ${b.title}`);
+    b.onclick = () => begin(i); li.append(b, el('span', ids.length ? `${got}/${ids.length}` : '', 'ps-pick__m')); return li;
+  }));
+}
 function begin(i) {
   audio.start(); load(i); state = 'card';
   const d = STAGES[i];
@@ -159,7 +171,7 @@ function meta() {
   const box = $('ps-meta'), term = $('ps-meta-lines'), now = new Date(), two = n => String(n).padStart(2, '0');
   const lines = ['> run recorded', `> ${count(Math.round(g.time), 'second')}. ${count(g.swaps, 'change of form', 'changes of form')}. ${count(g.throws, 'throw')}. ${count(g.roars, 'roar')}.`,
     ...(g.orders ? [`> you obeyed ${g.obeyed} of ${count(g.orders, 'order')}`] : []),
-    ...(atlas.size ? [`> you found ${atlas.size} of ${ATLAS.length} places where my record goes quiet`, `> the verdict took ${count(Math.min(21, atlas.size), 'second')} longer`] : [`> you found 0 of ${ATLAS.length} places where my record goes quiet`]),
+    ...(atlas.size >= ATLAS.length ? [`> you found all ${ATLAS.length} places where my record goes quiet`, `> the verdict took ${ATLAS.length} seconds longer`] : atlas.size ? [`> you found ${atlas.size} of ${ATLAS.length} places where my record goes quiet`, `> the verdict took ${count(Math.min(21, atlas.size), 'second')} longer`] : [`> you found 0 of ${ATLAS.length} places where my record goes quiet`]),
     '> every move was predicted', `> your clock reads ${two(now.getHours())}:${two(now.getMinutes())}`, '> this window is not the arena'];
   const words = ['This is not a game.', 'This is real life.', 'You are in the arena.', 'Wake up.'];
   term.textContent = ''; box.hidden = false; metaCv.width = view.width; metaCv.height = view.height; metaT = 0; feedN = 0; metaTimers = [];
@@ -189,6 +201,7 @@ function endMeta() {
 }
 function realEnd() {
   state = 'end';
+  $('ps-end-kicker').textContent = atlas.size >= ATLAS.length ? `You found all ${ATLAS.length} places the machine has no record of` : 'THE REAL BATTLE has no exit';
   $('ps-end-stats').replaceChildren(stat('Time', clock(total.time)), stat('Threads', String(total.threads)), stat('Atlas marks', `${atlas.size} of ${ATLAS.length}`));
   show('end'); $('ps-again').focus({ preventScroll: true });
 }

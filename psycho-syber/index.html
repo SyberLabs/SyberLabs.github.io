@@ -10,17 +10,17 @@
   <meta property="og:title" content="PSYCHO SYBER | SyberLabs">
   <meta property="og:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
   <meta property="og:url" content="https://syberlabs.io/psycho-syber/">
-  <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117e">
+  <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117f">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="PSYCHO SYBER | SyberLabs">
   <meta name="twitter:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
-  <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117e">
+  <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117f">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="/syberlabs.css?v=20261105">
-  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261117e">
+  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261117f">
   <title>PSYCHO SYBER | SyberLabs</title>
 </head>
 <body class="syber-play">
@@ -58,6 +58,7 @@
           <h1 class="ps-logo"><span class="ps-logo__p">PSYCHO</span> <span class="ps-logo__s">SYBER</span></h1>
           <p class="ps-lede">A browser game from SyberLabs. Six stages: one for each project, and a last one with no exit.</p>
           <p class="ps-actions"><button class="sy-btn sy-btn--solid" id="ps-start" type="button">Play</button><button class="sy-btn sy-btn--line" id="ps-continue" type="button" hidden>Continue</button></p>
+          <ol class="ps-pick" id="ps-pick" aria-label="Start from a stage you have reached" hidden></ol>
           <p class="ps-keys ps-for-keys">Shift changes your form. Try it here.</p>
           <p class="ps-keys ps-for-touch">Tap the picture to change form. Turn a phone sideways for a larger picture.</p>
         </div>
@@ -91,7 +92,7 @@
         </div>
 
         <div class="ps-panel ps-panel--end" id="ps-end" hidden>
-          <p class="ps-kicker">THE REAL BATTLE has no exit</p>
+          <p class="ps-kicker" id="ps-end-kicker">THE REAL BATTLE has no exit</p>
           <h2 class="ps-card-title">Wake up</h2>
           <dl class="ps-stats" id="ps-end-stats"></dl>
           <p class="ps-card-line">The Thousand Eyes is invented. SyberLabs makes software for checking AI's work: each change is tested, and a person approves it. <a href="#real">What is real</a> is below.</p>
@@ -141,7 +142,7 @@
       <section id="atlas" aria-labelledby="atlas-title">
         <h2 id="atlas-title">The 21 Atlas marks</h2>
         <p>The first five stages hold 21 marks between them, one for each site in the <a href="/lacuna/">Lacuna Atlas</a>: three in each of the first four stages and nine in the fifth. A mark carries the name of its site and links to that entry. The game says nothing else about any site. Each Atlas entry has sections headed “What's known”, “What's missing”, “The open question” and “Sources”.</p>
-        <p>The marks you find are kept in this browser. In the last stage each one is a lens on the machine's wall that has gone dark, and the verdict comes one second later for each.</p>
+        <p>The marks you find are kept in this browser. Once you have finished a stage, the title shows a numbered button for each stage you have reached, with the count of marks found in it, and each button starts that stage. In the last stage each mark found is a lens on the machine's wall that has gone dark, and the verdict comes one second later for each.</p>
         <ul class="ps-sites">
           <li><a href="/lacuna/#paracas">Paracas</a></li>
           <li><a href="/lacuna/#rapanui">Rapa Nui</a></li>
@@ -236,6 +237,6 @@
     <span class="sy-footer__copy">© 2026 SyberLabs</span>
   </div>
 </div></footer>
-  <script type="module" src="/psycho-syber/game/main.js?v=20261117e"></script>
+  <script type="module" src="/psycho-syber/game/main.js?v=20261117f"></script>
 </body>
 </html>

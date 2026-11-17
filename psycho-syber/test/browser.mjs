@@ -221,6 +221,21 @@ const S = {
     console.log('title again:', await G(() => window.__ps.state), '· stage back in the page:', await G(() => !document.getElementById('ps-stage').classList.contains('is-immersive'))); await snap('upright-title');
     await tctx.close();
   },
+  // The title once stages are finished: a button for each stage reached, with its Atlas marks. SIZE=390x844 for a phone.
+  async pick() {
+    await page.goto(BASE + '/psycho-syber/', { waitUntil: 'load' }); await wait(500);
+    await page.evaluate(() => { localStorage.setItem('psycho-syber.stage', '3'); localStorage.setItem('psycho-syber.atlas', JSON.stringify(['paracas', 'rapanui', 'sacsay', 'canyon'])); });
+    await page.reload({ waitUntil: 'load' }); await wait(1200); await shot('pick-' + size[0]);
+    console.log('buttons:', await page.evaluate(() => [...document.querySelectorAll('#ps-pick li')].map(li => `${li.firstChild.textContent}${li.firstChild.disabled ? ' (locked)' : ''} ${li.lastChild.textContent} [${li.firstChild.title}]`).join(' · ')));
+    await page.click('#ps-pick li:nth-child(3) button'); await wait(500);
+    console.log('third button ->', await page.evaluate(() => [window.__ps.state, document.getElementById('ps-card-kicker').textContent, document.getElementById('ps-card-title').textContent].join(' / ')));
+    await page.evaluate(() => { localStorage.setItem('psycho-syber.atlas', JSON.stringify([...document.querySelectorAll('.ps-sites a')].map(a => a.getAttribute('href').split('#')[1]))); });
+    await page.goto(BASE + '/psycho-syber/?stage=6&go=1', { waitUntil: 'load' }); await wait(600);
+    console.log('all marks:', await page.evaluate(() => window.__ps.atlas.size), '· verdict at', await page.evaluate(() => 40 + window.__ps.g.blind));
+    await page.evaluate(() => { window.__ps.g.realT = 16.4; window.__ps.g.p.inv = 9; }); await wait(1400); await view('real-all21');
+    await page.evaluate(() => { window.__ps.g.p.inv = 0; window.__ps.g.p.hp = 0; window.__ps.g.p.y = 999; }); await page.waitForFunction(() => window.__ps.state === 'meta', null, { timeout: 8000 });
+    await page.keyboard.press('Escape'); await wait(400); console.log('last panel says:', await page.evaluate(() => document.getElementById('ps-end-kicker').textContent)); await view('end-all21');
+  },
   // The page's own copy, section by section, at the size given: SIZE=390x844 for a phone.
   async copy() {
     await page.goto(BASE + '/psycho-syber/', { waitUntil: 'load' }); await wait(1200);

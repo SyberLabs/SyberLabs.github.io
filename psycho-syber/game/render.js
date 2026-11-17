@@ -1,8 +1,8 @@
 // PSYCHO SYBER: drawing. Everything is drawn into a 480x270 frame and scaled up without smoothing.
 // There are two complete looks. SYBER (skin 0) is cold stone and Visitor circuitry at night. PSYCHO (skin 1) is
 // the same world as the jaguar sees it: a living Paracas textile. The same geometry is drawn twice, once per skin.
-import { T, C, tileAt, gateActive, eyeAngle, wordActive, wordFresh, coreOpen, verdictAt, HUM, JAG } from './sim.js?v=20261117e';
-import { text, textC, textW } from './font.js?v=20261117e';
+import { T, C, tileAt, gateActive, eyeAngle, wordActive, wordFresh, coreOpen, verdictAt, HUM, JAG } from './sim.js?v=20261117f';
+import { text, textC, textW } from './font.js?v=20261117f';
 export const VW = 480, VH = 270;
 const TAU = Math.PI * 2;
 const hash = (x, y, s = 0) => { let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(s | 0, 1274126177)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -423,7 +423,7 @@ function logReal(fx, e, g) {
   else if (k === 'hurt') log(`HIT. ${g.p.hp} LEFT`);
   else if (k === 'die') log('SUBJECT DOWN');
   else if (k === 'phase' && PHASE[e.n]) say('phase' + e.n, PHASE[e.n]);
-  else if (k === 'blind') say('blind', `${e.n} OF MY LENSES ARE DARK. YOU FOUND WHERE THE RECORD GOES QUIET.`);
+  else if (k === 'blind') say('blind', e.n >= 21 ? 'TWENTY-ONE LENSES DARK. YOU FOUND EVERY PLACE WHERE MY RECORD GOES QUIET.' : `${e.n} OF MY LENSES ARE DARK. YOU FOUND WHERE THE RECORD GOES QUIET.`);
   else if (k === 'wall') { log(e.obeyed ? 'ORDER OBEYED' : 'ORDER IGNORED'); fx.shake = 0.2; }
   if (k === 'judgment') { fx.flash = 1.6; fx.shake = 0.6; }
 }

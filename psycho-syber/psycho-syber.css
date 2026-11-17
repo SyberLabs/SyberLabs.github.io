@@ -47,11 +47,11 @@
 .is-psycho .ps-rsvp { font-style: italic; color: #fff2a8; }
 .is-psycho .ps-rsvp b { color: #ff5fa2; }
 
-.ps-panel { position: absolute; inset: 0; z-index: 2; display: grid; place-content: center; justify-items: center; gap: clamp(8px, 1.6cqw, 22px); padding: 4% 6%; text-align: center;
+.ps-panel { position: absolute; inset: 0; z-index: 2; display: grid; place-content: safe center; justify-items: center; overflow-y: auto; gap: clamp(8px, 1.6cqw, 22px); padding: 4% 6%; text-align: center;
   background: radial-gradient(90% 80% at 50% 45%, rgba(2, 7, 10, .5), rgba(2, 7, 10, .9)); color: #e3f3fc; }
 .ps-panel p, .ps-panel h1, .ps-panel h2, .ps-panel dl, .ps-panel ul { margin: 0; }
 .ps-panel--title { background: radial-gradient(70% 60% at 50% 42%, rgba(2, 7, 10, .1), rgba(2, 7, 10, .82)); }
-.ps-panel--card { align-content: end; padding-bottom: 7%; background: linear-gradient(0deg, rgba(2, 7, 10, .94), rgba(2, 7, 10, .2) 60%, rgba(2, 7, 10, 0)); }
+.ps-panel--card { align-content: safe end; padding-bottom: 7%; background: linear-gradient(0deg, rgba(2, 7, 10, .94), rgba(2, 7, 10, .2) 60%, rgba(2, 7, 10, 0)); }
 .ps-logo { font: 500 clamp(30px, 9.4cqw, 124px)/.9 var(--sy-mono); letter-spacing: .02em; }
 .ps-logo__p { font-family: var(--sy-serif); font-style: italic; font-weight: 400; letter-spacing: 0; background: linear-gradient(90deg, #ff5fa2, #ffb347, #fff2a8, #5dffb0, #b388ff, #ff5fa2); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: ps-flow 6s linear infinite; padding-right: .06em; }
 .ps-logo__s { color: #4cc0f5; text-shadow: 0 0 34px rgba(2, 151, 222, .9); }
@@ -59,6 +59,13 @@
 .ps-keys, .ps-touch { font: 500 clamp(9px, 1.25cqw, 14px)/1.4 var(--sy-mono); letter-spacing: .12em; text-transform: uppercase; color: #9fc6da; }
 .ps-touch { color: #fc734d; max-width: 44ch; }
 .ps-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.ps-pick { list-style: none; display: flex; gap: clamp(6px, 1.2cqw, 14px); padding: 0; justify-content: center; }
+.ps-pick li { display: grid; justify-items: center; gap: 3px; }
+.ps-pick__b { width: clamp(26px, 3.6cqw, 42px); aspect-ratio: 1; padding: 0; border: 1px solid rgba(159, 198, 218, .55); background: rgba(2, 7, 10, .55); color: #e3f3fc; font: 500 clamp(10px, 1.4cqw, 15px)/1 var(--sy-mono); cursor: pointer; }
+.ps-pick__b:disabled { opacity: .35; cursor: default; }
+.ps-pick__b:hover:not(:disabled), .ps-pick__b:focus-visible { border-color: #4cc0f5; color: #4cc0f5; outline: none; }
+.ps-pick__m { min-height: 1em; font: 500 clamp(7px, .95cqw, 11px)/1 var(--sy-mono); letter-spacing: .06em; color: #fc734d; }
+@container (max-width: 560px) { .ps-panel--title .ps-lede { display: none; } .ps-panel--title { gap: 6px; } }
 .ps-kicker { font: 500 clamp(9px, 1.25cqw, 14px)/1.4 var(--sy-mono); letter-spacing: .16em; text-transform: uppercase; color: #9fc6da; }
 .ps-card-title { font: 400 clamp(22px, 5.4cqw, 70px)/1 var(--sy-serif); letter-spacing: .01em; }
 .is-psycho .ps-card-title { font-style: italic; color: #fff2a8; }
