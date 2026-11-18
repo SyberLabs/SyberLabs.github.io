@@ -5,7 +5,6 @@
    - progress(): a spectrum scroll-progress bar under the header (.sy-progress).
    - spy(): marks the header nav link whose section is on screen (aria-current="location").
    - header(): adds .is-scrolled to .sy-header after the first 24px.
-   - magnetic(root): .sy-btn--solid buttons drift a few px toward the pointer.
    - hue(root): spectrum text pauses its colour drift while off screen (it repaints its layer on every update).
    Everything is off under prefers-reduced-motion, and nothing here is needed to read the page. */
 
@@ -22,7 +21,7 @@ export function reveal(root = document) {
     for (const e of entries) if (e.isIntersecting) { io.unobserve(e.target); batch.push(e.target); }
     if (!flush) flush = requestAnimationFrame(() => {
       batch.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top || a.getBoundingClientRect().left - b.getBoundingClientRect().left);
-      batch.forEach((el, i) => { el.style.setProperty('--sy-delay', Math.min(i, 8) * 70 + 'ms'); el.classList.add('is-in'); });
+      batch.forEach((el, i) => { el.style.setProperty('--sy-delay', Math.min(i, 5) * 40 + 'ms'); el.classList.add('is-in'); });
       batch = []; flush = 0;
     });
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
@@ -43,19 +42,6 @@ export function tilt(root = document) {
     }, { passive: true });
     el.addEventListener('pointerleave', () => { rx = ry = 0; mx = my = 50; if (!raf) raf = requestAnimationFrame(paint); });
     el.classList.add('sy-tilt');
-  }
-}
-
-export function magnetic(root = document) {
-  if (reducedMotion() || !fine()) return;
-  for (const el of root.querySelectorAll('.sy-btn--solid, [data-magnetic]')) {
-    el.addEventListener('pointermove', e => {
-      const r = el.getBoundingClientRect();
-      el.style.setProperty('--tx', ((e.clientX - r.left) / r.width - 0.5) * 8 + 'px');
-      el.style.setProperty('--ty', ((e.clientY - r.top) / r.height - 0.5) * 6 + 'px');
-    }, { passive: true });
-    el.addEventListener('pointerleave', () => { el.style.setProperty('--tx', '0px'); el.style.setProperty('--ty', '0px'); });
-    el.classList.add('sy-magnetic');
   }
 }
 

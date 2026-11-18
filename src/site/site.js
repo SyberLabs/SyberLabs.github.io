@@ -1,7 +1,7 @@
 /* SyberLabs site v3 "Observatory": the one script every static page loads, built unhashed to /syberlabs.js
    (vite.config.js). The homepage bundle (src/App.jsx) calls the same modules directly.
    Order: mark JS present -> chrome behaviours -> reveal/tilt -> the 3D field (lazy, so first paint never waits). */
-import { reveal, tilt, magnetic, hue, progress, spy, splitWords, toTop, reducedMotion } from './motion.js';
+import { reveal, tilt, hue, progress, spy, splitWords, toTop, reducedMotion } from './motion.js';
 import { atlas } from './nav.js';
 import { account as accountNav } from './account.js';
 import { params as sigilParams } from '../../kit/v2/syber-sigil.js';
@@ -10,7 +10,7 @@ export function boot(root = document, fieldOpts) {
   document.documentElement.classList.add('sy-js');
   accountNav(root); atlas(); progress(); spy(); toTop(); counters(root);
   root.querySelectorAll('[data-split]').forEach(el => { splitWords(el); el.setAttribute('data-reveal', ''); });
-  reveal(root); tilt(root); magnetic(root); hue(root);
+  reveal(root); tilt(root); hue(root);
   mountFieldLazy(fieldOpts);
   mountSigils3d(root);
 }
@@ -40,7 +40,7 @@ export function mountFieldLazy(fieldOpts = {}) {
   }
   const density = fieldOpts.density || document.documentElement.dataset.field || 'full';
   const start = () => import('./field.js').then(m => {
-    field = m.mountField(canvas, { ...fieldOpts, density });
+    field = m.mountField(canvas, { ...fieldOpts, density, still: true });
     document.documentElement.classList.toggle('sy-field-live', field.supported);
   }).catch(() => { canvas.style.display = 'none'; });
   if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 1200 }); else setTimeout(start, 120);
@@ -54,7 +54,7 @@ export function mountSigils3d(root = document) {
   import('./field.js').then(m => {
     for (const c of list) {
       const { P } = sigilParams(c.dataset.sigil3d);
-      const r = m.sigil3d(c, P, { color: c.dataset.color || undefined });
+      const r = m.sigil3d(c, P, { color: c.dataset.color || undefined, still: true });
       if (!r.supported) c.remove(); // the 2D sigil behind it stays
       else c.classList.add('is-live');
     }

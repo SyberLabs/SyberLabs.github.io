@@ -50,6 +50,10 @@ const navLinks = (current = '', here = '') => nav.map(item => `<li><a href="${it
 // JS, and src/site/nav.js keeps the attribute in step once it runs.
 // `sticky` (default) keeps the header in flow; the homepage passes false so it floats over the hero.
 // The customer subscription route is separate from staff sign-in in the footer.
+// Same-site links prerender after a short hover (Chromium's Speculation Rules), so a click lands on a page that is
+// already rendered. Staff routes are excluded. Browsers without support ignore it.
+const SPECULATION = `<script type="speculationrules">{"prerender":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/admin*"}},{"not":{"href_matches":"/auth/*"}}]},"eagerness":"moderate"}]}</script>`;
+
 // The header row ends with the one conversion action, Book a consultation, which stays visible on phones too.
 export const header = (current = '', { sticky = true, script = true, here = '' } = {}) => `<a class="sy-skip" href="#main">Skip to content</a>
 <div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
@@ -57,7 +61,7 @@ export const header = (current = '', { sticky = true, script = true, here = '' }
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
   <nav class="sy-nav" aria-label="Primary"><ul>${navLinks(current)}<li class="sy-nav__cta-item"><a class="sy-nav__cta" href="${workWithUs.href}">${workWithUs.label}</a></li></ul></nav>
   <details class="sy-menu"><summary aria-label="Menu" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas(here)}</details>
-</div></header>${script ? '\n<script type="module" src="/syberlabs.js?v=20261105"></script>' : ''}`;
+</div>${SPECULATION}</header>${script ? '\n<script type="module" src="/syberlabs.js?v=20261105b"></script>' : ''}`;
 
 // The footer: one hairline bar of essential contact, account and legal links. Every contact
 // route is defined by projects/site-data.js footerLinks. The site map is not repeated here: it is the header's

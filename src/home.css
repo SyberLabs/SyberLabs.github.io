@@ -201,13 +201,13 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 /* First visit (html.sy-reveal, index.html), timed to the clip by data-phase (src/App.jsx, REVEAL in hero-media.js):
    with the Gyre the name rises; as the Sophia frame draws, the role follows; once Earth is framed the panel rises.
    Interview and Résumé stay in the header throughout. Any failure, scroll or the film ends it in the full layout. */
-.pitch-hero h1>span, .pitch-hero__role, .pitch-hero__panel { transition:opacity .9s ease, transform 1.3s cubic-bezier(.16,.84,.24,1), filter 1s ease; }
-.sy-reveal .pitch-hero h1>span { animation:hero-rise 1.5s cubic-bezier(.16,.84,.24,1) .35s both; }
-.sy-reveal .pitch-hero h1>span + span { animation-delay:.55s; }
-.sy-reveal .pitch-hero .pitch-hero__brand { animation:brand-rise 1.5s cubic-bezier(.16,.84,.24,1) .35s both; }
+.pitch-hero h1>span, .pitch-hero__role, .pitch-hero__panel { transition:opacity .45s ease, transform .6s cubic-bezier(.16,.84,.24,1); }
+.sy-reveal .pitch-hero h1>span { animation:hero-rise .7s cubic-bezier(.16,.84,.24,1) .1s both; }
+.sy-reveal .pitch-hero h1>span + span { animation-delay:.2s; }
+.sy-reveal .pitch-hero .pitch-hero__brand { animation:brand-rise .7s cubic-bezier(.16,.84,.24,1) .1s both; }
 .sy-reveal .pitch-hero .pitch-hero__brand::after { animation-delay:1.5s; }
 @keyframes brand-rise { from { opacity:0; transform:translateY(30px); } }
-@keyframes hero-rise { from { opacity:0; transform:translateY(30px); filter:blur(12px); } }
+@keyframes hero-rise { from { opacity:0; transform:translateY(18px); } }
 /* The role, proof and actions are never held back: a recruiter can read and act from the first frame. */
 
 @media(max-width:800px) {
@@ -233,7 +233,6 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
   /* the frame held between the name and the panel, fading out before the clip's edges */
   /* the Gyre alone, full-bleed behind the copy, dimmed a little so the title and the panel stay crisp */
   .pitch-hero__art, .pitch-hero__clip { transform:none; -webkit-mask-image:linear-gradient(180deg,#000 0,#000 72%,transparent 100%); mask-image:linear-gradient(180deg,#000 0,#000 72%,transparent 100%); }
-  .pitch-hero__art, .pitch-hero__background.is-ready, .pitch-hero__still { opacity:.7; }
 }
 @media(prefers-reduced-motion:reduce) {
   .pitch-hero h1>span, .pitch-hero__role, .pitch-hero__panel, .pitch-hero__brand, .pitch-hero__brand::after, .pitch-hero__signature { transition:none; animation:none; }
@@ -324,7 +323,7 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
 /* ---------- The headline, still: SyberLabs in chromatic blue over "High-Fidelity Systems", on the Gyre ---------- */
 /* The Gyre is full-bleed on every screen, so it is never scaled into a frame or pushed aside. */
 .pitch-hero .pitch-hero__art, .pitch-hero .pitch-hero__clip { transform:none !important; -webkit-mask-image:none; mask-image:none; }
-.pitch-hero .pitch-hero__art, .pitch-hero .pitch-hero__background.is-ready, .pitch-hero .pitch-hero__still { opacity:.62; }
+.pitch-hero .pitch-hero__art, .pitch-hero .pitch-hero__background.is-ready, .pitch-hero .pitch-hero__still { opacity:1; }
 .pitch-hero h1>.pitch-hero__tagline { margin-top:10px; color:var(--sy-vellum); font:500 clamp(28px,3.4vw,52px)/1.05 var(--sy-sans); letter-spacing:-.03em; }
 @media (max-width:600px) { .pitch-hero h1>.pitch-hero__tagline { font-size:clamp(24px,7.4vw,32px); margin-top:6px; } }
 
@@ -332,8 +331,10 @@ html:not(.sy-js) .pitch-hero__film { position:relative; aspect-ratio:16/9; heigh
    The Gyre is graded from its steel blue into Electric Blue, and a warm Cantaloupe horizon glows at the foot of
    its bright column, as if the light rises from heat. The glow is screen-blended light (it brightens, never paints
    over type), sits above the scrim and below the copy, and leaves while the film plays. */
-.pitch-hero__art img, .pitch-hero__background, .pitch-hero__still { filter:saturate(2.1) hue-rotate(6deg); }
-.pitch-hero::before { content:""; position:absolute; inset:0; z-index:2; pointer-events:none; mix-blend-mode:screen;
+/* The grade (saturate 2.1, hue 6deg) and the dimming are baked into the v2 clip and posters (media/demos/gyre-full-*-v2):
+   a CSS filter or opacity on a full-screen playing video costs a full re-composite every frame. */
+.pitch-hero__art img, .pitch-hero__background, .pitch-hero__still { filter:none; }
+.pitch-hero::before { content:""; position:absolute; inset:0; z-index:2; pointer-events:none; /* plain alpha: a blend mode over a playing video re-blends every frame */
   background:radial-gradient(9% 9% at 46% 102%, rgba(255,222,206,.42), rgba(255,222,206,0) 70%),
     radial-gradient(26% 28% at 46% 104%, rgba(252,115,77,.8), rgba(252,115,77,0) 72%),
     radial-gradient(52% 40% at 46% 112%, rgba(252,115,77,.18), rgba(252,115,77,0) 70%),
