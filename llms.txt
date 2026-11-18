@@ -76,7 +76,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 ## Design system
 
 - [Atlas kit v2](https://syberlabs.io/kit/v2/): SyberLabs Design System v2 "Atlas" kit. Files: `syber-atlas.css` (tokens + components), `syber-atmosphere.js` (Plate I engine), `syber-sigil.js` (product sigils), `syber-mark-96.png`, `demo.html`.
-- [Kit README](https://syberlabs.io/kit/v2/README.md): Sections: Current website direction: immersive mathematical media, Vendoring, CSS, JS (ES modules, no dependencies), Rules (accessibility and performance).
+- [Kit README](https://syberlabs.io/kit/v2/README.md): Sections: Current website direction: an AI lab, Vendoring, CSS, JS (ES modules, no dependencies), Rules (accessibility and performance).
 
 ## How we build
 

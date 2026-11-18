@@ -5,9 +5,11 @@
 The direction is the Midnight theme: Midnight Black `#02070A` surfaces, off-white
 text, Electric Blue `#0297DE` for light, links and focus, and Cantaloupe Orange
 `#FC734D` used a little (solid action buttons, live signals, the Approve step),
-with full-bleed mathematical media, Instrument Sans headings, generous whitespace
-and sparse actions. `kit/v2/README.md` ("Current website direction: immersive
-mathematical media") has the fuller account; read it before changing the look.
+with Instrument Sans headings, generous whitespace and sparse actions. Since
+November 18, 2026 the homepage reads as an AI lab's: one grid, parts under
+hairlines, rows in place of cards, and pictures that answer the visitor
+("Homepage" below). `kit/v2/README.md` ("Current website direction: an AI lab")
+has the fuller account; read it before changing the look.
 The theme is defined once, in `src/styles/tokens.css`; pages do not carry their
 own colour blocks. `kit/v2/` is the kit that product apps vendor. It stays
 published at `/kit/v2/` unchanged, and the site does not load it.
@@ -17,9 +19,10 @@ published at `/kit/v2/` unchanged, and the site does not load it.
 - `/syberlabs.css`, the stylesheet every page links, is `fonts/site.css` then `src/styles/` in this order: `tokens`,
   `base`, `type`, `chrome` (header, Menu, breadcrumbs, footer), `components` (`vite.config.js`). A page's own
   stylesheet holds only what that page alone needs.
-- The homepage is plain HTML written at build time by `src/home/page.js`, styled by `src/home/home.css`. Its script,
-  `src/home/main.js`, starts the hero clip and loads each canvas visual (`src/visuals/`) when it scrolls near. No page
-  ships a framework except the two system maps, which fetch React when their section nears the viewport.
+- The homepage is plain HTML written at build time by `src/home/page.js` from the parts in `src/home/parts/`, styled
+  by `src/home/home.css`. Its script, `src/home/main.js`, mounts the Line in the first screen and fetches the rest
+  when it scrolls near: `src/home/run.js`, `globe.js` and `pieces.js`, and the canvas visuals in `src/visuals/`. No
+  page ships a framework except the two system maps, which fetch React when their section nears the viewport.
 - `/syberlabs.js` (`src/site/`) is the Menu's keyboard and focus behaviour and a back-to-top button. Every page reads
   and works without it. There are no scroll-in animations: text is on the page when it loads.
 - Every typeface is served from `/fonts/` (`fonts/README.md`). No page may load a font, stylesheet or script from
@@ -51,6 +54,12 @@ the answer is nothing, delete it.
 
 - No slogans, taglines or metaphors. Say what the thing does: "Tests every
   AI-written code change before a person approves it", not a three-beat motto.
+  The homepage's headline is the one exception. On November 18, 2026 the owner
+  asked for a headline with more weight than a plain description and chose
+  "Take no machine at its word." (after the Royal Society's motto, "Nullius in
+  verba": take nobody's word for it). The line under it says what the company
+  makes in plain words, and the page's `<title>` stays "Software for checking
+  AI's work". Do not add a second motto anywhere.
 - Name the actor. SyberWork runs the checks, a person approves, the client
   logs the call. Never use the word "host" in public copy (`scripts/qa.mjs`
   fails the build on it): write SyberWork, the application or the machine.
@@ -156,46 +165,75 @@ the game's link in the homepage's first screen and one note in its Studio part l
 
 ## Homepage
 
-The homepage (`src/home/page.js`) was rebuilt on November 18, 2026, when the owner asked for a full redesign and left
-the choices open. It has a first screen and four parts:
+The homepage (`src/home/page.js`, parts in `src/home/parts/`) was redesigned on November 18, 2026, when the owner asked
+for an aggressive redesign: the page should look like a professional AI lab's, with interface elements that react and
+that are about AI. It has a first screen and five parts:
 
-- First screen: the Gyre, the wordmark, one line saying what the company makes ("Software for checking AI's work.",
-  the page's own title), three rows that name Factory, Studio and Lacuna with one line of what is in each, and the
-  link to the game (`PSYCHO SYBER`, `Play the game`). It has no buttons: `Book a consultation` stays in the header at
-  every width and closes the page.
-- Factory: the machine (`src/visuals/factory.js`), SyberWork and Attest, SyberWork's recorded run and the GitHits
-  design partnership. The run's figure is read from `run` in `projects/site-data.js`, the same output the SyberWork
-  page prints; it is left out if that output stops parsing.
-- Studio: RISE and FLYSPACE, the four pieces that move to sound, and the game.
-- Lacuna: a globe (`src/visuals/atlas.js`) that marks the Atlas's sites and names each one in turn as it comes round.
-  The globe, the site named in the caption and the heading are links into `/lacuna/`. Its data
-  (`src/visuals/atlas-data.js`) is generated from the Atlas's site list by `node scripts/lacuna-home.mjs`; the build
-  fails when it is stale.
-- Contact: the field in which the letters of SyberLabs appear (`src/visuals/phase.js`), one sentence and the action.
+- First screen (`parts/hero.js`): the link to the game at the top (`PSYCHO SYBER`, `Play the game`), the headline
+  ("Take no machine at its word.", the page's one motto: "Wording" above), a line saying what the company makes
+  ("SyberLabs is an AI lab. It makes software for checking AI's work."), one sentence on how, `Book a consultation`
+  and `Read the research`, and the Line.
+- The Line (`src/visuals/line.js` draws it, `src/visuals/line-sim.js` holds its rules, `src/home/line.js` joins it to
+  the words and the button). A model, drawn as a small network, proposes changes. Each goes down a line of stations:
+  Propose, Check, Review, Approve. A change that reaches Approve waits there until the visitor presses `Approve`; only
+  then does it turn onto the published line. When three changes are waiting the line stops and the model stops
+  proposing. The network is computed: every frame runs a forward pass through fixed weights, two of its inputs are the
+  pointer's position, and pointing at a unit shows its activation.
+- Recorded run (`parts/run.js`, `#run`): SyberWork's recorded run as a table, three facts and the output itself, all
+  read from `run` in `projects/site-data.js`, the same output the SyberWork page prints. Pointing at a row lights the
+  lines of the output it was read from (`src/home/run.js`), and `Replay the run` shows the run in order. The part is
+  left out if that output stops parsing.
+- Products (`parts/products.js`, `#products`): the four products, one row each, and the GitHits design partnership
+  (`#partners`).
+- Research (`parts/research.js`, `#research`): the reports on the site (`research` in `projects/site-data.js`), then
+  Lacuna Institute (`#lacuna`) with a globe (`src/visuals/atlas.js`) that marks the Atlas's sites, names each in turn
+  and can be turned by dragging it or with the arrow keys (`src/home/globe.js`). The globe, the site named beside it
+  and the heading are links into `/lacuna/`. Its data (`src/visuals/atlas-data.js`) is generated from the Atlas's site
+  list by `node scripts/lacuna-home.mjs`; the build fails when it is stale.
+- Studio (`parts/studio.js`, `#studio`): the four pieces that move to sound, and the game.
+- Contact (`parts/contact.js`, `#contact`): the field in which the letters of SyberLabs appear
+  (`src/visuals/phase.js`; the pointer breaks its step), one sentence and the action.
 
 Rules for the homepage:
 
-- Factory, Studio and Lacuna are names, exempt from the Wording rules. Every other homepage line follows them.
-- Each product is described once, by its `headline` in `projects/site-data.js`.
-- No part ends at a hard edge: each canvas fades at its top and foot, and the Factory visual rises through the foot
-  of the first screen. On wide screens a part's name sits over the foot of its canvas; on narrow ones it follows the
-  canvas, so no words lie on the drawing.
+- What moves answers the visitor: the pointer, a press, a drag or a key. Nothing animates on scroll, and every word is
+  on the page when it loads. With reduced motion the Line and the globe are drawn still and their controls still
+  work. Without JavaScript the five steps read as a numbered list (`@media (scripting: none)` in `home.css`).
+- The Line is an illustration, and the page says so beside it. Its changes are invented; the first two follow the
+  recorded run. No timer publishes a change: only the visitor's `Approve` moves one past Approve, and
+  `node --test src/visuals/line-sim.test.mjs` checks it. Do not add an automatic approval, and do not present the
+  Line's counts as figures about SyberWork.
+- Keep the network computed. Do not replace the forward pass with a drawn animation.
+- Blue is the machine (the model, the checks, links). Orange is the person (Approve, `Book a consultation`). `Approve`
+  is a line button, so `Book a consultation` stays the page's one solid button.
+- Each product is described once, by its `headline` in `projects/site-data.js`. A report listed under Research carries
+  the title, code and date that `research/index.html` gives it; the build fails if one is not on that page.
+- A part opens with its name over a hairline, and what follows is rows. Do not box the content in cards. Mono is for
+  data: change ids, commits, dates, counts and output.
 - One piece runs at a time, and only after a press (or a mouse resting on a tile). Nothing on the page plays sound
   or loads a piece by itself. The pieces in `media/home/pieces/` are copies of the audio-reactive pieces with their
   own controls hidden; they are marked `noindex`.
-- The first screen has one entrance, once: the sheen across the wordmark while the lines under it rise. Nothing else
-  on the page animates on scroll.
+- The game's link stays in the first screen, above the title, at every width: the owner asked that nobody miss it.
 
-Three earlier directions for the homepage changed in that rebuild. They are listed so they can be restored on request:
+Earlier directions that changed. They are listed so they can be restored on request; the first three were on the page
+until commit `ff2ae68`, and the last three changed in the rebuild earlier on November 18:
 
-- The hero carried no paragraph (November 15). It now carries one line and the three rows, because the first screen
-  did not say what the company makes.
-- The page had a fourth part, Liminal, with two full-height visuals (Resonance and Emergence). Resonance is now the
-  ground of the contact part. Emergence's rule still draws each product's mark; its full-height canvas is gone.
+- The first screen was the Gyre clip under the SyberLabs wordmark in chromatic blue, one line, and three rows naming
+  Factory, Studio and Lacuna. It had no buttons. The clips are still in `media/demos/`.
+- Factory was a part of its own with a full-height canvas, a machine that copies a strand piece by piece
+  (`src/visuals/factory.js`, removed). SyberWork and Attest now sit with RISE and FLYSPACE under Products, and the
+  five steps are the Line's stations.
+- Lacuna was a part of its own with a full-height globe. It is now the second half of Research.
+- The headline was the page's title, "Software for checking AI's work." The owner found it too plain, and an earlier
+  line, "High fidelity systems", good but vague.
+- The hero carried no paragraph (November 15).
+- The page had a part named Liminal, with two full-height visuals (Resonance and Emergence). Resonance is the ground
+  of the contact part. Emergence's rule still draws each product's mark; its full-height canvas is gone.
 - The first piece started by itself when the row scrolled into view. A piece now waits for a press.
 
-CI requires `id="products"`, `id="partners"`, `id="contact"` and `id="lacuna"` on the homepage, and fails the build on
-personal names, so homepage media must not link to personal sites. CI also fails if the homepage loads React.
+CI requires `class="home-hero"`, `id="products"`, `id="partners"`, `id="contact"` and `id="lacuna"` on the homepage, and
+fails the build on personal names, so homepage media must not link to personal sites. CI also fails if the homepage
+loads React.
 
 ## Public dependency lookup (GitHits)
 
