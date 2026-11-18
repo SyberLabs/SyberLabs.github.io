@@ -1,4 +1,4 @@
-/* Reading page on the site's Midnight theme (src/syberlabs.css): colours come from there; only measures live here. */
+/* Reading page on the site's Midnight theme (src/styles/): colours come from there; only measures live here. */
 .syber-services .sy-btn { white-space:normal; min-height:48px; padding:12px 20px; line-height:1.4; }
 .syber-services :focus-visible { outline-offset:5px; }
 

@@ -33,7 +33,7 @@ const LIMIT = 200 * 1024;
 
 const { projects } = await import(pathToFileURL(resolve(root, 'projects/site-data.js')).href);
 
-// The site's Midnight theme (src/syberlabs.css): Electric Blue for every sigil, Cantaloupe for live signals.
+// The site's Midnight theme (src/styles/): Electric Blue for every sigil, Cantaloupe for live signals.
 const ICE = '#0297de', RESEARCH = '#4cc0f5', RISE = '#0297de';
 const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -81,7 +81,7 @@ const DOT = { live: '#fc734d', early: ICE, research: '#7fcff5', wip: '#fc734d' }
 
 function card(p) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><style>
-/* Midnight theme tokens (src/syberlabs.css). The webfonts are not loaded: see the note at the top of og-cards.mjs. */
+/* Midnight theme tokens (src/styles/). The webfonts are not loaded: see the note at the top of og-cards.mjs. */
 :root { --ink: #02070a; --vellum: #f1f6f9; --body: #c3cfd6; --mist: #93a4ae; --dim: #708490; --rule: rgba(140,200,235,.14); --rule-2: rgba(140,200,235,.28);
   --accent: ${p.accent};
   --serif: "Instrument Serif", Georgia, "Liberation Serif", "Times New Roman", serif;

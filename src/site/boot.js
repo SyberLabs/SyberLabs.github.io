@@ -1,3 +1,3 @@
-// Entry for /syberlabs.js (vite.config.js): boots the site v3 behaviours on every static page.
+// Entry for /syberlabs.js (vite.config.js): the shared behaviours on every static page.
 import { boot } from './site.js';
 boot();

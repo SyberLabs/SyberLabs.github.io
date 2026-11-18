@@ -1,4 +1,4 @@
-/* Reading page on the site's Midnight theme (src/syberlabs.css): colours come from there; only measures live here. */
+/* Reading page on the site's Midnight theme (src/styles/): colours come from there; only measures live here. */
 .syber-stack .sy-btn { white-space:normal; min-height:48px; padding:12px 20px; line-height:1.4; }
 .syber-stack :focus-visible { outline-offset:5px; }
 .syber-stack main section[id] { scroll-margin-top:100px; }
@@ -64,7 +64,7 @@
   .commands { padding: var(--space-4); font-size: 13px; }
 }
 
-/* GitHits dependency totals (src/githits-panel.jsx, prerendered into the <!-- stack:githits --> marker); moved here from the homepage */
+/* GitHits dependency totals (scripts/githits-panel.mjs, written into the <!-- stack:githits --> marker at build time); moved here from the homepage */
 .home-gh__data { display: grid; gap: 20px; align-content: start; min-width: 0; }
 .home-gh__data > * { margin: 0; }
 .home-gh__stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0; border: 1px solid var(--sy-rule); border-radius: var(--sy-r-panel); overflow: hidden; background: var(--sy-rule); }

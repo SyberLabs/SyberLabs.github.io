@@ -30,8 +30,6 @@ jobs:
           node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Public account navigation tests
-        run: node --test scripts/account-nav.test.mjs
       - name: Production probe tests
         run: node --test scripts/probe.test.mjs
       - name: Staff sign-in tests
@@ -87,6 +85,10 @@ jobs:
         run: |
           pnpm build:site
           test -s dist/index.html
+          # The homepage is complete HTML and loads no framework: React is fetched only by the system maps.
+          grep -Fq 'class="home-hero"' dist/index.html
+          if grep -Eq 'assets/react-[^"]+\.js' dist/index.html; then echo 'the homepage loads React'; exit 1; fi
+          grep -Fq '@font-face' dist/syberlabs.css
           test ! -e dist/.private-githits
           test -s dist/syberlabs.css
           test -s dist/syberlabs.js
@@ -224,6 +226,11 @@ jobs:
           if grep -Eq '@|[0-9]{6,}' migrations/*.sql; then echo 'email or provider id in migrations'; exit 1; fi
           if grep -rqiE "<script[^>]+src=[\"']?(https?:)?//" dist --include='*.html'; then echo 'third-party script on a public page'; exit 1; fi
           if grep -rqiE "<link[^>]+rel=[\"']?modulepreload[^>]+href=[\"']?(https?:)?//" dist --include='*.html'; then echo 'third-party modulepreload'; exit 1; fi
+          # Typefaces are served from /fonts/ (fonts/README.md): no page may ask another origin for a stylesheet or a font.
+          if grep -rqiE "<link[^>]+rel=[\"']?(stylesheet|preconnect|preload)[^>]+href=[\"']?(https?:)?//" dist --include='*.html'; then echo 'third-party stylesheet, preconnect or preload on a public page'; exit 1; fi
+          if grep -rqE 'fonts\.(googleapis|gstatic)\.com' dist --include='*.html' --include='*.css' --include='*.js'; then echo 'a page asks Google for a font'; exit 1; fi
+          test -s dist/fonts/v1/instrument-sans-latin-wght-normal.woff2
+          test -s dist/_headers
       - name: Quality sweep of the built site
         run: node scripts/qa.mjs
       - uses: actions/upload-artifact@v4

@@ -118,7 +118,7 @@ main details p { font-size: 14px; line-height: 20px; }
 }
 
 /* Reading measures for this archive and its reports. Colours come from the site's Midnight theme
-   (src/syberlabs.css). Research evidence and authorship are unchanged. */
+   (src/styles/). Research evidence and authorship are unchanged. */
 .research-reading body { background-image: none; }
 .research-reading .hero h1 { font-size: clamp(40px, 6.2vw, 84px); font-weight: 600; line-height: 1.08; letter-spacing: -.045em; text-wrap: balance; }
 .research-reading .hero h1 em { background: none; color: var(--sy-ice); font-style: normal; padding: 0; }

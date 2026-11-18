@@ -1,7 +1,6 @@
-/* The factory page: the homepage's Midnight stage (src/syberlabs.css), with the Admit step in Cantaloupe.
+/* The factory page: the homepage's Midnight stage (src/styles/), with the Admit step in Cantaloupe.
    One column of reading, a numbered line for the Build Thread, a grid of guarantees, and an honest list of limits. */
 body.syber-factory { background:var(--sy-ink); }
-.syber-factory .sy-field-host { display:none; }
 .factory { padding-bottom:40px; }
 .factory h2 { margin:0 0 14px; font:500 clamp(28px,3.4vw,44px)/1.1 var(--sy-sans); letter-spacing:-.03em; color:var(--sy-vellum); }
 .factory h3 { margin:0; font:500 20px/1.3 var(--sy-sans); letter-spacing:-.015em; color:var(--sy-vellum); }

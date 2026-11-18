@@ -1,10 +1,9 @@
-// Project page template (SyberLabs site v3 "Observatory" on the Atlas v2 kit): one template for every project.
-// Pure module: used in the browser (experience-v7.js), at build time (scripts/prerender.mjs), by the homepage
-// (src/App.jsx renders the same header/footer) and by scripts/site-chrome.mjs, which writes the same header
-// and footer into the static pages.
-// Case studies lead with project context and real evidence. Sigil helpers remain
-// available to the shared site chrome and project directory.
-import { projects, nav, footerLinks, siteMap, EMAIL, workWithUs } from './site-data.js?v=20261117c';
+// Project page template: one template for every product page, and the header and footer every page shares.
+// Pure module: used at build time by scripts/prerender.mjs (the product pages), src/home/page.js (the homepage's
+// header and footer) and scripts/site-chrome.mjs (which writes the same header and footer into the static pages),
+// and by the staff pages (server/views/). projects/experience-v7.js loads it in the browser only when a product
+// page arrives without its prerendered markup, which happens in `pnpm dev`.
+import { projects, nav, footerLinks, siteMap, EMAIL, workWithUs } from './site-data.js';
 import { params as sigilParams } from '../kit/v2/syber-sigil.js';
 export { projects };
 
@@ -25,12 +24,14 @@ const ICONS = {
 export const icon = (name, size = 20, cls = '') =>
   `<svg class="sy-icon ${cls}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
 const esc = value => String(value).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// A hyphenated word in a headline stays on one line ("AI-written" never breaks after "AI-").
+const keepHyphens = html => html.replace(/[^\s<>]+-[^\s<>]+/g, word => `<span class="sy-nowrap">${word}</span>`);
 const badge = (status, cls = '') => `<span class="sy-badge sy-badge--${status.kind}${cls ? ' ' + cls : ''}">${esc(status.label)}</span>`;
 
-// The Atlas: the full-screen site map inside the header's <details>, and the site's one directory (the footer does not
-// repeat it). Works without JS: Menu opens and closes it (src/syberlabs.css keeps Menu above the panel until JS boots),
-// and `here`, the page's own path, marks its link aria-current in the markup. src/site/nav.js adds Esc, the close
-// button, focus handling and the "/" shortcut.
+// The Menu's panel: the full-screen site map inside the header's <details>, and the site's one directory (the footer
+// does not repeat it). Works without JS: Menu opens and closes it (src/styles/chrome.css keeps Menu above the panel
+// until JS boots), and `here`, the page's own path, marks its link aria-current in the markup. src/site/nav.js adds
+// Esc, the close button, focus handling and the "/" shortcut.
 const atlas = (here = '') => `<div class="sy-atlas" id="sy-atlas" role="dialog" aria-label="Site map">
   <span class="sy-atlas__backdrop" aria-hidden="true"></span>
   <div class="sy-atlas__panel">
@@ -52,12 +53,11 @@ const navLinks = (current = '', here = '') => nav.map(item => `<li><a href="${it
 // The customer subscription route is separate from staff sign-in in the footer.
 // The header row ends with the one conversion action, Book a consultation, which stays visible on phones too.
 export const header = (current = '', { sticky = true, script = true, here = '' } = {}) => `<a class="sy-skip" href="#main">Skip to content</a>
-<div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
 <header class="sy-header${sticky ? ' sy-header--sticky' : ''}"><div class="sy-header__in">
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
   <nav class="sy-nav" aria-label="Primary"><ul>${navLinks(current)}<li class="sy-nav__cta-item"><a class="sy-nav__cta" href="${workWithUs.href}">${workWithUs.label}</a></li></ul></nav>
   <details class="sy-menu"><summary aria-label="Menu" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas(here)}</details>
-</div></header>${script ? '\n<script type="module" src="/syberlabs.js?v=20261105"></script>' : ''}`;
+</div></header>${script ? '\n<script type="module" src="/syberlabs.js"></script>' : ''}`;
 
 // The footer: one hairline bar of essential contact, account and legal links. Every contact
 // route is defined by projects/site-data.js footerLinks. The site map is not repeated here: it is the header's
@@ -74,12 +74,11 @@ export const footer = (current = '') => `<footer class="sy-footer">
 // Breadcrumb for every page below the homepage.
 export const crumbs = (items) => `<nav class="sy-crumbs" aria-label="Breadcrumb"><ol><li><a href="/">SyberLabs</a></li>${items.map((it, i) => `<li>${i === items.length - 1 ? `<span aria-current="page">${esc(it.label)}</span>` : `<a href="${it.href}">${esc(it.label)}</a>`}</li>`).join('')}</ol></nav>`;
 
-// A product sigil in a plate frame, with its de Jong parameters as the plate caption. The flat sigil is
-// always drawn; a 3D cloud (data-sigil3d) spins over it when the field engine is available.
+// A product sigil in a plate frame, with its de Jong parameters as the plate caption.
 export function sigilPlate(seed, plate, title, cls = '') {
   const id = `params-${seed}`;
-  return `<figure class="sy-plate-figure site-sigil ${cls}" aria-hidden="true" data-tilt="6" data-sigil3d-host>
-    <div class="sy-plate sy-plate--sigil"><canvas data-sigil="${esc(seed)}" data-caption-for="${id}"></canvas><canvas class="sy-sigil3d" data-sigil3d="${esc(seed)}"></canvas><span class="sy-plate__sheen"></span></div>
+  return `<figure class="sy-plate-figure site-sigil ${cls}" aria-hidden="true">
+    <div class="sy-plate sy-plate--sigil"><canvas data-sigil="${esc(seed)}" data-caption-for="${id}"></canvas></div>
     <figcaption><b>Plate ${plate} · ${esc(title)}</b>de Jong map · <span class="sy-nowrap">seed “${esc(seed)}”</span><span class="sy-params" id="${id}">${sigilParams(seed).caption}</span></figcaption>
   </figure>`;
 }
@@ -93,7 +92,7 @@ function actions(p) {
 
 // A live destination, named at the top of the page so a visitor can reach the running thing in one tap.
 const liveBar = p => p.live ? `
-<section class="pj-live sy-container" aria-label="Where to use ${esc(p.name)}" data-reveal>
+<section class="pj-live sy-container" aria-label="Where to use ${esc(p.name)}">
   <a class="pj-live__card" href="${p.live.href}" rel="noopener">
     <span class="pj-live__dot" aria-hidden="true"></span>
     <span class="pj-live__text"><span class="pj-live__label">${esc(p.status.label)} · <b>${esc(p.live.label)}</b></span><span class="pj-live__note">${esc(p.live.note)}</span></span>
@@ -104,11 +103,11 @@ const liveBar = p => p.live ? `
 // A real demo film. The video never autoplays; the poster is the page's still.
 const videoSection = p => p.video ? `
 <section class="pj-section pj-video sy-container" aria-labelledby="video-title">
-  <div class="pj-split" data-reveal>
+  <div class="pj-split">
     <h2 id="video-title" class="sy-eyebrow">Demo film</h2>
     <p class="sy-title pj-split__main">${esc(p.video.title)}</p>
   </div>
-  <figure class="pj-video__figure" data-reveal>
+  <figure class="pj-video__figure">
     <div class="pj-video__box"><video controls preload="none" playsinline poster="${p.video.poster}" aria-label="${esc(p.video.title)}"><source src="${p.video.src}" type="video/mp4"><a href="${p.video.src}">Download the film (MP4)</a></video></div>
     <figcaption class="sy-small pj-video__caption">${esc(p.video.caption)}</figcaption>
   </figure>
@@ -117,20 +116,20 @@ const videoSection = p => p.video ? `
 // Motivation: why the thing exists, in two paragraphs.
 const whySection = p => p.why ? `
 <section class="pj-section sy-container" aria-labelledby="why-title">
-  <div class="pj-split" data-reveal>
+  <div class="pj-split">
     <h2 id="why-title" class="sy-eyebrow">Why</h2>
-    <div class="pj-split__main"><p class="sy-title">${esc(p.why.title)}</p><div class="pj-why" data-reveal-children>${p.why.paragraphs.map(t => `<p class="sy-body">${esc(t)}</p>`).join('')}</div></div>
+    <div class="pj-split__main"><p class="sy-title">${esc(p.why.title)}</p><div class="pj-why">${p.why.paragraphs.map(t => `<p class="sy-body">${esc(t)}</p>`).join('')}</div></div>
   </div>
 </section>` : '';
 
 // Use case: the numbered steps a person actually takes.
 const useSection = p => p.use ? `
 <section class="pj-section sy-container" aria-labelledby="use-title">
-  <div class="pj-split" data-reveal>
+  <div class="pj-split">
     <h2 id="use-title" class="sy-eyebrow">Use</h2>
     <div class="pj-split__main"><p class="sy-title">${esc(p.use.title)}</p>${p.use.note ? `<p class="sy-small pj-split__note">${esc(p.use.note)}</p>` : ''}</div>
   </div>
-  <ol class="pj-how pj-how--steps pj-how--${p.use.steps.length}" data-reveal-children>
+  <ol class="pj-how pj-how--steps pj-how--${p.use.steps.length}">
     ${p.use.steps.map(([label, title, text]) => `<li class="pj-how__item"><span class="sy-label">${esc(label)}</span><h3 class="sy-subheading">${esc(title)}</h3><p>${esc(text)}</p></li>`).join('')}
   </ol>
 </section>` : '';
@@ -139,11 +138,11 @@ const useSection = p => p.use ? `
 // (room, build, date, source of the text). p.gallery = { title, note, link?, items: [{ src, alt, label?, caption, width?, height? }] }.
 const gallerySection = p => p.gallery ? `
 <section class="pj-section pj-gallery sy-container" aria-labelledby="gallery-title">
-  <div class="pj-split" data-reveal>
+  <div class="pj-split">
     <h2 id="gallery-title" class="sy-eyebrow">${esc(p.gallery.eyebrow || 'Gallery')}</h2>
     <div class="pj-split__main"><p class="sy-title">${esc(p.gallery.title)}</p>${p.gallery.note ? `<p class="sy-small pj-split__note">${esc(p.gallery.note)}${p.gallery.link ? ` <a class="sy-link pj-gallery__link" href="${p.gallery.link.href}">${esc(p.gallery.link.label)}</a>` : ''}</p>` : ''}</div>
   </div>
-  <ul class="pj-gallery__grid" data-reveal-children>
+  <ul class="pj-gallery__grid">
     ${p.gallery.items.map(it => `<li class="pj-gallery__item"><figure class="pj-gallery__figure"><div class="pj-gallery__plate"><img src="${it.src}" alt="${esc(it.alt)}" width="${it.width || 1440}" height="${it.height || 900}" loading="lazy" decoding="async"></div><figcaption class="sy-small pj-gallery__caption">${it.label ? `<b>${esc(it.label)}</b>` : ''}${esc(it.caption)}</figcaption></figure></li>`).join('')}
   </ul>
 </section>` : '';
@@ -151,11 +150,11 @@ const gallerySection = p => p.gallery ? `
 // Design: how it is built, as a grid of named mechanisms.
 const designSection = p => p.design ? `
 <section class="pj-section sy-container" aria-labelledby="design-title">
-  <div class="pj-split" data-reveal>
+  <div class="pj-split">
     <h2 id="design-title" class="sy-eyebrow">Design</h2>
     <p class="sy-title pj-split__main">${esc(p.design.title)}</p>
   </div>
-  <ul class="pj-design" data-reveal-children>
+  <ul class="pj-design">
     ${p.design.items.map(([title, text]) => `<li class="pj-design__item"><h3 class="sy-subheading">${esc(title)}</h3><p>${esc(text)}</p></li>`).join('')}
   </ul>
 </section>` : '';
@@ -164,10 +163,10 @@ const designSection = p => p.design ? `
 const STATES = { deployed: 'Deployed', measured: 'Measured', tested: 'Tested', implemented: 'Implemented', 'not yet': 'Not yet' };
 const evidenceSection = p => p.evidence ? `
 <section class="pj-section sy-container" aria-labelledby="evidence-title">
-  <div class="pj-split pj-split--facts" data-reveal>
+  <div class="pj-split pj-split--facts">
     <h2 id="evidence-title" class="sy-eyebrow pj-facts__label">Evidence</h2>
     <div class="pj-split__main">
-      <ul class="pj-evidence" data-reveal-children>${p.evidence.map(([state, text]) => `<li class="pj-evidence__row is-${state.replace(/\s+/g, '-')}"><span class="pj-evidence__state sy-label"><i aria-hidden="true"></i>${esc(STATES[state] || state)}</span><p>${esc(text)}</p></li>`).join('')}</ul>
+      <ul class="pj-evidence">${p.evidence.map(([state, text]) => `<li class="pj-evidence__row is-${state.replace(/\s+/g, '-')}"><span class="pj-evidence__state sy-label"><i aria-hidden="true"></i>${esc(STATES[state] || state)}</span><p>${esc(text)}</p></li>`).join('')}</ul>
       ${p.reflects ? `<p class="sy-small pj-evidence__ref">Reflects ${esc(p.reflects)}. Each state is backed by code, a named test, a measurement under stated conditions, or a deployment.</p>` : ''}
     </div>
   </div>
@@ -177,22 +176,22 @@ const evidenceSection = p => p.evidence ? `
 // The host keeps a paragraph for readers without JavaScript; /system-map.js replaces it with the exhibit.
 const mapSection = p => p.map ? `
 <section class="pj-section pj-map sy-container" aria-labelledby="map-title">
-  <div class="pj-split" data-reveal>
+  <div class="pj-split">
     <h2 id="map-title" class="sy-eyebrow">Inspect</h2>
     <div class="pj-split__main"><p class="sy-title">${esc(p.map.title)}</p><p class="sy-small pj-split__note">${esc(p.map.note)}</p></div>
   </div>
-  <div class="pj-map__host" data-system-map="${esc(p.map.id)}" data-reveal><p class="sy-small pj-map__fallback">${esc(p.map.fallback)}</p></div>
-  <script type="module" src="/system-map.js?v=20261030-contrast"></script>
+  <div class="pj-map__host" data-system-map="${esc(p.map.id)}"><p class="sy-small pj-map__fallback">${esc(p.map.fallback)}</p></div>
+  <script type="module" src="/system-map.js"></script>
 </section>` : '';
 
 // A recorded run: the output of running the repository's own example, shown as it came back.
 const runSection = p => p.run ? `
 <section class="pj-section pj-run sy-container" aria-labelledby="run-title">
-  <div class="pj-split" data-reveal>
+  <div class="pj-split">
     <h2 id="run-title" class="sy-eyebrow">Recorded run</h2>
     <div class="pj-split__main"><p class="sy-title">${esc(p.run.title)}</p><p class="sy-small pj-split__note">${esc(p.run.note)}</p></div>
   </div>
-  <figure class="pj-run__figure" data-reveal>
+  <figure class="pj-run__figure">
     <div class="pj-run__box"><p class="pj-run__cmd sy-label">${esc(p.run.command)}</p><pre class="pj-run__out"><code>${esc(p.run.output)}</code></pre></div>
     <figcaption class="sy-small pj-run__caption">${esc(p.run.caption)}</figcaption>
   </figure>
@@ -209,14 +208,14 @@ const sections = p => `${liveBar(p)}${videoSection(p)}${gallerySection(p)}${runS
 // authored by hand) can carry the same sections: scripts/prerender.mjs fills its marker at build time. That page
 // does not otherwise load experience-v7.js, so the sections bring it along to fill the dependency panel.
 export const renderSections = p => `${sections(p)}
-<script type="module" src="/projects/experience-v7.js?v=16"></script>`;
+<script type="module" src="/projects/experience-v7.js"></script>`;
 
 function facts(p) {
   const value = v => typeof v === 'string' ? esc(v) : `<a class="sy-link pj-facts__link" href="${v.href}">${esc(v.label)}${/^https?:/.test(v.href) ? icon('external', 16) : ''}</a>`;
   const rows = [['Status', badge(p.status)], ...p.facts.map(([k, v]) => [k, k === 'Technology' ? `<span class="pj-facts__tech">${value(v)}</span>` : value(v)])];
   return `
 <section class="pj-section sy-container" aria-labelledby="facts-title">
-  <div class="pj-split pj-split--facts" data-reveal>
+  <div class="pj-split pj-split--facts">
     <h2 id="facts-title" class="sy-eyebrow pj-facts__label">Facts</h2>
     <dl class="pj-facts pj-split__main">${rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join('')}</dl>
   </div>
@@ -225,7 +224,7 @@ function facts(p) {
 
 export function projectRow(item, { intro = true } = {}) {
   const tech = item.facts.find(([k]) => k === 'Technology')?.[1];
-  return `<li><a class="sy-project-row" href="/projects/${item.slug}/" style="--sy-accent:${item.accent}" data-tilt="2">
+  return `<li><a class="sy-project-row" href="/projects/${item.slug}/" style="--sy-accent:${item.accent}">
     <span class="sy-project-row__index">${item.number}</span>
     <canvas class="sy-project-row__sigil" data-sigil="${item.slug}" aria-hidden="true"></canvas>
     <span class="sy-project-row__name"><span class="sy-project-row__title">${esc(item.name)}</span><span class="sy-project-row__cat">${esc(item.category)}</span></span>
@@ -240,8 +239,8 @@ export function projectRow(item, { intro = true } = {}) {
 export function others(p) {
   return `
 <section class="pj-section sy-container" aria-labelledby="others-title">
-  <div class="pj-others__head" data-reveal><h2 id="others-title" class="sy-eyebrow">Other products</h2></div>
-  <ul class="sy-project-rows pj-others" data-reveal-children>${projects.filter(item => item.slug !== p.slug).map(item => projectRow(item, { intro: false })).join('')}</ul>
+  <div class="pj-others__head"><h2 id="others-title" class="sy-eyebrow">Other products</h2></div>
+  <ul class="sy-project-rows pj-others">${projects.filter(item => item.slug !== p.slug).map(item => projectRow(item, { intro: false })).join('')}</ul>
 </section>`;
 }
 
@@ -254,12 +253,12 @@ export function renderProject(p) {
   <section class="pj-hero sy-container" aria-labelledby="project-title">
     <div class="pj-hero__copy">
       ${crumbs([{ label: 'Products', href: '/#products' }, { label: p.name }])}
-      <p class="pj-eyebrow sy-eyebrow" data-reveal><span class="pj-number">${p.number}</span> / ${esc(p.category)}</p>
-      <div class="pj-identity" data-reveal><span class="pj-name">${esc(p.name)}</span>${badge(p.status)}</div>
-      <h1 id="project-title" class="sy-display pj-title" data-split>${esc(p.headline)}</h1>
-      <p class="sy-body-lg pj-intro" data-reveal>${esc(p.intro)}</p>
-      ${p.summary ? `<p class="pj-summary" data-reveal>${esc(p.summary)}</p>` : ''}
-      <div data-reveal>${actions(p)}</div>
+      <p class="pj-eyebrow sy-eyebrow"><span class="pj-number">${p.number}</span> / ${esc(p.category)}</p>
+      <div class="pj-identity"><span class="pj-name">${esc(p.name)}</span>${badge(p.status)}</div>
+      <h1 id="project-title" class="sy-display pj-title">${keepHyphens(esc(p.headline))}</h1>
+      <p class="sy-body-lg pj-intro">${esc(p.intro)}</p>
+      ${p.summary ? `<p class="pj-summary">${esc(p.summary)}</p>` : ''}
+      <div>${actions(p)}</div>
     </div>
   </section>
   ${sections(p)}

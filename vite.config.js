@@ -1,19 +1,21 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig, transformWithEsbuild } from 'vite';
 
-// The static pages (projects/, services/, research/ ...) link the shared design-system stylesheet at /syberlabs.css:
-// the v2 kit (kit/v2/syber-atlas.css) followed by the site layer (src/syberlabs.css), the same two files the homepage imports.
-// They also load /syberlabs.js, the site v3 behaviours (src/site/site.js: the 3D field, the Atlas menu, reveal, tilt),
-// which this config builds as a second, unhashed entry, and project pages with a system map load /system-map.js
-// (src/system-map-embed.js, which loads src/system-map-mount.jsx on demand), a third. All are served in dev and emitted unhashed in the build.
-const kitCss = fileURLToPath(new URL('./kit/v2/syber-atlas.css', import.meta.url));
-const siteCss = fileURLToPath(new URL('./src/syberlabs.css', import.meta.url));
-const siteJs = fileURLToPath(new URL('./src/site/boot.js', import.meta.url));
-const mapJs = fileURLToPath(new URL('./src/system-map-embed.js', import.meta.url));
-const sharedCss = () => readFileSync(kitCss, 'utf8') + '\n' + readFileSync(siteCss, 'utf8');
+// What this build makes:
+//   /index.html     the homepage. Its markup is src/home/page.js, written into index.html here, at build time and in
+//                   `pnpm dev`, so the page is complete without JavaScript. Its script is src/home/main.js.
+//   /syberlabs.css  the stylesheet every page links: fonts/site.css, then src/styles/ in the order below.
+//   /syberlabs.js   the script every static page loads (src/site/boot.js): the Menu and a back-to-top button.
+//   /system-map.js  a small loader on the RISE and FLYSPACE pages (src/system-map-embed.js). It fetches React and
+//                   the maps (src/system-map-mount.jsx) only when an Inspect section nears the viewport.
+// The three are emitted unhashed, because hand-written pages link them by name; scripts/stamp.mjs then adds each
+// file's content hash to those links in dist/, so a changed file is never served from a browser's cache.
+const file = path => fileURLToPath(new URL(path, import.meta.url));
+const SHARED_CSS = ['./fonts/site.css', './src/styles/tokens.css', './src/styles/base.css', './src/styles/type.css', './src/styles/chrome.css', './src/styles/components.css'];
+const sharedCss = () => SHARED_CSS.map(path => readFileSync(file(path), 'utf8')).join('\n');
 
-function syberlabsShared() {
+function shared() {
   return {
     name: 'syberlabs-shared',
     configureServer(server) {
@@ -31,24 +33,43 @@ function syberlabsShared() {
         res.end(`import '/src/system-map-embed.js';`);
       });
     },
-    generateBundle() {
-      this.emitFile({ type: 'asset', fileName: 'syberlabs.css', source: sharedCss() });
+    async generateBundle() {
+      const { code } = await transformWithEsbuild(sharedCss(), 'syberlabs.css', { loader: 'css', minify: true, legalComments: 'none' });
+      this.emitFile({ type: 'asset', fileName: 'syberlabs.css', source: code });
     },
   };
 }
 
-export default defineConfig(({ isSsrBuild }) => ({
+function homepage() {
+  let server;
+  return {
+    name: 'syberlabs-home',
+    configureServer(s) { server = s; },
+    transformIndexHtml: {
+      // post: Vite has already found the page's script and stylesheet, and leaves the markup added here alone
+      // (its images and clips are served from media/, which scripts/assemble-dist.sh copies as it is).
+      order: 'post',
+      async handler(html) {
+        const { renderHome } = server ? await server.ssrLoadModule('/src/home/page.js') : await import('./src/home/page.js');
+        if (!html.includes('<!-- home:body -->')) throw new Error('index.html has no <!-- home:body --> marker');
+        return html.replace('<!-- home:body -->', renderHome());
+      },
+    },
+  };
+}
+
+export default defineConfig({
   base: '/',
   publicDir: false,
-  plugins: [syberlabsShared()],
-  build: isSsrBuild ? {} : {
+  plugins: [shared(), homepage()],
+  build: {
     rollupOptions: {
-      input: { main: fileURLToPath(new URL('./index.html', import.meta.url)), syberlabs: siteJs, systemmap: mapJs },
+      input: { main: file('./index.html'), syberlabs: file('./src/site/boot.js'), systemmap: file('./src/system-map-embed.js') },
       output: {
         entryFileNames: chunk => chunk.name === 'syberlabs' ? 'syberlabs.js' : chunk.name === 'systemmap' ? 'system-map.js' : 'assets/[name]-[hash].js',
-        // React in its own chunk so the homepage and the project pages' system maps share one cached copy
+        // React in its own chunk: only the system maps use it
         manualChunks: id => (/node_modules\/(react|react-dom|scheduler)\//.test(id) ? 'react' : undefined),
       },
     },
   },
-}));
+});

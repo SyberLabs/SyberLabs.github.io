@@ -1,4 +1,4 @@
-/* Reading page on the site's Midnight theme (src/syberlabs.css): colours come from there; only measures live here. */
+/* Reading page on the site's Midnight theme (src/styles/): colours come from there; only measures live here. */
 .syber-jev .sy-btn { white-space:normal; min-height:48px; padding:12px 20px; line-height:1.4; }
 .syber-jev :focus-visible { outline-offset:5px; }
 .syber-jev main section[id] { scroll-margin-top:100px; }

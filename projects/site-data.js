@@ -1,6 +1,7 @@
 // Single source of site navigation and project data.
-// Bundled into the homepage by Vite (src/App.jsx), used by the build-time prerender
-// (scripts/prerender.mjs) and loaded as-is by the project pages (experience-v7.js).
+// Read at build time by the homepage (src/home/page.js), the product pages (scripts/prerender.mjs through
+// projects/project-template.js) and the shared header and footer (scripts/site-chrome.mjs). No page loads it in
+// the browser, except a product page opened in `pnpm dev` (projects/experience-v7.js).
 // Every project claim is taken from its repository at the commit named in `reflects` or its public
 // page. Evidence states: implemented
 // (the behaviour exists in code), tested (a named test exercises it), measured (numbers exist
