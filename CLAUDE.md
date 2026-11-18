@@ -25,7 +25,8 @@ published at `/kit/v2/` unchanged, and the site does not load it.
 - Every typeface is served from `/fonts/` (`fonts/README.md`). No page may load a font, stylesheet or script from
   another origin; CI fails if one does, and `/privacy/` tells visitors so.
 - Write links to local stylesheets and scripts without a `?v=` token. `scripts/stamp.mjs` adds each file's content
-  hash to its links in `dist/` at the end of the build. Two links are outside its reach: the staff pages' links to
+  hash to its links in `dist/` at the end of the build. It leaves the game's own files (they share a token set by
+  hand, see PSYCHO SYBER) and the Lacuna pages as they are. Two links are outside its reach: the staff pages' links to
   `/syberlabs.css` and `/staff.css` in `server/views/layout.js`. Change their token by hand (and the test that names
   it) when either file changes.
 - One title style: `main h1` in `src/styles/type.css`. A page sets its title's measure and margins, never its font.

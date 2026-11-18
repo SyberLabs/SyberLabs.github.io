@@ -2,14 +2,16 @@
 // Adds each local stylesheet's and script's content hash to the links that name it, in every page of dist/:
 // href="/syberlabs.css" becomes href="/syberlabs.css?v=1a2b3c4d". A browser that has an older copy cached then asks
 // for the new address, so a changed file is never hidden by a stale one, and nobody keeps version tokens by hand.
-// Run last (scripts/assemble-dist.sh does). Files under /assets/ already carry a hash in their name. The game and
-// the Lacuna pages are left alone: the game versions its own module graph (psycho-syber/README.md).
+// Run last (scripts/assemble-dist.sh does). Files under /assets/ already carry a hash in their name. The game's own
+// files keep the token its modules share (psycho-syber/README.md), so on the game's page only the links to the
+// site's shared files are stamped. The Lacuna pages, the pieces and the kit are published as they are.
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join, resolve, dirname, relative } from 'node:path';
 
 const root = resolve(process.argv[2] || 'dist');
-const SKIP = ['psycho-syber/', 'lacuna/', 'media/', 'kit/', 'rise-demo/assets/'];
+const SKIP = ['lacuna/', 'media/', 'kit/', 'rise-demo/assets/'];   // pages left as they are
+const OWN = ['psycho-syber/'];                                      // files whose links carry a token set by hand
 const walk = dir => readdirSync(dir, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(join(dir, e.name)) : e.name.endsWith('.html') ? [join(dir, e.name)] : []);
 const hashes = new Map();
 const hashOf = file => { if (!hashes.has(file)) hashes.set(file, createHash('sha256').update(readFileSync(file)).digest('hex').slice(0, 8)); return hashes.get(file); };
@@ -23,6 +25,7 @@ for (const page of walk(root)) {
     if (url.startsWith('//') || url.startsWith('/assets/')) return tag;
     const file = url.startsWith('/') ? join(root, url) : resolve(dirname(page), url);
     if (!file.startsWith(root) || !existsSync(file) || !statSync(file).isFile()) return tag;
+    if (OWN.some(prefix => relative(root, file).split('\\').join('/').startsWith(prefix))) return tag;
     links++;
     return `${before}${url}?v=${hashOf(file)}${after}`;
   });
