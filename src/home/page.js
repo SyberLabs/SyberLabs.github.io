@@ -49,7 +49,8 @@ const lacunaRows = () => `<ul class="home-rows" role="list">${LACUNA_ROWS.map(r 
 
 // SyberWork's recorded run, read from the same output the product page prints (projects/site-data.js, `run`), so the
 // two cannot disagree. It shows one row per proposed change: what was claimed, what SyberWork's own check found and
-// what happened to the change. If the output ever stops parsing, or changes shape, the figure is left out.
+// what happened to the change. If the output ever stops parsing, or changes shape, the figure is left out. The
+// table carries its roles in the markup because narrow screens lay it out as blocks (src/home/home.css).
 const CHECK_WORDS = { 'candidate_check_failed:tests': 'Tests failed', all_checks_passed: 'All checks passed' };
 function recordedRun(p) {
   const run = p && p.run;
@@ -61,7 +62,7 @@ function recordedRun(p) {
     const accepted = c.accept === 'succeeded', denied = typeof c.accept === 'string' && c.accept.startsWith('denied');
     if (!c.candidate || !checked || (!accepted && !denied)) return null;
     const claimed = c.claimed ? `Tests ${esc(c.claimed.tests)}, confidence ${esc(c.claimed.confidence)}` : 'No claim in the record';
-    return `<tr><th scope="row">${esc(c.candidate)}</th><td data-label="Claimed">${claimed}</td><td data-label="SyberWork's check">${checked}</td><td data-label="Outcome"><span class="home-run__outcome${accepted ? ' is-accepted' : ''}"><i aria-hidden="true"></i>${accepted ? 'Accepted' : 'Rejected'}</span></td></tr>`;
+    return `<tr role="row"><th scope="row" role="rowheader">${esc(c.candidate)}</th><td role="cell" data-label="Claimed">${claimed}</td><td role="cell" data-label="SyberWork's check">${checked}</td><td role="cell" data-label="Outcome"><span class="home-run__outcome${accepted ? ' is-accepted' : ''}"><i aria-hidden="true"></i>${accepted ? 'Accepted' : 'Rejected'}</span></td></tr>`;
   });
   if (rows.length !== 2 || rows.includes(null)) return '';
   return `
@@ -71,9 +72,9 @@ function recordedRun(p) {
           <p class="home-run__title">${esc(run.title)}</p>
           <p class="home-run__note">${esc(run.note)} <a href="/projects/${p.slug}/">Full output on the ${esc(p.name)} page</a></p>
         </figcaption>
-        <table>
-          <thead><tr><th scope="col">Proposed change</th><th scope="col">Claimed</th><th scope="col">SyberWork&rsquo;s check</th><th scope="col">Outcome</th></tr></thead>
-          <tbody>${rows.join('')}</tbody>
+        <table role="table" aria-label="${esc(run.title)}">
+          <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">Proposed change</th><th scope="col" role="columnheader">Claimed</th><th scope="col" role="columnheader">SyberWork&rsquo;s check</th><th scope="col" role="columnheader">Outcome</th></tr></thead>
+          <tbody role="rowgroup">${rows.join('')}</tbody>
         </table>
       </figure>`;
 }
@@ -93,11 +94,11 @@ const main = () => `<main id="main">
         <h1 id="hero-title" tabindex="-1"><span class="home-wordmark" data-text="SyberLabs">SyberLabs</span></h1>
         <p class="home-hero__line">Software for checking AI&rsquo;s work.</p>
         <ul class="home-index" aria-label="Parts of SyberLabs">
-          <li><a href="#factory"><b>Factory</b><span>SyberWork tests AI-written code changes. Attest runs every step in your docs.</span></a></li>
-          <li><a href="#studio"><b>Studio</b><span>RISE is a reading app. FLYSPACE shows which data fed each AI answer.</span></a></li>
-          <li><a href="#lacuna"><b>Lacuna</b><span>A research institute. Its atlas covers ${ATLAS_SITES.length} places where the historical record has a gap.</span></a></li>
+          <li><a href="#factory"><b>Factory</b> <span>SyberWork tests AI-written code changes. Attest runs every step in your docs.</span></a></li>
+          <li><a href="#studio"><b>Studio</b> <span>RISE is a reading app. FLYSPACE shows which data fed each AI answer.</span></a></li>
+          <li><a href="#lacuna"><b>Lacuna</b> <span>A research institute. Its atlas covers ${ATLAS_SITES.length} places where the historical record has a gap.</span></a></li>
         </ul>
-        <p class="home-play"><a href="/psycho-syber/" aria-label="Play PSYCHO SYBER, a browser game"><span class="home-play__p">PSYCHO</span><span class="home-play__s">SYBER</span><span class="home-play__t">Play the game</span></a></p>
+        <p class="home-play"><a href="/psycho-syber/"><span class="home-play__p">PSYCHO</span> <span class="home-play__s">SYBER</span> <span class="home-play__t">Play the game</span></a></p>
       </div>
     </section>
 

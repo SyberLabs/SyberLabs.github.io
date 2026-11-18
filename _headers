@@ -1,10 +1,7 @@
 # Cloudflare Pages response headers for static files (the staff Function sets its own; server/http.js).
 # Files under /assets/ carry a content hash in their name, and fonts live in a versioned directory (fonts/README.md),
-# so a browser may keep both for a year. Everything else keeps Pages' default: checked against the server each time.
+# so a browser may keep both for a year. Everything else keeps Pages' defaults: checked against the server each time.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 /fonts/v1/*
   Cache-Control: public, max-age=31536000, immutable
-/*
-  X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
