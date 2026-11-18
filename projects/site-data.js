@@ -1,6 +1,7 @@
 // Single source of site navigation and project data.
-// Bundled into the homepage by Vite (src/App.jsx), used by the build-time prerender
-// (scripts/prerender.mjs) and loaded as-is by the project pages (experience-v7.js).
+// Read at build time by the homepage (src/home/page.js), the product pages (scripts/prerender.mjs through
+// projects/project-template.js) and the shared header and footer (scripts/site-chrome.mjs). No page loads it in
+// the browser, except a product page opened in `pnpm dev` (projects/experience-v7.js).
 // Every project claim is taken from its repository at the commit named in `reflects` or its public
 // page. Evidence states: implemented
 // (the behaviour exists in code), tested (a named test exercises it), measured (numbers exist
@@ -38,6 +39,7 @@ export const LACUNA_PARACAS = '/lacuna/research/paracas-bundles/';
 
 export const nav = [
   { id: 'products', label: 'Products', href: '/#products' },
+  { id: 'research', label: 'Research', href: '/research/' },
   { id: 'factory', label: 'Factory', href: '/factory/' },
   { id: 'services', label: 'Services', href: '/services/' },
   { id: 'lacuna', label: 'Lacuna', href: LACUNA },
@@ -312,6 +314,18 @@ export const siteMap = [
     { label: 'Subscriber account', note: 'Existing RISE subscribers', href: RISE_PLUS.href, external: true },
     { label: 'Privacy', note: 'Data and contact policy', href: '/privacy/' },
   ] },
+];
+
+// The reports the homepage lists under Research, newest first. Each line is the report's own wording on the research
+// index (research/index.html), which is written by hand: src/home/parts/research.js fails the build if a title or a
+// date here is not on that page.
+export const research = [
+  { code: 'DA–01', kind: 'Research report, draft', title: 'Decision Arena: same request, different deciders', href: '/research/decision-arena/', date: '8 October 2026',
+    line: 'The same RISE reading requests given to every decider. The first run covers only the two baselines that call no model.' },
+  { code: 'SB–01', kind: 'Research note', title: 'Sybershoke: shock tests for multi-agent systems', href: '/research/sybershoke/', date: '29 September 2026',
+    line: 'A deterministic fault-injection harness: a seed gives a fault plan, and invariants judge the recorded run.' },
+  { code: 'GC–01', kind: 'Technical report', title: 'GrokCell Execution: reliable execution for AI agents', href: '/research/jev-execution/', date: '26 September 2026',
+    line: 'After an AI model chooses an action, the application still has to enforce permissions and budgets, check the result and recover from crashes.' },
 ];
 
 export const skills = ['Python', 'TypeScript', 'JavaScript', 'SQL', 'React', 'Next.js', 'FastAPI', 'PostgreSQL', 'SQLite', 'Redis', 'Cloudflare Workers', 'LightGBM', 'scikit-learn', 'pandas', 'NumPy', 'LLM applications', 'AI agents', 'pytest', 'Vitest', 'Playwright'];

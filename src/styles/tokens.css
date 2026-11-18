@@ -1,0 +1,94 @@
+/*
+ * SyberLabs site tokens: the Midnight theme, defined once, here.
+ *   Midnight Black #02070A is the material: every page, menu and footer sits on it.
+ *   Electric Blue #0297DE is the system's light: links, focus and structure.
+ *   Cantaloupe Orange #FC734D is heat, used a little: the action a person takes (solid buttons), live signals,
+ *   the Approve step and the "you are here" dot.
+ * Text on either colour fill is Midnight (white on the blue is 3.2:1; Midnight on it is 6.3:1, and 7.4:1 on orange).
+ * /syberlabs.css is fonts/site.css followed by tokens, base, type, chrome and components, in that order
+ * (vite.config.js). kit/v2/ is the separate kit that product apps vendor; the site does not load it.
+ */
+:root {
+  /* colour */
+  --sy-midnight: #02070a;
+  --sy-electric: #0297de;
+  --sy-electric-hi: #4cc0f5;
+  --sy-electric-deep: #015d8c;
+  --sy-cantaloupe: #fc734d;
+  --sy-cantaloupe-hi: #fd9273;
+  --sy-cantaloupe-deep: #e4522c;
+
+  --sy-ink: var(--sy-midnight);
+  --sy-ink-2: #07121a;
+  --sy-ink-3: #0c1b25;
+  --sy-vellum: #f1f6f9;
+  --sy-body: #c3cfd6;
+  --sy-mist: #93a4ae;
+  --sy-dim: #708490;
+  --sy-rule: rgba(140, 200, 235, .14);
+  --sy-rule-2: rgba(140, 200, 235, .28);
+
+  --sy-ice: var(--sy-electric);
+  --sy-deep: var(--sy-electric-deep);
+  --sy-amber: var(--sy-cantaloupe);
+  --sy-live: var(--sy-cantaloupe);
+  --sy-research: #7fcff5;
+  --sy-success: #6ff5a8;
+  --sy-warning: #ffc96b;
+  --sy-danger: #ff7a8a;
+  --sy-accent: var(--sy-electric);
+  --sy-accent-rise: var(--sy-electric);
+  /* cool light, a white-hot core, then heat */
+  --sy-spectrum: linear-gradient(100deg, #0297de 0%, #63c3f2 34%, #eef3f2 54%, #fda98f 72%, #fc734d 100%);
+
+  /* type */
+  --sy-sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sy-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --sy-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* space, shape, motion */
+  --sy-gutter: clamp(16px, 4vw, 56px);
+  --sy-max: 1320px;
+  --sy-header-h: 64px;
+  --sy-r-pill: 3px;
+  --sy-r-panel: 4px;
+  --sy-r-input: 10px;
+  --sy-r-sm: 4px;
+  --sy-ease: cubic-bezier(.2, .8, .2, 1);
+  --sy-t-hover: 120ms;
+  --sy-t-enter: 200ms;
+  --sy-t-page: 320ms;
+
+  /* The names the page stylesheets use, mapped onto the tokens above. */
+  --bg: var(--sy-ink);
+  --surface: var(--sy-ink-2);
+  --surface-2: var(--sy-ink-3);
+  --line: var(--sy-rule);
+  --line-strong: var(--sy-rule-2);
+  --text: var(--sy-vellum);
+  --text-body: var(--sy-body);
+  --text-2: var(--sy-mist);
+  --text-3: var(--sy-dim);
+  --brand: var(--sy-electric);
+  --success: var(--sy-success);
+  --warning: var(--sy-warning);
+  --font-display: var(--sy-sans);
+  --font-sans: var(--sy-sans);
+  --font-mono: var(--sy-mono);
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px;
+  --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px; --space-10: 128px;
+  --radius-sm: 4px;
+  --radius: 14px;
+  --radius-full: 999px;
+  --control-height: 46px;
+  --header-height: var(--sy-header-h);
+  --gutter: var(--sy-gutter);
+  --content-max: calc(var(--sy-max) - 2 * var(--sy-gutter));
+  --measure: 68ch;
+  --duration-fast: var(--sy-t-hover);
+  --ease: var(--sy-ease);
+
+  color-scheme: dark;
+  background: var(--sy-ink);
+  scroll-padding-top: calc(var(--sy-header-h) + 16px);
+}

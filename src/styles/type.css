@@ -1,0 +1,14 @@
+/* Type: Instrument Sans for every heading and paragraph, JetBrains Mono for metadata. Nothing is set below 12px. */
+/* The page title: one voice on every page. A page's own stylesheet sets its measure and margins only.
+   An <em> in a title is not coloured: on this site Electric Blue means a link. */
+main h1, .sy-display { font: 500 clamp(38px, 5.4vw, 80px)/1.03 var(--sy-sans); letter-spacing: -.045em; color: var(--sy-vellum); text-wrap: balance; }
+main h1 em, .sy-display em { font-style: normal; }
+.sy-display { margin: 0; }
+.sy-title { font: 400 40px/44px var(--sy-sans); margin: 0; color: var(--sy-vellum); }
+.sy-heading { font: 600 22px/30px var(--sy-sans); letter-spacing: -.01em; margin: 0; }
+.sy-subheading { margin: 0; font: 600 18px/28px var(--sy-sans); color: var(--sy-vellum); }
+.sy-body-lg { margin: 0; font: 400 clamp(18px, 1.45vw, 21px)/1.5 var(--sy-sans); color: var(--sy-body); max-width: 68ch; }
+.sy-body { font: 400 17px/1.6 var(--sy-sans); color: var(--sy-body); max-width: 68ch; }
+.sy-small { font: 400 14px/20px var(--sy-sans); color: var(--sy-mist); }
+.sy-eyebrow, .sy-label { font: 500 12px/1.4 var(--sy-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--sy-mist); margin: 0; }
+@media (max-width: 640px) { .sy-title { font-size: 32px; line-height: 36px; } }

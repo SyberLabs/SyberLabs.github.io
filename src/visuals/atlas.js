@@ -1,7 +1,8 @@
 /* SyberLabs: the Lacuna visual. The Earth drawn as evenly spaced dots, turning. The research sites of the Lacuna
    Atlas are marked on it: a lit dot for a Lacuna investigation, a ring for an open question. As the globe turns it
-   names each site in turn, and onSite reports the one named so the caption and the links can follow. Mounted in a
-   section. */
+   names each site in turn, and onSite reports the one named so the caption and the links can follow. It can be
+   turned by hand: mount returns grab, turn and release, which src/home/globe.js calls as the globe is dragged.
+   Mounted in a section. */
 import { LAND, SITES } from './atlas-data.js';
 
 const root = typeof window !== 'undefined' ? window : globalThis;
@@ -13,6 +14,8 @@ const TURN = 3 * RAD;             // radians a second: one turn in two minutes
 // named from LEAD degrees before the central meridian to TRAIL degrees after it, each name stays up at least DWELL
 // seconds, and a site that has been named waits REST seconds, so the eleven sites in the Americas queue up in order.
 const LEAD = 18 * RAD, TRAIL = 55 * RAD, DWELL = 2.8, REST = 60, FACING = 0.2;
+// After a hand lets go, the site named is the one nearest the middle for HAND seconds, and the globe eases back to its own turn.
+const HAND = 4, FASTEST = 2.6;
 
 const cl = x => (x < 0 ? 0 : x > 1 ? 1 : x);
 const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${cl(a).toFixed(3)})`;
@@ -45,6 +48,7 @@ export function mount(canvas, { onSite } = {}) {
   let W = 0, H = 0, dpr = 1, t = 0, last = 0, visible = false;
   let centre = first.lon * RAD;   // the meridian facing the viewer
   let named = null, since = 0;
+  let spin = -TURN, held = false, touched = -1e9, R = 1;   // spin: radians a second, negative as the Earth turns
 
   // Orthographic view of a point on the unit sphere: x to the right, y up, z towards the viewer.
   function place(lon, sin, cos, out) {
@@ -55,7 +59,8 @@ export function mount(canvas, { onSite } = {}) {
   }
 
   function render() {
-    const R = Math.min(W * 0.42, H * 0.33), cx = W / 2, cy = H * 0.46;
+    R = Math.min(W, H) * 0.38;
+    const cx = W / 2, cy = H * 0.52;
     ctx.globalCompositeOperation = 'source-over';
     ctx.clearRect(0, 0, W, H);
 
@@ -111,6 +116,11 @@ export function mount(canvas, { onSite } = {}) {
       if (m !== named && m.z > FACING && m.east > -LEAD && m.east < TRAIL && t - m.at > REST && (!next || m.east > next.east)) next = m;
     }
     if (!named) { named = marks[0]; named.at = t; since = t; }
+    else if (held || t - touched < HAND) {   // turned by hand: name the site nearest the middle of the view
+      let near = null;
+      for (const m of marks) if (m.z > 0.6 && (!near || m.z > near.z)) near = m;
+      if (near && near !== named && t - since > 0.3) { named = near; named.at = t; since = t; if (onSite) onSite(named.site); }
+    }
     else if (next && t - since >= DWELL) { named = next; named.at = t; since = t; if (onSite) onSite(named.site); }
     const pulse = 0.5 + 0.5 * Math.sin(t * 2.4);
     for (const m of marks) {
@@ -169,12 +179,20 @@ export function mount(canvas, { onSite } = {}) {
     root.requestAnimationFrame(frame);
     if (!visible || document.hidden || !W) return;
     let dt = last ? (now - last) / 1000 : 0.016; last = now; if (dt > 0.05) dt = 0.05;
-    t += dt; centre -= TURN * dt;   // the surface moves left to right, as the Earth turns
-    if (centre < -Math.PI) centre += TAU;
+    t += dt;
+    if (!held) { spin += (-TURN - spin) * Math.min(1, dt * 0.9); centre += spin * dt; }   // the surface moves left to right, as the Earth turns
+    if (centre < -Math.PI) centre += TAU; else if (centre > Math.PI) centre -= TAU;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     render();
   }
   size();
   if (!still) root.requestAnimationFrame(frame);
-  return true;
+  const paint = () => { if (still && W) { t += 1; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); render(); } };
+  return {
+    grab() { held = true; touched = t; },
+    // dx: how far the hand moved, in CSS pixels. The surface under it moves the same distance.
+    turn(dx) { centre -= dx / R; if (centre < -Math.PI) centre += TAU; else if (centre > Math.PI) centre -= TAU; touched = t; paint(); },
+    // speed: the hand's speed as it let go, in CSS pixels a second. The globe keeps it, then eases back to its own turn.
+    release(speed = 0) { held = false; touched = t; spin = Math.max(-FASTEST, Math.min(FASTEST, -speed / R)); paint(); },
+  };
 }

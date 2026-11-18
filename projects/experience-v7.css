@@ -6,7 +6,6 @@
 /* Hero foundations; .pj-page below supplies the evidence-led reading layout. */
 .pj-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 380px); column-gap: var(--space-8); align-items: center; padding-top: var(--space-9); }
 .pj-eyebrow { display: flex; align-items: center; gap: var(--space-2); }
-.pj-number { color: var(--sy-accent); }
 .pj-identity { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-5); }
 .pj-name { font: 400 40px/1 var(--sy-serif); color: var(--sy-vellum); }
 .pj-title { margin-top: var(--space-5); max-width: 15em; }
@@ -164,7 +163,7 @@ main.pj-page {
 .pj-page .pj-hero { grid-template-columns: minmax(0, 1fr); padding-top: clamp(40px, 6vw, 88px); }
 .pj-page .pj-hero__copy { max-width: 1000px; }
 .pj-page .pj-name { font: 600 clamp(24px, 3vw, 36px)/1.15 var(--sy-sans); letter-spacing: -.035em; }
-.pj-page .pj-title { font: 600 clamp(40px, 5.8vw, 80px)/1.08 var(--sy-sans); letter-spacing: -.045em; max-width: 18ch; text-wrap: balance; }
+.pj-page .pj-title { max-width: 18ch; }
 .pj-page .sy-title { font: 600 clamp(26px, 3vw, 40px)/1.18 var(--sy-sans); letter-spacing: -.03em; text-wrap: balance; }
 .pj-page .pj-intro { max-width: 58ch; font-size: clamp(19px, 2vw, 23px); line-height: 1.6; }
 .pj-page .pj-summary { max-width: 72ch; }
@@ -202,7 +201,6 @@ main.pj-page {
 }
 @media (max-width: 640px) {
   .pj-page .pj-gallery__grid { grid-template-columns: 1fr; gap: 32px; }
-  .pj-page .pj-title { font-size: clamp(36px, 10vw, 48px); }
   .pj-page .pj-live__card { padding: 24px 0; }
 }
 

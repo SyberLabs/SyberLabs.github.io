@@ -1,5 +1,5 @@
-// Screenshot every page of the built site (dist/, served at BASE) at desktop and phone widths, with the
-// WebGL field forced on (window.SY_ALLOW_SOFTWARE_GL) so the 3D layer renders under headless SwiftShader.
+// Screenshot every page of the built site (dist/, served at BASE) at desktop and phone widths. Software WebGL is
+// allowed (window.SY_ALLOW_SOFTWARE_GL) so the 404 page's plate renders under headless SwiftShader.
 // Usage: node scripts/shoot.mjs [outDir] [BASE]   (needs a Playwright install resolvable from here, or PW_REQUIRE_FROM=/path/to/package.json;
 // PW_EXECUTABLE=/path/to/chrome uses a preinstalled Chromium instead of Playwright's own download)
 import { createRequire } from 'node:module';
@@ -8,7 +8,7 @@ const require = createRequire(process.env.PW_REQUIRE_FROM || import.meta.url);
 const { chromium } = require('playwright');
 const out = process.argv[2] || 'shots', BASE = process.argv[3] || 'http://localhost:4173';
 mkdirSync(out, { recursive: true });
-const pages = ['/', '/projects/syberwork/', '/projects/attest/', '/projects/rise/', '/projects/flyspace/', '/factory/', '/approach/', '/stack/', '/services/', '/plus/', '/research/', '/research/sybershoke/', '/research/decision-arena/', '/research/jev-execution/', '/kev/', '/jev/', '/rise-demo/', '/privacy/', '/404.html'];
+const pages = ['/', '/psycho-syber/', '/lacuna/', '/projects/syberwork/', '/projects/attest/', '/projects/rise/', '/projects/flyspace/', '/factory/', '/approach/', '/stack/', '/services/', '/plus/', '/research/', '/research/sybershoke/', '/research/decision-arena/', '/research/jev-execution/', '/kev/', '/jev/', '/rise-demo/', '/privacy/', '/404.html'];
 const browser = await chromium.launch({ executablePath: process.env.PW_EXECUTABLE || undefined, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const errors = [];
 for (const [label, vp] of [['desktop', { width: 1440, height: 900 }], ['phone', { width: 390, height: 844 }]]) {
@@ -23,7 +23,7 @@ for (const [label, vp] of [['desktop', { width: 1440, height: 900 }], ['phone', 
     const name = path.replace(/[\/.]+/g, '_').replace(/^_|_$/g, '') || 'home';
     await page.screenshot({ path: `${out}/${label}-${name}-top.png` });
     if (process.argv.includes('--full')) await page.screenshot({ path: `${out}/${label}-${name}-full.png`, fullPage: true });
-    // mid-page: scroll a screen and a half so reveals, tilt cards and the field's scroll response are visible
+    // mid-page: a screen and a half down
     await page.mouse.wheel(0, vp.height * 1.5); await page.waitForTimeout(1400);
     await page.screenshot({ path: `${out}/${label}-${name}-mid.png` });
     if (path === '/') {

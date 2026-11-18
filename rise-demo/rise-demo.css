@@ -1,4 +1,4 @@
-/* Reading page on the site's Midnight theme (src/syberlabs.css): colours come from there; only measures live here. */
+/* Reading page on the site's Midnight theme (src/styles/): colours come from there; only measures live here. */
 .syber-demo .sy-btn { white-space:normal; min-height:48px; padding:12px 20px; line-height:1.4; }
 .syber-demo :focus-visible { outline-offset:5px; }
 .syber-demo main section[id] { scroll-margin-top:100px; }
@@ -18,7 +18,7 @@ main { padding: var(--space-9) 0 var(--space-10); }
 .hero-head .eyebrow::before { content: ''; width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--accent); }
 
 .hero-head { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: var(--space-6); padding-bottom: var(--space-7); }
-.hero-head h1 { margin: var(--space-5) 0 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(56px, 7vw, 96px); line-height: 1; letter-spacing: -0.02em; }
+.hero-head h1 { margin: var(--space-5) 0 0; }
 .intro { max-width: 32ch; margin: 0; font-size: 18px; line-height: 28px; color: var(--text-2); }
 
 .interactive-entry { padding: var(--space-6) 0 var(--space-7); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
@@ -76,7 +76,6 @@ video, .video-frame iframe { display: block; width: 100%; aspect-ratio: 16 / 9; 
 @media (max-width: 640px) {
   main { padding: var(--space-8) 0; }
   .hero-head { padding-bottom: var(--space-6); }
-  .hero-head h1 { font-size: 56px; line-height: 56px; }
   .interactive-entry h2, .second-film h2, .below h2 { font-size: 32px; line-height: 36px; }
   .interactive-entry p:not(.eyebrow) { font-size: 16px; line-height: 24px; }
   .interactive-cta, .links, .links .sy-btn { width: 100%; }

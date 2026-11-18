@@ -1,9 +1,10 @@
-// Writes static HTML for the homepage and project pages into dist/ so their text is
-// present without JavaScript (crawlers and link previews).
-// Run after `pnpm build` and scripts/assemble-dist.sh. The client scripts take over on load.
-import { readFile, writeFile, rm } from 'node:fs/promises';
+// Writes static HTML for the product pages and the /stack/ dependency totals into dist/, so their text is present
+// without JavaScript (crawlers and link previews). The homepage is written by the Vite build itself (vite.config.js).
+// Run after `pnpm build` and scripts/assemble-dist.sh.
+import { readFile, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
+import { renderGitHits } from './githits-panel.mjs';
 
 const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -13,11 +14,8 @@ async function inject(file, markerRe, replacement) {
   await writeFile(file, replacement(html));
 }
 
-const { render, renderGitHits } = await import(pathToFileURL(resolve('dist-ssr/entry-server.js')).href);
-await inject(resolve('dist/index.html'), /<div id="root"><\/div>/, html => html.replace('<div id="root"></div>', `<div id="root">${render()}</div>`));
-// /stack/ carries the GitHits dependency totals (src/githits-panel.jsx), built from the same snapshots as the project panels.
+// /stack/ carries the GitHits dependency totals, built from the same snapshots as the product pages' panels.
 await inject(resolve('dist/stack/index.html'), /<!-- stack:githits -->/, html => html.replace('<!-- stack:githits -->', renderGitHits()));
-await rm('dist-ssr', { recursive: true, force: true });
 
 const { projects, renderProject, renderSections, others } = await import(pathToFileURL(resolve('projects/project-template.js')).href);
 for (const p of projects) {
@@ -41,4 +39,4 @@ for (const p of projects) {
     .replace('<html lang="en">', `<html lang="en" style="--accent:${p.accent};--sy-accent:${p.accent}">`)
     .replace('<div id="app"></div>', `<div id="app">${page.body}</div>`));
 }
-console.log(`prerender: homepage, ${projects.length - 1} project pages, the RISE sections and the /stack/ dependency totals`);
+console.log(`prerender: ${projects.length - 1} product pages, the RISE sections and the /stack/ dependency totals`);
