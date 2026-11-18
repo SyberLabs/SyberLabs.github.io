@@ -1,8 +1,8 @@
 // PSYCHO SYBER: drawing. Everything is drawn into a 480x270 frame and scaled up without smoothing.
 // There are two complete looks. SYBER (skin 0) is cold stone and Visitor circuitry at night. PSYCHO (skin 1) is
 // the same world as the jaguar sees it: a living Paracas textile. The same geometry is drawn twice, once per skin.
-import { T, C, tileAt, gateActive, eyeAngle, wordActive, wordFresh, coreOpen, verdictAt, HUM, JAG } from './sim.js?v=20261117j';
-import { text, textC, textW } from './font.js?v=20261117j';
+import { T, C, tileAt, gateActive, eyeAngle, wordActive, wordFresh, coreOpen, verdictAt, corrupted, HUM, JAG } from './sim.js?v=20261118a';
+import { text, textC, textW } from './font.js?v=20261118a';
 export const VW = 480, VH = 270;
 const TAU = Math.PI * 2;
 const hash = (x, y, s = 0) => { let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(s | 0, 1274126177)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -29,8 +29,30 @@ function disc(c, color, x, y, r) { c.fillStyle = color; c.beginPath(); c.arc(x, 
 function ring(c, color, x, y, r, w = 1) { if (r <= 0) return; c.strokeStyle = color; c.lineWidth = w; c.beginPath(); c.arc(x, y, r, 0, TAU); c.stroke(); }
 
 // ---------------------------------------------------------------- tiles (cached once per stage and skin)
+// THE ANOMALOUS SYSTEM draws its own tiles: stone is the ground of a desktop, metal is the frame of a window or a
+// dialog, and a beam is a title bar with its three buttons.
+function sysTile(c, L, x, y, t, sk, px, py, h) {
+  const at = (dx, dy) => { const xx = x + dx, yy = y + dy; return xx < 0 || yy < 0 || xx >= L.w || yy >= L.h ? -1 : L.tiles[yy * L.w + xx]; };
+  if (t === C.STONE) {
+    R(c, sk ? '#1f0d3a' : '#081520', px, py, T, T);
+    if (at(0, -1) !== C.STONE && at(0, -1) !== C.METAL) { R(c, sk ? '#f2b632' : '#0297de', px, py, T, 1); R(c, sk ? '#7a3fa0' : '#12384c', px, py + 1, T, 2); if (x % 4 === 0) R(c, sk ? '#f6e7c8' : '#35607a', px, py + 5, 1, 7); if (x % 4 === 1) R(c, sk ? '#c2347f' : '#16303f', px + 2, py + 6, 9, 5); }
+    else if (h > 0.8) R(c, sk ? '#2e1456' : '#0b1c28', px + 3, py + 3, 10, 1);
+  } else if (t === C.METAL) {
+    R(c, sk ? '#3a1052' : '#16303f', px, py, T, T);
+    c.fillStyle = sk ? '#4f1d6e' : '#1d3d50'; for (let j = 3; j < T; j += 6) c.fillRect(px + 2 + (j % 4), py + j, 4, 1);
+    const edge = sk ? '#ff5fa2' : '#6fa9c6';
+    if (at(0, -1) !== C.METAL) { R(c, sk ? '#f2b632' : '#0297de', px, py, T, 3); R(c, edge, px, py, T, 1); }
+    if (at(0, 1) !== C.METAL) R(c, sk ? '#1b0730' : '#0a1620', px, py + T - 1, T, 1);
+    if (at(-1, 0) !== C.METAL) R(c, edge, px, py, 1, T);
+    if (at(1, 0) !== C.METAL) R(c, edge, px + T - 1, py, 1, T);
+  } else {
+    R(c, sk ? '#f2b632' : '#0297de', px, py, T, 4); R(c, sk ? '#fff2a8' : '#9bdcff', px, py, T, 1);
+    if (at(1, 0) !== C.ONEWAY) for (let i = 0; i < 3; i++) R(c, i === 2 ? '#fc734d' : (sk ? '#3a1052' : '#02070a'), px + 4 + i * 4, py + 1, 2, 2);
+  }
+}
 function drawTile(c, L, x, y, t, sk) {
   const px = x * T, py = y * T, h = hash(x, y), h2 = hash(x, y, 7);
+  if (L.def.bg === 'system' && (t === C.STONE || t === C.METAL || t === C.ONEWAY)) return sysTile(c, L, x, y, t, sk, px, py, h);
   const rk = (dx, dy) => { const xx = x + dx, yy = y + dy; if (yy < 0) return false; if (xx < 0 || xx >= L.w || yy >= L.h) return true; const q = L.tiles[yy * L.w + xx]; return q === C.STONE || q === C.METAL; };
   if (t === C.STONE) {
     if (!sk) {
@@ -90,6 +112,24 @@ export function buildTiles(L, sk) {
 }
 
 // ---------------------------------------------------------------- backgrounds
+// The inside of the Thousand Eyes: a desktop. Rows of icons stand on its ground and far windows drift behind the
+// stage. As the share of corrupt metal rises, more of the icons and the far windows change with it.
+function systemBg(c, cam, t, sk, g) {
+  const share = corrupted(g), oy = Math.round(-cam.y * 0.1), tick = Math.floor(t * 6);
+  R(c, sk ? '#12062a' : '#02070a', 0, 0, VW, VH);
+  for (let gy = 0; gy < 6; gy++) for (let gx = 0; gx < 14; gx++) {   // the icons
+    const wx = gx * 44 + 12, x = ((wx - cam.x * 0.2) % 616 + 616) % 616 - 20, y = 18 + gy * 38 + oy, bad = hash(gx, gy, 3) < share;
+    if (bad) { R(c, sk ? '#5a2a86' : '#4a1c12', x + (hash(gx, gy, tick) * 4 | 0) - 2, y, 8, 8); R(c, sk ? '#c2347f' : '#8a3a26', x + 2, y + 2, 4, 4); R(c, sk ? '#5a2a86' : '#4a1c12', x - 2, y + 11, 12, 1); }   // dim, so they do not read as things to pick up
+    else { R(c, sk ? '#2e1456' : '#0b1c28', x, y, 8, 8); R(c, sk ? '#4f1d6e' : '#12384c', x + 2, y + 2, 4, 4); R(c, sk ? '#2e1456' : '#0b1c28', x - 2, y + 11, 12, 1); }
+  }
+  for (let i = 0; i < 6; i++) {   // the far windows
+    const w = 70 + (hash(i, 3) * 60 | 0), h = 36 + (hash(i, 5) * 44 | 0), x = (((i * 190 + 40 - cam.x * 0.45) % 1140 + 1140) % 1140 - 140) | 0, y = (24 + hash(i, 9) * 80 + oy * 2) | 0, bad = hash(i, 13) < share;
+    const line = bad ? (sk ? rb(i + tick * 0.5) : '#fc734d') : (sk ? '#4f1d6e' : '#12384c');
+    R(c, sk ? '#1a0b33' : '#050d14', x, y, w, h); R(c, line, x, y, w, 1); R(c, line, x, y + h - 1, w, 1); R(c, line, x, y, 1, h); R(c, line, x + w - 1, y, 1, h);
+    R(c, bad ? line : (sk ? '#7a3fa0' : '#0b3a52'), x + 1, y + 1, w - 2, 5);
+    for (let j = 0; j < 4; j++) R(c, sk ? '#2e1456' : '#0b1c28', x + 6, y + 12 + j * 7, ((hash(i, j, bad ? tick : 0) * (w - 20)) | 0) + 6, 2);
+  }
+}
 const STARS = Array.from({ length: 110 }, (_, i) => ({ x: hash(i, 1) * 560, y: hash(i, 2) * 190, s: hash(i, 3), p: hash(i, 4) * TAU }));
 function sky(c, cam, t, sk, low) {
   const oy = Math.round(-cam.y * 0.06);
@@ -144,6 +184,7 @@ function background(c, g, cam, t, sk) {
   if (kind === 'ruins') { ruins(c, cam, t, sk); return; }
   if (kind === 'eyes') { eyesBg(c, cam, t, sk, g); return; }
   if (kind === 'ship') { shipBg(c, cam, t, sk); return; }
+  if (kind === 'system') { systemBg(c, cam, t, sk, g); return; }
   if (kind === 'shore' || kind === 'desert' || kind === 'sky') {
     sky(c, cam, t, sk, kind === 'sky');
     if (kind === 'shore') {
@@ -446,6 +487,13 @@ export function feed(fx, e, g) {
   else if (k === 'check') { fx.rings.push({ x: e.x, y: e.y, t: 0, max: 0.5, r: 40, color: psy ? '#fff2a8' : '#4cc0f5', w: 2 }); }
   else if (k === 'door') burst(fx, e.x, e.y, 14, 50, 0.6, psy ? '#fff2a8' : '#fc734d', -20);
   else if (k === 'sale') { fx.rings.push({ x: e.x, y: e.y - 10, t: 0, max: 0.8, r: 200, color: '#fc734d', w: 2 }); fx.shake = 0.3; }
+  else if (k === 'plant') { burst(fx, e.x, e.y - 8, 14, 70, 0.5, psy ? '#f2b632' : '#fc734d'); fx.rings.push({ x: e.x, y: e.y - 8, t: 0, max: 0.4, r: 26, color: psy ? '#ff5fa2' : '#fc734d', w: 2 }); }
+  else if (k === 'turned') { fx.rings.push({ x: e.x, y: e.y, t: 0, max: 0.7, r: 90, color: psy ? '#fff2a8' : '#fc734d', w: 2 }); fx.shake = 0.15; }
+  else if (k === 'restored') burst(fx, e.x, e.y, 16, 60, 0.6, '#e3f3fc');
+  else if (k === 'wake') { for (let i = 0; i < 3; i++) fx.rings.push({ x: e.x, y: e.y - 10, t: -i * 0.15, max: 0.9, r: 240, color: '#e3f3fc', w: 1 }); fx.shake = 0.2; }
+  else if (k === 'deleted') { burst(fx, e.x, e.y - 10, 18, 80, 0.5, '#e3f3fc'); fx.rings.push({ x: e.x, y: e.y - 10, t: 0, max: 0.3, r: 18, color: '#fff', w: 1 }); }
+  else if (k === 'click' || k === 'caught') { fx.rings.push({ x: g.p.x, y: g.p.y - 10, t: 0, max: 0.5, r: 60, color: '#fff', w: 2 }); fx.shake = 0.3; }
+  else if (k === 'stunned') burst(fx, e.x, e.y, 10, 60, 0.4, '#9bdcff');
   else if (k === 'core') { burst(fx, e.x, e.y, 80, 160, 1.4, '#fff', 0); fx.shake = 0.8; for (let i = 0; i < 5; i++) fx.rings.push({ x: e.x, y: e.y, t: -i * 0.12, max: 1, r: 260, color: rb(i), w: 3 }); }
 }
 export function stepFx(fx, dt) {
@@ -459,12 +507,47 @@ export function stepFx(fx, dt) {
 }
 
 const MARK = { 7: ['......x', '.....x.', 'x...x..', '.x.x...', '..x....'], 8: ['.......', '.x...x.', 'x.x.x.x', '...x...', '.......'], 9: ['x...x', '.x.x.', '..x..', '.x.x.', 'x...x'] };
+// THE ANOMALOUS SYSTEM. Corrupt metal: the weaver sees the frame breaking up in the signal colour, and the jaguar
+// sees cloth woven over it. The newest tiles of the front are brighter.
+function drawRot(c, g, x0, x1, y0, y1, ox, oy, t, sk) {
+  const L = g.L, tick = Math.floor(t * 10), fresh = new Set(g.front);
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+    const i = y * L.w + x; if (!g.rot[i]) continue;
+    const px = x * T + ox, py = y * T + oy, hot = fresh.has(i);
+    if (sk) {
+      const k = (L.body[i] + 5) % 5; R(c, PSB[k], px, py, T, T); motif(c, (x * 3 + y) % MOTIF.length, px + 4, py + 4, PSM[k]);
+      R(c, hot ? '#fff2a8' : 'rgba(0,0,0,.35)', px, py + T - 1, T, 1);
+    } else {
+      R(c, hot ? '#fc734d' : '#3a1a14', px, py, T, T);
+      c.fillStyle = hot ? '#ffd9cc' : '#fc734d';
+      for (let j = 0; j < 4; j++) for (let q = 0; q < 4; q++) if (hash(x * 4 + q, y * 4 + j, hot ? tick : tick >> 3) > (hot ? 0.45 : 0.62)) c.fillRect(px + q * 4, py + j * 4, 4, 4);
+    }
+  }
+}
+// The scan line with what it has cleaned behind it, and the cursor.
+const ARROW = ['x.......', 'xx......', 'xox.....', 'xoox....', 'xooox...', 'xoooox..', 'xooooox.', 'xoooxxxx', 'xoxoox..', 'xx.xoox.', '....xx..'];
+function drawSystem(c, g, ox, oy, t, sk) {
+  if (g.scanX >= 0) {
+    const x = Math.round(g.scanX) + ox;
+    if (x > -40 && x < VW + 4) {
+      for (let i = 1; i <= 8; i++) { c.globalAlpha = 0.16 - i * 0.018; R(c, '#e3f3fc', x - i * 5, 0, 5, VH); } c.globalAlpha = 1;
+      R(c, '#ffffff', x, 0, 1, VH); for (let y = (Math.floor(t * 40) % 6); y < VH; y += 6) R(c, sk ? '#ff5fa2' : '#0297de', x + 1, y, 1, 2);
+      textC(c, 'SCAN', clamp(x, 12, VW - 12), 3, '#ffffff');
+    } else if (x <= -40) { R(c, 'rgba(227,243,252,.5)', 0, VH / 2 - 8, 1, 16); }
+  }
+  const k = g.cursor; if (!k || !k.on) return;
+  const x = Math.round(k.x) + ox, y = Math.round(k.y) + oy, stunned = k.stun > 0;
+  if (stunned && Math.floor(t * 12) % 2) return;
+  if (k.click > 0) ring(c, '#fc734d', x + 0.5, y + 0.5, 12 - k.click * 16, 1);
+  for (let r = 0; r < ARROW.length; r++) for (let i = 0; i < 8; i++) { const ch = ARROW[r][i]; if (ch !== '.') R(c, ch === 'x' ? (sk ? '#3a1052' : '#02070a') : (stunned ? '#9bdcff' : k.rest > 0 ? '#c9d6dd' : '#ffffff'), clamp(x, 0, VW - 8) + i, clamp(y, 0, VH - 11) + r, 1, 1); }
+}
 export function drawFrame(c, g, cam, t, sk, tiles, fx) {
   const L = g.L, p = g.p, ox = -Math.round(cam.x), oy = -Math.round(cam.y), psy = g.persona === 'psycho';
   background(c, g, cam, t, sk);
   c.drawImage(tiles, ox, oy);
   if (L.def.real) watchBack(c, g, fx, t, sk);
   const x0 = Math.max(0, Math.floor(cam.x / T)), x1 = Math.min(L.w - 1, Math.floor((cam.x + VW) / T)), y0 = Math.max(0, Math.floor(cam.y / T)), y1 = Math.min(L.h - 1, Math.floor((cam.y + VH) / T));
+  if (L.def.anomaly) drawRot(c, g, x0, x1, y0, y1, ox, oy, t, sk);
   // steps: unverified until the check has run on them
   for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
     const i = y * L.w + x, q = L.tiles[i];
@@ -525,8 +608,8 @@ export function drawFrame(c, g, cam, t, sk, tiles, fx) {
     R(c, '#9bdcff', p.rope.pts[0].x + ox - 1, p.rope.pts[0].y + oy - 1, 3, 3);
   } else if (p.cordMiss) line(c, p.x + ox, p.y - 13 + oy, p.cordMiss.x + ox, p.cordMiss.y + oy, 'rgba(227,243,252,.4)', 2);
   // the double: the form you left, standing where you changed
-  if (g.double) {
-    const D = g.double, dx = Math.round(D.x) + ox, dy = Math.round(D.y) + oy, a = Math.min(1, D.t) * (0.4 + 0.15 * Math.sin(t * 18)), still = { face: D.face, run: 0, onGround: true };
+  for (const D of (L.def.anomaly ? g.copies : g.double ? [g.double] : [])) {   // inside the system every copy still standing is drawn
+    const dx = Math.round(D.x) + ox, dy = Math.round(D.y) + oy, a = Math.min(1, D.t) * (0.4 + 0.15 * Math.sin(t * 18)), still = { face: D.face, run: 0, onGround: true };
     if (D.persona === 'psycho') jaguar(c, still, dx, dy, t, a, 3 + t * 2); else { c.globalAlpha = a; human(c, still, dx, dy, t, false); c.globalAlpha = 1; }
     ring(c, sk ? '#fff2a8' : '#9bdcff', dx, dy - 10, 13 + Math.sin(t * 6) * 2, 1);
   }
@@ -550,6 +633,7 @@ export function drawFrame(c, g, cam, t, sk, tiles, fx) {
   if (g.slow > 0) { c.globalAlpha = Math.min(1, g.slow) * 0.8; for (let i = 0; i < 70; i++) { const rx = (hash(i, 5) * (VW + 80) + t * 40 * (0.6 + hash(i, 7))) % (VW + 80) - 40, ry = (hash(i, 9) * VH + t * 230 * (0.7 + hash(i, 11) * 0.6)) % VH; c.fillStyle = sk ? rb(i * 0.4 + t) : '#9bdcff'; c.fillRect(rx | 0, ry | 0, 1, 5); } c.globalAlpha = 1; }
   if (g.alarm > 0 && Math.floor(t * 6) % 2) { R(c, 'rgba(252,115,77,.5)', 0, 0, VW, 2); R(c, 'rgba(252,115,77,.5)', 0, VH - 2, VW, 2); }
   if (L.def.real) watch(c, g, fx, ox, oy, t, sk);
+  if (L.def.anomaly) drawSystem(c, g, ox, oy, t, sk);
 }
 function thread(c, x0, y0, x1, y1, t) {
   const d = Math.hypot(x1 - x0, y1 - y0), n = Math.ceil(d / 2);

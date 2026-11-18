@@ -11,7 +11,7 @@ say are in the repository's `CLAUDE.md`, under "PSYCHO SYBER". This file and `te
 |---|---|
 | `index.html`, `psycho-syber.css` | The page: the stage, the panels laid over it, and the copy under it |
 | `game/sim.js` | The rules. No DOM. Fixed step of 1/60 s, 16 px tiles |
-| `game/levels.js` | The six stages, the command ship and the 21 Atlas marks |
+| `game/levels.js` | The six stages, the command ship, THE ANOMALOUS SYSTEM and the 21 Atlas marks |
 | `game/render.js`, `game/font.js` | Draws one 480 x 270 frame per look into a 2D canvas |
 | `game/post.js` | Puts the frame on screen with WebGL: the ring that spreads on a change of form, and the jaguar's distortion. Falls back to 2D |
 | `game/audio.js` | The music and the effects, synthesised with Web Audio (one stem per form), and the playing of the narrator's recordings |
@@ -169,3 +169,45 @@ people.
 Three roars at the great carved head (`J`, stage 1) within its 22 seconds emit `abduct`. `main.js` loads `SHIP`
 from `levels.js` in place of the stage and, at its exit, starts that stage again with a fifth life
 (`psycho-syber.ship` in `localStorage`). The page does not say how to get there.
+
+## THE ANOMALOUS SYSTEM
+
+`ANOMALY` in `levels.js` is a scene outside the six stages, started from its own button on the title (`beginAnomaly`
+in `main.js`). It is the inside of the Thousand Eyes, drawn as an operating system, 192 x 24 tiles: BOOT, DESKTOP,
+REGISTRY, DEFRAG, FIREWALL, CORE and LOG OFF. Every rule below is behind `def.anomaly`, so the six stages play as
+they did before (the suite printed the same lines for them before and after).
+
+| Rule | In `sim.js` | First value |
+|---|---|---|
+| Every change of form leaves a copy. No wait of 8 seconds | `trySwap`, `g.copies` | up to `COPY_MAX` 5, each for `COPY_LIFE` 12 s |
+| A copy corrupts the metal within a tile of it | `plant` | `PLANT_REACH` 16 px |
+| Metal tiles that touch are a body, and corruption spreads through a body | `parseLevel` (`L.body`), `stepAnomaly` | one tile each `ROT_STEP` 0.2 s. The roar does not slow it |
+| Corrupt metal takes the cord and the claws | `climbable`, the cord's hit test | |
+| A gate or an eye set in a body is dark while the whole body is corrupt | `bodyDark` | |
+| The first plant wakes the system: its cursor and its scan | `plant` (`wake`) | |
+| The cursor deletes the nearest copy, then comes for the player. It does not see a hidden player. The roar and glass stop it | `stepCursor` | `CURSOR_SPEED` 80 px/s, `CURSOR_CLICK` 0.5 s |
+| The scan crosses the stage, cleans what it passes and sends the player it reaches back to the standing stone | `stepAnomaly`, `respawn` | `scan: 240` s in the def, twice as fast under alarm |
+| The first plant in a body sets the scan back | `plant` | `SCAN_BACK` 15 s of travel |
+
+Each of the first five sectors ends in an alert: a metal dialog with a gate that is always lit (`|`) standing on it.
+That gate goes dark only when the whole dialog is corrupt, so every sector needs a copy. The exit opens when the core
+breaks, as the door `core` does in THE WORKS. The card shows `corrupted(g)`: corrupt metal tiles over all metal tiles
+at the exit. The best share is `psycho-syber.anomaly` in `localStorage`.
+
+The picture is `bg: 'system'` in `render.js`: `sysTile` draws stone as a desktop's ground, metal as window frames
+and beams as title bars. `drawRot` draws corrupt metal (the weaver sees it break up in the signal colour, the jaguar
+sees cloth woven over it) and `drawSystem` draws the scan line and the cursor. While the scene is on, `paintRot` in
+`main.js` splits the HUD's letters and turns letters in the scene's name and in the tab's title into figures as the
+share rises. Reduced motion keeps the name and the title still.
+
+Checks: the run `anomaly` in `test/scripts.mjs` plays the scene to its exit, and six rules at the end of
+`test/run.mjs` cover the copies, the corruption, the gates, the scan, the cursor and the cord. There is no `weaver`
+run: a copy is left by changing form.
+
+Not built yet: a second run that takes every body, sentinels in FIREWALL and CORE, the arm in DEFRAG as a scripted
+swing, a touch check on a phone, and a narrator's reading of the intro. The numbers in the table are first values
+and have not been tuned by people playing.
+
+Where the structure came from: the sectors follow the parts of AnomalyOS (github.com/the-bugeater/AnomalyOS), a
+browser desktop made as an art piece by another author. The scene uses none of its text, art or code, and that
+repository carried no license file on November 18, 2026. The page does not name it.

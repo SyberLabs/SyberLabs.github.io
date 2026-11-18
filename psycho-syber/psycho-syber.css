@@ -198,3 +198,7 @@
 .ps-about ul { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
 @media (max-width: 600px) { .ps-table { font-size: 14px; } .ps-table tbody th { white-space: normal; } }
 @media (prefers-reduced-motion: reduce) { .is-psycho .ps-form, .ps-logo__p, .ps-hud__tc .ps-flag.is-low { animation: none; } }
+/* THE ANOMALOUS SYSTEM: the HUD's letters split further as the share of corrupt metal (--ps-rot, 0 to 1) rises */
+.ps-stage.is-anomalous .ps-hud { text-shadow: calc(var(--ps-rot, 0) * 3px) 0 rgba(252, 115, 77, .9), calc(var(--ps-rot, 0) * -3px) 0 rgba(2, 151, 222, .9); }
+.ps-stage.is-anomalous .ps-card-title { text-shadow: 2px 0 rgba(252, 115, 77, .8), -2px 0 rgba(2, 151, 222, .8); }
+@media (prefers-reduced-motion: reduce) { .ps-stage.is-anomalous .ps-hud, .ps-stage.is-anomalous .ps-card-title { text-shadow: none; } }

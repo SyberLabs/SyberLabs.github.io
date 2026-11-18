@@ -306,6 +306,77 @@ function ship() {
 export const TOLD = { abduct: ['The carved head answers.', 'The ship comes down.'], end: ['This is not a game.', 'This is real life.', 'You are in the arena.', 'Wake up.'] };
 export const SHIP = { id: 'ship', name: 'THE COMMAND SHIP', project: 'SyberLabs', href: '/', line: 'The command ship, in another star system.', intro: [], bg: 'ship', persona: 'syber', ...ship() };
 
+// ------------------------------------------------------------------ THE ANOMALOUS SYSTEM (not a stage: see main.js)
+// The inside of the Thousand Eyes, 192 x 24: an operating system. Here every change of form leaves a copy, and a
+// copy corrupts the metal it touches (stepAnomaly in sim.js). Metal tiles that touch are one body. Corrupt metal
+// takes the claws and the cord, and a gate or an eye set in a body goes dark when the whole body is corrupt. Each
+// of the first five sectors ends in an alert: a metal dialog with a gate that is always lit standing on it.
+//   BOOT      the log prints five words up to the top of the boot block
+//   DESKTOP   three windows, the records of the villagers, a Visitor among them, an eye under the second window
+//   REGISTRY  two racks behind doors, a terminal for each, an eye over the gap between them
+//   DEFRAG    a pit crossed on blocks that are proven, stale or broken, and an arm of metal over it
+//   FIREWALL  three rules: a gate that blinks, a gate fed by a source, a gate lit by the alarm
+//   CORE      three sources feed the core, as at Approve in the Works
+function anomaly() {
+  const m = grid(192, 24), bulk = x => m.box(x - 1, 0, x + 1, 15, 'M');
+  // an alert: the dialog, the gate on it, and its title bars as steps on the near side
+  const alert = (x, top) => { m.box(x, top, x + 2, 19, 'M').col(x + 1, 0, top - 1, '|'); for (let y = 18; y >= top + 2; y -= 2) m.put(x - 2, y, '=='); };
+  // a window: a frame of metal with a title bar to stand on
+  const win = (x, y, w, h) => { m.box(x, y, x + w - 1, y + h - 1, 'M').box(x + 1, y + 1, x + w - 2, y + h - 2, ' ').put(x, y - 1, R('=', w)); };
+  m.box(0, 20, 191, 23);
+  // BOOT
+  m.put(3, 19, '@').put(2, 12, 'L', { text: 'BOOT' }).hint(5, 18, 'The log prints one word at a time. Jump to the next while it is lit.');
+  m.put(8, 19, 'P').hint(9, 17, 'E sets the pace of every word: fast or slow.');
+  ['LOAD', 'EVERY', 'FACE', 'EVERY', 'STEP'].forEach((text, k) => m.put(k % 2 ? 11 : 15, 18 - k * 2, 'WWWW', { i: k, n: 5, beat: 0.9, text }));
+  m.hint(17, 19, 'Shift beside metal. The copy you leave turns it. Turned metal holds the claws and the cord.');
+  m.box(19, 8, 24, 19, 'M').col(22, 0, 7, '|');
+  m.hint(20, 6, 'The gate goes dark when the whole block has turned.');
+  // DESKTOP
+  m.put(27, 19, 'C').put(30, 12, 'L', { text: 'DESKTOP' }).hint(29, 18, 'The system has woken. Its cursor deletes a copy before it comes for you. Keep leaving copies.');
+  win(33, 13, 6, 4); win(42, 12, 8, 5); win(52, 13, 4, 4);
+  m.put(45, 17, 'e', { base: 90, sweep: 50, period: 4, range: 150, fov: 20 });
+  m.hint(39, 18, 'An eye set in a window goes dark when the whole window has turned. Jump beside the frame and change form.');
+  for (const x of [35, 40, 50]) m.put(x, 19, 'v');
+  m.put(54, 19, 'w', { mimic: true });
+  alert(60, 12);
+  // REGISTRY
+  m.put(65, 19, 'C').put(66, 12, 'L', { text: 'REGISTRY' }).hint(67, 18, 'The jaguar fits under the racks. The weaver checks each terminal, which opens the doors above the tunnel.');
+  m.put(69, 19, 'T', { opens: 'ra' }).box(72, 8, 77, 17, 'M').box(78, 8, 81, 9, 'M').box(82, 8, 87, 17, 'M');
+  for (let x = 72; x <= 77; x++) m.put(x, 18, 'D', { id: 'ra' });
+  for (let x = 82; x <= 87; x++) m.put(x, 18, 'D', { id: 'rb' });
+  m.put(79, 19, 'T', { opens: 'rb' }).put(80, 10, 'e', { base: 90, sweep: 40, period: 3.5, range: 150, fov: 18 });
+  alert(92, 12);
+  // DEFRAG
+  m.put(97, 19, 'C').put(98, 12, 'L', { text: 'DEFRAG' }).hint(98, 18, 'E runs the check: proven blocks hold, stale blocks fall, broken blocks are not there.');
+  m.box(101, 20, 120, 21, ' ').box(101, 22, 120, 22, '^');
+  m.put(101, 20, '11').put(104, 20, '22').put(107, 20, '11').put(110, 20, '3').put(111, 20, '11').put(114, 20, '22').put(117, 20, '11');
+  m.box(100, 13, 118, 14, 'M').col(100, 15, 16, 'M');   // the arm, and the post that brings it within reach
+  alert(125, 12);
+  // FIREWALL
+  m.put(129, 19, 'C').put(130, 12, 'L', { text: 'FIREWALL' }).hint(131, 18, 'Three rules guard the way: a gate that blinks, a gate fed by a source, a gate the alarm lights. A copy on the metal above each is another way.');
+  bulk(136); m.col(136, 16, 19, '!', { period: 2.4, duty: 0.5, ph: 0 });
+  m.put(140, 19, 'S', { id: 'fw' }).put(142, 19, 'S', { trap: true });
+  bulk(144); m.col(144, 16, 19, 'f', { src: 'fw' });
+  m.box(147, 8, 150, 9, 'M').put(148, 10, 'e', { base: 90, sweep: 50, period: 4, range: 150, fov: 20 });   // the eye's bar is part of the third bulkhead
+  bulk(152); m.col(152, 16, 19, 'i');
+  alert(157, 12);
+  // CORE
+  m.put(161, 19, 'C').put(162, 12, 'L', { text: 'CORE' }).hint(163, 18, 'Three sources feed the core. Cut all three. Then glass or a pounce breaks it.');
+  m.put(165, 19, 'S', { core: true }).box(168, 18, 169, 19).put(168, 17, 'S', { core: true });
+  m.box(172, 18, 179, 19, 'M').put(178, 17, 'S', { core: true }).put(175, 12, 'K');
+  m.box(181, 0, 181, 15, 'M').col(181, 16, 19, 'D', { id: 'core' });
+  // LOG OFF
+  m.put(183, 12, 'L', { text: 'LOG OFF' }).put(187, 19, 'X').put(190, 19, 'R', { far: 150, line: 'The Patron: "It restores from a copy each night. Tonight the copy has you in it."' });
+  for (const [x, y] of [[13, 13], [35, 11], [45, 10], [53, 11], [80, 17], [110, 17], [116, 12], [140, 16], [148, 17], [176, 16]]) m.put(x, y, 't');
+  return m.done();
+}
+export const ANOMALY = {
+  id: 'anomaly', name: 'THE ANOMALOUS SYSTEM', project: 'SyberWork', href: '/projects/syberwork/',
+  line: 'Tests every AI-written code change before a person approves it.',
+  intro: ['The machine closed | your record.', 'It keeps the record | inside itself.', 'Nothing in there | is approved by a person.', 'Change form. | Leave copies of yourself.', 'Turn all of it.'],
+  bg: 'system', persona: 'syber', anomaly: true, scan: 240, words: { text: 'LOAD EVERY FACE EVERY STEP', beat: 0.9 }, ...anomaly(),
+};
+
 export const STAGES = [
   {
     id: 'steps', name: 'THE STEPS', project: 'Attest', href: '/projects/attest/',

@@ -1,10 +1,10 @@
 // node psycho-syber/test/run.mjs [stage id] [--log]
 // Builds every stage (which checks the maps) and plays each scripted run to the exit.
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
-import { STAGES, ATLAS, SHIP } from '../game/levels.js';
+import { STAGES, ATLAS, SHIP, ANOMALY } from '../game/levels.js';
 import { VOICE } from '../game/voice.js';
 import { LINES, ABOUT, said } from './voice.mjs';
-import { newGame, step, T } from '../game/sim.js';
+import { newGame, step, T, corrupted, bodiesTurned, gateActive } from '../game/sim.js';
 import { play } from './bot.mjs';
 import { SCRIPTS } from './scripts.mjs';
 const [only, route] = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2].split(':') : [null], log = process.argv.includes('--log');
@@ -44,7 +44,7 @@ let failed = 0;
   if (bad.length) { failed++; console.log('FAIL: the narrator (run psycho-syber/test/voice.mjs to put it right)\n  ' + bad.join('\n  ')); }
   else console.log(n ? `narrator: ${n} of ${LINES.length} lines have a recording, and the page says the voice is synthetic` : 'narrator: no recordings, and the page describes no voice');
 }
-for (const def of STAGES) {
+for (const def of [...STAGES, ANOMALY]) {   // the Anomalous System is not one of the six, and it is played the same way
   if (only && def.id !== only) continue;
   const g = newGame(def);
   const kinds = {}; for (const e of g.ents) kinds[e.type] = (kinds[e.type] || 0) + 1;
@@ -56,7 +56,7 @@ for (const def of STAGES) {
     if (route && key !== def.id + ':' + route) continue;
     const g = newGame(def), name = key.split(':')[1] || 'main', r = play(g, SCRIPTS[key], { log });
     const bad = r.ok && name === 'weaver' && g.swaps > 0 ? 'the weaver route took the jaguar\'s form' : r.ok && g.deaths > 0 ? 'the run died on the way' : '';
-    if (r.ok && !bad) console.log(`  ${name}: finished in ${(g.time).toFixed(1)} s of play · threads ${g.threads}/${g.threadsTotal} · hp ${g.p.hp} · changes of form ${g.swaps}${def.timer ? ` · evidence ${g.evidence}/${g.evidenceTotal} · ${g.sale.toFixed(0)} s left of ${def.timer}` : ''}`);
+    if (r.ok && !bad) console.log(`  ${name}: finished in ${(g.time).toFixed(1)} s of play · threads ${g.threads}/${g.threadsTotal} · hp ${g.p.hp} · changes of form ${g.swaps}${def.timer ? ` · evidence ${g.evidence}/${g.evidenceTotal} · ${g.sale.toFixed(0)} s left of ${def.timer}` : ''}${def.anomaly ? ` · corrupted ${(corrupted(g) * 100).toFixed(0)}% · bodies turned ${bodiesTurned(g)}/${g.L.bodies.length} · plants ${g.plants} · the cursor deleted ${g.cursor.deleted} copies and hit ${g.cursor.hits} times · the scan reached tile ${(g.scanX / T).toFixed(0)}` : ''}`);
     else { failed++; console.log(`  ${name}: FAIL: ${bad || r.why} at x ${r.x?.toFixed(2)} y ${r.y?.toFixed(2)} (${g.persona}, hp ${g.p.hp}, deaths ${g.deaths})`); }
   }
 }
@@ -152,6 +152,50 @@ if (!only) {
     const stood = !core.dead; for (const e of of(g, 'source')) { e.alive = false; g.srcAlive[e.id] = false; }
     for (let i = 0; i < 4 && !core.dead; i++) { g.p.throwCd = 0; step(g, { ...idle, fire: true, fireP: true, aimX: core.x, aimY: core.y - 10 }, 1 / 60); run(g, {}, 0.8); }
     rule('the Approver opens only when its three sources are cut', stood && core.dead && g.open.has('core') && !g.done);
+  }
+  // ---------------------------------------------------------------- THE ANOMALOUS SYSTEM
+  const sys = def => newGame(def || ANOMALY), swap = g => step(g, { ...idle, swapP: true }, 1 / 60), bodyOf = (g, tx, ty) => g.L.body[ty * g.L.w + tx], foot = 18.7 * T;
+  { // every change of form leaves a copy in there, and the six stages keep the wait of 8 seconds
+    const g = sys(); swap(g); run(g, {}, 0.3); swap(g); run(g, {}, 0.3); swap(g);
+    const s = stage('steps'); swap(s); run(s, {}, 0.3); swap(s);
+    rule('inside the system every change of form leaves a copy, and the six stages keep their wait', g.copies.length === 3 && !!s.double && s.doubleCd > 7 && s.copies.length === 0 && s.plants === 0);
+  }
+  { // a copy at the foot of the boot block corrupts that block and nothing else, and its gate goes dark only when all of it has turned
+    const g = sys(), gate = of(g, 'gate')[0], b = bodyOf(g, 19, 19);
+    g.p.x = foot; swap(g);
+    const woke = g.plants === 1 && g.scanX >= 0 && g.cursor.on; run(g, {}, 1.5);
+    const half = g.rotN[b] > 0 && g.rotN[b] < g.L.bodies[b].n && gateActive(g, gate); run(g, {}, 3);
+    rule('a copy corrupts the metal it touches, the corruption stays in that body, and its gate goes dark when the whole body has turned', woke && half && g.rotN[b] === g.L.bodies[b].n && !gateActive(g, gate) && g.rotN.filter(n => n > 0).length === 1);
+  }
+  { // the scan cleans what it passes, and the player it reaches goes back to the standing stone with the scan behind
+    const g = sys(), gate = of(g, 'gate')[0], b = bodyOf(g, 19, 19);
+    g.p.x = foot; swap(g); run(g, {}, 4.5);
+    const dark = !gateActive(g, gate); g.p.x = 40 * T; g.scanX = 19 * T; g.scanCol = 19; run(g, {}, 0.5);
+    const lit = gateActive(g, gate) && g.rotN[b] < g.L.bodies[b].n;
+    g.scanX = g.p.x + 4; run(g, {}, 1.3);
+    rule('the scan cleans what it passes and sends the player it reaches back to the standing stone', dark && lit && g.caught === 1 && g.deaths === 1 && !g.p.dead && g.scanX < g.p.x);
+  }
+  { // the cursor takes a copy before it comes for the player, and it does not see a player who hides
+    const g = sys(), k = g.cursor; g.p.x = foot; swap(g);
+    k.x = g.p.x - 30; k.y = g.p.y - 10; run(g, {}, 1);
+    const took = k.deleted === 1 && k.hits === 0 && g.copies.length === 0;
+    run(g, { down: true }, 4); const unseen = g.p.hidden && k.hits === 0;
+    run(g, {}, 5);
+    rule('the cursor deletes a copy before it comes for the player, and it does not see a player who hides', took && unseen && k.hits >= 1);
+  }
+  { // turned metal takes the cord and the claws; clean metal takes neither
+    const g = sys(), throwCord = { ...idle, alt: true, altP: true, aimX: 21.5 * T, aimY: 12 * T };
+    g.p.x = 17 * T; step(g, throwCord, 1 / 60);
+    const refused = !g.p.rope;
+    g.p.x = foot; swap(g); run(g, {}, 0.3); swap(g); run(g, {}, 2.5); g.p.x = 17 * T; step(g, throwCord, 1 / 60);
+    const c = sys({ ...ANOMALY, anomaly: false }); c.p.x = foot; swap(c); let clung = false; run(c, { right: true, up: true, jump: true, jumpP: true }, 1.5, () => { clung = clung || !!c.p.cling; });
+    rule('turned metal takes the cord and the claws, and clean metal takes neither', refused && !!g.p.rope && !clung && c.persona === 'psycho');
+  }
+  { // a gate that is always lit, and the door of the core
+    const g = sys(), gate = of(g, 'gate')[0]; g.p.x = 20 * T; g.p.y = 8 * T; run(g, { right: true }, 1.5);
+    const stopped = g.p.x < gate.x && g.p.hp < g.p.maxHp && gateActive(g, gate);
+    const d = sys(); d.p.x = 179.5 * T; run(d, { right: true }, 1);
+    rule('a lit gate stops the player until its body has turned, and the way out is shut until the core breaks', stopped && d.p.x < 181 * T && !d.done);
   }
 }
 process.exit(failed ? 1 : 0);

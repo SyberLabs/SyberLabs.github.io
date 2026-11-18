@@ -10,17 +10,17 @@
   <meta property="og:title" content="PSYCHO SYBER | SyberLabs">
   <meta property="og:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
   <meta property="og:url" content="https://syberlabs.io/psycho-syber/">
-  <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117j">
+  <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261118a">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="PSYCHO SYBER | SyberLabs">
   <meta name="twitter:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
-  <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117j">
+  <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261118a">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="/syberlabs.css?v=20261105">
-  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261117j">
+  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261118a">
   <title>PSYCHO SYBER | SyberLabs</title>
 </head>
 <body class="syber-play">
@@ -57,7 +57,7 @@
         <div class="ps-panel ps-panel--title" id="ps-title">
           <h1 class="ps-logo"><span class="ps-logo__p">PSYCHO</span> <span class="ps-logo__s">SYBER</span></h1>
           <p class="ps-lede">A browser game from SyberLabs. Six stages: one for each project, and a last one with no exit.</p>
-          <p class="ps-actions"><button class="sy-btn sy-btn--solid" id="ps-start" type="button">Play</button><button class="sy-btn sy-btn--line" id="ps-continue" type="button" hidden>Continue</button></p>
+          <p class="ps-actions"><button class="sy-btn sy-btn--solid" id="ps-start" type="button">Play</button><button class="sy-btn sy-btn--line" id="ps-continue" type="button" hidden>Continue</button><button class="sy-btn sy-btn--line" id="ps-anomaly" type="button">THE ANOMALOUS SYSTEM</button></p>
           <ol class="ps-pick" id="ps-pick" aria-label="Start from a stage you have reached" hidden></ol>
           <p class="ps-keys ps-for-keys">Shift changes your form. Try it here.</p>
           <p class="ps-keys ps-for-touch">Tap the picture to change form. The game plays sideways: turn your phone when it starts.</p>
@@ -115,6 +115,7 @@
         <p class="sy-eyebrow">SyberLabs / Game</p>
         <h2 id="game-title">The game</h2>
         <p>PSYCHO SYBER is a side-scrolling stealth game that runs in this page. It has six stages. Each of the first five stands for one project and takes its rule from what that project does. The sixth has no exit.</p>
+        <p>THE ANOMALOUS SYSTEM is a seventh scene, started from its own button on the title. It is not one of the six stages and does not change your progress through them.</p>
         <p>It is set in an invented ancient Paracas, on the south coast of Peru. In this story a long head marks a noble house, and the Visitors who live among the people wear the same shape. The Visitors run the Works, where a machine approves which births may go ahead. The Patron, a Visitor in gold, owns the Works, the sale in the fifth stage and the machine in the sixth. You play a noble weaver who stole one of their circlets and drank what the old ones drank. A jaguar came with you.</p>
       </section>
 
@@ -138,6 +139,15 @@
           <li><span class="ps-stages__n">05</span><div><h3>THE RECORD · <a href="/lacuna/">Lacuna Institute</a></h3><p>A viewing hall before a sale. Seven lots stand on plinths. E reads the record of a lot, and five of the records have a gap. You deliver that evidence at the far door before the sale timer runs out. Nothing is taken and no one is fought. Lacuna Institute describes its work as “Finding the history that fell out of the record.”</p></div></li>
           <li><span class="ps-stages__n">06</span><div><h3>THE REAL BATTLE · <a href="/#products">SyberLabs</a></h3><p>One room with no exit, and a machine called the Thousand Eyes. It aims each shot at the place you are about to reach, lists what you do on the screen as you do it, and counts down to a verdict. Glass, the check, the roar and hiding do not stop it. The stage ends when the count reaches zero or your health runs out, and the ending follows. SyberLabs makes software for checking AI's work: each change is tested, and a person approves it.</p></div></li>
         </ol>
+        <h3 class="ps-sub" id="anomalous-system">THE ANOMALOUS SYSTEM</h3>
+        <p>The scene is set inside the Thousand Eyes, drawn as an operating system: a boot log, a desktop of windows, a registry, a defragmenter, a firewall and a core. Its rules differ from the six stages in four ways.</p>
+        <ul>
+          <li>Every change of form leaves a copy where you stood. Up to five copies stand at once, each for 12 seconds. The six stages keep the double that lasts 3 seconds.</li>
+          <li>A copy corrupts the metal it touches, and the corruption spreads through every piece of metal joined to it at five tiles a second. Corrupt metal takes the cord and the jaguar's claws. A gate or an eye set in a piece of metal goes dark when that whole piece is corrupt.</li>
+          <li>The first copy that corrupts metal wakes the system. A cursor then flies after you. It deletes the nearest copy before it comes for you, and it does not see you while you hide. The roar and thrown glass stop it for a moment.</li>
+          <li>A scan line starts at the left edge and crosses the scene in four minutes. It cleans the metal it passes. It moves twice as fast while the alarm is up. If it reaches you, you go back to the last standing stone. The first copy in each piece of metal sets the line back by 12 tiles.</li>
+        </ul>
+        <p>The exit opens when the core is broken. The card then shows the share of the metal that was corrupt when you left, and the best share is kept in this browser. While the scene is on, letters in its name and in this tab's title turn into figures as that share rises. With reduced motion set on your device they stay as they are.</p>
       </section>
 
       <section id="atlas" aria-labelledby="atlas-title">
@@ -200,7 +210,7 @@
 
       <section id="real" aria-labelledby="real-title">
         <h2 id="real-title">What is real</h2>
-        <p>The story is invented: the Visitors, the Patron, the Works, the sale, every lot in it and the Thousand Eyes. No dealer, auction house, museum or company in the game exists. The story's people are invented too, with one exception: a hidden scene in which three members of SyberLabs appear under their nicknames.</p>
+        <p>The story is invented: the Visitors, the Patron, the Works, the sale, every lot in it and the Thousand Eyes. No dealer, auction house, museum or company in the game exists. The story's people are invented too, with one exception: a hidden scene in which three members of SyberLabs appear under their nicknames. The operating system in THE ANOMALOUS SYSTEM is invented and stands for no product.</p>
         <p>Paracas is real. The Lacuna Atlas entry on it begins: “The elongated skulls of Paracas are real. So is the paperwork gap around where some of the burials went.” The same entry says: “Shaping an infant's skull with boards and bindings was a deliberate cultural practice, not a mystery of biology.”</p>
         <p><a href="/lacuna/#paracas">Paracas in the Lacuna Atlas</a> · <a href="/lacuna/research/paracas-bundles/">The Paracas bundles dataset</a></p>
         <p>Machu Picchu is real and much later. It was built in the mid-1400s as an estate for the Inka emperor Pachacuti, with terraces, fitted stone and trapezoid doorways. The game puts it on the same road as Paracas. <a href="https://smarthistory.org/?p=1631" rel="noopener">Smarthistory: Machu Picchu</a></p>
@@ -227,9 +237,10 @@
           <li>The story pace has no touch control. On a phone it is set to 220 words a minute.</li>
           <li>Checked in Chrome on a desktop. Firefox and Safari have not been checked.</li>
           <li>Each of the first five stages has two <a href="https://github.com/SyberLabs/SyberLabs.github.io/tree/main/psycho-syber/test" rel="noopener">scripted runs</a> that play it to the exit: one that takes the jaguar's form and one that never does. A third check plays the last stage and confirms that it ends without an exit.</li>
+          <li>THE ANOMALOUS SYSTEM is a first version. One <a href="https://github.com/SyberLabs/SyberLabs.github.io/tree/main/psycho-syber/test" rel="noopener">scripted run</a> plays it to its exit, using both forms. It has no run that stays in one form, because a copy is left by changing form. It has been checked in headless Chrome at a desktop width and a phone width. No person has played it through yet, and it has not been opened on a phone.</li>
           <li>The ending covers the whole page and changes this tab's title for about ten seconds. Enter or Escape skips it. With reduced motion set on your device it shows its text and no animation.</li>
           <li>The ending reads the time from your device's clock and shows it to you. The game sends nothing: the only requests it makes are for its own files on this site, so what it reads stays on your device.</li>
-          <li>Your progress, the Atlas marks you have found and your story pace are kept in this browser's storage. Clearing site data resets them.</li>
+          <li>Your progress, the Atlas marks you have found, your story pace and your best share in THE ANOMALOUS SYSTEM are kept in this browser's storage. Clearing site data resets them.</li>
           <li>The music and the effects are synthesised in the browser. Their level was set by measurement in Chrome, without listening.</li>
         </ul>
       </section>
@@ -243,6 +254,6 @@
     <span class="sy-footer__copy">© 2026 SyberLabs</span>
   </div>
 </div></footer>
-  <script type="module" src="/psycho-syber/game/main.js?v=20261117j"></script>
+  <script type="module" src="/psycho-syber/game/main.js?v=20261118a"></script>
 </body>
 </html>

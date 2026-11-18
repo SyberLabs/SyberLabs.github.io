@@ -6,6 +6,12 @@ export const C = { EMPTY: 0, STONE: 1, METAL: 2, ONEWAY: 3, SPIRIT: 4, WARD: 5, 
 export const HUM = { w: 8, h: 20, run: 96, acc: 900, air: 560, fric: 1000, jump: 300 };
 export const JAG = { w: 14, h: 12, run: 150, acc: 1300, air: 820, fric: 1200, jump: 330, climb: 72, wjx: 165, wjy: 285, pounce: 380, pounceT: 0.18 };
 export const GRAV = 900, MAXFALL = 430, CORD_RANGE = 150, CHECK_RANGE = 132;
+// THE ANOMALOUS SYSTEM (def.anomaly). Corruption crosses one tile of metal every ROT_STEP seconds.
+// The form left behind corrupts metal within PLANT_REACH px of it (one tile). The first plant in a body sets the scan back
+// SCAN_BACK seconds of travel, and a fall puts the scan at least SCAN_REST seconds behind the standing stone.
+// In there every change of form leaves a copy: up to COPY_MAX at once, each for COPY_LIFE seconds. The cursor
+// flies at CURSOR_SPEED px a second and clicks what it has held for CURSOR_CLICK seconds.
+export const ROT_STEP = 0.2, PLANT_REACH = 16, SCAN_BACK = 15, SCAN_REST = 60, COPY_LIFE = 12, COPY_MAX = 5, CURSOR_SPEED = 80, CURSOR_CLICK = 0.5;
 
 const TILE_OF = { '#': C.STONE, M: C.METAL, '=': C.ONEWAY, '%': C.SPIRIT, '&': C.WARD, '^': C.SPIKE, 1: C.STEP_OK, 2: C.STEP_STALE, 3: C.STEP_BAD, D: C.DOOR };
 const VGATE = { '|': 'on', '!': 'blink', i: 'alarm', f: 'fed' }, HGATE = { '-': 'on', '~': 'blink', a: 'alarm', g: 'fed' };
@@ -85,6 +91,21 @@ export function parseLevel(def) {
       L.ents.push({ type: 'word', x: x * T, y: y * T + 4, w: n * T, h: 6, idx: p.i ?? k % words.length, n: p.n || words.length, beat: p.beat || (def.words && def.words.beat) || 0.85, text: p.text || words[k % words.length] });
     }
   }
+  // Metal tiles that touch form a body. A gate or an eye belongs to the body it is set in.
+  L.body = new Int16Array(w * h).fill(-1); L.bodies = [];
+  for (let i = 0; i < w * h; i++) if (L.tiles[i] === C.METAL && L.body[i] < 0) {
+    const id = L.bodies.length, q = [i]; let n = 0; L.body[i] = id;
+    while (q.length) {
+      const j = q.pop(), x = j % w, y = (j - x) / w; n++;
+      for (const [ax, ay] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const X = x + ax, Y = y + ay, k = Y * w + X; if (X >= 0 && Y >= 0 && X < w && Y < h && L.tiles[k] === C.METAL && L.body[k] < 0) { L.body[k] = id; q.push(k); } }
+    }
+    L.bodies.push({ n });
+  }
+  const bodyAt = (px, py) => { const tx = Math.floor(px / T), ty = Math.floor(py / T); return tx < 0 || ty < 0 || tx >= w || ty >= h ? -1 : L.body[ty * w + tx]; };
+  for (const e of L.ents) {
+    if (e.type === 'gate') e.body = e.vert ? Math.max(bodyAt(e.x, e.y - e.h / 2 - 8), bodyAt(e.x, e.y + e.h / 2 + 8)) : Math.max(bodyAt(e.x - e.w / 2 - 8, e.y), bodyAt(e.x + e.w / 2 + 8, e.y));
+    else if (e.type === 'eye') e.body = bodyAt(e.x, e.y - T);
+  }
   return L;
 }
 
@@ -102,7 +123,11 @@ export function solidTile(g, tx, ty, psy) {
   if (c === C.DOOR) return !g.open.has(L.doorId[i]);
   return false;
 }
-export const gateActive = (g, e) => e.off > 0 ? false : e.mode === 'on' ? true : e.mode === 'blink' ? ((g.wt + e.ph) % e.period) < e.duty * e.period
+export const bodyDark = (g, e) => e.body >= 0 && g.rotN[e.body] === g.L.bodies[e.body].n;
+export const corrupted = g => { let all = 0, n = 0; g.L.bodies.forEach((b, k) => { all += b.n; n += g.rotN[k]; }); return all ? n / all : 0; };
+export const bodiesTurned = g => g.L.bodies.filter((b, k) => g.rotN[k] === b.n).length;
+export const scanSpeed = g => g.L.w * T / g.L.def.scan;   // px a second: the scan crosses the stage in def.scan seconds
+export const gateActive = (g, e) => e.off > 0 || bodyDark(g, e) ? false : e.mode === 'on' ? true : e.mode === 'blink' ? ((g.wt + e.ph) % e.period) < e.duty * e.period
   : e.mode === 'alarm' ? g.alarm > 0 : !!(g.L.sources[e.src] && g.srcAlive[e.src]);
 export const eyeAngle = (g, e) => e.base + Math.sin(g.wt * 6.2832 / e.period + e.ph) * e.sweep;
 export const wordActive = (g, e) => { const k = ((Math.floor(g.wordT / e.beat) - e.idx) % e.n + e.n) % e.n; return k < 2; };
@@ -121,6 +146,8 @@ export function newGame(def) {
     gone: new Float32Array(L.w * L.h), shake: new Float32Array(L.w * L.h), scanned: new Uint8Array(L.w * L.h), live: new Set(),
     open: new Set(), srcAlive: {}, alarm: 0, slow: 0, threads: 0, threadsTotal: L.ents.filter(e => e.type === 'thread').length,
     deaths: 0, done: false, check: { x: L.start.x, y: L.start.y, persona: def.persona || 'syber', sale: def.timer || 0 }, hint: -1, swapT: 0, wordT: 0, pace: 1, double: null, doubleCd: 0, swaps: 0, roars: 0, marks: [], said: 0, over: false, realT: 0, blind: 0, lastDir: 0, turnT: -9, wasHidden: false, orders: 0, obeyed: 0, kills: 0, alarms: 0, throws: 0,
+    rot: new Uint8Array(L.w * L.h), rotN: L.bodies.map(() => 0), seeded: L.bodies.map(() => 0), front: [], rotT: 0, plants: 0, scanX: -1, scanCol: 0, caught: 0,
+    copies: [], cursor: def.anomaly ? { x: -40, y: 24, on: false, stun: 0, rest: 0, click: 0, hits: 0, deleted: 0 } : null,
     evidence: 0, evidenceTotal: L.ents.filter(e => e.type === 'lot' && e.gap).length, lotsRead: 0, lots: L.ents.filter(e => e.type === 'lot').length, sale: def.timer || 0, found: [], denyT: -9,
   };
   for (const e of g.ents) if (e.type === 'source') { g.srcAlive[e.id] = true; g.L.sources[e.id] = e; }
@@ -173,7 +200,7 @@ export function ray(g, x, y, ax, ay, range, psy, beams) {
   for (let d = 2; d <= range; d += 2) {
     const px = x + ax * d, py = y + ay * d, tx = Math.floor(px / T), ty = Math.floor(py / T);
     const c = tileAt(g.L, tx, ty);
-    if (solidTile(g, tx, ty, psy) || (beams && c === C.ONEWAY)) return { x: x + ax * (d - 2), y: y + ay * (d - 2), d: d - 2, c: c < 0 ? C.METAL : c };
+    if (solidTile(g, tx, ty, psy) || (beams && c === C.ONEWAY)) return { x: x + ax * (d - 2), y: y + ay * (d - 2), d: d - 2, c: c < 0 ? C.METAL : c, i: c < 0 ? -1 : ty * g.L.w + tx };
   }
   return null;
 }
@@ -199,6 +226,7 @@ export function step(g, inp, dt) {
   if (g.alarm > 0) g.alarm = Math.max(0, g.alarm - wdt);
   if (g.sale > 0 && !g.p.dead) { g.sale -= dt; if (g.sale <= 0) { g.sale = 0; ev(g, 'sale', g.p); die(g); } }
   if (g.L.def.real && !g.over) stepReal(g, dt);
+  if (g.L.def.anomaly) stepAnomaly(g, dt, wdt);
   stepTiles(g, wdt);
   stepPlayer(g, inp, dt);
   stepEnts(g, wdt);
@@ -222,12 +250,78 @@ function stepTiles(g, wdt) {
   }
 }
 
+// THE ANOMALOUS SYSTEM. The form left behind corrupts the metal it touches or nearly touches. The first plant
+// starts the scan, and the first plant in each body sets the scan back.
+function plant(g, x, y, F) {
+  const L = g.L, r = PLANT_REACH; let n = 0, fresh = 0;
+  for (let ty = Math.floor((y - F.h - r) / T); ty <= Math.floor((y + r) / T); ty++) for (let tx = Math.floor((x - F.w / 2 - r) / T); tx <= Math.floor((x + F.w / 2 + r) / T); tx++) {
+    if (tileAt(L, tx, ty) !== C.METAL || !turn(g, ty * L.w + tx)) continue;
+    const b = L.body[ty * L.w + tx]; n++; if (!g.seeded[b]) { g.seeded[b] = 1; fresh++; }
+  }
+  if (!n) return;
+  if (++g.plants === 1) {   // the first plant wakes the system: its cursor comes, and its scan starts at the left edge
+    if (g.cursor) Object.assign(g.cursor, { on: true, x: Math.max(8, x - 20 * T), y: 24 });
+    if (L.def.scan) { g.scanX = 0; g.scanCol = 0; }
+    ev(g, 'wake', g.p);
+  } else if (fresh && g.scanX >= 0) { g.scanX = Math.max(0, g.scanX - fresh * SCAN_BACK * scanSpeed(g)); g.scanCol = Math.min(g.scanCol, Math.ceil(g.scanX / T)); }
+  ev(g, 'plant', { x, y }, { n, fresh });
+}
+function turn(g, i) {
+  if (g.rot[i] || (g.scanX > (i % g.L.w) * T)) return 0;   // what the scan has passed stays clean
+  g.rot[i] = 1; g.front.push(i);
+  const b = g.L.body[i];
+  if (++g.rotN[b] === g.L.bodies[b].n) ev(g, 'turned', { x: (i % g.L.w) * T + 8, y: Math.floor(i / g.L.w) * T + 8 }, { body: b });
+  return 1;
+}
+// The cursor is the system's hand. It goes for the nearest copy and deletes it. With no copy left it comes for
+// you, and it does not see you while you hide. The roar and thrown glass stop it for a moment.
+function stepCursor(g, wdt) {
+  const k = g.cursor, p = g.p; if (!k || !k.on || p.dead) return;
+  if (k.stun > 0) { k.stun -= wdt; k.click = 0; return; }
+  if (k.rest > 0) { k.rest -= wdt; return; }
+  let tgt = null, bd = 1e9;
+  for (const c of g.copies) { const d = Math.hypot(c.x - k.x, c.y - 10 - k.y); if (d < bd) { bd = d; tgt = c; } }
+  if (!tgt && p.hidden) { k.click = 0; return; }
+  const tx = tgt ? tgt.x : p.x, ty = tgt ? tgt.y - 10 : p.y - form(g).h / 2, dx = tx - k.x, dy = ty - k.y, d = Math.hypot(dx, dy), s = CURSOR_SPEED * wdt;
+  k.tx = tx; k.ty = ty;
+  if (d > 10) { k.x += dx / d * Math.min(s, d); k.y += dy / d * Math.min(s, d); k.click = 0; return; }
+  if ((k.click += wdt) < CURSOR_CLICK) return;
+  k.click = 0;
+  if (tgt) { tgt.gone = true; k.deleted++; k.rest = 1; ev(g, 'deleted', tgt); }
+  else { k.hits++; k.rest = 3; ev(g, 'click', k); hurt(g, 1, k.x); }
+}
+function stepAnomaly(g, dt, wdt) {
+  const L = g.L, p = g.p;
+  for (const c of g.copies) if (c !== g.double) c.t -= dt;   // step() ages the newest copy, which is also g.double
+  if (g.copies.some(c => c.t <= 0 || c.gone)) { g.copies = g.copies.filter(c => c.t > 0 && !c.gone); if (g.double && !g.copies.includes(g.double)) g.double = null; }
+  stepCursor(g, wdt);
+  if (g.scanX >= 0 && !p.dead) {   // the scan: it cleans each column it reaches, and it is not slowed by the roar
+    g.scanX += scanSpeed(g) * dt * (g.alarm > 0 ? 2 : 1);
+    for (; g.scanCol < L.w && g.scanCol * T < g.scanX; g.scanCol++) for (let ty = 0; ty < L.h; ty++) {
+      const i = ty * L.w + g.scanCol; if (!g.rot[i]) continue;
+      const b = L.body[i]; if (g.rotN[b] === L.bodies[b].n) ev(g, 'restored', { x: g.scanCol * T + 8, y: ty * T + 8 }, { body: b });
+      g.rot[i] = 0; g.rotN[b]--;
+    }
+    if (p.x < g.scanX) { g.caught++; ev(g, 'caught', p); die(g); }
+  }
+  if (!g.front.length) { g.rotT = 0; return; }
+  g.rotT += dt;   // the spread: each step, every tile on the front corrupts the metal beside it. The roar does not slow it
+  while (g.rotT >= ROT_STEP && g.front.length) {
+    g.rotT -= ROT_STEP;
+    const was = g.front; g.front = [];
+    for (const i of was) { if (!g.rot[i]) continue; const x = i % L.w, y = (i - x) / L.w; for (const [ax, ay] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const X = x + ax, Y = y + ay; if (tileAt(L, X, Y) === C.METAL) turn(g, Y * L.w + X); } }
+  }
+}
+
 function trySwap(g) {
   const p = g.p, to = g.persona === 'syber' ? 'psycho' : 'syber', F = to === 'psycho' ? JAG : HUM, psy = to === 'psycho';
   for (const [ox, oy] of [[0, 0], [0, -4], [0, -8], [3, 0], [-3, 0], [3, -8], [-3, -8], [6, 0], [-6, 0], [0, -14]]) {
     if (blocked(g, p.x + ox - F.w / 2, p.y + oy - F.h, F.w, F.h, psy)) continue;
-    const made = g.doubleCd <= 0;
-    if (made) { g.double = { x: p.x, y: p.y, persona: g.persona, face: p.face, t: 3 }; g.doubleCd = 8; }
+    const an = !!g.L.def.anomaly, made = an || g.doubleCd <= 0;   // inside the system every change of form leaves a copy
+    if (made) {
+      g.double = { x: p.x, y: p.y, persona: g.persona, face: p.face, t: an ? COPY_LIFE : 3 }; g.doubleCd = an ? 0 : 8;
+      if (an) { g.copies.push(g.double); if (g.copies.length > COPY_MAX) g.copies.shift(); plant(g, p.x, p.y, form(g)); }
+    }
     p.x += ox; p.y += oy; g.persona = to; p.rope = null; p.pounce = null; p.cling = 0; p.swapCd = 0.25; p.hideT = 0; g.swapT = 0.5;
     if (psy) g.swaps++;
     ev(g, 'swap', p, { to, double: made });
@@ -252,7 +346,7 @@ function jumpLogic(g, p, inp, F, dt) {
 
 function climbable(g, b, dir) {
   const tx = Math.floor((dir > 0 ? b.x + b.w + 1 : b.x - 1) / T), c = tileAt(g.L, tx, Math.floor((b.y + 3) / T));
-  return c === C.STONE || c === C.SPIRIT || c === C.STEP_OK;
+  return c === C.STONE || c === C.SPIRIT || c === C.STEP_OK || (c === C.METAL && !!g.rot[Math.floor((b.y + 3) / T) * g.L.w + tx]);
 }
 
 // The cord bends round corners. `pts` is the anchor followed by every corner it is wrapped on; `len` is the free
@@ -335,6 +429,7 @@ function stepPlayer(g, inp, dt) {
       p.roarCd = 8; g.slow = 3.2; g.roars++;
       for (const e of g.ents) if (e.type === 'monument' && Math.abs(e.x - p.x) < 72 && Math.abs(e.y - p.y) < 80) { e.roars++; e.lit = 22; ev(g, 'omen', e, { n: e.roars }); if (e.roars >= 3) { e.roars = 0; ev(g, 'abduct', p); } }
       for (const e of g.ents) if ((e.type === 'warden' || e.type === 'sentinel') && !e.dead && Math.hypot(e.x - p.x, e.y - p.y) < 104) e.stun = 2.6;
+      if (g.cursor && g.cursor.on && Math.hypot(g.cursor.x - p.x, g.cursor.y - p.y) < 104) g.cursor.stun = 2.6;
       ev(g, 'roar', p);
     }
   } else {
@@ -361,7 +456,7 @@ function stepPlayer(g, inp, dt) {
         const a = Math.acos(clamp((dx * ax + dy * ay) / dd, -1, 1));
         if (a < bestA && los(g, cx, cy, e.x, e.y, false)) { bestA = a; best = { x: e.x, y: e.y, d: dd }; }
       }
-      if (!best) { const hit = ray(g, cx, cy, ax, ay, CORD_RANGE, false, true); if (hit && (hit.c === C.STONE || hit.c === C.STEP_OK || hit.c === C.ONEWAY)) best = hit; }
+      if (!best) { const hit = ray(g, cx, cy, ax, ay, CORD_RANGE, false, true); if (hit && (hit.c === C.STONE || hit.c === C.STEP_OK || hit.c === C.ONEWAY || (hit.c === C.METAL && hit.i >= 0 && g.rot[hit.i]))) best = hit; }
       if (best) { p.rope = { pts: [{ x: best.x, y: best.y }], len: Math.max(22, best.d), block: 0 }; p.jumping = false; ev(g, 'cord', best); }
       else { p.cordMiss = { x: cx + ax * CORD_RANGE, y: cy + ay * CORD_RANGE, t: 0.12 }; ev(g, 'cordMiss', p); }
     }
@@ -471,6 +566,8 @@ function respawn(g) {
   p.x = g.check.x; p.y = g.check.y; p.vx = p.vy = 0; p.hp = p.maxHp; p.dead = false; p.inv = 1.4; p.rope = null; p.pounce = null; p.cling = 0;
   g.alarm = 0; g.slow = 0; g.shots.length = 0;
   if (g.L.def.timer) g.sale = Math.max(g.check.sale, 75);
+  if (g.scanX >= 0) { g.scanX = Math.max(0, Math.min(g.scanX, g.check.x - SCAN_REST * scanSpeed(g))); g.scanCol = Math.min(g.scanCol, Math.ceil(g.scanX / T)); }
+  if (g.cursor) { g.copies.length = 0; g.double = null; if (g.cursor.on) Object.assign(g.cursor, { x: Math.max(8, g.check.x - 15 * T), y: 24, rest: 2, stun: 0, click: 0 }); }
   let F = form(g);
   if (blocked(g, p.x - F.w / 2, p.y - F.h, F.w, F.h, g.persona === 'psycho')) { g.persona = g.check.persona; F = form(g); }
   for (const e of g.ents) { if (e.see) e.see = 0; if (e.type === 'warden' || e.type === 'sentinel') e.cd = 0.6; }
@@ -546,7 +643,7 @@ function stepEnts(g, wdt) {
         e.x = e.x0 + (e.x1 - e.x0) * e.u; e.y = e.y0 + (e.y1 - e.y0) * e.u;
       }
     } else if (e.type === 'eye') {
-      if (e.off) continue;
+      if (e.off || bodyDark(g, e)) continue;
       const dx = px - e.x, dy = py - e.y, d = Math.hypot(dx, dy);
       let sees = false;
       if (vis && d < e.range) { const da = Math.atan2(dy, dx) - eyeAngle(g, e); sees = Math.abs(Math.atan2(Math.sin(da), Math.cos(da))) < e.fov && los(g, e.x, e.y, px, py, psy); }
@@ -563,6 +660,7 @@ function stepShots(g, dt, wdt) {
     s.life -= d; if (s.k === 'glass') s.vy += 110 * d;
     s.x += s.vx * d; s.y += s.vy * d;
     let dead = s.life <= 0 || solidTile(g, Math.floor(s.x / T), Math.floor(s.y / T), psy);
+    if (!dead && s.k === 'glass' && g.cursor && g.cursor.on && Math.abs(s.x - g.cursor.x) < 9 && Math.abs(s.y - g.cursor.y) < 9) { g.cursor.stun = 1.5; ev(g, 'stunned', g.cursor); dead = true; }
     if (!dead && (s.k === 'glass' || s.friendly)) {
       for (const e of g.ents) {
         if (e.dead || Math.abs(s.x - e.x) > e.w / 2 + 3 || Math.abs(s.y - e.y) > e.h / 2 + 3) continue;
