@@ -9,10 +9,12 @@ Company site for [syberlabs.io](https://syberlabs.io/).
 Static pages on Cloudflare Pages, built with Vite. `pnpm install` and `pnpm build:site` write the whole site to `dist/`;
 `pnpm dev` serves it for work on the homepage and the shared styles.
 
-- **Homepage.** `src/home/page.js` renders the page to HTML at build time (Vite writes it into `index.html`), so it is
-  complete without JavaScript. `src/home/main.js` starts the hero's Gyre clip and loads each canvas visual
-  (`src/visuals/`: the factory machine, the Lacuna globe, the field behind the contact part, the product marks) when it
-  scrolls near. `src/home/home.css` styles it. The page ships no framework.
+- **Homepage.** `src/home/page.js` renders the page to HTML at build time from the parts in `src/home/parts/` (Vite
+  writes it into `index.html`), so it is complete without JavaScript. `src/home/main.js` mounts the Line in the first
+  screen (`src/visuals/line.js`; its rules are `src/visuals/line-sim.js`, tested by
+  `node --test src/visuals/line-sim.test.mjs`) and fetches the rest when it scrolls near: the recorded run's
+  behaviour, the Lacuna globe, the product marks, the four pieces and the field behind the contact part.
+  `src/home/home.css` styles it. The page ships no framework.
 - **Shared stylesheet.** `/syberlabs.css` is `fonts/site.css` followed by `src/styles/` (`tokens`, `base`, `type`,
   `chrome`, `components`). The Midnight theme is defined once, in `tokens.css`. Each static page links it and, where it
   needs one, its own small stylesheet.
