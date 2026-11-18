@@ -173,6 +173,13 @@ svg.home-rows__mark { padding: 13px; color: var(--sy-vellum); }
 .home-contact__links a:hover { color: var(--sy-vellum); }
 
 /* ---------- narrower screens ---------- */
+@media (max-width: 1280px) {
+  /* the part's name follows the drawing instead of lying on it */
+  .home-stage { --view: calc(86svh - var(--sy-header-h)); }
+  .home-stage--globe { --view: min(calc(86svh - var(--sy-header-h)), 118vw); }
+  .home-stage__cap { position: relative; margin-top: -14px; padding-bottom: 8px; }
+  .home-stage__cap p { max-width: 44ch; }
+}
 @media (max-width: 1000px) {
   .home-rows { --mark: 72px; --gap: 24px; }
   .home-rows li a { grid-template-columns: var(--mark) minmax(0, 1fr) minmax(0, 1fr); }
@@ -193,11 +200,6 @@ svg.home-rows__mark { padding: 13px; color: var(--sy-vellum); }
   .home-index span { font-size: 14px; line-height: 1.4; }
   .home-play__p { font-size: 26px; } .home-play__s { font-size: 20px; }
   .home-hero__motion { top: auto; bottom: 42px; }
-  /* the name follows the drawing instead of lying on it */
-  .home-stage { --view: calc(86svh - var(--sy-header-h)); }
-  .home-stage--globe { --view: min(calc(86svh - var(--sy-header-h)), 118vw); }
-  .home-stage__cap { position: relative; margin-top: -14px; padding-bottom: 8px; }
-  .home-stage__cap p { max-width: 44ch; }
   .home-block { padding-top: 24px; padding-bottom: 72px; }
   .home-rows { --mark: 60px; --gap: 16px; }
   .home-rows li a { grid-template-columns: var(--mark) minmax(0, 1fr); gap: 6px var(--gap); padding: 18px 0; }

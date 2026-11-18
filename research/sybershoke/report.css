@@ -9,8 +9,7 @@
   font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2);
 }
 .kicker { margin: var(--space-8) 0 var(--space-5); }
-.hero h1 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(64px, 8.6vw, 124px); line-height: .9; letter-spacing: -0.02em; color: var(--text); }
-.hero h1 em { font-style: italic; background: var(--sy-spectrum); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .08em; }
+.hero h1 { margin: 0; }
 .dek { max-width: 720px; margin: var(--space-6) 0 var(--space-7); font-size: 18px; line-height: 28px; color: var(--text-2); }
 .hero-bottom { display: flex; justify-content: space-between; align-items: end; gap: var(--space-5); font-size: 14px; line-height: 20px; }
 .hero-bottom p { margin: 0; color: var(--text); }
@@ -105,7 +104,6 @@ main details p { font-size: 14px; line-height: 20px; }
 @media (max-width: 640px) {
   .hero { padding-top: var(--space-8); }
   .kicker { margin-top: var(--space-7); }
-  .hero h1 { font-size: 56px; line-height: 56px; }
   .dek { font-size: 16px; line-height: 24px; }
   article h2 { font-size: 32px; line-height: 36px; }
   .roadmap { grid-template-columns: 1fr; }
@@ -122,8 +120,6 @@ main details p { font-size: 14px; line-height: 20px; }
 /* Reading measures for this archive and its reports. Colours come from the site's Midnight theme
    (src/styles/). Research evidence and authorship are unchanged. */
 .research-reading body { background-image: none; }
-.research-reading .hero h1 { font-size: clamp(40px, 6.2vw, 84px); font-weight: 600; line-height: 1.08; letter-spacing: -.045em; text-wrap: balance; }
-.research-reading .hero h1 em { background: none; color: var(--sy-ice); font-style: normal; padding: 0; }
 .research-reading article h2,
 .research-reading .cards h2 { font-weight: 600; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.2; letter-spacing: -.025em; text-wrap: balance; }
 .research-reading .card h3 { font-weight: 600; }
@@ -142,7 +138,6 @@ main details p { font-size: 14px; line-height: 20px; }
 @media (max-width: 640px) {
   .research-reading .hero { padding-top: 40px; }
   .research-reading .kicker { margin-top: 40px; }
-  .research-reading .hero h1 { font-size: clamp(36px, 10vw, 52px); }
   .research-reading .meta { overflow-wrap: anywhere; }
 }
 

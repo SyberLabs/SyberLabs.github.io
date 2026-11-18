@@ -3,8 +3,7 @@
 .eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2); }
 
 .plus-hero { padding: var(--space-10) 0 var(--space-9); }
-.plus-hero h1 { max-width: 1000px; margin: var(--space-6) 0 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(56px, 7vw, 104px); line-height: .95; letter-spacing: -0.02em; }
-.plus-hero h1 em { font-style: italic; background: var(--sy-spectrum); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .08em; }
+.plus-hero h1 { max-width: 1000px; margin: var(--space-6) 0 0; }
 .plus-hero .lead { max-width: 620px; margin: var(--space-6) 0 0; font-size: 18px; line-height: 28px; color: var(--text-2); }
 .plus-hero .hero-links { display: flex; flex-wrap: wrap; gap: var(--space-4); margin: var(--space-6) 0 0; }
 
@@ -35,7 +34,7 @@
 }
 @media (max-width: 640px) {
   .plus-hero { padding: var(--space-8) 0; }
-  .plus-hero h1 { margin-top: var(--space-5); font-size: 48px; line-height: 50px; }
+  .plus-hero h1 { margin-top: var(--space-5); }
   .plus-hero .hero-links .sy-btn { width: 100%; }
   .plus-section { padding: var(--space-8) 0; }
   .section-heading { margin-bottom: var(--space-6); }
@@ -99,11 +98,10 @@ html:not(.sy-js) .hear-line__who::after { content: ""; }
 /* Keep the product and offer together in the first view, then explain the journey. */
 .plus-intro { display:grid; grid-template-columns:1.05fr 1fr; align-items:center; gap:56px; padding:72px 0 56px; }
 .plus-intro .plus-hero { padding:0; }
-.plus-intro .plus-hero h1 { font-size:clamp(48px,5.2vw,78px); line-height:1.02; }
 .plus-intro .plus-preview { margin:0; transform:rotate(1deg); }
 .plus-intro .plus-preview img { aspect-ratio:1.5; object-fit:cover; }
 .plus-intro .plus-preview figcaption { font-size:11px; }
 .plus-intro .hero-links { gap:12px; }
 .plus-intro .hero-links .sy-btn { font-size:14px; padding-inline:18px; }
 .plus-main > .plus-section { padding:64px 0; }
-@media(max-width:960px) { .plus-intro { grid-template-columns:1fr; padding:56px 0 40px; gap:32px; } .plus-intro .plus-preview { transform:none; } .plus-intro .plus-hero h1 { font-size:clamp(48px,7vw,76px); } }
+@media(max-width:960px) { .plus-intro { grid-template-columns:1fr; padding:56px 0 40px; gap:32px; } .plus-intro .plus-preview { transform:none; } }

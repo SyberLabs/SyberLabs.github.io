@@ -225,7 +225,6 @@ function facts(p) {
 export function projectRow(item, { intro = true } = {}) {
   const tech = item.facts.find(([k]) => k === 'Technology')?.[1];
   return `<li><a class="sy-project-row" href="/projects/${item.slug}/" style="--sy-accent:${item.accent}">
-    <span class="sy-project-row__index">${item.number}</span>
     <canvas class="sy-project-row__sigil" data-sigil="${item.slug}" aria-hidden="true"></canvas>
     <span class="sy-project-row__name"><span class="sy-project-row__title">${esc(item.name)}</span><span class="sy-project-row__cat">${esc(item.category)}</span></span>
     <span class="sy-project-row__body"><span class="sy-project-row__headline">${esc(item.headline)}</span>${intro ? `<span class="sy-project-row__intro">${esc(item.intro)}</span>${tech ? `<span class="sy-project-row__stack">${esc(tech)}</span>` : ''}` : ''}</span>
@@ -253,7 +252,7 @@ export function renderProject(p) {
   <section class="pj-hero sy-container" aria-labelledby="project-title">
     <div class="pj-hero__copy">
       ${crumbs([{ label: 'Products', href: '/#products' }, { label: p.name }])}
-      <p class="pj-eyebrow sy-eyebrow"><span class="pj-number">${p.number}</span> / ${esc(p.category)}</p>
+      <p class="pj-eyebrow sy-eyebrow">${esc(p.category)}</p>
       <div class="pj-identity"><span class="pj-name">${esc(p.name)}</span>${badge(p.status)}</div>
       <h1 id="project-title" class="sy-display pj-title">${keepHyphens(esc(p.headline))}</h1>
       <p class="sy-body-lg pj-intro">${esc(p.intro)}</p>

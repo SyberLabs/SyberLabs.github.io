@@ -49,9 +49,11 @@ function homepage() {
       // post: Vite has already found the page's script and stylesheet, and leaves the markup added here alone
       // (its images and clips are served from media/, which scripts/assemble-dist.sh copies as it is).
       order: 'post',
-      async handler(html) {
-        const { renderHome } = server ? await server.ssrLoadModule('/src/home/page.js') : await import('./src/home/page.js');
+      async handler(html, ctx) {
+        // `pnpm dev` also serves the hand-written pages through here; only the homepage has the marker.
+        if (ctx.filename !== file('./index.html')) return html;
         if (!html.includes('<!-- home:body -->')) throw new Error('index.html has no <!-- home:body --> marker');
+        const { renderHome } = server ? await server.ssrLoadModule('/src/home/page.js') : await import('./src/home/page.js');
         return html.replace('<!-- home:body -->', renderHome());
       },
     },

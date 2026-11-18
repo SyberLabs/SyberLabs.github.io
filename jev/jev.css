@@ -78,9 +78,6 @@
   .contract-code pre { padding: var(--space-4); font-size: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
 }
 
-.syber-jev main :is(.sy-display-xl,.sy-title,.sy-heading) { font-family:var(--sy-sans); }
-.syber-jev .jev-hero__title { font-size:clamp(46px,6vw,82px); line-height:1.04; letter-spacing:-.045em; }
-.syber-jev .jev-hero__title em { font-style:normal; background:none; color:var(--sy-ice); }
 .syber-jev .jev-hero__note { padding:18px 20px; background:var(--sy-ink-2); border-left:3px solid var(--sy-electric); color:var(--sy-body); line-height:1.7; }
 .jev-evidence-links { display:flex; flex-wrap:wrap; gap:8px 28px; margin-top:16px; }
 .jev-evidence-links a { display:inline-flex; align-items:center; min-height:44px; }

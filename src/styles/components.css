@@ -58,9 +58,8 @@
 
 /* ---------- product rows ---------- */
 .sy-project-rows { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--sy-rule); }
-.sy-project-row { display: grid; grid-template-columns: 44px 40px minmax(0, 210px) minmax(0, 1fr) auto 24px; align-items: center; column-gap: 28px; padding: 28px 12px; border-top: 1px solid var(--sy-rule); color: var(--sy-vellum); text-decoration: none; transition: background var(--sy-t-enter) var(--sy-ease); }
+.sy-project-row { display: grid; grid-template-columns: 40px minmax(0, 210px) minmax(0, 1fr) auto 24px; align-items: center; column-gap: 28px; padding: 28px 12px; border-top: 1px solid var(--sy-rule); color: var(--sy-vellum); text-decoration: none; transition: background var(--sy-t-enter) var(--sy-ease); }
 .sy-project-row:hover { background: rgba(2, 151, 222, .05); text-decoration: none; }
-.sy-project-row__index { font: 500 12px/1 var(--sy-mono); letter-spacing: .1em; color: var(--sy-dim); align-self: start; padding-top: 12px; }
 .sy-project-row__sigil { width: 40px; height: 40px; display: block; }
 .sy-project-row__name { display: flex; flex-direction: column; gap: 8px; }
 .sy-project-row__title { font: 600 28px/1 var(--sy-sans); }
@@ -73,7 +72,7 @@
 .sy-project-row:hover .sy-project-row__arrow { transform: translateX(4px); color: var(--sy-vellum); }
 @media (max-width: 1000px) {
   .sy-project-row { grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: "sig name badge" "body body body"; row-gap: 16px; column-gap: 16px; padding: 24px 0; }
-  .sy-project-row__index, .sy-project-row__arrow { display: none; }
+  .sy-project-row__arrow { display: none; }
   .sy-project-row__sigil { grid-area: sig; } .sy-project-row__name { grid-area: name; } .sy-project-row__body { grid-area: body; } .sy-project-row > .sy-badge { grid-area: badge; }
 }
 @media (max-width: 480px) {
