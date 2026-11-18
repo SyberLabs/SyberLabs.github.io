@@ -2,16 +2,35 @@
 
 ## SyberLabs website design
 
-`kit/v2/` is the canonical existing Claude/SyberLabs design kit. Read
-`kit/v2/README.md`, especially "Current website direction: immersive mathematical
-media", before changing the website. The direction is the Midnight theme:
-Midnight Black `#02070A` surfaces, off-white text, Electric Blue `#0297DE` for
-light, links and focus, and Cantaloupe Orange `#FC734D` used a little (solid
-action buttons, live signals, the Approve step, the hero's warm horizon), with
-full-bleed mathematical media, Instrument Sans headings, generous whitespace and
-sparse actions. The theme is defined once, at the end of `src/syberlabs.css`;
-pages do not carry their own colour blocks. Apply scoped website overrides;
-preserve shared kit consumers and the existing framework.
+The direction is the Midnight theme: Midnight Black `#02070A` surfaces, off-white
+text, Electric Blue `#0297DE` for light, links and focus, and Cantaloupe Orange
+`#FC734D` used a little (solid action buttons, live signals, the Approve step),
+with full-bleed mathematical media, Instrument Sans headings, generous whitespace
+and sparse actions. `kit/v2/README.md` ("Current website direction: immersive
+mathematical media") has the fuller account; read it before changing the look.
+The theme is defined once, in `src/styles/tokens.css`; pages do not carry their
+own colour blocks. `kit/v2/` is the kit that product apps vendor. It stays
+published at `/kit/v2/` unchanged, and the site does not load it.
+
+## How the site is built
+
+- `/syberlabs.css`, the stylesheet every page links, is `fonts/site.css` then `src/styles/` in this order: `tokens`,
+  `base`, `type`, `chrome` (header, Menu, breadcrumbs, footer), `components` (`vite.config.js`). A page's own
+  stylesheet holds only what that page alone needs.
+- The homepage is plain HTML written at build time by `src/home/page.js`, styled by `src/home/home.css`. Its script,
+  `src/home/main.js`, starts the hero clip and loads each canvas visual (`src/visuals/`) when it scrolls near. No page
+  ships a framework except the two system maps, which fetch React when their section nears the viewport.
+- `/syberlabs.js` (`src/site/`) is the Menu's keyboard and focus behaviour and a back-to-top button. Every page reads
+  and works without it. There are no scroll-in animations: text is on the page when it loads.
+- Every typeface is served from `/fonts/` (`fonts/README.md`). No page may load a font, stylesheet or script from
+  another origin; CI fails if one does, and `/privacy/` tells visitors so.
+- Write links to local stylesheets and scripts without a `?v=` token. `scripts/stamp.mjs` adds each file's content
+  hash to its links in `dist/` at the end of the build. Two links are outside its reach: the staff pages' links to
+  `/syberlabs.css` and `/staff.css` in `server/views/layout.js`. Change their token by hand (and the test that names
+  it) when either file changes.
+- One title style: `main h1` in `src/styles/type.css`. A page sets its title's measure and margins, never its font.
+  Do not colour a phrase in a title: on this site Electric Blue means a link.
+- Mono is for data (coordinates, hashes, commit references, status labels). Nothing is set below 12px.
 
 The site is a company site: it sells SyberLabs' four products (SyberWork, Attest,
 RISE, FLYSPACE) and its consulting and design partnerships. Keep `Book a
@@ -62,7 +81,7 @@ and Open Graph addresses on Lacuna pages are the `syberlabs.io/lacuna/` ones. Th
   `python3 src/lacuna/atlas/build.py` and `python3 src/lacuna/atlas/share.py --pages` (`src/lacuna/atlas/README.md`).
   The build fails if `lacuna/index.html` is stale. The dataset page is plain HTML, edited by hand.
 - Lacuna pages keep their own look (near-black ground, bone text, ember accent; Cormorant Garamond, Marcellus and IBM
-  Plex Mono) and their own voice. The Midnight theme, the shared header and footer and the "no slogans" rule stop at
+  Plex Mono, served from `/fonts/lacuna.css`) and their own voice. The Midnight theme, the shared header and footer and the "no slogans" rule stop at
   `lacuna/`. The banned word in Wording, the ban on third-party scripts and the personal-name guard apply there too.
   Each Lacuna page links to the homepage with "Part of SyberLabs".
 - Lacuna copy states only what a source shows. Quote sources as written, label speculation as speculation, and make no
@@ -77,7 +96,7 @@ and Open Graph addresses on Lacuna pages are the `syberlabs.io/lacuna/` ones. Th
 Since November 16, 2026 the site carries a game at `/psycho-syber/` (`psycho-syber/`): a side-scrolling stealth game
 with two forms, changed with Shift. Since November 17 it has six stages: one for each product, one for Lacuna
 Institute, and THE REAL BATTLE, which has no exit. `Game` in the header (`nav` in `projects/site-data.js`), the Menu,
-the line under the homepage's section names and one line in its Studio section link to it.
+the game's link in the homepage's first screen and one note in its Studio part link to it.
 
 - The story is fiction and the page says so under "What is real". It is set in an invented ancient Paracas. State
   nothing about the Paracas culture or about any Atlas site beyond a quotation from the Lacuna pages. No real person,
@@ -137,26 +156,46 @@ the line under the homepage's section names and one line in its Studio section l
 
 ## Homepage
 
-Since November 15, 2026 the homepage (`src/App.jsx`) is mostly visual, by the owner's direction: the Gyre and the
-wordmark, then sections named Factory, Studio, Lacuna (added November 16) and Liminal, then contact. For the homepage
-only, this overrides two rules above and in `kit/v2/README.md`:
+The homepage (`src/home/page.js`) was rebuilt on November 18, 2026, when the owner asked for a full redesign and left
+the choices open. It has a first screen and four parts:
 
-- The hero carries no paragraph and no buttons. `Book a consultation` stays in the header at every width and closes
-  the page. Since November 17, 2026 one line under the section names links to the game (`PSYCHO SYBER`, `Play the
-  game`), so the game shows in the first screen on a phone and on a laptop.
-- The four section names and the one-word labels on the four canvas visuals (Proof, Atlas, Resonance, Emergence) are
-  names, exempt from the Wording rules. Every other homepage line follows them.
-- Lacuna Institute is linked from the header (`Lacuna`, on every page), from the section names under the wordmark and
-  from its own section: a globe (`src/visuals/atlas.js`) that marks the Atlas's sites and names each one in turn as
-  it comes round. The globe, the site name in the caption and the heading are links into `/lacuna/`. Its data
+- First screen: the Gyre, the wordmark, one line saying what the company makes ("Software for checking AI's work.",
+  the page's own title), three rows that name Factory, Studio and Lacuna with one line of what is in each, and the
+  link to the game (`PSYCHO SYBER`, `Play the game`). It has no buttons: `Book a consultation` stays in the header at
+  every width and closes the page.
+- Factory: the machine (`src/visuals/factory.js`), SyberWork and Attest, SyberWork's recorded run and the GitHits
+  design partnership. The run's figure is read from `run` in `projects/site-data.js`, the same output the SyberWork
+  page prints; it is left out if that output stops parsing.
+- Studio: RISE and FLYSPACE, the four pieces that move to sound, and the game.
+- Lacuna: a globe (`src/visuals/atlas.js`) that marks the Atlas's sites and names each one in turn as it comes round.
+  The globe, the site named in the caption and the heading are links into `/lacuna/`. Its data
   (`src/visuals/atlas-data.js`) is generated from the Atlas's site list by `node scripts/lacuna-home.mjs`; the build
   fails when it is stale.
-- The hero has no warm horizon. Its media fades into the page ground and the Factory visual rises through the
-  fade. No homepage section ends at a hard edge: each canvas fades at its top and foot.
+- Contact: the field in which the letters of SyberLabs appear (`src/visuals/phase.js`), one sentence and the action.
 
-CI still requires `id="products"`, `id="partners"` and `id="contact"` on the homepage, and still fails the build on
-personal names, so homepage media must not link to personal sites. The pieces in `media/home/pieces/` are copies of
-the audio-reactive pieces with their own controls hidden; they are marked `noindex`. One piece runs at a time.
+Rules for the homepage:
+
+- Factory, Studio and Lacuna are names, exempt from the Wording rules. Every other homepage line follows them.
+- Each product is described once, by its `headline` in `projects/site-data.js`.
+- No part ends at a hard edge: each canvas fades at its top and foot, and the Factory visual rises through the foot
+  of the first screen. On wide screens a part's name sits over the foot of its canvas; on narrow ones it follows the
+  canvas, so no words lie on the drawing.
+- One piece runs at a time, and only after a press (or a mouse resting on a tile). Nothing on the page plays sound
+  or loads a piece by itself. The pieces in `media/home/pieces/` are copies of the audio-reactive pieces with their
+  own controls hidden; they are marked `noindex`.
+- The first screen has one entrance, once: the sheen across the wordmark while the lines under it rise. Nothing else
+  on the page animates on scroll.
+
+Three earlier directions for the homepage changed in that rebuild. They are listed so they can be restored on request:
+
+- The hero carried no paragraph (November 15). It now carries one line and the three rows, because the first screen
+  did not say what the company makes.
+- The page had a fourth part, Liminal, with two full-height visuals (Resonance and Emergence). Resonance is now the
+  ground of the contact part. Emergence's rule still draws each product's mark; its full-height canvas is gone.
+- The first piece started by itself when the row scrolled into view. A piece now waits for a press.
+
+CI requires `id="products"`, `id="partners"`, `id="contact"` and `id="lacuna"` on the homepage, and fails the build on
+personal names, so homepage media must not link to personal sites. CI also fails if the homepage loads React.
 
 ## Public dependency lookup (GitHits)
 
@@ -204,4 +243,4 @@ are unavailable, say so and continue other checks; do not claim grounding ran
 or make exploratory traffic to fill a quota. Cached read data stays in private
 MasterMind; missing runtime paths never justify a direct hosted fallback.
 
-When changing an unhashed public stylesheet, update its existing link version in affected static pages. Verify a previously opened production tab after release so browser caching does not conceal the new design.
+After a release, look at a production tab that was open before it: the content hashes that `scripts/stamp.mjs` adds should bring the new stylesheet without a hard reload.

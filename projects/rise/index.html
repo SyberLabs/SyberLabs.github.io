@@ -6,9 +6,7 @@
 <title>RISE: Reading App with Timed Text, Sound and Visuals | SyberLabs</title>
 <meta name="description" content="RISE is a reading app that runs in the browser at rise.syberlabs.io. Words appear at a pace you set, with sound and generated visuals. Reading runs in your browser, and the texts you bring stay there.">
 <meta name="theme-color" content="#02070a">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400;1,7..72,500&display=swap">
+<link rel="stylesheet" href="/fonts/rise.css">
 <link rel="canonical" href="https://syberlabs.io/projects/rise/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="RISE: Reading App with Timed Text, Sound and Visuals | SyberLabs">
@@ -20,14 +18,14 @@
 <meta name="twitter:description" content="RISE is a reading app that runs in the browser at rise.syberlabs.io. Words appear at a pace you set, with sound and generated visuals. Reading runs in your browser, and the texts you bring stay there.">
 <meta name="twitter:image" content="https://syberlabs.io/og/rise.png?v=20261113">
 <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/syberlabs.css?v=20261105">
+<link rel="preload" href="/fonts/v1/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/syberlabs.css">
 <link rel="stylesheet" href="../experience-v7.css?v=20261030">
 <style>
 /* ---------- RISE tokens (single dark world, by choice) ---------- */
 :root{
   color-scheme: dark;
-  --ink:#02070a;          /* the site's Midnight Black (src/syberlabs.css) */
+  --ink:#02070a;          /* the site's Midnight Black (src/styles/) */
   --ink-2:#0d0a1c;
   --paper:#f4f1ff;        /* text on ink */
   --mute:#a9a3c7;         /* secondary text, 8.3:1 on ink */
@@ -42,7 +40,6 @@
 }
 *{box-sizing:border-box}
 html{background:var(--ink)}
-html.sy-field-live{background:var(--sy-ink)}
 body{
   margin:0;background:var(--ink);color:var(--paper);
   font:400 17px/1.55 var(--read);
@@ -52,7 +49,6 @@ body{
 main a{color:inherit}
 .rise-page main :focus-visible{outline:3px solid var(--cyan);outline-offset:4px;border-radius:2px}
 .rise-page{--sy-accent:var(--sy-accent-rise)}
-html.sy-field-live .rise-page{background:transparent}
 .rise-page .sy-crumbs{max-width:1600px;margin:18px auto 0;padding:0 var(--gutter)}
 .rise-page .sy-crumbs ol{margin:0}
 .rise-page .sy-footer a{color:var(--sy-mist)}
@@ -232,7 +228,6 @@ footer a{text-decoration-color:rgba(169,163,199,.5);text-underline-offset:3px}
 <body class="rise-page">
 <!--email_off-->
 <a class="sy-skip" href="#main">Skip to content</a>
-<div class="sy-field-host" aria-hidden="true"><canvas class="sy-field"></canvas></div>
 <header class="sy-header sy-header--sticky"><div class="sy-header__in">
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
   <nav class="sy-nav" aria-label="Primary"><ul><li><a href="/#products" aria-current="page">Products</a></li><li><a href="/factory/">Factory</a></li><li><a href="/services/">Services</a></li><li><a href="/lacuna/">Lacuna</a></li><li><a href="/psycho-syber/">Game</a></li><li class="sy-nav__cta-item"><a class="sy-nav__cta" href="mailto:syberlabs.support@gmail.com?subject=AI%20consultation">Book a consultation</a></li></ul></nav>
@@ -245,7 +240,7 @@ footer a{text-decoration-color:rgba(169,163,199,.5);text-underline-offset:3px}
   </div>
 </div></details>
 </div></header>
-<script type="module" src="/syberlabs.js?v=20261105"></script>
+<script type="module" src="/syberlabs.js"></script>
 
 <!-- Shared SVG defs for both wordmark layouts -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -363,7 +358,7 @@ footer a{text-decoration-color:rgba(169,163,199,.5);text-underline-offset:3px}
     </div>
   </section>
 
-  <section class="sample" id="sample" aria-labelledby="sample-title" data-reveal-children>
+  <section class="sample" id="sample" aria-labelledby="sample-title">
     <h2 id="sample-title">SAMPLE PASSAGE</h2>
     <blockquote class="passage" id="passage">
       <p style="margin:0" data-words>Call me Ishmael. Some years ago, having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.</p>
@@ -382,13 +377,13 @@ footer a{text-decoration-color:rgba(169,163,199,.5);text-underline-offset:3px}
 
   <!-- Composer in Claude: the connector instructions, moved here from the homepage (2026-10-09). -->
   <section class="pj-section sy-container rise-composer" id="composer" aria-labelledby="composer-title">
-    <div class="pj-split" data-reveal>
+    <div class="pj-split">
       <h2 id="composer-title" class="sy-eyebrow">Composer in Claude</h2>
       <div class="pj-split__main">
         <p class="sy-body">RISE Composer is a free connector for Claude. Ask Claude for a reading and RISE plays the answer with narration and visuals.</p>
       </div>
     </div>
-    <ol class="pj-how pj-how--steps pj-how--3" aria-label="How Composer works" data-reveal-children>
+    <ol class="pj-how pj-how--steps pj-how--3" aria-label="How Composer works">
       <li class="pj-how__item"><span class="sy-label">01</span><h3>Compose</h3><p>The model writes the reading: the words, their timing and the visuals around them.</p></li>
       <li class="pj-how__item"><span class="sy-label">02</span><h3>Check</h3><p>RISE checks every choice against what it can play. A reading that fails the check does not play.</p></li>
       <li class="pj-how__item"><span class="sy-label">03</span><h3>Play</h3><p>The words appear on a timer, with images, sound and generated motion.</p></li>

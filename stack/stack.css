@@ -1,4 +1,4 @@
-/* Reading page on the site's Midnight theme (src/syberlabs.css): colours come from there; only measures live here. */
+/* Reading page on the site's Midnight theme (src/styles/): colours come from there; only measures live here. */
 .syber-stack .sy-btn { white-space:normal; min-height:48px; padding:12px 20px; line-height:1.4; }
 .syber-stack :focus-visible { outline-offset:5px; }
 .syber-stack main section[id] { scroll-margin-top:100px; }
@@ -9,8 +9,7 @@
 .eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2); }
 
 .stack-hero { padding: var(--space-10) 0 var(--space-9); }
-.stack-hero h1 { max-width: 1000px; margin: var(--space-6) 0 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(44px, 5.2vw, 76px); line-height: 1.02; letter-spacing: -.045em; }
-.stack-hero h1 em { font-style: normal; color: var(--sy-ice); }
+.stack-hero h1 { max-width: 1000px; margin: var(--space-6) 0 0; }
 .stack-hero .lead { max-width: 620px; margin: var(--space-6) 0 0; font-size: 18px; line-height: 28px; color: var(--text-2); }
 
 .stack-section { padding: var(--space-9) 0; border-top: 1px solid var(--line); }
@@ -57,14 +56,14 @@
 }
 @media (max-width: 640px) {
   .stack-hero { padding: var(--space-8) 0; }
-  .stack-hero h1 { margin-top: var(--space-5); font-size: clamp(40px, 10vw, 52px); line-height: 1.04; }
+  .stack-hero h1 { margin-top: var(--space-5); }
   .stack-section { padding: var(--space-8) 0; }
   .section-heading { margin-bottom: var(--space-6); }
   .section-heading h2 { font-size: 32px; line-height: 36px; }
   .commands { padding: var(--space-4); font-size: 13px; }
 }
 
-/* GitHits dependency totals (src/githits-panel.jsx, prerendered into the <!-- stack:githits --> marker); moved here from the homepage */
+/* GitHits dependency totals (scripts/githits-panel.mjs, written into the <!-- stack:githits --> marker at build time); moved here from the homepage */
 .home-gh__data { display: grid; gap: 20px; align-content: start; min-width: 0; }
 .home-gh__data > * { margin: 0; }
 .home-gh__stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0; border: 1px solid var(--sy-rule); border-radius: var(--sy-r-panel); overflow: hidden; background: var(--sy-rule); }

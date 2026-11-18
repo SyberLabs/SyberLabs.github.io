@@ -4,7 +4,7 @@
 set -eu
 cd "$(dirname "$0")/.."
 test -d dist
-cp 404.html robots.txt sitemap.xml site.webmanifest _redirects \
+cp 404.html robots.txt sitemap.xml site.webmanifest _redirects _headers \
   syber-mark.png syber-logo.png syber-logo.webp syber-logo-96.png \
   og-image.png footer-orb.webp \
   favicon.ico favicon-32x32.png favicon-16x16.png \
@@ -14,6 +14,10 @@ cp 404.html robots.txt sitemap.xml site.webmanifest _redirects \
 # staff/ holds Google's sign-in button images (RFC-0002 3.2)
 cp _routes.json staff.css dist/
 cp -r staff dist/
+# every typeface the site uses is served from /fonts/ (fonts/README.md); no page asks another company for a font
+mkdir -p dist/fonts
+cp -r fonts/v1 fonts/licenses dist/fonts/
+cp fonts/site.css fonts/lacuna.css fonts/rise.css dist/fonts/
 # kit/v2 is the canonical public home of the design kit: https://syberlabs.io/kit/v2/
 mkdir -p dist/kit
 cp -r kit/v2 dist/kit/
@@ -39,3 +43,5 @@ cp data/githits/*.json dist/githits/
 rm -rf dist/psycho-syber/test dist/psycho-syber/README.md
 node scripts/llms.mjs --check; cp llms.txt llms-full.txt dist/
 node scripts/prerender.mjs
+# last: add each local stylesheet's and script's content hash to the links that name it
+node scripts/stamp.mjs

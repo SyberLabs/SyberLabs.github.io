@@ -1,0 +1,231 @@
+/* The homepage: a first screen and four parts (Factory, Studio, Lacuna, contact). Markup: src/home/page.js.
+   Tokens and the header, footer and buttons come from /syberlabs.css (src/styles/). Mono is used for data only
+   (coordinates, change ids); nothing is set below 12px. */
+
+.home-label { margin: 0; font: 400 13px/1.5 var(--sy-sans); color: var(--sy-dim); }
+main a:not(.sy-btn) { text-underline-offset: 4px; }
+
+/* ---------- first screen: the Gyre, the name, what the company makes, and its three parts ---------- */
+.home-hero { position: relative; isolation: isolate; min-height: max(680px, 100svh); overflow: hidden; overflow: clip; background: var(--sy-ink); }
+/* The poster and, once it plays, the clip over it. The Gyre is graded toward Electric Blue and fades into the
+   ground at its foot, where the Factory visual rises through it. */
+.home-hero__media { position: absolute; inset: 0; z-index: -2; opacity: .62; filter: saturate(2.1) hue-rotate(6deg);
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 56%, transparent 97%); mask-image: linear-gradient(180deg, #000 0, #000 56%, transparent 97%); }
+.home-hero__media img, .home-hero__clip { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: center; display: block; }
+.home-hero__clip { opacity: 0; pointer-events: none; transition: opacity .6s ease; }
+.home-hero__clip.is-ready { opacity: 1; }
+/* contrast for the copy: darker toward the side the copy is on, and at the foot */
+.home-hero::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(90deg, rgba(2, 7, 10, .74) 0%, rgba(2, 7, 10, .38) 36%, rgba(2, 7, 10, 0) 60%), linear-gradient(0deg, rgba(2, 7, 10, .6) 0%, rgba(2, 7, 10, 0) 34%); }
+.home-hero__copy { display: flex; flex-direction: column; justify-content: center; min-height: max(680px, 100svh); padding-top: 112px; padding-bottom: 136px; text-shadow: 0 1px 2px #000e, 0 0 16px #000c; }
+.home-hero h1 { margin: 0; line-height: 1; }
+/* SyberLabs in chromatic blue, in three stacked copies of the word: the element's own text in deep blue is the
+   lower edge; ::before (pale, raised a little more) is the lit upper edge; ::after carries the chrome gradient on
+   top. Each copy is a solid fill, so no inner glyph joints show (Instrument Sans draws letters from overlapping
+   contours, and an outline stroke traces them as seams). The heading reads the word once. */
+.home-wordmark { position: relative; display: block; width: max-content; max-width: 100%; padding: .04em .02em .1em; font: 600 clamp(54px, 7.4vw, 112px)/.95 var(--sy-sans); letter-spacing: -.045em; color: #01263b; text-shadow: none;
+  filter: drop-shadow(0 4px 3px #00111bd9) drop-shadow(0 16px 30px #000000b3) drop-shadow(0 0 30px rgba(2, 151, 222, .38)); }
+.home-wordmark::before, .home-wordmark::after { content: attr(data-text); content: attr(data-text) / ""; position: absolute; inset: 0; padding: inherit; pointer-events: none; }
+.home-wordmark::before { color: #e3f6ff; transform: translateY(-.05em); }
+.home-wordmark::after { color: transparent; transform: translateY(-.032em);
+  background: linear-gradient(100deg, #0000 38%, #ffffff99 48%, #0000 58%) -160% 0/250% 100% no-repeat,
+    linear-gradient(180deg, #f3fbff 0%, #c4ebff 16%, #5ec2f4 32%, #0297de 45%, #014e78 51%, #0283c4 58%, #3ab4ef 74%, #bde8fc 90%, #effaff 100%);
+  -webkit-background-clip: text; background-clip: text; }
+.home-hero__line { margin: clamp(8px, 1.2vh, 14px) 0 0; padding-left: .12em; color: var(--sy-vellum); font: 500 clamp(21px, 2.15vw, 31px)/1.2 var(--sy-sans); letter-spacing: -.02em; }
+
+/* The three parts, each a link to its section and one line of what is in it. They sit in the calm side of the
+   picture, clear of the Gyre's bright column. */
+.home-index { display: grid; gap: 0; max-width: 600px; margin: clamp(26px, 4.6vh, 46px) 0 0; padding: 0 0 0 .12em; list-style: none; }
+.home-index a { display: grid; grid-template-columns: 104px minmax(0, 1fr); align-items: baseline; gap: 0 20px; padding: 13px 0 12px; border-top: 1px solid rgba(241, 246, 249, .3); color: var(--sy-vellum); text-decoration: none; transition: border-color var(--sy-t-enter); }
+.home-index li:last-child a { border-bottom: 1px solid rgba(241, 246, 249, .3); }
+.home-index b { font: 500 19px/1.2 var(--sy-sans); letter-spacing: -.015em; transition: color var(--sy-t-hover); }
+.home-index span { color: var(--sy-body); font: 400 15px/1.45 var(--sy-sans); text-wrap: pretty; }
+.home-index a:hover b { color: var(--sy-electric-hi); }
+.home-index a:hover span { color: var(--sy-vellum); }
+
+/* The game, named in its own two faces. The colours are the game's. */
+.home-play { margin: clamp(14px, 2.4vh, 26px) 0 0; padding-left: .12em; }
+.home-play a { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; min-height: 44px; text-decoration: none; }
+.home-play__p { padding-right: .08em; font: italic 400 30px/1 var(--sy-serif); color: transparent; background: linear-gradient(90deg, #ff7ab3, #ffc266, #fff2a8, #7dffc0, #c9a8ff, #ff7ab3) 0 0/200% 100%; -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 0 10px rgba(255, 95, 162, .5)); text-shadow: none; }
+.home-play__s { font: 500 23px/1 var(--sy-mono); letter-spacing: .02em; color: var(--sy-electric-hi); text-shadow: 0 0 22px rgba(2, 151, 222, .9), 0 1px 2px #000; }
+.home-play__t { padding: 8px 12px; border: 1px solid rgba(241, 246, 249, .5); border-radius: var(--sy-r-pill); background: rgba(2, 7, 10, .45); color: var(--sy-vellum); font: 500 13px/1 var(--sy-sans); text-shadow: none; transition: background var(--sy-t-hover), color var(--sy-t-hover), border-color var(--sy-t-hover); }
+.home-play a:hover .home-play__t, .home-play a:focus-visible .home-play__t { color: var(--sy-midnight); background: var(--sy-cantaloupe); border-color: var(--sy-cantaloupe); }
+
+.home-hero__motion { position: absolute; top: 88px; right: var(--sy-gutter); z-index: 4; min-height: 44px; padding: 10px 14px; border: 1px solid var(--sy-rule-2); border-radius: var(--sy-r-pill); background: rgba(2, 7, 10, .79); color: var(--sy-vellum); font: 400 13px var(--sy-sans); cursor: pointer; }
+.home-hero__motion:hover { border-color: var(--sy-electric); }
+
+/* One entrance, once: the sheen crosses the name while the lines under it rise. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-wordmark::after { animation: home-sheen 2.4s cubic-bezier(.3, .6, .2, 1) .5s both; }
+  .home-hero__line, .home-index, .home-play { animation: home-rise 1s cubic-bezier(.16, .84, .24, 1) both; }
+  .home-hero__line { animation-delay: .1s; } .home-index { animation-delay: .22s; } .home-play { animation-delay: .34s; }
+  .home-play a:hover .home-play__p { animation: home-flow 3s linear infinite; }
+}
+@keyframes home-sheen { from { background-position: -160% 0, 0 0; } to { background-position: 260% 0, 0 0; } }
+@keyframes home-rise { from { opacity: 0; transform: translateY(18px); } }
+@keyframes home-flow { to { background-position: 200% 0; } }
+
+/* ---------- a part: Factory, Studio, Lacuna ---------- */
+.home-part h2, .home-contact h2 { margin: 0; color: var(--sy-vellum); font: 500 clamp(36px, 4.6vw, 64px)/1 var(--sy-sans); letter-spacing: -.045em; }
+.home-part h2 a { color: inherit; text-decoration: none; }
+.home-part h2 a:hover { color: var(--sy-electric-hi); }
+#factory, #studio, #lacuna, #products, #partners, #contact { scroll-margin-top: 16px; }
+
+/* A stage: one tall canvas, and the part's name. On wide screens the name sits over the foot of the canvas, in the
+   empty side of the drawing; on narrow ones it follows the canvas, so no words lie on the drawing. The header is a
+   fixed bar, so the canvas is the viewport less the bar. It never ends at an edge: it fades into the ground at the
+   top and the foot. */
+.home-stage { --lap: 0px; --view: calc(100svh - var(--sy-header-h)); position: relative; margin-top: calc(-1 * var(--lap)); }
+.home-stage__view { position: relative; height: calc(var(--view) + var(--lap)); overflow: hidden; overflow: clip;
+  background: radial-gradient(60% 55% at 50% 50%, rgba(2, 151, 222, .09), #0000 72%); }
+.home-stage__view > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 max(14%, var(--lap) * 1.25), #000 84%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 max(14%, var(--lap) * 1.25), #000 84%, transparent 100%); }
+/* Factory rises through the foot of the first screen: the strand starts inside the Gyre's fading light. The stage
+   lets presses through to the hero beneath it (its Pause motion button on phones); only the caption's link takes them. */
+.home-stage--rise { --lap: clamp(120px, 22svh, 240px); pointer-events: none; }
+#factory { scroll-margin-top: calc(-1 * clamp(120px, 22svh, 240px)); }
+.home-stage__cap { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding-bottom: 28px; pointer-events: none; text-shadow: 0 0 12px var(--sy-ink), 0 0 5px var(--sy-ink), 0 1px 2px var(--sy-ink); }
+.home-stage__cap p { margin: 12px 0 0; max-width: 37ch; color: var(--sy-body); font-size: 16px; line-height: 1.5; text-wrap: pretty; }
+.home-stage__cap a { pointer-events: auto; color: var(--sy-vellum); text-decoration: underline; text-decoration-color: var(--sy-rule-2); }
+.home-stage__cap a:hover { text-decoration-color: currentColor; }
+.home-stage__cap h2 a { text-decoration: none; }
+.home-coords { margin-left: 6px; color: var(--sy-mist); font: 400 13px/1 var(--sy-mono); white-space: nowrap; }
+/* Lacuna: the globe is one link, to the Atlas opened at the site the globe is naming. The link is the globe's own
+   disc: the canvas draws it 46% down, and 84% of the width or 66% of the height across. */
+.home-stage--globe .home-stage__view { background: radial-gradient(46% 42% at 50% 46%, rgba(2, 151, 222, .1), #0000 74%); }
+.home-globe { position: absolute; z-index: 1; left: 50%; top: 46%; width: min(84%, calc(var(--view) * .66)); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; }
+.home-globe:focus-visible { outline: 2px solid var(--sy-electric-hi); outline-offset: 6px; }
+
+.home-block { position: relative; padding-top: 36px; padding-bottom: 104px; }
+.home-part--studio .home-block { padding-top: 24px; }
+.home-part--studio h2 { margin-bottom: 36px; }
+
+/* ---------- rows: one product or published work each, and the whole row is its link ---------- */
+.home-rows { --mark: 88px; --gap: 36px; margin: 0; padding: 0; list-style: none; }
+.home-rows li a { display: grid; grid-template-columns: var(--mark) minmax(0, 1.1fr) minmax(0, 1fr) 200px; align-items: center; gap: 12px var(--gap); padding: 22px 0; border-top: 1px solid var(--sy-rule); color: inherit; text-decoration: none; transition: background .3s ease; }
+.home-rows li:last-child a { border-bottom: 1px solid var(--sy-rule); }
+.home-rows__mark { display: block; width: var(--mark); height: var(--mark); opacity: .9; transition: opacity .3s ease; }
+svg.home-rows__mark { padding: 13px; color: var(--sy-vellum); }
+.home-rows__name { color: var(--sy-vellum); font: 500 clamp(30px, 4.2vw, 58px)/1 var(--sy-sans); letter-spacing: -.045em; transition: color var(--sy-t-hover); }
+.home-rows__line { max-width: 36ch; color: var(--sy-body); font-size: 16px; line-height: 1.45; }
+.home-rows li a:hover { background: linear-gradient(90deg, rgba(2, 151, 222, .07), transparent 60%); }
+.home-rows li a:hover .home-rows__name { color: var(--sy-electric-hi); }
+.home-rows li a:hover .home-rows__mark { opacity: 1; }
+/* Status: a dot and a word. A lit dot means people can use it now. */
+.home-status { display: inline-flex; align-items: center; justify-self: end; gap: 8px; color: var(--sy-mist); font: 400 13.5px/1.3 var(--sy-sans); white-space: nowrap; }
+.home-status i { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--sy-dim); flex: none; }
+.home-status.is-live i { border: 0; background: var(--sy-cantaloupe); box-shadow: 0 0 10px var(--sy-cantaloupe); }
+
+/* A note under the rows: what kind of note it is, then the note. It lines up with the names above it. */
+.home-note { display: grid; grid-template-columns: 124px minmax(0, 1fr); align-items: baseline; gap: 6px 0; margin: 0; padding: 26px 0 0; color: var(--sy-body); font-size: 15px; line-height: 1.55; }
+.home-note > span + span { max-width: 68ch; }
+.home-note b { color: var(--sy-vellum); font-weight: 500; }
+.home-note a, .home-run a { color: var(--sy-vellum); text-decoration: underline; text-decoration-color: var(--sy-rule-2); white-space: nowrap; }
+.home-note a:hover, .home-run a:hover { text-decoration-color: currentColor; }
+
+/* ---------- SyberWork's recorded run: what the change claimed, what the check found ---------- */
+.home-run { margin: 44px 0 0; padding: 0 0 0 124px; }
+.home-run__title { margin: 6px 0 0; max-width: 24em; color: var(--sy-vellum); font: 500 clamp(21px, 2.1vw, 28px)/1.2 var(--sy-sans); letter-spacing: -.025em; text-wrap: balance; }
+.home-run__note { margin: 10px 0 0; max-width: 72ch; color: var(--sy-mist); font-size: 14px; line-height: 1.5; }
+.home-run table { width: 100%; max-width: 900px; margin-top: 20px; border-collapse: collapse; font-size: 15px; line-height: 1.4; }
+.home-run th, .home-run td { padding: 13px 20px 13px 0; border-top: 1px solid var(--sy-rule); text-align: left; vertical-align: baseline; font-weight: 400; }
+.home-run thead th { padding-top: 0; padding-bottom: 9px; border-top: 0; color: var(--sy-dim); font-size: 13px; }
+.home-run tbody th { color: var(--sy-vellum); font: 500 14px/1.4 var(--sy-mono); }
+.home-run tbody tr:last-child > * { border-bottom: 1px solid var(--sy-rule); }
+.home-run td { color: var(--sy-body); }
+.home-run td:nth-child(3) { color: var(--sy-vellum); }
+.home-run__outcome { display: inline-flex; align-items: center; gap: 8px; color: var(--sy-vellum); font-weight: 500; white-space: nowrap; }
+.home-run__outcome i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--sy-mist); flex: none; }
+.home-run__outcome.is-accepted i { border: 0; background: var(--sy-electric); box-shadow: 0 0 10px var(--sy-electric); }
+
+/* ---------- four pieces that move to sound; a press runs one, and one runs at a time ---------- */
+.home-pieces__label { margin-top: 56px; color: var(--sy-mist); font-size: 14px; }
+.home-pieces { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 14px 0 18px; padding: 0; list-style: none; }
+.home-tile { position: relative; aspect-ratio: 4 / 5; margin: 0; overflow: hidden; border: 1px solid var(--sy-rule); border-radius: 2px; background: #010406; transition: border-color .4s ease; }
+.home-tile > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: .74; transition: opacity .5s ease, transform 1.4s cubic-bezier(.16, .84, .24, 1); }
+.home-tile:hover > img, .home-tile.is-waking > img, .home-tile.is-live > img { opacity: 1; }
+.home-tile.is-waking > img { transform: scale(1.03); }
+.home-tile.is-live { border-color: var(--sy-electric); }
+.home-tile iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; opacity: 0; transition: opacity .9s ease; background: transparent; }
+.home-tile iframe.is-ready { opacity: 1; }
+/* The shield lets the page scroll over a running piece. The corner it leaves open is the piece's own Sound button. */
+.home-tile__shield { position: absolute; z-index: 2; left: 0; cursor: pointer; }
+.home-tile__shield--a { top: 0; right: 0; bottom: 60px; }
+.home-tile__shield--b { bottom: 0; height: 60px; right: 112px; }
+.home-tile figcaption { position: absolute; z-index: 3; left: 14px; top: 13px; right: 14px; display: grid; gap: 4px; pointer-events: none; text-shadow: 0 0 10px #000, 0 1px 2px #000; }
+.home-tile figcaption b { color: var(--sy-vellum); font: 500 18px/1.1 var(--sy-sans); letter-spacing: -.02em; }
+.home-tile figcaption span { color: var(--sy-body); font: 400 13px/1.35 var(--sy-sans); }
+.home-tile__run { position: absolute; z-index: 4; right: 10px; bottom: 10px; min-height: 44px; padding: 0 16px; border: 1px solid var(--sy-rule-2); border-radius: var(--sy-r-pill); background: rgba(2, 7, 10, .6); color: var(--sy-vellum); font: 500 13px/1 var(--sy-sans); cursor: pointer; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.home-tile__run:hover { border-color: var(--sy-electric-hi); }
+.home-tile.is-live .home-tile__run { display: none; }
+
+/* ---------- contact: the field in which the name appears, then one sentence and the one action ---------- */
+.home-contact { position: relative; padding-bottom: 112px; background: var(--sy-ink); }
+.home-contact__field { position: relative; height: clamp(300px, 58svh, 560px); background: radial-gradient(50% 60% at 50% 50%, rgba(2, 151, 222, .08), #0000 72%); }
+.home-contact__field canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 18%, #000 62%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0, #000 18%, #000 62%, transparent 100%); }
+.home-contact__copy { position: relative; display: flex; flex-direction: column; align-items: flex-start; margin-top: clamp(-96px, -9svh, -40px); }
+.home-contact h2 { max-width: 12em; font-size: clamp(38px, 5vw, 72px); line-height: 1.02; text-wrap: balance; text-shadow: 0 0 14px var(--sy-ink), 0 0 6px var(--sy-ink); }
+.home-contact__copy > p { margin: 18px 0 30px; max-width: 44ch; color: var(--sy-body); font-size: 17px; line-height: 1.5; text-wrap: pretty; }
+.home-contact__copy > p.home-contact__links { display: flex; flex-wrap: wrap; gap: 4px 28px; margin: 22px 0 0; font-size: 14.5px; }
+.home-contact__links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--sy-mist); overflow-wrap: anywhere; }
+.home-contact__links a:hover { color: var(--sy-vellum); }
+
+/* ---------- narrower screens ---------- */
+@media (max-width: 1280px) {
+  /* the part's name follows the drawing instead of lying on it */
+  .home-stage { --view: calc(86svh - var(--sy-header-h)); }
+  .home-stage--globe { --view: min(calc(86svh - var(--sy-header-h)), 118vw); }
+  .home-stage__cap { position: relative; margin-top: -14px; padding-bottom: 8px; }
+  .home-stage__cap p { max-width: 44ch; }
+}
+@media (max-width: 1000px) {
+  .home-rows { --mark: 72px; --gap: 24px; }
+  .home-rows li a { grid-template-columns: var(--mark) minmax(0, 1fr) minmax(0, 1fr); }
+  .home-status { grid-column: 2 / -1; justify-self: start; }
+  svg.home-rows__mark { padding: 10px; }
+  .home-note { grid-template-columns: 96px minmax(0, 1fr); }
+  .home-run { padding-left: 96px; }
+  .home-pieces { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+}
+@media (max-width: 800px) {
+  /* stacked: the copy under the header, the Gyre's light below it */
+  .home-hero__copy { justify-content: flex-start; padding-top: 96px; padding-bottom: 120px; }
+  .home-hero::after { background: linear-gradient(180deg, rgba(2, 7, 10, .74) 0%, rgba(2, 7, 10, .56) 38%, rgba(2, 7, 10, .12) 60%, rgba(2, 7, 10, .8) 100%); }
+  .home-hero__media { opacity: .7; -webkit-mask-image: linear-gradient(180deg, #000 0, #000 72%, transparent 100%); mask-image: linear-gradient(180deg, #000 0, #000 72%, transparent 100%); }
+  .home-index { max-width: 520px; margin-top: 22px; }
+  .home-index a { grid-template-columns: 78px minmax(0, 1fr); gap: 0 12px; padding: 11px 0; }
+  .home-index b { font-size: 17px; }
+  .home-index span { font-size: 14px; line-height: 1.4; }
+  .home-play__p { font-size: 26px; } .home-play__s { font-size: 20px; }
+  .home-hero__motion { top: auto; bottom: 42px; }
+  .home-block { padding-top: 24px; padding-bottom: 72px; }
+  .home-rows { --mark: 60px; --gap: 16px; }
+  .home-rows li a { grid-template-columns: var(--mark) minmax(0, 1fr); gap: 6px var(--gap); padding: 18px 0; }
+  .home-rows__mark { grid-row: 1 / span 3; align-self: start; margin-top: 2px; }
+  .home-rows__line { font-size: 15px; }
+  .home-status { grid-column: 2; }
+  .home-note { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .home-run { margin-top: 36px; padding-left: 0; }
+  /* the run as a short list: one block for each proposed change */
+  .home-run table, .home-run tbody, .home-run tr, .home-run th, .home-run td { display: block; }
+  .home-run thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .home-run tr { padding: 12px 0; border-top: 1px solid var(--sy-rule); }
+  .home-run tbody tr:last-child { border-bottom: 1px solid var(--sy-rule); }
+  .home-run th, .home-run td, .home-run tbody tr:last-child > * { padding: 2px 0; border: 0; }
+  .home-run td { display: grid; grid-template-columns: 136px minmax(0, 1fr); gap: 0 12px; }
+  .home-run td::before { content: attr(data-label); color: var(--sy-dim); font-size: 13px; line-height: 1.6; }
+  .home-pieces__label { margin-top: 40px; }
+  .home-tile figcaption { left: 11px; top: 10px; right: 11px; }
+  .home-tile figcaption b { font-size: 16px; }
+  .home-tile figcaption span { font-size: 12px; }
+  .home-contact { padding-bottom: 80px; }
+}
+@media (max-width: 600px) {
+  .home-wordmark { font-size: clamp(50px, 14vw, 60px); }
+  .home-hero__line { font-size: 20px; }
+  .home-stage__cap p { font-size: 15px; }
+  .home-hero__motion { font-size: 12px; padding: 8px 10px; }
+}
+@media (max-width: 360px) { .home-index a { grid-template-columns: minmax(0, 1fr); } }

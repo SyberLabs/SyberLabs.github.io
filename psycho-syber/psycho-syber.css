@@ -1,5 +1,5 @@
 /* PSYCHO SYBER: the game page. The stage fills the first screen; the page's own copy follows on the site's Midnight
-   theme (src/syberlabs.css). The stage carries is-syber or is-psycho, and everything laid over the picture changes
+   theme (src/styles/). The stage carries is-syber or is-psycho, and everything laid over the picture changes
    with it: type, colour and motion. */
 .syber-play main { padding: 0; }
 .ps-stage { position: relative; display: grid; place-items: center; min-height: 320px; height: calc(100svh - var(--sy-header-h, 64px)); background: #02070a; overflow: hidden; -webkit-user-select: none; user-select: none; }

@@ -8,8 +8,6 @@
 .staff .sy-heading, .staff .sy-h3 { font: 600 20px/28px var(--sy-sans); margin: 0 0 var(--space-4); color: var(--sy-vellum); }
 .staff .sy-btn--primary { color: var(--sy-midnight, #02070a); background: var(--sy-cantaloupe, #fc734d); box-shadow: inset 0 1px 0 rgba(255,255,255,.38), 0 12px 34px -14px rgba(252,115,77,.8); }
 
-/* The site layer reuses .sy-field for the star canvas (absolute, full size); undo that for form fields. */
-.staff-field.sy-field { position: static; inset: auto; width: auto; height: auto; display: grid; gap: 8px; }
 .staff-field .sy-field__hint { margin: 0; }
 .staff-field .sy-field__error { margin: 0; }
 /* The kit shows an error as a flex row; a message with a link and a second line needs normal flow. */
@@ -33,7 +31,8 @@
 .staff-profile:focus-visible { outline: 2px solid var(--sy-ice); outline-offset: 3px; }
 .staff-btn--small.sy-btn { min-height: 44px; padding: 0 12px; font-size: 13px; }
 .workspace-app { background: #07131b; background-image: none; font-size: 15px; }
-.workspace-app > .sy-field-host { display: none; }
+/* the staff header still carries this empty element (server/views/chrome.js); it draws nothing */
+.sy-field-host { display: none; }
 .workspace-app .staff-header { position: sticky; top: 0; z-index: 60; }
 .workspace-app .staff-header__in { max-width: none; padding: 14px 28px; }
 .workspace-app .staff-header__row { min-height: 44px; flex-wrap: nowrap; }
