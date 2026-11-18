@@ -6,7 +6,8 @@
    The network is computed, not animated: each frame runs a forward pass through fixed weights, and what is drawn is
    each unit's activation and each connection's share of it. Two of its six inputs are the pointer's position, so
    the picture answers the visitor; three are slow oscillators and one is how full Approve is. Pointing at a unit
-   shows its activation.
+   shows its activation, and a press on the network sends a signal down from the input unit nearest the press, by
+   the connections that carry most of the activation at that moment.
 
    The picture is an illustration and the page says so: its changes are invented. Station names are HTML, placed
    over the canvas by src/home/line.js from the positions onLayout reports. */
@@ -16,8 +17,9 @@ const root = typeof window !== 'undefined' ? window : globalThis;
 const TAU = Math.PI * 2;
 const VELLUM = [241, 246, 249], BODY = [195, 207, 214], MIST = [147, 164, 174], STEEL = [127, 166, 189];
 const ELECTRIC = [2, 151, 222], ELECTRIC_HI = [76, 192, 245], CANTALOUPE = [252, 115, 77];
-const MONO = '500 12px "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace';
-const SANS = '400 13px "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif';
+const MONO = '500 13px "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace';
+const SANS = '400 14px "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif';
+const SANS_NARROW = '400 13px "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif';
 
 const cl = x => (x < 0 ? 0 : x > 1 ? 1 : x);
 const lerp = (a, b, p) => a + (b - a) * p;
@@ -27,7 +29,10 @@ const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${cl(a).toFixed(3)})`;
 
 // units in each layer, top to bottom, and how wide each layer is drawn (the last is the one output)
 const LAYERS = [6, 10, 14, 10, 6, 1], SPREAD = [0.62, 0.9, 1, 0.84, 0.48, 0];
-const CHIP_W = 54, CHIP_H = 22, STACK = 27, GRID = 26, REACH = 150, COMMIT = 22;
+const CHIP_W = 64, CHIP_H = 26, STACK = 31, GRID = 26, REACH = 150, COMMIT = 34;
+// The way down from the model's output, in steps: to Propose, to Check, to Review, to Approve (further off, because
+// up to three changes wait above it) and to the published line. STEP is the least a step may measure, in pixels.
+const WAY = [0.9, 1, 1, 1.9, 0.9], SPAN = WAY.reduce((a, b) => a + b, 0), STEP = 60;
 
 function network(seed) {
   const rand = prng(seed), W = [], B = [];
@@ -56,10 +61,9 @@ function geometry(canvas, zone) {
   const ax = Math.round(zx + zw * (wide ? 0.5 : 0.44));
   const top = zy + (wide ? 50 : 14), foot = wide ? 34 : 30, hw = Math.min(zw * (wide ? 0.47 : 0.42), 250);
   // the network takes two fifths of the box (a third on narrow screens), less when the stations need the room
-  const nh = Math.max(120, Math.min(zh * (wide ? 0.4 : 0.34), zy + zh - foot - top - 5.4 * 56));
-  // the stations share what is left; Approve stands further off, because up to three changes wait above it
-  const yOut = top + nh, yB = zy + zh - foot, g = (yB - yOut) / 5.4;
-  const yP = yOut + g * 0.9, yC = yP + g, yR = yC + g, yA = yR + g * 1.6;
+  const nh = Math.max(120, Math.min(zh * (wide ? 0.4 : 0.34), zy + zh - foot - top - SPAN * STEP));
+  const yOut = top + nh, yB = zy + zh - foot, g = (yB - yOut) / SPAN;
+  const yP = yOut + g * WAY[0], yC = yP + g * WAY[1], yR = yC + g * WAY[2], yA = yR + g * WAY[3];
   const nodes = LAYERS.map((n, k) => {
     const y = top + nh * k / (LAYERS.length - 1);
     return Array.from({ length: n }, (_, i) => {
@@ -96,7 +100,7 @@ export function mount(canvas, { zone, surface, onLayout, onState } = {}) {
   let G = null, back = null, dpr = 1, maxDpr = Math.min(root.devicePixelRatio || 1, 2);
   let t = 0, last = 0, visible = false, slow = 0, fast = 0, lastState = '';
   const pointer = { x: 0, y: 0, u: 0, v: 0, on: 0, seen: false };   // u, v: where the network's first two inputs are heading
-  const pulses = [], rings = [];
+  const pulses = [], rings = [], taps = [];
   let ambient = 0, dim = 1;
   const drawn = new Map();   // per change and per commit: the position it is drawn at, eased toward where the rules put it
 
@@ -124,7 +128,15 @@ export function mount(canvas, { zone, surface, onLayout, onState } = {}) {
     }
     return path;
   }
-  function pulse(bright, per) { pulses.push({ path: strongest((Math.random() * LAYERS[0]) | 0), seg: 0, p: 0, per, bright }); }
+  function pulse(bright, per, from = (Math.random() * LAYERS[0]) | 0, delay = 0, loud = false) { pulses.push({ path: strongest(from), seg: 0, p: -delay, per, bright, loud }); }
+  // A press on the network: a signal goes down from the input unit nearest the press, and from its two neighbours.
+  function press() {
+    if (!G || Math.abs(pointer.x - G.ax) > G.hw + 48 || pointer.y < G.top - 36 || pointer.y > G.yOut + 14) return;
+    taps.push({ x: pointer.x, y: pointer.y, at: t });
+    const first = G.nodes[0]; let near = 0;
+    first.forEach((n, i) => { if (Math.abs(n.x - pointer.x) < Math.abs(first[near].x - pointer.x)) near = i; });
+    [near, Math.max(0, near - 1), Math.min(first.length - 1, near + 1)].forEach((from, n) => pulse(false, 0.17, from, n * 0.45, true));
+  }
   const curve = (a, b, p, out) => {   // a point on the connection from unit a to unit b
     const d = b.y - a.y, q = 1 - p, c1y = a.y + d * 0.55, c2y = b.y - d * 0.55;
     out.x = q * q * q * a.x + 3 * q * q * p * a.x + 3 * q * p * p * b.x + p * p * p * b.x;
@@ -190,60 +202,67 @@ export function mount(canvas, { zone, surface, onLayout, onState } = {}) {
       for (let n = 0; n < 5; n++) {
         const p1 = cl(s.p - n * 0.07), p0 = cl(p1 - 0.07); if (p1 <= 0) break;
         curve(a, b, p0, P); curve(a, b, p1, Q);
-        ctx.strokeStyle = rgba(s.bright ? VELLUM : ELECTRIC_HI, (s.bright ? 0.95 : 0.5) * (1 - n / 5) * dim); ctx.lineWidth = s.bright ? 2.4 : 1.5;
+        ctx.strokeStyle = rgba(s.bright ? VELLUM : ELECTRIC_HI, (s.bright ? 0.95 : s.loud ? 0.9 : 0.5) * (1 - n / 5) * (s.loud ? 1 : dim)); ctx.lineWidth = s.bright ? 2.4 : s.loud ? 2.1 : 1.5;
         ctx.beginPath(); ctx.moveTo(P.x, P.y); ctx.lineTo(Q.x, Q.y); ctx.stroke();
       }
       if (s.bright) { curve(a, b, cl(s.p), Q); ctx.fillStyle = rgba(ELECTRIC_HI, 0.5); ctx.beginPath(); ctx.arc(Q.x, Q.y, 5, 0, TAU); ctx.fill(); }
+    }
+    for (let i = taps.length - 1; i >= 0; i--) {   // where the network was pressed
+      const tap = taps[i], p = (t - tap.at) / 0.6; if (p >= 1) { taps.splice(i, 1); continue; }
+      ctx.strokeStyle = rgba(ELECTRIC_HI, 0.85 * (1 - p)); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(tap.x, tap.y, 6 + 40 * out3(p), 0, TAU); ctx.stroke();
     }
     ctx.globalCompositeOperation = 'source-over';
   }
 
   // ---------- the line ----------
   function drawLine() {
-    const { ax, yOut, yP, yC, yR, yA, yB } = G, hair = 'rgba(140,200,235,.3)', top = yA - (QUEUE - 1) * STACK - 16;
+    const { ax, yOut, yP, yC, yR, yA, yB } = G, hair = 'rgba(140,200,235,.3)', hw = CHIP_W / 2, hh = CHIP_H / 2, top = yA - (QUEUE - 1) * STACK - hh - 7;
     ctx.lineWidth = 1; ctx.lineCap = 'butt';
-    ctx.strokeStyle = hair; ctx.beginPath(); ctx.moveTo(ax + 0.5, yOut + 7); ctx.lineTo(ax + 0.5, yA + 16); ctx.stroke();
+    ctx.strokeStyle = hair; ctx.beginPath(); ctx.moveTo(ax + 0.5, yOut + 7); ctx.lineTo(ax + 0.5, yA + hh + 5); ctx.stroke();
     // from Approve to the published line the way is dashed: it is closed until a person approves
-    ctx.setLineDash([3, 5]); ctx.strokeStyle = rgba(CANTALOUPE, 0.6); ctx.beginPath(); ctx.moveTo(ax + 0.5, yA + 18); ctx.lineTo(ax + 0.5, yB - 10); ctx.stroke(); ctx.setLineDash([]);
+    ctx.setLineDash([3, 5]); ctx.strokeStyle = rgba(CANTALOUPE, 0.6); ctx.beginPath(); ctx.moveTo(ax + 0.5, yA + hh + 7); ctx.lineTo(ax + 0.5, yB - 10); ctx.stroke(); ctx.setLineDash([]);
     ctx.strokeStyle = hair; ctx.beginPath(); ctx.moveTo(ax + 0.5, yB - 10); ctx.quadraticCurveTo(ax + 0.5, yB + 0.5, ax + 10, yB + 0.5); ctx.lineTo(G.right, yB + 0.5); ctx.stroke();
     // Propose: a mark on the line
-    ctx.fillStyle = rgba(ELECTRIC_HI, 0.9); ctx.beginPath(); ctx.moveTo(ax, yP - 31); ctx.lineTo(ax + 4, yP - 27); ctx.lineTo(ax, yP - 23); ctx.lineTo(ax - 4, yP - 27); ctx.fill();
+    ctx.fillStyle = rgba(ELECTRIC_HI, 0.9); ctx.beginPath(); ctx.moveTo(ax, yP - hh - 20); ctx.lineTo(ax + 4, yP - hh - 16); ctx.lineTo(ax, yP - hh - 12); ctx.lineTo(ax - 4, yP - hh - 16); ctx.fill();
     // Check: a gate the change stands in
     const busy = S.slot.check && S.slot.check.st === 'check' ? 1 : 0;
     ctx.strokeStyle = rgba(busy ? ELECTRIC_HI : STEEL, busy ? 0.95 : 0.5); ctx.lineWidth = 1.2; ctx.beginPath();
-    for (const d of [-1, 1]) { ctx.moveTo(ax + d * 34, yC - 17); ctx.lineTo(ax + d * 40, yC - 17); ctx.lineTo(ax + d * 40, yC + 17); ctx.lineTo(ax + d * 34, yC + 17); }
+    for (const d of [-1, 1]) { ctx.moveTo(ax + d * (hw + 7), yC - hh - 6); ctx.lineTo(ax + d * (hw + 13), yC - hh - 6); ctx.lineTo(ax + d * (hw + 13), yC + hh + 6); ctx.lineTo(ax + d * (hw + 7), yC + hh + 6); }
     ctx.stroke();
     // Review: a second reader, drawn as a lens
     const read = S.slot.review && S.slot.review.st === 'review' ? 1 : 0;
     ctx.strokeStyle = rgba(read ? ELECTRIC_HI : STEEL, read ? 0.9 : 0.45); ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.arc(ax - 14, yR, 28, Math.PI - 0.66, Math.PI + 0.66); ctx.stroke();
-    ctx.beginPath(); ctx.arc(ax + 14, yR, 28, -0.66, 0.66); ctx.stroke();
+    ctx.beginPath(); ctx.arc(ax - hw + 16, yR, 30, Math.PI - 0.62, Math.PI + 0.62); ctx.stroke();
+    ctx.beginPath(); ctx.arc(ax + hw - 16, yR, 30, -0.62, 0.62); ctx.stroke();
     // Approve: the dock where changes stop, in the colour of the person's action
     const full = sim.waiting() / QUEUE, beat = still ? 0 : 0.5 + 0.5 * Math.sin(t * 2.6);
     ctx.strokeStyle = rgba(CANTALOUPE, 0.55 + 0.4 * full * beat); ctx.lineWidth = 1.3; ctx.beginPath();
-    for (const d of [-1, 1]) { ctx.moveTo(ax + d * 29, top); ctx.lineTo(ax + d * 37, top); ctx.lineTo(ax + d * 37, yA + 17); ctx.lineTo(ax + d * 29, yA + 17); }
+    for (const d of [-1, 1]) { ctx.moveTo(ax + d * (hw + 2), top); ctx.lineTo(ax + d * (hw + 10), top); ctx.lineTo(ax + d * (hw + 10), yA + hh + 6); ctx.lineTo(ax + d * (hw + 2), yA + hh + 6); }
     ctx.stroke();
     for (let i = rings.length - 1; i >= 0; i--) {
       const r = rings[i], p = (t - r.at) / 0.7; if (p >= 1) { rings.splice(i, 1); continue; }
-      ctx.strokeStyle = rgba(CANTALOUPE, 0.8 * (1 - p)); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(ax, yA, 16 + 44 * out3(p), 0, TAU); ctx.stroke();
+      ctx.strokeStyle = rgba(CANTALOUPE, 0.8 * (1 - p)); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(ax, yA, 20 + 48 * out3(p), 0, TAU); ctx.stroke();
     }
   }
 
+  // The published line: one mark for each change a person approved, newest first, each under its id.
   function drawCommits(dt) {
-    const { ax, yB } = G, room = Math.max(1, Math.floor((G.right - ax - 52) / COMMIT));
+    const { ax, yB } = G, room = Math.max(1, Math.floor((G.right - ax - 60) / COMMIT));
+    ctx.font = MONO; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
     for (let i = 0; i < S.commits.length && i <= room; i++) {
-      const c = S.commits[i], key = 'k' + c.n, want = ax + 44 + i * COMMIT;
-      let x = drawn.get(key); x = x === undefined ? ax + 44 : x + (want - x) * Math.min(1, dt * 9); drawn.set(key, x);
-      const a = cl((G.right - 18 - x) / 70), age = S.t - c.at, warm = cl(1 - age / 2.4);
-      ctx.fillStyle = rgba(ELECTRIC_HI, a); ctx.beginPath(); ctx.arc(x, yB + 0.5, 3.6, 0, TAU); ctx.fill();
-      if (warm > 0) { ctx.strokeStyle = rgba(CANTALOUPE, warm * a); ctx.lineWidth = 1.4; ctx.beginPath(); ctx.arc(x, yB + 0.5, 6.5 + 3 * (1 - warm), 0, TAU); ctx.stroke(); }
+      const c = S.commits[i], key = 'k' + c.n, want = ax + 48 + i * COMMIT;
+      let x = drawn.get(key); x = x === undefined ? ax + 48 : x + (want - x) * Math.min(1, dt * 9); drawn.set(key, x);
+      const a = cl((G.right - 22 - x) / 70), age = S.t - c.at, warm = cl(1 - age / 2.4);
+      ctx.fillStyle = rgba(ELECTRIC_HI, a); ctx.beginPath(); ctx.arc(x, yB + 0.5, 4, 0, TAU); ctx.fill();
+      if (warm > 0) { ctx.strokeStyle = rgba(CANTALOUPE, warm * a); ctx.lineWidth = 1.4; ctx.beginPath(); ctx.arc(x, yB + 0.5, 7 + 3 * (1 - warm), 0, TAU); ctx.stroke(); }
+      ctx.fillStyle = rgba(i ? MIST : VELLUM, a); ctx.fillText('c' + c.n, x, yB + 11);
     }
   }
 
   // What is said beside a change, and where the change is.
   function words(c) {
     switch (c.st) {
-      case 'propose': return [`claims tests passed, ${c.conf.toFixed(2)}`, BODY];
+      case 'propose': return [`${G.wide ? 'claims tests passed' : 'claims passed'}, ${c.conf.toFixed(2)}`, BODY];
       case 'check': return c.p < 1 ? ['running the tests', MIST] : ['tests passed', VELLUM];
       case 'stopped': return [G.wide ? 'claimed passed, tests failed' : 'tests failed', VELLUM];
       case 'review': return c.p < 1 ? ['reviewer reading', MIST] : ['reviewed', VELLUM];
@@ -262,10 +281,10 @@ export function mount(canvas, { zone, surface, onLayout, onState } = {}) {
       case 'review': case 'returned': y = yR; break;
       case 'toApprove': y = lerp(yR, slot, p); break;
       case 'approve': { const was = drawn.get(c.n); y = was === undefined ? slot : was + (slot - was) * Math.min(1, dt * 10); drawn.set(c.n, y); break; }
-      case 'toPublish': { const l1 = yB - yA, d = p * (l1 + 44); if (d < l1) y = yA + d; else { y = yB + 0.5; x = ax + d - l1; } k = 1 - cl((d - l1 * 0.3) / (l1 * 0.7 + 30)); break; }
+      case 'toPublish': { const l1 = yB - yA, d = p * (l1 + 48); if (d < l1) y = yA + d; else { y = yB + 0.5; x = ax + d - l1; } k = 1 - cl((d - l1 * 0.3) / (l1 * 0.7 + 30)); break; }
     }
     if (c.st === 'stopped' || c.st === 'returned') { x = ax + 20 * out3(c.p * 2.4); y += 10 * c.p * c.p; a = 1 - ease((c.p - 0.45) / 0.55); }
-    if (c.st === 'toPublish' && k < 0.3) { ctx.fillStyle = rgba(ELECTRIC_HI, 1); ctx.beginPath(); ctx.arc(x, y, 3.6, 0, TAU); ctx.fill(); return; }
+    if (c.st === 'toPublish' && k < 0.3) { ctx.fillStyle = rgba(ELECTRIC_HI, 1); ctx.beginPath(); ctx.arc(x, y, 4, 0, TAU); ctx.fill(); return; }
 
     const out = c.st === 'stopped' || c.st === 'returned', first = S.queue[0] === c && c.st === 'approve';
     const passed = c.okCheck && !['toPropose', 'propose', 'toCheck'].includes(c.st) && (c.st !== 'check' || c.p >= 1);
@@ -282,8 +301,8 @@ export function mount(canvas, { zone, surface, onLayout, onState } = {}) {
     }
     if (k > 0.75) {
       ctx.font = MONO; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = rgba(out ? MIST : VELLUM, a); ctx.fillText(c.id, l + 7, y + 0.5);
-      const gx = l + w - 10; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
+      ctx.fillStyle = rgba(out ? MIST : VELLUM, a); ctx.fillText(c.id, l + 9, y + 0.5);
+      const gx = l + w - 13; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
       if (out) { ctx.strokeStyle = rgba(MIST, a); ctx.beginPath(); ctx.moveTo(gx - 3, y - 3); ctx.lineTo(gx + 3, y + 3); ctx.moveTo(gx + 3, y - 3); ctx.lineTo(gx - 3, y + 3); ctx.stroke(); }
       else if (passed) { ctx.strokeStyle = rgba(first ? CANTALOUPE : ELECTRIC_HI, a); ctx.beginPath(); ctx.moveTo(gx - 3.5, y); ctx.lineTo(gx - 1, y + 2.8); ctx.lineTo(gx + 3.5, y - 3); ctx.stroke(); }
       else { ctx.strokeStyle = rgba(MIST, 0.9 * a); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(gx, y, 2.6, 0, TAU); ctx.stroke(); }
@@ -292,8 +311,8 @@ export function mount(canvas, { zone, surface, onLayout, onState } = {}) {
     const say = words(c);
     if (say) {
       const settle = c.st === 'propose' || c.st === 'check' || c.st === 'review' ? cl(c.p * 6 + (c.p >= 1 ? 1 : 0)) : 1;
-      ctx.font = SANS; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = rgba(say[1], a * settle);
-      ctx.fillText(say[0], x + (out ? 38 : 50), y + 0.5, Math.max(40, G.zx + G.zw - x - 52));
+      ctx.font = G.wide ? SANS : SANS_NARROW; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = rgba(say[1], a * settle);
+      ctx.fillText(say[0], x + CHIP_W / 2 + (out ? 10 : 22), y + 0.5, Math.max(40, G.zx + G.zw - x - CHIP_W / 2 - 24));
     }
   }
 
@@ -370,7 +389,7 @@ export function mount(canvas, { zone, surface, onLayout, onState } = {}) {
       pointer.u = cl(pointer.x / G.W) * 2 - 1; pointer.v = cl(pointer.y / G.H) * 2 - 1;
     };
     surface.addEventListener('pointermove', move, { passive: true });
-    surface.addEventListener('pointerdown', move, { passive: true });
+    surface.addEventListener('pointerdown', e => { move(e); press(); }, { passive: true });
     surface.addEventListener('pointerleave', () => { pointer.live = false; }, { passive: true });
     surface.addEventListener('pointercancel', () => { pointer.live = false; }, { passive: true });
     root.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') pointer.live = false; }, { passive: true });
@@ -379,7 +398,7 @@ export function mount(canvas, { zone, surface, onLayout, onState } = {}) {
   if ('IntersectionObserver' in root) new IntersectionObserver(en => { visible = en[0].isIntersecting; last = 0; }, { threshold: 0.01 }).observe(canvas);
   else visible = true;
   if ('ResizeObserver' in root) { const ro = new ResizeObserver(size); ro.observe(canvas); ro.observe(zone); } else root.addEventListener('resize', size);
-  if (document.fonts && document.fonts.load) { document.fonts.load(MONO).catch(() => {}); document.fonts.load(SANS).catch(() => {}); }
+  if (document.fonts && document.fonts.load) for (const font of [MONO, SANS, SANS_NARROW]) document.fonts.load(font).catch(() => {});
 
   function frame(now) {
     root.requestAnimationFrame(frame);

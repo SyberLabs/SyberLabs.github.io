@@ -11,7 +11,7 @@
 
 export const QUEUE = 3;
 // seconds: the model's thinking before a proposal, a move between stations, and the stay at each station
-export const TIME = { think: 0.7, move: 0.46, propose: 0.75, check: 0.95, review: 0.75, leave: 1.25, publish: 0.7, gap: 0.5 };
+export const TIME = { think: 0.7, move: 0.46, propose: 0.75, check: 0.95, review: 0.75, leave: 1.7, publish: 0.7, gap: 0.5 };
 
 export function prng(seed) {
   return () => {
