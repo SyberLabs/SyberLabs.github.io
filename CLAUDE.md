@@ -178,13 +178,16 @@ that are about AI. It has a first screen and five parts:
   Propose, Check, Review, Approve. A change that reaches Approve waits there until the visitor presses `Approve`; only
   then does it turn onto the published line. When three changes are waiting the line stops and the model stops
   proposing. The network is computed: every frame runs a forward pass through fixed weights, two of its inputs are the
-  pointer's position, and pointing at a unit shows its activation.
+  pointer's position, pointing at a unit shows its activation, and a press on the network sends a signal down from
+  the input unit nearest the press. A published change keeps its id on the published line.
 - Recorded run (`parts/run.js`, `#run`): SyberWork's recorded run as a table, three facts and the output itself, all
   read from `run` in `projects/site-data.js`, the same output the SyberWork page prints. Pointing at a row lights the
   lines of the output it was read from (`src/home/run.js`), and `Replay the run` shows the run in order. The part is
   left out if that output stops parsing.
 - Products (`parts/products.js`, `#products`): the four products, one row each, and the GitHits design partnership
-  (`#partners`).
+  (`#partners`). Under each row is `Evidence`, a `<details>` that opens to the product's `evidence` lines from
+  `projects/site-data.js`, each with its state (Deployed, Measured, Tested, Implemented, Not yet). It needs no script,
+  and one is open at a time.
 - Research (`parts/research.js`, `#research`): the reports on the site (`research` in `projects/site-data.js`), then
   Lacuna Institute (`#lacuna`) with a globe (`src/visuals/atlas.js`) that marks the Atlas's sites, names each in turn
   and can be turned by dragging it or with the arrow keys (`src/home/globe.js`). The globe, the site named beside it
@@ -208,6 +211,9 @@ Rules for the homepage:
   is a line button, so `Book a consultation` stays the page's one solid button.
 - Each product is described once, by its `headline` in `projects/site-data.js`. A report listed under Research carries
   the title, code and date that `research/index.html` gives it; the build fails if one is not on that page.
+- A product's evidence on the homepage is the product page's own, word for word, "Not yet" lines included. Do not
+  write evidence for the homepage alone. The workflow keeps RISE Plus off the homepage, so a line that names it is
+  left to the RISE page (`evidence` in `parts/products.js`).
 - A part opens with its name over a hairline, and what follows is rows. Do not box the content in cards. Mono is for
   data: change ids, commits, dates, counts and output.
 - One piece runs at a time, and only after a press (or a mouse resting on a tile). Nothing on the page plays sound
@@ -233,7 +239,7 @@ until commit `ff2ae68`, and the last three changed in the rebuild earlier on Nov
 
 CI requires `class="home-hero"`, `id="products"`, `id="partners"`, `id="contact"` and `id="lacuna"` on the homepage, and
 fails the build on personal names, so homepage media must not link to personal sites. CI also fails if the homepage
-loads React.
+loads React, and it runs the Line's rules (`src/visuals/line-sim.test.mjs`).
 
 ## Public dependency lookup (GitHits)
 

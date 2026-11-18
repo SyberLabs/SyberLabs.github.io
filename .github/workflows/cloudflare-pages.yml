@@ -35,6 +35,9 @@ jobs:
       - name: Staff sign-in tests
         # Quoted glob: `node --test server/` does not find them. The PR pastes the reported pass count.
         run: node --test 'server/test/**/*.test.js'
+      - name: Rules of the homepage's Line
+        # In the first screen nothing is published without a press on Approve (CLAUDE.md, "Homepage").
+        run: node --test src/visuals/line-sim.test.mjs
       - name: Check shared header and footer
         run: node scripts/site-chrome.mjs --check
       - name: Play every PSYCHO SYBER stage to its exit
