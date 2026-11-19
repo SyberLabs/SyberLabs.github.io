@@ -74,7 +74,7 @@ const html = read('index.html'), game = read('game.js'), link = read('link.js'),
   const sizes = [...css.matchAll(/font(?:-size)?:\s*([^;}]+)/g)].flatMap(m => [...m[1].matchAll(/(?<![\w.(-])(\d+(?:\.\d+)?)px/g)].slice(0, 1).map(n => +n[1])).filter(n => n < 12);
   rule('nothing in arena.css is set below 12px', sizes.length === 0, sizes.join(' '));
   rule('the page says the arena is invented and lists the four products and Lacuna Institute', /are invented/.test(html) && ['/projects/syberwork/', '/projects/attest/', '/projects/rise/', '/projects/flyspace/', '/lacuna/'].every(h => html.includes(`<a href="${h}">`)));
-  rule('the page says what a duel sends, and that it has no relay', html.includes('id="sent"') && html.includes('stun.cloudflare.com') && html.includes('There is no relay'));
+  rule('the page says what a duel sends, and that it has no relay', html.includes('id="sent"') && html.includes('a STUN server run by Cloudflare') && html.includes('There is no relay'));
 }
 
 { // 4. the vendored library
