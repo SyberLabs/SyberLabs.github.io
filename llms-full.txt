@@ -341,14 +341,14 @@ Text version of the interactive map: This map needs JavaScript.
 
 ## Research
 
-- [Research index](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: three reports and notes on this site, two RISE status pages, five working papers in SyberLabs/papers and two Lacuna Institute pages. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
-- [Lacuna Institute](https://syberlabs.io/lacuna/): Lacuna Institute, part of SyberLabs: an atlas of places where the historical record goes quiet.
-- [Paracas bundles](https://syberlabs.io/lacuna/research/paracas-bundles/): A census of the Paracas Necropolis (Wari Kayan) mummy bundles that published sources show leaving Peru, with destinations, current holders and graded sources. Version 1.0.
+- [Research index](https://syberlabs.io/research/): All 12 SyberLabs research artifacts: technical reports, fault-injection studies, working papers, and Lacuna provenance datasets with explicit limits.
+- [Lacuna Institute](https://syberlabs.io/lacuna/): Lacuna Institute maps 21 sites where the historical record breaks down, separating verified primary sources from open questions and speculation.
+- [Paracas bundles](https://syberlabs.io/lacuna/research/paracas-bundles/): Open CC BY 4.0 census of 13 Wari Kayan Paracas mummy bundles documented leaving Peru, with destinations, presumed holders, and graded sources.
 
 ## Company
 
 - [Services](https://syberlabs.io/services/): AI consulting, custom verifiable agent systems, and developer-tool design partnerships built with automated checks, signed logs, and human sign-off.
-- [PSYCHO SYBER](https://syberlabs.io/psycho-syber/): PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.
+- [PSYCHO SYBER](https://syberlabs.io/psycho-syber/): Play PSYCHO SYBER in your browser: a six-stage stealth game translating Attest, RISE, FLYSPACE, SyberWork, and Lacuna Institute into game mechanics.
 
 ## Account
 

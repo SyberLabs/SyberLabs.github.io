@@ -36,10 +36,10 @@ HEAD = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#07080b">
-<title>Lacuna Institute | SyberLabs</title>
-<meta name="description" content="Lacuna Institute, part of SyberLabs: an atlas of places where the historical record goes quiet.">
-<meta property="og:title" content="Lacuna Institute">
-<meta property="og:description" content="An atlas of places where the historical record goes quiet. Turn back the clock 25,000 years and see the Earth as it was.">
+<title>Lacuna Institute | Atlas of Historical Gaps | SyberLabs</title>
+<meta name="description" content="Lacuna Institute maps 21 sites where the historical record breaks down, separating verified primary sources from open questions and speculation.">
+<meta property="og:title" content="Lacuna Institute | Atlas of Historical Gaps">
+<meta property="og:description" content="Lacuna Institute maps 21 sites where the historical record breaks down, separating verified primary sources from open questions and speculation.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://syberlabs.io/lacuna/">
 <meta property="og:site_name" content="Lacuna Institute">
@@ -48,8 +48,8 @@ HEAD = """<!doctype html>
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Lacuna Institute: where the record goes quiet. The Grand Canyon at dusk.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Lacuna Institute">
-<meta name="twitter:description" content="An atlas of places where the historical record goes quiet. Turn back the clock 25,000 years and see the Earth as it was.">
+<meta name="twitter:title" content="Lacuna Institute | Atlas of Historical Gaps">
+<meta name="twitter:description" content="Lacuna Institute maps 21 sites where the historical record breaks down, separating verified primary sources from open questions and speculation.">
 <meta name="twitter:image" content="https://syberlabs.io/lacuna/share/lacuna.jpg">
 <link rel="canonical" href="https://syberlabs.io/lacuna/">
 <!--email_off-->

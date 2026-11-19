@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#02070a">
-  <title>Decision Arena: Same Request, Different Deciders | SyberLabs Research</title>
-  <meta name="description" content="The same RISE reading requests given to every decider: what each chose and how often it agreed with author-written expectations. The first run covers only the two no-model baselines; OpenAI, Jev and Kev are pending. Every score carries its interval; nothing is ranked.">
+  <title>DA-01: Decision Arena | RISE Decider Comparison | SyberLabs Research</title>
+  <meta name="description" content="Side-by-side comparison of deciders on identical RISE reading requests with 95% confidence intervals and zero rankings. Initial non-model baselines.">
   <link rel="canonical" href="https://syberlabs.io/research/decision-arena/">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Decision Arena: Same Request, Different Deciders | SyberLabs Research">
-  <meta property="og:description" content="Same request, different deciders. The first run covers only the two no-model baselines; OpenAI, Jev and Kev are pending.">
+  <meta property="og:title" content="DA-01: Decision Arena | RISE Decider Comparison | SyberLabs Research">
+  <meta property="og:description" content="Side-by-side comparison of deciders on identical RISE reading requests with 95% confidence intervals and zero rankings. Initial non-model baselines.">
   <meta property="og:url" content="https://syberlabs.io/research/decision-arena/">
   <meta property="og:image" content="https://syberlabs.io/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Decision Arena: Same Request, Different Deciders | SyberLabs Research">
-  <meta name="twitter:description" content="Same request, different deciders. The first run covers only the two no-model baselines; OpenAI, Jev and Kev are pending.">
+  <meta name="twitter:title" content="DA-01: Decision Arena | RISE Decider Comparison | SyberLabs Research">
+  <meta name="twitter:description" content="Side-by-side comparison of deciders on identical RISE reading requests with 95% confidence intervals and zero rankings. Initial non-model baselines.">
   <meta name="twitter:image" content="https://syberlabs.io/og-image.png">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preload" href="/fonts/v1/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -40,54 +40,54 @@
   <section class="hero">
     <div class="meta"><span>RESEARCH REPORT · DA–01</span><span data-arena="captured">READING THE RUN FILE</span></div>
     <p class="kicker">DECISION ARENA</p>
-    <h1>Compare reading choices<br><em>on the same request.</em></h1>
-    <p class="dek" data-arena="dek">We give the same reading requests to every decider and show what each one chose, how sure it said it was, and how often it agreed with what the requests’ author expected.</p>
+    <h1>Same reading request.<br><em>Every decider compared.</em></h1>
+    <p class="dek" data-arena="dek">Identical RISE requests sent to each decider, reporting chosen plans, stated confidence, and agreement with author expectations alongside 95% intervals.</p>
     <p class="hero-note" data-arena="hero-note">Every score carries its interval. Nothing is ranked.</p>
   </section>
-  <p class="arena-placeholder" data-arena="placeholder" hidden><strong>Placeholder data — not results.</strong> <span data-arena="placeholder-note"></span></p>
-  <div class="status"><span class="dot" aria-hidden="true"></span><strong data-arena="status">READING THE RUN FILE</strong><span data-arena="status-note">Every number on this page is read from <code>data/report.json</code> and <code>data/replay.json</code>.</span></div>
-  <noscript><p class="arena-placeholder">This report builds its tables from <a href="data/report.json">data/report.json</a>, <a href="data/replay.json">data/replay.json</a> and <a href="data/PROVENANCE.json">data/PROVENANCE.json</a> with JavaScript. Those files are the full record.</p></noscript>
+  <p class="arena-placeholder" data-arena="placeholder" hidden><strong>Placeholder data: not results.</strong> <span data-arena="placeholder-note"></span></p>
+  <div class="status"><span class="dot" aria-hidden="true"></span><strong data-arena="status">READING THE RUN FILE</strong><span data-arena="status-note">Live tables populate deterministically from <code>data/report.json</code>, <code>data/replay.json</code>, and <code>data/PROVENANCE.json</code>.</span></div>
+  <noscript><p class="arena-placeholder">This report builds its tables from <a href="data/report.json">data/report.json</a>, <a href="data/replay.json">data/replay.json</a>, and <a href="data/PROVENANCE.json">data/PROVENANCE.json</a> with JavaScript. Those files are the full record.</p></noscript>
   <div class="layout">
-    <aside><nav aria-label="Report contents"><p>CONTENTS</p><a href="#deciders">00 / The deciders</a><a href="#agreement">01 / Agreement</a><a href="#calibration">02 / Calibration</a><a href="#cases">03 / Case by case</a><a href="#answers">04 / Answers, cost, time</a><a href="#method">05 / Method</a><a href="#disclosure">06 / Disclosure</a></nav><p class="aside-note">Engineering report.<br>Not peer reviewed.</p></aside>
+    <aside><nav aria-label="Report contents"><p>CONTENTS</p><a href="#deciders">00 / Deciders</a><a href="#agreement">01 / Agreement</a><a href="#calibration">02 / Calibration</a><a href="#cases">03 / Case by case</a><a href="#answers">04 / Answers, cost, time</a><a href="#method">05 / Method</a><a href="#disclosure">06 / Disclosure</a></nav><p class="aside-note">Engineering report.<br>Not peer reviewed.</p></aside>
     <article>
-      <section id="deciders"><p class="section-label">00 / THE DECIDERS</p><h2>Who was asked.</h2><p>Each decider read the same request and chose a book, a pace, a sound and a look from RISE’s menus. RISE then checked every answer with the same code it runs for readers. Letters are fixed and carry no order of merit.</p>
+      <section id="deciders"><p class="section-label">00 / DECIDERS</p><h2>Who was evaluated.</h2><p>Every decider picks book, pace, sound, and visuals from RISE’s menus, validated by RISE’s production rules. Fixed labels carry no rank.</p>
         <div class="table-wrap" tabindex="0" role="region" aria-label="Deciders (scrolls sideways)"><table data-arena="deciders"><caption>Reading the run file…</caption></table></div>
       </section>
 
-      <section id="agreement"><p class="section-label">01 / AGREEMENT</p><h2>Agreement with author-written expectations.</h2><p>For each request, its author wrote down what a fitting answer looks like: a request for a slow, restful reading should get 100 or 150 words per minute, for example. <strong>Expectations met</strong> counts how often a decider’s admitted choice fell inside them. <strong>Opposites told apart</strong> counts how often two opposite requests got different choices. These are one author’s expectations, not ground truth, and the cases were tuned on Jev.</p>
+      <section id="agreement"><p class="section-label">01 / AGREEMENT</p><h2>Agreement with author expectations.</h2><p>Measures how often admitted plans fall within author-written expectations (for example, 100 or 150 words per minute for a slow, restful request). <strong>Expectations met</strong> counts agreement across admitted plans; <strong>Opposites told apart</strong> counts distinct plans across paired opposite prompts. Author expectations are not objective truth, and prompts were tuned on Jev.</p>
         <div class="table-wrap" tabindex="0" role="region" aria-label="Agreement table (scrolls sideways)"><table data-arena="agreement"><caption>Reading the run file…</caption></table></div>
         <div data-arena="noise"></div>
       </section>
 
-      <section id="calibration"><p class="section-label">02 / CALIBRATION</p><h2>When it says 30%, does it agree 30% of the time?</h2><p data-arena="calibration-intro">Some deciders state how likely each option is. Each dot below groups choices by the probability the decider gave them, across, against how often those choices met the author’s expectation, up. On the dotted diagonal the two match; below it the decider was surer than its agreement rate supports. A larger dot holds more choices, and a hollow dot holds fewer than 15, too few to read alone.</p>
+      <section id="calibration"><p class="section-label">02 / CALIBRATION</p><h2>Stated probability vs. observed agreement.</h2><p data-arena="calibration-intro">Reliability plots compare stated option probability (horizontal) against observed expectation agreement (vertical). Points on the dotted diagonal match; points below indicate overconfidence. Larger dots hold more choices; hollow dots indicate fewer than 15 samples.</p>
         <figure class="reliability" data-arena="figure">
           <div class="panels" data-arena="panels"></div>
-          <figcaption>Figure 1. Reliability diagrams, one per decider and per kind of stated certainty. Per-option probabilities and a separate overall confidence are never merged. Vertical bars are 95% Wilson intervals.</figcaption>
+          <figcaption>Figure 1. Reliability diagrams per decider and certainty type. Per-option probabilities and overall confidence remain separate. Vertical bars show 95% Wilson intervals.</figcaption>
           <details><summary>The same bins as a table</summary><div class="table-wrap" tabindex="0" role="region" aria-label="Reliability bins table (scrolls sideways)"><table data-arena="reliability"></table></div></details>
         </figure>
         <p data-arena="silent"></p>
         <p data-arena="controls"></p>
       </section>
 
-      <section id="cases"><p class="section-label">03 / CASE BY CASE</p><h2>What each one chose.</h2><p>Run 1 of every request. Each cell is the decision RISE admitted: pace in words per minute, sound, visual mode and style, then the book. Follow a cell to play that exact decision as a reading in RISE.</p>
+      <section id="cases"><p class="section-label">03 / CASE BY CASE</p><h2>Run 1 decisions per prompt.</h2><p>Each cell shows the admitted plan: pace in words per minute, sound, visual mode and style, and book. Select any cell to replay that exact plan in RISE.</p>
         <div class="table-wrap cases-wrap" tabindex="0" role="region" aria-label="Choices by request (scrolls sideways)"><table data-arena="cases"><caption>Reading the run file…</caption></table></div>
       </section>
 
-      <section id="answers"><p class="section-label">04 / ANSWERS, COST, TIME</p><h2>What a decision costs.</h2><p>How many answers RISE admitted, why the rest were turned away, how long a call took and what the provider billed, over every run of every request and control.</p>
+      <section id="answers"><p class="section-label">04 / ANSWERS, COST, TIME</p><h2>Admission rates, latency, and billed cost.</h2><p>Tracks admission counts, rejection reasons, response latency, and billed provider cost across all prompts and controls.</p>
         <div class="table-wrap" tabindex="0" role="region" aria-label="Answers, cost and time table (scrolls sideways)"><table data-arena="answers"><caption>Reading the run file…</caption></table></div>
       </section>
 
-      <section id="method"><p class="section-label">05 / METHOD</p><h2>One run file, one command.</h2><p>The harness lives in RISE under <code>scripts/arena/</code>. An operator runs it by hand on the operator’s own keys, under a spending cap; it never runs in CI. It asks every decider every request, passes each answer through the same checks RISE runs for readers, and freezes the capture into one file named by the hash of its bytes. RISE’s report command re-derives every score from that file deterministically. This page copies that report and the slim replay file, and CI checks both against the hashes below.</p>
+      <section id="method"><p class="section-label">05 / METHOD</p><h2>One frozen capture, one deterministic report.</h2><p>The harness runs manually from RISE under <code>scripts/arena/</code> using operator keys and spend caps (never in CI). Every answer passes RISE’s production checks, captures freeze into hash-named files, and CI verifies regenerated reports and replay files against the committed hashes below.</p>
         <dl class="facts" data-arena="method"></dl>
         <pre><code data-arena="command">Reading the run file…</code></pre>
         <ul class="limits" data-arena="notes"></ul>
-        <p>The known-probability controls test whether a decider puts stated odds on stated options. They say nothing about whether its reading choices are good. Frozen results describe each model id on its capture date; a later model is a new run, never an edit.</p>
-        <p class="terms">Terms: OpenAI’s <a href="https://openai.com/policies/sharing-publication-policy/" rel="noopener">Sharing &amp; publication policy</a> “welcome[s] research publications related to the OpenAI API”, and its beta terms say “as-is” for “testing and evaluation”.</p>
+        <p>Known-probability controls test stated odds only, not reading quality. Frozen captures describe exact model IDs on their run date; newer versions require new frozen runs.</p>
+        <p class="terms">Terms: OpenAI evaluation follows OpenAI’s <a href="https://openai.com/policies/sharing-publication-policy/" rel="noopener">Sharing &amp; Publication Policy</a> and beta evaluation terms.</p>
       </section>
 
       <section id="disclosure"><p class="section-label">06 / DISCLOSURE</p>
-        <div class="callout disclosure"><span>INDEPENDENT COMPARISON</span><p>No partnership with, sponsorship by, or endorsement from TypeSafe AI, OpenAI, or Kev’s author. Names identify the systems listed in the comparison. Captured <span data-arena="disclosure-date">on the date in the run file</span> from RISE <span data-arena="disclosure-commit">at the commit in the run file</span>, with <span data-arena="disclosure-models">the model ids in the run file</span>; results may differ today. The <span data-arena="case-count">fixed</span> requests and menus were written by RISE’s authors and tuned on Jev.</p></div>
-        <div class="callout invitation"><span>GET IN TOUCH</span><p>Talk with SyberLabs about a custom AI system or a design partnership.</p><a href="/services/">Work with us<svg class="sy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></a></div>
+        <div class="callout disclosure"><span>INDEPENDENT EVALUATION</span><p>Zero affiliation, sponsorship, or endorsement from TypeSafe AI, OpenAI, or Kev’s author. Names identify evaluated systems only. Captured <span data-arena="disclosure-date">on the date in the run file</span> from RISE <span data-arena="disclosure-commit">at the commit in the run file</span>, with <span data-arena="disclosure-models">the model ids in the run file</span>; later releases may differ. The <span data-arena="case-count">fixed</span> requests and menus were authored by RISE and tuned on Jev.</p></div>
+        <div class="callout invitation"><span>GET IN TOUCH</span><p>Building an evaluated agent workflow or exploring a design partnership?</p><a href="/services/">Work with us<svg class="sy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></a></div>
       </section>
     </article>
   </div>

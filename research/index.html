@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#02070a">
-  <title>Research Index | SyberLabs Research</title>
-  <meta name="description" content="Every SyberLabs research artifact on one page: three reports and notes on this site, two RISE status pages, five working papers in SyberLabs/papers and two Lacuna Institute pages. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.">
+  <title>Research Index | Reports, Benchmarks &amp; Working Papers | SyberLabs</title>
+  <meta name="description" content="All 12 SyberLabs research artifacts: technical reports, fault-injection studies, working papers, and Lacuna provenance datasets with explicit limits.">
   <link rel="canonical" href="https://syberlabs.io/research/">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preload" href="/fonts/v1/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/syberlabs.css">
   <link rel="stylesheet" href="research.css?v=20261030">
-  <meta property="og:title" content="Research Index | SyberLabs Research">
-  <meta property="og:description" content="One card per research artifact: claim, evidence state, what it does not establish, date and source. Reports, notes, status pages, working papers and Lacuna Institute pages.">
+  <meta property="og:title" content="Research Index | Reports, Benchmarks &amp; Working Papers | SyberLabs">
+  <meta property="og:description" content="All 12 SyberLabs research artifacts: technical reports, fault-injection studies, working papers, and Lacuna provenance datasets with explicit limits.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://syberlabs.io/research/">
   <meta property="og:image" content="https://syberlabs.io/og/research.png?v=20261113">
@@ -37,26 +37,26 @@
 <main id="main">
   <section class="hero">
     <nav class="sy-crumbs" aria-label="Breadcrumb"><ol><li><a href="/">SyberLabs</a></li><li><span aria-current="page">Research</span></li></ol></nav>
-    <div class="meta"><span>RESEARCH INDEX</span><span>16 NOVEMBER 2026</span></div>
+    <div class="meta"><span>RESEARCH INDEX</span><span>UPDATED 16 NOVEMBER 2026</span></div>
     <p class="kicker">SYBERLABS RESEARCH</p>
-    <h1>Research and<br><em>experiments.</em></h1>
-    <p class="dek">Reports, working papers and recorded experiments, with sources, dates and known limits.</p>
-    <div class="hero-bottom"><p>12 artifacts<br><span>3 reports on this site · 2 RISE status pages · 5 working papers · 2 Lacuna Institute pages</span></p><a href="#on-this-site">Read the cards <svg class="sy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></a></div>
+    <h1>Research and<br><em>empirical notes.</em></h1>
+    <p class="dek">Reports, fault-injection studies, working papers, and provenance datasets. Every artifact states its exact claim, current evidence level, and explicit boundaries.</p>
+    <div class="hero-bottom"><p>12 artifacts<br><span>3 technical reports · 2 RISE status notes · 5 working papers · 2 Lacuna Institute releases</span></p><a href="#on-this-site">Browse artifacts <svg class="sy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></a></div>
   </section>
 
   <div class="status" role="note" aria-label="How evidence states are read">
-    <strong>HOW TO READ A CARD</strong>
+    <strong>EVIDENCE SCALE</strong>
     <ul class="legend">
-      <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> the behaviour exists in code</span></li>
-      <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> a named test exercises it</span></li>
-      <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> numbers exist under stated conditions</span></li>
-      <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> it runs where people can reach it</span></li>
-      <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> named, and still missing</span></li>
+      <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> behavior exists in source code</span></li>
+      <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> exercised by named automated tests</span></li>
+      <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> quantitative results captured under stated conditions</span></li>
+      <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> live at a public endpoint</span></li>
+      <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> explicitly absent or unverified</span></li>
     </ul>
   </div>
 
   <div class="layout">
-    <aside><nav aria-label="Index contents"><p>CONTENTS</p><a href="#on-this-site">01 / On this site</a><a href="#rise">02 / RISE and reader-owned AI</a><a href="#papers">03 / Working papers</a><a href="#lacuna">04 / Lacuna Institute</a><a href="#provenance">05 / Provenance</a></nav></aside>
+    <aside><nav aria-label="Index contents"><p>CONTENTS</p><a href="#on-this-site">01 / On this site</a><a href="#rise">02 / RISE &amp; reader-owned AI</a><a href="#papers">03 / Working papers</a><a href="#lacuna">04 / Lacuna Institute</a><a href="#provenance">05 / Provenance</a></nav></aside>
     <div class="cards">
 
       <section id="on-this-site" aria-labelledby="on-this-site-title">
@@ -67,18 +67,18 @@
           <div class="card__head">
             <p class="kind">Technical report · GC–01</p>
             <h3><a href="/research/jev-execution/">GrokCell Execution: reliable execution for AI agents</a></h3>
-            <p class="claim">After an AI model chooses an action, the application still has to enforce permissions and budgets, check the result and recover from crashes. The report defines a small contract for that work (read, decide, call, check, admit, yield) and tests a Python and SQLite prototype of it.</p>
+            <p class="claim">Defines a six-operation execution contract (read, decide, call, check, admit, yield) enforcing permissions, budgets, validation, and crash recovery after model selection.</p>
           </div>
           <dl class="facts">
             <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> a single-machine Python prototype with optional SQLite persistence and two offline fixtures.</span></li>
-              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> 87 passing regression tests and process-kill experiments: fresh-process replay, death during a callback, death around admission.</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> live provider calls, verifier isolation, a task-quality or cost benchmark.</span></li>
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> single-machine Python/SQLite prototype with two offline fixtures.</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> 87 passing regression tests and process-kill replay experiments (fresh replay, death during callback, death around admission).</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> live provider calls, verifier isolation, or task-quality and cost benchmarks.</span></li>
             </ul></dd></div>
-            <div><dt>Establishes</dt><dd>Specific recovery behaviour across process exit for two offline fixtures: a restart replays a completed step without another callback, and an interrupted step is not resent under the same identity.</dd></div>
-            <div><dt>Does not establish</dt><dd>Live-provider quality, security isolation (the verifier is trusted application code), exactly-once for remote effects, power-loss recovery, or any live success rate, latency or cost per accepted result.</dd></div>
+            <div><dt>Establishes</dt><dd>Crash-safe replay across process exit on two offline fixtures without resending interrupted steps under the same ID.</dd></div>
+            <div><dt>Does not establish</dt><dd>Live-provider quality, adversarial isolation (the verifier runs as trusted code), remote exactly-once semantics, power-loss durability, or live latency and cost.</dd></div>
             <div><dt>Date</dt><dd>26 September 2026 · revision 1</dd></div>
-            <div><dt>Source</dt><dd><a href="/research/jev-execution/">Read the report</a> · implementation in SyberLabs/grokcell-execution, a private repository (authorized access required)</dd></div>
+            <div><dt>Source</dt><dd><a href="/research/jev-execution/">Read report</a> · private repo SyberLabs/grokcell-execution (authorized access required)</dd></div>
           </dl>
         </article>
 
@@ -86,82 +86,82 @@
           <div class="card__head">
             <p class="kind">Research note · SB–01</p>
             <h3><a href="/research/sybershoke/">Sybershoke: shock tests for multi-agent systems</a></h3>
-            <p class="claim">A deterministic fault-injection harness: a seed gives a fault plan, the system’s run is recorded as a plain-text history, invariants judge the history alone, and a shrinker reduces a failing plan to the faults that matter. Revision 2 runs the real RISE Worker source against recorded Jev answers.</p>
+            <p class="claim">Deterministic fault-injection harness using seeded fault plans, history-only invariant checks, and failure shrinking. Revision 2 tests the live RISE Worker source against 39 captured production Jev answers.</p>
           </div>
           <dl class="facts">
             <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> Week 0 reference simulator: 43 passing tests, 4 of 4 seeded bugs caught, 0 failing runs for the correct implementation over 2,000 seeds per campaign.</span></li>
-              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> the Jev/Kev workspace: 89 tests after an eleven-finding red-team review, each fix with a regression test that failed on the old code.</span></li>
-              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> the RISE Worker source on 39 recorded production Jev answers: 10 predictions written before the first run, 1 refuted; a keyword override that sends “drift off to sleep” to 300 words per minute and a missing provider fallback, both found with replayable seeds.</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> a live system; Kev; the Week 0 repository is unpublished.</span></li>
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> Week 0 simulator: 43 tests, 4/4 seeded bugs caught, 0 failures over 12,000 runs (2,000 seeds per campaign).</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> 89 Jev/Kev model tests following an 11-finding adversarial red-team review.</span></li>
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> RISE Worker source on 39 captured production Jev answers: 10 pre-registered predictions (1 refuted); caught a 300 wpm sleep-override bug and missing provider fallback with replayable seeds.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> live traffic tests, Kev captures, or publication of the Week 0 repo.</span></li>
             </ul></dd></div>
-            <div><dt>Establishes</dt><dd>The harness catches the seeded bugs it was built to catch, and one real system’s source misbehaves in two replayable ways on recorded answers. The override fix is merged in RISE (SyberLabs/RISE#306).</dd></div>
-            <div><dt>Does not establish</dt><dd>Failure rates: the decision-path counts are set by assumed traffic, fault windows and latencies, so only caught versus not caught survives. Anything about Kev, since no recorded Kev answers exist. The live RISE service: Redis and Neon were stand-ins and time was virtual. The sound-loudness rank is the adapter’s interpretation, not RISE’s.</dd></div>
+            <div><dt>Establishes</dt><dd>Reproducible detection of seeded bugs and two replayable defects in RISE Worker source (override fix merged in SyberLabs/RISE#306).</dd></div>
+            <div><dt>Does not establish</dt><dd>Production failure rates (model counts depend on assumed parameters, so only caught vs. missed holds), Kev behavior, or live production behavior (in-memory stand-ins and virtual time). Sound-loudness ranks reflect adapter heuristics.</dd></div>
             <div><dt>Date</dt><dd>29 September 2026 · revision 2</dd></div>
-            <div><dt>Source</dt><dd><a href="/research/sybershoke/">Read the note</a> · <a href="https://github.com/SyberLabs/sybershoke" rel="noopener">SyberLabs/sybershoke</a> at 45956fe (REPORT.md, docs/REDTEAM.md, docs/ADAPTER-RISE.md)</dd></div>
+            <div><dt>Source</dt><dd><a href="/research/sybershoke/">Read note</a> · <a href="https://github.com/SyberLabs/sybershoke" rel="noopener">SyberLabs/sybershoke</a> at 45956fe (REPORT.md, docs/REDTEAM.md, docs/ADAPTER-RISE.md)</dd></div>
           </dl>
         </article>
 
         <article class="card" id="decision-arena">
           <div class="card__head">
-            <p class="kind">Research report · DA–01 · draft</p>
+            <p class="kind">Draft report · DA–01</p>
             <h3><a href="/research/decision-arena/">Decision Arena: same request, different deciders</a></h3>
-            <p class="claim">The same RISE reading requests given to every decider: what each chose and how often it agreed with author-written expectations. The first run covers only the two baselines that call no model; OpenAI, Jev and Kev are pending. Every score carries its interval.</p>
+            <p class="claim">Feeds identical RISE reading requests to multiple deciders and tracks agreement with author expectations alongside 95% confidence intervals. Nothing is ranked.</p>
           </div>
           <dl class="facts">
             <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> the report page, rendered from RISE’s own deterministic report of one frozen run and its replay file, whose hashes are checked in CI.</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> any model: the first real run (8 October 2026, RISE ee72038) ran only the two no-model baselines. OpenAI and Jev were not run (no key) and Kev was not run (hardware and setup).</span></li>
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> deterministic CI-verified report pipeline reading one frozen run and replay file.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> model runs: the initial 8 October 2026 capture (RISE ee72038) covers two non-model baselines only; OpenAI, Jev, and Kev runs are pending.</span></li>
             </ul></dd></div>
-            <div><dt>Establishes</dt><dd>Only how two no-model baselines, matching words in the request and always taking the first option, fare against expectations RISE’s authors wrote. Nothing about any model.</dd></div>
-            <div><dt>Does not establish</dt><dd>Any ordering of deciders: no difference is claimed inside the noise. Real-world taste: the calibration controls test stated odds. Generality: the cases and menus were written by RISE’s authors and tuned on Jev.</dd></div>
+            <div><dt>Establishes</dt><dd>Baseline agreement of keyword-matching and first-option heuristics against author-written expectations. Nothing about any model.</dd></div>
+            <div><dt>Does not establish</dt><dd>Model rankings, statistical dominance within noise, or general reader taste (cases and menus were author-written and tuned on Jev).</dd></div>
             <div><dt>Date</dt><dd>8 October 2026 · draft</dd></div>
-            <div><dt>Source</dt><dd><a href="/research/decision-arena/">Read the report</a> · harness in SyberLabs/RISE under scripts/arena/</dd></div>
+            <div><dt>Source</dt><dd><a href="/research/decision-arena/">Read report</a> · SyberLabs/RISE (scripts/arena/)</dd></div>
           </dl>
         </article>
       </section>
 
       <section id="rise" aria-labelledby="rise-title">
-        <p class="section-label">02 / RISE AND READER-OWNED AI</p>
-        <h2 id="rise-title">Status pages.</h2>
+        <p class="section-label">02 / RISE &amp; READER-OWNED AI</p>
+        <h2 id="rise-title">Status notes.</h2>
 
         <article class="card" id="kev">
           <div class="card__head">
             <p class="kind">Status page · RISE</p>
             <h3><a href="/kev/">RISE, Jev and Kev: reader-owned AI</a></h3>
-            <p class="claim">The RISE server calls no model and holds no model key. An AI reading request runs on a connection the reader owns: hosted Jev through the reader’s own OpenRouter account, or a pinned Kev-4B on the reader’s own computer. Reading and manual settings need neither.</p>
+            <p class="claim">Documents RISE’s zero-model Worker architecture, user-owned OpenRouter and local Kev boundaries, and deterministic catalog validation. Manual reading requires no AI.</p>
           </div>
           <dl class="facts">
             <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> the Cloudflare Worker serves the app and a static decision catalog; the six former inference routes answer 410 with instructions to connect.</span></li>
-              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> bounded decisions: finite choice questions built from the public catalog, an answer admitted only if every choice was offered, and a deterministic mapping to reading settings. The same contract serves hosted Jev, local Kev and the evaluation harness.</span></li>
-              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> the local Kev path, on Windows with an RTX 5080.</span></li>
-              <li class="is-measured"><i aria-hidden="true"></i><span><b>Checked</b> local Kev on RISE’s internal evaluations: it did not meet the bar for reading requests (results not published).</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> the Apple Silicon path.</span></li>
+              <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> zero-model Cloudflare Worker serving the app and static catalog; six legacy inference routes return HTTP 410 with setup guidance.</span></li>
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> finite-menu decision contract shared across hosted Jev, local Kev, and evaluations.</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> local Kev path on Windows (RTX 5080).</span></li>
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Checked</b> local Kev fell short of RISE’s reading-request quality bar in unpublished internal evaluations (SCR-004).</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> Apple Silicon local setup.</span></li>
             </ul></dd></div>
-            <div><dt>Establishes</dt><dd>Where the model boundary sits in RISE today, and that a model can pick an offered value and nothing else.</dd></div>
-            <div><dt>Does not establish</dt><dd>Jev’s 48 of 49 result belongs to the historical evaluation below and is not a Kev result. There is no production Kev deployment, by design.</dd></div>
-            <div><dt>Date</dt><dd>October 2026 · page revised 5 October 2026</dd></div>
-            <div><dt>Source</dt><dd><a href="/kev/">Read the status page</a> · <a href="https://github.com/SyberLabs/RISE/blob/main/docs/USER-OWNED-AI.md" rel="noopener">docs/USER-OWNED-AI.md</a>, <a href="https://github.com/SyberLabs/RISE/blob/main/docs/LOCAL-RISE.md" rel="noopener">docs/LOCAL-RISE.md</a> and <a href="https://github.com/SyberLabs/RISE/blob/main/docs/product/tasks/SCR-004.json" rel="noopener">docs/product/tasks/SCR-004.json</a> in SyberLabs/RISE</dd></div>
+            <div><dt>Establishes</dt><dd>Where RISE’s model boundary sits today and that models can choose strictly from offered catalog values.</dd></div>
+            <div><dt>Does not establish</dt><dd>Any production Kev deployment; Jev’s 48/49 evaluation belongs strictly to Jev, never Kev.</dd></div>
+            <div><dt>Date</dt><dd>October 2026 · revised 5 October 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="/kev/">Read status note</a> · <a href="https://github.com/SyberLabs/RISE/blob/main/docs/USER-OWNED-AI.md" rel="noopener">docs/USER-OWNED-AI.md</a>, <a href="https://github.com/SyberLabs/RISE/blob/main/docs/LOCAL-RISE.md" rel="noopener">docs/LOCAL-RISE.md</a>, <a href="https://github.com/SyberLabs/RISE/blob/main/docs/product/tasks/SCR-004.json" rel="noopener">SCR-004.json</a></dd></div>
           </dl>
         </article>
 
         <article class="card" id="jev">
           <div class="card__head">
-            <p class="kind">Case study · historical</p>
+            <p class="kind">Historical case study · RISE</p>
             <h3><a href="/jev/">Jev in RISE: typed AI decisions, validated by code</a></h3>
-            <p class="claim">The recorded Jev integration. Jev answers typed questions (choose one option, estimate a yes-or-no probability, rate on a scale), and RISE’s own code validates every choice before playback.</p>
+            <p class="claim">Archived hosted Jev integration across 23 synthesized soundscapes, 7 typefaces, and 5 text sizes with deterministic pre-playback code validation.</p>
           </div>
           <dl class="facts">
             <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> the integration ran in RISE; readers’ requests chose a released text and passage and configured the reader from 23 browser-synthesized sound options, seven typefaces and five text sizes.</span></li>
-              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> the post-fix live record of 27 September 2026 reran all 39 evaluation cases: all 39 responses valid, 48 of 49 explicit choices matched, all 19 paired contrasts differed.</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> independent verification of the Scriptorium composition feature.</span></li>
+              <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> archived hosted path ran in RISE before retiring in September 2026.</span></li>
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> post-fix 27 September 2026 record across 39 cases: 39/39 valid responses, 48/49 explicit choices matched, 19/19 paired contrasts distinct.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> independent verification of Scriptorium AI composition.</span></li>
             </ul></dd></div>
-            <div><dt>Establishes</dt><dd>That a typed-decision integration with validation in code worked for one request path, and one pass of its choices against a fixed case set.</dd></div>
-            <div><dt>Does not establish</dt><dd>A verified live Kev deployment: these results must not be attributed to Kev. Consistency across runs or reader enjoyment, which a single pass cannot show. Cost, latency or calibration, which were not measured. Any partnership with TypeSafe AI.</dd></div>
-            <div><dt>Date</dt><dd>Historical · evaluation record 27 September 2026 · page revised 5 October 2026</dd></div>
-            <div><dt>Source</dt><dd><a href="/jev/">Read the case study</a> · <a href="https://github.com/SyberLabs/RISE/blob/main/docs/jev-core/variety-evaluation.md" rel="noopener">docs/jev-core/variety-evaluation.md</a> in SyberLabs/RISE</dd></div>
+            <div><dt>Establishes</dt><dd>That code-validated typed decisions functioned for one request path and one pass over a fixed case set.</dd></div>
+            <div><dt>Does not establish</dt><dd>Kev performance, cross-run consistency, reader preference, cost or latency, or any partnership with TypeSafe AI.</dd></div>
+            <div><dt>Date</dt><dd>Historical · 27 September 2026 eval · revised 5 October 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="/jev/">Read case study</a> · <a href="https://github.com/SyberLabs/RISE/blob/main/docs/jev-core/variety-evaluation.md" rel="noopener">docs/jev-core/variety-evaluation.md</a></dd></div>
           </dl>
         </article>
       </section>
@@ -169,62 +169,62 @@
       <section id="papers" aria-labelledby="papers-title">
         <p class="section-label">03 / WORKING PAPERS · SYBERLABS/PAPERS</p>
         <h2 id="papers-title">Five studies at different stages.</h2>
-        <p class="section-note">The papers repository is an index of research artifacts, not of finished papers. Each folder defines its evidence, claim limits and reproduction steps; the sentences below are taken from those folders.</p>
+        <p class="section-note">Work-in-progress research repositories documenting explicit methods, evidence states, reproduction steps, and claim limits.</p>
 
         <article class="card" id="dtbr">
           <div class="card__head">
-            <p class="kind">Working paper · internal-review draft</p>
+            <p class="kind">Working paper · internal draft</p>
             <h3><a href="https://github.com/SyberLabs/papers/tree/main/DTBR" rel="noopener">DTBR-MC: the marker is not the binding constraint</a></h3>
-            <p class="claim">A falsification-oriented Monte Carlo audit of deep-time hazard-warning assumptions. In this model family, symbolic factors (markers, legibility, dread) act as modulators while physical factors (access, capability, severity, certainty of consequence) act as gates, and the capacity-threshold hypothesis it set out to test is algebraically impossible in an additive behavioural model.</p>
+            <p class="claim">Falsification-oriented Monte Carlo audit of deep-time hazard warnings. Shows physical access and consequence act as hard gates while symbolic markers only modulate behavior; disproves the additive capacity-threshold hypothesis algebraically.</p>
           </div>
           <dl class="facts">
             <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> a seeded, vectorized simulator; H1, sensitivity and H3 experiments; a first experiment bundle with outputs and figures.</span></li>
-              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> deterministic regression and falsifiability tests in <code>tests/</code>.</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> review: the draft is internal, and its references still need verification against primary sources.</span></li>
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> seeded vectorized simulator, H1/sensitivity/H3 experiments, and initial output bundle.</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> deterministic regression and falsifiability suite in <code>tests/</code>.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> external review and primary-source citation audit.</span></li>
             </ul></dd></div>
-            <div><dt>Establishes</dt><dd>Which modelling assumptions are load-bearing once the warning-design problem is written as replaceable equations. Every result carries an epistemic label: audit, extrapolation, cartography or exploratory.</dd></div>
-            <div><dt>Does not establish</dt><dd>How distant-future people will behave, operational nuclear-waste policy, or calibrated future-behaviour estimates. The simulator is a consistency auditor, not a predictive instrument.</dd></div>
-            <div><dt>Date</dt><dd>Published to SyberLabs/papers 26 September 2026</dd></div>
+            <div><dt>Establishes</dt><dd>Which modeling assumptions are load-bearing once warning design is written as explicit equations, with every output epistemically labeled.</dd></div>
+            <div><dt>Does not establish</dt><dd>Distant-future human behavior, operational nuclear-waste policy, or predictive forecasts. Audits model consistency only.</dd></div>
+            <div><dt>Date</dt><dd>26 September 2026</dd></div>
             <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/papers/tree/main/DTBR" rel="noopener">papers/DTBR</a> · <a href="https://github.com/SyberLabs/papers/blob/main/DTBR/PAPER.md" rel="noopener">PAPER.md</a></dd></div>
           </dl>
         </article>
 
         <article class="card" id="green-hypercube">
           <div class="card__head">
-            <p class="kind">Manuscript · draft</p>
+            <p class="kind">Draft manuscript</p>
             <h3><a href="https://github.com/SyberLabs/papers/tree/main/green-hypercube" rel="noopener">Green Hypercube: coverage artifacts in computational ethnobotany</a></h3>
-            <p class="claim">Apparent structure in integrated plant-data search benchmarks can be inflated by coverage and reward-density artifacts. Six sequential search strategies run over a plant manifold with four cue channels, and raw cue–reward coupling is reported beside coverage-controlled and residualized coupling; the manuscript reports that the raw coupling collapses under those controls.</p>
+            <p class="claim">Demonstrates that raw cue-reward signal in plant-search benchmarks collapses under coverage-controlled and residualized baselines across six search strategies.</p>
           </div>
           <dl class="facts">
             <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> a Python package with an offline synthetic path, live-data configurations, and a validation suite: reward permutation, graph rewiring, phylogeny shuffles, coupling, residualization and matched-density sweeps.</span></li>
-              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> a pytest suite for the pipeline, strategies, controls, coupling and metrics.</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> author confirmation and TODO items in the draft; raw external caches and live result bundles are not published.</span></li>
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> Python package, offline synthetic path, live configs, and permutation/rewiring/matched-density validation suite.</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> pytest suite covering pipeline, strategies, controls, coupling, and metrics.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> author sign-off, remaining draft TODOs, or publication of raw external caches and live result bundles.</span></li>
             </ul></dd></div>
-            <div><dt>Establishes</dt><dd>A methodological result: matched-density comparisons are necessary before a strategy is credited with real signal across pools.</dd></div>
-            <div><dt>Does not establish</dt><dd>Anything about Indigenous discovery mechanisms or community knowledge. It is not a bioprospecting recommendation engine, and documented use is not treated as a proxy for latent biological value.</dd></div>
-            <div><dt>Date</dt><dd>Published to SyberLabs/papers 26 September 2026</dd></div>
+            <div><dt>Establishes</dt><dd>Methodological requirement for matched-density baselines before attributing signal to search strategies across uneven pools.</dd></div>
+            <div><dt>Does not establish</dt><dd>Claims about Indigenous knowledge or discovery mechanisms. Not a bioprospecting tool; documented use is never treated as latent biological value.</dd></div>
+            <div><dt>Date</dt><dd>26 September 2026</dd></div>
             <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/papers/tree/main/green-hypercube" rel="noopener">papers/green-hypercube</a> · <a href="https://github.com/SyberLabs/papers/blob/main/green-hypercube/green_hypercube_manuscript.md" rel="noopener">green_hypercube_manuscript.md</a></dd></div>
           </dl>
         </article>
 
         <article class="card" id="grokking">
           <div class="card__head">
-            <p class="kind">Empirical research artifact</p>
+            <p class="kind">Empirical artifact</p>
             <h3><a href="https://github.com/SyberLabs/papers/tree/main/grokking-scaling-theory" rel="noopener">Grokking Scaling Theory</a></h3>
-            <p class="claim">Tests scaling-law and order-parameter claims around grokking in modular arithmetic by fit competition across candidate laws rather than one hand-picked curve. Phase 2 (July 2026) asks whether a label-free sheaf “gluing” parameter or a logical-cells decidability parameter supplies the architecture-universal order parameter that phase 1 lacked.</p>
+            <p class="claim">Evaluates modular-arithmetic grokking scaling laws via model-fit competition across 21 scaling points and 63 bit-deterministic runs (5 architectures).</p>
           </div>
           <dl class="facts">
             <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> expanded validation on 21 scaling points, 19 of them measured; phase 2 on 63 deterministic training runs across five architectures, bit-deterministic from the committed seeds (verified 18 of 18).</span></li>
-              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> fit competition, a corrected scaling law, RG-inspired flow models, and the sheaf and logical-cell instruments.</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> publication: more measured runs, tests and manuscript cleanup remain, and some anchors and bibliography assets are research-stage.</span></li>
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> 21 scaling points (19 measured) and 63 bit-deterministic Phase 2 runs across 5 architectures (18/18 seed reproducibility verified).</span></li>
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> fit competition, corrected scaling law, RG-inspired flow models, and sheaf and logical-cell instruments.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> additional measured runs, full tests, and manuscript polish.</span></li>
             </ul></dd></div>
-            <div><dt>Establishes</dt><dd>As the repository reports it: the sheaf parameter beats the variance incumbent but leads grokking by 10 to 25%, no logical cell assembles, depth amplifies the Fourier code while trainability collapses, and width rather than depth is the dominant quantization pressure. Pooled fits point to regime dependence rather than universality.</dd></div>
-            <div><dt>Does not establish</dt><dd>A solved theory of grokking, or architecture-independent universal scaling laws.</dd></div>
-            <div><dt>Date</dt><dd>Phase 2 July 2026 · published to SyberLabs/papers 26 September 2026</dd></div>
-            <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/papers/tree/main/grokking-scaling-theory" rel="noopener">papers/grokking-scaling-theory</a> · <a href="https://github.com/SyberLabs/papers/blob/main/grokking-scaling-theory/analysis/ORDER_PARAMETER_RESULTS.md" rel="noopener">analysis/ORDER_PARAMETER_RESULTS.md</a></dd></div>
+            <div><dt>Establishes</dt><dd>Sheaf gluing beats variance baselines by 10 to 25% lead time, no logical cells assemble, width dominates quantization pressure over depth, and pooled fits point to regime dependence over universality.</dd></div>
+            <div><dt>Does not establish</dt><dd>A complete theory of grokking or architecture-independent universal scaling laws.</dd></div>
+            <div><dt>Date</dt><dd>Phase 2 July 2026 · published 26 September 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/papers/tree/main/grokking-scaling-theory" rel="noopener">papers/grokking-scaling-theory</a> · <a href="https://github.com/SyberLabs/papers/blob/main/grokking-scaling-theory/analysis/ORDER_PARAMETER_RESULTS.md" rel="noopener">ORDER_PARAMETER_RESULTS.md</a></dd></div>
           </dl>
         </article>
 
@@ -232,59 +232,59 @@
           <div class="card__head">
             <p class="kind">Curated public package</p>
             <h3><a href="https://github.com/SyberLabs/papers/tree/main/tok" rel="noopener">TOK: a governed epistemic architecture</a></h3>
-            <p class="claim">Reasoning represented as a sequence of validated artifacts (mechanism graph, dynamics binding, divergence trace, observation registry, evidence-transition proposal, human review gate), each carrying boundaries such as <code>candidate_not_evidence</code> and <code>may_update_evidence: false</code>. The package holds sanitized freeze summaries, replay artifacts, a public validator and a toy reference pipeline.</p>
+            <p class="claim">Models reasoning as human-gated, auditable artifacts enforcing <code>candidate_not_evidence</code> and <code>may_update_evidence: false</code> boundaries. Ships sanitized freeze summaries, public validator, and toy pipeline.</p>
           </div>
           <dl class="facts">
             <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> public summaries of the Paper 1 benchmark freeze (a naturalistic holdout of 240 problems: exact coordinate accuracy 173/240, axis decision accuracy 885/960) and the Paper 2 dynamics atlas (12 systems across 7 regimes, 116,640 admissibility fits, 144 collapse transects, every recorded acceptance gate passed).</span></li>
-              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> 26 safe research checks passed in the source workspace on 18 June 2026; the public validator checks release boundaries, freeze summaries and the toy pipeline.</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> public: the full internal engine, private answer keys, maps and scorecards are not in the package.</span></li>
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> Paper 1 holdout summaries (240 problems: 173/240 exact coordinates, 885/960 axis accuracy) and Paper 2 dynamics atlas (12 systems, 116,640 fits, 144 collapse transects, all acceptance gates passed).</span></li>
+              <li class="is-tested"><i aria-hidden="true"></i><span><b>Tested</b> 26 safety checks passing (18 June 2026) plus public release-boundary validator.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> public release of core engine, private answer keys, maps, and scorecards.</span></li>
             </ul></dd></div>
-            <div><dt>Establishes</dt><dd>Narrow claims about how TOK represents reasoning as auditable, human-gated artifacts and how its freeze summaries keep research-only boundaries. The atlas supports claims about the tested implementations, corpus, ladder and measurement grid.</dd></div>
-            <div><dt>Does not establish</dt><dd>That TOK discovers real-world causal truth, proves a candidate mechanism, or autonomously updates evidence or production systems. It does not support broad invalidation of LTC/LNN model classes, and the private benchmark material cannot be re-verified from this package.</dd></div>
-            <div><dt>Date</dt><dd>Freezes through June 2026 · published to SyberLabs/papers 26 September 2026</dd></div>
+            <div><dt>Establishes</dt><dd>How TOK represents reasoning as auditable, human-gated artifacts while preserving strict research-only freeze boundaries.</dd></div>
+            <div><dt>Does not establish</dt><dd>Field causal discovery, proof of candidate mechanisms, autonomous evidence updates, or broad invalidation of LTC/LNN classes; private benchmark keys cannot be re-verified from this package.</dd></div>
+            <div><dt>Date</dt><dd>Freezes June 2026 · published 26 September 2026</dd></div>
             <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/papers/tree/main/tok" rel="noopener">papers/tok</a> · <a href="https://github.com/SyberLabs/papers/blob/main/tok/docs/PUBLIC_SCOPE.md" rel="noopener">docs/PUBLIC_SCOPE.md</a></dd></div>
           </dl>
         </article>
 
         <article class="card" id="vital-language">
           <div class="card__head">
-            <p class="kind">Exploratory research system · interim findings</p>
+            <p class="kind">Interim findings</p>
             <h3><a href="https://github.com/SyberLabs/papers/tree/main/vital-language" rel="noopener">Vital Language: coherence, agency and literary vitality</a></h3>
-            <p class="claim">Can controlled generation dynamics make language-model prose feel more alive without collapsing coherence? The founding bet, that deterministic chaotic logit modulation raises multifractal structure and perceived vitality, inverted: at 0.5B to 1.5B scale, token-level chaos does not beat plain sampling on meaningful vitality proxies, and a prompt-level persistent-speaker scaffold is the reliable lever, buying non-collapse rather than vitality.</p>
+            <p class="claim">Tests whether chaotic logit modulation improves prose vitality on Qwen2.5-0.5B and 1.5B. Hypothesis inverted: token-level chaos does not beat plain sampling on vitality proxies, while a persistent-speaker prompt scaffold eliminated degenerate outputs.</p>
           </div>
           <dl class="facts">
             <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> paired epsilon sweeps on Qwen2.5-0.5B and 1.5B on CPU (6 prompts × 3 seeds, legibility-gated, bootstrap intervals): white noise drives self-perplexity from 7.8 to 176 while chaos at the same magnitude stays near 10; the agency scaffold leaves 0 of 18 passages degenerate against 3 of 18 for plain sampling.</span></li>
-              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> one generation harness with chaotic, matched-noise and white-noise controls, MFDFA, coherence and trajectory metrics, and a blind rating scaffold.</span></li>
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> CPU epsilon sweeps (6 prompts × 3 seeds): white noise pushes self-perplexity from 7.8 to 176 while matched chaos stays near 10; the agency scaffold yielded 0/18 degenerate passages vs. 3/18 for plain sampling.</span></li>
+              <li class="is-implemented"><i aria-hidden="true"></i><span><b>Implemented</b> generation harness with chaotic, matched-noise, and white-noise controls, MFDFA, coherence metrics, and blind rating scaffold.</span></li>
               <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> independent human raters.</span></li>
             </ul></dd></div>
-            <div><dt>Establishes</dt><dd>The coherence and degeneracy results, which are rater-independent counts, and that the MFDFA instrument works on real literature (a shuffle surrogate collapses Joyce’s width and barely moves Austen’s).</dd></div>
-            <div><dt>Does not establish</dt><dd>Any claim about felt vitality. All human-judgment data is n = 1 and the rater is the assistant model itself, so every vitality claim is a hypothesis about sign until independent raters are collected.</dd></div>
-            <div><dt>Date</dt><dd>Interim · published to SyberLabs/papers 26 September 2026</dd></div>
+            <div><dt>Establishes</dt><dd>Rater-independent coherence and degeneracy counts, plus sensitivity of MFDFA on published literature (shuffle surrogates collapse Joyce’s width while barely shifting Austen’s).</dd></div>
+            <div><dt>Does not establish</dt><dd>Felt-vitality claims: human-judgment data is n = 1 from the assistant model itself, leaving all vitality claims as unverified hypotheses.</dd></div>
+            <div><dt>Date</dt><dd>Interim · published 26 September 2026</dd></div>
             <div><dt>Source</dt><dd><a href="https://github.com/SyberLabs/papers/tree/main/vital-language" rel="noopener">papers/vital-language</a> · <a href="https://github.com/SyberLabs/papers/blob/main/vital-language/docs/FINDINGS.md" rel="noopener">docs/FINDINGS.md</a></dd></div>
           </dl>
         </article>
       </section>
       <section id="lacuna" aria-labelledby="lacuna-title">
         <p class="section-label">04 / LACUNA INSTITUTE</p>
-        <h2 id="lacuna-title">An atlas and a dataset.</h2>
-        <p class="section-note">Lacuna Institute is SyberLabs’ research institute for gaps in the historical record. Its pages are published under <a href="/lacuna/">/lacuna/</a>; the sentences below are taken from those pages.</p>
+        <h2 id="lacuna-title">Atlas and provenance dataset.</h2>
+        <p class="section-note">Lacuna Institute is SyberLabs’ research arm examining gaps in the historical record, published under <a href="/lacuna/">/lacuna/</a>.</p>
 
         <article class="card" id="lacuna-atlas">
           <div class="card__head">
             <p class="kind">Interactive atlas · 21 sites</p>
             <h3><a href="/lacuna/">Lacuna Atlas</a></h3>
-            <p class="claim">A globe of 21 research sites. Each site’s panel states what is known, what is missing and the open question, and lists its sources. A time bar redraws coastlines, ice sheets and the Green Sahara for any point in the last 25,000 years.</p>
+            <p class="claim">Interactive globe covering 21 historical gaps with primary sources, open questions, labeled speculation, and a 25,000-year schematic sea-level and ice-sheet timeline.</p>
           </div>
           <dl class="facts">
             <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> 21 sites, each with a panel and a share link, published under /lacuna/.</span></li>
+              <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> 21 sourced site panels and share links live under /lacuna/.</span></li>
             </ul></dd></div>
-            <div><dt>Establishes</dt><dd>For each site, a sourced summary and one stated open question. Speculation has its own section of the panel and is labelled as speculation.</dd></div>
-            <div><dt>Does not establish</dt><dd>Survey-grade past geography. The page describes its past coastlines as approximate, because land that has risen or sunk is not corrected for, and its ice sheets as simplified outlines.</dd></div>
-            <div><dt>Date</dt><dd>First published 10 November 2026</dd></div>
-            <div><dt>Source</dt><dd><a href="/lacuna/">Open the atlas</a> · site texts, sources and image credits in <code>src/lacuna/atlas/sites.js</code> in this site’s repository</dd></div>
+            <div><dt>Establishes</dt><dd>A sourced summary, explicit gap statement, and single open question per site, separating labeled speculation from verified records.</dd></div>
+            <div><dt>Does not establish</dt><dd>Survey-grade paleogeography: past coastlines omit local tectonic uplift or subsidence, and ice-sheet boundaries are schematic.</dd></div>
+            <div><dt>Date</dt><dd>Published 10 November 2026</dd></div>
+            <div><dt>Source</dt><dd><a href="/lacuna/">Open atlas</a> · <code>src/lacuna/atlas/sites.js</code> in this repository</dd></div>
           </dl>
         </article>
 
@@ -292,27 +292,26 @@
           <div class="card__head">
             <p class="kind">Dataset · version 1.0 · CC BY 4.0</p>
             <h3><a href="/lacuna/research/paracas-bundles/">Paracas bundles that left Peru</a></h3>
-            <p class="claim">A census of the whole mummy bundles from the Paracas Necropolis of Wari Kayan that published sources show leaving Peru: where each went, who is thought to hold it now, and how well each claim is sourced.</p>
+            <p class="claim">Graded provenance census tracking 13 whole Wari Kayan mummy bundles documented leaving Peru, including destinations, presumed holders, and unresolved source conflicts.</p>
           </div>
           <dl class="facts">
             <div><dt>Status</dt><dd><ul class="states">
-              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> counted from published literature and museum catalogues: 13 bundles recorded leaving Peru, 1 recorded as returned, 7 with whereabouts unknown.</span></li>
-              <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> the page and its CSV (21 rows, 22 columns), released under CC BY 4.0.</span></li>
-              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> the bundles held in Lima, which a future version will add; a check of the parts of Daggett 2016 that were consulted through a summary.</span></li>
+              <li class="is-measured"><i aria-hidden="true"></i><span><b>Measured</b> 13 bundles documented leaving Peru, 1 recorded return, 7 with whereabouts unknown.</span></li>
+              <li class="is-deployed"><i aria-hidden="true"></i><span><b>Deployed</b> dataset page and CSV (21 rows, 22 columns) under CC BY 4.0.</span></li>
+              <li class="is-not-yet"><i aria-hidden="true"></i><span><b>Not yet</b> bundles held in Lima (planned for a future version) and direct check of summarized passages in Daggett 2016.</span></li>
             </ul></dd></div>
-            <div><dt>Establishes</dt><dd>Where each bundle went and who is thought to hold it now, with a grade beside every source: primary, a retelling that cites a source, or one person’s word.</dd></div>
-            <div><dt>Does not establish</dt><dd>Current holders marked presumed: each is inferred from an older record, with no current record seen. Where the sources disagree, the page reports the disagreement and does not choose between them.</dd></div>
+            <div><dt>Establishes</dt><dd>Documented destinations and presumed holders, grading every source as Primary (P), Secondary retelling (R), or unsourced Word (W).</dd></div>
+            <div><dt>Does not establish</dt><dd>Confirmed current custody for entries marked presumed; where published lists conflict, both accounts are reported without choosing sides.</dd></div>
             <div><dt>Date</dt><dd>10 November 2026 · version 1.0</dd></div>
-            <div><dt>Source</dt><dd><a href="/lacuna/research/paracas-bundles/">Read the dataset page</a> · <a href="/lacuna/data/paracas-exported-bundles-v1.0.csv">paracas-exported-bundles-v1.0.csv</a></dd></div>
+            <div><dt>Source</dt><dd><a href="/lacuna/research/paracas-bundles/">Read dataset page</a> · <a href="/lacuna/data/paracas-exported-bundles-v1.0.csv">paracas-exported-bundles-v1.0.csv</a></dd></div>
           </dl>
         </article>
       </section>
       <section id="provenance" aria-labelledby="provenance-title">
         <p class="section-label">05 / PROVENANCE</p>
-        <h2 id="provenance-title">What this index reflects.</h2>
-        <p class="reflects">Reflects SyberLabs/papers@e925ed6, SyberLabs/cross-platform@5e031ae, SyberLabs/OSAHR_Cell@7293e27, SyberLabs/sybershoke@45956fe and SyberLabs/RISE@998d725 (its task SCR-004 at @681ccaa, checked 2026-10-08), and the site pages linked above as of SyberLabs/SyberLabs.github.io@085cf5b · verified 2026-10-08.</p>
-        <p class="reflects">The Lacuna Institute cards reflect the pages under /lacuna/ as added to this repository on 2026-11-16.</p>
-        <p class="reflects">Not indexed here: the private SyberLabs/grokcell-execution repository, reachable only through the report above, and the per-project evidence rows, which live on each <a href="/projects/rise/">project page</a>.</p>
+        <h2 id="provenance-title">Repository snapshots.</h2>
+        <p class="reflects">Reflects SyberLabs/papers@e925ed6, SyberLabs/cross-platform@5e031ae, SyberLabs/OSAHR_Cell@7293e27, SyberLabs/sybershoke@45956fe, SyberLabs/RISE@998d725 (SCR-004@681ccaa), and SyberLabs/SyberLabs.github.io@085cf5b (verified 2026-10-08), plus Lacuna Institute releases added 2026-11-16.</p>
+        <p class="reflects">Excludes the private SyberLabs/grokcell-execution repository (accessible only via the report above) and per-project homepage evidence, which lives on each <a href="/projects/rise/">project page</a>.</p>
       </section>
 
     </div>

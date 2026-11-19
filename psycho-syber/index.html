@@ -4,22 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#02070a">
-  <meta name="description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
+  <meta name="description" content="Play PSYCHO SYBER in your browser: a six-stage stealth game translating Attest, RISE, FLYSPACE, SyberWork, and Lacuna Institute into game mechanics.">
   <link rel="canonical" href="https://syberlabs.io/psycho-syber/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="PSYCHO SYBER | SyberLabs">
-  <meta property="og:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
+  <meta property="og:title" content="PSYCHO SYBER | Six-Stage Stealth Browser Game | SyberLabs">
+  <meta property="og:description" content="Play PSYCHO SYBER in your browser: a six-stage stealth game translating Attest, RISE, FLYSPACE, SyberWork, and Lacuna Institute into game mechanics.">
   <meta property="og:url" content="https://syberlabs.io/psycho-syber/">
   <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117j">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="PSYCHO SYBER | SyberLabs">
-  <meta name="twitter:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
+  <meta name="twitter:title" content="PSYCHO SYBER | Six-Stage Stealth Browser Game | SyberLabs">
+  <meta name="twitter:description" content="Play PSYCHO SYBER in your browser: a six-stage stealth game translating Attest, RISE, FLYSPACE, SyberWork, and Lacuna Institute into game mechanics.">
   <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261117j">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preload" href="/fonts/v1/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/syberlabs.css">
   <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261117j">
-  <title>PSYCHO SYBER | SyberLabs</title>
+  <title>PSYCHO SYBER | Six-Stage Stealth Browser Game | SyberLabs</title>
 </head>
 <body class="syber-play">
   <a class="sy-skip" href="#main">Skip to content</a>
@@ -53,11 +53,11 @@
 
         <div class="ps-panel ps-panel--title" id="ps-title">
           <h1 class="ps-logo"><span class="ps-logo__p">PSYCHO</span> <span class="ps-logo__s">SYBER</span></h1>
-          <p class="ps-lede">A browser game from SyberLabs. Six stages: one for each project, and a last one with no exit.</p>
+          <p class="ps-lede">Six stages in the browser: one per SyberLabs project, and a final room with no exit.</p>
           <p class="ps-actions"><button class="sy-btn sy-btn--solid" id="ps-start" type="button">Play</button><button class="sy-btn sy-btn--line" id="ps-continue" type="button" hidden>Continue</button></p>
           <ol class="ps-pick" id="ps-pick" aria-label="Start from a stage you have reached" hidden></ol>
-          <p class="ps-keys ps-for-keys">Shift changes your form. Try it here.</p>
-          <p class="ps-keys ps-for-touch">Tap the picture to change form. The game plays sideways: turn your phone when it starts.</p>
+          <p class="ps-keys ps-for-keys">Press Shift to change form. Try it here.</p>
+          <p class="ps-keys ps-for-touch">Tap the scene to shift form. Rotate phone sideways to play.</p>
         </div>
 
         <div class="ps-panel ps-panel--card" id="ps-card" hidden>
@@ -73,27 +73,27 @@
         <div class="ps-panel ps-panel--pause" id="ps-pause" hidden>
           <h2 class="ps-card-title">Paused</h2>
           <ul class="ps-controls ps-for-touch">
-            <li>The stick on the left walks. Up reels in the cord or climbs. Down hides, and with JUMP drops through a beam.</li>
-            <li>JUMP jumps · FORM changes form · E runs the check, or roars as the jaguar</li>
-            <li>SYBER: a tap on the picture throws glass · press and hold throws the cord, which stays tied until you tap again or jump</li>
-            <li>PSYCHO: a tap on the picture pounces toward it · push the stick into stone and up to climb</li>
+            <li>Left stick moves, reels cord, or climbs; down hides (with JUMP drops through beams).</li>
+            <li>JUMP jumps · FORM shifts form · E runs checks or roars as jaguar</li>
+            <li>SYBER: tap throws glass · press-and-hold throws cord (tap or jump to release)</li>
+            <li>PSYCHO: tap pounces toward target · push stick into stone and up to climb</li>
           </ul>
           <ul class="ps-controls ps-for-keys">
-            <li><kbd>A</kbd> <kbd>D</kbd> walk · <kbd>W</kbd> or <kbd>Space</kbd> jump · hold <kbd>S</kbd> to hide</li>
-            <li><kbd>Shift</kbd> change form (<kbd>Q</kbd> does the same)</li>
-            <li>SYBER: click throws glass · hold the button for the cord · <kbd>E</kbd> runs the check</li>
+            <li><kbd>A</kbd> <kbd>D</kbd> move · <kbd>W</kbd> or <kbd>Space</kbd> jump · hold <kbd>S</kbd> to hide</li>
+            <li><kbd>Shift</kbd> or <kbd>Q</kbd> shift form</li>
+            <li>SYBER: click throws glass · hold/right-click throws cord · <kbd>E</kbd> runs check</li>
             <li>PSYCHO: click pounces · push into stone to climb · <kbd>E</kbd> roars</li>
-            <li><kbd>Esc</kbd> pause · <kbd>R</kbd> back to the last stone · <kbd>F</kbd> full screen · <kbd>M</kbd> sound</li>
+            <li><kbd>Esc</kbd> pause · <kbd>R</kbd> checkpoint · <kbd>F</kbd> fullscreen · <kbd>M</kbd> sound</li>
           </ul>
           <p class="ps-actions"><button class="sy-btn sy-btn--solid" id="ps-resume" type="button">Resume</button><button class="sy-btn sy-btn--line" id="ps-restart" type="button">Restart stage</button><button class="sy-btn sy-btn--line" id="ps-mute" type="button">Sound on</button><button class="sy-btn sy-btn--line" id="ps-turn" type="button" hidden>Play upright</button><button class="sy-btn sy-btn--line" id="ps-quit" type="button">Title</button></p>
         </div>
 
         <div class="ps-panel ps-panel--end" id="ps-end" hidden>
-          <p class="ps-kicker" id="ps-end-kicker">THE REAL BATTLE has no exit</p>
-          <h2 class="ps-card-title">Wake up</h2>
+          <p class="ps-kicker" id="ps-end-kicker">THE REAL BATTLE · No exit</p>
+          <h2 class="ps-card-title">Wake up.</h2>
           <dl class="ps-stats" id="ps-end-stats"></dl>
-          <p class="ps-card-line">The Thousand Eyes is invented. SyberLabs makes software for checking AI's work: each change is tested, and a person approves it. <a href="#real">What is real</a> is below.</p>
-          <p class="ps-actions"><a class="sy-btn sy-btn--solid" href="/#products">See what SyberLabs makes</a><button class="sy-btn sy-btn--line" id="ps-again" type="button">Play again</button><a class="sy-btn sy-btn--line" href="/lacuna/">Open the Lacuna Atlas</a></p>
+          <p class="ps-card-line">The Thousand Eyes is fiction. SyberLabs builds verification software for AI work: every change is tested, and humans hold approval. See <a href="#real">what is documented</a> below.</p>
+          <p class="ps-actions"><a class="sy-btn sy-btn--solid" href="/#products">Explore SyberLabs</a><button class="sy-btn sy-btn--line" id="ps-again" type="button">Play again</button><a class="sy-btn sy-btn--line" href="/lacuna/">Open Lacuna Atlas</a></p>
         </div>
       </div>
       <div class="ps-pad" id="ps-pad" hidden>
@@ -110,37 +110,37 @@
     <div class="ps-about sy-wrap">
       <section aria-labelledby="game-title">
         <p class="sy-eyebrow">SyberLabs / Game</p>
-        <h2 id="game-title">The game</h2>
-        <p>PSYCHO SYBER is a side-scrolling stealth game that runs in this page. It has six stages. Each of the first five stands for one project and takes its rule from what that project does. The sixth has no exit.</p>
-        <p>It is set in an invented ancient Paracas, on the south coast of Peru. In this story a long head marks a noble house, and the Visitors who live among the people wear the same shape. The Visitors run the Works, where a machine approves which births may go ahead. The Patron, a Visitor in gold, owns the Works, the sale in the fifth stage and the machine in the sixth. You play a noble weaver who stole one of their circlets and drank what the old ones drank. A jaguar came with you.</p>
+        <h2 id="game-title">Six stages built from SyberLabs mechanics.</h2>
+        <p>PSYCHO SYBER is a browser stealth game set in a fictionalized ancient Paracas. Each of the first five stages translates a SyberLabs project into play rules; the sixth has no exit.</p>
+        <p>You play a noble weaver who stole a Visitor circlet, shadowed by a jaguar spirit, confronting the Patron’s automated Works, the viewing-hall auction, and the machine called the Thousand Eyes.</p>
       </section>
 
       <section aria-labelledby="forms-title">
-        <h2 id="forms-title">Two forms</h2>
-        <p>Shift changes your form. The picture, the music and what you can do change with it. For a moment at each change you are both: a person's body under the jaguar's head. The form you leave stays behind as a double for three seconds, at most once every eight. A Visitor who can see the double watches it and loses you.</p>
-        <p>Each of the first five stages can be finished without taking the jaguar's form. Where the jaguar goes under a wall, up a cliff or across a path only it can stand on, the weaver has a terminal that opens a door, a stair, or a ladder of beams. The weaver's way takes longer.</p>
+        <h2 id="forms-title">Weaver or jaguar.</h2>
+        <p>Press Shift (or Q) to shift forms, changing visuals, music, and abilities while leaving a 3-second decoy double (8-second cooldown) that distracts watching Visitors.</p>
+        <p>Every solvable stage can be beaten purely as the weaver via terminals, doors, and stairs; the jaguar offers faster, riskier routes.</p>
         <dl class="ps-forms">
-          <div><dt>SYBER</dt><dd>The weaver, wearing the circlet. Throws glass, swings on a knotted cord and runs the check with E. On a Visitor machine the check takes the machine over. On stone it marks each step proven, stale or broken. On a lot in the fifth stage it reads the record.</dd></div>
-          <div><dt>PSYCHO</dt><dd>The jaguar. It runs faster, climbs stone, fits through low tunnels and pounces. E is a roar: the mountain echoes it three times, rain falls, and everything else slows for about three seconds. It stands on spirit paths the weaver falls through. It sees which source feeds each gate and which villagers are Visitors. A pounce breaks a source, and the alarm goes up when it does. In the fifth stage it sees each record as a line: a broken line is a gap.</dd></div>
+          <div><dt>SYBER (The Weaver)</dt><dd>Throws glass distractions, swings by knotted cord, and triggers E to run checks: hijacking Visitor machines, flagging proven, stale, or broken stone steps, and auditing provenance records.</dd></div>
+          <div><dt>PSYCHO (The Jaguar)</dt><dd>Faster movement, wall climbs, low tunnels, spirit paths, and pounce attacks that shatter power sources (triggering alarms). E unleashes a mountain-echoed roar that brings rain and slows enemies for ~3 seconds. Reveals hidden source wires, disguised Visitors, and broken provenance lines.</dd></div>
         </dl>
       </section>
 
       <section id="stages" aria-labelledby="stages-title">
         <h2 id="stages-title">Six stages</h2>
         <ol class="ps-stages">
-          <li><span class="ps-stages__n">01</span><div><h3>THE STEPS · <a href="/projects/attest/">Attest</a></h3><p>A stair where some steps are stale and some are missing. The check marks each one. Attest runs every step in your docs and marks the ones that fail.</p></div></li>
-          <li><span class="ps-stages__n">02</span><div><h3>MACHU PICCHU · <a href="/projects/rise/">RISE</a></h3><p>A climb through Inca ruins on words that light one at a time. You set their pace: the jaguar's roar slows them for a moment, and a pace setter in the ravine slows them until you check it again. Each part of the climb also has a stair of stone that needs no jaguar. RISE shows text at a pace you set, with sound and moving visuals.</p></div></li>
-          <li><span class="ps-stages__n">03</span><div><h3>THE LINES · <a href="/projects/flyspace/">FLYSPACE</a></h3><p>Gates on the desert floor, each fed by a source somewhere else. The jaguar sees the line between them. FLYSPACE shows which data sources fed each AI answer.</p></div></li>
-          <li><span class="ps-stages__n">04</span><div><h3>THE WORKS · <a href="/projects/syberwork/">SyberWork</a></h3><p>The Visitors' factory, with stations named Propose, Check, Review, Approve and Publish. At Approve a machine decides alone until you cut its three sources. SyberWork tests every AI-written code change before a person approves it.</p></div></li>
-          <li><span class="ps-stages__n">05</span><div><h3>THE RECORD · <a href="/lacuna/">Lacuna Institute</a></h3><p>A viewing hall before a sale. Seven lots stand on plinths. E reads the record of a lot, and five of the records have a gap. You deliver that evidence at the far door before the sale timer runs out. Nothing is taken and no one is fought. Lacuna Institute describes its work as “Finding the history that fell out of the record.”</p></div></li>
-          <li><span class="ps-stages__n">06</span><div><h3>THE REAL BATTLE · <a href="/#products">SyberLabs</a></h3><p>One room with no exit, and a machine called the Thousand Eyes. It aims each shot at the place you are about to reach, lists what you do on the screen as you do it, and counts down to a verdict. Glass, the check, the roar and hiding do not stop it. The stage ends when the count reaches zero or your health runs out, and the ending follows. SyberLabs makes software for checking AI's work: each change is tested, and a person approves it.</p></div></li>
+          <li><span class="ps-stages__n">01</span><div><h3>THE STEPS · <a href="/projects/attest/">Attest</a></h3><p>Navigate stairs with stale and missing steps; run checks to mark each one. Mirrors Attest’s executable documentation testing.</p></div></li>
+          <li><span class="ps-stages__n">02</span><div><h3>MACHU PICCHU · <a href="/projects/rise/">RISE</a></h3><p>Ascend ruins across timed illuminated words whose pace you control via roars or pace-setters (with an alternate stone stair). Mirrors RISE’s paced reading.</p></div></li>
+          <li><span class="ps-stages__n">03</span><div><h3>THE LINES · <a href="/projects/flyspace/">FLYSPACE</a></h3><p>Desert gates fed by remote sources; jaguar vision reveals every hidden connection. Mirrors FLYSPACE’s source lineage.</p></div></li>
+          <li><span class="ps-stages__n">04</span><div><h3>THE WORKS · <a href="/projects/syberwork/">SyberWork</a></h3><p>Stations named Propose, Check, Review, Approve, and Publish. Cut three automated feeds at Approve to restore human sign-off. Mirrors SyberWork.</p></div></li>
+          <li><span class="ps-stages__n">05</span><div><h3>THE RECORD · <a href="/lacuna/">Lacuna Institute</a></h3><p>Inspect seven auction lots before the clock expires, identify five broken records, and deliver the evidence without combat or theft. Mirrors Lacuna’s provenance audits (“Mapping the history missing from the record.”).</p></div></li>
+          <li><span class="ps-stages__n">06</span><div><h3>THE REAL BATTLE · <a href="/#products">SyberLabs</a></h3><p>A single room with no exit against the Thousand Eyes, which anticipates your path, logs every move, and counts down to a verdict. Every Atlas mark found disables a lens and buys one extra second.</p></div></li>
         </ol>
       </section>
 
       <section id="atlas" aria-labelledby="atlas-title">
         <h2 id="atlas-title">The 21 Atlas marks</h2>
-        <p>The first five stages hold 21 marks between them, one for each site in the <a href="/lacuna/">Lacuna Atlas</a>: three in each of the first four stages and nine in the fifth. A mark carries the name of its site and links to that entry. The game says nothing else about any site. Each Atlas entry has sections headed “What's known”, “What's missing”, “The open question” and “Sources”.</p>
-        <p>The marks you find are kept in this browser. Once you have finished a stage, the title shows a numbered button for each stage you have reached, with the count of marks found in it, and each button starts that stage. In the last stage each mark found is a lens on the machine's wall that has gone dark, and the verdict comes one second later for each.</p>
+        <p>21 collectible marks across stages 1 to 5 (3 per stages 1–4, 9 in stage 5) link directly to the 21 <a href="/lacuna/">Lacuna Atlas</a> entries, each structured under “What is known”, “What is missing”, “Open question”, and “Sources”.</p>
+        <p>Progress persists locally in browser storage; completed stages unlock direct replay with mark counters. In stage 6, each mark darkens a lens and delays the verdict by one second.</p>
         <ul class="ps-sites">
           <li><a href="/lacuna/#paracas">Paracas</a></li>
           <li><a href="/lacuna/#rapanui">Rapa Nui</a></li>
@@ -172,62 +172,58 @@
           <thead><tr><th scope="col">Key</th><th scope="col">SYBER</th><th scope="col">PSYCHO</th></tr></thead>
           <tbody>
             <tr><th scope="row">A, D</th><td>Walk</td><td>Run</td></tr>
-            <tr><th scope="row">W or Space</th><td>Jump. On the cord, W reels in and Space lets go.</td><td>Jump. On a wall, W climbs and Space leaps off.</td></tr>
+            <tr><th scope="row">W or Space</th><td>Jump (W reels cord; Space releases)</td><td>Jump (W climbs wall; Space leaps off)</td></tr>
             <tr><th scope="row">S</th><td colspan="2">Hold still and hold S to hide</td></tr>
-            <tr><th scope="row">Shift or Q</th><td colspan="2">Change form</td></tr>
-            <tr><th scope="row">Mouse</th><td>Click throws glass. Hold the button, or right-click, to throw the cord at stone, a beam or a ring.</td><td>Click pounces toward the pointer</td></tr>
-            <tr><th scope="row">E</th><td>Run the check</td><td>Roar</td></tr>
-            <tr><th scope="row">[ and ]</th><td colspan="2">Slow down or speed up the story text, from 120 to 480 words a minute</td></tr>
-            <tr><th scope="row">Esc, R, F, M</th><td colspan="2">Pause, return to the last standing stone, full screen, sound</td></tr>
+            <tr><th scope="row">Shift or Q</th><td colspan="2">Shift form</td></tr>
+            <tr><th scope="row">Mouse</th><td>Click throws glass; hold or right-click throws cord at stone, beams, or rings</td><td>Click pounces toward cursor</td></tr>
+            <tr><th scope="row">E</th><td>Run check</td><td>Roar</td></tr>
+            <tr><th scope="row">[ and ]</th><td colspan="2">Adjust story text speed (120 to 480 wpm)</td></tr>
+            <tr><th scope="row">Esc, R, F, M</th><td colspan="2">Pause, checkpoint, fullscreen, sound</td></tr>
           </tbody>
         </table>
-        <h3 class="ps-sub">On a phone or tablet</h3>
-        <p>Touch controls show while a stage is on, and the stage takes the whole screen. On a phone held upright the stage is drawn sideways along the long edge, which makes the picture about three times the size: turn the phone to play. This works whether or not the phone's rotation is locked. Pause has a button to play upright instead, and a button back to the title, where this page's header returns.</p>
+        <h3 class="ps-sub">Phone &amp; tablet</h3>
+        <p>Full-screen touch controls rotate automatically to landscape for ~3x viewport size (even with rotation lock enabled; an upright toggle lives in Pause).</p>
         <ul>
-          <li>The stick on the left walks. Up reels in the cord or climbs. Down hides, and with Jump drops through a beam.</li>
-          <li>Jump, Form and E are buttons on the right. E runs the check, or roars as the jaguar.</li>
-          <li>A tap on the picture throws glass, or pounces as the jaguar, toward the place you tapped.</li>
-          <li>Press and hold on a ring or on stone to throw the cord. It stays tied when you lift your finger. A tap or Jump lets it go.</li>
-          <li>The note button switches the sound off and on.</li>
+          <li>Left stick moves, climbs, or reels cord; down hides (with Jump drops through beams).</li>
+          <li>Right buttons trigger Jump, Form, and E (check or roar).</li>
+          <li>Tap the scene to throw glass or pounce toward that spot.</li>
+          <li>Press and hold on stone or rings to attach the cord (tap or Jump to release).</li>
+          <li>The note icon toggles sound.</li>
         </ul>
         <h3 class="ps-sub">Music</h3>
-        <p>Music starts at your first tap or key. It is slow, at 56 to 96 beats a minute. One low note is held under everything with a fifth over it and no third, and over that a tune in A minor pentatonic moves in long notes. The jaguar hears the tune on two pipes tuned a few cents apart, over a drum that beats like a heart, seed rattles and a conch horn. The weaver hears it struck on stone, over the clack of a loom. Changing form crossfades between the two without restarting the tune. Each stage sets its own pitch and pace, the fifth stage has no drum, and in the last stage the pace rises as the verdict nears.</p>
+        <p>Synthesized live in-browser (56–96 bpm, A minor pentatonic over a sustained fifth drone). Crossfades between loom/stone percussion (Weaver) and twin pipes, heartbeat drum, rattles, and conch (Jaguar). Stage 5 drops the drum; stage 6 accelerates toward the verdict.</p>
         <!-- narrator: written by psycho-syber/test/voice.mjs --><!-- /narrator -->
       </section>
 
       <section id="real" aria-labelledby="real-title">
-        <h2 id="real-title">What is real</h2>
-        <p>The story is invented: the Visitors, the Patron, the Works, the sale, every lot in it and the Thousand Eyes. No dealer, auction house, museum or company in the game exists. The story's people are invented too, with one exception: a hidden scene in which three members of SyberLabs appear under their nicknames.</p>
-        <p>Paracas is real. The Lacuna Atlas entry on it begins: “The elongated skulls of Paracas are real. So is the paperwork gap around where some of the burials went.” The same entry says: “Shaping an infant's skull with boards and bindings was a deliberate cultural practice, not a mystery of biology.”</p>
+        <h2 id="real-title">Fiction vs. history</h2>
+        <p>The Visitors, Patron, Works, auction, and Thousand Eyes are fictional; no actual dealer, museum, or company appears (one hidden scene briefly features three SyberLabs team members by nickname).</p>
+        <p>Paracas cranial shaping and provenance gaps are documented history. The Lacuna Atlas entry notes: “The elongated skulls of Paracas are real. So is the paperwork gap around where some of the burials went.” and “Shaping an infant's skull with boards and bindings was a deliberate cultural practice, not a mystery of biology.”</p>
         <p><a href="/lacuna/#paracas">Paracas in the Lacuna Atlas</a> · <a href="/lacuna/research/paracas-bundles/">The Paracas bundles dataset</a></p>
-        <p>Machu Picchu is real and much later. It was built in the mid-1400s as an estate for the Inka emperor Pachacuti, with terraces, fitted stone and trapezoid doorways. The game puts it on the same road as Paracas. <a href="https://smarthistory.org/?p=1631" rel="noopener">Smarthistory: Machu Picchu</a></p>
+        <p>Machu Picchu (built mid-1400s for Inka emperor Pachacuti) is historically much later than Paracas, placed along the same road for fiction. <a href="https://smarthistory.org/?p=1631" rel="noopener">Smarthistory: Machu Picchu</a></p>
       </section>
 
       <section id="borrows" aria-labelledby="borrows-title">
-        <h2 id="borrows-title">What the jaguar borrows</h2>
-        <p>The jaguar's side of the game takes ideas from several ancient American traditions. They belong to different peoples and centuries, and the game mixes them freely.</p>
+        <h2 id="borrows-title">Cultural sources</h2>
+        <p>The jaguar mechanics freely blend distinct ancient American traditions from different peoples and eras:</p>
         <ul class="ps-borrows">
-          <li><b>The half form and the standing stones.</b> Olmec carvings from Mexico show a face with a cleft head, slanted almond eyes and a downturned open mouth, known as the were-jaguar. Researchers disagree about what it shows, and some link it to an Olmec rain deity. The game shows a half form at each change, carves the cleft head on its standing stones, and has the roar bring rain. <a href="https://en.wikipedia.org/wiki/Werejaguar" rel="noopener">Wikipedia: Werejaguar</a></li>
-          <li><b>The double.</b> In Mesoamerican belief a nagual is a guardian spirit that lives in an animal such as a deer, a jaguar or a bird. In some places it is the animal a powerful person can turn into. The game leaves a double behind when you change. <a href="https://www.britannica.com/topic/nagual" rel="noopener">Britannica: nagual</a></li>
-          <li><b>The roar.</b> The Aztec god Tepeyollotl, whose name means heart of the mountain, is a jaguar tied to caves, echoes and earthquakes. <a href="https://en.wikipedia.org/wiki/Tep%C4%93y%C5%8Dll%C5%8Dtl" rel="noopener">Wikipedia: Tepeyollotl</a></li>
-          <li><b>The paths only the jaguar walks.</b> Maya art has a jaguar god that scholars have read as the night sun: the sun on its way through the underworld. <a href="https://en.wikipedia.org/wiki/Maya_jaguar_gods" rel="noopener">Wikipedia: Maya jaguar gods</a></li>
-          <li><b>The drink.</b> At Chavín de Huántar in the Peruvian highlands, carvings around the Circular Plaza show a figure with feline and human traits holding a San Pedro cactus. The cactus is thought to be the source of the drug used in rituals there. <a href="https://web.stanford.edu/~johnrick/chavin_wrap/chavin/galleries2.html" rel="noopener">Stanford: Chavín de Huántar</a></li>
+          <li><b>Half-form &amp; standing stones.</b> Olmec were-jaguar carvings from Mexico (cleft head, rain-deity hypotheses). <a href="https://en.wikipedia.org/wiki/Werejaguar" rel="noopener">Wikipedia: Werejaguar</a></li>
+          <li><b>Decoy double.</b> Mesoamerican nagual animal doubles. <a href="https://www.britannica.com/topic/nagual" rel="noopener">Britannica: nagual</a></li>
+          <li><b>Mountain-echo roar.</b> Aztec jaguar deity Tepeyollotl, tied to caves and echoes. <a href="https://en.wikipedia.org/wiki/Tep%C4%93y%C5%8Dll%C5%8Dtl" rel="noopener">Wikipedia: Tepeyollotl</a></li>
+          <li><b>Spirit paths.</b> Maya night-sun jaguar traversing the underworld. <a href="https://en.wikipedia.org/wiki/Maya_jaguar_gods" rel="noopener">Wikipedia: Maya jaguar gods</a></li>
+          <li><b>The drink.</b> Chavín de Huántar Circular Plaza carvings holding San Pedro cactus. <a href="https://web.stanford.edu/~johnrick/chavin_wrap/chavin/galleries2.html" rel="noopener">Stanford: Chavín de Huántar</a></li>
         </ul>
       </section>
 
       <section aria-labelledby="limits-title">
         <h2 id="limits-title">Limits</h2>
         <ul>
-          <li>The touch controls are checked in Chrome's phone emulation, sideways and upright, and the game has been opened on one iPhone. It has not been played through on a phone or tablet.</li>
-          <li>If you choose to play upright on a phone, the picture is small and the words drawn inside the last stage's picture are hard to read.</li>
-          <li>On an iPhone the game asks to play its sound with the ringer switch off, which stops other apps' audio while the sound is on. This has not been checked on a phone. Before iOS 16.4 the ringer switch silences the game.</li>
-          <li>The story pace has no touch control. On a phone it is set to 220 words a minute.</li>
-          <li>Checked in Chrome on a desktop. Firefox and Safari have not been checked.</li>
-          <li>Each of the first five stages has two <a href="https://github.com/SyberLabs/SyberLabs.github.io/tree/main/psycho-syber/test" rel="noopener">scripted runs</a> that play it to the exit: one that takes the jaguar's form and one that never does. A third check plays the last stage and confirms that it ends without an exit.</li>
-          <li>The ending covers the whole page and changes this tab's title for about ten seconds. Enter or Escape skips it. With reduced motion set on your device it shows its text and no animation.</li>
-          <li>The ending reads the time from your device's clock and shows it to you. The game sends nothing: the only requests it makes are for its own files on this site, so what it reads stays on your device.</li>
-          <li>Your progress, the Atlas marks you have found and your story pace are kept in this browser's storage. Clearing site data resets them.</li>
-          <li>The music and the effects are synthesised in the browser. Their level was set by measurement in Chrome, without listening.</li>
+          <li>Verified in desktop Chrome and mobile emulation (opened once on iPhone; full touch playthrough and Firefox/Safari remain untested).</li>
+          <li>Upright phone mode shrinks stage 6 text; mobile text speed locks at 220 wpm.</li>
+          <li>iOS audio attempts playback past the mute switch (unverified on hardware; silenced pre-iOS 16.4).</li>
+          <li>CI verifies all five exitable stages via automated <a href="https://github.com/SyberLabs/SyberLabs.github.io/tree/main/psycho-syber/test" rel="noopener">Weaver-only and Jaguar scripts</a> plus stage 6’s no-exit ending.</li>
+          <li>The ending displays your local device clock and briefly updates the tab title (Esc/Enter skips; honors reduced motion). Zero data leaves your device; progress saves locally in browser storage.</li>
+          <li>Synthesized audio levels were calibrated via Chrome measurements without human listening calibration.</li>
         </ul>
       </section>
     </div>

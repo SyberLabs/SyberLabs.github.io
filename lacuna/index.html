@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#07080b">
-<title>Lacuna Institute | SyberLabs</title>
-<meta name="description" content="Lacuna Institute, part of SyberLabs: an atlas of places where the historical record goes quiet.">
-<meta property="og:title" content="Lacuna Institute">
-<meta property="og:description" content="An atlas of places where the historical record goes quiet. Turn back the clock 25,000 years and see the Earth as it was.">
+<title>Lacuna Institute | Atlas of Historical Gaps | SyberLabs</title>
+<meta name="description" content="Lacuna Institute maps 21 sites where the historical record breaks down, separating verified primary sources from open questions and speculation.">
+<meta property="og:title" content="Lacuna Institute | Atlas of Historical Gaps">
+<meta property="og:description" content="Lacuna Institute maps 21 sites where the historical record breaks down, separating verified primary sources from open questions and speculation.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://syberlabs.io/lacuna/">
 <meta property="og:site_name" content="Lacuna Institute">
@@ -16,8 +16,8 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Lacuna Institute: where the record goes quiet. The Grand Canyon at dusk.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Lacuna Institute">
-<meta name="twitter:description" content="An atlas of places where the historical record goes quiet. Turn back the clock 25,000 years and see the Earth as it was.">
+<meta name="twitter:title" content="Lacuna Institute | Atlas of Historical Gaps">
+<meta name="twitter:description" content="Lacuna Institute maps 21 sites where the historical record breaks down, separating verified primary sources from open questions and speculation.">
 <meta name="twitter:image" content="https://syberlabs.io/lacuna/share/lacuna.jpg">
 <link rel="canonical" href="https://syberlabs.io/lacuna/">
 <!--email_off-->
@@ -302,7 +302,7 @@ a:hover{border-bottom-color:var(--ember)}
     </svg>
     <div>
       <h1>LACUNA INSTITUTE</h1>
-      <p>Finding the history that fell out of the record.</p>
+      <p>Mapping the history missing from the record.</p>
       <p class="org"><a href="/">Part of SyberLabs</a></p>
     </div>
   </header>
@@ -318,19 +318,19 @@ a:hover{border-bottom-color:var(--ember)}
 
   <div class="why-pop" id="why" role="dialog" aria-label="About the map projection">
     <h2>Why a globe</h2>
-    <p>No flat map can be true everywhere: a sphere can't be flattened without stretching it, which Gauss proved in 1827. So the default view is the globe itself, which shows true shapes at the centre of view.</p>
-    <p>The flat view uses Equal Earth (Šavrič, Patterson &amp; Jenny, 2018). It keeps every region's true area, so Africa and the Amazon aren't shrunk next to Europe as they are on Mercator.</p>
+    <p>No flat map preserves shape and area simultaneously (Gauss, 1827). Defaulting to a globe preserves true geometry at the center of view.</p>
+    <p>The flat view uses Equal Earth (Šavrič, Patterson &amp; Jenny, 2018) so every landmass keeps its true relative area.</p>
     <p>Orthographic ⇄ Equal Earth · Natural Earth coastlines</p>
   </div>
 
   <nav class="index" id="index" aria-label="Research sites">
-    <p class="eyebrow">An atlas of lacunae</p>
-    <h2>Twenty-one places where the record <em>goes quiet</em></h2>
+    <p class="eyebrow">Atlas of lacunae</p>
+    <h2>21 places where the record <em>goes quiet</em></h2>
     <ol id="list"></ol>
     <div class="signup">
       <p class="su-h">Get new findings</p>
       <p class="su-row"><a class="su-mail" href="mailto:contact@lacunainstitute.org?subject=Add%20me%20to%20Lacuna%20findings">Email us to join the list</a></p>
-      <p class="su-note">Opens your email app. Only for Lacuna findings.</p>
+      <p class="su-note">Opens your email app. Lacuna updates only.</p>
     </div>
   </nav>
   <div class="scrim" id="scrim"></div>
@@ -338,12 +338,12 @@ a:hover{border-bottom-color:var(--ember)}
   <div class="legend" aria-hidden="true">
     <span><i class="mk lacuna"></i>Lacuna investigation</span>
     <span><i class="mk watch"></i>Open question</span>
-    <span class="hint" id="hint">Drag to turn · scroll to zoom</span>
+    <span class="hint" id="hint">Drag to rotate · scroll to zoom</span>
   </div>
   <section class="chrono" id="chrono" aria-label="Time">
     <div class="cr-top">
       <button class="cr-play" id="crplay" aria-label="Play 25,000 years forward to today"><svg class="i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.6 6z"/></svg><svg class="i-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.4 1.4h2.6v9.2H2.4zM7 1.4h2.6v9.2H7z"/></svg></button>
-      <div class="cr-read" aria-live="polite"><span class="cr-yr" id="cryr">Today</span><span class="cr-per" id="crper">Drag back through 25,000 years</span></div>
+      <div class="cr-read" aria-live="polite"><span class="cr-yr" id="cryr">Today</span><span class="cr-per" id="crper">Drag back 25,000 years</span></div>
       <button class="pill cr-src" id="crsrc" aria-expanded="false" aria-controls="tpop">Sources</button>
     </div>
     <div class="cr-track" id="crtrack">
@@ -352,16 +352,16 @@ a:hover{border-bottom-color:var(--ember)}
   </section>
   <div class="tpop" id="tpop" role="dialog" aria-label="About the time view">
     <h2>How the past is drawn</h2>
-    <p>Past coastlines come from today's land and seafloor heights, flooded to the global sea level of each moment after Lambeck et al. 2014 (PNAS). Land that has risen or sunk since then is not corrected for, so treat the edges as approximate.</p>
-    <p>Ice sheets are simplified outlines after Dyke 2004 (North America) and Hughes et al. 2016, DATED-1 (Eurasia), shrunk along their dated retreat. They are sketches, not survey lines.</p>
-    <p>The Green Sahara follows the timing in Tierney, Pausata &amp; deMenocal 2017 (Science Advances), and Lake Mega-Chad the shorelines in Drake &amp; Bristow 2006 (The Holocene). Their extents are schematic.</p>
-    <p>Why 25,000 years: across that span the continents sat where they are now, so what changed the human world was ice and water. Terrain: Mapzen terrain tiles on AWS Open Data (ETOPO1, GEBCO, SRTM and others).</p>
+    <p>Paleocoastlines flood modern elevation data to global sea-level curves (Lambeck et al., 2014, PNAS) without local tectonic correction; treat edges as approximate.</p>
+    <p>Ice sheets show simplified retreat outlines after Dyke (2004, North America) and Hughes et al. (2016, DATED-1, Eurasia).</p>
+    <p>Green Sahara timing follows Tierney, Pausata &amp; deMenocal (2017, Science Advances); Lake Mega-Chad shorelines follow Drake &amp; Bristow (2006, The Holocene). Both are schematic.</p>
+    <p>25,000-year span: continental positions remained fixed while ice and sea level reshaped human geography. Terrain: Mapzen tiles via AWS Open Data (ETOPO1, GEBCO, SRTM).</p>
   </div>
   <div class="zoom">
     <button id="zin" aria-label="Zoom in">+</button>
     <button id="zout" aria-label="Zoom out">−</button>
   </div>
-  <p class="foot">Images via Wikimedia Commons, credited on each card. Coastlines: Natural Earth. Past coasts and ice: see Sources on the time bar.</p>
+  <p class="foot">Imagery via Wikimedia Commons (credited per site). Coastlines: Natural Earth. Past coasts and ice: see Sources.</p>
 
   <div class="hcard" id="hcard" aria-hidden="true">
     <div class="himg" id="himg"></div>
@@ -383,19 +383,19 @@ a:hover{border-bottom-color:var(--ember)}
         <p class="note" id="pnote"></p>
         <p class="lede" id="plede"></p>
         <div class="acts"><a class="earth" id="pearth" target="_blank" rel="noopener"><span aria-hidden="true">◎</span> Explore in Google Earth ↗</a><button class="earth" id="pshare" type="button"><span aria-hidden="true">↗</span> <span id="pshare-t">Share</span></button></div>
-        <section class="sec"><h3>What's known</h3><p id="pknown"></p></section>
-        <section class="sec"><h3>What's missing</h3><p id="pmissing"></p></section>
-        <section class="sec q"><h3>The open question</h3><p id="pq"></p></section>
+        <section class="sec"><h3>What is known</h3><p id="pknown"></p></section>
+        <section class="sec"><h3>What is missing</h3><p id="pmissing"></p></section>
+        <section class="sec q"><h3>Open question</h3><p id="pq"></p></section>
         <section class="sec hyp" id="phyps"><h3>Lacuna's hypothesis</h3><p id="phyp"></p></section>
         <section class="sec spec" id="plegs"><h3>Legends &amp; theories</h3><div id="pleg"></div></section>
-        <section class="sec spec" id="pspecs"><h3>Speculation, flagged as such</h3><p id="pspec"></p></section>
+        <section class="sec spec" id="pspecs"><h3>Speculation (labeled)</h3><p id="pspec"></p></section>
         <section class="sec work" id="pworks"><h3>Lacuna's work</h3><p id="pwork"></p><a id="plink" target="_blank" rel="noopener"></a></section>
         <section class="sec src"><h3>Sources</h3><ul id="psrc"></ul></section>
         <section class="sec su-sec">
           <div class="signup">
             <p class="su-h">Get new findings</p>
             <p class="su-row"><a class="su-mail" href="mailto:contact@lacunainstitute.org?subject=Add%20me%20to%20Lacuna%20findings">Email us to join the list</a></p>
-            <p class="su-note">Opens your email app. Only for Lacuna findings.</p>
+            <p class="su-note">Opens your email app. Lacuna updates only.</p>
           </div>
         </section>
         <nav class="pn" aria-label="Browse sites"><button id="prev">← Prev</button><span id="pcount"></span><button id="next">Next →</button></nav>
