@@ -36,13 +36,13 @@ const steps = wide(24, [
     R('#', 24),
     R('#', 24),
   ],
-  [ // C · a wall the cord gets you over
-    '           o              ',
+  [ // C · a wall the cord gets you over. The ring hangs just past the wall's near edge (props.o), in sight from its foot
+    '          o               ',
     R(' ', 26),
     R(' ', 26),
     '               t          ',
     ...rep('          ##########      ', 4),
-    '   ?      ##########      ',
+    '      ?   ##########      ',
     ...base(26),
   ],
   [ // D · swing across the thorns
@@ -105,7 +105,7 @@ const steps = wide(24, [
     R(' ', 10) + '22                  M' + R('#', 13),
     R(' ', 8) + '11                    M' + R('#', 13),
     R(' ', 6) + '11                      M' + R('#', 13),
-    '  ?' + R(' ', 17) + 't' + R(' ', 9) + 'M' + R('#', 13),
+    '  ?' + R(' ', 17) + 't' + R(' ', 5) + '?' + R(' ', 3) + 'M' + R('#', 13),   // the second hint is at the wall the floor ends at: this way is closed
     ...base(44),
   ],
 ]);
@@ -143,12 +143,14 @@ function machu() {
   m.box(41, 26, 55, 40).col(41, 26, 33, 'M');            // the far terrace
   for (let y = 24; y >= 10; y -= 2) m.put(53, y, '==='); // the stone stair
   m.box(49, 9, 55, 9, '=');                              // the top: a beam, so a jump from below passes through it
-  m.put(3, 40, '@').hint(6, 39, 'Words light one at a time. Jump to the next while it is lit. Or take the stair inside the wall.');
+  m.put(3, 40, '@').hint(8, 39, 'Words light one at a time. Jump to the next while it is lit. Or take the stair inside the wall.');
   for (let k = 0; k < 7; k++) m.put(k % 2 ? 8 : 12, 39 - k * 2, 'WWWW');
-  m.put(22, 24, 'C').hint(21, 23, 'These four flash too fast to cross. As the jaguar, roar (E) while they are lit and run. As the weaver, check the pace setter in the ravine.');
+  m.put(8, 34, '====').put(12, 32, '====');              // a perch under the fourth word and the fifth: a fall from the upper words lands halfway, and not at the foot
+  m.put(22, 24, 'C').hint(21, 23, 'Too fast to cross. Jaguar: roar (E) while they light and run. Weaver: check the pace setter in the ravine.');
   ['TOO', 'FAST', 'TO', 'READ'].forEach((text, k) => m.put(25 + k * 4, 25, 'WWWW', { i: 0, n: 6, beat: 0.6, text, w: 4 }));
-  m.put(32, 33, 'P').hint(30, 33, 'E sets the pace of every word: fast or slow. It stays until you check it again.');
-  m.put(43, 25, 'C').hint(44, 24, 'The jaguar jumps three tiles from word to word. The stone stair on the right takes longer.');
+  m.put(32, 33, 'P').hint(30, 33, 'As the weaver, E sets every word slow or fast until you check it again. The beams on the left climb out.');
+  m.hint(39, 33, 'Nothing this way. The beams at the left end of the ravine climb out.');
+  m.put(43, 25, 'C').hint(44, 24, 'The jaguar jumps three tiles up, word to word. The stair on the right takes longer.');
   ['ONE', 'WORD', 'AT', 'A', 'TIME'].forEach((text, k) => m.put(k % 2 ? 49 : 45, 23 - k * 3, 'WWWW', { i: k, n: 5, beat: 0.7, text }));
   m.put(53, 8, 'X');
   for (const [x, y] of [[13, 37], [9, 35], [14, 29], [32, 29], [35, 33], [46, 21], [50, 12], [54, 17]]) m.put(x, y, 't');
@@ -164,23 +166,23 @@ function lines() {
   m.box(0, 20, 149, 23);
   // A · one gate, one source, on a column the cord reaches
   m.put(3, 19, '@').hint(6, 18, 'A gate burns while its source is alive.');
-  m.box(16, 15, 21, 19).put(17, 11, 'o').put(20, 14, 'S', { id: 'a' });
-  m.hint(11, 18, 'Shift: the jaguar sees the line from each gate to its source. Reach the source, then press E as the weaver.');
-  wall(30, 'a');
+  m.box(16, 15, 21, 19).put(16, 11, 'o', { dx: -6 }).put(20, 14, 'S', { id: 'a' });
+  m.hint(15, 18, 'Shift: the jaguar sees the line from each gate to its source. Reach the source, then press E as the weaver.');
+  m.put(25, 19, 'C'); wall(30, 'a');                     // a standing stone before the first gate: most falls in this stage are at it
   // B · the village
   m.hint(37, 18, 'Visitors walk among the people. The jaguar sees which are which.');
   m.put(44, 19, '##').put(64, 19, '##').put(47, 17, '=====').put(58, 17, '=====');
   m.put(56, 19, 'w', { mimic: true });
   for (const x of [40, 50, 53, 60, 68]) m.put(x, 19, 'v');
   // C · the source is on the tower; a watched source stands by the gate
-  m.put(70, 19, 'C').hint(73, 18, 'Follow the line. Stone is the jaguar\'s to climb. The steps beside it are the weaver\'s.');
+  m.put(70, 19, 'C').hint(73, 18, 'Follow the line. The jaguar climbs the stone. The weaver takes the beams beside it.');
   for (const y of [18, 16, 14, 12, 10]) m.put(76, y, '==');
   m.box(78, 8, 82, 19).put(83, 8, '==').put(81, 7, 'S', { id: 'b' });   // the beam is a perch to throw from
-  m.hint(80, 6, 'From up here your glass reaches the Visitor below. A source with no line is watched: leave it.');
+  m.hint(80, 6, 'From up here your glass reaches the warden below. A source with no line is watched: leave it.');
   m.put(92, 19, 'w').put(96, 19, 'S', { trap: true });
   wall(100, 'b');
   // D · three sources, two gates, crossed lines
-  m.put(104, 19, 'C').hint(108, 18, 'Three sources, two gates. Check only the sources that have a line. The jaguar can break a source with a pounce, and that is loud.');
+  m.put(104, 19, 'C').hint(108, 18, 'Three sources, two gates. Check only the two with a line. A jaguar pounce breaks a source, but raises the alarm.');
   m.put(112, 19, 'S', { id: 'c' }).put(116, 19, '##').put(116, 18, 'S', { trap: true }).put(121, 19, 'S', { id: 'd' });
   wall(126, 'd'); wall(134, 'c');
   m.put(143, 19, 'X');
@@ -200,21 +202,21 @@ function works() {
   bulk(14); m.col(14, 16, 19, '!', { period: 2.4, duty: 0.5, ph: 0 });
   bulk(22); m.col(22, 16, 19, '!', { period: 2.4, duty: 0.5, ph: 1.2 });
   // CHECK · a sentinel over the hall, a Visitor on the floor
-  m.put(26, 19, 'C').put(30, 12, 'L', { text: 'CHECK' }).hint(30, 18, 'E on a sentinel turns it. For twelve seconds it shoots for you.');
+  m.put(26, 19, 'C').put(30, 12, 'L', { text: 'CHECK' }).hint(30, 18, 'As the weaver, E turns a sentinel. For twelve seconds it shoots for you.');
   m.put(40, 15, 's', { dx: 12, speed: 36 }).put(44, 19, '##').put(60, 19, '##').put(54, 19, 'w');
   // REVIEW · the eye, the gate it lights, and a bulkhead only the jaguar fits under
   m.put(64, 19, 'C').put(66, 12, 'L', { text: 'REVIEW' });
   m.hint(67, 18, 'An eye that sees you raises the alarm and lights the gate ahead. Glass breaks an eye. E switches it off.');
   m.box(72, 8, 90, 9, 'M').put(81, 10, 'e', { base: 90, sweep: 50, period: 4, range: 150, fov: 20 });
   bulk(92); m.col(92, 16, 19, 'i');
-  m.hint(94, 18, 'Shift: the jaguar fits under the bulkhead. Or check the terminal behind you, which opens the duct above the tunnel.');
+  m.hint(94, 18, 'Shift: the jaguar fits under the bulkhead. Or press E at the terminal behind you to open the duct above.');
   m.box(96, 0, 103, 18, 'M').put(88, 19, 'T', { opens: 'duct' });
   for (let x = 96; x <= 103; x++) m.put(x, 18, 'D', { id: 'duct' });
   // APPROVE · three sources feed the Approver: one on the floor, one on a block, one under the dais
   m.put(105, 19, 'C').put(106, 12, 'L', { text: 'APPROVE' }).hint(107, 18, 'Three sources feed the Approver. The jaguar sees the lines. Cut all three.');
   m.put(110, 19, 'S', { core: true });
-  m.box(116, 15, 121, 19).put(117, 11, 'o').put(120, 14, 'S', { core: true });
-  m.hint(124, 18, 'One source is under the floor. Go in as the jaguar and stand up as the weaver. Or check it through the grate on the dais.');
+  m.box(116, 15, 121, 19).put(116, 11, 'o', { dx: -6 }).put(120, 14, 'S', { core: true });
+  m.hint(124, 18, 'One source is under the dais. Go in as the jaguar and stand up as the weaver, or check it through the grate.');
   m.box(132, 18, 143, 19, 'M').box(128, 20, 131, 20, 'M');                    // the dais, and a lip the jaguar cannot cling to
   m.box(126, 20, 127, 21, ' ').box(128, 21, 135, 21, ' ').box(136, 20, 139, 21, ' ');   // the way under it
   m.box(137, 18, 138, 19, '=');                                               // a grate in the dais
@@ -224,7 +226,7 @@ function works() {
   m.hint(148, 18, 'E at the terminal. Now a person approves.').put(150, 19, 'T', { opens: 'pub' });
   m.box(154, 0, 154, 15, 'M').col(154, 16, 19, 'D', { id: 'pub' });
   // PUBLISH
-  m.put(156, 12, 'L', { text: 'PUBLISH' }).put(160, 19, 'X').put(163, 19, 'R', { far: 240, line: 'The Patron: "You put a person where my machine stood. I own the Works that built it. Come to my sale."' });
+  m.put(156, 12, 'L', { text: 'PUBLISH' }).put(160, 19, 'X').put(163, 19, 'R', { far: 240, line: 'The Patron: "You put a person where my machine stood. I own the Works. Come to my sale."' });
   for (const [x, y] of [[18, 17], [36, 16], [52, 16], [76, 16], [99, 19], [118, 12], [131, 21], [141, 16]]) m.put(x, y, 't');
   m.put(10, 17, 'A', mark('antikythera')).put(70, 17, 'A', mark('baghdad')).put(158, 17, 'A', mark('gobekli'));
   return m.done();
@@ -254,10 +256,10 @@ function record() {
   m.hint(17, 18, 'A record with a gap is evidence. Find all five, then go to the far door.');
   lot(22, 19, 'Lot 2, a feather fan', 'The record does not say where it was found');
   // B · a lot on a wall the cord reaches
-  m.put(34, 19, 'C').box(40, 15, 49, 19).put(41, 11, 'o').put(55, 17, '====');
+  m.put(34, 19, 'C').box(40, 15, 49, 19).put(40, 11, 'o', { dx: -6 }).put(55, 17, '====');
   lot(45, 14, 'Lot 3, a shell collar', 'Forty years have no owner listed');
   // C · a lot past a wall the jaguar goes under, and one on a cliff it climbs
-  m.hint(62, 18, 'The jaguar goes under this wall, up the cliff and over the bridge it alone can see. The weaver checks the terminal and takes the steps. The jaguar also sees each record as a line: a broken line is a gap.');
+  m.hint(62, 18, 'Jaguar: under the wall, up the cliff, over the spirit bridge; it sees gaps as broken lines. Weaver: E at the terminal, then the beams.');
   m.box(70, 4, 75, 18, 'M').put(77, 19, 'C').put(66, 19, 'T', { opens: 'low' });
   for (let x = 70; x <= 75; x++) m.put(x, 18, 'D', { id: 'low' });
   for (const y of [18, 16, 14]) m.put(84, y, '==').put(106, y, '==');
@@ -271,7 +273,7 @@ function record() {
   // E · the last lot and the far door
   lot(140, 19, 'Lot 7, a woven band', 'The line for its export is blank');
   m.put(146, 17, '====').put(152, 15, '====');
-  m.hint(160, 18, 'The far door. It takes the evidence when all five gaps are found.').put(168, 19, 'X').put(172, 19, 'R', { far: 330, line: 'The Patron: "Five gaps. Keep them. My machine has no gaps, and it has watched you since the shore."' });
+  m.hint(160, 18, 'The far door. It takes the evidence when all five gaps are found.').put(168, 19, 'X').put(172, 19, 'R', { far: 330, line: 'The Patron: "Five gaps. Keep them. My machine has none. It has watched you since the shore."' });
   for (const [x, y] of [[17, 16], [48, 14], [53, 17], [72, 19], [88, 10], [99, 11], [101, 19], [116, 13], [134, 17], [147, 16], [153, 14], [163, 17]]) m.put(x, y, 't');
   [[8, 17, 'canyon'], [27, 17, 'sedona'], [43, 12, 'amazon'], [56, 16, 'mosquitia'], [83, 16, 'longview'], [93, 10, 'rushmore'], [104, 11, 'padang'], [124, 17, 'dogger'], [158, 17, 'vostok']].forEach(([x, y, id]) => m.put(x, y, 'A', mark(id)));
   return m.done();
@@ -326,34 +328,34 @@ function anomaly() {
   m.box(0, 20, 191, 23);
   // BOOT
   m.put(3, 19, '@').put(2, 12, 'L', { text: 'BOOT' }).hint(5, 18, 'The log prints one word at a time. Jump to the next while it is lit.');
-  m.put(8, 19, 'P').hint(9, 17, 'E sets the pace of every word: fast or slow.');
+  m.put(8, 19, 'P').hint(9, 17, 'As the weaver, E sets every word slow or fast.');
   ['LOAD', 'EVERY', 'FACE', 'EVERY', 'STEP'].forEach((text, k) => m.put(k % 2 ? 11 : 15, 18 - k * 2, 'WWWW', { i: k, n: 5, beat: 0.9, text }));
-  m.hint(17, 19, 'Shift beside metal. The copy you leave turns it. Turned metal holds the claws and the cord.');
+  m.hint(17, 19, 'Press Shift beside metal. Changing form leaves a copy that corrupts it. Corrupt metal takes claws and cord.');
   m.box(19, 8, 24, 19, 'M').col(22, 0, 7, '|');
-  m.hint(20, 6, 'The gate goes dark when the whole block has turned.');
+  m.hint(20, 6, 'The gate goes dark when the whole block is corrupt.');
   // DESKTOP
-  m.put(27, 19, 'C').put(30, 12, 'L', { text: 'DESKTOP' }).hint(29, 18, 'The system has woken. Its cursor deletes a copy before it comes for you. Keep leaving copies.');
+  m.put(27, 19, 'C').put(30, 12, 'L', { text: 'DESKTOP' }).hint(29, 18, 'The cursor deletes copies, then hunts you; hide, roar or throw glass. The scan cleans and sends you back.');
   win(33, 13, 6, 4); win(42, 12, 8, 5); win(52, 13, 4, 4);
   m.put(45, 17, 'e', { base: 90, sweep: 50, period: 4, range: 150, fov: 20 });
-  m.hint(39, 18, 'An eye set in a window goes dark when the whole window has turned. Jump beside the frame and change form.');
+  m.hint(39, 18, 'An eye set in a window goes dark when the whole window is corrupt. Jump beside the frame and change form.');
   for (const x of [35, 40, 50]) m.put(x, 19, 'v');
   m.put(54, 19, 'w', { mimic: true });
   alert(60, 12);
   // REGISTRY
-  m.put(65, 19, 'C').put(66, 12, 'L', { text: 'REGISTRY' }).hint(67, 18, 'The jaguar fits under the racks. The weaver checks each terminal, which opens the doors above the tunnel.');
+  m.put(65, 19, 'C').put(66, 12, 'L', { text: 'REGISTRY' }).hint(67, 18, 'The jaguar fits under the racks. As the weaver, E at each terminal opens the doors above.');
   m.put(69, 19, 'T', { opens: 'ra' }).box(72, 8, 77, 17, 'M').box(78, 8, 81, 9, 'M').box(82, 8, 87, 17, 'M');
   for (let x = 72; x <= 77; x++) m.put(x, 18, 'D', { id: 'ra' });
   for (let x = 82; x <= 87; x++) m.put(x, 18, 'D', { id: 'rb' });
   m.put(79, 19, 'T', { opens: 'rb' }).put(80, 10, 'e', { base: 90, sweep: 40, period: 3.5, range: 150, fov: 18 });
   alert(92, 12);
   // DEFRAG
-  m.put(97, 19, 'C').put(98, 12, 'L', { text: 'DEFRAG' }).hint(98, 18, 'E runs the check: proven blocks hold, stale blocks fall, broken blocks are not there.');
+  m.put(97, 19, 'C').put(98, 12, 'L', { text: 'DEFRAG' }).hint(98, 18, 'As the weaver, E runs the check: proven blocks hold, stale blocks fall, broken blocks are not there.');
   m.box(101, 20, 120, 21, ' ').box(101, 22, 120, 22, '^');
   m.put(101, 20, '11').put(104, 20, '22').put(107, 20, '11').put(110, 20, '3').put(111, 20, '11').put(114, 20, '22').put(117, 20, '11');
   m.box(100, 13, 118, 14, 'M').col(100, 15, 16, 'M');   // the arm, and the post that brings it within reach
   alert(125, 12);
   // FIREWALL
-  m.put(129, 19, 'C').put(130, 12, 'L', { text: 'FIREWALL' }).hint(131, 18, 'Three rules guard the way: a gate that blinks, a gate fed by a source, a gate the alarm lights. A copy on the metal above each is another way.');
+  m.put(129, 19, 'C').put(130, 12, 'L', { text: 'FIREWALL' }).hint(131, 18, 'Three rules: one gate blinks, one has a source, one lights on alarm. Corrupt the metal above to shut it off.');
   bulk(136); m.col(136, 16, 19, '!', { period: 2.4, duty: 0.5, ph: 0 });
   m.put(140, 19, 'S', { id: 'fw' }).put(142, 19, 'S', { trap: true });
   bulk(144); m.col(144, 16, 19, 'f', { src: 'fw' });
@@ -373,7 +375,7 @@ function anomaly() {
 export const ANOMALY = {
   id: 'anomaly', name: 'THE ANOMALOUS SYSTEM', project: 'SyberWork', href: '/projects/syberwork/',
   line: 'Tests every AI-written code change before a person approves it.',
-  intro: ['The machine closed | your record.', 'It keeps the record | inside itself.', 'Nothing in there | is approved by a person.', 'Change form. | Leave copies of yourself.', 'Turn all of it.'],
+  intro: ['The machine closed | your record.', 'It filed you | inside its own system.', 'Nothing in there | is approved by a person.', 'Change form. | Leave copies behind.', 'Corrupt all of it.'],
   bg: 'system', persona: 'syber', anomaly: true, scan: 240, words: { text: 'LOAD EVERY FACE EVERY STEP', beat: 0.9 }, ...anomaly(),
 };
 
@@ -381,50 +383,51 @@ export const STAGES = [
   {
     id: 'steps', name: 'THE STEPS', project: 'Attest', href: '/projects/attest/',
     line: 'Runs every step in your docs and marks the ones that fail.',
-    intro: ['You are a weaver | of a noble house.', 'You drank | what the old ones drank, | and a jaguar | came with you.', 'The Visitors built a stair | to their gate.', 'They say | every step holds.', 'Run each one.'],   // a bar ends a phrase: the story shows one phrase at a time
+    intro: ['You are a weaver | of a noble house, | in a stolen circlet.', 'You drank | what the old ones drank. | A jaguar | walked out with you.', 'The Visitors cut a stair | to their gate.', 'They swear | every step holds.', 'Prove each one.'],   // a bar ends a phrase: the story shows one phrase at a time
     bg: 'shore', persona: 'syber', map: steps,
-    props: { A: [mark('paracas'), mark('rapanui'), mark('nanmadol')], D: [...Array.from({ length: 6 }, () => ({ id: 'wall' })), { id: 'top' }], T: [{ opens: 'wall' }, { opens: 'top' }] },
+    props: { A: [mark('paracas'), mark('rapanui'), mark('nanmadol')], D: [...Array.from({ length: 6 }, () => ({ id: 'wall' })), { id: 'top' }], T: [{ opens: 'wall' }, { opens: 'top' }], o: [{ dx: -6 }] },
     hints: [
       'A and D walk. W or Space jumps.',
       'Hold the mouse button on a ring or on stone to throw the cord. W reels in. Let go to drop.',
-      'Cord the ring and swing across. Space lets go with a kick.',
+      'Throw the cord at the ring and swing across. Space lets go with a kick.',
       'Click throws glass. Two hits drop a warden. Hold S to hide.',
-      'Shift changes you into the jaguar. Q does the same. It fits under the wall. Or stay the weaver: E at the terminal opens the doors above the tunnel.',
-      'As the jaguar, push into stone and hold W to climb. Space leaps off. The weaver takes the steps cut beside the cliff.',
-      'The jaguar walks on what the weaver cannot see. The weaver goes down, and up the steps on the far side.',
-      'Click to pounce. One pounce drops a warden.',
-      'Shift back. E runs the check: proven steps hold, stale steps fall, broken steps are not there.',
-      'E beside a terminal opens its door.',
+      'Shift (or Q) changes you into the jaguar to fit under the wall. Or stay the weaver: E at the terminal opens the doors above.',
+      'As the jaguar, push into stone and hold W to climb. Space leaps off. The weaver takes the beams beside the cliff.',
+      'The jaguar walks on what the weaver cannot see. The weaver goes under, then up the far beams.',
+      'Click to pounce as the jaguar. One pounce drops a warden.',
+      'As the weaver, E runs the check: proven steps hold, stale steps fall, broken steps are not there.',
+      'This way is closed. The only way up is the stair; it begins back to the left.',
+      'As the weaver, E beside a terminal opens its door.',
     ],
   },
   {
     id: 'machu', name: 'MACHU PICCHU', project: 'RISE', href: '/projects/rise/',
     line: 'Shows text at a pace you set, with sound and moving visuals.',
-    intro: ['The road climbs | to Machu Picchu.', 'The Visitors keep their words | in the ruins.', 'One word shows | at a time.', 'Climb | at the pace you set.'],
+    intro: ['The road climbs | to Machu Picchu.', 'The Visitors\' words | burn in the ruins.', 'One word lights | at a time.', 'Climb | at the pace you set.'],
     bg: 'ruins', persona: 'syber', order: 'up', words: { text: 'WORDS RISE AT THE PACE YOU SET', beat: 0.9 }, ...machu(),
   },
   {
     id: 'lines', name: 'THE LINES', project: 'FLYSPACE', href: '/projects/flyspace/',
     line: 'Shows which data sources fed each AI answer.',
-    intro: ['Lines cross | the desert floor.', 'Each gate is fed | by a source | somewhere else.', 'Find which one.'],
+    intro: ['Lines cut | the desert floor.', 'Each gate drinks | from a source | out of sight.', 'Find which one. | Cut it.'],
     bg: 'desert', persona: 'syber', ...lines(),
   },
   {
     id: 'works', name: 'THE WORKS', project: 'SyberWork', href: '/projects/syberwork/',
     line: 'Tests every AI-written code change before a person approves it.',
-    intro: ['Here the Visitors decide | who is born.', 'The Patron owns the Works.', 'Each birth is proposed, | checked and reviewed.', 'A machine approves.', 'Put a person there.'],
+    intro: ['Here the Visitors decide | who is born.', 'The Patron | owns the Works.', 'Each birth is proposed, | checked, | reviewed.', 'A machine | approves alone.', 'Put a person | in its place.'],
     bg: 'works', persona: 'syber', ...works(),
   },
   {
     id: 'record', name: 'THE RECORD', project: 'Lacuna Institute', href: '/lacuna/',
     line: 'An atlas of places where the historical record goes quiet.',
-    intro: ['The Patron is selling | what the Visitors collected.', 'The viewing is open.', 'Each lot has a record.', 'Find what the records leave out | before the sale closes.'],
+    intro: ['The Patron sells | what the Visitors took.', 'The viewing is open.', 'Each lot | carries a record.', 'Find every gap | before the sale closes.'],
     bg: 'vault', persona: 'syber', timer: 240, needs: 'evidence', ...record(),
   },
   {
     id: 'real', name: 'THE REAL BATTLE', project: 'SyberLabs', href: '/#products',
     line: 'Makes software for checking AI\'s work.',
-    intro: ['The Patron owns the Works, | the sale | and the machine.', 'The machine is called | the Thousand Eyes.', 'It has every camera | and every record.', 'It saw you coming.'],   // what it says in the room is in render.js
+    intro: ['The Patron owns | the Works, | the sale, | the machine.', 'Its name | is the Thousand Eyes.', 'It holds every camera | and every record.', 'It saw you coming.'],   // what it says in the room is in render.js
     bg: 'eyes', persona: 'syber', real: true, ...real(),
   },
 ];

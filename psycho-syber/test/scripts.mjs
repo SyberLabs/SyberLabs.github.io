@@ -34,8 +34,8 @@ export const SCRIPTS = {
     ...leap(21.6), ['R', past(29.4)], ...leap(29.5), ['R', all(grounded, past(34.7))],
     ...leap(35.5), ['R', past(49)],
     // C: cord to the ring, reel up over the wall
-    ['A', g => !!g.p.rope, { aim: [53, 11], max: 1 }],
-    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 52.4 * T, { aim: [53, 11], max: 5 }],
+    ['A', g => !!g.p.rope, { aim: aimAt('ring', 0), max: 1 }],
+    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 52 * T, { aim: aimAt('ring', 0), max: 5 }],
     ['R', all(grounded, past(54))], ['R', past(62.5)], ['R', all(grounded, past(63))],
     // D: swing over the thorns
     ['R', past(76.4)],
@@ -84,8 +84,8 @@ export const SCRIPTS = {
   ],
   lines: [
     // A: cord to the ring, onto the column, check the source, walk through the dead gate
-    ['R', past(13)], ['A', g => !!g.p.rope, { aim: [17, 11], max: 1 }],
-    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 16.4 * T, { aim: [17, 11], max: 5 }],
+    ['R', past(13)], ['A', g => !!g.p.rope, { aim: aimAt('ring', 0), max: 1 }],
+    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 16 * T, { aim: aimAt('ring', 0), max: 5 }],
     ['R', all(grounded, past(17.5)), { max: 3 }], ['E', 0.1, { aim: aimAt('source', 0) }],
     ['R', all(grounded, past(36)), { max: 8 }],
     // B: the Visitor among the villagers
@@ -120,8 +120,8 @@ export const SCRIPTS = {
     ['R', past(94.3)], ['X', 0.1], ['R', past(104.5)],
     // APPROVE: the source on the floor, the one on the block, the one under the dais
     ['X', 0.1], ['R', past(107.5)], ['E', 0.1, { aim: aimAt('source', 0) }],
-    ['R', past(113)], ['A', g => !!g.p.rope, { aim: [117, 11], max: 1 }],
-    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 116.4 * T, { aim: [117, 11], max: 5 }],
+    ['R', past(113)], ['A', g => !!g.p.rope, { aim: aimAt('ring', 0), max: 1 }],
+    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 116 * T, { aim: aimAt('ring', 0), max: 5 }],
     ['R', all(grounded, past(117.5)), { max: 3 }], ['E', 0.1, { aim: aimAt('source', 1) }],
     ['R', all(grounded, past(123)), { max: 4 }], ['X', 0.1], ['R', past(136.5), { max: 4 }],
     ['X', 0.1], ['E', 0.1, { aim: aimAt('source', 2) }], ['', 0.2],
@@ -139,8 +139,8 @@ export const SCRIPTS = {
     // A: read the first two lots
     ['R', past(10)], ['E', 0.1, { aim: aimAt('lot', 0) }], ['R', past(20)], ['', 0.3], ['E', 0.1, { aim: aimAt('lot', 1) }],
     // B: cord to the ring, read the lot on the wall
-    ['R', past(37)], ['A', g => !!g.p.rope, { aim: [41, 11], max: 1 }],
-    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 40.4 * T, { aim: [41, 11], max: 5 }],
+    ['R', past(37)], ['A', g => !!g.p.rope, { aim: aimAt('ring', 0), max: 1 }],
+    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 40 * T, { aim: aimAt('ring', 0), max: 5 }],
     ['R', all(grounded, past(43)), { max: 3 }], ['E', 0.1, { aim: aimAt('lot', 2) }],
     ['R', all(grounded, past(51)), { max: 6 }],
     // C: under the wall as the jaguar, read; up the cliff, read
@@ -169,8 +169,8 @@ export const SCRIPTS = {
   'steps:weaver': [
     ...leap(21.6), ['R', past(29.4)], ...leap(29.5), ['R', all(grounded, past(34.7))],
     ...leap(35.5), ['R', past(49)],
-    ['A', g => !!g.p.rope, { aim: [53, 11], max: 1 }],
-    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 52.4 * T, { aim: [53, 11], max: 5 }],
+    ['A', g => !!g.p.rope, { aim: aimAt('ring', 0), max: 1 }],
+    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 52 * T, { aim: aimAt('ring', 0), max: 5 }],
     ['R', all(grounded, past(54))], ['R', past(62.5)], ['R', all(grounded, past(63))],
     ['R', past(76.4)],
     ['RA', g => !!g.p.rope, { aim: [81, 13], max: 1 }],
@@ -204,8 +204,8 @@ export const SCRIPTS = {
     ['R', () => false, { max: 6 }],
   ],
   'lines:weaver': [
-    ['R', past(13)], ['A', g => !!g.p.rope, { aim: [17, 11], max: 1 }],
-    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 16.4 * T, { aim: [17, 11], max: 5 }],
+    ['R', past(13)], ['A', g => !!g.p.rope, { aim: aimAt('ring', 0), max: 1 }],
+    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 16 * T, { aim: aimAt('ring', 0), max: 5 }],
     ['R', all(grounded, past(17.5)), { max: 3 }], ['E', 0.1, { aim: aimAt('source', 0) }],
     ['R', all(grounded, past(36)), { max: 8 }],
     ['R', past(42.4)], ...leap(42.5), ['R', all(grounded, past(46.4))],
@@ -234,8 +234,8 @@ export const SCRIPTS = {
     ['', gone('eye', 0), { max: 0.1 }],
     // the terminal opens the duct above the tunnel: through the bulkhead on foot
     ['R', past(86)], ['E', 0.1, { aim: aimAt('terminal', 0) }], ['R', past(107.5)], ['E', 0.1, { aim: aimAt('source', 0) }],
-    ['R', past(113)], ['A', g => !!g.p.rope, { aim: [117, 11], max: 1 }],
-    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 116.4 * T, { aim: [117, 11], max: 5 }],
+    ['R', past(113)], ['A', g => !!g.p.rope, { aim: aimAt('ring', 0), max: 1 }],
+    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 116 * T, { aim: aimAt('ring', 0), max: 5 }],
     ['R', all(grounded, past(117.5)), { max: 3 }], ['E', 0.1, { aim: aimAt('source', 1) }],
     ['R', all(grounded, past(123)), { max: 4 }],
     // over the hole, onto the dais, and the third source through the grate
@@ -250,8 +250,8 @@ export const SCRIPTS = {
   ],
   'record:weaver': [
     ['R', past(10)], ['E', 0.1, { aim: aimAt('lot', 0) }], ['R', past(20)], ['', 0.3], ['E', 0.1, { aim: aimAt('lot', 1) }],
-    ['R', past(37)], ['A', g => !!g.p.rope, { aim: [41, 11], max: 1 }],
-    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 40.4 * T, { aim: [41, 11], max: 5 }],
+    ['R', past(37)], ['A', g => !!g.p.rope, { aim: aimAt('ring', 0), max: 1 }],
+    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 40 * T, { aim: aimAt('ring', 0), max: 5 }],
     ['R', all(grounded, past(43)), { max: 3 }], ['E', 0.1, { aim: aimAt('lot', 2) }],
     ['R', all(grounded, past(51)), { max: 6 }],
     // the terminal opens the doors above the tunnel; the steps beside the cliff; down and up under the bridge

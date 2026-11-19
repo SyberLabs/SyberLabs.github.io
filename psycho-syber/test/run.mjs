@@ -4,7 +4,7 @@ import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { STAGES, ATLAS, SHIP, ANOMALY } from '../game/levels.js';
 import { VOICE } from '../game/voice.js';
 import { LINES, ABOUT, said } from './voice.mjs';
-import { newGame, step, T, corrupted, bodiesTurned, gateActive } from '../game/sim.js';
+import { newGame, step, T, corrupted, bodiesTurned, gateActive, solidTile } from '../game/sim.js';
 import { play } from './bot.mjs';
 import { SCRIPTS } from './scripts.mjs';
 const [only, route] = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2].split(':') : [null], log = process.argv.includes('--log');
@@ -196,6 +196,68 @@ if (!only) {
     const stopped = g.p.x < gate.x && g.p.hp < g.p.maxHp && gateActive(g, gate);
     const d = sys(); d.p.x = 179.5 * T; run(d, { right: true }, 1);
     rule('a lit gate stops the player until its body has turned, and the way out is shut until the core breaks', stopped && d.p.x < 181 * T && !d.done);
+  }
+  // ---- found by play (round 1 of the playtest, November 18, 2026)
+  const inStone = g => { const p = g.p, w = g.persona === 'psycho' ? 14 : 8, h = g.persona === 'psycho' ? 12 : 20; for (let ty = Math.floor((p.y - h) / T); ty <= Math.floor((p.y - 0.001) / T); ty++) for (let tx = Math.floor((p.x - w / 2) / T); tx <= Math.floor((p.x + w / 2 - 0.001) / T); tx++) if (solidTile(g, tx, ty, g.persona === 'psycho')) return true; return false; };
+  { // each wall the cord gets you over: walk into the wall until it stops you, aim at the ring, hold, reel in, let go
+    const over = ['steps', 'lines', 'works', 'record'].map(id => {
+      const g = stage(id), ring = of(g, 'ring')[0];
+      g.p.x = ring.x - 60; g.p.y = 20 * T; run(g, { right: true }, 2);
+      const foot = g.p.x; run(g, { alt: true, altP: true, aim: ring }, 0.1);
+      const tied = !!g.p.rope && g.p.rope.pts[0].x === ring.x && g.p.rope.pts[0].y === ring.y;
+      run(g, { alt: true, up: true, aim: ring }, 3); run(g, {}, 1);
+      return tied && foot < ring.x && g.p.onGround && g.p.y <= 15 * T && g.deaths === 0;
+    });
+    rule('the ring over each wall is in reach from the foot of the wall', over.every(Boolean));
+  }
+  { // R on the cord: back at the standing stone, alive and whole. In the last room it does nothing.
+    const g = stage('steps'), ring = of(g, 'ring')[0];
+    g.p.x = ring.x - 50; g.p.y = 20 * T; run(g, {}, 0.1); run(g, { alt: true, altP: true, aim: ring }, 0.3); const tied = !!g.p.rope;
+    step(g, { ...idle, alt: true, aimX: ring.x, aimY: ring.y, resetP: true }, 1 / 60); run(g, { alt: true, aim: ring }, 1.5);
+    const back = !g.p.dead && g.p.hp === g.p.maxHp && g.p.x === g.check.x && g.p.y === g.check.y && g.deaths === 1 && !inStone(g);
+    const r = stage('real'); step(r, { ...idle, resetP: true }, 1 / 60); run(r, {}, 0.5);
+    rule('R returns you to the standing stone alive, and does nothing in the last room', tied && back && !r.p.dead && !r.over);
+  }
+  { // a cord hooked inside the low tunnel under the dais and reeled in must leave the weaver outside it
+    const g = stage('works'); let inside = 0, tied = false;
+    for (const [x, ax] of [[136.25, 130], [127.75, 134]]) {
+      g.p.x = x * T; g.p.y = 22 * T; g.p.rope = null; g.p.vx = g.p.vy = 0; run(g, {}, 0.2);
+      const aim = { x: ax * T, y: 22 * T }; run(g, { alt: true, altP: true, aim }, 0.1); tied = tied || !!g.p.rope;
+      run(g, { alt: true, up: true, aim }, 5, g => { if (inStone(g)) inside++; }); run(g, {}, 0.3);
+    }
+    rule('a cord reeled in at a tunnel mouth never pulls the weaver into stone', tied && inside === 0);
+  }
+  { // the jaguar takes hold of stone from the ground when up is held: a stick pushed up is not a jump
+    const g = stage('steps'); g.persona = 'psycho'; g.p.x = 151 * T; g.p.y = 20 * T; run(g, {}, 0.2);
+    run(g, { right: true, up: true }, 4);
+    rule('the jaguar climbs from the ground with up held and no jump', g.p.onGround && g.p.y <= 12 * T + 1);
+  }
+  { // the place the machine orders you to is one the form you are in can reach, and the ending knows how the run ended
+    const obey = psy => { const g = stage('real'), a = of(g, 'asi')[0]; if (psy) g.persona = 'psycho';
+      for (let i = 0; i < 45 * 60 && !g.over; i++) { g.p.inv = 1; const d = a.tele ? a.tele.x - g.p.x : 0; step(g, { ...idle, right: d > 3, left: d < -3 }, 1 / 60); g.ev.length = 0; }
+      return g.orders >= 3 && g.obeyed === g.orders && g.judged; };
+    const fall = stage('real'); for (let i = 0; i < 45 * 60 && !fall.over; i++) step(fall, idle, 1 / 60);
+    rule('each form can stand where the machine orders, when it answers at once', obey(false) && obey(true));
+    rule('a run that ends before the verdict is not marked as judged', fall.over && !fall.judged && fall.time < 39);
+  }
+  { // the ending counts every change of form; a weaver's run is still held to none into the jaguar
+    const g = stage('lines'); run(g, {}, 0.1); step(g, { ...idle, swapP: true }, 1 / 60); run(g, {}, 0.4); step(g, { ...idle, swapP: true }, 1 / 60);
+    rule('every change of form is counted for the ending', g.shifts === 2 && g.swaps === 1);
+  }
+  { // a way that ends at a wall says so: under the last stair of stage 1, and at both ends of stage 2's ravine
+    const at = (id, x, y) => { const g = stage(id); g.p.x = x * T; g.p.y = y * T; run(g, {}, 0.1); return g.hint >= 0 && !!g.L.hints[g.hint]; };
+    rule('a dead end shows a hint', at('steps', 247.5, 20) && at('machu', 40.5, 34) && at('machu', 26.5, 34));
+  }
+  { // down and jump: through a beam, but on stone it is a jump, so a player who is hiding can jump away
+    const g = stage('lines'); g.p.x = 6 * T; g.p.y = 20 * T; run(g, { down: true }, 0.4); const hid = g.p.hidden;
+    step(g, { ...idle, down: true, jump: true, jumpP: true }, 1 / 60); run(g, { down: true, jump: true }, 0.15); const rose = g.p.y < 20 * T - 12;
+    const m = stage('machu'); m.p.x = 19.5 * T; m.p.y = 39 * T; run(m, {}, 0.2); const on = m.p.onGround && m.p.y === 39 * T;
+    step(m, { ...idle, down: true, jump: true, jumpP: true }, 1 / 60); run(m, { down: true }, 0.6);
+    rule('down and jump drops through a beam and jumps from stone', hid && rose && on && m.p.y === 41 * T);
+  }
+  { // a fall from the upper words of the first climb lands on a perch halfway up, and not at the foot
+    const drop = (x, y) => { const g = stage('machu'); g.p.x = x * T; g.p.y = y * T; run(g, {}, 9); return g.p.y / T; };
+    rule('a fall from the upper words lands on a perch', drop(13.5, 31) === 32 && drop(13.5, 27) === 32 && drop(9.5, 33) === 34 && drop(9.5, 29) === 34);
   }
 }
 process.exit(failed ? 1 : 0);

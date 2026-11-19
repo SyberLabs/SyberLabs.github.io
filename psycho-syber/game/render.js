@@ -1,8 +1,8 @@
 // PSYCHO SYBER: drawing. Everything is drawn into a 480x270 frame and scaled up without smoothing.
 // There are two complete looks. SYBER (skin 0) is cold stone and Visitor circuitry at night. PSYCHO (skin 1) is
 // the same world as the jaguar sees it: a living Paracas textile. The same geometry is drawn twice, once per skin.
-import { T, C, tileAt, gateActive, eyeAngle, wordActive, wordFresh, coreOpen, verdictAt, corrupted, HUM, JAG } from './sim.js?v=20261118a';
-import { text, textC, textW } from './font.js?v=20261118a';
+import { T, C, tileAt, gateActive, eyeAngle, wordActive, wordFresh, coreOpen, verdictAt, corrupted, HUM, JAG } from './sim.js?v=20261118b';
+import { text, textC, textW } from './font.js?v=20261118b';
 export const VW = 480, VH = 270;
 const TAU = Math.PI * 2;
 const hash = (x, y, s = 0) => { let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(s | 0, 1274126177)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -450,22 +450,22 @@ function sentinel(c, e, x, y, t, sk) {
 export function makeFx() { return { parts: [], rings: [], beams: [], trail: [], shake: 0, log: [], speak: null, flash: 0 }; }
 const burst = (fx, x, y, n, speed, life, color, grav = 0) => { for (let i = 0; i < n; i++) { const a = Math.random() * TAU, s = speed * (0.3 + Math.random() * 0.7); fx.parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life, max: life, color, grav }); } };
 // In the last stage the machine logs what you do, and answers it.
-const LOGS = { throw: 'GLASS THROWN', predicted: 'GLASS: PREDICTED', roar: 'ROAR: ON RECORD', pounce: 'POUNCE: PREDICTED', cord: 'CORD: LOGGED', scan: 'CHECK: NOTHING TO PROVE', seen: 'HIDING: SEEN', glassed: 'CLAWS ON GLASS', picture: 'TOUCHED THE PICTURE', tele: 'ORDER: STAND WHERE SHOWN', judgment: 'VERDICT: AS PREDICTED' };
-const SAYS = { predicted: 'I SAW THE GLASS BEFORE YOU THREW IT.', roar: 'YOUR ROAR IS ON RECORD.', seen: 'HIDING WORKS ON WARDENS. I HAVE YOUR RECORD.', glassed: 'GLASS. BEHIND IT, MORE GLASS.', picture: 'HE IS NOT HERE. HE NEVER IS.', swap: 'BOTH OF YOUR FORMS ARE ON RECORD.', asi: 'ACCESS DENIED. I APPROVE MYSELF.', tele: 'I AM CLOSING YOUR RECORD. STAND WHERE I SHOW YOU.', judgment: 'VERDICT: AS PREDICTED.' };
+const LOGS = { throw: 'GLASS: THROWN', predicted: 'GLASS: PREDICTED', roar: 'ROAR: RECORDED', pounce: 'POUNCE: PREDICTED', cord: 'CORD: LOGGED', scan: 'CHECK: NOTHING TO PROVE', seen: 'HIDE: VISIBLE', glassed: 'CLAWS ON GLASS', picture: 'PATRON: PROJECTION', tele: 'ORDER: STAND WHERE SHOWN', judgment: 'VERDICT: AS PREDICTED' };
+const SAYS = { predicted: 'I SAW THE GLASS BEFORE YOUR HAND MOVED.', roar: 'YOUR ROAR IS FILED. THE CLOCK DOES NOT SLOW.', seen: 'WARDENS LOSE YOU IN THE DARK. I DO NOT.', glassed: 'GLASS. BEHIND IT, MORE GLASS.', picture: 'HE IS NOT HERE. HE NEVER IS.', swap: 'WEAVER OR JAGUAR. I MODEL BOTH.', asi: 'ACCESS DENIED. I APPROVE MYSELF.', tele: 'CLOSING YOUR RECORD. STAND WHERE I MARK.', judgment: 'VERDICT: AS PREDICTED.' };
 const PHASE = ['', 'I HAVE WATCHED YOU SINCE THE SHORE.', 'THE RED FRAME IS WHERE YOU WILL BE.', 'I KNOW WHERE YOU WILL STEP.', 'I KNOW WHERE YOU WILL TURN.'];
 function logReal(fx, e, g) {
   const k = e.k, log = s => { fx.log.push({ t: g.realT, s }); if (fx.log.length > 7) fx.log.shift(); }, say = (key, s) => { if (!fx.told[key] || key === 'judgment') { fx.told[key] = 1; fx.speak = { s, t: 4, max: 4 }; } };
   fx.told = fx.told || {};
   if (LOGS[k]) log(LOGS[k]); if (SAYS[k]) say(k, SAYS[k]);
-  if (k === 'turn') log(e.dir > 0 ? 'TURNS RIGHT' : 'TURNS LEFT');
-  else if (k === 'jump') { if (g.realT - (fx.jumpT || -9) > 1.5) { fx.jumpT = g.realT; log('JUMPS'); } }
-  else if (k === 'swap') log(e.to === 'psycho' ? 'FORM: JAGUAR. LOGGED' : 'FORM: WEAVER. LOGGED');
+  if (k === 'turn') log(e.dir > 0 ? 'TURN: RIGHT' : 'TURN: LEFT');
+  else if (k === 'jump') { if (g.realT - (fx.jumpT || -9) > 1.5) { fx.jumpT = g.realT; log('JUMP: LOGGED'); } }
+  else if (k === 'swap') log(e.to === 'psycho' ? 'FORM: JAGUAR' : 'FORM: WEAVER');
   else if (k === 'hack' && e.what === 'asi') { log('CHECK: ACCESS DENIED'); say('asi', SAYS.asi); }
-  else if (k === 'hurt') log(`HIT. ${g.p.hp} LEFT`);
+  else if (k === 'hurt') log(`HIT: ${g.p.hp} REMAINING`);
   else if (k === 'die') log('SUBJECT DOWN');
   else if (k === 'phase' && PHASE[e.n]) say('phase' + e.n, PHASE[e.n]);
-  else if (k === 'blind') say('blind', e.n >= 21 ? 'TWENTY-ONE LENSES DARK. YOU FOUND EVERY PLACE WHERE MY RECORD GOES QUIET.' : `${e.n} OF MY LENSES ARE DARK. YOU FOUND WHERE THE RECORD GOES QUIET.`);
-  else if (k === 'wall') { log(e.obeyed ? 'ORDER OBEYED' : 'ORDER IGNORED'); fx.shake = 0.2; }
+  else if (k === 'blind') say('blind', e.n >= 21 ? 'TWENTY-ONE LENSES DARK. YOU FOUND EVERY PLACE MY RECORD GOES QUIET.' : `${e.n} ${e.n === 1 ? 'LENS' : 'LENSES'} DARK. YOU FOUND WHERE MY RECORD GOES QUIET.`);
+  else if (k === 'wall') { log(e.obeyed ? 'ORDER: OBEYED' : 'ORDER: REFUSED'); fx.shake = 0.2; }
   if (k === 'judgment') { fx.flash = 1.6; fx.shake = 0.6; }
 }
 export function feed(fx, e, g) {
