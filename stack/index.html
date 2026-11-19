@@ -4,22 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#02070a">
-  <meta name="description" content="How SyberLabs’ coding agents read open-source dependencies at the exact version a project uses, through GitHits, and what that sends off our machines.">
+  <meta name="description" content="How SyberLabs grounds coding agents in exact open-source dependency versions via GitHits, plus exact setup commands and data-disclosure boundaries.">
   <link rel="canonical" href="https://syberlabs.io/stack/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="How We Build | SyberLabs">
-  <meta property="og:description" content="How SyberLabs’ coding agents read open-source dependencies at the exact version a project uses, through GitHits, and what that sends off our machines.">
+  <meta property="og:title" content="How We Build | Version-Pinned Dependency Grounding | SyberLabs">
+  <meta property="og:description" content="How SyberLabs grounds coding agents in exact open-source dependency versions via GitHits, plus exact setup commands and data-disclosure boundaries.">
   <meta property="og:url" content="https://syberlabs.io/stack/">
   <meta property="og:image" content="https://syberlabs.io/og/stack.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="How We Build | SyberLabs">
-  <meta name="twitter:description" content="How SyberLabs’ coding agents read open-source dependencies at the exact version a project uses, through GitHits, and what that sends off our machines.">
+  <meta name="twitter:title" content="How We Build | Version-Pinned Dependency Grounding | SyberLabs">
+  <meta name="twitter:description" content="How SyberLabs grounds coding agents in exact open-source dependency versions via GitHits, plus exact setup commands and data-disclosure boundaries.">
   <meta name="twitter:image" content="https://syberlabs.io/og/stack.png">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preload" href="/fonts/v1/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/syberlabs.css">
   <link rel="stylesheet" href="/stack/stack.css?v=20261030">
-  <title>How We Build | SyberLabs</title>
+  <title>How We Build | Version-Pinned Dependency Grounding | SyberLabs</title>
 </head>
 <body class="syber-stack">
   <a class="sy-skip" href="#main">Skip to content</a>
@@ -39,31 +39,31 @@
   <main class="stack-main" id="main">
     <section class="stack-hero" aria-labelledby="stack-title">
       <p class="eyebrow">HOW WE BUILD</p>
-      <h1 id="stack-title">How our coding agents <em>look up dependencies.</em></h1>
-      <p class="lead">GitHits connects our AI coding assistants to searchable public code and documentation. We use it to look up the exact version of an open-source dependency that a project uses.</p>
+      <h1 id="stack-title">Pinning coding agents to <em>exact dependency versions.</em></h1>
+      <p class="lead">We connect our AI coding agents to GitHits so they read open-source code, documentation, and advisories matching the exact package versions locked in each repository.</p>
     </section>
 
     <section class="stack-section" id="why" aria-labelledby="why-title">
       <div class="section-heading">
-        <p class="eyebrow">WHY</p>
-        <h2 id="why-title">AI answers can mix up software versions.</h2>
+        <p class="eyebrow">PROBLEM</p>
+        <h2 id="why-title">Models confuse library versions.</h2>
       </div>
       <div class="prose">
         <div>
-          <p>An AI coding assistant can mix up software versions: a renamed function, an option available only in unreleased code, or a security advisory published after training. Its answer may look convincing while failing against the version a project actually uses.</p>
-          <p>Reading the source at the project’s exact version gives the assistant evidence to check. <a href="https://githits.com/" rel="noopener">GitHits</a> indexes public open-source code, documentation, package metadata, vulnerabilities and changelogs by version, and makes them available through AI tool connections (MCP), a command-line tool and a web interface for software (REST API). The assistant can read the release recorded in the lockfile, which lists the dependency versions installed by the project.</p>
+          <p>Coding assistants routinely mix up renamed APIs, unreleased flags, or outdated security advisories. Answers look plausible while failing against the version installed in the repo.</p>
+          <p>Reading primary source at the lockfile version replaces guesswork with verifiable code. <a href="https://githits.com/" rel="noopener">GitHits</a> indexes public open-source code, docs, package metadata, vulnerabilities, and changelogs by exact version over MCP, CLI, and REST.</p>
         </div>
       </div>
     </section>
 
     <section class="stack-section" id="wiring" aria-labelledby="wiring-title">
       <div class="section-heading">
-        <p class="eyebrow">USE</p>
-        <h2 id="wiring-title">How we use GitHits.</h2>
+        <p class="eyebrow">IMPLEMENTATION</p>
+        <h2 id="wiring-title">Two integration points.</h2>
       </div>
       <div class="pieces">
-        <article><span class="number">01 / AGENTS</span><h3>Code search inside our coding assistants</h3><p>GitHits uses MCP, a standard connection between AI assistants and tools. Its server is configured in SyberLabs repositories, so coding agents such as Claude Code can search and read dependency source, docs and changelogs at a named version, and check vulnerabilities before updating a dependency.</p></article>
-        <article><span class="number">02 / THIS SITE</span><h3>Dependency panels at build time</h3><p>Each product page can carry a dependency panel generated from GitHits’ package API (<code>api.githits.dev/v1</code>) when the site is built: license, latest version and known vulnerabilities for the packages listed in the project’s dependency files. Only fields GitHits returned are shown. Where no live report has been fetched yet, the panel stays hidden.</p></article>
+        <article><span class="number">01 / CODING AGENTS</span><h3>Version-pinned MCP search</h3><p>Configured across SyberLabs repositories so coding agents such as Claude Code inspect dependency source, docs, changelogs, and security advisories at exact pinned versions before editing or upgrading.</p></article>
+        <article><span class="number">02 / THIS SITE</span><h3>Build-time dependency panels</h3><p>Product pages support build-time snapshots from GitHits&rsquo; package API (<code>api.githits.dev/v1</code>) showing licenses, latest versions, and known advisories. Panels render only fetched fields and stay hidden until a live snapshot publishes.</p></article>
       </div>
     </section>
 
@@ -73,36 +73,36 @@
     <section class="stack-section" id="setup" aria-labelledby="setup-title">
       <div class="section-heading">
         <p class="eyebrow">SETUP</p>
-        <h2 id="setup-title">The exact commands.</h2>
+        <h2 id="setup-title">Configuration commands.</h2>
       </div>
       <div class="prose">
         <div>
-          <p>On a developer machine, one command detects the installed coding agents, configures GitHits for them and signs in. Sign-in uses OAuth, which opens the provider’s sign-in page in your browser. The access token is kept in the system keychain.</p>
+          <p>On a developer machine, one command detects installed coding agents, configures GitHits, and authenticates via browser OAuth (token stored in the OS keychain):</p>
           <pre class="commands"><code>npx githits@latest init</code></pre>
-          <p>A repository can also register the hosted server for every agent that opens it, in <code>.mcp.json</code>; the first use asks for sign-in.</p>
+          <p>Repositories can also register the server for every agent in <code>.mcp.json</code>; first use prompts for sign-in:</p>
           <pre class="commands"><code>{ "mcpServers": { "githits": { "type": "http", "url": "https://mcp.githits.com" } } }</code></pre>
-          <p>Automated builds (CI) and other runs without an interactive user have no browser for sign-in. An API token is stored as the repository secret <code>GITHITS_API_TOKEN</code> and exposed to the job as an environment variable. It is never committed or written to a file, and the build still succeeds without it.</p>
+          <p>Headless CI builds read <code>GITHITS_API_TOKEN</code> from repository secrets (never committed). Builds succeed even when the token is absent:</p>
           <pre class="commands"><code><span class="c"># CI: token from the GitHits settings page, stored as a secret</span>
 env:
   GITHITS_API_TOKEN: ${{ secrets.GITHITS_API_TOKEN }}
 
 <span class="c"># confirm the token is picked up</span>
 npx githits@latest auth status</code></pre>
-          <p class="note">Commands from the <a href="https://docs.githits.com/" rel="noopener">GitHits documentation</a> as of 8 October 2026.</p>
+          <p class="note">Commands reflect <a href="https://docs.githits.com/" rel="noopener">GitHits documentation</a> as of 8 October 2026.</p>
         </div>
       </div>
     </section>
 
     <section class="stack-section" id="data" aria-labelledby="data-title">
       <div class="section-heading">
-        <p class="eyebrow">WHAT LEAVES OUR MACHINES</p>
-        <h2 id="data-title">What we send to GitHits.</h2>
+        <p class="eyebrow">DISCLOSURE</p>
+        <h2 id="data-title">What leaves our machines.</h2>
       </div>
       <div class="prose">
         <ul>
-          <li><b>Build-time panels.</b> The requests carry public package names and versions read from each project’s manifests. Nothing else from our repositories is sent.</li>
-          <li><b>Agents over MCP.</b> A request carries the agent’s query and any context the agent puts in it. GitHits states that signing in gives it no access to private repositories and that it does not access, index, search or store private repository code; the agent keeps working on the local checkout. Because the agent writes the query, our repositories instruct it to name public packages, versions and APIs and never to send unpublished code, content, tokens, secrets or personal data. GitHits’ own docs give the same rule.</li>
-          <li><b>Retention.</b> Per GitHits’ <a href="https://githits.com/legal/privacy-policy" rel="noopener">privacy policy</a>, queries and outputs are kept for 90 days and MCP and API request logs for 30 days, and training on inputs is off unless a user opts in. Their policy governs; this is a summary as of 8 October 2026.</li>
+          <li><b>Build-time panels.</b> Sends only public package names and versions parsed from dependency manifests.</li>
+          <li><b>Agents over MCP.</b> Sends the agent&rsquo;s query text. Per GitHits documentation, sign-in grants zero access to private repositories; our repo instructions prohibit sending unpublished code, content, tokens, secrets, or personal data.</li>
+          <li><b>Retention.</b> Per GitHits&rsquo; <a href="https://githits.com/legal/privacy-policy" rel="noopener">privacy policy</a> (reviewed 8 October 2026), queries and outputs retain for 90 days, logs for 30 days, and training on inputs is off unless opted in.</li>
         </ul>
       </div>
     </section>
@@ -110,28 +110,28 @@ npx githits@latest auth status</code></pre>
     <section class="stack-section" id="evidence" aria-labelledby="evidence-title">
       <div class="section-heading">
         <p class="eyebrow">EVIDENCE</p>
-        <h2 id="evidence-title">Where each piece stands.</h2>
+        <h2 id="evidence-title">Current status.</h2>
       </div>
       <div class="prose">
         <div>
           <ul class="evidence">
-            <li><span class="state"><i aria-hidden="true"></i>Implemented</span><p>GitHits MCP configured for coding agents in the SyberWork, RISE, FLYSPACE and Attest repositories and this site’s repository, with instructions on what may be sent.</p></li>
-            <li><span class="state"><i aria-hidden="true"></i>Implemented</span><p>Build-time dependency snapshot from GitHits’ package API and the product-page panel that reads it.</p></li>
-            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Not yet</span><p>No named test covers either piece, and nothing has been measured. We make no claim that agents are faster or make fewer mistakes with GitHits.</p></li>
+            <li><span class="state"><i aria-hidden="true"></i>Implemented</span><p>GitHits MCP configured across SyberWork, RISE, FLYSPACE, Attest, and this site&rsquo;s repository with explicit query rules.</p></li>
+            <li><span class="state"><i aria-hidden="true"></i>Implemented</span><p>Build-time dependency snapshot pipeline and product-page panel component.</p></li>
+            <li class="is-not-yet"><span class="state"><i aria-hidden="true"></i>Not yet</span><p>No automated tests or productivity benchmarks exist yet. We make no claim of speed gains or error reduction.</p></li>
           </ul>
-          <p class="evidence-ref">Reflects this site and those repositories as of 8 October 2026. Each state is backed by code, a named test, a measurement under stated conditions, or a deployment.</p>
+          <p class="evidence-ref">Reflects repositories as of 8 October 2026.</p>
         </div>
       </div>
     </section>
 
     <section class="stack-section" id="about-githits" aria-labelledby="about-githits-title">
       <div class="section-heading">
-        <p class="eyebrow">ABOUT GITHITS</p>
-        <h2 id="about-githits-title">About the tool we use.</h2>
+        <p class="eyebrow">DISCLOSURE</p>
+        <h2 id="about-githits-title">Relationship with GitHits.</h2>
       </div>
       <div class="prose">
         <div>
-          <p>Our <a href="/#partners">GitHits design partnership</a> is described on the homepage. GitHits has not reviewed or endorsed this page.</p>
+          <p>GitHits is a SyberLabs <a href="/#partners">design partner</a> and has not reviewed or endorsed this page.</p>
         </div>
       </div>
     </section>

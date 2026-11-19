@@ -4,22 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#02070a">
-  <meta name="description" content="How SyberWork handles one code change: an AI agent proposes it as a Git commit, SyberWork runs every check on that exact commit, rules and a person approve it, and each step is logged in a signed record.">
+  <meta name="description" content="Six-stage pipeline governing AI code changes in SyberWork: scoped context, isolated diffs, independent checks, policy review, and human sign-off.">
   <link rel="canonical" href="https://syberlabs.io/factory/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="The Factory | SyberLabs">
-  <meta property="og:description" content="How SyberWork handles one code change: an AI agent proposes it as a Git commit, SyberWork runs every check on that exact commit, rules and a person approve it, and each step is logged in a signed record.">
+  <meta property="og:title" content="The Factory | Inside SyberWork's Verification Pipeline | SyberLabs">
+  <meta property="og:description" content="Six-stage pipeline governing AI code changes in SyberWork: scoped context, isolated diffs, independent checks, policy review, and human sign-off.">
   <meta property="og:url" content="https://syberlabs.io/factory/">
   <meta property="og:image" content="https://syberlabs.io/og/factory.png?v=20261113">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="The Factory | SyberLabs">
-  <meta name="twitter:description" content="How SyberWork handles one code change: an AI agent proposes it as a Git commit, SyberWork runs every check on that exact commit, rules and a person approve it, and each step is logged in a signed record.">
+  <meta name="twitter:title" content="The Factory | Inside SyberWork's Verification Pipeline | SyberLabs">
+  <meta name="twitter:description" content="Six-stage pipeline governing AI code changes in SyberWork: scoped context, isolated diffs, independent checks, policy review, and human sign-off.">
   <meta name="twitter:image" content="https://syberlabs.io/og/factory.png?v=20261113">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preload" href="/fonts/v1/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/syberlabs.css">
   <link rel="stylesheet" href="/factory/factory.css?v=20261030">
-  <title>The Factory | SyberLabs</title>
+  <title>The Factory | Inside SyberWork's Verification Pipeline | SyberLabs</title>
 </head>
 <body class="syber-factory">
   <a class="sy-skip" href="#main">Skip to content</a>
@@ -39,52 +39,52 @@
   <main class="factory" id="main">
     <section class="factory-hero sy-wrap" aria-labelledby="factory-title">
       <img class="factory-hero__emblem" src="/media/lab/syberlabs-emblem.webp" width="900" height="675" alt="">
-      <p class="sy-eyebrow">SyberLabs / The factory</p>
-      <h1 id="factory-title">How SyberWork handles a code change.</h1>
-      <p class="factory-lede">AI agents write and repair the code. SyberWork runs every check itself, logs each step in a signed record, and changes your branch only after a person approves.</p>
-      <p class="factory-links"><a class="sy-btn sy-btn--solid" href="mailto:syberlabs.support@gmail.com?subject=AI%20consultation">Book a consultation</a><a href="https://github.com/SyberLabs/SyberWork">Source code <span aria-hidden="true">↗</span></a><a href="https://github.com/SyberLabs/SyberWork/pull/134">Example pull request <span aria-hidden="true">↗</span></a></p>
+      <p class="sy-eyebrow">SyberLabs / The Factory</p>
+      <h1 id="factory-title">How SyberWork verifies a code change.</h1>
+      <p class="factory-lede">AI agents write and repair the code. SyberWork independently executes every check, signs every event into an audit chain, and updates a branch only after human approval.</p>
+      <p class="factory-links"><a class="sy-btn sy-btn--solid" href="mailto:contact@syberlabs.io?subject=AI%20consultation">Book a consultation</a><a href="https://github.com/SyberLabs/SyberWork">Source code <span aria-hidden="true">↗</span></a><a href="https://github.com/SyberLabs/SyberWork/pull/134">Example pull request <span aria-hidden="true">↗</span></a></p>
     </section>
 
     <section class="factory-steps-detail sy-wrap" aria-labelledby="steps-title">
-      <h2 id="steps-title">The six steps</h2>
-      <p class="factory-note">SyberWork calls one change to one repository a Build Thread. Each step below is logged, and each lists what it never does.</p>
+      <h2 id="steps-title">Six stages of a Build Thread.</h2>
+      <p class="factory-note">Each Build Thread governs one repository change. Every stage logs its output and enforces strict boundaries.</p>
       <ol class="factory-line">
-        <li><span class="factory-line__n">01</span><div><h3>Start</h3><p>Records the starting commit, the paths the change may touch and the version of the contract, the file that sets the checks, rules and budget.</p><p class="factory-never">Never moves a branch or changes your working files.</p></div></li>
-        <li><span class="factory-line__n">02</span><div><h3>Context</h3><p>Picks the code excerpts the agent will read by matching file paths and symbol names, and logs why each was picked. It uses no embeddings.</p><p class="factory-never">Never stores the excerpt text. It is read from Git again when the agent runs.</p></div></li>
-        <li><span class="factory-line__n">03</span><div><h3>Propose</h3><p>Models write proposed changes as Git commits on separate refs. By default SyberWork sends its own check results back to the model until a change passes or the budget runs out. The alternative is an evolutionary search. On SyberWork’s own benchmark fixtures the repair loop solved more tasks per dollar, so it is the default.</p><p class="factory-never">Never edits your working files. A model’s report that its tests pass is logged as unverified and changes nothing.</p></div></li>
-        <li><span class="factory-line__n">04</span><div><h3>Check</h3><p>SyberWork runs the contract’s checks on the exact files in the proposed commit, in a new worktree with a scrubbed environment. It logs each check’s state, exit code and a hash of its output. A separate reviewer then examines the change. The reviewer is never the agent that wrote it, and a high-severity finding blocks approval.</p><p class="factory-never">Never treats a model provider’s claim as a check result.</p></div></li>
-        <li><span class="factory-line__n">05</span><div><h3>Approve</h3><p>Twenty-one rules are evaluated in order, and the first one that applies decides. Agents and people are held to the same rules. A person accepts the change, or a second person with the required role approves it first.</p><p class="factory-never">The only write moves the thread’s own branch, and only if that branch still points at the expected commit. No push, no merge, no change to main.</p></div></li>
-        <li><span class="factory-line__n">06</span><div><h3>Publish</h3><p>Pushing the branch, opening a pull request and publishing a package are separate actions. Each goes through the rules, is logged, and can be retried or reconciled safely.</p><p class="factory-never">Accepting a change never publishes it.</p></div></li>
+        <li><span class="factory-line__n">01</span><div><h3>Start</h3><p>Locks the base commit, allowed file paths, and contract version defining checks, policy, and spend limits.</p><p class="factory-never">Never moves a branch or modifies working files.</p></div></li>
+        <li><span class="factory-line__n">02</span><div><h3>Context</h3><p>Selects exact code excerpts by file path and symbol match (no embeddings) and logs why each snippet was chosen.</p><p class="factory-never">Never stores raw excerpts; re-reads directly from Git at execution time.</p></div></li>
+        <li><span class="factory-line__n">03</span><div><h3>Propose</h3><p>Agents commit edits to isolated refs. By default, SyberWork feeds independent check failures back into a repair loop until checks pass or budget expires (outperforming evolutionary search per dollar on internal fixtures).</p><p class="factory-never">Never edits working files. Agent self-reports are logged as unverified.</p></div></li>
+        <li><span class="factory-line__n">04</span><div><h3>Check</h3><p>Executes contract checks on the exact proposed commit inside a fresh worktree with a scrubbed environment, recording exit codes and output hashes. A separate reviewer then inspects the diff; high-severity findings block approval.</p><p class="factory-never">Never substitutes a model&rsquo;s claim for an executed check.</p></div></li>
+        <li><span class="factory-line__n">05</span><div><h3>Approve</h3><p>Evaluates 21 ordered policy rules identically for humans and agents. Requires named human acceptance or role-based secondary sign-off.</p><p class="factory-never">Updates only the thread branch via compare-and-swap. Never pushes, merges, or modifies main.</p></div></li>
+        <li><span class="factory-line__n">06</span><div><h3>Publish</h3><p>Pushing branches, opening pull requests, and publishing packages run as separate, idempotent, policy-checked actions.</p><p class="factory-never">Accepting a change never publishes it automatically.</p></div></li>
       </ol>
     </section>
 
     <section class="factory-record sy-wrap" aria-labelledby="record-title">
-      <h2 id="record-title">What the record contains</h2>
+      <h2 id="record-title">What every Build Thread records.</h2>
       <dl class="factory-grid">
-        <div><dt>Check results SyberWork produced itself</dt><dd>Every check result comes from a process SyberWork started on files it wrote. None comes from an agent’s report.</dd></div>
-        <div><dt>A signed hash chain</dt><dd>Every event is added to a hash chain. A separate process holds the signing key, signs the latest hash in the chain and appends it to an append-only log.</dd></div>
-        <div><dt>Spend against a budget</dt><dd>The contract can set a price for each model. SyberWork measures the spend, stops a search at its dollar limit, and rejects a change that cost more than the thread’s budget.</dd></div>
-        <div><dt>Metrics for each work item</dt><dd>Each work item reports its cost, turns, agent time, fix rounds, lookups, review rejections and human interventions. Each number traces to the events it was computed from.</dd></div>
+        <div><dt>Independent check outputs</dt><dd>Every pass or fail comes from a process SyberWork executed on exact commit files.</dd></div>
+        <div><dt>Signed hash chain</dt><dd>Every event hashes into a chain signed by a separate key-holding witness process and written to an append-only log.</dd></div>
+        <div><dt>Enforced spend caps</dt><dd>Contracts price models, meter spend in real time, halt searches at budget limits, and reject over-budget changes.</dd></div>
+        <div><dt>Traceable item metrics</dt><dd>Cost, turns, agent duration, repair cycles, lookups, rejections, and human interventions all trace back to source events.</dd></div>
       </dl>
     </section>
 
     <section class="factory-self-built sy-wrap" aria-labelledby="self-title">
       <div>
-        <h2 id="self-title">SyberWork is built with SyberWork</h2>
-        <p>SyberWork’s own pull requests go through a Build Thread before they merge. The repository checks out the change, proposes it, runs its tests and conformance checks on those exact files, and approves it under the same rules. Each pull request shows who approved it, the rules review and the check results.</p>
-        <p>The GitHits client and its Claude Code integration were built this way.</p>
-        <p class="factory-links"><a href="https://github.com/SyberLabs/SyberWork/pull/129">GitHits client <span aria-hidden="true">↗</span></a><a href="https://github.com/SyberLabs/SyberWork/pull/134">Claude Code integration <span aria-hidden="true">↗</span></a><a href="/#partners">The GitHits partnership <span aria-hidden="true">→</span></a></p>
+        <h2 id="self-title">Built with SyberWork.</h2>
+        <p>SyberWork merges its own pull requests through Build Threads, exposing approvers, rule verdicts, and verified check outputs on every PR.</p>
+        <p>Both the GitHits Python client and Claude Code integration shipped through the same pipeline.</p>
+        <p class="factory-links"><a href="https://github.com/SyberLabs/SyberWork/pull/129">GitHits client <span aria-hidden="true">↗</span></a><a href="https://github.com/SyberLabs/SyberWork/pull/134">Claude Code integration <span aria-hidden="true">↗</span></a><a href="/#partners">GitHits partnership <span aria-hidden="true">→</span></a></p>
       </div>
       <figure><img src="/media/lab/agent-network.webp" width="1100" height="921" alt="Glowing blue nodes joined by arcing links, like a network of agents." loading="lazy" decoding="async"><figcaption>Illustration made with Midjourney.</figcaption></figure>
     </section>
 
     <section class="factory-limits sy-wrap" aria-labelledby="limits-title">
-      <h2 id="limits-title">Limits</h2>
+      <h2 id="limits-title">Current boundaries.</h2>
       <ul>
-        <li>Checks run in a temporary worktree with a scrubbed environment. That is not a sandbox, so untrusted agent code runs as a separate command.</li>
-        <li>An approved change is <em>tested</em>: the named checks passed on those files. That does not show the change is correct, wanted, measured or deployed.</li>
-        <li>The hash chain is evidence of integrity only as far as you trust the database that stores it. It is not a public transparency service.</li>
-        <li>Browser checks of documentation run in <a href="/projects/attest/">Attest</a>, a local command-line tool. There is no hosted service yet.</li>
+        <li>Isolated worktrees use scrubbed environments, not OS sandboxes; untrusted agent code must execute separately.</li>
+        <li>Approval confirms named checks passed on exact files (<em>tested</em>). It does not guarantee product fit, correctness beyond test coverage, or production deployment.</li>
+        <li>Hash-chain integrity depends on trust in the backing database; it is not yet a public transparency log.</li>
+        <li>Browser verification of documentation runs locally in <a href="/projects/attest/">Attest</a>; no hosted service exists yet.</li>
       </ul>
     </section>
   </main>

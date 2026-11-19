@@ -66,3 +66,36 @@
 
 .syber-approach main :is(p,li) { overflow-wrap:break-word; }
 .syber-approach main :is(article,.prose > *) { min-width:0; }
+
+/* Engineering doctrine layout (/approach/) */
+.doctrine-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.doctrine-section { padding: var(--space-9) 0; border-top: 1px solid var(--line); }
+.doctrine-prose { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.doctrine-prose__body { grid-column: 2 / 4; padding-left: var(--space-6); }
+.doctrine-prose__body p { margin: 0; max-width: 66ch; font-size: 18px; line-height: 28px; color: var(--text-2); }
+.doctrine-rules { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.doctrine-rules li { display: grid; grid-template-columns: 120px minmax(0, 260px) minmax(0, 1fr); gap: var(--space-4) var(--space-6); align-items: baseline; padding: var(--space-6) 0; border-bottom: 1px solid var(--line); }
+.doctrine-rules__n { font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: .08em; color: var(--text-3); }
+.doctrine-rules h3 { margin: 0; font-size: 18px; line-height: 26px; font-weight: 600; color: var(--text); }
+.doctrine-rules p { margin: 0; font-size: 16px; line-height: 26px; color: var(--text-2); }
+.doctrine-table-wrap { overflow-x: auto; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.doctrine-table { width: 100%; border-collapse: collapse; min-width: 680px; text-align: left; }
+.doctrine-table th, .doctrine-table td { padding: var(--space-4) var(--space-4) var(--space-4) 0; vertical-align: top; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 24px; color: var(--text-2); }
+.doctrine-table tbody tr:last-child :is(th, td) { border-bottom: 0; }
+.doctrine-table thead th { font-family: var(--font-mono); font-size: 11px; line-height: 16px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+.doctrine-table tbody th { font-weight: 600; color: var(--text); white-space: nowrap; }
+.doctrine-table tbody th a { color: var(--text); }
+.doctrine-cta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: var(--space-6); }
+.doctrine-cta__body { grid-column: 2 / 4; padding-left: var(--space-6); }
+.doctrine-cta__body h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 44px; letter-spacing: -0.01em; }
+.doctrine-cta__body p { margin: var(--space-4) 0 var(--space-6); max-width: 58ch; font-size: 18px; line-height: 28px; color: var(--text-2); }
+@media (max-width: 860px) {
+  .doctrine-prose, .doctrine-cta { grid-template-columns: 1fr; }
+  .doctrine-prose__body, .doctrine-cta__body { grid-column: 1; padding-left: 0; }
+  .doctrine-rules li { grid-template-columns: 1fr; gap: var(--space-2); padding: var(--space-5) 0; }
+}
+@media (max-width: 640px) {
+  .doctrine-section { padding: var(--space-8) 0; }
+  .doctrine-cta__body h2 { font-size: 32px; line-height: 36px; }
+  .doctrine-actions .sy-btn { width: 100%; }
+}

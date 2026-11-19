@@ -4,19 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#02070a">
-  <meta name="description" content="RISE runs its AI reading decisions on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s own machine. The RISE server calls no model, and there is no production Kev deployment, by design. Status and evidence limits.">
+  <meta name="description" content="RISE runs zero server-side models. Connect hosted Jev via your own OpenRouter account or run pinned Kev-4B locally. Architecture and status limits.">
   <link rel="canonical" href="https://syberlabs.io/kev/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="RISE, Jev and Kev: Reader-Owned AI | SyberLabs">
-  <meta property="og:description" content="The RISE server calls no model. Jev runs on the reader’s OpenRouter account; Kev-4B runs locally on the reader’s GPU. What is verified and what is not.">
+  <meta property="og:title" content="Reader-Owned AI in RISE: Jev and Kev Status | SyberLabs">
+  <meta property="og:description" content="RISE runs zero server-side models. Connect hosted Jev via your own OpenRouter account or run pinned Kev-4B locally. Architecture and status limits.">
   <meta property="og:url" content="https://syberlabs.io/kev/">
   <meta property="og:image" content="https://syberlabs.io/og/kev.png?v=20261113">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="RISE, Jev and Kev: Reader-Owned AI | SyberLabs">
-  <meta name="twitter:description" content="The RISE server calls no model. Jev runs on the reader’s OpenRouter account; Kev-4B runs locally on the reader’s GPU. What is verified and what is not.">
+  <meta name="twitter:title" content="Reader-Owned AI in RISE: Jev and Kev Status | SyberLabs">
+  <meta name="twitter:description" content="RISE runs zero server-side models. Connect hosted Jev via your own OpenRouter account or run pinned Kev-4B locally. Architecture and status limits.">
   <meta name="twitter:image" content="https://syberlabs.io/og/kev.png?v=20261113">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
-  <title>RISE, Jev and Kev: Reader-Owned AI | SyberLabs</title>
+  <title>Reader-Owned AI in RISE: Jev and Kev Status | SyberLabs</title>
   <link rel="preload" href="/fonts/v1/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/syberlabs.css">
   <link rel="stylesheet" href="/approach/approach.css?v=20261030">
@@ -38,26 +38,26 @@
 <script type="module" src="/syberlabs.js"></script>
   <main class="approach-main" id="main">
     <section class="approach-hero" aria-labelledby="kev-title">
-      <p class="eyebrow">RISE / AI integration / updated October 2026</p>
-      <h1 id="kev-title">Use your own AI <em>for reading.</em></h1>
-      <p class="mission">RISE can use an AI connection you control: Jev through your OpenRouter account, or the specified Kev-4B model on your computer. RISE’s server does not run a model or store its access key. Reading and manual settings work without AI.</p>
+      <p class="eyebrow">RISE · AI ARCHITECTURE · UPDATED OCTOBER 2026</p>
+      <h1 id="kev-title">Bring your own <em>AI connection.</em></h1>
+      <p class="mission">Optional AI features in RISE run strictly on connections you control: hosted Jev through your OpenRouter account, or pinned Kev-4B running locally on your GPU. RISE servers run no models and store no keys. Manual reading requires no AI.</p>
       <a class="sy-btn sy-btn--solid hero-link" href="https://github.com/SyberLabs/RISE/blob/main/docs/USER-OWNED-AI.md">Read the design note ↗</a>
     </section>
     <section class="approach-method" aria-labelledby="status-title">
-      <div class="section-heading"><p class="eyebrow">CURRENT STATUS</p><h2 id="status-title">What is established, shipped and not adopted</h2></div>
+      <div class="section-heading"><p class="eyebrow">CURRENT STATUS</p><h2 id="status-title">Established, shipped, and not adopted</h2></div>
       <ol class="method-list">
-        <li><span>01 / ESTABLISHED</span><div><h3>Bounded decisions, one contract</h3><p>RISE builds finite choice questions from its public catalog, admits an answer only if every choice was offered, and maps it to reading settings in deterministic code. A model can pick an offered value and nothing else. The same contract serves hosted Jev, local Kev and the evaluation harness.</p></div></li>
-        <li><span>02 / SHIPPED</span><div><h3>Shared inference retired</h3><p>The Cloudflare Worker serves the app and a static decision catalog only. The six former inference routes answer 410 with instructions to connect. Connecting OpenRouter uses OAuth PKCE; the key lives in the tab’s memory and reaches only openrouter.ai. Local RISE starts the reader and a pinned Kev-4B on loopback with a per-run key the page never sees.</p></div></li>
-        <li><span>03 / NOT ADOPTED</span><div><h3>Kev on RISE requests</h3><p>RISE has no production Kev deployment, by design. In RISE’s internal checks, local Kev did not meet the bar for reading requests; those results are not published (<a href="https://github.com/SyberLabs/RISE/blob/main/docs/product/tasks/SCR-004.json">RISE task SCR-004</a>). Jev’s earlier 48 of 49 preference result belongs to the historical evaluation below and is not a Kev result. The local Kev path is tested on Windows with an RTX 5080; the Apple Silicon path is untested.</p></div></li>
+        <li><span>01 / ESTABLISHED</span><div><h3>Bounded decision contract</h3><p>RISE builds finite choice menus from its public catalog, accepts answers only if every field matches an offered value, and applies reading settings deterministically. The same contract governs hosted Jev, local Kev, and evaluations.</p></div></li>
+        <li><span>02 / SHIPPED</span><div><h3>Shared inference retired</h3><p>The Cloudflare Worker serves only the app and static catalog; six legacy inference routes return HTTP 410 with setup guidance. OpenRouter connects via OAuth PKCE with keys kept strictly in tab memory and sent only to openrouter.ai. Local mode binds RISE and pinned Kev-4B to loopback with a per-run key invisible to the page.</p></div></li>
+        <li><span>03 / NOT ADOPTED</span><div><h3>Production Kev</h3><p>RISE intentionally runs no production Kev deployment. In internal evaluations, local Kev did not meet RISE&rsquo;s quality threshold for reading requests (<a href="https://github.com/SyberLabs/RISE/blob/main/docs/product/tasks/SCR-004.json">RISE task SCR-004</a>, unpublished). Jev&rsquo;s historical 48 of 49 preference score applies strictly to Jev, never Kev. Local Kev is tested on Windows (RTX 5080); Apple Silicon remains untested.</p></div></li>
       </ol>
     </section>
     <section class="approach-projects" aria-labelledby="links-title">
       <div class="section-heading"><p class="eyebrow">SOURCES</p><h2 id="links-title">Source documents</h2></div>
       <div class="project-grid">
-        <a class="project-card" href="https://github.com/SyberLabs/RISE/blob/main/docs/USER-OWNED-AI.md"><span>DESIGN</span><strong>User-owned AI in RISE</strong><p>The decision contract, the OpenRouter connection, and the Worker that calls no model.</p><b aria-hidden="true">↗</b></a>
-        <a class="project-card" href="https://github.com/SyberLabs/RISE/blob/main/docs/LOCAL-RISE.md"><span>LOCAL</span><strong>Run RISE locally with Kev</strong><p>Pinned Kev-4B on your own GPU, every service on loopback, no hosted bill.</p><b aria-hidden="true">↗</b></a>
-        <a class="project-card" href="https://github.com/jaredpalmer/kev"><span>UPSTREAM MODEL</span><strong>Kev source</strong><p>Model family and serving API by Jared Palmer.</p><b aria-hidden="true">↗</b></a>
-        <a class="project-card" href="/jev/"><span>EARLIER EVIDENCE</span><strong>Jev case study</strong><p>Historical integration and evaluation.</p><b aria-hidden="true">→</b></a>
+        <a class="project-card" href="https://github.com/SyberLabs/RISE/blob/main/docs/USER-OWNED-AI.md"><span>DESIGN</span><strong>User-owned AI in RISE</strong><p>Decision contract, OpenRouter OAuth, and zero-model Worker.</p><b aria-hidden="true">↗</b></a>
+        <a class="project-card" href="https://github.com/SyberLabs/RISE/blob/main/docs/LOCAL-RISE.md"><span>LOCAL</span><strong>Run RISE locally with Kev</strong><p>Loopback setup with pinned Kev-4B on your own GPU.</p><b aria-hidden="true">↗</b></a>
+        <a class="project-card" href="https://github.com/jaredpalmer/kev"><span>UPSTREAM</span><strong>Kev source</strong><p>Model family and serving API.</p><b aria-hidden="true">↗</b></a>
+        <a class="project-card" href="/jev/"><span>HISTORICAL RECORD</span><strong>Jev case study</strong><p>Archived hosted integration and evaluation.</p><b aria-hidden="true">→</b></a>
       </div>
     </section>
   </main>

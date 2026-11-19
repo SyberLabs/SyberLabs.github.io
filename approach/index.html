@@ -4,22 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#02070a">
-  <meta name="description" content="How SyberLabs builds AI software: establish what a system knows, design what a person can do with it, and verify that they can review and change the result.">
+  <meta name="description" content="SyberLabs' five engineering rules for verifiable AI systems: bounded action spaces, independent checks, explicit provenance, and human approval.">
   <link rel="canonical" href="https://syberlabs.io/approach/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Our Approach | SyberLabs">
-  <meta property="og:description" content="How SyberLabs builds AI software: establish what a system knows, design what a person can do with it, and verify that they can review and change the result.">
+  <meta property="og:title" content="Engineering Doctrine | How SyberLabs Builds AI Software">
+  <meta property="og:description" content="SyberLabs' five engineering rules for verifiable AI systems: bounded action spaces, independent checks, explicit provenance, and human approval.">
   <meta property="og:url" content="https://syberlabs.io/approach/">
   <meta property="og:image" content="https://syberlabs.io/og/approach.png?v=20261113">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Our Approach | SyberLabs">
-  <meta name="twitter:description" content="How SyberLabs builds AI software: establish what a system knows, design what a person can do with it, and verify that they can review and change the result.">
+  <meta name="twitter:title" content="Engineering Doctrine | How SyberLabs Builds AI Software">
+  <meta name="twitter:description" content="SyberLabs' five engineering rules for verifiable AI systems: bounded action spaces, independent checks, explicit provenance, and human approval.">
   <meta name="twitter:image" content="https://syberlabs.io/og/approach.png?v=20261113">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preload" href="/fonts/v1/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/syberlabs.css">
   <link rel="stylesheet" href="/approach/approach.css?v=20261030">
-  <title>Our Approach | SyberLabs</title>
+  <title>Engineering Doctrine | How SyberLabs Builds AI Software</title>
 </head>
 <body class="syber-approach">
   <a class="sy-skip" href="#main">Skip to content</a>
@@ -38,35 +38,109 @@
 <script type="module" src="/syberlabs.js"></script>
   <main class="approach-main" id="main">
     <section class="approach-hero" id="mission" aria-labelledby="mission-title">
-      <p class="eyebrow">OUR APPROACH</p>
-      <h1 id="mission-title">Our approach: <em>observe, design, verify.</em></h1>
-      <p class="mission">We build software that lets people steer what AI does and check the result.</p>
-      <a class="sy-btn sy-btn--solid hero-link" href="#projects">See the products <svg class="sy-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></a>
+      <p class="eyebrow">SYBERLABS / APPROACH</p>
+      <h1 id="mission-title">Isolate model output from execution authority.</h1>
+      <p class="mission">Language models are capable generators and unreliable judges. Every system SyberLabs ships separates probabilistic output from execution authority, verifies proposals through deterministic code, and leaves an auditable record.</p>
+      <div class="doctrine-actions">
+        <a class="sy-btn sy-btn--solid" href="mailto:contact@syberlabs.io?subject=AI%20consultation">Book a consultation</a>
+        <a class="sy-btn sy-btn--line" href="/factory/">See the Factory pipeline</a>
+      </div>
     </section>
 
-    <section class="approach-method" id="method" aria-labelledby="method-title">
+    <section class="doctrine-section" id="failure-mode" aria-labelledby="failure-title">
       <div class="section-heading">
-        <p class="eyebrow">HOW WE BUILD</p>
-        <h2 id="method-title">The three steps</h2>
+        <p class="eyebrow">01 / THE FAILURE MODE</p>
+        <h2 id="failure-title">Why prompt-only agent loops fail in production.</h2>
       </div>
-      <ol class="method-list">
-        <li><span>01</span><div><h3>Observe</h3><p>Establish what the system knows and can do right now.</p></div></li>
-        <li><span>02</span><div><h3>Design</h3><p>Decide what a person should be able to see, choose, or approve.</p></div></li>
-        <li><span>03</span><div><h3>Verify</h3><p>Test that a person can direct the system and check its result.</p></div></li>
+      <div class="doctrine-prose">
+        <div class="doctrine-prose__body">
+          <p>Standard agent stacks collapse generation, verification, and execution into one untrusted loop: a model writes code, summarizes its own test run, and promotes the result. When it hallucinates an API, misreads a failure, or skips a constraint, nothing outside the prompt catches it. Reliability cannot be prompted into a model; it must be engineered around it.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="doctrine-section" id="rules" aria-labelledby="rules-title">
+      <div class="section-heading">
+        <p class="eyebrow">02 / FIVE ENGINEERING RULES</p>
+        <h2 id="rules-title">What every SyberLabs system enforces.</h2>
+      </div>
+      <ol class="doctrine-rules">
+        <li><span class="doctrine-rules__n">01 / AUTHORITY</span><h3>Separate proposal from authority</h3><p>Models draft patches, propose edits, or pick from offered menus. Application code holds every credential, enforces live permissions and budgets, and decides whether any output is admitted.</p></li>
+        <li><span class="doctrine-rules__n">02 / BOUNDS</span><h3>Constrain actions before the model runs</h3><p>Unbounded tool access creates silent drift. We bind models to explicit contracts: allowlisted paths and dollar caps in SyberWork, finite catalog menus in RISE, schema-checked wires and approval-gated manifests in FLYSPACE, and lockfile-pinned dependency lookups via <a href="/stack/">GitHits</a>.</p></li>
+        <li><span class="doctrine-rules__n">03 / VERIFICATION</span><h3>Verify against running code, never self-reports</h3><p>An agent&rsquo;s claim that tests passed is logged as unverified and changes nothing. SyberWork runs contract checks on exact commit files in a clean worktree. Attest executes shell commands and Chrome checks against the live product. Sybershoke grades fault campaigns solely from plain-text logs.</p></li>
+        <li><span class="doctrine-rules__n">04 / PROVENANCE</span><h3>Bind provenance and halt on uncertainty</h3><p>Every accepted state ties back to exact inputs, policy versions, and output hashes. SyberWork writes signed hash-chained logs; FLYSPACE cites only sources that supplied data; interrupted or ambiguous writes remain marked uncertain instead of retrying blindly.</p></li>
+        <li><span class="doctrine-rules__n">05 / EVIDENCE</span><h3>State evidence boundaries without inflation</h3><p>Every product and research artifact declares its exact stage: implemented, tested, measured, deployed, or not yet. A passing test suite proves named checks ran on named bytes; wording never promotes a prototype into a production claim.</p></li>
       </ol>
-      <p class="method-tooling" style="max-width: var(--measure); margin: var(--space-6) 0 0; color: var(--text-2);">We apply the same steps to our tools: our coding agents read dependencies at the exact version a project uses. <a href="/stack/">How we build</a> covers that, and what it sends off our machines.</p>
     </section>
 
-    <section class="approach-projects" id="projects" aria-labelledby="projects-title">
+    <section class="doctrine-section" id="projects" aria-labelledby="projects-title">
       <div class="section-heading">
-        <p class="eyebrow">PRODUCTS</p>
-        <h2 id="projects-title">The four products</h2>
+        <p class="eyebrow">03 / ARCHITECTURE IN PRACTICE</p>
+        <h2 id="projects-title">Where each boundary lives.</h2>
       </div>
-      <div class="project-grid">
-        <a class="project-card" href="/projects/syberwork/"><span>SOFTWARE FACTORY</span><strong>SyberWork</strong><p>AI agents propose code changes. SyberWork runs every check, and a person approves each change.</p><b><svg class="sy-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></b></a>
-        <a class="project-card" href="/projects/attest/"><span>DOCUMENTATION TESTING</span><strong>Attest</strong><p>Runs every step in a document or spec against the running app and marks each one proven or broken.</p><b><svg class="sy-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></b></a>
-        <a class="project-card" href="/projects/rise/"><span>READING APP</span><strong>RISE</strong><p>Shows text at a pace you set, with sound and moving visuals.</p><b><svg class="sy-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></b></a>
-        <a class="project-card" href="/projects/flyspace/"><span>DATA CANVAS FOR AI ASSISTANTS</span><strong>FLYSPACE</strong><p>Connect data sources on a canvas. The public preview shows the workspace; AI answers require a local model.</p><b><svg class="sy-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></b></a>
+      <div class="doctrine-table-wrap" tabindex="0" role="region" aria-label="SyberLabs architecture boundaries">
+        <table class="doctrine-table">
+          <thead>
+            <tr>
+              <th scope="col">System</th>
+              <th scope="col">What proposes</th>
+              <th scope="col">Deterministic gate</th>
+              <th scope="col">Human authority</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row"><a href="/projects/syberwork/">SyberWork</a></th>
+              <td>Coding agents submit isolated Git commits</td>
+              <td>Clean-worktree tests, independent reviewer, 21 policy rules, budget cap</td>
+              <td>Named approval before branch update; explicit publish actions</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/projects/attest/">Attest</a></th>
+              <td>Extraction and repair agents</td>
+              <td>Exit codes, Chrome UI label rules, protected-promise policy</td>
+              <td>Approval before spec-mode code changes apply</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/projects/flyspace/">FLYSPACE</a></th>
+              <td>Wired personas over live data feeds</td>
+              <td>Schema-checked connections, server-side secret isolation, source lineage</td>
+              <td>Explicit approval on write and delete tool calls</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/projects/rise/">RISE</a></th>
+              <td>Reader-owned Jev or local Kev-4B</td>
+              <td>Finite catalog menu validation and deterministic playback mapping</td>
+              <td>Reader controls model connection, pacing, and playback</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/research/">GrokCell &amp; Sybershoke</a></th>
+              <td>Offline fixtures and RISE Worker source</td>
+              <td>Six-operation crash contract; seeded faults judged by log invariants</td>
+              <td>Counterexample review and explicit policy decisions</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/lacuna/">Lacuna Institute</a></th>
+              <td>Published historical literature and catalogues</td>
+              <td>Graded source provenance (P, R, W) and labeled speculation</td>
+              <td>Open corrections and transparent dispute records</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="doctrine-section" id="next" aria-labelledby="next-title">
+      <div class="doctrine-cta">
+        <p class="eyebrow">04 / WORK WITH US</p>
+        <div class="doctrine-cta__body">
+          <h2 id="next-title">Apply this architecture to your stack.</h2>
+          <p>We build custom agent systems, verification pipelines, and tool integrations under these same constraints. Review our <a href="/stack/">dependency-grounding stack</a> or schedule a technical consultation.</p>
+          <div class="doctrine-actions">
+            <a class="sy-btn sy-btn--solid" href="mailto:contact@syberlabs.io?subject=AI%20consultation">Book a consultation</a>
+            <a class="sy-btn sy-btn--line" href="/research/">Browse research</a>
+          </div>
+        </div>
       </div>
     </section>
   </main>

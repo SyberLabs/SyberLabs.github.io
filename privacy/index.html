@@ -4,19 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#02070a">
-  <meta name="description" content="What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.">
+  <meta name="description" content="How syberlabs.io handles visitor data: static Cloudflare Pages delivery, cookieless Cloudflare Web Analytics, zero visitor cookies, and staff sign-in.">
   <link rel="canonical" href="https://syberlabs.io/privacy/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Privacy | SyberLabs">
-  <meta property="og:description" content="What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.">
+  <meta property="og:title" content="Privacy Policy | SyberLabs">
+  <meta property="og:description" content="How syberlabs.io handles visitor data: static Cloudflare Pages delivery, cookieless Cloudflare Web Analytics, zero visitor cookies, and staff sign-in.">
   <meta property="og:url" content="https://syberlabs.io/privacy/">
   <meta property="og:image" content="https://syberlabs.io/og/privacy.png?v=20261030">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Privacy | SyberLabs">
-  <meta name="twitter:description" content="What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.">
+  <meta name="twitter:title" content="Privacy Policy | SyberLabs">
+  <meta name="twitter:description" content="How syberlabs.io handles visitor data: static Cloudflare Pages delivery, cookieless Cloudflare Web Analytics, zero visitor cookies, and staff sign-in.">
   <meta name="twitter:image" content="https://syberlabs.io/og/privacy.png?v=20261030">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
-  <title>Privacy | SyberLabs</title>
+  <title>Privacy Policy | SyberLabs</title>
   <link rel="preload" href="/fonts/v1/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/syberlabs.css">
   <link rel="stylesheet" href="/privacy/privacy.css?v=1">
@@ -40,19 +40,20 @@
   <main id="main" class="privacy sy-container">
     <div class="site-head">
       <p class="sy-eyebrow">Privacy</p>
-      <h1 class="sy-display">What this site does with your data.</h1>
+      <h1 class="sy-display">How this site handles your data.</h1>
     </div>
-    <p class="sy-body-lg privacy__lede">syberlabs.io is a static website. Visitors get no accounts, forms, cookies or analytics. The one exception is a staff sign-in at /admin/ for people SyberLabs adds.</p>
+    <p class="sy-body-lg privacy__lede">syberlabs.io is a static website. Visitors get no accounts, web forms, tracking cookies, or third-party ad scripts. We use cookieless Cloudflare Web Analytics for aggregate page-view counts. The only login is an invite-only staff portal at /admin/.</p>
     <dl class="privacy__list">
-      <div><dt>Hosting</dt><dd>The site is served by Cloudflare Pages. Like any service that delivers web pages, Cloudflare processes technical request data, such as your IP address and browser details, to deliver pages and protect the service.</dd></div>
-      <div><dt>Fonts</dt><dd>Pages load their typefaces from syberlabs.io. No font file is requested from another company.</dd></div>
-      <div><dt>Video</dt><dd>The RISE demo page embeds a video from YouTube using its privacy-enhanced domain (youtube-nocookie.com). Nothing loads from YouTube until you press play on that video. The site’s own demo video is served from syberlabs.io.</dd></div>
-      <div><dt>Email</dt><dd>Contact links open your email app. SyberLabs receives only what you choose to send and uses it to reply to you.</dd></div>
-      <div id="account-saves"><dt>Private app backups</dt><dd>Signed-in people can explicitly save a private backup from Omni, RISE or Sketch to their account. We store the selected document or canvas content, its name, app and save time in Cloudflare D1, linked to the account. There is no automatic upload: existing local work stays in the browser until you choose Save to account. The apps can retrieve only their own app’s backups for that signed-in account. Backups stay until you ask us to remove them; use the contact below to request removal. Each account can store up to 50 backups, with a 1 MB limit each and 10 MB total. These backups do not carry model API credentials or grant application permissions.</dd></div>
-      <div id="staff"><dt>Staff sign-in</dt><dd>People SyberLabs adds can sign in with GitHub, and can add Google. We receive the account’s numeric id and username from GitHub and keep them, with the roles we grant and sign-in times, in a Cloudflare database. For Google, we receive the account’s id and email address. Sessions and admin actions are recorded with a shortened IP address and the browser name. We never keep Google or GitHub access tokens. Starting a sign-in sets a 10-minute cookie on syberlabs.io; signing in sets a session cookie that expires after 13 hours, and the session itself ends after 12. Nothing is set for visitors who don’t start a sign-in, nothing is recorded about people who are refused, and the session cookie stays on syberlabs.io. Omni, RISE and Sketch can check that session through a restricted account service. Records are kept for about 400 days. Staff accounts are turned off, not deleted, when access ends; ask us and we will remove your details. Processors: GitHub, Google, Cloudflare.</dd></div>
-      <div><dt>Other sites</dt><dd>Links to GitHub, TypeSafe AI and other sites follow those sites’ own policies. The RISE reading app has its own <a href="https://rise.syberlabs.io/privacy.html">RISE privacy policy</a>.</dd></div>
+      <div><dt>Infrastructure</dt><dd>Served via Cloudflare Pages. As with any web delivery network, Cloudflare processes standard request metadata (IP address, user agent) to deliver pages and mitigate abuse.</dd></div>
+      <div><dt>Analytics</dt><dd>Cloudflare Web Analytics collects aggregate page-view and performance metrics via a lightweight beacon without cookies, local storage, or cross-site visitor tracking.</dd></div>
+      <div><dt>Fonts</dt><dd>All typefaces serve directly from syberlabs.io. Zero external font requests occur.</dd></div>
+      <div><dt>Video</dt><dd>RISE demo videos serve from syberlabs.io. The YouTube concept film embeds via youtube-nocookie.com and loads nothing until you press play.</dd></div>
+      <div><dt>Email</dt><dd>Contact links open your local mail client. SyberLabs receives only what you explicitly send and uses it strictly to reply.</dd></div>
+      <div id="account-saves"><dt>Optional app backups</dt><dd>Signed-in users may explicitly save private backups from FLYSPACE (formerly Omni), RISE, or Sketch to Cloudflare D1 (document or canvas content, name, app, and save timestamp). No automatic sync occurs; local work remains in browser storage unless you select Save to account. Apps read only their own backups. Limits: up to 50 backups per account, 1 MB each, 10 MB total. Backups never store model API credentials or grant application permissions. Email contact@syberlabs.io anytime for deletion.</dd></div>
+      <div id="staff"><dt>Invite-only staff sign-in</dt><dd>Authorized staff sign in via GitHub (numeric ID, username) and optionally Google (ID, email), stored with assigned roles and login timestamps in Cloudflare D1 alongside truncated IPs and browser names for audit logs. OAuth access tokens are never stored. Initiating sign-in sets a 10-minute cookie; authenticated sessions last 12 hours (13-hour cookie) strictly on syberlabs.io and can be checked by FLYSPACE, RISE, and Sketch via a restricted account endpoint. Visitors who never initiate sign-in receive zero cookies, and rejected logins leave no records. Audit logs retain for about 400 days; revoked accounts deactivate and delete upon request. Subprocessors: Cloudflare, GitHub, Google.</dd></div>
+      <div><dt>External links &amp; products</dt><dd>Third-party sites (including GitHub and TypeSafe AI) follow their own privacy policies. The RISE reading app publishes a separate <a href="https://rise.syberlabs.io/privacy.html">RISE privacy policy</a>.</dd></div>
     </dl>
-    <p class="sy-small privacy__updated">Last updated 18 November 2026. Questions: <a href="mailto:syberlabs.support@gmail.com">syberlabs.support@gmail.com</a></p>
+    <p class="sy-small privacy__updated">Last updated 18 November 2026. Questions or deletion requests: <a href="mailto:contact@syberlabs.io">contact@syberlabs.io</a></p>
   </main>
   <footer class="sy-footer">
 <div class="sy-footer__in">

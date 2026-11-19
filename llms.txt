@@ -65,13 +65,13 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 ## Company
 
-- [Services](https://syberlabs.io/services/): AI consulting, custom builds and design partnerships from SyberLabs. We build agent systems in which software runs the checks, every step is logged in a signed record and a person approves before anything ships.
+- [Services](https://syberlabs.io/services/): AI consulting, custom verifiable agent systems, and developer-tool design partnerships built with automated checks, signed logs, and human sign-off.
 - [PSYCHO SYBER](https://syberlabs.io/psycho-syber/): PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.
 
 ## Account
 
 - [Subscriber account](https://rise.syberlabs.io/plus/): Manage existing RISE subscriptions
-- [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.
+- [Privacy](https://syberlabs.io/privacy/): How syberlabs.io handles visitor data: static Cloudflare Pages delivery, cookieless Cloudflare Web Analytics, zero visitor cookies, and staff sign-in.
 
 ## Design system
 
@@ -80,9 +80,9 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 ## How we build
 
-- [The Factory](https://syberlabs.io/factory/): How SyberWork handles one code change: an AI agent proposes it as a Git commit, SyberWork runs every check on that exact commit, rules and a person approve it, and each step is logged in a signed record.
-- [Approach](https://syberlabs.io/approach/): How SyberLabs builds AI software: establish what a system knows, design what a person can do with it, and verify that they can review and change the result.
-- [/stack/](https://syberlabs.io/stack/): How SyberLabs’ coding agents read open-source dependencies at the exact version a project uses, through GitHits, and what that sends off our machines.
+- [The Factory](https://syberlabs.io/factory/): Six-stage pipeline governing AI code changes in SyberWork: scoped context, isolated diffs, independent checks, policy review, and human sign-off.
+- [Approach](https://syberlabs.io/approach/): SyberLabs' five engineering rules for verifiable AI systems: bounded action spaces, independent checks, explicit provenance, and human approval.
+- [/stack/](https://syberlabs.io/stack/): How SyberLabs grounds coding agents in exact open-source dependency versions via GitHits, plus exact setup commands and data-disclosure boundaries.
 
 ## Full text
 
