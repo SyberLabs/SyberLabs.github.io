@@ -100,6 +100,41 @@ random and clumsy input against `sim.js`. What it found is now checked by `run.m
   (`main.js`), and a hint that says "push into stone and hold up" has to be true there too.
 - `R` is an input to `sim.js` (`resetP`), which ends the attempt the ordinary way. The page must not move or
   hurt the player itself: the cord pulled such a player back, alive and at no health.
+
+## What a second tester said was fun
+
+Later on November 18, 2026 a second tester played the opening of stage 1 in both forms and the opening of THE
+ANOMALOUS SYSTEM, and was asked what would make the game more fun. Its answer was that the best moment was choosing
+where to change form, because the form left behind did something, and that the six stages never showed it. Four
+things came of that. `run.mjs` checks the first, the second and the fourth; the third is in `render.js` and
+`post.js`, which it does not load, and was looked at in the page. A new stage should keep to all four:
+
+- **The double is seen to work, in the first minute.** A change of form leaves the old form standing for
+  `DOUBLE_LIFE` 5 s (it was 3), at most once every `DOUBLE_WAIT` 8 s. A warden within `LURE` 240 px with a
+  clear line to it turns to it, whichever way it was walking (it used to need to be facing it already), holds still
+  and neither sees the player nor fires until the double fades. `render.js` draws what the rule does: a line of
+  dashes from the warden to the double (`gaze`), an eye over the double, a question mark over the warden and a bar
+  for what is left of the double. The HUD counts it down. Stage 1's second segment is the place to learn it: a
+  warden on a beam four tiles up, a thread behind it, and a standing stone that is out of its sight (128 px) and
+  inside `LURE`. Shift at the stone, and the other form walks under the warden while it watches the one left
+  behind. The hint there shows over three tiles each side of its mark (`r` on a hint), which is where what it says
+  is safe and always works. The line is drawn from a warden dressed as a villager too, so a double is one more
+  way to tell which villager is a Visitor. Inside the system a warden watches the nearest copy it can see. The weaver's way is glass from the stone, or under it while its back is turned. Two changes in a row
+  leave a double and keep the form: the main run of stage 1 does that at the second warden.
+- **A hint is about the body the player is in.** A hint in `levels.js` is a line, or `by(weaver, jaguar)`, or a
+  function of the game that gives either; `hintText` in `sim.js` reads it. At the first wall the weaver is told
+  the ring and the jaguar the climb. The tester, as the jaguar, had been told to hold the mouse button for a cord
+  the jaguar does not have. The ring beats while the weaver is in reach of it with the cord free, and marks rise up
+  a stone face the jaguar can climb when it stands within two tiles of one too high to jump (`claws`). The main
+  run of stage 1 is the jaguar's way from the first warden to the stair and `steps:weaver` is the weaver's, so
+  each form's line at each obstacle is played. `TOUCH_WORDS` is in `levels.js` beside the hints.
+- **The jaguar's look moves, and the ground under the jaguar does not.** The player's jaguar is drawn over a dark
+  shape one pixel wider (`INK`), every top within a leap of it is drawn again as a line of white over a line of
+  black (`footing`), and `post.js` lets the ripple, the fold and the split of colours fall to nothing around the
+  player (`sway`). Black and white have no hue, so the drift of colour cannot tint them. Keep such marks without
+  hue.
+- **A scene teaches its rule before it tests speed.** THE ANOMALOUS SYSTEM opens with one panel of metal across the
+  way (see below). Nothing hunts the player until the rule has been used once.
 - `cord()` moves the weaver in pieces of 6 px. `moveX` and `moveY` test only where a move ends, so nothing may
   call them with more than a tile at once.
 - Down and jump lets go of a beam or a word. On stone it is a jump.
@@ -134,7 +169,7 @@ rotated a quarter turn, so the player turns the phone and the picture is about t
 depend on the phone's own rotation, which is often locked. `point()` and `moveStick()` turn pointer positions to
 match, and `resize()` reads layout sizes, which a rotation does not change. Pause has `Play upright`
 (`.is-upright`: the picture at the top, the controls under it). A held press on the picture throws the cord and `tied` keeps it after the finger lifts. The
-hints are written for keys, and `TOUCH_WORDS` says the same things for touch.
+hints are written for keys, and `TOUCH_WORDS` in `levels.js` says the same things for touch. `run.mjs` fails if a hint still names a key afterwards.
 
 ## Music
 
@@ -211,10 +246,18 @@ they did before (the suite printed the same lines for them before and after).
 | Metal tiles that touch are a body, and corruption spreads through a body | `parseLevel` (`L.body`), `stepAnomaly` | one tile each `ROT_STEP` 0.2 s. The roar does not slow it |
 | Corrupt metal takes the cord and the claws | `climbable`, the cord's hit test | |
 | A gate or an eye set in a body is dark while the whole body is corrupt | `bodyDark` | |
-| The first plant wakes the system: its cursor and its scan | `plant` (`wake`) | |
+| The system wakes (its cursor and its scan) once a copy has turned metal and the player is past the first panel | `wake` | `wake: 12` in the def, a tile column. A def with none wakes at its first plant |
 | The cursor deletes the nearest copy, then comes for the player. It does not see a hidden player. The roar and glass stop it | `stepCursor` | `CURSOR_SPEED` 80 px/s, `CURSOR_CLICK` 0.5 s |
 | The scan crosses the stage, cleans what it passes and sends the player it reaches back to the standing stone | `stepAnomaly`, `respawn` | `scan: 240` s in the def, twice as fast under alarm |
 | The first plant in a body sets the scan back | `plant` | `SCAN_BACK` 15 s of travel |
+
+BOOT opens with a panel: five tiles of metal across the way, too high to jump, with the place to stand, the
+panel and its top in one view. (A jaguar that jumps and then pounces straight up clears it without a copy. The
+system stays asleep for it until its first copy at the boot block, which was the rule before.) A copy left against it corrupts it in under a second, and then it takes the claws and
+the cord. A copy that touches no metal, before any has, gets a message that says so (`idle`). The first hint there
+changes with what has happened: how to corrupt the panel, then how the form the player is in climbs it. The boot
+block and its gate come after, with the system awake. BOOT used to be a stair of words and a pace setter, which are
+stage 2's rule, with one line of text for this scene's own rule.
 
 Each of the first five sectors ends in an alert: a metal dialog with a gate that is always lit (`|`) standing on it.
 That gate goes dark only when the whole dialog is corrupt, so every sector needs a copy. The exit opens when the core
@@ -227,8 +270,8 @@ sees cloth woven over it) and `drawSystem` draws the scan line and the cursor. W
 `main.js` splits the HUD's letters and turns letters in the scene's name and in the tab's title into figures as the
 share rises. Reduced motion keeps the name and the title still.
 
-Checks: the run `anomaly` in `test/scripts.mjs` plays the scene to its exit, and six rules at the end of
-`test/run.mjs` cover the copies, the corruption, the gates, the scan, the cursor and the cord. There is no `weaver`
+Checks: the run `anomaly` in `test/scripts.mjs` plays the scene to its exit, and seven rules in
+`test/run.mjs` cover the copies, the corruption, the gates, the scan, the cursor, the cord and the first panel. There is no `weaver`
 run: a copy is left by changing form.
 
 Not built yet: a second run that takes every body, sentinels in FIREWALL and CORE, the arm in DEFRAG as a scripted

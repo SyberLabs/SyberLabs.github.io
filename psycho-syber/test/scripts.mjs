@@ -31,31 +31,29 @@ const alertAt = (x, k, land) => [['R', past(x - 0.5)], ['X', 0.1], ['', 0.3], ['
 
 export const SCRIPTS = {
   steps: [
-    ...leap(21.6), ['R', past(29.4)], ...leap(29.5), ['R', all(grounded, past(34.7))],
-    ...leap(35.5), ['R', past(49)],
-    // C: cord to the ring, reel up over the wall
-    ['A', g => !!g.p.rope, { aim: aimAt('ring', 0), max: 1 }],
-    ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 52 * T, { aim: aimAt('ring', 0), max: 5 }],
-    ['R', all(grounded, past(54))], ['R', past(62.5)], ['R', all(grounded, past(63))],
-    // D: swing over the thorns
-    ['R', past(76.4)],
-    ['RA', g => !!g.p.rope, { aim: [81, 13], max: 1 }],
-    ['RA', past(86.6), { aim: [81, 13], max: 5 }],
-    ['R', all(grounded, past(87))],
-    // E: the warden behind the crate
+    // B: change form at the standing stone. The warden on the beam turns to the weaver left behind and the jaguar
+    // goes under it, through the thread, unseen (test/run.mjs checks that it was watched and never seen)
+    ['R', past(20.5)], ['X', 0.1], ['R', past(49)],
+    // C: the same wall, the jaguar's way: up its face
+    ['R', past(51.3)], ['RJ', 0.3], ['RU', g => g.p.onGround && g.p.y <= 15 * T + 1, { max: 8 }],
+    ['R', past(62.5)], ['R', all(grounded, past(63))],
+    // D: the thorns, the jaguar's way: a jump, and a pounce in the air
+    ['R', past(77)], ['RJ', 0.3], ['RF', 0.25, { aim: g => [g.p.x + 200, g.p.y - 30] }], ['R', all(grounded, past(87)), { max: 3 }],
+    // E: the warden behind the crate. Two changes of form leave a double and keep the jaguar: the warden turns to
+    // the double, and the pounce comes from where it is not looking
     ['R', past(107.4)], ...leap(107.5), ['R', all(grounded, past(111.4))],
-    ['R', g => Math.abs(ent(g, 'warden', 0).x - g.p.x) < 96, { max: 6 }],
-    ...Array.from({ length: 8 }, () => [['F', 0.05, { aim: aimAt('warden', 0) }], ['', 0.22]]).flat(),
-    ['', gone('warden', 0), { max: 0.1 }],
+    ['X', 0.3], ['X', 0.1],
+    ['R', g => Math.abs(ent(g, 'warden', 1).x - g.p.x) < 56, { max: 6 }],
+    ['RF', 0.3, { aim: aimAt('warden', 1) }], ['', gone('warden', 1), { max: 0.1 }],
     ['R', past(126.4)], ...leap(126.5), ['R', all(grounded, past(131))],
-    // F: jaguar under the wall and up the cliff
-    ['R', past(137)], ['X', 0.1], ['R', past(149.8)],
+    // F: under the wall and up the cliff
+    ['R', past(149.8)],
     ['RJ', 0.3], ['RU', g => g.p.onGround && g.p.y <= 12 * T + 1, { max: 8 }],
     // G: over the spirit bridge and down the terraces
     ['R', past(183.5)], ['R', all(grounded, past(196.6))],
     // H: pounce the warden
-    ['R', g => Math.abs(ent(g, 'warden', 1).x - g.p.x) < 80, { max: 4 }],
-    ['RF', 0.3, { aim: aimAt('warden', 1) }], ['', gone('warden', 1), { max: 0.1 }],
+    ['R', g => Math.abs(ent(g, 'warden', 2).x - g.p.x) < 80, { max: 4 }],
+    ['RF', 0.3, { aim: aimAt('warden', 2) }], ['', gone('warden', 2), { max: 0.1 }],
     ['R', past(214.4)], ...leap(214.5), ['R', all(grounded, past(219.5))],
     // I: back to yourself, run the check, climb the steps
     ['X', 0.1], ['E', 0.1], ['R', past(222.4)],
@@ -167,8 +165,11 @@ export const SCRIPTS = {
   ],
   // ---------------------------------------------------------------- the weaver's ways: no change of form
   'steps:weaver': [
-    ...leap(21.6), ['R', past(29.4)], ...leap(29.5), ['R', all(grounded, past(34.7))],
-    ...leap(35.5), ['R', past(49)],
+    // B: the warden on the beam cannot see as far as the standing stone, and glass reaches it from there
+    ['R', past(22)],
+    ...Array.from({ length: 8 }, () => [['F', 0.05, { aim: lead('warden', 0) }], ['', 0.3]]).flat(),
+    ['', gone('warden', 0), { max: 0.1 }],
+    ['R', past(49)],
     ['A', g => !!g.p.rope, { aim: aimAt('ring', 0), max: 1 }],
     ['AU', g => g.p.y < 15 * T - 6 && g.p.x > 52 * T, { aim: aimAt('ring', 0), max: 5 }],
     ['R', all(grounded, past(54))], ['R', past(62.5)], ['R', all(grounded, past(63))],
@@ -177,9 +178,9 @@ export const SCRIPTS = {
     ['RA', past(86.6), { aim: [81, 13], max: 5 }],
     ['R', all(grounded, past(87))],
     ['R', past(107.4)], ...leap(107.5), ['R', all(grounded, past(111.4))],
-    ['R', g => Math.abs(ent(g, 'warden', 0).x - g.p.x) < 96, { max: 6 }],
-    ...Array.from({ length: 8 }, () => [['F', 0.05, { aim: aimAt('warden', 0) }], ['', 0.22]]).flat(),
-    ['', gone('warden', 0), { max: 0.1 }],
+    ['R', g => Math.abs(ent(g, 'warden', 1).x - g.p.x) < 96, { max: 6 }],
+    ...Array.from({ length: 8 }, () => [['F', 0.05, { aim: aimAt('warden', 1) }], ['', 0.22]]).flat(),
+    ['', gone('warden', 1), { max: 0.1 }],
     ['R', past(126.4)], ...leap(126.5), ['R', all(grounded, past(131))],
     // F: the terminal opens the doors above the tunnel; then the steps cut beside the cliff
     ['R', past(134.5)], ['E', 0.1, { aim: aimAt('terminal', 0) }],
@@ -188,9 +189,9 @@ export const SCRIPTS = {
     ['R', all(grounded, past(176.3)), { max: 10 }], ...climb(3), ['RJ', 0.34], ['R', all(grounded, past(179)), { max: 2 }],
     ['R', all(grounded, past(196.6)), { max: 10 }],
     // H: the second warden, with glass
-    ['R', g => Math.abs(ent(g, 'warden', 1).x - g.p.x) < 96, { max: 6 }],
-    ...Array.from({ length: 8 }, () => [['F', 0.05, { aim: aimAt('warden', 1) }], ['', 0.22]]).flat(),
-    ['', gone('warden', 1), { max: 0.1 }],
+    ['R', g => Math.abs(ent(g, 'warden', 2).x - g.p.x) < 96, { max: 6 }],
+    ...Array.from({ length: 8 }, () => [['F', 0.05, { aim: aimAt('warden', 2) }], ['', 0.22]]).flat(),
+    ['', gone('warden', 2), { max: 0.1 }],
     ['R', past(214.4)], ...leap(214.5), ['R', all(grounded, past(219.5))],
     // I: the steps
     ['E', 0.1], ['R', past(222.4)],
@@ -266,11 +267,15 @@ export const SCRIPTS = {
   ],
   // THE ANOMALOUS SYSTEM. Each alert is planted at its foot, climbed as it turns and crossed when its gate is dark.
   anomaly: [
-    // BOOT: change form at the foot of the block and climb its face as the jaguar
-    ['R', past(18.7)], ['X', 0.1], ...scale(8), ...over(0, 26.5),
+    // BOOT: change form against the panel, watch it turn, climb it as the jaguar. The system wakes on the way down.
+    ['R', past(8.2)], ['X', 0.1], ['', 0.9], ...scale(15), ['R', all(grounded, past(13)), { max: 3 }],
+    // then the boot block: two copies at its foot, up its face as it turns, across when its gate is dark
+    ['R', past(18.4)], ['X', 0.1], ['', 0.3], ['X', 0.1], ...scale(8), ...over(0, 26.5),
     // DESKTOP: drop the Visitor among the records, turn the second window so its eye goes dark, plant the alert
     ['R', g => Math.abs(ent(g, 'warden', 0).x - g.p.x) < 80, { max: 6 }], ['RF', 0.3, { aim: aimAt('warden', 0) }], ['', gone('warden', 0), { max: 0.1 }],
-    ['R', past(41.4)], ['J', 0.2], ['X', 0.05], ['', grounded, { max: 2 }], ['', lensDark(0), { max: 6 }], ['X', 0.1],
+    // stand still beside the second window's frame, wherever the Visitor fell, and change form at the top of a jump
+    ['L', before(40.5), { max: 5 }], ['', 0.2], ['R', past(40.6)], ['', 0.25],
+    ['J', 0.2], ['X', 0.05], ['', grounded, { max: 2 }], ['', lensDark(0), { max: 6 }], ['X', 0.1],
     ...alertAt(60, 1, 64.5),
     // REGISTRY: the weaver's copy turns the racks, the jaguar goes under them, and a roar carries it past the eye
     ['X', 0.1], ['R', past(71.4)], ['', 0.2], ['X', 0.1], ['R', past(77)], ['E', 0.05], ['R', past(88.5)],

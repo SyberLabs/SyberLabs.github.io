@@ -11,6 +11,10 @@ export const GRAV = 900, MAXFALL = 430, CORD_RANGE = 150, CHECK_RANGE = 132;
 // SCAN_BACK seconds of travel, and a fall puts the scan at least SCAN_REST seconds behind the standing stone.
 // In there every change of form leaves a copy: up to COPY_MAX at once, each for COPY_LIFE seconds. The cursor
 // flies at CURSOR_SPEED px a second and clicks what it has held for CURSOR_CLICK seconds.
+// The double: the form you leave when you change. In the six stages it stands for DOUBLE_LIFE seconds and the next
+// one can be left DOUBLE_WAIT seconds after the last. A warden within LURE px that has a clear line to it turns
+// and watches it for as long as it stands.
+export const DOUBLE_LIFE = 5, DOUBLE_WAIT = 8, LURE = 240;
 export const ROT_STEP = 0.2, PLANT_REACH = 16, SCAN_BACK = 15, SCAN_REST = 60, COPY_LIFE = 12, COPY_MAX = 5, CURSOR_SPEED = 80, CURSOR_CLICK = 0.5;
 
 const TILE_OF = { '#': C.STONE, M: C.METAL, '=': C.ONEWAY, '%': C.SPIRIT, '&': C.WARD, '^': C.SPIKE, 1: C.STEP_OK, 2: C.STEP_STALE, 3: C.STEP_BAD, D: C.DOOR };
@@ -60,7 +64,7 @@ export function parseLevel(def) {
     else if (ch === 'G' || ch === 'O') { const [k, p] = next('lot'); L.ents.push({ type: 'lot', x: cx(x), y: (y + 1) * T - 9, w: 14, h: 18, gap: ch === 'G', scanned: false, k, name: p.name || 'Lot ' + (k + 1), note: p.note || '' }); }
     else if (ch === 'v') L.ents.push({ type: 'villager', x: cx(x), y: (y + 1) * T - 10, w: 8, h: 20, seed: x * 7 + y });
     else if (ch === 'K') L.ents.push({ type: 'core', x: cx(x), y: cy(y), w: 30, h: 30, hp: 1 });
-    else if (ch === '?') { const [k, p] = next(ch); L.hints[k] = p.text || (def.hints && def.hints[k]) || ''; L.ents.push({ type: 'hint', x: cx(x), y: cy(y), w: 8, h: 8, i: k }); }
+    else if (ch === '?') { const [k, p] = next(ch); L.hints[k] = p.text || (def.hints && def.hints[k]) || ''; L.ents.push({ type: 'hint', x: cx(x), y: cy(y), w: 8, h: 8, i: k, r: p.r || 88 }); }   // r: how far to each side it shows, in px
     else if (ch === 'L') { const [k, p] = next(ch); L.signs.push({ x: x * T, y: y * T, text: (def.signs && def.signs[k]) || p.text || '' }); }
     else if (ch === 'w') { const [, p] = next(ch); L.ents.push({ type: 'warden', x: cx(x), y: (y + 1) * T - 11, w: 10, h: 22, hp: 2, dir: p.dir || -1, vx: 0, vy: 0, see: 0, cd: 0.45, stun: 0, mimic: !!p.mimic }); }
     else if (ch === 's') {
@@ -134,6 +138,9 @@ export const wordActive = (g, e) => { const k = ((Math.floor(g.wordT / e.beat) -
 export const wordFresh = (g, e) => ((Math.floor(g.wordT / e.beat) - e.idx) % e.n + e.n) % e.n === 0;
 export const coreOpen = g => g.ents.every(e => e.type !== 'source' || !e.core || !e.alive);
 export const form = g => g.persona === 'psycho' ? JAG : HUM;
+// What a hint says to the form you are in. A hint is a line, a line for each form ({ syber, psycho }), or a function
+// of the game that gives either: the words on screen are about the body you have and what has just happened.
+export function hintText(g, i = g.hint) { let h = i >= 0 ? g.L.hints[i] : ''; if (typeof h === 'function') h = h(g); return !h ? '' : typeof h === 'string' ? h : h[g.persona] || ''; }
 
 export function newGame(def) {
   const L = parseLevel(def);
@@ -147,7 +154,7 @@ export function newGame(def) {
     open: new Set(), srcAlive: {}, alarm: 0, slow: 0, threads: 0, threadsTotal: L.ents.filter(e => e.type === 'thread').length,
     deaths: 0, done: false, check: { x: L.start.x, y: L.start.y, persona: def.persona || 'syber', sale: def.timer || 0 }, hint: -1, swapT: 0, wordT: 0, pace: 1, double: null, doubleCd: 0, swaps: 0, roars: 0, marks: [], said: 0, over: false, judged: false, shifts: 0, realT: 0, blind: 0, lastDir: 0, turnT: -9, wasHidden: false, orders: 0, obeyed: 0, kills: 0, alarms: 0, throws: 0,
     rot: new Uint8Array(L.w * L.h), rotN: L.bodies.map(() => 0), seeded: L.bodies.map(() => 0), front: [], rotT: 0, plants: 0, scanX: -1, scanCol: 0, caught: 0,
-    copies: [], cursor: def.anomaly ? { x: -40, y: 24, on: false, stun: 0, rest: 0, click: 0, hits: 0, deleted: 0 } : null,
+    woke: false, copies: [], cursor: def.anomaly ? { x: -40, y: 24, on: false, stun: 0, rest: 0, click: 0, hits: 0, deleted: 0 } : null,
     evidence: 0, evidenceTotal: L.ents.filter(e => e.type === 'lot' && e.gap).length, lotsRead: 0, lots: L.ents.filter(e => e.type === 'lot').length, sale: def.timer || 0, found: [], denyT: -9,
   };
   for (const e of g.ents) if (e.type === 'source') { g.srcAlive[e.id] = true; g.L.sources[e.id] = e; }
@@ -258,13 +265,23 @@ function plant(g, x, y, F) {
     if (tileAt(L, tx, ty) !== C.METAL || !turn(g, ty * L.w + tx)) continue;
     const b = L.body[ty * L.w + tx]; n++; if (!g.seeded[b]) { g.seeded[b] = 1; fresh++; }
   }
-  if (!n) return;
-  if (++g.plants === 1) {   // the first plant wakes the system: its cursor comes, and its scan starts at the left edge
-    if (g.cursor) Object.assign(g.cursor, { on: true, x: Math.max(8, x - 20 * T), y: 24 });
-    if (L.def.scan) { g.scanX = 0; g.scanCol = 0; }
-    ev(g, 'wake', g.p);
-  } else if (fresh && g.scanX >= 0) { g.scanX = Math.max(0, g.scanX - fresh * SCAN_BACK * scanSpeed(g)); g.scanCol = Math.min(g.scanCol, Math.ceil(g.scanX / T)); }
+  if (!n) return 0;
+  g.plants++;
+  if (!g.woke) wake(g);
+  else if (fresh && g.scanX >= 0) { g.scanX = Math.max(0, g.scanX - fresh * SCAN_BACK * scanSpeed(g)); g.scanCol = Math.min(g.scanCol, Math.ceil(g.scanX / T)); }
   ev(g, 'plant', { x, y }, { n, fresh });
+  return n;
+}
+// The system wakes (its cursor comes, and its scan starts at the left edge) when a copy has turned metal and you
+// are past def.wake, a tile column. A scene with no such column wakes at its first plant. In THE ANOMALOUS SYSTEM
+// the column is past the first panel, so the rule is learned and used once before anything hunts you.
+function wake(g) {
+  const L = g.L, p = g.p;
+  if (g.woke || !g.plants || p.x < (L.def.wake || 0) * T) return;
+  g.woke = true;
+  if (g.cursor) Object.assign(g.cursor, { on: true, x: Math.max(8, p.x - 20 * T), y: 24 });
+  if (L.def.scan) { g.scanX = 0; g.scanCol = 0; }
+  ev(g, 'wake', p);
 }
 function turn(g, i) {
   if (g.rot[i] || (g.scanX > (i % g.L.w) * T)) return 0;   // what the scan has passed stays clean
@@ -294,6 +311,7 @@ function stepAnomaly(g, dt, wdt) {
   const L = g.L, p = g.p;
   for (const c of g.copies) if (c !== g.double) c.t -= dt;   // step() ages the newest copy, which is also g.double
   if (g.copies.some(c => c.t <= 0 || c.gone)) { g.copies = g.copies.filter(c => c.t > 0 && !c.gone); if (g.double && !g.copies.includes(g.double)) g.double = null; }
+  if (!g.woke && g.plants && !p.dead) wake(g);
   stepCursor(g, wdt);
   if (g.scanX >= 0 && !p.dead) {   // the scan: it cleans each column it reaches, and it is not slowed by the roar
     g.scanX += scanSpeed(g) * dt * (g.alarm > 0 ? 2 : 1);
@@ -319,8 +337,9 @@ function trySwap(g) {
     if (blocked(g, p.x + ox - F.w / 2, p.y + oy - F.h, F.w, F.h, psy)) continue;
     const an = !!g.L.def.anomaly, made = an || g.doubleCd <= 0;   // inside the system every change of form leaves a copy
     if (made) {
-      g.double = { x: p.x, y: p.y, persona: g.persona, face: p.face, t: an ? COPY_LIFE : 3 }; g.doubleCd = an ? 0 : 8;
-      if (an) { g.copies.push(g.double); if (g.copies.length > COPY_MAX) g.copies.shift(); plant(g, p.x, p.y, form(g)); }
+      const life = an ? COPY_LIFE : DOUBLE_LIFE;
+      g.double = { x: p.x, y: p.y, persona: g.persona, face: p.face, t: life, max: life }; g.doubleCd = an ? 0 : DOUBLE_WAIT;
+      if (an) { g.copies.push(g.double); if (g.copies.length > COPY_MAX) g.copies.shift(); if (!plant(g, p.x, p.y, form(g)) && !g.plants) ev(g, 'idle', p); }   // idle: a copy that touches no metal, before any has
     }
     p.x += ox; p.y += oy; g.persona = to; p.rope = null; p.pounce = null; p.cling = 0; p.swapCd = 0.25; p.hideT = 0; g.swapT = 0.5;
     g.shifts++; if (psy) g.swaps++;   // shifts: every change of form. swaps: the changes into the jaguar, which a weaver's run must not make
@@ -607,17 +626,26 @@ function stepEnts(g, wdt) {
     if (e.flash > 0) e.flash -= wdt;
     if (e.type === 'monument') { if (e.lit > 0 && (e.lit -= wdt) <= 0) e.roars = 0; continue; }
     if (e.type === 'warden') {
+      // A warden with a clear line to the form you left turns to it, whichever way it was walking, and watches it
+      // for as long as it stands. It does not look for you and it does not fire: there is nobody in the double.
+      // Inside the system every copy that stands is such a form, and the warden watches the nearest it can see.
+      let D = null, ex = 0, ey = 0, near = LURE;
+      if (!(e.stun > 0)) for (const c of (g.L.def.anomaly ? g.copies : g.double ? [g.double] : [])) {
+        const cx = c.x - e.x, cy = c.y - 10 - e.y, d = Math.hypot(cx, cy);
+        if (d < near && los(g, e.x, e.y - 6, c.x, c.y - 10, false)) { D = c; ex = cx; ey = cy; near = d; }
+      }
+      const lured = !!D;
+      if (lured && !e.lured) ev(g, 'lured', e);
+      e.lured = lured; e.watch = D;   // watch: the form it is looking at, for the picture
       if (e.stun > 0) { e.stun -= wdt; e.see = 0; e.vx = 0; }
+      else if (lured) { if (Math.abs(ex) > 3) e.dir = ex > 0 ? 1 : -1; e.vx = 0; e.see = 0; e.cd = 0.45; }
       else {
-        // a warden that can see your double watches it, and not you
-        let qx = px, qy = py, qv = vis; const D = g.double; e.lured = false;
-        if (D) { const ex = D.x - e.x, ey = D.y - 10 - e.y; if (Math.hypot(ex, ey) < (hot ? 190 : 128) && (hot || ex * e.dir > 0) && Math.abs(ey) < Math.abs(ex) * 0.9 + 26 && los(g, e.x, e.y - 6, D.x, D.y - 10, false)) { qx = D.x; qy = D.y - 10; qv = true; e.lured = true; } }
-        const dx = qx - e.x, dy = qy - e.y, d = Math.hypot(dx, dy);
-        const sees = qv && d < (hot ? 190 : 128) && (hot || dx * e.dir > 0) && Math.abs(dy) < Math.abs(dx) * 0.9 + 26 && los(g, e.x, e.y - 6, qx, qy, psy);
+        const dx = px - e.x, dy = py - e.y, d = Math.hypot(dx, dy);
+        const sees = vis && d < (hot ? 190 : 128) && (hot || dx * e.dir > 0) && Math.abs(dy) < Math.abs(dx) * 0.9 + 26 && los(g, e.x, e.y - 6, px, py, psy);
         e.see = sees ? Math.min(1, e.see + wdt * 2.2) : Math.max(0, e.see - wdt * 0.8);
         if (e.see >= 0.75) {
           e.dir = dx >= 0 ? 1 : -1; e.vx = 0; e.cd -= wdt;
-          if (e.cd <= 0 && sees) { e.cd = 1.25; shootAt(g, e.x + e.dir * 6, e.y - 7, qx, qy, 150, false); ev(g, 'bolt', e); }
+          if (e.cd <= 0 && sees) { e.cd = 1.25; shootAt(g, e.x + e.dir * 6, e.y - 7, px, py, 150, false); ev(g, 'bolt', e); }
         } else { e.cd = 0.45; e.vx = e.dir * 26; }
       }
       e.vy = Math.min(e.vy + GRAV * wdt, MAXFALL);
@@ -694,7 +722,7 @@ function touch(g) {
   g.hint = -1;
   for (const e of g.ents) {
     if (e.dead) continue;
-    if (e.type === 'hint') { if (Math.abs(e.x - p.x) < 88 && Math.abs(e.y - p.y) < 72 && (g.hint < 0 || e.i > g.hint)) g.hint = e.i; continue; }
+    if (e.type === 'hint') { if (Math.abs(e.x - p.x) < e.r && Math.abs(e.y - p.y) < 72 && (g.hint < 0 || e.i > g.hint)) g.hint = e.i; continue; }
     if (e.type === 'patron' && !e.said && e.far && Math.abs(e.x - p.x) < e.far) { e.said = true; ev(g, 'patron', e, { line: e.line }); }
     if (b.x >= e.x + e.w / 2 || b.x + b.w <= e.x - e.w / 2 || b.y >= e.y + e.h / 2 || b.y + b.h <= e.y - e.h / 2) continue;
     if (e.type === 'patron') { if (L.def.real && !e.through) { e.through = true; ev(g, 'picture', e); } continue; }

@@ -1,7 +1,9 @@
 // PSYCHO SYBER: presenting the frame. The two skins are drawn into two 480x270 canvases; this shader puts one of
 // them on screen, and during a change of form it reveals the new world in a ring that spreads from the player.
 // SYBER gets scanlines and a cool grade. PSYCHO breathes: the image ripples, its hues drift, and during a roar it
-// folds into a kaleidoscope. Without WebGL the frames are drawn with the 2D canvas and the page still plays.
+// folds into a kaleidoscope. The ripple, the fold and the split of colours all fall to nothing around the player,
+// so the ground under the jaguar holds still while the rest of its world moves. Without WebGL the frames are drawn
+// with the 2D canvas and the page still plays.
 const VS = 'attribute vec2 a; varying vec2 v; void main(){ v = vec2(a.x * 0.5 + 0.5, 0.5 - a.y * 0.5); gl_Position = vec4(a, 0.0, 1.0); }';
 const FS = `precision mediump float;
 uniform sampler2D uA, uB; uniform float uT, uTo, uWipe, uTrip, uBeat, uHurt, uCalm; uniform vec2 uC;
@@ -14,14 +16,15 @@ void main() {
   float psy = mix(1.0 - uTo, uTo, inside);
   vec3 col;
   if (psy > 0.5) {
-    float amp = (0.0030 + 0.0060 * uTrip) * (1.0 - uCalm);
+    float sway = smoothstep(0.07, 0.32, d);   // still around you: within a tile of the jaguar nothing ripples or splits, and five tiles out it all does
+    float amp = (0.0030 + 0.0060 * uTrip) * (1.0 - uCalm) * sway;
     vec2 w = v + vec2(sin(v.y * 24.0 + uT * 2.1), cos(v.x * 19.0 + uT * 1.7)) * amp;
     if (uTrip > 0.0) {
       vec2 q = w - 0.5; float a = atan(q.y, q.x), r = length(q), n = 3.1416 / 6.0;
       a = abs(mod(a, 2.0 * n) - n);
-      w = mix(w, 0.5 + r * vec2(cos(a), sin(a)), uTrip * 0.3);
+      w = mix(w, 0.5 + r * vec2(cos(a), sin(a)), uTrip * 0.3 * sway);
     }
-    float f = 0.0028 * (1.0 - uCalm);
+    float f = 0.0028 * (1.0 - uCalm) * sway;
     col = vec3(texture2D(uB, w + vec2(f, 0.0)).r, texture2D(uB, w).g, texture2D(uB, w - vec2(f, 0.0)).b);
     col = hue(col, (sin(uT * 0.45) * 0.4 + uTrip * sin(uT * 3.0) * 1.2) * (1.0 - uCalm));
     col *= 1.04 + 0.14 * uBeat;

@@ -5,6 +5,22 @@
 //   SYBER (the weaver)  ledge up 2 tiles · gap 3 tiles · cord reach 9 tiles (stone, beams, rings; never metal)
 //   PSYCHO (the jaguar) ledge up 3 tiles · gap 5 tiles · 10 with a pounce · climbs stone · fits 1-tile tunnels
 const R = (ch, n) => ch.repeat(n);
+// A hint is a line, or by(weaver, jaguar): a line for each form, so the words on screen are about the body you are
+// in. It may also be a function of the game that gives either (sim.js: hintText). Hints are written for keys;
+// TOUCH_WORDS says the same things for a touch screen, first match first, and test/run.mjs fails if a hint still
+// names a key afterwards. E is a button on the touch pad too, so it stays.
+const by = (syber, psycho) => ({ syber, psycho });
+export const TOUCH_WORDS = [
+  ['A and D walk. W or Space jumps.', 'The stick on the left walks. JUMP jumps.'],
+  ['Hold the mouse button on the ring to throw the cord. W reels in. Let go to drop.', 'Press and hold on the ring to throw the cord. It stays tied. Stick up reels in. Tap again to drop.'],
+  ['hold the mouse button on it, then W', 'press and hold on it, then stick up'],
+  ['Space lets go with a kick', 'JUMP lets go with a kick'], ['Click throws glass', 'A tap on the picture throws glass'], ['Hold S to hide', 'Hold the stick down to hide'],
+  ['hold W to climb', 'hold the stick up to climb'], ['Space leaps off', 'JUMP leaps off'],
+  ['Click to pounce', 'Tap the picture to pounce'], ['then click ahead of you', 'then tap the picture ahead of you'],
+  ['Press Shift (or Q)', 'Tap FORM'], ['Press Shift', 'Tap FORM'], ['press Shift', 'tap FORM'], ['Shift back', 'Change back'], ['Or Shift, and', 'Or change form, and'],
+  ['Shift (or Q)', 'FORM'], ['Shift', 'FORM'],
+];
+export const forTouch = s => { for (const [a, b] of TOUCH_WORDS) s = s.split(a).join(b); return s; };
 function wide(H, segs) {
   const rows = Array.from({ length: H }, () => '');
   segs.forEach((s, i) => {
@@ -27,14 +43,18 @@ const steps = wide(24, [
     '   @    ?  J  t   ',
     ...base(18),
   ],
-  [ // B · first hops and a shallow pit
-    '              t         ',
-    '             ###        ',
-    '     ##      ###        ',
-    '##################   ###',
-    '##################   ###',
-    R('#', 24),
-    R('#', 24),
+  [ // B · the first warden, on a beam four tiles up, with a thread behind it. The standing stone is out of its sight
+    //     and within its sight of a double: a change of form there turns it to the form left behind, and the other
+    //     form walks under it. The weaver's way: glass from the stone, or under it while its back is turned.
+    //     The warden sees the ground 3 to 7 tiles from it, which is tiles 23.6 to 29.6 of the stage when it looks
+    //     left, and a double left at tile 17.7 or beyond is always within its 240 px. The hint shows only between
+    //     the two (props['?'] below: 3 tiles each side of its mark), so what it says to do is safe and always works.
+    '             w          ',
+    '            ===         ',
+    R(' ', 24),
+    R(' ', 24),
+    ' C?             t       ',
+    ...base(24),
   ],
   [ // C · a wall the cord gets you over. The ring hangs just past the wall's near edge (props.o), in sight from its foot
     '          o               ',
@@ -146,11 +166,11 @@ function machu() {
   m.put(3, 40, '@').hint(8, 39, 'Words light one at a time. Jump to the next while it is lit. Or take the stair inside the wall.');
   for (let k = 0; k < 7; k++) m.put(k % 2 ? 8 : 12, 39 - k * 2, 'WWWW');
   m.put(8, 34, '====').put(12, 32, '====');              // a perch under the fourth word and the fifth: a fall from the upper words lands halfway, and not at the foot
-  m.put(22, 24, 'C').hint(21, 23, 'Too fast to cross. Jaguar: roar (E) while they light and run. Weaver: check the pace setter in the ravine.');
+  m.put(22, 24, 'C').hint(21, 23, by('Too fast to cross. Check the pace setter in the ravine below. Or Shift, and roar.', 'Too fast to cross. Roar (E) while they light, and run.'));
   ['TOO', 'FAST', 'TO', 'READ'].forEach((text, k) => m.put(25 + k * 4, 25, 'WWWW', { i: 0, n: 6, beat: 0.6, text, w: 4 }));
-  m.put(32, 33, 'P').hint(30, 33, 'As the weaver, E sets every word slow or fast until you check it again. The beams on the left climb out.');
+  m.put(32, 33, 'P').hint(30, 33, by('E sets every word slow or fast until you check it again. The beams on the left climb out.', 'Shift back to the weaver. Its E sets every word slow or fast. The beams on the left climb out.'));
   m.hint(39, 33, 'Nothing this way. The beams at the left end of the ravine climb out.');
-  m.put(43, 25, 'C').hint(44, 24, 'The jaguar jumps three tiles up, word to word. The stair on the right takes longer.');
+  m.put(43, 25, 'C').hint(44, 24, by('The stair on the right is the weaver\'s way. Or Shift: the jaguar jumps three tiles up, word to word.', 'Jump three tiles up, word to word, as each one lights. The stair on the right takes longer.'));
   ['ONE', 'WORD', 'AT', 'A', 'TIME'].forEach((text, k) => m.put(k % 2 ? 49 : 45, 23 - k * 3, 'WWWW', { i: k, n: 5, beat: 0.7, text }));
   m.put(53, 8, 'X');
   for (const [x, y] of [[13, 37], [9, 35], [14, 29], [32, 29], [35, 33], [46, 21], [50, 12], [54, 17]]) m.put(x, y, 't');
@@ -167,22 +187,22 @@ function lines() {
   // A · one gate, one source, on a column the cord reaches
   m.put(3, 19, '@').hint(6, 18, 'A gate burns while its source is alive.');
   m.box(16, 15, 21, 19).put(16, 11, 'o', { dx: -6 }).put(20, 14, 'S', { id: 'a' });
-  m.hint(15, 18, 'Shift: the jaguar sees the line from each gate to its source. Reach the source, then press E as the weaver.');
+  m.hint(15, 18, by('Shift: the jaguar sees the line from each gate to its source. Reach the source, then press E.', 'You see the line from each gate to its source. Reach the source, then Shift back: the weaver\'s E cuts it.'));
   m.put(25, 19, 'C'); wall(30, 'a');                     // a standing stone before the first gate: most falls in this stage are at it
   // B · the village
-  m.hint(37, 18, 'Visitors walk among the people. The jaguar sees which are which.');
+  m.hint(37, 18, by('Visitors walk among the people. Shift: the jaguar sees which are which.', 'Visitors walk among the people, and you see which are which. A warden turns to the double you leave.'));
   m.put(44, 19, '##').put(64, 19, '##').put(47, 17, '=====').put(58, 17, '=====');
   m.put(56, 19, 'w', { mimic: true });
   for (const x of [40, 50, 53, 60, 68]) m.put(x, 19, 'v');
   // C · the source is on the tower; a watched source stands by the gate
-  m.put(70, 19, 'C').hint(73, 18, 'Follow the line. The jaguar climbs the stone. The weaver takes the beams beside it.');
+  m.put(70, 19, 'C').hint(73, 18, by('Follow the line. The weaver takes the beams beside the stone.', 'Follow the line. Push into the stone and hold W to climb.'));
   for (const y of [18, 16, 14, 12, 10]) m.put(76, y, '==');
   m.box(78, 8, 82, 19).put(83, 8, '==').put(81, 7, 'S', { id: 'b' });   // the beam is a perch to throw from
-  m.hint(80, 6, 'From up here your glass reaches the warden below. A source with no line is watched: leave it.');
+  m.hint(80, 6, by('From up here your glass reaches the warden below. A source with no line is watched: leave it.', 'Shift back: from up here the weaver\'s glass reaches the warden below. A source with no line is watched: leave it.'));
   m.put(92, 19, 'w').put(96, 19, 'S', { trap: true });
   wall(100, 'b');
   // D · three sources, two gates, crossed lines
-  m.put(104, 19, 'C').hint(108, 18, 'Three sources, two gates. Check only the two with a line. A jaguar pounce breaks a source, but raises the alarm.');
+  m.put(104, 19, 'C').hint(108, 18, by('Three sources, two gates. Check only the two with a line. Shift: the jaguar sees the lines.', 'Three sources, two gates. Two have a line: Shift back and check those. A pounce breaks a source, but raises the alarm.'));
   m.put(112, 19, 'S', { id: 'c' }).put(116, 19, '##').put(116, 18, 'S', { trap: true }).put(121, 19, 'S', { id: 'd' });
   wall(126, 'd'); wall(134, 'c');
   m.put(143, 19, 'X');
@@ -202,18 +222,18 @@ function works() {
   bulk(14); m.col(14, 16, 19, '!', { period: 2.4, duty: 0.5, ph: 0 });
   bulk(22); m.col(22, 16, 19, '!', { period: 2.4, duty: 0.5, ph: 1.2 });
   // CHECK · a sentinel over the hall, a Visitor on the floor
-  m.put(26, 19, 'C').put(30, 12, 'L', { text: 'CHECK' }).hint(30, 18, 'As the weaver, E turns a sentinel. For twelve seconds it shoots for you.');
+  m.put(26, 19, 'C').put(30, 12, 'L', { text: 'CHECK' }).hint(30, 18, by('E turns a sentinel. For twelve seconds it shoots for you.', 'Shift back to the weaver: its E turns a sentinel, which then shoots for you. Your roar (E) stuns one.'));
   m.put(40, 15, 's', { dx: 12, speed: 36 }).put(44, 19, '##').put(60, 19, '##').put(54, 19, 'w');
   // REVIEW · the eye, the gate it lights, and a bulkhead only the jaguar fits under
   m.put(64, 19, 'C').put(66, 12, 'L', { text: 'REVIEW' });
-  m.hint(67, 18, 'An eye that sees you raises the alarm and lights the gate ahead. Glass breaks an eye. E switches it off.');
+  m.hint(67, 18, by('An eye that sees you raises the alarm and lights the gate ahead. Glass breaks an eye. E switches it off.', 'An eye that sees you raises the alarm and lights the gate ahead. Shift back: the weaver\'s glass breaks it, and its E switches it off.'));
   m.box(72, 8, 90, 9, 'M').put(81, 10, 'e', { base: 90, sweep: 50, period: 4, range: 150, fov: 20 });
   bulk(92); m.col(92, 16, 19, 'i');
-  m.hint(94, 18, 'Shift: the jaguar fits under the bulkhead. Or press E at the terminal behind you to open the duct above.');
+  m.hint(94, 18, by('Shift: the jaguar fits under the bulkhead. Or press E at the terminal behind you to open the duct above.', 'The jaguar fits under the bulkhead. Go through.'));
   m.box(96, 0, 103, 18, 'M').put(88, 19, 'T', { opens: 'duct' });
   for (let x = 96; x <= 103; x++) m.put(x, 18, 'D', { id: 'duct' });
   // APPROVE · three sources feed the Approver: one on the floor, one on a block, one under the dais
-  m.put(105, 19, 'C').put(106, 12, 'L', { text: 'APPROVE' }).hint(107, 18, 'Three sources feed the Approver. The jaguar sees the lines. Cut all three.');
+  m.put(105, 19, 'C').put(106, 12, 'L', { text: 'APPROVE' }).hint(107, 18, by('Three sources feed the Approver. Cut all three with E. Shift: the jaguar sees the lines.', 'Three sources feed the Approver, and you see the lines. Cut all three: Shift back for E.'));
   m.put(110, 19, 'S', { core: true });
   m.box(116, 15, 121, 19).put(116, 11, 'o', { dx: -6 }).put(120, 14, 'S', { core: true });
   m.hint(124, 18, 'One source is under the dais. Go in as the jaguar and stand up as the weaver, or check it through the grate.');
@@ -223,7 +243,7 @@ function works() {
   m.put(138, 21, 'S', { core: true }).put(137, 12, 'K');
   m.hint(130, 17, 'When all three are cut the Approver opens. Glass or a pounce breaks it.');
   m.box(146, 0, 146, 15, 'M').col(146, 16, 19, 'D', { id: 'core' });
-  m.hint(148, 18, 'E at the terminal. Now a person approves.').put(150, 19, 'T', { opens: 'pub' });
+  m.hint(148, 18, by('E at the terminal. Now a person approves.', 'Shift back to the weaver. Its E at the terminal: now a person approves.')).put(150, 19, 'T', { opens: 'pub' });
   m.box(154, 0, 154, 15, 'M').col(154, 16, 19, 'D', { id: 'pub' });
   // PUBLISH
   m.put(156, 12, 'L', { text: 'PUBLISH' }).put(160, 19, 'X').put(163, 19, 'R', { far: 240, line: 'The Patron: "You put a person where my machine stood. I own the Works. Come to my sale."' });
@@ -251,15 +271,15 @@ function record() {
   const m = grid(176, 24), lot = (x, y, name, note) => m.put(x, y, note ? 'G' : 'O', { name, note });
   m.box(0, 20, 175, 23);
   // A · two lots on the floor: one record complete, one with a gap
-  m.put(3, 19, '@').hint(6, 18, 'The sale closes when the timer runs out. E reads the record of a lot.');
+  m.put(3, 19, '@').hint(6, 18, by('The sale closes when the timer runs out. E reads the record of a lot.', 'The sale closes when the timer runs out. Shift back to the weaver: its E reads the record of a lot.'));
   lot(12, 19, 'Lot 1, a gourd bowl');
-  m.hint(17, 18, 'A record with a gap is evidence. Find all five, then go to the far door.');
+  m.hint(17, 18, by('A record with a gap is evidence. Find all five, then go to the far door.', 'A record you see as a broken line has a gap. A gap is evidence. Find all five, then go to the far door.'));
   lot(22, 19, 'Lot 2, a feather fan', 'The record does not say where it was found');
   // B · a lot on a wall the cord reaches
   m.put(34, 19, 'C').box(40, 15, 49, 19).put(40, 11, 'o', { dx: -6 }).put(55, 17, '====');
   lot(45, 14, 'Lot 3, a shell collar', 'Forty years have no owner listed');
   // C · a lot past a wall the jaguar goes under, and one on a cliff it climbs
-  m.hint(62, 18, 'Jaguar: under the wall, up the cliff, over the spirit bridge; it sees gaps as broken lines. Weaver: E at the terminal, then the beams.');
+  m.hint(62, 18, by('E at the terminal opens the doors above the tunnel. Then take the beams. Or Shift: the jaguar goes under the wall.', 'Go under the wall, up the cliff and over the spirit bridge.'));
   m.box(70, 4, 75, 18, 'M').put(77, 19, 'C').put(66, 19, 'T', { opens: 'low' });
   for (let x = 70; x <= 75; x++) m.put(x, 18, 'D', { id: 'low' });
   for (const y of [18, 16, 14]) m.put(84, y, '==').put(106, y, '==');
@@ -313,7 +333,7 @@ export const SHIP = { id: 'ship', name: 'THE COMMAND SHIP', project: 'SyberLabs'
 // copy corrupts the metal it touches (stepAnomaly in sim.js). Metal tiles that touch are one body. Corrupt metal
 // takes the claws and the cord, and a gate or an eye set in a body goes dark when the whole body is corrupt. Each
 // of the first five sectors ends in an alert: a metal dialog with a gate that is always lit standing on it.
-//   BOOT      the log prints five words up to the top of the boot block
+//   BOOT      a panel of metal to corrupt and climb with nothing hunting you, then the boot block and its gate
 //   DESKTOP   three windows, the records of the villagers, a Visitor among them, an eye under the second window
 //   REGISTRY  two racks behind doors, a terminal for each, an eye over the gap between them
 //   DEFRAG    a pit crossed on blocks that are proven, stale or broken, and an arm of metal over it
@@ -326,11 +346,16 @@ function anomaly() {
   // a window: a frame of metal with a title bar to stand on
   const win = (x, y, w, h) => { m.box(x, y, x + w - 1, y + h - 1, 'M').box(x + 1, y + 1, x + w - 2, y + h - 2, ' ').put(x, y - 1, R('=', w)); };
   m.box(0, 20, 191, 23);
-  // BOOT
-  m.put(3, 19, '@').put(2, 12, 'L', { text: 'BOOT' }).hint(5, 18, 'The log prints one word at a time. Jump to the next while it is lit.');
-  m.put(8, 19, 'P').hint(9, 17, 'As the weaver, E sets every word slow or fast.');
-  ['LOAD', 'EVERY', 'FACE', 'EVERY', 'STEP'].forEach((text, k) => m.put(k % 2 ? 11 : 15, 18 - k * 2, 'WWWW', { i: k, n: 5, beat: 0.9, text }));
-  m.hint(17, 19, 'Press Shift beside metal. Changing form leaves a copy that corrupts it. Corrupt metal takes claws and cord.');
+  // BOOT: a panel that teaches the rule, then the block that tests it. The panel is five tiles of metal across the
+  // way, too high to jump, with the copy, the panel and its top all in one view. Nothing hunts you until a copy
+  // has corrupted metal and you are past it: the system wakes at column 12 (wake, below). A jaguar that jumps and
+  // then pounces straight up clears the panel clean; it meets the boot block with the system still asleep. The
+  // hint reads the panel itself (rotN), because the scan can clean it again.
+  m.put(3, 19, '@').put(2, 12, 'L', { text: 'BOOT' });
+  m.box(9, 15, 11, 19, 'M');
+  m.hint(6, 18, g => !g.rotN[g.L.body[19 * g.L.w + 9]] ? 'Metal takes no claw and no cord. Stand against the panel and press Shift. Changing form leaves a copy that corrupts it.'
+    : by('The panel is corrupt. Corrupt metal takes the cord: hold the mouse button on it, then W. Or Shift, and climb it.', 'The panel is corrupt. Corrupt metal takes the claws. Push into it and hold W to climb.'));
+  m.hint(15, 18, 'Now the block ahead. Change form at its foot, climb it as it corrupts, and cross when its gate goes dark.');
   m.box(19, 8, 24, 19, 'M').col(22, 0, 7, '|');
   m.hint(20, 6, 'The gate goes dark when the whole block is corrupt.');
   // DESKTOP
@@ -342,14 +367,14 @@ function anomaly() {
   m.put(54, 19, 'w', { mimic: true });
   alert(60, 12);
   // REGISTRY
-  m.put(65, 19, 'C').put(66, 12, 'L', { text: 'REGISTRY' }).hint(67, 18, 'The jaguar fits under the racks. As the weaver, E at each terminal opens the doors above.');
+  m.put(65, 19, 'C').put(66, 12, 'L', { text: 'REGISTRY' }).hint(67, 18, by('E at each terminal opens the doors above. Or Shift: the jaguar fits under the racks.', 'The jaguar fits under the racks. Go through.'));
   m.put(69, 19, 'T', { opens: 'ra' }).box(72, 8, 77, 17, 'M').box(78, 8, 81, 9, 'M').box(82, 8, 87, 17, 'M');
   for (let x = 72; x <= 77; x++) m.put(x, 18, 'D', { id: 'ra' });
   for (let x = 82; x <= 87; x++) m.put(x, 18, 'D', { id: 'rb' });
   m.put(79, 19, 'T', { opens: 'rb' }).put(80, 10, 'e', { base: 90, sweep: 40, period: 3.5, range: 150, fov: 18 });
   alert(92, 12);
   // DEFRAG
-  m.put(97, 19, 'C').put(98, 12, 'L', { text: 'DEFRAG' }).hint(98, 18, 'As the weaver, E runs the check: proven blocks hold, stale blocks fall, broken blocks are not there.');
+  m.put(97, 19, 'C').put(98, 12, 'L', { text: 'DEFRAG' }).hint(98, 18, by('E runs the check: proven blocks hold, stale blocks fall, broken blocks are not there.', 'Shift back to the weaver. Its E runs the check, which shows the blocks that hold.'));
   m.box(101, 20, 120, 21, ' ').box(101, 22, 120, 22, '^');
   m.put(101, 20, '11').put(104, 20, '22').put(107, 20, '11').put(110, 20, '3').put(111, 20, '11').put(114, 20, '22').put(117, 20, '11');
   m.box(100, 13, 118, 14, 'M').col(100, 15, 16, 'M');   // the arm, and the post that brings it within reach
@@ -376,7 +401,7 @@ export const ANOMALY = {
   id: 'anomaly', name: 'THE ANOMALOUS SYSTEM', project: 'SyberWork', href: '/projects/syberwork/',
   line: 'Tests every AI-written code change before a person approves it.',
   intro: ['The machine closed | your record.', 'It filed you | inside its own system.', 'Nothing in there | is approved by a person.', 'Change form. | Leave copies behind.', 'Corrupt all of it.'],
-  bg: 'system', persona: 'syber', anomaly: true, scan: 240, words: { text: 'LOAD EVERY FACE EVERY STEP', beat: 0.9 }, ...anomaly(),
+  bg: 'system', persona: 'syber', anomaly: true, scan: 240, wake: 12, ...anomaly(),   // wake: the system sleeps until you are past this column
 };
 
 export const STAGES = [
@@ -385,19 +410,25 @@ export const STAGES = [
     line: 'Runs every step in your docs and marks the ones that fail.',
     intro: ['You are a weaver | of a noble house, | in a stolen circlet.', 'You drank | what the old ones drank. | A jaguar | walked out with you.', 'The Visitors cut a stair | to their gate.', 'They swear | every step holds.', 'Prove each one.'],   // a bar ends a phrase: the story shows one phrase at a time
     bg: 'shore', persona: 'syber', map: steps,
-    props: { A: [mark('paracas'), mark('rapanui'), mark('nanmadol')], D: [...Array.from({ length: 6 }, () => ({ id: 'wall' })), { id: 'top' }], T: [{ opens: 'wall' }, { opens: 'top' }], o: [{ dx: -6 }] },
+    props: { A: [mark('paracas'), mark('rapanui'), mark('nanmadol')], D: [...Array.from({ length: 6 }, () => ({ id: 'wall' })), { id: 'top' }], T: [{ opens: 'wall' }, { opens: 'top' }], o: [{ dx: -6 }], '?': [{}, { r: 48 }] },
     hints: [
       'A and D walk. W or Space jumps.',
-      'Hold the mouse button on a ring or on stone to throw the cord. W reels in. Let go to drop.',
-      'Throw the cord at the ring and swing across. Space lets go with a kick.',
-      'Click throws glass. Two hits drop a warden. Hold S to hide.',
-      'Shift (or Q) changes you into the jaguar to fit under the wall. Or stay the weaver: E at the terminal opens the doors above.',
-      'As the jaguar, push into stone and hold W to climb. Space leaps off. The weaver takes the beams beside the cliff.',
-      'The jaguar walks on what the weaver cannot see. The weaver goes under, then up the far beams.',
-      'Click to pounce as the jaguar. One pounce drops a warden.',
-      'As the weaver, E runs the check: proven steps hold, stale steps fall, broken steps are not there.',
+      // the first warden: what to press, then what it did, then when the next double can be left
+      g => g.ents.find(e => e.type === 'warden').dead ? 'Shift (or Q) changes your form. The form you leave stays behind as a double, and a warden that can see it watches it.'
+        : g.double ? 'The warden is watching the form you left. Go under it while the double stands.'
+        : g.doubleCd > 0 ? 'A new double can be left eight seconds after the last one.'
+        : by('Press Shift (or Q) here. The jaguar steps out and the weaver stays behind as a double. The warden above watches the double.',
+          'Press Shift (or Q) here. The weaver steps out and the jaguar stays behind as a double. The warden above watches the double.'),
+      by('Hold the mouse button on the ring to throw the cord. W reels in. Let go to drop.', 'Push into the wall and hold W to climb. Space leaps off.'),
+      by('Throw the cord at the ring and swing across. Space lets go with a kick.', 'Too wide for a jump alone. Jump, then click ahead of you in the air to pounce across.'),
+      by('Click throws glass. Two hits drop a warden. Hold S to hide.', 'Click to pounce. One pounce drops a warden. It does not see you while it watches your double.'),
+      by('Shift (or Q): the jaguar fits under the wall. Or stay the weaver: E at the terminal opens the doors above.', 'The jaguar fits under the wall. Go through.'),
+      by('The weaver takes the beams beside the cliff. Jump up through them.', 'Push into the stone and hold W to climb. Space leaps off.'),
+      by('The jaguar walks on what the weaver cannot see. As the weaver, go under, then up the far beams.', 'The jaguar walks on what the weaver cannot see. Cross it.'),
+      by('Two hits of glass drop a warden. Or Shift, and pounce it as the jaguar.', 'Click to pounce. One pounce drops a warden.'),
+      by('E runs the check: proven steps hold, stale steps fall, broken steps are not there.', 'Shift back to the weaver. Its E runs the check, which shows the steps that hold.'),
       'This way is closed. The only way up is the stair; it begins back to the left.',
-      'As the weaver, E beside a terminal opens its door.',
+      by('E beside a terminal opens its door.', 'Shift back to the weaver. Its E beside a terminal opens the door.'),
     ],
   },
   {

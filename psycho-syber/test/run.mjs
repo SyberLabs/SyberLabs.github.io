@@ -1,10 +1,10 @@
 // node psycho-syber/test/run.mjs [stage id] [--log]
 // Builds every stage (which checks the maps) and plays each scripted run to the exit.
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
-import { STAGES, ATLAS, SHIP, ANOMALY } from '../game/levels.js';
+import { STAGES, ATLAS, SHIP, ANOMALY, forTouch } from '../game/levels.js';
 import { VOICE } from '../game/voice.js';
 import { LINES, ABOUT, said } from './voice.mjs';
-import { newGame, step, T, corrupted, bodiesTurned, gateActive, solidTile } from '../game/sim.js';
+import { newGame, step, T, corrupted, bodiesTurned, gateActive, solidTile, hintText, DOUBLE_LIFE, DOUBLE_WAIT, LURE } from '../game/sim.js';
 import { play } from './bot.mjs';
 import { SCRIPTS } from './scripts.mjs';
 const [only, route] = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2].split(':') : [null], log = process.argv.includes('--log');
@@ -84,13 +84,56 @@ if (!only) {
     g.srcAlive[gate.src] = false; g.p.hp = 4; g.p.dead = false; g.p.x = gate.x - 40; g.p.y = 20 * T; run(g, { right: true }, 2);
     rule('a lit gate is a barrier until its source is cut', held && g.p.x > gate.x + 20);
   }
-  { // the double: a warden that can see the form you left watches it, and the double fades after three seconds
-    const g = stage('lines'), w = of(g, 'warden')[0];
-    g.p.x = w.x - 90; g.p.y = 20 * T; w.dir = -1; run(g, {}, 0.05);
-    step(g, { ...idle, swapP: true }, 1 / 60); const made = !!g.double;
-    g.p.x = w.x + 300; run(g, {}, 0.2); const lured = w.lured === true;
-    run(g, {}, 3.2);
-    rule('a warden watches the double you leave behind', made && lured && !g.double && !w.lured);
+  { // the double: a warden with a clear line to the form you left turns to it, even with its back to it. While the
+    // double stands the warden holds still, does not fire and does not see you, though you stand in front of it
+    const g = stage('lines'), w = of(g, 'warden')[0]; let bolts = 0; const count = g => { bolts += g.ev.filter(e => e.k === 'bolt').length; g.ev.length = 0; };
+    g.p.x = w.x + 110; g.p.y = 20 * T; w.dir = -1; run(g, {}, 0.05);            // behind its back
+    step(g, { ...idle, swapP: true }, 1 / 60); const made = !!g.double && g.double.t > DOUBLE_LIFE - 0.1 && Math.hypot(g.double.x - w.x, g.double.y - w.y) < LURE;
+    run(g, {}, 0.2); const turned = w.lured === true && w.dir === 1, x0 = w.x;
+    g.p.x = w.x + 60; run(g, {}, 1.5, count);                                   // in front of it, in plain view
+    const unseen = w.see === 0 && bolts === 0 && g.p.hp === g.p.maxHp && Math.abs(w.x - x0) < 0.01 && !!g.double;
+    run(g, {}, DOUBLE_LIFE - 1.5, count); const faded = !g.double && !w.lured;
+    run(g, {}, 1.5, count);                                                     // and with the double gone it sees you there
+    rule('a warden turns to the double you leave and neither sees you nor fires while it stands', made && turned && unseen && faded && bolts > 0);
+  }
+  { // stage 1, the first warden: it cannot see as far as the standing stone, a change of form there turns it, and the
+    // other form goes under it and through the thread without being seen
+    const g = stage('steps'), w = of(g, 'warden')[0], stone = of(g, 'check')[0]; let seen = 0, held = 0;
+    g.p.x = stone.x + 30; g.p.y = 20 * T; run(g, {}, 6, () => { seen = Math.max(seen, w.see); });   // six seconds of its pacing, both ways
+    const safe = seen === 0 && g.p.hp === g.p.maxHp, t0 = g.threads;
+    step(g, { ...idle, swapP: true }, 1 / 60);
+    run(g, { right: true }, 2.2, () => { seen = Math.max(seen, w.see); if (w.lured) held++; });
+    rule('the first warden cannot see the standing stone, turns to a double left there, and does not see the other form go under it', safe && held > 120 && seen === 0 && g.threads === t0 + 1 && g.p.hp === g.p.maxHp && g.p.x > w.x + 40);
+  }
+  { // the numbers the player is told are the numbers in sim.js: on the page, in the message and in the hint
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8'), main = readFileSync(new URL('../game/main.js', import.meta.url), 'utf8'), word = n => ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'][n];
+    const page = html.includes(`as a double for ${word(DOUBLE_LIFE)} seconds, at most once every ${word(DOUBLE_WAIT)}. A warden within ${LURE / T} tiles`) && html.split(`stands for ${DOUBLE_LIFE} seconds as a double`).length === 3;
+    const game = main.includes(`as a double for ${word(DOUBLE_LIFE)} seconds`) && hintText(Object.assign(stage('steps'), { doubleCd: 1 }), 1).includes(`${word(DOUBLE_WAIT)} seconds after`);
+    rule('the page and the game say how long a double stands, how often and how far, as sim.js has it', page && game);
+  }
+  { // a yard with one warden and one wall: a double holds the warden only within LURE and only with a clear line to it
+    // (this fails if LURE is made endless, and if the line of sight is not asked for)
+    const map = Array.from({ length: 8 }, (_, y) => y === 7 ? '#'.repeat(60) : y >= 3 ? ' '.repeat(26) + '#' + ' '.repeat(33) : ' '.repeat(60));
+    map[6] = '  @' + ' '.repeat(23) + '#' + ' '.repeat(7) + 'w' + ' '.repeat(25);
+    const left = x => { const g = newGame({ id: 'yard', map }), w = of(g, 'warden')[0]; g.p.x = x * T; g.p.y = 7 * T; run(g, {}, 0.05); step(g, { ...idle, swapP: true }, 1 / 60); run(g, {}, 0.1); return w.lured === true && w.watch === g.double; };
+    rule('a double holds a warden only within its reach and with a clear line to it', left(30.5) && left(48.5) && !left(51) && !left(22.5) && LURE === 240);
+  }
+  { // the first warden's hint shows where what it says is safe and works, and not where the warden can see you
+    const at = x => { const g = stage('steps'); g.p.x = x * T; g.p.y = 20 * T; run(g, {}, 0.05); return g.hint; };
+    const down = stage('steps'); of(down, 'warden')[0].dead = true;
+    rule('the hint at the first warden shows only out of its sight, and stops speaking of a warden that is down', at(18.5) === 1 && at(22.5) === 1 && at(25) !== 1 && at(28) !== 1 && /warden above/.test(hintText(stage('steps'), 1)) && !/above|is watching/.test(hintText(down, 1)));
+  }
+  { // the words on screen are about the body you are in: at the first wall the weaver is told the ring and the jaguar the climb
+    const at = psy => { const g = stage('steps'); if (psy) g.persona = 'psycho'; g.p.x = 49 * T; g.p.y = 20 * T; run(g, {}, 0.1); return hintText(g); };
+    const KEYS = /\b(Shift|Space|[Cc]lick|mouse|key|W|S|Q|A and D)\b/, bad = [];
+    const states = [() => {}, g => { g.double = { t: 1 }; }, g => { g.doubleCd = 3; }, g => { for (const e of g.ents) if (e.type === 'warden') e.dead = true; }, g => { g.plants = 1; g.rotN.fill(1); }];   // every state a hint reads
+    for (const def of [...STAGES, SHIP, ANOMALY]) for (const state of states) for (const persona of ['syber', 'psycho']) {
+      const g = Object.assign(newGame(def), { persona }); state(g);
+      g.L.hints.forEach((h, i) => { const t = hintText(g, i); if (!t) bad.push(`${def.id}: hint ${i} says nothing to ${persona}`); else if (KEYS.test(forTouch(t))) bad.push(`${def.id}: hint ${i} names a key on a touch screen: ${forTouch(t)}`); });
+    }
+    if (bad.length) console.log('  ' + [...new Set(bad)].join('\n  '));
+    rule('a hint is about the form you are in', /ring/.test(at(false)) && !/climb/.test(at(false)) && /climb/.test(at(true)) && !/cord|ring/.test(at(true)));
+    rule('every hint has a line for each form, and none names a key once it is said for touch', !bad.length);
   }
   { // the pace setter slows the words until it is checked again
     const g = stage('machu'), pc = of(g, 'pacer')[0];
@@ -190,6 +233,20 @@ if (!only) {
     g.p.x = foot; swap(g); run(g, {}, 0.3); swap(g); run(g, {}, 2.5); g.p.x = 17 * T; step(g, throwCord, 1 / 60);
     const c = sys({ ...ANOMALY, anomaly: false }); c.p.x = foot; swap(c); let clung = false; run(c, { right: true, up: true, jump: true, jumpP: true }, 1.5, () => { clung = clung || !!c.p.cling; });
     rule('turned metal takes the cord and the claws, and clean metal takes neither', refused && !!g.p.rope && !clung && c.persona === 'psycho');
+  }
+  { // the first panel: a copy that touches no metal says so, a copy against the panel corrupts all of it with the system
+    // asleep, corrupt it is climbed, and the system wakes once you are over it
+    const g = sys(); swap(g); const said = g.ev.filter(e => e.k === 'idle').length; run(g, {}, 0.3); swap(g); run(g, {}, 0.3);
+    g.p.x = 8.4 * T; run(g, {}, 0.05); swap(g); run(g, {}, 1.5);
+    const b = bodyOf(g, 9, 19), asleep = g.plants === 1 && !g.woke && g.scanX < 0 && !g.cursor.on && g.rotN[b] === g.L.bodies[b].n && g.rotN.filter(n => n > 0).length === 1;
+    const told = /corrupt/.test(hintText(g, 0)) && /Stand against/.test(hintText(sys(), 0));
+    run(g, { right: true, up: true, jump: true, jumpP: true }, 3); run(g, { right: true }, 0.6);
+    const over = g.p.x > 12 * T && g.woke && g.scanX >= 0 && g.cursor.on && g.deaths === 0;
+    g.p.x = 15 * T; g.p.y = 20 * T; run(g, {}, 0.3); g.ev.length = 0; swap(g); const quiet = !g.ev.some(e => e.k === 'idle');   // no metal here either, and a copy has taken before: nothing is said
+    g.scanX = 13 * T; run(g, {}, 0.1); const cleaned = g.rotN[b] === 0 && /Stand against/.test(hintText(g, 0));                  // the scan cleans the panel, and the hint says how to corrupt it again
+    const walker = sys(); walker.p.x = 14 * T; run(walker, {}, 0.5);                                                             // past the panel with no copy on metal: still asleep
+    rule('the first panel is corrupted and climbed with the system asleep, and the system wakes once you are over it', said === 1 && asleep && over);
+    rule('the system does not wake without a copy on metal, and the panel\'s hint follows the panel', !walker.woke && walker.scanX < 0 && told && quiet && cleaned);
   }
   { // a gate that is always lit, and the door of the core
     const g = sys(), gate = of(g, 'gate')[0]; g.p.x = 20 * T; g.p.y = 8 * T; run(g, { right: true }, 1.5);

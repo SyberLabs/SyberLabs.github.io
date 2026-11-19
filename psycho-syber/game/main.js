@@ -1,11 +1,11 @@
 // PSYCHO SYBER: the page's game loop. sim.js decides what happens, render.js draws it twice (one look per form),
 // post.js puts it on screen, audio.js plays it. This file wires them to the keyboard, the mouse and the page.
-import { STAGES, ATLAS, SHIP, ANOMALY, TOLD } from './levels.js?v=20261118b';
-import { VOICE } from './voice.js?v=20261118b';
-import { newGame, step, T, verdictAt, corrupted, bodiesTurned } from './sim.js?v=20261118b';
-import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261118b';
-import { makePost } from './post.js?v=20261118b';
-import { makeAudio } from './audio.js?v=20261118b';
+import { STAGES, ATLAS, SHIP, ANOMALY, TOLD, forTouch } from './levels.js?v=20261119a';
+import { VOICE } from './voice.js?v=20261119a';
+import { newGame, step, T, verdictAt, corrupted, bodiesTurned, hintText } from './sim.js?v=20261119a';
+import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261119a';
+import { makePost } from './post.js?v=20261119a';
+import { makeAudio } from './audio.js?v=20261119a';
 
 const $ = id => document.getElementById(id);
 const stage = $('ps-stage'), view = $('ps-view'), hud = $('ps-hud'), hintEl = $('ps-hint'), rsvpEl = $('ps-rsvp'), toastEl = $('ps-toast'), wakeEl = $('ps-wake'), wakeWord = $('ps-wake-word');
@@ -431,13 +431,6 @@ panels.title.addEventListener('pointerdown', e => {   // on the title a tap on t
   if (e.target.closest('button, a')) return;
   audio.start(); g.persona = g.persona === 'psycho' ? 'syber' : 'psycho'; wipe = 0; skin(g.persona);
 });
-// What the hints say for keys, said for touch.
-const TOUCH_WORDS = [['A and D walk. W or Space jumps.', 'The stick on the left walks. JUMP jumps.'],
-  ['Hold the mouse button on a ring or on stone to throw the cord. W reels in. Let go to drop.', 'Press and hold on a ring or on stone to throw the cord. It stays tied. Stick up reels in. Tap again to drop.'],
-  ['Space lets go with a kick', 'JUMP lets go with a kick'], ['Click throws glass', 'A tap on the picture throws glass'], ['Hold S to hide', 'Hold the stick down to hide'],
-  ['Shift (or Q) changes you into the jaguar', 'FORM changes you into the jaguar'], ['hold W to climb. Space leaps off', 'hold the stick up to climb. JUMP leaps off'],
-  ['Click to pounce', 'Tap the picture to pounce'], ['Shift:', 'FORM:'], ['Press Shift beside metal', 'Tap FORM beside metal']];
-const forTouch = s => { for (const [a, b] of TOUCH_WORDS) s = s.replace(a, b); return s; };
 view.addEventListener('contextmenu', e => e.preventDefault());
 $('ps-start').onclick = () => begin(0);
 $('ps-continue').onclick = () => begin(store.get());
@@ -464,7 +457,9 @@ function drain() {
     feed(fx, e, g); audio.play(e.k, psy);
     if (e.k === 'swap') { wipe = 0; skin(e.to); }
     else if (e.k === 'hurt' || e.k === 'die') hurtT = 0.5;
-    if (e.k === 'swap' && e.double && !g.L.def.anomaly && (said.double = (said.double || 0) + 1) <= 2) toast('Your old form stays as a double. A warden who sees it watches the double instead.');
+    if (e.k === 'swap' && e.double && !g.L.def.anomaly && !g.ev.some(o => o.k === 'lured') && (said.double = (said.double || 0) + 1) <= 2) toast('Your old form stays as a double for five seconds. A warden that can see it watches it.');
+    else if (e.k === 'lured' && !g.L.def.anomaly && (said.lured = (said.lured || 0) + 1) <= 3) toast('The warden turned to your double. It is watching that, and not you.');
+    else if (e.k === 'idle' && (said.idle = (said.idle || 0) + 1) <= 3) toast('That copy touches no metal. Stand against metal and change form.');
     else if (e.k === 'hack' && e.what === 'pacer') toast(e.slow ? 'Pace set to slow. Every word stays lit longer.' : 'Pace set to fast.');
     else if (e.k === 'mark') { atlas.add(e.id); saveAtlas(); toast(`Atlas mark ${atlas.size} of ${ATLAS.length}: ${e.name}. Its entry is in the Lacuna Atlas.`); }
     else if (e.k === 'talk') say(e);
@@ -533,14 +528,14 @@ function paintHud() {
   set('ps-stage-name', d.anomaly ? (calm ? d.name : glitch(d.name, corrupted(g), 1)) : `${d.name} · ${d.project}`);
   set('ps-threads', d.anomaly ? `${g.threads}/${g.threadsTotal} threads` : `${g.threadsTotal ? `${g.threads}/${g.threadsTotal} threads · ` : ''}Atlas ${atlas.size}/${ATLAS.length}`);
   set('ps-time', clock(g.time));
-  set('ps-a1', psy ? 'Click · pounce' : 'Click · glass   Hold · cord');
+  set('ps-a1', psy ? 'Click · pounce   Stone + W · climb' : 'Click · glass   Hold · cord');
   set('ps-a2', psy ? (p.roarCd > 0 ? `E · roar ${Math.ceil(p.roarCd)}` : g.slow > 0 ? 'E · roar · slowed' : 'E · roar') : 'E · check');
-  set('ps-a3', [p.hidden && 'Hidden', g.alarm > 0 && 'Alarm'].filter(Boolean).join(' · '));   // both when both are so: hiding does not end an alarm
+  set('ps-a3', [p.hidden && 'Hidden', g.alarm > 0 && 'Alarm', !d.anomaly && g.double && `Double ${Math.ceil(g.double.t)}`].filter(Boolean).join(' · '));   // both when both are so: hiding does not end an alarm
   const share = d.anomaly ? corrupted(g) : 0, gap = d.anomaly && g.scanX >= 0 ? Math.max(0, Math.round((p.x - g.scanX) / T)) : -1;
   set('ps-sale', d.timer ? `Sale closes in ${clock(Math.ceil(g.sale))} · evidence ${g.evidence}/${g.evidenceTotal}` : d.anomaly ? `${gap < 0 ? '' : `Scan ${count(gap, 'tile')} behind · `}corrupt ${Math.round(share * 100)}% · copies ${g.copies.length}` : '');
   if (d.timer || d.anomaly) $('ps-sale').classList.toggle('is-low', d.timer ? g.sale < 30 : gap >= 0 && gap < 12);
   if (d.anomaly) paintRot(share);
-  const h0 = (g.hint >= 0 && g.L.hints[g.hint]) || '', h = touch ? forTouch(h0) : h0;
+  const h0 = hintText(g), h = touch ? forTouch(h0) : h0;   // the line for the form you are in
   if (shown.hint !== h) { shown.hint = h; hintEl.textContent = h; hintEl.classList.toggle('is-on', !!h); }
   if (touch) set('ps-b-act-t', psy ? (p.roarCd > 0 ? String(Math.ceil(p.roarCd)) : 'roar') : 'check');
 }

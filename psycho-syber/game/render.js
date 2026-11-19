@@ -1,8 +1,8 @@
 // PSYCHO SYBER: drawing. Everything is drawn into a 480x270 frame and scaled up without smoothing.
 // There are two complete looks. SYBER (skin 0) is cold stone and Visitor circuitry at night. PSYCHO (skin 1) is
 // the same world as the jaguar sees it: a living Paracas textile. The same geometry is drawn twice, once per skin.
-import { T, C, tileAt, gateActive, eyeAngle, wordActive, wordFresh, coreOpen, verdictAt, corrupted, HUM, JAG } from './sim.js?v=20261118b';
-import { text, textC, textW } from './font.js?v=20261118b';
+import { T, C, tileAt, solidTile, gateActive, eyeAngle, wordActive, wordFresh, coreOpen, verdictAt, corrupted, HUM, JAG } from './sim.js?v=20261119a';
+import { text, textC, textW } from './font.js?v=20261119a';
 export const VW = 480, VH = 270;
 const TAU = Math.PI * 2;
 const hash = (x, y, s = 0) => { let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(s | 0, 1274126177)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -378,14 +378,21 @@ function ruins(c, cam, t, sk) {
   for (let i = 0; i < 9; i++) { const y = VH + 46 - i * 16 + Math.round(oy * 1.5); if (y > VH || y < 90) continue; R(c, sk ? PSB[i % 5] : '#0e2a39', 0, y, VW, 2); R(c, sk ? 'rgba(26,11,46,.6)' : 'rgba(2,7,10,.5)', 0, y + 2, VW, 14); }
   for (let i = 0; i < 4; i++) { const cx = ((i * 190 + t * (6 + i * 2) - cam.x * 0.05) % 700 + 700) % 700 - 110, cy = 70 + i * 34 + oy; c.fillStyle = sk ? 'rgba(255,242,168,.16)' : 'rgba(155,200,220,.10)'; c.beginPath(); c.ellipse(cx, cy, 70, 7, 0, 0, TAU); c.fill(); c.beginPath(); c.ellipse(cx + 40, cy + 5, 50, 5, 0, 0, TAU); c.fill(); }
 }
-function jaguar(c, p, x, y, t, a, hue) {
+// The jaguar. With `edge` it is drawn first as a dark shape one pixel wider on every side: the dark has no hue, so
+// the jaguar's world cannot tint it, and it holds the gold body apart from a floor woven in ochre and gold.
+const INK = '#0a0410';
+function jaguar(c, p, x, y, t, a, hue, edge) {
+  if (edge) for (const [ex, ey] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) jagShape(c, p, x + ex, y + ey, t, a, hue, INK);
+  jagShape(c, p, x, y, t, a, hue, '');
+}
+function jagShape(c, p, x, y, t, a, hue, ink) {
   const f = p.face, run = p.run * 0.3, air = !p.onGround;
   c.globalAlpha = a;
-  const body = hue ? rb(hue) : '#f2a623', spot = hue ? '#1a0b2e' : '#2a0f4a';
+  const body = ink || (hue ? rb(hue) : '#f2a623'), spot = ink || (hue ? '#1a0b2e' : '#2a0f4a'), lit = ink || '#fff2a8', nose = ink || '#1a0b2e';
   if (p.cling) {   // upright against the wall
     const s = p.cling;
     R(c, body, x - 3 * s - (s > 0 ? 0 : 5), y - 13, 5, 12); R(c, body, x - 2 * s - (s > 0 ? 0 : 5), y - 17, 6, 5);
-    R(c, '#fff2a8', x + (s > 0 ? 2 : -3), y - 16, 1, 1); R(c, spot, x - 2 * s - (s > 0 ? 0 : 2), y - 10, 2, 2); R(c, spot, x - s - (s > 0 ? 0 : 2), y - 5, 2, 2);
+    R(c, lit, x + (s > 0 ? 2 : -3), y - 16, 1, 1); R(c, spot, x - 2 * s - (s > 0 ? 0 : 2), y - 10, 2, 2); R(c, spot, x - s - (s > 0 ? 0 : 2), y - 5, 2, 2);
     R(c, body, x + s * 2 - (s > 0 ? 0 : 2), y - 15 + Math.round(Math.sin(t * 14) * 1), 2, 3); R(c, body, x + s * 2 - (s > 0 ? 0 : 2), y - 5 - Math.round(Math.sin(t * 14) * 1), 2, 3);
     line(c, x - s * 4, y - 2, x - s * 7, y + 2 + Math.sin(t * 5) * 2, body);
     c.globalAlpha = 1; return;
@@ -394,8 +401,8 @@ function jaguar(c, p, x, y, t, a, hue) {
   R(c, body, x - 7 - st, y - 9 + cr, 13 + st, 6 - cr);                                  // body
   R(c, body, x + (f > 0 ? 3 : -9), y - 12 + cr, 6, 6);                                  // head
   R(c, body, x + (f > 0 ? 4 : -5), y - 14 + cr, 1, 2); R(c, body, x + (f > 0 ? 7 : -8), y - 14 + cr, 1, 2);   // ears
-  R(c, '#fff2a8', x + (f > 0 ? 7 : -8), y - 10 + cr, 1, 1); R(c, '#1a0b2e', x + (f > 0 ? 8 : -9), y - 8 + cr, 1, 1);
-  for (let i = 0; i < 3; i++) R(c, i % 2 ? rb(t * 6 + i) : spot, x - 5 + i * 4, y - 8 + cr + (i % 2), 2, 2);      // rosettes
+  R(c, lit, x + (f > 0 ? 7 : -8), y - 10 + cr, 1, 1); R(c, nose, x + (f > 0 ? 8 : -9), y - 8 + cr, 1, 1);
+  for (let i = 0; i < 3; i++) R(c, ink || (i % 2 ? rb(t * 6 + i) : spot), x - 5 + i * 4, y - 8 + cr + (i % 2), 2, 2);      // rosettes
   const a1 = air || p.pounce ? 3 : Math.round(Math.sin(run) * 3), a2 = air || p.pounce ? -3 : Math.round(Math.cos(run) * 3);
   R(c, body, x + (f > 0 ? 3 : -5) + a1 * f, y - 4, 2, 4 - (air ? 1 : 0)); R(c, body, x + (f > 0 ? 0 : -2) + a2 * f, y - 4, 2, 4 - (air ? 1 : 0));
   R(c, body, x - (f > 0 ? 6 : -4) - a1 * f, y - 4, 2, 4 - (air ? 1 : 0)); R(c, body, x - (f > 0 ? 3 : -1) - a2 * f, y - 4, 2, 4 - (air ? 1 : 0));
@@ -424,7 +431,8 @@ function warden(c, e, x, y, t, sk, g) {
     ring(c, rb(t * 3), x - d, y - 9, 9 + Math.sin(t * 4) * 1.5);
     line(c, x + d * 6, y - 10, x + d * 6, y + 10, rb(t * 2 + 2));
   }
-  if (alert) textC(c, '!', x, y - 24, '#fc734d', 1);
+  if (e.lured && !stun) textC(c, '?', x, y - 24, sk ? '#fff2a8' : '#e3f3fc', 1);
+  else if (alert) textC(c, '!', x, y - 24, '#fc734d', 1);
   else if (e.see > 0.1) R(c, sk ? '#fff2a8' : '#fc734d', x - 3, y - 21, Math.round(e.see / 0.75 * 6), 1);
   if (stun) for (let i = 0; i < 3; i++) R(c, sk ? rb(i + t * 4) : '#9bdcff', x + Math.cos(t * 6 + i * 2.1) * 5, y - 20 + Math.sin(t * 6 + i * 2.1) * 2, 1, 1);
 }
@@ -541,6 +549,43 @@ function drawSystem(c, g, ox, oy, t, sk) {
   if (k.click > 0) ring(c, '#fc734d', x + 0.5, y + 0.5, 12 - k.click * 16, 1);
   for (let r = 0; r < ARROW.length; r++) for (let i = 0; i < 8; i++) { const ch = ARROW[r][i]; if (ch !== '.') R(c, ch === 'x' ? (sk ? '#3a1052' : '#02070a') : (stunned ? '#9bdcff' : k.rest > 0 ? '#c9d6dd' : '#ffffff'), clamp(x, 0, VW - 8) + i, clamp(y, 0, VH - 11) + r, 1, 1); }
 }
+// The line from a warden to the double it watches. The dashes run toward the double, and an eye sits where it ends.
+function gaze(c, x0, y0, x1, y1, t, sk) {
+  const dx = x1 - x0, dy = y1 - y0, n = Math.max(1, Math.ceil(Math.max(Math.abs(dx), Math.abs(dy)))), ph = Math.floor(t * 30);
+  c.fillStyle = sk ? '#fff2a8' : '#e3f3fc';
+  for (let i = 4; i <= n; i++) if (((i - ph) % 8 + 8) % 8 < 3) c.fillRect(Math.round(x0 + dx * i / n), Math.round(y0 + dy * i / n), 1, 1);
+  const ex = x1, ey = y1 - 22;
+  R(c, sk ? '#1a0b2e' : '#02070a', ex - 5, ey - 3, 11, 7); R(c, sk ? '#fff2a8' : '#e3f3fc', ex - 4, ey, 9, 1); R(c, sk ? '#fff2a8' : '#e3f3fc', ex - 2, ey - 2, 5, 5); R(c, sk ? '#1a0b2e' : '#02070a', ex - 1, ey - 1, 3, 3); R(c, '#fc734d', ex, ey, 1, 1);
+}
+// In the jaguar's world the ground is cloth, and it moves. Every top within a leap of the jaguar is drawn again,
+// plain: a line of white over a line of black. Neither has a hue, so the drift of colour cannot tint them, and
+// where the feet will land is never a guess. The nearest tops are the brightest.
+function footing(c, g, ox, oy) {
+  const L = g.L, p = g.p, px = Math.floor(p.x / T), py = Math.floor((p.y - 1) / T);
+  for (let ty = Math.max(0, py - 6); ty <= Math.min(L.h - 1, py + 5); ty++) for (let tx = Math.max(0, px - 8); tx <= Math.min(L.w - 1, px + 8); tx++) {
+    const q = L.tiles[ty * L.w + tx];
+    if (q >= C.STEP_OK && q <= C.STEP_BAD) continue;   // a step shows what the check has found and nothing more: a line here would tell proven from broken
+    if (!(solidTile(g, tx, ty, true) || q === C.ONEWAY) || solidTile(g, tx, ty - 1, true) || tileAt(L, tx, ty - 1) === C.SPIKE) continue;   // nor under thorns
+    const d = Math.hypot(tx * T + 8 - p.x, ty * T - p.y), a = 1.15 - d / 130; if (a <= 0.05) continue;
+    c.globalAlpha = Math.min(1, a); R(c, '#ffffff', tx * T + ox, ty * T + oy, T, 1); R(c, INK, tx * T + ox, ty * T + oy + 1, T, 1);
+  }
+  c.globalAlpha = 1;
+}
+// Stone the jaguar can take hold of, when it stands within two tiles of a face too high to jump: marks rise up it.
+function claws(c, g, ox, oy, t) {
+  const L = g.L, p = g.p; if (p.cling || p.pounce) return;
+  const holds = (tx, ty) => { const q = tileAt(L, tx, ty); return q === C.STONE || q === C.SPIRIT || q === C.STEP_OK || (q === C.METAL && !!g.rot[ty * L.w + tx]); };
+  const ty = Math.floor((p.y - 9) / T);
+  for (const dir of [-1, 1]) for (let k = 0; k <= 2; k++) {
+    const tx = Math.floor(p.x / T) + dir * k;
+    if (!solidTile(g, tx, ty, true)) continue;
+    let h = 0; while (h < 12 && holds(tx, ty - h) && !solidTile(g, tx - dir, ty - h, true)) h++;   // how far up the open face runs
+    if (h < 4) break;   // three tiles the jaguar jumps
+    const fx = (dir > 0 ? tx * T + 1 : tx * T + T - 8) + ox, top = (ty - h + 1) * T + oy, bot = (ty + 1) * T + oy - 5, run = Math.floor(t * 22) % 12;
+    for (let y = bot - run; y >= top; y -= 12) { const a = Math.min(1, (y - top) / 20 + 0.25); c.globalAlpha = a; R(c, INK, fx, y, 7, 5); c.fillStyle = '#ffffff'; c.fillRect(fx + 3, y, 1, 1); c.fillRect(fx + 2, y + 1, 3, 1); c.fillRect(fx + 1, y + 2, 2, 1); c.fillRect(fx + 4, y + 2, 2, 1); c.fillRect(fx, y + 3, 2, 1); c.fillRect(fx + 5, y + 3, 2, 1); }
+    c.globalAlpha = 1; break;
+  }
+}
 export function drawFrame(c, g, cam, t, sk, tiles, fx) {
   const L = g.L, p = g.p, ox = -Math.round(cam.x), oy = -Math.round(cam.y), psy = g.persona === 'psycho';
   background(c, g, cam, t, sk);
@@ -570,7 +615,7 @@ export function drawFrame(c, g, cam, t, sk, tiles, fx) {
     if (x < -60 || x > VW + 60 || y < -60 || y > VH + 60) { if (e.type !== 'gate' && e.type !== 'door' && e.type !== 'word') continue; }
     switch (e.type) {
       case 'thread': if (!e.dead) { const b = Math.round(Math.sin(t * 3 + e.x * 0.05) * 2); if (e.atlas) { const col = sk ? rb(e.x * 0.05 + t * 4) : '#fc734d'; ring(c, col, x + 0.5, y + b - 1, 3.5, 1); R(c, sk ? '#1a0b2e' : '#fff2a8', x, y + b - 2, 1, 2); R(c, col, x, y + b + 3, 1, 3); } else if (!sk) { R(c, '#4cc0f5', x - 1, y - 3 + b, 3, 7); R(c, '#4cc0f5', x - 3, y - 1 + b, 7, 3); R(c, '#e3f3fc', x, y - 1 + b, 1, 3); } else for (let i = 0; i < 6; i++) R(c, rb(i + t * 6), x + Math.cos(t * 4 + i) * 3, y + b + Math.sin(t * 4 + i) * 3, 2, 2); } break;
-      case 'ring': { const near = !psy && Math.hypot(e.x - p.x, e.y - (p.y - 12)) < 150; if (!sk) { R(c, near ? '#e3f3fc' : '#5d93ad', x - 3, y - 3, 6, 1); R(c, near ? '#e3f3fc' : '#5d93ad', x - 3, y + 2, 6, 1); R(c, near ? '#e3f3fc' : '#5d93ad', x - 3, y - 3, 1, 6); R(c, near ? '#e3f3fc' : '#5d93ad', x + 2, y - 3, 1, 6); R(c, '#16303f', x, y - 8, 1, 5); if (near) ring(c, 'rgba(76,192,245,.35)', x, y, 6 + Math.sin(t * 5) * 1.5); } else { ring(c, 'rgba(246,231,200,.4)', x, y, 3); } break; }
+      case 'ring': { const near = !psy && Math.hypot(e.x - p.x, e.y - (p.y - 12)) < 150; if (!sk) { R(c, near ? '#e3f3fc' : '#5d93ad', x - 3, y - 3, 6, 1); R(c, near ? '#e3f3fc' : '#5d93ad', x - 3, y + 2, 6, 1); R(c, near ? '#e3f3fc' : '#5d93ad', x - 3, y - 3, 1, 6); R(c, near ? '#e3f3fc' : '#5d93ad', x + 2, y - 3, 1, 6); R(c, '#16303f', x, y - 8, 1, 5); if (near) { ring(c, 'rgba(76,192,245,.35)', x, y, 6 + Math.sin(t * 5) * 1.5); if (!p.rope) for (const o of [0, 0.5]) { const k = (t * 0.9 + o) % 1; c.globalAlpha = (1 - k) * 0.85; ring(c, '#e3f3fc', x, y, 5 + k * 13, 1); c.globalAlpha = 1; } } } else { ring(c, 'rgba(246,231,200,.4)', x, y, 3); } break; }
       case 'check': stela(c, x, y, t, sk, g.check.e === e); break;
       case 'monument': monument(c, e, x, y, t, sk); break;
       case 'pacer': drawPacer(c, e, x, y, t, sk, g); break;
@@ -612,18 +657,22 @@ export function drawFrame(c, g, cam, t, sk, tiles, fx) {
     const dx = Math.round(D.x) + ox, dy = Math.round(D.y) + oy, a = Math.min(1, D.t) * (0.4 + 0.15 * Math.sin(t * 18)), still = { face: D.face, run: 0, onGround: true };
     if (D.persona === 'psycho') jaguar(c, still, dx, dy, t, a, 3 + t * 2); else { c.globalAlpha = a; human(c, still, dx, dy, t, false); c.globalAlpha = 1; }
     ring(c, sk ? '#fff2a8' : '#9bdcff', dx, dy - 10, 13 + Math.sin(t * 6) * 2, 1);
+    if (D.max) { R(c, sk ? 'rgba(26,11,46,.7)' : 'rgba(2,7,10,.7)', dx - 7, dy - 29, 14, 3); R(c, sk ? '#fff2a8' : '#e3f3fc', dx - 6, dy - 28, Math.max(1, Math.round(12 * D.t / D.max)), 1); }   // what is left of it
   }
+  for (const e of g.ents) if (e.type === 'warden' && e.lured && e.watch && !e.dead) gaze(c, Math.round(e.x) + ox + e.dir * 2, Math.round(e.y) + oy - 7, Math.round(e.watch.x) + ox, Math.round(e.watch.y) + oy - 12, t, sk);
+  if (sk) footing(c, g, ox, oy);
+  if (psy && !p.dead) claws(c, g, ox, oy, t);
   // the player
   if (!p.dead && !(p.inv > 0 && Math.floor(t * 20) % 2)) {
     const x = Math.round(p.x) + ox, y = Math.round(p.y) + oy;
     if (g.swapT > 0.24) were(c, p, x, y, t);
     else if (psy) {
       if (sk) for (let i = 0; i < fx.trail.length - 1; i += 2) { const q = fx.trail[i]; if (Math.abs(q.x - p.x) + Math.abs(q.y - p.y) > 2) jaguar(c, q, Math.round(q.x) + ox, Math.round(q.y) + oy, t, 0.12 + i * 0.05, i + 1 + t * 4); }
-      jaguar(c, p, x, y, t, p.hidden ? 0.45 : 1, 0);
+      jaguar(c, p, x, y, t, p.hidden ? 0.45 : 1, 0, !p.hidden);   // hidden, it stays see-through: four dark shapes under it would fill it in
     } else human(c, p, x, y, t, p.hidden);
   } else if (g.over) {   // the last stage keeps the body in the picture: the record of where it ended
     const x = Math.round(p.x) + ox, y = Math.round(p.y) + oy; c.globalAlpha = 0.5;
-    if (psy) jaguar(c, p, x, y, t, 0.5, 0); else human(c, p, x, y, t, false);
+    if (psy) jaguar(c, p, x, y, t, 0.5, 0, true); else human(c, p, x, y, t, false);
     c.globalAlpha = 1; textC(c, 'SUBJECT DOWN', clamp(x, 40, VW - 40), y - (psy ? 22 : 30), sk ? '#ff5fa2' : '#ff5a4a');
   }
   // particles, rings, the check beam
