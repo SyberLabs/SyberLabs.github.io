@@ -67,7 +67,7 @@ async function waves(tag, ctxOpts) {
   await page.evaluate(() => __arena.pause());
   await page.screenshot({ path: join(out, `arena-${tag}-pause.png`) });
   s = await state(page);
-  check(`${tag}: Pause keeps the whole screen`, s.state === 'pause' && s.run);
+  check(`${tag}: Pause keeps the whole screen, says Paused and offers Restart`, s.state === 'pause' && s.run && await page.evaluate(() => document.getElementById('ar-pause-lede').textContent === 'Paused.' && !document.getElementById('ar-restart').hidden));
   await page.click('#ar-quit');
   const back = await page.evaluate(() => ({ run: document.getElementById('ar-stage').classList.contains('run'), state: __arena.G.state, header: document.querySelector('.sy-header').getBoundingClientRect().height > 0 && getComputedStyle(document.documentElement).overflow !== 'hidden', privacy: !!document.querySelector('a[href="/privacy/"]') }));
   check(`${tag}: Leave the game brings back the page, its header and the privacy link`, !back.run && back.state === 'menu' && back.header && back.privacy, JSON.stringify(back));
@@ -115,6 +115,14 @@ async function duel(viaLink) {
   const seen = await a.evaluate(() => { const r = __arena.D.rival; return r ? { x: r.pos.x, z: r.pos.z, buf: __arena.D.buf.length, phase: __arena.D.phase } : null; });
   check(`${tag}: the countdown ends and each side receives the other's position`, !!seen && seen.buf > 0 && seen.phase === 'live', JSON.stringify(seen));
   await a.screenshot({ path: join(out, 'arena-duel-live.png') });
+  // a duel does not pause: the panel says so, has no Restart, and positions keep going out from under it
+  const before = await b.evaluate(() => { __arena.pause(); return __arena.D.seq; });
+  await sleep(2500);
+  const held = await b.evaluate(() => ({ state: __arena.G.state, seq: __arena.D.seq, text: document.getElementById('ar-pause-lede').textContent, restart: document.getElementById('ar-restart').hidden, back: document.getElementById('ar-resume').textContent }));
+  await b.screenshot({ path: join(out, 'arena-duel-panel.png') });
+  check(`${tag}: the panel in a duel says the duel goes on, and it does`, held.state === 'pause' && held.seq > before && /does not pause/.test(held.text) && held.restart && held.back === 'Back to the duel', JSON.stringify({ ...held, before }));
+  await b.click('#ar-resume');
+  check(`${tag}: Back to the duel returns to it`, await b.evaluate(() => __arena.G.state === 'play'));
   // up to nine rounds: whoever is Psycho stands next to the other and fires at their feet
   for (let round = 1; round <= 9; round++) {
     for (let i = 0; i < 10 && !(await live()); i++) { await advance(1); await sleep(150); }

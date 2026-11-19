@@ -1315,7 +1315,17 @@ function startRun(mode) {
   audioInit(); G.mode = mode; resetGame('arena'); enterPlay();
 }
 function play(fresh) { if (fresh) startRun('wave'); else enterPlay(); }
-function pause() { if (G.state !== 'play') return; setHead(); leavePlay('pause', 's-pause'); }
+// One browser cannot stop the other's game, so a duel does not pause: the panel opens, this player stands still,
+// and the duel goes on under it (frame() keeps calling update(), which sends positions and, for the lead, runs the
+// rounds). The panel says so in place of "Paused.", and has no Restart.
+const PAUSE_TEXT = [$('pause-lede').textContent, $('pause-note').textContent, $('resume').textContent];
+function pause() {
+  if (G.state !== 'play') return; const duel = G.mode === 'duel';
+  $('pause-lede').textContent = duel ? 'A duel does not pause. While this panel is open you stand still and your rival can still hit you. The next round closes it.' : PAUSE_TEXT[0];
+  $('pause-note').textContent = duel ? 'Leave the game ends the duel for both players and returns to this page.' : PAUSE_TEXT[1];
+  $('resume').textContent = duel ? 'Back to the duel' : PAUSE_TEXT[2]; $('restart').hidden = duel;
+  setHead(); leavePlay('pause', 's-pause');
+}
 function die() {
   setHead(); leavePlay('dead', 's-dead'); stage.classList.remove('od', 'ready'); G.od = 0; sfx.die();
   if (G.score > G.best) { G.best = G.score; try { localStorage.setItem('psycho-syber.arena.best', String(G.best)); } catch (e) { } }
@@ -1700,12 +1710,13 @@ function frame(now) {
     ema = lerp(ema, raw, 0.05);
     if (ema > 27 && !G.noAuto && (post.on || pixelRatio > 1)) { slowT += dt; if (slowT > 2.5) { if (post.on) { post.on = false; $('glow').textContent = 'GLOW OFF'; } else { pixelRatio = 1; renderer.setPixelRatio(1); resize(); } slowT = 0; ema = 18; } } else slowT = 0;
   } else if (G.state === 'pause' && G.mode === 'duel') {
-    update(dt);
+    update(dt);                            // a duel goes on under its panel: see pause()
   } else if (G.state !== 'pause' && G.state !== 'pick') {
     if (!onScreen) return;                 // the title is scrolled out of view: draw nothing
     if (!calm) menuA += dt * 0.12; camera.position.set(CX + Math.cos(menuA) * 52, 20 + Math.sin(menuA * 1.7) * 5, CZ + Math.sin(menuA) * 52); camera.lookAt(CX, 6, CZ);
   }
-  if (G.state !== 'pause') updateWorldFx(calm && G.state !== 'play' ? 0 : fdt);
+  const live = G.state === 'play' || (G.state === 'pause' && G.mode === 'duel');
+  if (G.state !== 'pause' || live) updateWorldFx(calm && !live ? 0 : fdt);
   G.ca = Math.max(0, G.ca - dt * 0.09); G.flash = Math.max(0, G.flash - dt * 2.4);
   renderFrame(G.state === 'play');
 }

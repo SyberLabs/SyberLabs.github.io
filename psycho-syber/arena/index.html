@@ -97,11 +97,11 @@
           </div>
 
           <div class="ar-sec" id="ar-s-pause">
-            <p class="ar-lede">Paused.</p>
+            <p class="ar-lede" id="ar-pause-lede">Paused.</p>
             <p class="ar-row"><label for="ar-sens">Aim speed</label><input id="ar-sens" type="range" min="0.4" max="2.5" step="0.1" value="1"></p>
             <p class="ar-actions"><button class="sy-btn sy-btn--solid" id="ar-resume" type="button">Resume</button><button class="sy-btn sy-btn--line" id="ar-restart" type="button">Restart</button><button class="sy-btn sy-btn--line" id="ar-quit" type="button">Leave the game</button></p>
             <p class="ar-actions"><button class="sy-btn sy-btn--ghost" id="ar-snd" type="button">SOUND ON</button><button class="sy-btn sy-btn--ghost" id="ar-glow" type="button">GLOW ON</button></p>
-            <p class="ar-keys">Leave the game returns to this page, with its header and menu.</p>
+            <p class="ar-keys" id="ar-pause-note">Leave the game returns to this page, with its header and menu.</p>
           </div>
 
           <div class="ar-sec" id="ar-s-dead">
@@ -182,6 +182,7 @@
       <section id="duel" aria-labelledby="duel-title">
         <h2 id="duel-title">The Duel</h2>
         <p>Two players meet on a map that is the same from both ends. One is Psycho and the other is Syber. You cannot change form during a round, so a duel has no tags to set off and no sync meter. The forms trade every round. A round ends when one player's health runs out. The first to win five rounds wins, and either player can call a rematch.</p>
+        <p>A duel does not pause. P or Esc opens the panel: while it is open you stand still and your rival can still hit you, and the next round closes it.</p>
         <h3 class="ps-sub">Starting one</h3>
         <ol>
           <li>The first player presses Duel, then Make an invite, and sends the invite link to the second player by any message app.</li>
@@ -218,7 +219,7 @@
             <tr><th scope="row">Space</th><td>Jump, and kick off a wall</td><td>Jump, and once more in the air</td></tr>
             <tr><th scope="row">Shift</th><td>Blink</td><td>Ram</td></tr>
             <tr><th scope="row">Q, E, Tab, the wheel or a middle click</th><td colspan="2">Change form</td></tr>
-            <tr><th scope="row">P or Esc</th><td colspan="2">Pause. Enter resumes.</td></tr>
+            <tr><th scope="row">P or Esc</th><td colspan="2">Pause in Waves, or open the panel in a duel. Enter goes back.</td></tr>
           </tbody>
         </table>
         <h3 class="ps-sub">On a phone or tablet</h3>

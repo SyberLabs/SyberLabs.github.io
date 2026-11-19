@@ -232,6 +232,8 @@ that game's title do not: one more button on the title pushes its words off a ph
 - While a game is on, the stage covers the whole screen, the header included (`run` on `#ar-stage`). Pause and the
   two end panels have `Leave the game`, which brings the page back: keep menu, privacy and account access one tap
   from Pause.
+- A duel does not pause, because one browser cannot stop the other's game. In a duel the panel says the duel goes on,
+  that the player stands still and can be hit, and that the next round closes it. Never show "Paused." over a duel.
 - Each browser reports its own hits, and the first player's browser keeps the rounds and the score. The page says a
   player who alters the game can cheat, that there is no relay, and what has not been tested. Keep those lines true:
   when a duel has been played across two networks, on a phone or in another browser, change the line that says it
