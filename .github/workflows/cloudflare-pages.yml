@@ -43,6 +43,10 @@ jobs:
       - name: Play every PSYCHO SYBER stage to its exit
         # A scripted run per stage (psycho-syber/test/scripts.mjs) and a check that the 21 Atlas marks match src/lacuna/atlas/sites.js.
         run: node psycho-syber/test/run.mjs
+      - name: "Check PSYCHO SYBER: ARENA's invite codes, page and scripts"
+        # The duel's invite and reply pack and read back, the page holds every element the script looks up, and the
+        # page's rules hold (no form, one STUN server and no other address). CLAUDE.md, "PSYCHO SYBER: ARENA".
+        run: node psycho-syber/test/arena.mjs
       - name: Refresh dependency panel targets
         run: |
           node scripts/githits-snapshot.mjs --targets || echo "githits: keeping committed targets.json"
@@ -185,6 +189,16 @@ jobs:
           grep -Fq 'href="/psycho-syber/"' dist/index.html
           grep -Fq 'href="/lacuna/#paracas"' dist/psycho-syber/index.html
           if grep -rqi '<form' dist/psycho-syber --include='*.html'; then echo 'form on the game page'; exit 1; fi
+          # PSYCHO SYBER: ARENA (/psycho-syber/arena/): the page, its scripts, the three.js it serves itself, and the links
+          # to it from the game page and to its "What is sent" from /privacy/. Its links carry the hashes stamp.mjs adds.
+          test -s dist/psycho-syber/arena/index.html
+          test -s dist/psycho-syber/arena/game.js
+          test -s dist/psycho-syber/arena/link.js
+          test -s dist/psycho-syber/arena/vendor/three.min.js
+          test -s dist/psycho-syber/arena/vendor/three.LICENSE.txt
+          grep -Fq 'href="/psycho-syber/arena/"' dist/psycho-syber/index.html
+          grep -Fq 'href="/psycho-syber/arena/#sent"' dist/privacy/index.html
+          grep -Eq 'src="/psycho-syber/arena/game\.js\?v=[0-9a-f]{8}"' dist/psycho-syber/arena/index.html
           test -s dist/privacy/index.html
           test -s dist/plus/index.html
           test -s dist/plus/plus.css

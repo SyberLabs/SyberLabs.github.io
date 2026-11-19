@@ -1,0 +1,171 @@
+/* PSYCHO SYBER: ARENA. The stage fills the first screen; the copy under it uses the game page's styles
+   (/psycho-syber/psycho-syber.css) on the site's Midnight theme. The stage carries `psycho` or `syber`, and
+   everything laid over the picture takes that form's colour. While a game is on, the stage carries `run` and covers
+   the whole screen, the site's header included; Leave the game, in Pause, takes `run` off again.
+   Type is the site's own (--sy-serif, --sy-mono, --sy-sans), and nothing is set below 12px. */
+.ar-stage {
+  --void: #04050a; --ink: #ebe5d6; --dim: #a39f92; --faint: rgba(235, 229, 214, .16); --gold: #e9c47c; --panel: rgba(6, 7, 12, .78);
+  --psycho: #ff5fcf; --syber: #5fe3d2; --fc: var(--psycho);
+  --st: env(safe-area-inset-top, 0px); --sb: env(safe-area-inset-bottom, 0px); --sl: env(safe-area-inset-left, 0px); --sr: env(safe-area-inset-right, 0px);
+  position: relative; height: calc(100svh - var(--sy-header-h, 64px)); min-height: 520px; overflow: hidden; background: var(--void); color: var(--ink);
+  font: 400 13px/1.4 var(--sy-mono); -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.ar-stage.syber { --fc: var(--syber); }
+.ar-stage.od { --fc: var(--gold); }
+.ar-stage.run { position: fixed; inset: 0; z-index: 3000; height: 100dvh; min-height: 0; touch-action: none; -webkit-touch-callout: none; overscroll-behavior: none; }
+html.ar-lock, html.ar-lock body { overflow: hidden; }
+.ar-stage [hidden] { display: none !important; }
+.ar-stage *, .ar-stage *::before, .ar-stage *::after { box-sizing: border-box; }
+.ar-view { position: absolute; inset: 0; width: 100%; height: 100%; display: block; outline: none; }
+.ar-layer { position: absolute; inset: 0; pointer-events: none; }
+
+/* what is laid over the whole picture */
+#ar-vig { background: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, .62) 100%); }
+#ar-grain { opacity: .075; background-size: 180px 180px; animation: ar-grain .6s steps(5) infinite; }
+@keyframes ar-grain { 0% { background-position: 0 0; } 20% { background-position: -43px 21px; } 40% { background-position: 17px -38px; } 60% { background-position: -29px -11px; } 80% { background-position: 36px 29px; } 100% { background-position: 0 0; } }
+#ar-dmg { background: radial-gradient(ellipse at center, transparent 42%, rgba(255, 90, 54, .6) 100%); opacity: 0; transition: opacity .35s; }
+#ar-surge { box-shadow: inset 0 0 90px 0 var(--fc); opacity: 0; transition: opacity .3s; }
+.ar-stage.surge #ar-surge { opacity: .28; }
+#ar-glitch { opacity: 0; background: radial-gradient(ellipse at center, transparent 30%, var(--fc) 130%); }
+#ar-glitch.go { animation: ar-gl .45s ease-out 1; }
+@keyframes ar-gl { 0% { opacity: .55; } 100% { opacity: 0; } }
+.ar-stage.od #ar-surge { opacity: .6; box-shadow: inset 60px 0 90px -40px var(--psycho), inset -60px 0 90px -40px var(--syber); }
+
+/* the HUD, shown while a game is on */
+#ar-hud { display: none; }
+.ar-stage.play #ar-hud { display: block; }
+.ar-tl { position: absolute; left: calc(20px + var(--sl)); top: calc(18px + var(--st)); display: grid; gap: 5px; justify-items: start; }
+.ar-tr { position: absolute; right: calc(20px + var(--sr)); top: calc(18px + var(--st)); display: grid; gap: 6px; justify-items: end; text-align: right; }
+#ar-form { font: italic 400 34px/1 var(--sy-serif); color: var(--fc); text-shadow: 0 0 22px var(--fc); margin: 1px 0 5px; }
+.ar-stage.od #ar-form { background: linear-gradient(90deg, var(--psycho), var(--gold), var(--syber)); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; }
+#ar-hpw, #ar-syw { width: min(44vw, 200px); background: var(--faint); }
+#ar-hpw { height: 3px; }
+#ar-hpf { height: 100%; width: 100%; background: var(--fc); box-shadow: 0 0 10px var(--fc); transition: width .12s; }
+#ar-syw { height: 2px; }
+#ar-syf { height: 100%; width: 0; background: var(--gold); box-shadow: 0 0 8px var(--gold); transition: width .15s; }
+.ar-stage.ready #ar-syw { animation: ar-rdy .5s ease-in-out infinite alternate; }
+@keyframes ar-rdy { to { box-shadow: 0 0 14px 2px var(--gold); } }
+#ar-hpn { font: 400 12px/1 var(--sy-mono); letter-spacing: .16em; color: var(--dim); margin-top: 3px; }
+#ar-obj { font: 400 12px/1.5 var(--sy-mono); letter-spacing: .12em; color: var(--gold); margin-top: 6px; max-width: min(72vw, 420px); }
+#ar-score { font: 400 19px/1 var(--sy-mono); letter-spacing: .08em; font-variant-numeric: tabular-nums; color: var(--ink); }
+#ar-combo { font: 400 12px/1 var(--sy-mono); letter-spacing: .16em; color: var(--gold); min-height: 12px; }
+#ar-wave { font: 400 12px/1 var(--sy-mono); letter-spacing: .16em; color: var(--dim); }
+#ar-pausebtn { pointer-events: auto; z-index: 5; position: absolute; right: calc(20px + var(--sr)); top: calc(88px + var(--st)); width: 44px; height: 44px;
+  border: 1px solid var(--faint); background: rgba(6, 7, 12, .4); color: var(--dim); font: 400 12px/1 var(--sy-mono); letter-spacing: .1em; cursor: pointer; }
+#ar-boss { position: absolute; left: 50%; top: calc(20px + var(--st)); transform: translateX(-50%); width: min(36vw, 300px); display: none; text-align: center; font: italic 400 18px/1 var(--sy-serif); color: var(--gold); }
+#ar-boss i { display: block; height: 2px; margin-top: 8px; background: var(--faint); }
+#ar-boss b { display: block; height: 100%; width: 100%; background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+
+/* the aim mark: a ring for Psycho, four ticks for Syber */
+#ar-xh { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transition: transform .08s; }
+#ar-xh::after { content: ""; position: absolute; left: -1.5px; top: -1.5px; width: 3px; height: 3px; border-radius: 50%; background: var(--ink); opacity: .8; }
+#ar-xh i { position: absolute; background: var(--fc); }
+.ar-stage.psycho #ar-xh i:nth-child(1) { left: -13px; top: -13px; width: 26px; height: 26px; background: none; border: 1px solid var(--fc); border-radius: 50%; opacity: .8; }
+.ar-stage.psycho #ar-xh i:nth-child(n+2) { display: none; }
+.ar-stage.syber #ar-xh i:nth-child(1) { left: -15px; top: -.5px; width: 8px; height: 1px; }
+.ar-stage.syber #ar-xh i:nth-child(2) { left: 7px; top: -.5px; width: 8px; height: 1px; }
+.ar-stage.syber #ar-xh i:nth-child(3) { left: -.5px; top: -15px; width: 1px; height: 8px; }
+.ar-stage.syber #ar-xh i:nth-child(4) { left: -.5px; top: 7px; width: 1px; height: 8px; }
+#ar-xh.hit { transform: scale(1.35); }
+#ar-xh.hit i { background-color: var(--ink); border-color: var(--ink); }
+#ar-xh.kill { transform: scale(1.9) rotate(45deg); }
+#ar-xh.kill i { background-color: var(--gold); border-color: var(--gold); }
+
+#ar-banner { position: absolute; left: 0; right: 0; top: 22%; text-align: center; opacity: 0; padding: 0 16px; }
+#ar-banner.show { animation: ar-bn 2.6s ease-out 1; }
+#ar-bt { font: italic 400 clamp(44px, 9vw, 92px)/.95 var(--sy-serif); letter-spacing: -.01em; color: var(--ink); text-shadow: 0 0 34px var(--fc); }
+#ar-bs { font: 400 12px/1.4 var(--sy-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--gold); margin-top: 12px; }
+@keyframes ar-bn { 0% { opacity: 0; transform: translateY(10px); } 14% { opacity: 1; transform: none; } 74% { opacity: 1; } 100% { opacity: 0; transform: translateY(-8px); } }
+#ar-toast { position: absolute; left: 0; right: 0; top: calc(50% + 44px); text-align: center; font: 400 12px/1 var(--sy-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--gold); text-shadow: 0 0 12px rgba(0, 0, 0, .9); opacity: 0; }
+#ar-toast.show { animation: ar-ts 1.1s ease-out 1; }
+@keyframes ar-ts { 0% { opacity: 0; transform: translateY(6px); } 15% { opacity: 1; transform: none; } 70% { opacity: 1; } 100% { opacity: 0; transform: translateY(-8px); } }
+#ar-hint { position: absolute; left: 50%; bottom: calc(20% + var(--sb)); transform: translateX(-50%); width: min(520px, calc(100% - 40px));
+  background: var(--panel); border-top: 1px solid var(--fc); padding: 13px 18px 14px; font: 400 16px/1.4 var(--sy-sans); color: var(--ink); opacity: 0; transition: opacity .5s; }
+#ar-hint.show { opacity: 1; }
+.ar-stage.touch #ar-hint { bottom: calc(290px + var(--sb)); }   /* above the five buttons */
+@media (orientation: landscape) { .ar-stage.touch #ar-hint { left: calc(20px + var(--sl)); transform: none; width: min(420px, 46%); bottom: calc(24px + var(--sb)); } }
+#ar-hint .hn { display: block; font: 600 12px/1 var(--sy-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--fc); margin-bottom: 8px; }
+
+/* keyboard: what Shift, right click and Q are ready to do */
+#ar-cds { position: absolute; left: 50%; bottom: calc(26px + var(--sb)); transform: translateX(-50%); display: flex; gap: 18px; }
+.ar-stage.touch #ar-cds { display: none; }
+.ar-cd { width: 112px; padding-top: 9px; position: relative; border-top: 1px solid var(--faint); }
+.ar-cd b { position: absolute; left: 0; top: -1px; height: 1px; width: 100%; background: var(--fc); box-shadow: 0 0 6px var(--fc); transform-origin: left; }
+.ar-cd span { display: block; font: 400 12px/1 var(--sy-mono); letter-spacing: .16em; color: var(--ink); }
+.ar-cd em { display: block; font: 400 12px/1 var(--sy-mono); font-style: normal; letter-spacing: .06em; color: var(--dim); margin-top: 5px; }
+.ar-stage.ready .ar-cd:last-child b { background: var(--gold); box-shadow: 0 0 12px var(--gold); }
+.ar-stage.ready .ar-cd:last-child span { color: var(--gold); }
+
+/* touch: a stick where the left thumb lands, five buttons under the right */
+#ar-touch { display: none; pointer-events: auto; z-index: 2; }
+.ar-stage.touch.play #ar-touch { display: block; }
+#ar-stick { position: absolute; width: 104px; height: 104px; margin: -52px 0 0 -52px; border: 1px solid var(--faint); border-radius: 50%; display: none; }
+#ar-knob { position: absolute; left: 50%; top: 50%; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; background: rgba(235, 229, 214, .2); }
+.ar-stage .tb { position: absolute; border-radius: 50%; border: 1px solid rgba(235, 229, 214, .3); background: rgba(6, 7, 12, .42); color: var(--ink);
+  display: flex; align-items: center; justify-content: center; font: 500 12px/1 var(--sy-mono); letter-spacing: 0; text-align: center; }
+.ar-stage .tb.on { background: rgba(235, 229, 214, .22); border-color: var(--ink); }
+.ar-stage .tb.wait { opacity: .3; }
+#ar-b-fire { right: calc(16px + var(--sr)); bottom: calc(64px + var(--sb)); width: 92px; height: 92px; border-color: var(--fc); box-shadow: 0 0 18px -6px var(--fc); }
+#ar-b-jump { right: calc(120px + var(--sr)); bottom: calc(24px + var(--sb)); width: 68px; height: 68px; }
+#ar-b-alt { right: calc(124px + var(--sr)); bottom: calc(106px + var(--sb)); width: 72px; height: 72px; }
+#ar-b-dash { right: calc(22px + var(--sr)); bottom: calc(170px + var(--sb)); width: 62px; height: 62px; }
+#ar-b-swap { right: calc(98px + var(--sr)); bottom: calc(194px + var(--sb)); width: 72px; height: 72px; border-color: var(--gold); color: var(--gold); }
+.ar-stage.ready #ar-b-swap { animation: ar-rdyb .5s ease-in-out infinite alternate; }
+@keyframes ar-rdyb { to { box-shadow: 0 0 26px var(--gold); background-color: rgba(233, 196, 124, .28); } }
+
+/* names drawn over things in the world (the rival) */
+#ar-labels { position: absolute; inset: 0; overflow: hidden; }
+.ar-stage .lab { position: absolute; left: 0; top: 0; text-align: center; white-space: nowrap; will-change: transform, opacity; opacity: 0; }
+.ar-stage .lab .n { display: block; font: 600 12px/1 var(--sy-mono); letter-spacing: .2em; color: var(--c, var(--gold)); margin-bottom: 6px; }
+.ar-stage .lab .t { display: block; font: italic 400 20px/1.05 var(--sy-serif); color: var(--ink); text-shadow: 0 0 18px rgba(0, 0, 0, .9); }
+.ar-stage .lab .s { display: block; font: 400 12px/1 var(--sy-mono); color: var(--dim); margin-top: 6px; }
+.ar-stage .lab .s:empty { display: none; }
+
+/* the panel: title, pause, the end of a game, operators, the duel */
+#ar-menu { position: absolute; inset: 0; z-index: 10; touch-action: pan-y; display: flex; flex-direction: column; align-items: flex-start; overflow-y: auto;
+  padding: calc(28px + var(--st)) max(var(--sy-gutter, 24px), var(--sr)) calc(36px + var(--sb)) max(var(--sy-gutter, 24px), var(--sl));
+  background: linear-gradient(90deg, rgba(2, 7, 10, .94) 0%, rgba(2, 7, 10, .74) 44%, rgba(2, 7, 10, 0) 82%); }
+.ar-stage.play #ar-menu { display: none; }
+.ar-card { width: 100%; max-width: 640px; margin-top: auto; display: grid; gap: 18px; }
+.ar-card p, .ar-card dl, .ar-card dd { margin: 0; }
+.ar-eyebrow { font: 500 12px/1.5 var(--sy-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--sy-mist, #93a4ae); }
+.ar-title.ps-logo { margin: 0; font-size: clamp(40px, 7.4vw, 88px); line-height: .92; color: var(--sy-vellum, #f1f6f9); }
+.ar-title__a { display: block; margin-top: .22em; font: 500 .34em/1 var(--sy-mono); letter-spacing: .42em; color: var(--sy-vellum, #f1f6f9); }
+.ar-sec { display: none; gap: 16px; }
+.ar-sec.on { display: grid; }
+.ar-lede { font: 400 clamp(17px, 2vw, 20px)/1.5 var(--sy-sans); color: var(--sy-vellum, #f1f6f9); max-width: 56ch; }
+.ar-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.ar-keys, .ar-note, .ar-status { font: 400 14px/1.55 var(--sy-sans); color: var(--sy-body, #c3cfd6); max-width: 62ch; }
+.ar-status { min-height: 1.55em; color: var(--sy-warning, #ffc96b); overflow-wrap: anywhere; -webkit-user-select: text; user-select: text; }
+.ar-status:empty { display: none; }
+.ar-stage .ar-for-touch, .ar-stage.touch .ar-for-keys { display: none; }
+.ar-stage.touch .ar-for-touch { display: block; }
+.ar-step { display: grid; gap: 14px; }
+.ar-row { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.ar-row label { flex: 1 0 100%; font: 500 14px/1.4 var(--sy-sans); color: var(--sy-vellum, #f1f6f9); }
+.ar-row label[for="ar-sens"] { flex: 0 0 auto; }
+.ar-row input[type="text"] { flex: 1 1 220px; min-width: 0; min-height: 46px; padding: 0 12px; border: 1px solid var(--sy-rule-2, rgba(140, 200, 235, .28)); border-radius: var(--sy-r-sm, 4px);
+  background: rgba(2, 7, 10, .66); color: var(--sy-vellum, #f1f6f9); font: 400 14px/1 var(--sy-mono); -webkit-user-select: text; user-select: text; }
+.ar-row input[type="text"]:focus-visible { outline: 2px solid var(--sy-electric, #0297de); outline-offset: 2px; }
+.ar-row input[type="range"] { width: 180px; accent-color: var(--sy-electric, #0297de); }
+.ar-stats { display: flex; gap: 34px; }
+.ar-stats dt { font: 500 12px/1 var(--sy-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--sy-mist, #93a4ae); }
+.ar-stats dd { font: 500 40px/1 var(--sy-mono); color: var(--sy-vellum, #f1f6f9); margin-top: 8px; font-variant-numeric: tabular-nums; }
+#ar-picks { display: grid; gap: 10px; }
+.ar-stage .pick { pointer-events: auto; text-align: left; background: rgba(2, 7, 10, .6); border: 0; border-top: 1px solid var(--sy-rule-2, rgba(140, 200, 235, .28)); padding: 13px 14px 14px; color: var(--sy-vellum, #f1f6f9); cursor: pointer; display: grid; gap: 6px; }
+.ar-stage .pick b { font: 600 12px/1 var(--sy-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--sy-electric-hi, #4cc0f5); }
+.ar-stage .pick span { font: 400 16px/1.4 var(--sy-sans); color: var(--sy-body, #c3cfd6); }
+.ar-stage .pick:hover, .ar-stage .pick:focus-visible { background: rgba(2, 151, 222, .16); }
+
+@media (max-width: 640px) {
+  #ar-menu { background: linear-gradient(0deg, rgba(2, 7, 10, .96) 0%, rgba(2, 7, 10, .82) 62%, rgba(2, 7, 10, .2) 100%); }
+  .ar-card, .ar-sec { gap: 14px; }
+  #ar-form { font-size: 30px; }
+  .ar-cd { width: 96px; }
+}
+@media (max-height: 520px) { .ar-stage .ar-keys { display: none; } .ar-card, .ar-sec { gap: 12px; } .ar-title.ps-logo { font-size: 40px; } }
+@media (prefers-reduced-motion: reduce) { #ar-grain, .ar-stage.ready #ar-syw, .ar-stage.ready #ar-b-swap { animation: none; } }
+
+/* the copy under the stage: one numbered list the game page does not have */
+.ps-about ol { margin: 0 0 14px; padding-left: 22px; display: grid; gap: 8px; color: var(--sy-body); }
+.ps-about dl + p, .ps-about ul + p { margin-top: 14px; }
