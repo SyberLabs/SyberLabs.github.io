@@ -56,7 +56,7 @@ export function parseLevel(def) {
     else if (ch === 'J') L.ents.push({ type: 'monument', x: cx(x), y: (y + 1) * T, w: 40, h: 48, roars: 0, lit: 0 });     // the great carved head
     else if (ch === 'X') L.ents.push({ type: 'exit', x: cx(x), y: (y + 1) * T - 16, w: 18, h: 32 });
     else if (ch === 't') { const [k] = next(ch); L.ents.push({ type: 'thread', x: cx(x), y: cy(y), w: 10, h: 10, atlas: def.atlas ? def.atlas[k] : null }); }
-    else if (ch === 'o') L.ents.push({ type: 'ring', x: cx(x), y: cy(y), w: 8, h: 8 });
+    else if (ch === 'o') { const [, p] = next(ch); L.ents.push({ type: 'ring', x: cx(x) + (p.dx || 0), y: cy(y) + (p.dy || 0), w: 8, h: 8 }); }   // dx, dy: pixels off the centre of its tile
     else if (ch === 'G' || ch === 'O') { const [k, p] = next('lot'); L.ents.push({ type: 'lot', x: cx(x), y: (y + 1) * T - 9, w: 14, h: 18, gap: ch === 'G', scanned: false, k, name: p.name || 'Lot ' + (k + 1), note: p.note || '' }); }
     else if (ch === 'v') L.ents.push({ type: 'villager', x: cx(x), y: (y + 1) * T - 10, w: 8, h: 20, seed: x * 7 + y });
     else if (ch === 'K') L.ents.push({ type: 'core', x: cx(x), y: cy(y), w: 30, h: 30, hp: 1 });
@@ -145,7 +145,7 @@ export function newGame(def) {
     ents: L.ents.map(e => ({ ...e })), shots: [], ev: [],
     gone: new Float32Array(L.w * L.h), shake: new Float32Array(L.w * L.h), scanned: new Uint8Array(L.w * L.h), live: new Set(),
     open: new Set(), srcAlive: {}, alarm: 0, slow: 0, threads: 0, threadsTotal: L.ents.filter(e => e.type === 'thread').length,
-    deaths: 0, done: false, check: { x: L.start.x, y: L.start.y, persona: def.persona || 'syber', sale: def.timer || 0 }, hint: -1, swapT: 0, wordT: 0, pace: 1, double: null, doubleCd: 0, swaps: 0, roars: 0, marks: [], said: 0, over: false, realT: 0, blind: 0, lastDir: 0, turnT: -9, wasHidden: false, orders: 0, obeyed: 0, kills: 0, alarms: 0, throws: 0,
+    deaths: 0, done: false, check: { x: L.start.x, y: L.start.y, persona: def.persona || 'syber', sale: def.timer || 0 }, hint: -1, swapT: 0, wordT: 0, pace: 1, double: null, doubleCd: 0, swaps: 0, roars: 0, marks: [], said: 0, over: false, judged: false, shifts: 0, realT: 0, blind: 0, lastDir: 0, turnT: -9, wasHidden: false, orders: 0, obeyed: 0, kills: 0, alarms: 0, throws: 0,
     rot: new Uint8Array(L.w * L.h), rotN: L.bodies.map(() => 0), seeded: L.bodies.map(() => 0), front: [], rotT: 0, plants: 0, scanX: -1, scanCol: 0, caught: 0,
     copies: [], cursor: def.anomaly ? { x: -40, y: 24, on: false, stun: 0, rest: 0, click: 0, hits: 0, deleted: 0 } : null,
     evidence: 0, evidenceTotal: L.ents.filter(e => e.type === 'lot' && e.gap).length, lotsRead: 0, lots: L.ents.filter(e => e.type === 'lot').length, sale: def.timer || 0, found: [], denyT: -9,
@@ -213,7 +213,7 @@ export function los(g, x0, y0, x1, y1, psy) {
 }
 
 // ---------------------------------------------------------------- step
-// inp: left right up down jump fire alt (held) · jumpP spaceP fireP altP actP swapP (pressed this step) · aimX aimY (world px)
+// inp: left right up down jump fire alt (held) · jumpP spaceP fireP altP actP swapP resetP (pressed this step) · aimX aimY (world px)
 export function step(g, inp, dt) {
   if (g.done) return;
   g.t += dt; g.time += dt;
@@ -323,7 +323,7 @@ function trySwap(g) {
       if (an) { g.copies.push(g.double); if (g.copies.length > COPY_MAX) g.copies.shift(); plant(g, p.x, p.y, form(g)); }
     }
     p.x += ox; p.y += oy; g.persona = to; p.rope = null; p.pounce = null; p.cling = 0; p.swapCd = 0.25; p.hideT = 0; g.swapT = 0.5;
-    if (psy) g.swaps++;
+    g.shifts++; if (psy) g.swaps++;   // shifts: every change of form. swaps: the changes into the jaguar, which a weaver's run must not make
     ev(g, 'swap', p, { to, double: made });
     return true;
   }
@@ -331,13 +331,19 @@ function trySwap(g) {
   return false;
 }
 
+// Standing on a beam or a lit word with nothing solid under any part of you: the only footing that can be dropped through.
+function perched(g, p, F) {
+  const b = box(p, F), ty = Math.floor((b.y + b.h + 1) / T), psy = g.persona === 'psycho'; let beam = false;
+  for (let tx = Math.floor(b.x / T); tx <= Math.floor((b.x + b.w - 0.001) / T); tx++) { if (solidTile(g, tx, ty, psy)) return false; if (tileAt(g.L, tx, ty) === C.ONEWAY) beam = true; }
+  return beam || g.ents.some(e => e.type === 'word' && wordActive(g, e) && Math.abs(b.y + b.h - e.y) < 1.5 && b.x + b.w > e.x && b.x < e.x + e.w);
+}
 function jumpLogic(g, p, inp, F, dt) {
   if (inp.jumpP) p.jumpBuf = 0.12; else if (p.jumpBuf > 0) p.jumpBuf -= dt;
   if (p.onGround) p.coyote = 0.09; else if (p.coyote > 0) p.coyote -= dt;
   if (p.dropT > 0) p.dropT -= dt;
   if (p.jumpBuf > 0 && p.coyote > 0) {
     p.jumpBuf = 0; p.coyote = 0;
-    if (inp.down) p.dropT = 0.2;
+    if (inp.down && perched(g, p, F)) p.dropT = 0.2;   // down and jump lets go of a beam or a word. On stone it is a jump like any other: it used to do nothing, which left a player who was hiding unable to jump away
     else { p.vy = -F.jump; p.onGround = false; p.jumping = true; ev(g, 'jump', p); }
   }
   if (p.jumping && !inp.jump && p.vy < -F.jump * 0.45) p.vy = -F.jump * 0.45;
@@ -383,7 +389,10 @@ function cord(g, p, F, psy, dt) {
   const dx = cx - a.x, dy = cy - a.y, d = Math.hypot(dx, dy);
   if (d > r.len) {
     const nx = dx / d, ny = dy / d, b = box(p, F);
-    moveX(g, b, -nx * (d - r.len), psy); moveY(g, b, -ny * (d - r.len), psy, false, false); unbox(p, b);
+    // In pieces shorter than the weaver is wide. A cord reeled in against a wall falls further and further short, and
+    // one long pull is tested only where it ends: it set the weaver down a tile inside a tunnel he does not fit.
+    for (let rest = d - r.len; rest > 0; rest -= 6) { const s = Math.min(rest, 6); moveX(g, b, -nx * s, psy); moveY(g, b, -ny * s, psy, false, false); }
+    unbox(p, b);
     const vr = p.vx * nx + p.vy * ny; if (vr > 0) { p.vx -= vr * nx; p.vy -= vr * ny; }
   }
 }
@@ -391,6 +400,7 @@ function cord(g, p, F, psy, dt) {
 function stepPlayer(g, inp, dt) {
   const p = g.p;
   if (p.dead) { p.deadT -= dt; if (p.deadT <= 0) respawn(g); return; }
+  if (inp.resetP && !g.L.def.real) { die(g); return; }   // back to the last standing stone the ordinary way, so the cord is dropped and health comes back. Not in the last room, where nobody comes back
   for (const k of ['throwCd', 'throwAnim', 'actCd', 'roarCd', 'swapCd', 'inv', 'pounceCd', 'wallLock']) if (p[k] > 0) p[k] = Math.max(0, p[k] - dt);
   if (p.cordMiss && (p.cordMiss.t -= dt) <= 0) p.cordMiss = null;
   if (inp.swapP && p.swapCd <= 0) trySwap(g);
@@ -409,7 +419,10 @@ function stepPlayer(g, inp, dt) {
       if (dir) p.vx = approach(p.vx, dir * F.run, (p.onGround ? F.acc : F.air) * dt);
       else p.vx = approach(p.vx, 0, (p.onGround ? F.fric : 260) * dt);
       const b = box(p, F);
-      if (!p.cling && dir && !p.onGround && p.vy > -120 && climbable(g, b, dir)) { p.cling = dir; ev(g, 'cling', p); }
+      // Pushing into stone takes hold of it: in the air at once, and from the ground when up is held with room to rise.
+      // A press of W is a jump first, as it was. A stick pushed up is no jump, and must climb all the same.
+      const grab = p.onGround ? inp.up && !inp.jumpP && !blocked(g, b.x, b.y - 6, b.w, b.h, true) : p.vy > -120;
+      if (!p.cling && dir && grab && climbable(g, b, dir)) { p.cling = dir; p.coyote = 0; ev(g, 'cling', p); }
       else if (p.cling && (dir !== p.cling || p.onGround || !climbable(g, b, p.cling))) {
         if (dir === p.cling && inp.up && !p.onGround) { p.vy = -175; p.vx = p.cling * 70; }   // over the top of the wall
         p.cling = 0;
@@ -542,9 +555,10 @@ function stepReal(g, dt) {
   }
   if (left < 8) {
     if (a.tele) { if ((a.tele.t -= dt) <= 0) { for (let x = 22; x <= 458; x += 12) if (Math.abs(x - a.tele.x) > 22) shootAt(g, x, 18, x, 400, 210, false); const ok = Math.abs(p.x - a.tele.x) < 20; g.orders++; if (ok) g.obeyed++; a.tele = null; ev(g, 'wall', a, { obeyed: ok }); } }
-    else if ((a.wallCd -= dt) <= 0) { a.wallCd = 1.5; const s = Math.floor(g.realT * 3) % 2 ? 1 : -1; let x = p.x + s * 84; if (x < 44 || x > 436) x = p.x - s * 84; a.tele = { x: clamp(x, 44, 436), t: 0.7 }; ev(g, 'tele', a); }
+    // The place it orders you to is as far as the form you are in can run in the 0.7 s given: 84 px for the jaguar, 54 for the weaver.
+    else if ((a.wallCd -= dt) <= 0) { a.wallCd = 1.5; const s = Math.floor(g.realT * 3) % 2 ? 1 : -1, far = Math.round(F.run * 0.56); let x = p.x + s * far; if (x < 44 || x > 436) x = p.x - s * far; a.tele = { x: clamp(x, 44, 436), t: 0.7 }; ev(g, 'tele', a); }
   }
-  if (left <= 0) { ev(g, 'judgment', p); p.hp = 0; p.inv = 0; die(g); }
+  if (left <= 0) { g.judged = true; ev(g, 'judgment', p); p.hp = 0; p.inv = 0; die(g); }
 }
 
 function hurt(g, n, fromX) {

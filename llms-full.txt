@@ -348,7 +348,7 @@ Text version of the interactive map: This map needs JavaScript.
 ## Company
 
 - [Consulting and partnerships](https://syberlabs.io/services/): AI consulting, custom builds and design partnerships from SyberLabs. We build agent systems in which software runs the checks, every step is logged in a signed record and a person approves before anything ships.
-- [PSYCHO SYBER](https://syberlabs.io/psycho-syber/): PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.
+- [PSYCHO SYBER](https://syberlabs.io/psycho-syber/): A SyberLabs browser stealth game: a stage each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a sixth with no exit. Keyboard, mouse or touch.
 
 ## Account
 

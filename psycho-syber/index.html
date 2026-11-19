@@ -4,21 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#02070a">
-  <meta name="description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
+  <meta name="description" content="A SyberLabs browser stealth game: a stage each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a sixth with no exit. Keyboard, mouse or touch.">
   <link rel="canonical" href="https://syberlabs.io/psycho-syber/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="PSYCHO SYBER | SyberLabs">
-  <meta property="og:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
+  <meta property="og:description" content="A SyberLabs browser stealth game: a stage each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a sixth with no exit. Keyboard, mouse or touch.">
   <meta property="og:url" content="https://syberlabs.io/psycho-syber/">
   <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261118a">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="PSYCHO SYBER | SyberLabs">
-  <meta name="twitter:description" content="PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.">
+  <meta name="twitter:description" content="A SyberLabs browser stealth game: a stage each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a sixth with no exit. Keyboard, mouse or touch.">
   <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261118a">
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preload" href="/fonts/v1/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/syberlabs.css">
-  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261118a">
+  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261118b">
   <title>PSYCHO SYBER | SyberLabs</title>
 </head>
 <body class="syber-play">
@@ -79,10 +79,10 @@
             <li>PSYCHO: a tap on the picture pounces toward it · push the stick into stone and up to climb</li>
           </ul>
           <ul class="ps-controls ps-for-keys">
-            <li><kbd>A</kbd> <kbd>D</kbd> walk · <kbd>W</kbd> or <kbd>Space</kbd> jump · hold <kbd>S</kbd> to hide</li>
+            <li><kbd>A</kbd> <kbd>D</kbd> walk · <kbd>W</kbd> or <kbd>Space</kbd> jump · hold <kbd>S</kbd> to hide · <kbd>S</kbd> + jump drops through a beam</li>
             <li><kbd>Shift</kbd> change form (<kbd>Q</kbd> does the same)</li>
             <li>SYBER: click throws glass · hold the button for the cord · <kbd>E</kbd> runs the check</li>
-            <li>PSYCHO: click pounces · push into stone to climb · <kbd>E</kbd> roars</li>
+            <li>PSYCHO: click pounces · push into stone and hold <kbd>W</kbd> to climb · <kbd>E</kbd> roars</li>
             <li><kbd>Esc</kbd> pause · <kbd>R</kbd> back to the last stone · <kbd>F</kbd> full screen · <kbd>M</kbd> sound</li>
           </ul>
           <p class="ps-actions"><button class="sy-btn sy-btn--solid" id="ps-resume" type="button">Resume</button><button class="sy-btn sy-btn--line" id="ps-restart" type="button">Restart stage</button><button class="sy-btn sy-btn--line" id="ps-mute" type="button">Sound on</button><button class="sy-btn sy-btn--line" id="ps-turn" type="button" hidden>Play upright</button><button class="sy-btn sy-btn--line" id="ps-quit" type="button">Title</button></p>
@@ -118,11 +118,11 @@
 
       <section aria-labelledby="forms-title">
         <h2 id="forms-title">Two forms</h2>
-        <p>Shift changes your form. The picture, the music and what you can do change with it. For a moment at each change you are both: a person's body under the jaguar's head. The form you leave stays behind as a double for three seconds, at most once every eight. A Visitor who can see the double watches it and loses you.</p>
+        <p>Shift changes your form. The picture, the music and what you can do change with it. For a moment at each change you are both: a person's body under the jaguar's head. The form you leave stays behind as a double for three seconds, at most once every eight. A warden who can see the double watches it and loses you.</p>
         <p>Each of the first five stages can be finished without taking the jaguar's form. Where the jaguar goes under a wall, up a cliff or across a path only it can stand on, the weaver has a terminal that opens a door, a stair, or a ladder of beams. The weaver's way takes longer.</p>
         <dl class="ps-forms">
-          <div><dt>SYBER</dt><dd>The weaver, wearing the circlet. Throws glass, swings on a knotted cord and runs the check with E. On a Visitor machine the check takes the machine over. On stone it marks each step proven, stale or broken. On a lot in the fifth stage it reads the record.</dd></div>
-          <div><dt>PSYCHO</dt><dd>The jaguar. It runs faster, climbs stone, fits through low tunnels and pounces. E is a roar: the mountain echoes it three times, rain falls, and everything else slows for about three seconds. It stands on spirit paths the weaver falls through. It sees which source feeds each gate and which villagers are Visitors. A pounce breaks a source, and the alarm goes up when it does. In the fifth stage it sees each record as a line: a broken line is a gap.</dd></div>
+          <div><dt>SYBER</dt><dd>The weaver, wearing the circlet. Throws glass, swings on a knotted cord and runs the check with E. On a Visitor machine it turns a sentinel, shuts off an eye or source, opens a door, or sets the word pace. On stone it marks each step proven, stale or broken. On a lot in the fifth stage it reads the record.</dd></div>
+          <div><dt>PSYCHO</dt><dd>The jaguar. It runs faster, climbs stone, fits through low tunnels and pounces. E is a roar: the mountain echoes it three times, rain falls, nearby wardens and sentinels are stunned, and everything else slows for about three seconds. It stands on spirit paths the weaver falls through. It sees which source feeds each gate and which villagers are Visitors. A pounce breaks a source, and the alarm goes up when it does. In the fifth stage it sees each record as a line: a broken line is a gap.</dd></div>
         </dl>
       </section>
 
@@ -130,7 +130,7 @@
         <h2 id="stages-title">Six stages</h2>
         <ol class="ps-stages">
           <li><span class="ps-stages__n">01</span><div><h3>THE STEPS · <a href="/projects/attest/">Attest</a></h3><p>A stair where some steps are stale and some are missing. The check marks each one. Attest runs every step in your docs and marks the ones that fail.</p></div></li>
-          <li><span class="ps-stages__n">02</span><div><h3>MACHU PICCHU · <a href="/projects/rise/">RISE</a></h3><p>A climb through Inca ruins on words that light one at a time. You set their pace: the jaguar's roar slows them for a moment, and a pace setter in the ravine slows them until you check it again. Each part of the climb also has a stair of stone that needs no jaguar. RISE shows text at a pace you set, with sound and moving visuals.</p></div></li>
+          <li><span class="ps-stages__n">02</span><div><h3>MACHU PICCHU · <a href="/projects/rise/">RISE</a></h3><p>A climb through Inca ruins on words that light one at a time. You set their pace: the jaguar's roar slows them for a moment, and a pace setter in the ravine slows them until you check it again. Parts one and three also have beam stairs for the weaver. RISE shows text at a pace you set, with sound and moving visuals.</p></div></li>
           <li><span class="ps-stages__n">03</span><div><h3>THE LINES · <a href="/projects/flyspace/">FLYSPACE</a></h3><p>Gates on the desert floor, each fed by a source somewhere else. The jaguar sees the line between them. FLYSPACE shows which data sources fed each AI answer.</p></div></li>
           <li><span class="ps-stages__n">04</span><div><h3>THE WORKS · <a href="/projects/syberwork/">SyberWork</a></h3><p>The Visitors' factory, with stations named Propose, Check, Review, Approve and Publish. At Approve a machine decides alone until you cut its three sources. SyberWork tests every AI-written code change before a person approves it.</p></div></li>
           <li><span class="ps-stages__n">05</span><div><h3>THE RECORD · <a href="/lacuna/">Lacuna Institute</a></h3><p>A viewing hall before a sale. Seven lots stand on plinths. E reads the record of a lot, and five of the records have a gap. You deliver that evidence at the far door before the sale timer runs out. Nothing is taken and no one is fought. Lacuna Institute describes its work as “Finding the history that fell out of the record.”</p></div></li>
@@ -149,7 +149,7 @@
 
       <section id="atlas" aria-labelledby="atlas-title">
         <h2 id="atlas-title">The 21 Atlas marks</h2>
-        <p>The first five stages hold 21 marks between them, one for each site in the <a href="/lacuna/">Lacuna Atlas</a>: three in each of the first four stages and nine in the fifth. A mark carries the name of its site and links to that entry. The game says nothing else about any site. Each Atlas entry has sections headed “What's known”, “What's missing”, “The open question” and “Sources”.</p>
+        <p>The first five stages hold 21 marks between them, one for each site in the <a href="/lacuna/">Lacuna Atlas</a>: three in each of the first four stages and nine in the fifth. Each mark carries the name of its site; the list below and the fifth stage's end card link to every entry. The game says nothing else about any site. Each Atlas entry has sections headed “What's known”, “What's missing”, “The open question” and “Sources”.</p>
         <p>The marks you find are kept in this browser. Once you have finished a stage, the title shows a numbered button for each stage you have reached, with the count of marks found in it, and each button starts that stage. In the last stage each mark found is a lens on the machine's wall that has gone dark, and the verdict comes one second later for each.</p>
         <ul class="ps-sites">
           <li><a href="/lacuna/#paracas">Paracas</a></li>
@@ -181,9 +181,9 @@
         <table class="ps-table">
           <thead><tr><th scope="col">Key</th><th scope="col">SYBER</th><th scope="col">PSYCHO</th></tr></thead>
           <tbody>
-            <tr><th scope="row">A, D</th><td>Walk</td><td>Run</td></tr>
-            <tr><th scope="row">W or Space</th><td>Jump. On the cord, W reels in and Space lets go.</td><td>Jump. On a wall, W climbs and Space leaps off.</td></tr>
-            <tr><th scope="row">S</th><td colspan="2">Hold still and hold S to hide</td></tr>
+            <tr><th scope="row">A, D or Left, Right</th><td>Walk</td><td>Run</td></tr>
+            <tr><th scope="row">W, Up or Space</th><td>Jump. On the cord, W reels in, S lowers and Space lets go with a kick.</td><td>Jump. Push into stone and hold W to climb; pushing into stone in the air clings. S climbs down and Space leaps off.</td></tr>
+            <tr><th scope="row">S or Down</th><td colspan="2">Hold still and hold S to hide. S with W or Space drops through a beam.</td></tr>
             <tr><th scope="row">Shift or Q</th><td colspan="2">Change form</td></tr>
             <tr><th scope="row">Mouse</th><td>Click throws glass. Hold the button, or right-click, to throw the cord at stone, a beam or a ring.</td><td>Click pounces toward the pointer</td></tr>
             <tr><th scope="row">E</th><td>Run the check</td><td>Roar</td></tr>
@@ -194,10 +194,10 @@
         <h3 class="ps-sub">On a phone or tablet</h3>
         <p>Touch controls show while a stage is on, and the stage takes the whole screen. On a phone held upright the stage is drawn sideways along the long edge, which makes the picture about three times the size: turn the phone to play. This works whether or not the phone's rotation is locked. Pause has a button to play upright instead, and a button back to the title, where this page's header returns.</p>
         <ul>
-          <li>The stick on the left walks. Up reels in the cord or climbs. Down hides, and with Jump drops through a beam.</li>
-          <li>Jump, Form and E are buttons on the right. E runs the check, or roars as the jaguar.</li>
+          <li>The stick on the left walks. Up reels in the cord; as the jaguar, push into stone and up to climb. Down lowers the cord, climbs down, hides, and with Jump drops through a beam.</li>
+          <li>Jump, Form and E are buttons on the right. Jump leaps off stone while climbing. E runs the check, or roars as the jaguar.</li>
           <li>A tap on the picture throws glass, or pounces as the jaguar, toward the place you tapped.</li>
-          <li>Press and hold on a ring or on stone to throw the cord. It stays tied when you lift your finger. A tap or Jump lets it go.</li>
+          <li>Press and hold on a ring, a beam or stone to throw the cord. It stays tied when you lift your finger. A tap or Jump lets it go.</li>
           <li>The note button switches the sound off and on.</li>
         </ul>
         <h3 class="ps-sub">Music</h3>
@@ -207,10 +207,10 @@
 
       <section id="real" aria-labelledby="real-title">
         <h2 id="real-title">What is real</h2>
-        <p>The story is invented: the Visitors, the Patron, the Works, the sale, every lot in it and the Thousand Eyes. No dealer, auction house, museum or company in the game exists. The story's people are invented too, with one exception: a hidden scene in which three members of SyberLabs appear under their nicknames. The operating system in THE ANOMALOUS SYSTEM is invented and stands for no product.</p>
+        <p>The story is invented: the Visitors, the Patron, the Works, the sale, every lot in it and the Thousand Eyes. No dealer, auction house, museum or company in the game exists. The story's people are invented too, with one exception: a hidden scene in which three members of SyberLabs appear by first name or nickname and role. The operating system in THE ANOMALOUS SYSTEM is invented and stands for no product.</p>
         <p>Paracas is real. The Lacuna Atlas entry on it begins: “The elongated skulls of Paracas are real. So is the paperwork gap around where some of the burials went.” The same entry says: “Shaping an infant's skull with boards and bindings was a deliberate cultural practice, not a mystery of biology.”</p>
         <p><a href="/lacuna/#paracas">Paracas in the Lacuna Atlas</a> · <a href="/lacuna/research/paracas-bundles/">The Paracas bundles dataset</a></p>
-        <p>Machu Picchu is real and much later. It was built in the mid-1400s as an estate for the Inka emperor Pachacuti, with terraces, fitted stone and trapezoid doorways. The game puts it on the same road as Paracas. <a href="https://smarthistory.org/?p=1631" rel="noopener">Smarthistory: Machu Picchu</a></p>
+        <p>Machu Picchu is real and much later. It was built in the mid-1400s as an estate for the Inca emperor Pachacuti, with terraces, fitted stone and trapezoid doorways. The game puts it on the same road as Paracas. <a href="https://smarthistory.org/?p=1631" rel="noopener">Smarthistory: Machu Picchu</a></p>
       </section>
 
       <section id="borrows" aria-labelledby="borrows-title">
@@ -230,12 +230,12 @@
         <ul>
           <li>The touch controls are checked in Chrome's phone emulation, sideways and upright, and the game has been opened on one iPhone. It has not been played through on a phone or tablet.</li>
           <li>If you choose to play upright on a phone, the picture is small and the words drawn inside the last stage's picture are hard to read.</li>
-          <li>On an iPhone the game asks to play its sound with the ringer switch off, which stops other apps' audio while the sound is on. This has not been checked on a phone. Before iOS 16.4 the ringer switch silences the game.</li>
+          <li>On an iPhone the game asks to play its sound even when the ringer switch is set to silent, which stops other apps' audio while the sound is on. This has not been checked on a phone. Before iOS 16.4 the ringer switch silences the game.</li>
           <li>The story pace has no touch control. On a phone it is set to 220 words a minute.</li>
           <li>Checked in Chrome on a desktop. Firefox and Safari have not been checked.</li>
           <li>Each of the first five stages has two <a href="https://github.com/SyberLabs/SyberLabs.github.io/tree/main/psycho-syber/test" rel="noopener">scripted runs</a> that play it to the exit: one that takes the jaguar's form and one that never does. A third check plays the last stage and confirms that it ends without an exit.</li>
           <li>THE ANOMALOUS SYSTEM is a first version. One <a href="https://github.com/SyberLabs/SyberLabs.github.io/tree/main/psycho-syber/test" rel="noopener">scripted run</a> plays it to its exit, using both forms. It has no run that stays in one form, because a copy is left by changing form. It has been checked in headless Chrome at a desktop width and a phone width. No person has played it through yet, and it has not been opened on a phone.</li>
-          <li>The ending covers the whole page and changes this tab's title for about ten seconds. Enter or Escape skips it. With reduced motion set on your device it shows its text and no animation.</li>
+          <li>The ending covers the whole page and changes this tab's title for about ten seconds. Enter or Escape skips it at any point. Once the page goes dark for the last four lines, a tap skips the rest. With reduced motion set on your device it shows its text and no animation.</li>
           <li>The ending reads the time from your device's clock and shows it to you. The game sends nothing: the only requests it makes are for its own files on this site, so what it reads stays on your device.</li>
           <li>Your progress, the Atlas marks you have found, your story pace and your best share in THE ANOMALOUS SYSTEM are kept in this browser's storage. Clearing site data resets them.</li>
           <li>The music and the effects are synthesised in the browser. Their level was set by measurement in Chrome, without listening.</li>
@@ -251,6 +251,6 @@
     <span class="sy-footer__copy">© 2026 SyberLabs</span>
   </div>
 </div></footer>
-  <script type="module" src="/psycho-syber/game/main.js?v=20261118a"></script>
+  <script type="module" src="/psycho-syber/game/main.js?v=20261118b"></script>
 </body>
 </html>

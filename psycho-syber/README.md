@@ -24,7 +24,7 @@ say are in the repository's `CLAUDE.md`, under "PSYCHO SYBER". This file and `te
 
 ## Checks
 
-    node psycho-syber/test/run.mjs              every stage to its exit, the Atlas list against src/lacuna/atlas/sites.js, and the narrator's recordings against the story
+    node psycho-syber/test/run.mjs              every stage to its exit, the Atlas list against src/lacuna/atlas/sites.js, the narrator's recordings against the story, and the rules a clean run never trips
     node psycho-syber/test/run.mjs works --log  one stage, with the player's position after each script entry
     node psycho-syber/test/run.mjs machu:weaver one route of one stage
 
@@ -69,6 +69,7 @@ Measured by `test/probe.mjs`. Design inside these numbers.
 gates down a column `|` lit, `!` blinking, `i` lit by the alarm, `f` fed by a source · the same along a row `-` `~` `a` `g`.
 
 Settings go with the character: `m.put(x, y, 'S', { id: 'a' })`. `parseLevel` in `sim.js` lists every setting.
+A ring takes `dx` and `dy`, pixels off the centre of its tile.
 
 ## Adding or changing a stage
 
@@ -80,6 +81,32 @@ Settings go with the character: `m.put(x, y, 'S', { id: 'a' })`. `parseLevel` in
 4. Look at it: `browser.mjs <outDir> stage`, in both forms.
 
 A tall stage (`order: 'up'`) must not use gates or doors that run down a column.
+
+## What play has shown
+
+On November 18, 2026 the game was played by a tester that had not seen it, in the page and with 5.6 million steps of
+random and clumsy input against `sim.js`. What it found is now checked by `run.mjs` (the `rule:` lines under
+"found by play"), and a new stage should keep to the same things:
+
+- A ring over a wall hangs just past the wall's near edge (`{ dx: -6 }` on the wall's first column), so it is in
+  sight from the foot of the wall. One tile further in, the wall's corner hides it from anyone who walks up to the
+  wall, and the cord takes the wall's face.
+- A way that ends at a wall gets a hint at the wall that says so and says where the way on is. Stage 1 has one under
+  its last stair and stage 2 has one in the ravine.
+- A fall that costs a whole climb gets somewhere to land halfway: the two beams under the fourth and fifth words of
+  stage 2's first climb. They are lower than the word above them, so they are no part of the way up.
+- A standing stone comes before the first place a stage kills: stage 3 has one before its first gate.
+- The jaguar takes hold of stone from the ground when up is held, with no jump. On touch the stick's up is not a jump
+  (`main.js`), and a hint that says "push into stone and hold up" has to be true there too.
+- `R` is an input to `sim.js` (`resetP`), which ends the attempt the ordinary way. The page must not move or
+  hurt the player itself: the cord pulled such a player back, alive and at no health.
+- `cord()` moves the weaver in pieces of 6 px. `moveX` and `moveY` test only where a move ends, so nothing may
+  call them with more than a tile at once.
+- Down and jump lets go of a beam or a word. On stone it is a jump.
+- In the last stage the place the machine orders you to is as far as your form can run in the 0.7 seconds it gives.
+  `g.judged` says whether the run reached the verdict, and the ending says the verdict was late only when it did.
+- `g.shifts` counts every change of form and is what the ending reads back. `g.swaps` counts the changes into the
+  jaguar and is what holds a `weaver` run to none.
 
 ## More than one way through
 

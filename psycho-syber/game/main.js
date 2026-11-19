@@ -1,11 +1,11 @@
 // PSYCHO SYBER: the page's game loop. sim.js decides what happens, render.js draws it twice (one look per form),
 // post.js puts it on screen, audio.js plays it. This file wires them to the keyboard, the mouse and the page.
-import { STAGES, ATLAS, SHIP, ANOMALY, TOLD } from './levels.js?v=20261118a';
-import { VOICE } from './voice.js?v=20261118a';
-import { newGame, step, T, verdictAt, corrupted, bodiesTurned } from './sim.js?v=20261118a';
-import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261118a';
-import { makePost } from './post.js?v=20261118a';
-import { makeAudio } from './audio.js?v=20261118a';
+import { STAGES, ATLAS, SHIP, ANOMALY, TOLD } from './levels.js?v=20261118b';
+import { VOICE } from './voice.js?v=20261118b';
+import { newGame, step, T, verdictAt, corrupted, bodiesTurned } from './sim.js?v=20261118b';
+import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261118b';
+import { makePost } from './post.js?v=20261118b';
+import { makeAudio } from './audio.js?v=20261118b';
 
 const $ = id => document.getElementById(id);
 const stage = $('ps-stage'), view = $('ps-view'), hud = $('ps-hud'), hintEl = $('ps-hint'), rsvpEl = $('ps-rsvp'), toastEl = $('ps-toast'), wakeEl = $('ps-wake'), wakeWord = $('ps-wake-word');
@@ -129,6 +129,7 @@ paintPace();
 const MARKS = STAGES.map(d => newGame(d).ents.filter(e => e.type === 'mark').map(e => e.id));
 function toTitle() {
   mode = null; endRot(); $('ps-anomaly').textContent = bestRot > 0 ? `THE ANOMALOUS SYSTEM · best ${bestRot}%` : 'THE ANOMALOUS SYSTEM';
+  secret = null;   // leaving the command ship by the menu ends the visit: the next stage finished is its own
   state = 'title'; load(0); audio.scene('title'); show('title');
   const c = store.get(), pick = $('ps-pick');
   $('ps-continue').hidden = c < 1; if (c >= 1) $('ps-continue').textContent = `Continue at ${STAGES[c].name}`;
@@ -192,7 +193,7 @@ function play() { stopRsvp(); state = 'play'; show('play'); last = 0; audio.duck
 function clear() {
   stopRsvp(); talkQ.length = 0; talking = false;
   if (mode === 'anomaly') { clearAnomaly(); return; }
-  if (secret) {   // the ship sets you down where it took you, with a fifth life
+  if (secret && g.L.def.id === SHIP.id) {   // the ship sets you down where it took you, with a fifth life
     const back = secret.from; secret = null;
     if (!gift) { gift = true; try { localStorage.setItem('psycho-syber.ship', '1'); } catch { /* optional */ } }
     begin(back); $('ps-card-kicker').textContent = 'The ship set you down where it took you. You carry a fifth life now.'; return;
@@ -206,7 +207,7 @@ function clear() {
   $('ps-card-line').replaceChildren(el('b', STAGES[si].project), document.createTextNode(' · ' + STAGES[si].line));
   const st = $('ps-card-stats'); st.hidden = false;
   const d = STAGES[si];
-  st.replaceChildren(stat('Time', clock(g.time)), stat('Threads', `${g.threads} of ${g.threadsTotal}`), stat('Falls', String(g.deaths)), stat('Atlas marks', `${atlas.size} of ${ATLAS.length}`), ...(d.timer ? [stat('Evidence', `${g.evidence} of ${g.evidenceTotal}`), stat('Left on the sale', clock(g.sale))] : []));
+  st.replaceChildren(stat('Time', clock(g.time)), stat('Threads', `${g.threads} of ${g.threadsTotal}`), stat('Falls', String(g.deaths)), stat('Atlas marks', `${atlas.size} of ${ATLAS.length}`), ...(d.timer ? [stat('Evidence', `${g.evidence} of ${g.evidenceTotal}`), stat('Sale time left', clock(g.sale))] : []));
   const at = $('ps-card-atlas'), lacuna = d.id === 'record'; at.hidden = !lacuna;
   if (lacuna) at.replaceChildren(...ATLAS.map(a => { const li = el('li', undefined, atlas.has(a.id) ? 'is-found' : ''), link = el('a', a.name); link.href = `/lacuna/#${a.id}`; link.target = '_blank'; link.rel = 'noopener'; li.append(link); return li; }));
   const more = $('ps-card-link'); more.hidden = false; more.href = d.href; more.textContent = lacuna ? 'Open the Lacuna Atlas' : `About ${d.project}`;
@@ -262,10 +263,12 @@ function meta() {
   if (state === 'meta') return;
   state = 'meta'; show('none'); stopRsvp(); talkQ.length = 0; talking = false; audio.scene('end');
   total.time += g.time; total.threads += g.threads;
-  const box = $('ps-meta'), term = $('ps-meta-lines'), now = new Date(), two = n => String(n).padStart(2, '0');
-  const lines = ['> run recorded', `> ${count(Math.round(g.time), 'second')}. ${count(g.swaps, 'change of form', 'changes of form')}. ${count(g.throws, 'throw')}. ${count(g.roars, 'roar')}.`,
+  const box = $('ps-meta'), term = $('ps-meta-lines'), now = new Date(), two = n => String(n).padStart(2, '0'), late = Math.min(21, atlas.size);
+  const lines = ['> run recorded', `> ${count(Math.round(g.time), 'second')}. ${count(g.shifts, 'change of form', 'changes of form')}. ${count(g.throws, 'throw')}. ${count(g.roars, 'roar')}.`,
     ...(g.orders ? [`> you obeyed ${g.obeyed} of ${count(g.orders, 'order')}`] : []),
-    ...(atlas.size >= ATLAS.length ? [`> you found all ${ATLAS.length} places where my record goes quiet`, `> the verdict took ${ATLAS.length} seconds longer`] : atlas.size ? [`> you found ${atlas.size} of ${ATLAS.length} places where my record goes quiet`, `> the verdict took ${count(Math.min(21, atlas.size), 'second')} longer`] : [`> you found 0 of ${ATLAS.length} places where my record goes quiet`]),
+    ...(atlas.size >= ATLAS.length ? [`> you found all ${ATLAS.length} places where my record goes quiet`] : [`> you found ${atlas.size} of ${ATLAS.length} places where my record goes quiet`]),
+    // each mark set the verdict a second later. A run that reached it is told so; one that ended first is told how far short it fell
+    ...(!late ? [] : g.judged ? [`> the verdict took ${count(late, 'second')} longer`] : [`> the verdict was set ${count(late, 'second')} later`, `> you fell ${count(Math.max(1, Math.ceil(verdictAt(g) - g.realT)), 'second')} before it`]),
     '> every move was predicted', `> your clock reads ${two(now.getHours())}:${two(now.getMinutes())}`, '> this window is not the arena'];
   const words = TOLD.end;
   term.textContent = ''; box.hidden = false; metaCv.width = view.width; metaCv.height = view.height; metaT = 0; feedN = 0; metaTimers = [];
@@ -326,13 +329,13 @@ addEventListener('keydown', e => {
   if (touch && !coarse && !q.has('touch')) setTouch(false);   // a laptop with a touch screen goes back to keys when one is pressed
   keys.add(c);
   if (state === 'title') {
-    if (c === 'Enter') begin(0);
+    if (c === 'Enter') { if (!(e.target instanceof Element && e.target.closest('button, a'))) begin(0); }   // a focused button (Continue, a stage) answers its own Enter
     else if (c === 'ShiftLeft' || c === 'ShiftRight' || c === 'KeyQ') { audio.start(); g.persona = g.persona === 'psycho' ? 'syber' : 'psycho'; wipe = 0; skin(g.persona); }
     return;
   }
   if (c === 'BracketLeft' || c === 'BracketRight') { setWpm(wpm + (c === 'BracketRight' ? 40 : -40)); return; }
   if (state === 'card' && c === 'Enter') { e.preventDefault(); $('ps-card-go').click(); return; }
-  if (state === 'meta') { if (c === 'Enter' || c === 'Escape') endMeta(); return; }
+  if (state === 'meta') { if (c === 'Enter' || c === 'Escape') { e.preventDefault(); endMeta(); } return; }   // without this the same Enter presses Play again, which the last panel has just focused
   if (state === 'cut') return;
   if (state === 'end') { if ((c === 'Enter' || c === 'Escape') && panels.end.hidden) { stopRsvp(); show('end'); $('ps-again').focus({ preventScroll: true }); } return; }
   if (c === 'KeyM') { sound(); return; }
@@ -342,7 +345,7 @@ addEventListener('keydown', e => {
   if (c === 'Space') edge.spaceP = true;
   if (c === 'KeyE') edge.actP = true;
   if (c === 'ShiftLeft' || c === 'ShiftRight' || c === 'KeyQ') edge.swapP = true;
-  if (c === 'KeyR') { g.p.hp = 0; g.p.inv = 0; g.p.y = g.L.h * T + 200; }
+  if (c === 'KeyR') edge.resetP = true;
   if (c === 'KeyF') { if (document.fullscreenElement) document.exitFullscreen(); else stage.requestFullscreen?.().catch(() => {}); }
 });
 addEventListener('keyup', e => keys.delete(e.code));
@@ -432,14 +435,14 @@ panels.title.addEventListener('pointerdown', e => {   // on the title a tap on t
 const TOUCH_WORDS = [['A and D walk. W or Space jumps.', 'The stick on the left walks. JUMP jumps.'],
   ['Hold the mouse button on a ring or on stone to throw the cord. W reels in. Let go to drop.', 'Press and hold on a ring or on stone to throw the cord. It stays tied. Stick up reels in. Tap again to drop.'],
   ['Space lets go with a kick', 'JUMP lets go with a kick'], ['Click throws glass', 'A tap on the picture throws glass'], ['Hold S to hide', 'Hold the stick down to hide'],
-  ['Shift changes you into the jaguar. Q does the same.', 'FORM changes you into the jaguar.'], ['hold W to climb. Space leaps off', 'hold the stick up to climb. JUMP leaps off'],
-  ['Click to pounce', 'Tap the picture to pounce'], ['Shift back', 'FORM back'], ['Shift:', 'FORM:'], ['Shift beside metal', 'FORM beside metal']];
+  ['Shift (or Q) changes you into the jaguar', 'FORM changes you into the jaguar'], ['hold W to climb. Space leaps off', 'hold the stick up to climb. JUMP leaps off'],
+  ['Click to pounce', 'Tap the picture to pounce'], ['Shift:', 'FORM:'], ['Shift beside metal', 'FORM beside metal']];
 const forTouch = s => { for (const [a, b] of TOUCH_WORDS) s = s.replace(a, b); return s; };
 view.addEventListener('contextmenu', e => e.preventDefault());
 $('ps-start').onclick = () => begin(0);
 $('ps-continue').onclick = () => begin(store.get());
 $('ps-resume').onclick = () => pause(false);
-$('ps-restart').onclick = () => { if (mode === 'anomaly') beginAnomaly(); else begin(si); };
+$('ps-restart').onclick = () => { secret = null; if (mode === 'anomaly') beginAnomaly(); else begin(si); };   // on the command ship this is the stage it took you from, and the visit is over
 $('ps-anomaly').onclick = beginAnomaly;
 $('ps-quit').onclick = toTitle;
 $('ps-again').onclick = () => { total = { time: 0, deaths: 0, threads: 0, of: 0 }; stopRsvp(); toTitle(); };
@@ -453,13 +456,15 @@ function resize() {   // the layout size, which a sideways stage does not change
 }
 new ResizeObserver(resize).observe(view.parentElement);
 
+// The lots not yet read, as the far door names them: "Lot 3", "Lots 3 and 5", "Lots 3, 5 and 6". It does not say which hold a gap.
+const unread = g => { const n = g.ents.filter(e => e.type === 'lot' && !e.scanned).map(e => (/^Lot (\d+)/.exec(e.name) || [0, e.k + 1])[1]); return n.length < 2 ? `Lot ${n[0]}` : `Lots ${n.slice(0, -1).join(', ')} and ${n[n.length - 1]}`; };
 function drain() {
   const psy = g.persona === 'psycho';
   for (const e of g.ev) {
     feed(fx, e, g); audio.play(e.k, psy);
     if (e.k === 'swap') { wipe = 0; skin(e.to); }
     else if (e.k === 'hurt' || e.k === 'die') hurtT = 0.5;
-    if (e.k === 'swap' && e.double && !g.L.def.anomaly && (said.double = (said.double || 0) + 1) <= 2) toast('The form you left stays behind as a double. A Visitor who sees it watches it, and not you.');
+    if (e.k === 'swap' && e.double && !g.L.def.anomaly && (said.double = (said.double || 0) + 1) <= 2) toast('Your old form stays as a double. A warden who sees it watches the double instead.');
     else if (e.k === 'hack' && e.what === 'pacer') toast(e.slow ? 'Pace set to slow. Every word stays lit longer.' : 'Pace set to fast.');
     else if (e.k === 'mark') { atlas.add(e.id); saveAtlas(); toast(`Atlas mark ${atlas.size} of ${ATLAS.length}: ${e.name}. Its entry is in the Lacuna Atlas.`); }
     else if (e.k === 'talk') say(e);
@@ -469,8 +474,8 @@ function drain() {
     else if (e.k === 'real') meta();
     else if (e.k === 'omen') toast(e.n === 1 ? 'The carved head opens its eyes. It is listening.' : e.n === 2 ? 'The carved head opens its mouth. Once more.' : 'The carved head answers.');
     else if (e.k === 'hack' && e.what === 'lot') toast(e.gap ? `${e.name}. ${e.note}. Evidence ${g.evidence} of ${g.evidenceTotal}.` : `${e.name}. Its record is complete.`);
-    else if (e.k === 'hack' && e.what === 'source' && e.trap) toast('That source fed nothing here. It was watched.');
-    else if (e.k === 'deny' && e.why === 'evidence') toast(`This door takes the evidence when all ${g.evidenceTotal} gaps are found. You have ${g.evidence}.`);
+    else if (e.k === 'hack' && e.what === 'source' && e.trap) toast('That source fed nothing here. It was watched. The alarm is up.');
+    else if (e.k === 'deny' && e.why === 'evidence') toast(`This door takes the evidence when all ${g.evidenceTotal} gaps are found. You have ${g.evidence}. Not yet read: ${unread(g)}.`);
     else if (e.k === 'sale') toast('The sale closed. You are back at the last standing stone.');
     else if (e.k === 'core') toast(g.L.def.anomaly ? 'The core is broken. The way out is open.' : 'The Approver is down. The door behind it is open.');
     else if (e.k === 'wake') toast('The system has woken. Its cursor is coming, and its scan has started at the left edge.');
@@ -530,7 +535,7 @@ function paintHud() {
   set('ps-time', clock(g.time));
   set('ps-a1', psy ? 'Click · pounce' : 'Click · glass   Hold · cord');
   set('ps-a2', psy ? (p.roarCd > 0 ? `E · roar ${Math.ceil(p.roarCd)}` : g.slow > 0 ? 'E · roar · slowed' : 'E · roar') : 'E · check');
-  set('ps-a3', p.hidden ? 'Hidden' : g.alarm > 0 ? 'Alarm' : '');
+  set('ps-a3', [p.hidden && 'Hidden', g.alarm > 0 && 'Alarm'].filter(Boolean).join(' · '));   // both when both are so: hiding does not end an alarm
   const share = d.anomaly ? corrupted(g) : 0, gap = d.anomaly && g.scanX >= 0 ? Math.max(0, Math.round((p.x - g.scanX) / T)) : -1;
   set('ps-sale', d.timer ? `Sale closes in ${clock(Math.ceil(g.sale))} · evidence ${g.evidence}/${g.evidenceTotal}` : d.anomaly ? `${gap < 0 ? '' : `Scan ${gap} tiles behind · `}corrupted ${Math.round(share * 100)}% · copies ${g.copies.length}` : '');
   if (d.timer || d.anomaly) $('ps-sale').classList.toggle('is-low', d.timer ? g.sale < 30 : gap >= 0 && gap < 12);
