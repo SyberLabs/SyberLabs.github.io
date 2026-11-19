@@ -166,6 +166,8 @@ export function makeAudio() {
   const FX = {
     jump: p => p ? tone('sine', 220, 420, 0.09, 0.12, sfx) : tone('square', 300, 520, 0.07, 0.05, sfx),
     land: () => noise(0.07, 0.16, 'lowpass', 400, 120, sfx),
+    lured: () => { tone('triangle', 392, 392, 0.09, 0.07, sfx); tone('triangle', 523, 540, 0.18, 0.07, sfx, 0.1); },   // a warden turns to the double: a question, a fourth up
+    idle: () => tone('square', 150, 130, 0.1, 0.05, sfx),
     // THE ANOMALOUS SYSTEM: a copy taking hold, a body turned, the system waking, the cursor's click, the scan
     plant: () => { tone('sawtooth', 110, 220, 0.14, 0.09, sfx); noise(0.1, 0.1, 'bandpass', 600, 1800, sfx, 0.02, 3); },
     turned: () => [220, 330, 440].forEach((f, i) => tone('triangle', f, f * 0.99, 0.3, 0.09, sfx, i * 0.07)),

@@ -18,7 +18,7 @@
   <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
   <link rel="preload" href="/fonts/v1/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/syberlabs.css">
-  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261118b">
+  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css?v=20261119a">
   <title>PSYCHO SYBER | SyberLabs</title>
 </head>
 <body class="syber-play">
@@ -75,12 +75,13 @@
           <ul class="ps-controls ps-for-touch">
             <li>The stick on the left walks. Up reels in the cord or climbs. Down hides, and with JUMP drops through a beam.</li>
             <li>JUMP jumps · FORM changes form · E runs the check, or roars as the jaguar</li>
+            <li>The form you leave stands for 5 seconds as a double. A warden that can see it watches it and does not see you.</li>
             <li>SYBER: a tap on the picture throws glass · press and hold throws the cord, which stays tied until you tap again or jump</li>
             <li>PSYCHO: a tap on the picture pounces toward it · push the stick into stone and up to climb</li>
           </ul>
           <ul class="ps-controls ps-for-keys">
             <li><kbd>A</kbd> <kbd>D</kbd> walk · <kbd>W</kbd> or <kbd>Space</kbd> jump · hold <kbd>S</kbd> to hide · <kbd>S</kbd> + jump drops through a beam</li>
-            <li><kbd>Shift</kbd> change form (<kbd>Q</kbd> does the same)</li>
+            <li><kbd>Shift</kbd> change form (<kbd>Q</kbd> does the same) · the form you leave stands for 5 seconds as a double, and a warden that can see it watches it and does not see you</li>
             <li>SYBER: click throws glass · hold the button for the cord · <kbd>E</kbd> runs the check</li>
             <li>PSYCHO: click pounces · push into stone and hold <kbd>W</kbd> to climb · <kbd>E</kbd> roars</li>
             <li><kbd>Esc</kbd> pause · <kbd>R</kbd> back to the last stone · <kbd>F</kbd> full screen · <kbd>M</kbd> sound</li>
@@ -118,11 +119,12 @@
 
       <section aria-labelledby="forms-title">
         <h2 id="forms-title">Two forms</h2>
-        <p>Shift changes your form. The picture, the music and what you can do change with it. For a moment at each change you are both: a person's body under the jaguar's head. The form you leave stays behind as a double for three seconds, at most once every eight. A warden who can see the double watches it and loses you.</p>
+        <p>Shift changes your form. The picture, the music and what you can do change with it. For a moment at each change you are both: a person's body under the jaguar's head. The form you leave stays behind as a double for five seconds, at most once every eight. A warden within 15 tiles that has a clear line to the double turns to it and watches it for as long as it stands, and a line is drawn from the warden to the double. The line is drawn from a warden dressed as a villager too. While it watches, it does not fire and it does not see you. The first stage puts a warden on a beam near the start, with a standing stone where it cannot see you, so the double can be tried there.</p>
+        <p>The hint on screen is written for the form you are in. At the first wall the weaver is told about the ring and the cord, and the jaguar about the climb.</p>
         <p>Each of the first five stages can be finished without taking the jaguar's form. Where the jaguar goes under a wall, up a cliff or across a path only it can stand on, the weaver has a terminal that opens a door, a stair, or a ladder of beams. The weaver's way takes longer.</p>
         <dl class="ps-forms">
           <div><dt>SYBER</dt><dd>The weaver, wearing the circlet. Throws glass, swings on a knotted cord and runs the check with E. On a Visitor machine it turns a sentinel, shuts off an eye or source, opens a door, or sets the word pace. On stone it marks each step proven, stale or broken. On a lot in the fifth stage it reads the record.</dd></div>
-          <div><dt>PSYCHO</dt><dd>The jaguar. It runs faster, climbs stone, fits through low tunnels and pounces. E is a roar: the mountain echoes it three times, rain falls, nearby wardens and sentinels are stunned, and everything else slows for about three seconds. It stands on spirit paths the weaver falls through. It sees which source feeds each gate and which villagers are Visitors. A pounce breaks a source, and the alarm goes up when it does. In the fifth stage it sees each record as a line: a broken line is a gap.</dd></div>
+          <div><dt>PSYCHO</dt><dd>The jaguar. It runs faster, climbs stone, fits through low tunnels and pounces. E is a roar: the mountain echoes it three times, rain falls, nearby wardens and sentinels are stunned, and everything else slows for about three seconds. It stands on spirit paths the weaver falls through. It sees which source feeds each gate and which villagers are Visitors. A pounce breaks a source, and the alarm goes up when it does. In the fifth stage it sees each record as a line: a broken line is a gap. Its view ripples and its colours drift, except close around the jaguar, where the picture holds still. The jaguar is drawn with a dark edge, the tops it can land on nearby are edged in white, and marks rise up a stone face it can climb.</dd></div>
         </dl>
       </section>
 
@@ -137,11 +139,11 @@
           <li><span class="ps-stages__n">06</span><div><h3>THE REAL BATTLE · <a href="/#products">SyberLabs</a></h3><p>One room with no exit, and a machine called the Thousand Eyes. It aims each shot at the place you are about to reach, lists what you do on the screen as you do it, and counts down to a verdict. Glass, the check, the roar and hiding do not stop it. The stage ends when the count reaches zero or your health runs out, and the ending follows. SyberLabs makes software for checking AI's work: each change is tested, and a person approves it.</p></div></li>
         </ol>
         <h3 class="ps-sub" id="anomalous-system">THE ANOMALOUS SYSTEM</h3>
-        <p>The scene is set inside the Thousand Eyes, drawn as an operating system: a boot log, a desktop of windows, a registry, a defragmenter, a firewall and a core. Its rules differ from the six stages in four ways.</p>
+        <p>The scene is set inside the Thousand Eyes, drawn as an operating system: a boot sector, a desktop of windows, a registry, a defragmenter, a firewall and a core. Its rules differ from the six stages in four ways.</p>
         <ul>
           <li>Every change of form leaves a copy where you stood, with no eight-second wait. Up to five copies stand at once, each for 12 seconds.</li>
           <li>A copy corrupts metal within a tile of it, and the corruption spreads through connected metal at five tiles a second. Corrupt metal takes the cord and the jaguar's claws. A gate or an eye set in a connected piece of metal goes dark when that whole piece is corrupt.</li>
-          <li>The first copy that corrupts metal wakes the system. A cursor then hunts the nearest copy and deletes it; with no copy left, it comes for you unless you hide. The roar and thrown glass stop it for a moment.</li>
+          <li>The scene opens with a panel of metal across the way and nothing hunting you. A copy left against the panel corrupts it, and you climb over. The system wakes once a copy has corrupted metal and you are past the panel. A cursor then hunts the nearest copy and deletes it; with no copy left, it comes for you unless you hide. The roar and thrown glass stop it for a moment.</li>
           <li>When the system wakes, a scan line starts at the left edge and crosses the scene in four minutes. It cleans the metal it passes, moves twice as fast while the alarm is up, and sends you back to the last standing stone if it reaches you. The first copy in each piece of metal sets the line back by 12 tiles.</li>
         </ul>
         <p>The exit opens when the core is broken. The machine restores itself from a copy; the card shows the share of the metal that was corrupt when you left, and the title button shows your best share. While the scene is on, letters in its name and in this tab's title turn into figures as that share rises. With reduced motion set on your device they stay as they are.</p>
@@ -251,6 +253,6 @@
     <span class="sy-footer__copy">© 2026 SyberLabs</span>
   </div>
 </div></footer>
-  <script type="module" src="/psycho-syber/game/main.js?v=20261118b"></script>
+  <script type="module" src="/psycho-syber/game/main.js?v=20261119a"></script>
 </body>
 </html>

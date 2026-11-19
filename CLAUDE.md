@@ -163,7 +163,21 @@ the game's link in the homepage's first screen and one note in its Studio part l
   owner's direction that the picture be as large as the phone allows; Pause has `Play upright`. The title is in
   the page with the header, and Pause has a button back to it: keep menu, privacy and account access one tap from
   Pause. A hint that names a key gets its touch wording in
-  `TOUCH_WORDS` in `main.js`.
+  `TOUCH_WORDS` in `levels.js`; `node psycho-syber/test/run.mjs` fails if a hint still names a key once it is put for touch.
+- A hint is about the form the player is in. Write it with `by(weaver, jaguar)` in `levels.js`, or as a function of
+  the game where what to do next depends on what has happened. A line must not tell one form to do what only the
+  other can, and `run.mjs` fails if a hint has no line for a form. `psycho-syber/README.md` ("What a second tester
+  said was fun") has the reasons for this bullet and the next two.
+- The double: the form left at a change stands 5 seconds, at most once every 8, and a warden within 240 px with a
+  clear line to it turns to it and neither sees the player nor fires while it stands. The game draws the line from
+  the warden to the double. Stage 1's second segment teaches it (a warden on a beam, a standing stone out of its
+  sight), and it comes before the cord, the glass and the tunnels. Keep the change of form the first thing the game
+  teaches after walking.
+- In the jaguar's look the picture moves and the jaguar's own footing does not: the dark edge on the jaguar, the
+  white edge on the tops near it, and the still area around the player in `post.js`. Draw such marks in black and
+  white only, which the drift of colour cannot tint.
+- THE ANOMALOUS SYSTEM opens with a panel of metal that is corrupted and climbed before the system wakes (`wake` in
+  the def). Do not put a timer or a hunter ahead of the first use of a scene's rule.
 - The game has music, by the owner's direction, and he asked that it be dark, ancient and psychedelic and not
   joyful: slow, a held ground note with a fifth and no third, a minor pentatonic tune, no major chords and no dance
   beat. Keep every voice loud enough between 300 Hz and 2 kHz for a phone's speaker; `psycho-syber/README.md` says
