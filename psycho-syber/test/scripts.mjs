@@ -1,6 +1,6 @@
 // Scripted play-throughs: proof that each stage can be finished, run by test/run.mjs. A key is a stage id, or
 // 'id:route' for another way through the same stage. A route named 'weaver' must never take the jaguar's form.
-import { T, wordFresh, wordActive, gateActive } from '../game/sim.js';
+import { T, wordFresh, wordActive, gateActive, bodyDark } from '../game/sim.js';
 import { past, before, grounded, all } from './bot.mjs';
 const ent = (g, type, k = 0) => g.ents.filter(e => e.type === type)[k];
 const aimAt = (type, k = 0) => g => { const e = ent(g, type, k); return [e.x, e.y]; };
@@ -18,6 +18,16 @@ const lead = (type, k = 0) => g => { const e = ent(g, type, k), t = Math.hypot(e
 // a blinking gate that has just gone dark
 const dark = k => g => { const e = ent(g, 'gate', k), ph = (g.wt + e.ph) % e.period; return !gateActive(g, e) && ph < e.duty * e.period + 0.3; };
 const near = (type, k, d) => g => { const e = ent(g, type, k); return Math.hypot(e.x - g.p.x, e.y - (g.p.y - 12)) < d; };
+
+// THE ANOMALOUS SYSTEM
+const off = k => g => !gateActive(g, ent(g, 'gate', k));
+const lensDark = k => g => bodyDark(g, ent(g, 'eye', k));
+// climb the turning face on the right as the jaguar, to its top at row `top`
+const scale = top => [['RJ', 0.3], ['RU', g => g.p.onGround && g.p.y <= top * T + 1, { max: 8 }]];
+// wait on top for gate k to go dark, then run on and land past tile x
+const over = (k, x) => [['', off(k), { max: 8 }], ['R', all(grounded, past(x)), { max: 5 }]];
+// an alert whose dialog starts at tile x: arrive as the jaguar, leave two copies at its foot, climb, cross
+const alertAt = (x, k, land) => [['R', past(x - 0.5)], ['X', 0.1], ['', 0.3], ['X', 0.1], ...scale(12), ...over(k, land)];
 
 export const SCRIPTS = {
   steps: [
@@ -252,6 +262,32 @@ export const SCRIPTS = {
     ['E', 0.1, { aim: aimAt('lot', 5) }],
     ['R', all(grounded, past(128)), { max: 10 }],
     ['R', past(138)], ['E', 0.1, { aim: aimAt('lot', 6) }],
+    ['R', () => false, { max: 8 }],
+  ],
+  // THE ANOMALOUS SYSTEM. Each alert is planted at its foot, climbed as it turns and crossed when its gate is dark.
+  anomaly: [
+    // BOOT: change form at the foot of the block and climb its face as the jaguar
+    ['R', past(18.7)], ['X', 0.1], ...scale(8), ...over(0, 26.5),
+    // DESKTOP: drop the Visitor among the records, turn the second window so its eye goes dark, plant the alert
+    ['R', g => Math.abs(ent(g, 'warden', 0).x - g.p.x) < 80, { max: 6 }], ['RF', 0.3, { aim: aimAt('warden', 0) }], ['', gone('warden', 0), { max: 0.1 }],
+    ['R', past(41.4)], ['J', 0.2], ['X', 0.05], ['', grounded, { max: 2 }], ['', lensDark(0), { max: 6 }], ['X', 0.1],
+    ...alertAt(60, 1, 64.5),
+    // REGISTRY: the weaver's copy turns the racks, the jaguar goes under them, and a roar carries it past the eye
+    ['X', 0.1], ['R', past(71.4)], ['', 0.2], ['X', 0.1], ['R', past(77)], ['E', 0.05], ['R', past(88.5)],
+    ...alertAt(92, 2, 96.5),
+    // DEFRAG: three leaps from block to block
+    ...leap(101.5), ...leap(108.6), ...leap(115.7), ['R', all(grounded, past(121.5)), { max: 2 }],
+    ...alertAt(125, 3, 129.5),
+    // FIREWALL: through the first gate as it goes dark, check the source that feeds the second, roar past the eye
+    ['R', past(133.5)], ['', dark(4), { max: 4 }], ['R', past(138.6)],
+    ['X', 0.1], ['E', 0.1, { aim: aimAt('source', 0) }], ['', 0.2], ['X', 0.1],
+    ['R', past(145.6)], ['E', 0.05], ['R', past(154.5)],
+    ...alertAt(157, 7, 161.5),
+    // CORE: the three sources, then glass
+    ['X', 0.1], ['R', past(163)], ['E', 0.1, { aim: aimAt('source', 2) }], ['', 0.75], ['E', 0.1, { aim: aimAt('source', 3) }], ['', 0.75],
+    ...leap(167), ...leap(169.5), ['E', 0.1, { aim: aimAt('source', 4) }], ['', 0.75],
+    ...Array.from({ length: 3 }, () => [['F', 0.05, { aim: aimAt('core', 0) }], ['', 0.3]]).flat(),
+    ['', gone('core', 0), { max: 0.1 }],
     ['R', () => false, { max: 8 }],
   ],
 };

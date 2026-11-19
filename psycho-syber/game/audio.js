@@ -22,6 +22,7 @@ const SCENES = {
   title: { bpm: 66, tr: 0, drums: 1, tune: 1 }, steps: { bpm: 72, tr: 0, drums: 1, tune: 1 }, machu: { bpm: 76, tr: 5, drums: 1, tune: 1.1 },
   lines: { bpm: 68, tr: -5, drums: 1, tune: 1.1 }, works: { bpm: 84, tr: -2, drums: 2, tune: 0.8 }, record: { bpm: 60, tr: 3, drums: 0, tune: 1, jars: 1 },
   real: { bpm: 96, tr: 1, drums: 2, tune: 0, dread: 1 }, ship: { bpm: 56, tr: 7, drums: 0, tune: 1.1, warm: 1 }, end: { bpm: 60, tr: 1, drums: 0, tune: 0, hold: 1 },
+  anomaly: { bpm: 62, tr: -7, drums: 1, tune: 0.7, dread: 1 },   // THE ANOMALOUS SYSTEM: the same score, a fourth lower and slower
 };
 const rnd = n => { let h = Math.imul(n | 0, 374761393) ^ 0x9e3779b9; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
 export function makeAudio() {
@@ -165,6 +166,14 @@ export function makeAudio() {
   const FX = {
     jump: p => p ? tone('sine', 220, 420, 0.09, 0.12, sfx) : tone('square', 300, 520, 0.07, 0.05, sfx),
     land: () => noise(0.07, 0.16, 'lowpass', 400, 120, sfx),
+    // THE ANOMALOUS SYSTEM: a copy taking hold, a body turned, the system waking, the cursor's click, the scan
+    plant: () => { tone('sawtooth', 110, 220, 0.14, 0.09, sfx); noise(0.1, 0.1, 'bandpass', 600, 1800, sfx, 0.02, 3); },
+    turned: () => [220, 330, 440].forEach((f, i) => tone('triangle', f, f * 0.99, 0.3, 0.09, sfx, i * 0.07)),
+    wake: () => [0, 1, 2].forEach(i => tone('square', 330, 329, 0.12, 0.07, sfx, i * 0.22)),
+    deleted: () => { tone('square', 1320, 1320, 0.03, 0.06, sfx); tone('square', 660, 660, 0.05, 0.06, sfx, 0.04); },
+    click: () => { tone('square', 1320, 1320, 0.03, 0.09, sfx); noise(0.12, 0.16, 'lowpass', 900, 200, sfx, 0.03); },
+    caught: () => [0, 1, 2].forEach(i => tone('triangle', 196, 190, 0.4, 0.12, sfx, i * 0.25)),
+    restored: () => tone('sine', 880, 440, 0.3, 0.06, sfx),
     throw: () => noise(0.08, 0.12, 'bandpass', 2200, 5200, sfx, 0, 2),
     cord: () => { tone('sawtooth', 900, 1700, 0.06, 0.05, sfx); noise(0.03, 0.1, 'highpass', 3000, 3000, sfx, 0.05); },
     cordMiss: () => tone('sawtooth', 700, 380, 0.08, 0.03, sfx),

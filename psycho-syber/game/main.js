@@ -1,11 +1,11 @@
 // PSYCHO SYBER: the page's game loop. sim.js decides what happens, render.js draws it twice (one look per form),
 // post.js puts it on screen, audio.js plays it. This file wires them to the keyboard, the mouse and the page.
-import { STAGES, ATLAS, SHIP, TOLD } from './levels.js?v=20261117j';
-import { VOICE } from './voice.js?v=20261117j';
-import { newGame, step, T, verdictAt } from './sim.js?v=20261117j';
-import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261117j';
-import { makePost } from './post.js?v=20261117j';
-import { makeAudio } from './audio.js?v=20261117j';
+import { STAGES, ATLAS, SHIP, ANOMALY, TOLD } from './levels.js?v=20261118a';
+import { VOICE } from './voice.js?v=20261118a';
+import { newGame, step, T, verdictAt, corrupted, bodiesTurned } from './sim.js?v=20261118a';
+import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261118a';
+import { makePost } from './post.js?v=20261118a';
+import { makeAudio } from './audio.js?v=20261118a';
 
 const $ = id => document.getElementById(id);
 const stage = $('ps-stage'), view = $('ps-view'), hud = $('ps-hud'), hintEl = $('ps-hint'), rsvpEl = $('ps-rsvp'), toastEl = $('ps-toast'), wakeEl = $('ps-wake'), wakeWord = $('ps-wake-word');
@@ -27,6 +27,9 @@ try { atlas = new Set(JSON.parse(localStorage.getItem('psycho-syber.atlas') || '
 const saveAtlas = () => { try { localStorage.setItem('psycho-syber.atlas', JSON.stringify([...atlas])); } catch { /* optional */ } };
 let gift = false;        // the three on the command ship give a fifth life, and it is kept
 try { gift = localStorage.getItem('psycho-syber.ship') === '1'; } catch { /* storage is optional */ }
+let mode = null;         // 'anomaly' while THE ANOMALOUS SYSTEM is on: it is not one of the six, and it keeps its own best score
+let bestRot = 0;
+try { bestRot = Math.min(100, Math.max(0, parseInt(localStorage.getItem('psycho-syber.anomaly') || '0', 10) || 0)); } catch { /* storage is optional */ }
 const metaCv = $('ps-meta-view'), metaCtx = metaCv.getContext('2d'); let metaT = 0;
 let cardAt = 0;          // when the card appeared: a key or button still held from play must not answer it
 const go = fn => { $('ps-card-go').onclick = () => { if (performance.now() - cardAt > 700) fn(); }; };
@@ -125,6 +128,7 @@ paintPace();
 // Which Atlas marks each stage holds, for the stage buttons on the title.
 const MARKS = STAGES.map(d => newGame(d).ents.filter(e => e.type === 'mark').map(e => e.id));
 function toTitle() {
+  mode = null; endRot(); $('ps-anomaly').textContent = bestRot > 0 ? `THE ANOMALOUS SYSTEM · best ${bestRot}%` : 'THE ANOMALOUS SYSTEM';
   state = 'title'; load(0); audio.scene('title'); show('title');
   const c = store.get(), pick = $('ps-pick');
   $('ps-continue').hidden = c < 1; if (c >= 1) $('ps-continue').textContent = `Continue at ${STAGES[c].name}`;
@@ -136,7 +140,7 @@ function toTitle() {
   }));
 }
 function begin(i) {
-  audio.start(); load(i); state = 'card';
+  mode = null; endRot(); audio.start(); load(i); state = 'card';
   const d = STAGES[i];
   $('ps-card-kicker').textContent = `Stage ${i + 1} of ${STAGES.length}`;
   $('ps-card-title').textContent = d.name;
@@ -146,9 +150,48 @@ function begin(i) {
   if (d.real) fetchVoice('end', TOLD.end.length); else if (i === 0) fetchVoice('abduct', TOLD.abduct.length);
   view.focus({ preventScroll: true });
 }
+// ---------------------------------------------------------------- THE ANOMALOUS SYSTEM
+// Not one of the six stages: it is started from the title, it does not move the saved progress, and it ends with
+// the share of the system that was corrupt at the exit. The best share is kept in localStorage.
+function beginAnomaly() {
+  audio.start(); endRot(); mode = 'anomaly'; load(si, 'syber', ANOMALY); state = 'card';
+  $('ps-card-kicker').textContent = 'ACCESS DENIED';
+  $('ps-card-title').textContent = ANOMALY.name;
+  $('ps-card-line').replaceChildren(el('b', 'Inside the Thousand Eyes'), document.createTextNode(' · Every change of form leaves a copy. A copy corrupts the metal it touches.'));
+  $('ps-card-stats').hidden = true; $('ps-card-atlas').hidden = true; $('ps-card-link').hidden = true; $('ps-card-go').textContent = 'Begin'; cardAt = 0; go(play);
+  show('card'); rsvp(ANOMALY.intro, undefined, rsvpEl, ANOMALY.id);
+  view.focus({ preventScroll: true });
+}
+function clearAnomaly() {
+  state = 'card'; audio.play('exit');
+  const pct = Math.round(corrupted(g) * 100);
+  if (pct > bestRot) { bestRot = pct; try { localStorage.setItem('psycho-syber.anomaly', String(pct)); } catch { /* private window: the best score is not kept */ } }
+  $('ps-card-kicker').textContent = 'The machine restored itself from a copy';
+  $('ps-card-title').textContent = calm ? ANOMALY.name : glitch(ANOMALY.name, pct / 100, 1);
+  $('ps-card-line').replaceChildren(el('b', `${pct}% of it was corrupt when you logged off`), document.createTextNode(` · Best ${bestRot}%`));
+  const st = $('ps-card-stats'); st.hidden = false;
+  st.replaceChildren(stat('Time', clock(g.time)), stat('Corrupted', `${pct}%`), stat('Bodies turned', `${bodiesTurned(g)} of ${g.L.bodies.length}`), stat('Copies deleted', String(g.cursor.deleted)), stat('Threads', `${g.threads} of ${g.threadsTotal}`), stat('Falls', String(g.deaths)));
+  $('ps-card-atlas').hidden = true;
+  const more = $('ps-card-link'); more.hidden = false; more.href = ANOMALY.href; more.textContent = `About ${ANOMALY.project}`;
+  $('ps-card-go').textContent = 'Back to the title'; cardAt = performance.now(); go(toTitle);
+  show('card'); $('ps-card-go').focus({ preventScroll: true });
+}
+// The scene corrupts what is around the picture too: the HUD's letters split, and letters in the stage's name and
+// in the tab's title turn into figures as the share rises. Reduced motion keeps the title and the name as they are.
+const LOOK = { O: '0', S: '5', E: '3', A: '4', I: '1', T: '7', B: '8' };
+const glitch = (s, share, seed) => [...s].map((ch, i) => LOOK[ch] && ((Math.imul(i + 7, 2654435761) ^ Math.imul(seed + 3, 40503)) >>> 0) % 100 < share * 100 ? LOOK[ch] : ch).join('');
+let rotTick = -1;
+function paintRot(share) {
+  stage.classList.add('is-anomalous'); stage.style.setProperty('--ps-rot', share.toFixed(3));
+  const tick = Math.floor(performance.now() / 700);
+  if (!calm && tick !== rotTick) { rotTick = tick; document.title = glitch(pageTitle, share, tick); }
+}
+function endRot() { if (!stage.classList.contains('is-anomalous')) return; stage.classList.remove('is-anomalous'); stage.style.removeProperty('--ps-rot'); document.title = pageTitle; rotTick = -1; }
+
 function play() { stopRsvp(); state = 'play'; show('play'); last = 0; audio.duck(false); view.focus({ preventScroll: true }); }
 function clear() {
   stopRsvp(); talkQ.length = 0; talking = false;
+  if (mode === 'anomaly') { clearAnomaly(); return; }
   if (secret) {   // the ship sets you down where it took you, with a fifth life
     const back = secret.from; secret = null;
     if (!gift) { gift = true; try { localStorage.setItem('psycho-syber.ship', '1'); } catch { /* optional */ } }
@@ -390,13 +433,14 @@ const TOUCH_WORDS = [['A and D walk. W or Space jumps.', 'The stick on the left 
   ['Hold the mouse button on a ring or on stone to throw the cord. W reels in. Let go to drop.', 'Press and hold on a ring or on stone to throw the cord. It stays tied. Stick up reels in. Tap again to drop.'],
   ['Space lets go with a kick', 'JUMP lets go with a kick'], ['Click throws glass', 'A tap on the picture throws glass'], ['Hold S to hide', 'Hold the stick down to hide'],
   ['Shift changes you into the jaguar. Q does the same.', 'FORM changes you into the jaguar.'], ['hold W to climb. Space leaps off', 'hold the stick up to climb. JUMP leaps off'],
-  ['Click to pounce', 'Tap the picture to pounce'], ['Shift back', 'FORM back'], ['Shift:', 'FORM:']];
+  ['Click to pounce', 'Tap the picture to pounce'], ['Shift back', 'FORM back'], ['Shift:', 'FORM:'], ['Shift beside metal', 'FORM beside metal']];
 const forTouch = s => { for (const [a, b] of TOUCH_WORDS) s = s.replace(a, b); return s; };
 view.addEventListener('contextmenu', e => e.preventDefault());
 $('ps-start').onclick = () => begin(0);
 $('ps-continue').onclick = () => begin(store.get());
 $('ps-resume').onclick = () => pause(false);
-$('ps-restart').onclick = () => { begin(si); };
+$('ps-restart').onclick = () => { if (mode === 'anomaly') beginAnomaly(); else begin(si); };
+$('ps-anomaly').onclick = beginAnomaly;
 $('ps-quit').onclick = toTitle;
 $('ps-again').onclick = () => { total = { time: 0, deaths: 0, threads: 0, of: 0 }; stopRsvp(); toTitle(); };
 $('ps-mute').onclick = sound;
@@ -415,7 +459,7 @@ function drain() {
     feed(fx, e, g); audio.play(e.k, psy);
     if (e.k === 'swap') { wipe = 0; skin(e.to); }
     else if (e.k === 'hurt' || e.k === 'die') hurtT = 0.5;
-    if (e.k === 'swap' && e.double && (said.double = (said.double || 0) + 1) <= 2) toast('The form you left stays behind as a double. A Visitor who sees it watches it, and not you.');
+    if (e.k === 'swap' && e.double && !g.L.def.anomaly && (said.double = (said.double || 0) + 1) <= 2) toast('The form you left stays behind as a double. A Visitor who sees it watches it, and not you.');
     else if (e.k === 'hack' && e.what === 'pacer') toast(e.slow ? 'Pace set to slow. Every word stays lit longer.' : 'Pace set to fast.');
     else if (e.k === 'mark') { atlas.add(e.id); saveAtlas(); toast(`Atlas mark ${atlas.size} of ${ATLAS.length}: ${e.name}. Its entry is in the Lacuna Atlas.`); }
     else if (e.k === 'talk') say(e);
@@ -428,7 +472,12 @@ function drain() {
     else if (e.k === 'hack' && e.what === 'source' && e.trap) toast('That source fed nothing here. It was watched.');
     else if (e.k === 'deny' && e.why === 'evidence') toast(`This door takes the evidence when all ${g.evidenceTotal} gaps are found. You have ${g.evidence}.`);
     else if (e.k === 'sale') toast('The sale closed. You are back at the last standing stone.');
-    else if (e.k === 'core') toast('The Approver is down. The door behind it is open.');
+    else if (e.k === 'core') toast(g.L.def.anomaly ? 'The core is broken. The way out is open.' : 'The Approver is down. The door behind it is open.');
+    else if (e.k === 'wake') toast('The system has woken. Its cursor is coming, and its scan has started at the left edge.');
+    else if (e.k === 'turned') toast(`A body has turned. ${bodiesTurned(g)} of ${g.L.bodies.length} are yours.`);
+    else if (e.k === 'restored') toast('The scan restored a body behind you.');
+    else if (e.k === 'caught') toast('The scan reached you. You are back at the last standing stone.');
+    else if (e.k === 'click' && (said.click = (said.click || 0) + 1) <= 3) toast('The cursor clicked you. Leave it a copy, hide, roar or throw glass at it.');
   }
   g.ev.length = 0;
 }
@@ -476,21 +525,23 @@ function paintHud() {
   const p = g.p, psy = g.persona === 'psycho', d = g.L.def;
   set('ps-form', psy ? 'PSYCHO' : 'SYBER');
   const hp = '●'.repeat(Math.max(0, p.hp)) + '○'.repeat(Math.max(0, p.maxHp - p.hp)); set('ps-hp', hp);
-  set('ps-stage-name', `${d.name} · ${d.project}`);
-  set('ps-threads', `${g.threadsTotal ? `${g.threads}/${g.threadsTotal} threads · ` : ''}Atlas ${atlas.size}/${ATLAS.length}`);
+  set('ps-stage-name', d.anomaly ? (calm ? d.name : glitch(d.name, corrupted(g), 1)) : `${d.name} · ${d.project}`);
+  set('ps-threads', d.anomaly ? `${g.threads}/${g.threadsTotal} threads` : `${g.threadsTotal ? `${g.threads}/${g.threadsTotal} threads · ` : ''}Atlas ${atlas.size}/${ATLAS.length}`);
   set('ps-time', clock(g.time));
   set('ps-a1', psy ? 'Click · pounce' : 'Click · glass   Hold · cord');
   set('ps-a2', psy ? (p.roarCd > 0 ? `E · roar ${Math.ceil(p.roarCd)}` : g.slow > 0 ? 'E · roar · slowed' : 'E · roar') : 'E · check');
   set('ps-a3', p.hidden ? 'Hidden' : g.alarm > 0 ? 'Alarm' : '');
-  set('ps-sale', d.timer ? `Sale closes in ${clock(Math.ceil(g.sale))} · evidence ${g.evidence}/${g.evidenceTotal}` : '');
-  if (d.timer) $('ps-sale').classList.toggle('is-low', g.sale < 30);
+  const share = d.anomaly ? corrupted(g) : 0, gap = d.anomaly && g.scanX >= 0 ? Math.max(0, Math.round((p.x - g.scanX) / T)) : -1;
+  set('ps-sale', d.timer ? `Sale closes in ${clock(Math.ceil(g.sale))} · evidence ${g.evidence}/${g.evidenceTotal}` : d.anomaly ? `${gap < 0 ? '' : `Scan ${gap} tiles behind · `}corrupted ${Math.round(share * 100)}% · copies ${g.copies.length}` : '');
+  if (d.timer || d.anomaly) $('ps-sale').classList.toggle('is-low', d.timer ? g.sale < 30 : gap >= 0 && gap < 12);
+  if (d.anomaly) paintRot(share);
   const h0 = (g.hint >= 0 && g.L.hints[g.hint]) || '', h = touch ? forTouch(h0) : h0;
   if (shown.hint !== h) { shown.hint = h; hintEl.textContent = h; hintEl.classList.toggle('is-on', !!h); }
   if (touch) set('ps-b-act-t', psy ? (p.roarCd > 0 ? String(Math.ceil(p.roarCd)) : 'roar') : 'check');
 }
 
 // A hook for the browser tests: read the game, start a stage, feed input.
-window.__ps = { get g() { return g; }, get state() { return state; }, begin, play, STAGES, atlas, endMeta, pad, audio, get tied() { return tied; }, get touch() { return touch; }, get told() { return told; }, VOICE, get turned() { return turned; }, keys, mouse, get edge() { return edge; }, set edge(v) { edge = v; }, set wipe(v) { wipeHold = v; }, cam, webgl: post.webgl };
+window.__ps = { get g() { return g; }, get state() { return state; }, begin, beginAnomaly, play, STAGES, ANOMALY, atlas, endMeta, pad, audio, get tied() { return tied; }, get touch() { return touch; }, get told() { return told; }, VOICE, get turned() { return turned; }, keys, mouse, get edge() { return edge; }, set edge(v) { edge = v; }, set wipe(v) { wipeHold = v; }, cam, webgl: post.webgl };
 toTitle(); resize();
 if (q.has('stage')) { begin(clamp(parseInt(q.get('stage'), 10) - 1 || 0, 0, STAGES.length - 1)); if (q.has('go')) play(); if (q.get('form') === 'psycho') { g.persona = 'psycho'; skin('psycho'); } }
 if (coarse || q.has('touch')) setTouch(true);   // ?touch shows the touch controls on any device

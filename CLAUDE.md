@@ -104,7 +104,8 @@ and Open Graph addresses on Lacuna pages are the `syberlabs.io/lacuna/` ones. Th
 
 Since November 16, 2026 the site carries a game at `/psycho-syber/` (`psycho-syber/`): a side-scrolling stealth game
 with two forms, changed with Shift. Since November 17 it has six stages: one for each product, one for Lacuna
-Institute, and THE REAL BATTLE, which has no exit. `Game` in the header (`nav` in `projects/site-data.js`), the Menu,
+Institute, and THE REAL BATTLE, which has no exit. Since November 18 it also has THE ANOMALOUS SYSTEM, a scene
+outside the six that is started from its own button on the title. `Game` in the header (`nav` in `projects/site-data.js`), the Menu,
 the game's link in the homepage's first screen and one note in its Studio part link to it.
 
 - The story is fiction and the page says so under "What is real". It is set in an invented ancient Paracas. State
@@ -132,6 +133,23 @@ the game's link in the homepage's first screen and one note in its Studio part l
   `/lacuna/#<id>`. `ATLAS` in `psycho-syber/game/levels.js` must match `src/lacuna/atlas/sites.js`;
   `node psycho-syber/test/run.mjs` fails if not. In the last stage each mark found is a dark lens and delays the
   verdict by one second.
+- THE ANOMALOUS SYSTEM (`ANOMALY` in `levels.js`) is a scene outside the six, like the command ship, and it is
+  on the title from the start. It is set inside the Thousand Eyes, drawn as an operating system, and it does not
+  change `psycho-syber.stage`. Its rules are behind `def.anomaly` in `sim.js`: every change of form leaves a copy
+  (no wait of 8 seconds), a copy corrupts the metal it touches, corruption spreads through metal tiles that touch
+  (a body), corrupt metal takes the cord and the claws, a gate or an eye goes dark when its whole body is corrupt,
+  a cursor deletes copies before it comes for the player, and a scan line cleans what it passes. The six stages
+  must play exactly as before: `node psycho-syber/test/run.mjs` printed the same lines for them before and after
+  the scene was added. Keep it so.
+- The scene has one scripted run, `anomaly`, and CI plays it. It cannot have a `weaver` run, because a copy is
+  left by changing form. THE REAL BATTLE still cannot be won: the scene ends with the machine restoring itself
+  from a copy, and its card shows the share of the metal that was corrupt at the exit.
+- While the scene is on, the HUD's letters split and letters in the scene's name and in the tab's title turn into
+  figures as that share rises. Reduced motion keeps the name and the title as they are, and `endRot()` in `main.js`
+  puts the title back. The site's header, menu and footer are never changed by the game.
+- The scene's operating system is invented and the page says so. `psycho-syber/README.md` records what its
+  structure was drawn from. The page names no outside project: naming one needs its author's agreement and the
+  owner's exception to the invented-names rule above.
 - The rules of play are `psycho-syber/game/sim.js`, which has no DOM. Every stage with an exit has scripted runs in
   `psycho-syber/test/scripts.mjs` that play it to the exit, and CI runs them. A change to a stage or to the physics
   ships with a passing run. `psycho-syber/README.md` lists the files and the map characters.
@@ -160,7 +178,7 @@ the game's link in the homepage's first screen and one note in its Studio part l
   ("The narrator") has the rest.
 - The game loads no third-party script, has no form and sends nothing. The only requests it makes are for its own
   files on this site: its modules and, when there are recordings, the narrator's lines in `psycho-syber/voice/`.
-  Music and effects are synthesised in the browser. Progress, the Atlas marks found, the story pace and the command ship's gift are `localStorage` keys that
+  Music and effects are synthesised in the browser. Progress, the Atlas marks found, the story pace, the command ship's gift and the best share in THE ANOMALOUS SYSTEM are `localStorage` keys that
   begin `psycho-syber.`. `psycho-syber/test/` and `psycho-syber/README.md` are not published.
 
 ## Homepage
