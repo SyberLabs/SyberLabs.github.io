@@ -3,15 +3,15 @@
 import { esc, head } from './html.js';
 
 const PIECES = [
-  ['cymatica', 'Cymatica', 'Each note sets its own figure.'],
-  ['plutonian-core', 'Plutonian Core', 'The kick strikes the core.'],
-  ['kaleidos', 'Kaleidos', 'One attractor, folded 6 to 16 times.'],
-  ['murmuration', 'Murmuration', 'Up to 20,000 birds, one flock.'],
+  ['cymatica', 'Cymatica', 'Harmonic figures shaped by each note.'],
+  ['plutonian-core', 'Plutonian Core', 'Percussive impacts driving a central core.'],
+  ['kaleidos', 'Kaleidos', 'Single attractor folded 6 to 16 times.'],
+  ['murmuration', 'Murmuration', 'Up to 20,000 flocking agents in unison.'],
 ];
 
 export const studio = () => `<section id="studio" class="home-part" aria-labelledby="studio-title">
       <div class="sy-wrap">
-        ${head('studio-title', 'Studio', '<span id="pieces-title">Four pieces that move to sound. Press one to run it.</span>')}
+        ${head('studio-title', 'Studio', '<span id="pieces-title">Four audio-reactive generative instruments. Select one to run.</span>')}
         <ul class="home-pieces" role="list" aria-labelledby="pieces-title">${PIECES.map(([slug, name, line]) => `
           <li><figure class="home-tile" data-piece="${slug}" data-name="${esc(name)}" data-glow>
             <img src="/media/home/posters/${slug}.jpg" width="960" height="1200" alt="" loading="lazy" decoding="async">
@@ -20,6 +20,6 @@ export const studio = () => `<section id="studio" class="home-part" aria-labelle
             <button class="home-tile__run" type="button" aria-label="Run ${esc(name)}">Run</button>
           </figure></li>`).join('')}
         </ul>
-        <p class="home-note"><span class="home-label">Game</span><span><b>PSYCHO SYBER.</b> A side-scrolling game that runs in the browser. It has six stages: one for each of the four products, one for Lacuna Institute and a last one with no exit. It plays with a keyboard and a mouse, or by touch on a phone. <a href="/psycho-syber/">Play PSYCHO SYBER</a></span></p>
+        <p class="home-note"><span class="home-label">Game</span><span><b>PSYCHO SYBER.</b> Six-stage stealth game in the browser, one stage per SyberLabs project and a final room with no exit. Keyboard, mouse, or touch. <a href="/psycho-syber/">Play PSYCHO SYBER</a></span></p>
       </div>
     </section>`;

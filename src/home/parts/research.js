@@ -30,8 +30,8 @@ const LACUNA_MARK = '<svg class="home-rows__mark" viewBox="0 0 40 40" aria-hidde
 // Lacuna Institute's two published works. The counts are the pages' own: the Atlas lists its sites in
 // src/lacuna/atlas/sites.js, and the dataset page counts 13 bundles.
 const LACUNA_ROWS = [
-  { href: LACUNA, name: 'Lacuna Atlas', line: `A globe of ${ATLAS_SITES.length} places where the historical record has a gap. Each has its sources and one open question.`, status: { kind: 'live', label: 'Live' } },
-  { href: LACUNA_PARACAS, name: 'Paracas bundles', line: 'A census of the 13 Paracas mummy bundles recorded leaving Peru. Every claim carries a grade beside its source.', status: { kind: 'data', label: 'Dataset · version 1.0' } },
+  { href: LACUNA, name: 'Lacuna Atlas', line: `Interactive globe of ${ATLAS_SITES.length} historical gaps, each paired with primary sources and an open question.`, status: { kind: 'live', label: 'Live' } },
+  { href: LACUNA_PARACAS, name: 'Paracas bundles', line: 'Graded provenance census of 13 Paracas mummy bundles documented leaving Peru.', status: { kind: 'data', label: 'Dataset · v1.0' } },
 ];
 const lacunaRow = r => `
             <li><a href="${r.href}" data-glow>
@@ -43,18 +43,18 @@ const lacunaRow = r => `
 
 export const researchPart = () => `<section id="research" class="home-part" aria-labelledby="research-title">
       <div class="sy-wrap">
-        ${head('research-title', 'Research', '<a href="/research/">Research index</a>')}
+        ${head('research-title', 'Research', '<a href="/research/">All research</a>')}
         <ul class="home-papers" role="list">${checked(research).map(paper).join('')}
         </ul>
         <div id="lacuna" class="home-lacuna">
           <div class="home-lacuna__globe">
-            <canvas data-visual="atlas" role="img" aria-label="The Earth drawn in dots, turning. The ${ATLAS_SITES.length} research sites of the Lacuna Atlas are marked on it and named one at a time."></canvas>
+            <canvas data-visual="atlas" role="img" aria-label="Interactive dot globe displaying the ${ATLAS_SITES.length} documented sites of the Lacuna Atlas."></canvas>
             <a class="home-globe" data-atlas-globe draggable="false" href="${LACUNA}#${FIRST_SITE.id}" aria-label="Open ${esc(FIRST_SITE.name)} on the Lacuna Atlas"></a>
           </div>
           <div class="home-lacuna__copy">
             <h3 id="lacuna-title"><a href="${LACUNA}">Lacuna Institute</a></h3>
-            <p>Lacuna Institute is part of SyberLabs. It studies places and objects where the historical record has a gap, and publishes what is known, what is missing and its sources.</p>
-            <p class="home-lacuna__facing">The globe marks the ${ATLAS_SITES.length} sites of the Lacuna Atlas. Facing now: <a data-atlas-site href="${LACUNA}#${FIRST_SITE.id}">${esc(FIRST_SITE.name)}</a> <span class="home-coords" data-atlas-coords>${position(FIRST_SITE.lat, FIRST_SITE.lon)}</span> <span class="home-lacuna__hint">Drag the globe to turn it.</span></p>
+            <p>SyberLabs&rsquo; historical research arm. Lacuna documents places and artifacts where the historical record breaks down, separating verified sources from missing evidence.</p>
+            <p class="home-lacuna__facing">${ATLAS_SITES.length} documented sites. Centered on <a data-atlas-site href="${LACUNA}#${FIRST_SITE.id}">${esc(FIRST_SITE.name)}</a> <span class="home-coords" data-atlas-coords>${position(FIRST_SITE.lat, FIRST_SITE.lon)}</span> <span class="home-lacuna__hint">Drag to rotate.</span></p>
             <ul class="home-rows home-rows--works" role="list">${LACUNA_ROWS.map(lacunaRow).join('')}
             </ul>
           </div>

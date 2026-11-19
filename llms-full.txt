@@ -1,6 +1,6 @@
 # SyberLabs
 
-> SyberLabs makes software for checking AI’s work. SyberWork tests AI-written code changes before a person approves them. Attest runs every step in your docs. RISE is a reading app. FLYSPACE shows which data fed each AI answer. Also: AI consulting, custom builds and design partnerships. Lacuna Institute is its research institute.
+> SyberLabs builds verification software for AI systems: code checks, executable docs, source-traced workspaces, and custom agent engineering.
 
 > **RISE and AI models:** since RISE #294 the RISE server calls no model. An AI reading request runs on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s machine (`/kev/` on the site). local Kev did not meet RISE’s bar in internal checks on RISE’s evaluations (RISE `docs/product/tasks/SCR-004.json`), and there is no production Kev deployment, by design. Once the reader connects, RISE’s visual direction sends sections of the reading text to that connection.
 
@@ -24,43 +24,43 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 ## SyberWork: Software factory
 
 Page: https://syberlabs.io/projects/syberwork/
-Status: Work in progress
+Status: In development
 Reflects: SyberLabs/SyberWork@208eaf6 · verified 2026-10-05
 Source: https://github.com/SyberLabs/SyberWork
 
-SyberWork is an open-source Python runtime for AI agents that write, test and repair code. It runs the checks on every change itself. Rules define the allowed steps, a named person approves the work, and a hash-chained log records what was proposed, checked, approved and done.
+SyberWork is an open-source Python runtime for AI coding agents. It executes contract checks independently on every proposed diff, enforces explicit approval rules, and logs every step in a cryptographically signed chain.
 
-Page title: SyberWork: Tests Every AI-Written Code Change
+Page title: SyberWork: Verification Runtime for AI-Written Code
 
-Headline: Tests every AI-written code change before a person approves it.
+Headline: Verifies every AI-written code change before human approval.
 
-Build Thread is the part that handles code changes in a Git repository. It runs the checks before accepting a change, whatever the model says about its own tests. Each action carries a unique key so it cannot run twice, and its result is checked afterwards.
+Build Thread governs code changes inside Git repositories. Regardless of what a model claims about its own tests, SyberWork runs checks on the exact proposed files, blocks duplicate actions with idempotency keys, and verifies outcomes before advancing a branch.
 
 Primary link: [View source](https://github.com/SyberLabs/SyberWork)
 
-Secondary link: [Discuss a pilot](mailto:syberlabs.support@gmail.com?subject=AI%20consultation)
+Secondary link: [Discuss a pilot](mailto:contact@syberlabs.io?subject=AI%20consultation)
 
 Also: [Build Thread in ten minutes](https://github.com/SyberLabs/SyberWork/blob/main/docs/BUILD_THREAD.md)
 
-### Why check each proposed step?
+### Enforce rules outside the model.
 
-When an AI proposes an action, people need to know who approved it, what evidence supported it and whether it succeeded. SyberWork checks each proposal against rules controlled by the system running it.
+Autonomous agents should propose work, never self-certify it. SyberWork separates proposal from execution: explicit policy defines allowed actions and approvers, independent checks validate every change, and every refusal logs the exact rule violated.
 
-The rules define what may happen and who can approve it. If a proposal breaks a rule, SyberWork refuses it and records the reason and the rule used. The same checks can apply to a purchase order or a code change.
+The same verification contract governs code changes, deployments, or procurement orders.
 
-### Build Thread: review one code change
+### Review one code change end to end.
 
-Python 3.11+ and git. No account, no model and no network required.
+Requires Python 3.11+ and Git. No account, model, or network needed.
 
-- 01 / init, Name your checks: syberlabs init writes a contract into .syberlabs/ and guesses the test command. When it cannot, it writes a check that fails until you name one, so an unchecked change never looks accepted.
-- 02 / start, Open a thread: A thread tracks one change to one repository and names the files it may affect. It records and checks the starting Git commit.
-- 03 / propose, Keep proposed edits separate: Your edit, a coding tool’s edit, or an automated search result is saved as a separate Git commit for review. It does not change your working files.
-- 04 / check, SyberWork runs the checks: Checks run against the exact proposed files. The record keeps their exit codes, how long they took and hashes of their output.
-- 05 / accept and publish, Accept the change, then choose what to publish: Accept updates one branch only if it still points to the expected commit. Pushing code, opening a pull request and publishing each require a separate allowed action, with duplicate prevention and recovery checks.
+- 01 / init, Define checks: syberlabs init writes a contract to .syberlabs/ and infers your test command. If none is detected, it inserts a failing default so unchecked code can never pass.
+- 02 / start, Open a thread: Scopes one change to a repository, explicit file paths, and a verified base Git commit.
+- 03 / propose, Isolate edits: Saves human, agent, or search-generated edits as separate Git commits without touching your working files.
+- 04 / check, Verify independently: Runs contract checks against the exact proposed files, logging exit codes, durations, and output hashes.
+- 05 / accept & publish, Gate promotion: Updates one branch only if its base commit matches. Pushing, opening pull requests, and publishing remain separate gated actions with duplicate protection.
 
-### The change claimed its tests passed. SyberWork ran them and they failed.
+### The model claimed tests passed. SyberWork ran them and rejected the change.
 
-The repository’s own Build Thread example, run on 2026-10-05 from SyberWork@208eaf6 with Python 3.11 and git. No model, no network.
+Built-in Build Thread example (SyberWork@208eaf6, 5 October 2026, Python 3.11, local Git, zero network calls).
 
 ```
 $ PYTHONPATH=. python examples/build_thread.py
@@ -86,28 +86,28 @@ $ PYTHONPATH=. python examples/build_thread.py
 build-thread complete
 ```
 
-The provider claimed c1 passed its tests with 0.97 confidence, but checks run on its exact files failed, so SyberWork rejected it. Candidate c2 passed all checks. It was accepted by updating one branch only after confirming the branch had not changed (compare-and-swap). The working files and main branch were untouched. The thread resumed from a valid 18-event history. Replaying that history with a new lint-check requirement shows both candidates would be rejected for the missing check.
+Candidate c1 claimed passing tests at 0.97 confidence; SyberWork ran the suite on its files, observed failure, and denied acceptance. Candidate c2 passed all checks and updated a dedicated branch via compare-and-swap, leaving the working tree and main untouched. Resuming verified all 18 events in the hash chain. Replaying the same log under an updated lint rule confirms both candidates would now be rejected.
 
-### How it is built
+### Built for auditability and isolation.
 
-- Separate the core from the app: The reusable syberlabs package defines the rules, proposal interface and in-memory Session. It uses a fixed JSON format and a hash-linked event history. The syberwork app adds storage, a web API, command-line tools, a console and connectors. The core never imports the app.
-- A verifiable event chain: Every case event is hashed into a chain with a canonical-JSON digest and rule id beside it, an HMAC witness, an Ed25519 signature of the chain head, and an append-only transparency log kept in a separate file by a witness process that holds the key.
-- A fixed format for exchanging work records: Fifteen JSON schemas define work rules, observations, proposals, approval decisions, actions, outcome checks and rule changes. The protocol is sdk.syberlabs.space/v0alpha1, with a format checker and reference event sequences.
-- Plan checks and review rule changes: The compiler turns the work rules into ordered steps, approval checks, completion checks and form fields. Replay shows how changed rules would apply to recorded history without calling a model, changing a destination or fetching live data.
-- Separate proposals from execution: A planner receives the objective, allowed actions, work rules, history and completion criteria, then proposes one action. It cannot execute the action. It can run through an HTTPS service or a local loopback address.
-- Prevent duplicate writes: Executors send writes with unique request keys and conditions that prevent duplicates or outdated changes, then record the receipt. If the outcome is uncertain, it stays marked uncertain rather than being retried blindly.
+- Clean core boundary: The reusable syberlabs core defines policy, proposals, canonical JSON, and in-memory sessions. The syberwork application adds storage, HTTP APIs, CLI, console, and connectors. Core never imports app code.
+- Cryptographic audit log: Every event joins a canonical-JSON hash chain paired with rule IDs, an HMAC witness, Ed25519 chain-head signatures, and an append-only transparency log maintained by a separate signing process.
+- Typed exchange protocol: 15 JSON schemas (sdk.syberlabs.space/v0alpha1) formalize rules, observations, proposals, approvals, actions, outcome checks, and policy updates, backed by a validator and reference traces.
+- Compiled rules and offline replay: Policy compiles into ordered execution steps, approval gates, and completion criteria. Replay tests rule updates against recorded history without calling models or touching external systems.
+- Planners cannot execute: Planners see objectives, rules, and history, then propose a single action over HTTPS or local loopback. Execution stays strictly separate.
+- Safe writes: Executors attach unique idempotency keys and preconditions to every write. Uncertain outcomes remain marked uncertain instead of triggering blind retries.
 
 ### Evidence
 
-- tested: Twenty-three golden conformance traces, a clean-install release gate and CI green on CPython 3.11 to 3.13.
-- measured: On one development machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.
-- implemented: The included procurement case runs end to end against a separate reference system, with a real order POST under an idempotency key and manager sign-off.
-- not yet: The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has had one pilot against a real model, on three fixtures that proved too easy; it has no general result yet.
+- tested: 23 golden conformance traces, clean-install release gate, and green CI across CPython 3.11 to 3.13.
+- measured: Single-machine SQLite medians: explain.allowed 3.8 µs, complete_case 37.4 ms, 501-event chain verification 10.2 ms.
+- implemented: End-to-end procurement workflow against a reference system with idempotent order POSTs and manager sign-off.
+- not yet: Local loopback only; no external SDK adopters. Benchmark completed one three-fixture pilot that proved too simple for general conclusions.
 
 ### Facts
 
-- Stage: Open-source runtime and SDK, version 0.1.0, wheel verified
-- Technology: Python 3.11+ with no runtime dependencies, SQLite, pytest; Docker files for the console
+- Stage: Open-source runtime and SDK (v0.1.0, wheel verified)
+- Technology: Python 3.11+ (zero runtime dependencies), SQLite, pytest, Docker (console)
 - License: Apache 2.0
 - Source: [github.com/SyberLabs/SyberWork](https://github.com/SyberLabs/SyberWork)
 
@@ -118,225 +118,225 @@ Status: Public source · early
 Reflects: SyberLabs/attest@274b8e7 · verified 2026-11-05
 Source: https://github.com/SyberLabs/attest
 
-Give Attest a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the running app: commands in a scratch directory, browser steps in Chrome. It returns the document with each step marked proven, stale, broken, unverifiable or skipped, and the evidence for each mark.
+Point Attest at a README, quickstart, AI how-to response, or product spec. It executes shell commands in a scratch directory and UI steps in Chrome, returning every claim marked proven, stale, broken, unverifiable, or skipped with full evidence.
 
-Page title: Attest: Runs Every Step in Your Docs
+Page title: Attest: Executable Testing for Docs and Specs
 
-Headline: Runs every step in your docs and marks the ones that fail.
+Headline: Executes every step in your docs against the running app and flags what breaks.
 
-A failed step goes to an agent. A policy file decides what the agent may change, then the browser check runs again. A case closes only when the fix passes. Each case writes a receipt file that SyberWork can read.
+Failed steps route to a repair agent governed by a policy file. Browser verification re-runs before any patch lands, and every case outputs a structured receipt readable by SyberWork.
 
 Primary link: [View source](https://github.com/SyberLabs/attest)
 
-Secondary link: [Discuss a pilot](mailto:syberlabs.support@gmail.com?subject=AI%20consultation)
+Secondary link: [Discuss a pilot](mailto:contact@syberlabs.io?subject=AI%20consultation)
 
-### Why test a document?
+### Products ship daily. Docs quietly rot.
 
-Docs, quickstarts and specs tell the reader to run a command, click a button or expect a label. The product changes, the document does not, and a customer is usually the first to find out.
+Quickstarts and specs promise specific commands, buttons, and labels. When software changes, stale instructions break onboarding and customers discover it first.
 
-Attest checks each step against the running product. A step is marked proven only when its command passed or the browser saw the expected label. The verdict comes from a fixed rule. No model judges it.
+Attest verifies every instruction against the live product using deterministic rules. A step passes only when its command exits cleanly or Chrome observes the expected label. No model grades its own work.
 
-### Four ways to use it
+### Four workflows from audit to spec-driven builds.
 
-Python 3.11 or newer. Browser steps use Kane CLI, TestMu’s browser agent.
+Python 3.11+. Browser steps run via Kane CLI (TestMu browser agent).
 
-- 01 / Prove, Test a doc: Run attest prove on a Markdown document. Shell steps run in a scratch directory and browser steps run in Chrome. The result is one page with a badge on every claim.
-- 02 / Repair, Fix an outdated doc: When a description is out of date, an agent writes a patch that changes only the doc, in a temporary checkout. The browser check runs again before the patch is applied.
-- 03 / Protect, Protect required behaviour: A policy file marks statements the product must satisfy. Attest will not edit those to make a check pass. It writes an implementation handoff instead.
-- 04 / Spec, Build to a spec: In spec mode a failing claim becomes a ticket. An agent implements it in a copy of the app, never the original, and the browser checks the copy. Applying the change needs a person’s approval.
+- 01 / Prove, Audit a doc: Run attest prove on Markdown. Shell steps execute in a scratch folder; UI steps run in Chrome. Outputs one report with per-claim evidence badges.
+- 02 / Repair, Patch stale docs: An agent patches outdated descriptions in a temporary checkout. Chrome verification must pass before any edit applies.
+- 03 / Protect, Guard product guarantees: Mark binding behaviors in policy. Attest refuses to weaken protected promises to pass a check and generates an implementation handoff instead.
+- 04 / Spec, Build to spec: Failing spec claims become tickets. An agent implements fixes in an isolated copy verified by Chrome; merging requires human approval.
 
-### How it is built
+### Deterministic verdicts, pluggable agents.
 
-- Each claim is tied to exact lines: One structured-output model call splits the document into typed claims, each tied to an exact line range. Fenced command blocks become shell claims word for word.
-- Verdicts come from fixed rules: Shell claims are judged on exit code and expected output. Browser claims compare the expected label with the observed one, with extra checks for negation and changed numbers.
-- A policy check before any edit: Each stale or broken claim is checked against the policy file before an agent edits anything. Descriptive text may be repaired. Protected statements may not.
-- A receipt file for every case: Each loop case writes an attest.receipt/v0 file: document hashes before and after, the claim, the authority decision, the patch hash and the evidence. SyberWork reads them as observations.
-- Works with other agents: OpenAI is the default. Any command that reads a brief and prints a diff can replace it, so a team can use the agent it already has.
+- Line-exact claim extraction: One structured-output call parses docs into typed claims mapped to exact line ranges. Fenced shell blocks execute verbatim.
+- Rule-based verdicts: Shell claims check exit codes and expected output. Browser claims compare expected and observed UI labels, catching negations and numeric drift.
+- Policy-gated repairs: Before any agent edits a file, policy separates editable prose from protected product commitments.
+- Auditable receipts: Every run emits an attest.receipt/v0 record containing before/after document hashes, policy rulings, patch hashes, and evidence for SyberWork ingestion.
+- Agent-agnostic: Defaults to OpenAI, but any CLI tool that accepts a brief and outputs a diff can plug in.
 
 ### Evidence
 
-- measured: At Kane CLI Hack Day in San Francisco on 24 October 2026, Attest proved 9 documents across 23 turns, with 31 browser claims proven by Kane, each with a screenshot.
-- measured: Outdated text it found that day: Vite’s starter page now reads “Get started”, not “Vite + React”, and GitHub’s “Security & analysis” is now “Advanced Security”.
-- tested: Unit tests and red-team cases cover forged approvals, attempts to weaken a protected promise and path-escape attacks on the apply step.
-- not yet: There is no hosted service. Attest runs locally as a command-line tool. Shell steps run directly on your machine, with no sandbox. No outside team runs it in production yet.
+- measured: At Kane CLI Hack Day (San Francisco, 24 October 2026), proved 9 documents across 23 turns with 31 screenshot-backed browser claims.
+- measured: Caught live drift: Vite’s starter page changed from “Vite + React” to “Get started”; GitHub renamed “Security & analysis” to “Advanced Security”.
+- tested: Unit and red-team suites covering forged approvals, protected-promise tampering, and path-escape attacks.
+- not yet: Local CLI only, with unsandboxed shell execution and no hosted service. No external production teams yet.
 
 ### Facts
 
-- Stage: Public-source command-line tool, version 0.1.0
-- Technology: Python 3.11+, OpenAI structured outputs, Kane CLI and Chrome
+- Stage: Public-source CLI tool (v0.1.0)
+- Technology: Python 3.11+, OpenAI structured outputs, Kane CLI, Chrome
 - Works with: [SyberWork](https://syberlabs.io/projects/syberwork/)
-- License: MIT, declared in pyproject.toml
+- License: MIT (declared in pyproject.toml)
 - Source: [github.com/SyberLabs/attest](https://github.com/SyberLabs/attest)
 
-## RISE: Reading app
+## RISE: Browser reading app
 
 Page: https://syberlabs.io/projects/rise/
 Status: Live · open beta
 Reflects: SyberLabs/RISE@998d725 · verified 2026-10-05
 Source: https://github.com/SyberLabs/RISE
 
-A reading app that runs in your browser. Words appear over time at a pace you set, with sound and moving visuals, or you can switch to a page view.
+A browser-based reading instrument. Words unfold at your pace alongside synthesized audio and procedural visuals, with instant switching to a traditional page view.
 
-Page title: RISE: Reading App with Timed Text, Sound and Visuals
+Page title: RISE: Timed Browser Reader with Sound and Visuals
 
-Headline: Shows text at a pace you set, with sound and moving visuals.
+Headline: Timed text, synthesized audio, and procedural visuals in the browser.
 
-Open beta at rise.syberlabs.io. Reading runs entirely in the browser, and the files and compositions you bring stay in browser storage. An optional AI reading request runs on the reader’s own model connection; once connected, visual direction also sends sections of the reading text there. The RISE server holds no model credential.
+Open beta at rise.syberlabs.io. Reading runs locally in your browser, keeping uploaded texts and compositions in local storage. Optional AI reading requests use your own model connection; the RISE server holds no model credentials.
 
 Primary link: [Open RISE](https://rise.syberlabs.io/)
 
-Secondary link: [Try the interactive sample](https://rise.syberlabs.io/jev-scene-demo)
+Secondary link: [Try interactive sample](https://rise.syberlabs.io/jev-scene-demo)
 
-Also: [Watch the demo film](https://syberlabs.io/rise-demo/)
+Also: [Watch demo film](https://syberlabs.io/rise-demo/)
 
-Live at [rise.syberlabs.io](https://rise.syberlabs.io/): No account, no key and no install. Pick a reading and press Begin.
+Live at [rise.syberlabs.io](https://rise.syberlabs.io/): No account, API key, or install required. Pick a reading and press Begin.
 
 ### RISE demo film
 
 Video: https://syberlabs.io/rise-demo/rise-marketing-20260929-v3.mp4
 
-Edited from real RISE screen recordings, with an AI-generated narrator and portrait. RISE creates its own abstract visuals and synthesized sound; the film uses an original music bed.
+Cut from unmocked RISE screen captures with an AI-generated narrator, portrait, and original music bed. Abstract visuals and synthesized sound come directly from RISE.
 
-### Why combine reading with sound and visuals?
+### Reading through time, alongside static pages.
 
-RISE presents a text over time instead of all at once. The reader sets the pace and adds visuals and sound, or switches back to a page view.
+RISE pairs paced typography with sound and procedural motion while letting readers switch back to a navigable page at any moment.
 
-The open question is whether this changes how people experience a text. No reader study has been run, so we make no claim that readers prefer it.
+Whether timed audiovisual presentation improves comprehension or preference remains an open question; we have not run a reader study and make no preference claims.
 
-### What you can do today
+### What ships today.
 
-Five main areas, with related tools grouped inside each one.
+Five rooms with related tools grouped inside each.
 
-- 01 / Home, Begin today’s reading: Home offers one reading with moving visuals behind it. Press Begin, or choose another reading.
-- 02 / Read, Stream or Page: Words arrive over time at a pace you set, or sit on a page you can navigate. Switch at any point; your place is kept.
-- 03 / Library, Curated public-domain texts: Browse literature, philosophy, poetry and scripture, with records of each edition, its structure and its rights. The Chapel includes the Douay-Rheims Bible and liturgy with timed pacing.
-- 04 / Make, Compose your own: Create readings with text, sound and visuals using Workshop, Scriptorium and Visual Lab. Save them in your browser with the Vault.
-- 05 / Ask, A reading from your own model: Describe what you want to read. The model chooses a book and presentation only from the supplied catalog. Connect through OpenRouter, or run Kev-4B locally; model requests use your connection and are not billed to SyberLabs.
+- 01 / Home, Start today’s reading: Opens directly to a curated reading over moving visuals. Press Begin or choose another work.
+- 02 / Read, Stream or Page: Switch freely between timed Stream playback and a navigable Page layout without losing your place.
+- 03 / Library, Curated public-domain texts: Browse literature, philosophy, poetry, and scripture with edition provenance, including the Douay-Rheims Bible and timed liturgy in Chapel.
+- 04 / Make, Compose your own: Build audiovisual readings in Workshop, Scriptorium, and Visual Lab, saved locally in your browser Vault.
+- 05 / Ask, Connect your own model: Describe a reading mood and let your model choose strictly from the supplied catalog via OpenRouter or local Kev-4B. Usage bills to your connection, never SyberLabs.
 
-### Rooms: RISE’s five main screens, which it calls rooms
+### Rooms: Five rooms.
 
-Screenshots of a local build of SyberLabs/RISE@998d725 taken on 2026-10-05 in headless Chromium at 1440×900, nothing mocked. The text in every shot is Rural Architecture, from Lyrical Ballads by Wordsworth and Coleridge, a public-domain work served from RISE’s own Library; the fields behind it are RISE’s procedural engines. A silent 25-second screen recording of the same build, Home → Begin → words arriving in Stream (with the few seconds of Preparing session the software renderer needs), is also available.
+Unmocked captures from SyberLabs/RISE@998d725 (5 October 2026, headless Chromium, 1440×900) featuring Wordsworth and Coleridge’s Rural Architecture over RISE’s procedural visual engines. Also available: a 25-second silent screen capture of Home → Begin → Stream.
 
-Recording: [Watch the screen recording (MP4, 25 s, no sound)](https://syberlabs.io/rise-demo/rooms/rise-rooms-begin-20261005.mp4)
+Recording: [Watch screen recording (MP4, 25 s, silent)](https://syberlabs.io/rise-demo/rooms/rise-rooms-begin-20261005.mp4)
 
-- 01 / Home: Home as it opens: today’s poem, already streaming over its own visual field. (https://syberlabs.io/rise-demo/rooms/rise-home-20261005.webp)
-- Menu: The Menu, open on Home: the five rooms, Home, Read, Library, Make and Settings, with Ask for a reading, Guide and Wormhole under More. (https://syberlabs.io/rise-demo/rooms/rise-menu-20261005.webp)
-- 02 / Read · Stream: Read, in Stream, ten seconds into a 31-second reading, with the control bar shown: pause, Page view, fullscreen, Visuals, Settings, end. (https://syberlabs.io/rise-demo/rooms/rise-read-stream-20261005.webp)
-- 02 / Read · Page: Read, switched to Page view mid-reading: the same poem set as a page under its edition title, the visual field continuing below. (https://syberlabs.io/rise-demo/rooms/rise-read-page-20261005.webp)
-- 03 / Library: Library: curated public-domain works in named editions (the Epic shelf opens with Standard Ebooks translations of The Iliad and Metamorphoses), with Chapel, Rosary, Stations, Journeys, Keystones and Provenance as panes. (https://syberlabs.io/rise-demo/rooms/rise-library-20261005.webp)
-- 04 / Make: Make, opened from the Menu onto its Workshop pane with Vault, Scriptorium, Visual Lab and Visual Catalog alongside: a new, empty composition; the asset list is the build’s own procedural engines and sourced collections. (https://syberlabs.io/rise-demo/rooms/rise-make-20261005.webp)
+- 01 / Home: Opens directly to today’s reading streaming over its procedural visual field. (https://syberlabs.io/rise-demo/rooms/rise-home-20261005.webp)
+- Menu: Quick access to Home, Read, Library, Make, and Settings, plus Ask, Guide, and Wormhole. (https://syberlabs.io/rise-demo/rooms/rise-menu-20261005.webp)
+- 02 / Read · Stream: Timed playback with minimal controls: pause, Page view, fullscreen, visuals, settings, and end. (https://syberlabs.io/rise-demo/rooms/rise-read-stream-20261005.webp)
+- 02 / Read · Page: Mid-reading toggle to a navigable typeset page while the visual field continues underneath. (https://syberlabs.io/rise-demo/rooms/rise-read-page-20261005.webp)
+- 03 / Library: Curated public-domain editions (including Standard Ebooks translations of The Iliad and Metamorphoses), plus Chapel, Rosary, Stations, Journeys, Keystones, and Provenance. (https://syberlabs.io/rise-demo/rooms/rise-library-20261005.webp)
+- 04 / Make: Workshop, Vault, Scriptorium, Visual Lab, and Visual Catalog for building custom compositions from built-in procedural engines. (https://syberlabs.io/rise-demo/rooms/rise-make-20261005.webp)
 
-### How RISE checks a model’s suggestion
+### How RISE validates AI reading plans.
 
-How RISE checks an AI reading suggestion, using the rules at 998d725: the model makes one request through your connection and can choose only from the supplied options. Two examples show a suggestion being refused without opening a reading.
+Interactive trace of RISE@998d725’s decision gate. Models run over your connection and may select only from supplied catalog options; two examples show invalid proposals blocked before playback.
 
 Text version of the interactive map: This map needs JavaScript.
 
-### How it is built
+### Fast, local-first, and server-stateless.
 
-- One reading, two views: RISE divides text into timed units, sets the pacing and prepares one reading session. That same session drives both Stream and Page, so switching views keeps your place.
-- Book files checked when opened: Book text loads separately from the app, removing 15.4 MB from its JavaScript bundle. Files use SHA-256 content hashes as names, and RISE checks the hash each time it reads a file.
-- A limit on initial download size: The initial download is about 59 KB across three requests with Brotli compression. Automated build checks enforce a 64 KB limit.
-- No model runs on the RISE server: The Cloudflare Worker serves the app and its catalog of reading choices. It runs no model and holds no model credential. Six retired model-request routes return HTTP 410 (Gone).
-- Composer, in ChatGPT: In ChatGPT, RISE lets the model prepare a reading with text, sound and visuals in one tool call. RISE checks the result before making it playable, and the reader presses Begin to start. Rejected readings cannot play.
-- Automated checks before release: Around 2,800 Vitest unit and integration tests, plus Playwright browser tests, check the app. Releases also check a generated architecture diagram and the built files, with a way to restore an earlier release.
+- Unified reading state: One session model powers both Stream and Page views, preserving exact position across switches.
+- Verified external book files: Texts load on demand outside the JS bundle (saving 15.4 MB), addressed and verified by SHA-256 content hash on every open.
+- Strict first-load budget: Initial payload is ~59 KB Brotli across three requests, enforced by CI at a 64 KB ceiling.
+- Zero server-side AI: The Cloudflare Worker serves only the app and static catalog. It runs no models and stores no credentials; six retired inference routes return HTTP 410.
+- ChatGPT Composer: Prepares a complete reading in one tool call, validated deterministically before the reader presses Begin. Rejected readings cannot play.
+- Automated release checks: Around 2,800 Vitest unit and integration tests, Playwright browser suites, generated architecture diagram checks, and rollback-ready builds.
 
 ### Evidence
 
-- deployed: The reader, Library, Chapel, Make rooms and the interactive sample run at rise.syberlabs.io.
-- tested: Unit, integration and browser suites run in CI; the first-load budget and the design diagram are checked on every release.
-- measured: Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.
-- tested: RISE Plus voice, an optional ElevenLabs voice ($8.99 a month): implementation merged; paid launch pending verification. It runs in production on Stripe test mode: on 2026-10-08 a test purchase unlocked it and the voice was heard reading the buyer's own file.
-- not yet: No reader study has been run; release evidence still records zero real-device and stranger-testing records.
+- deployed: Reader, Library, Chapel, Make rooms, and interactive sample live at rise.syberlabs.io.
+- tested: CI runs unit, integration, and Playwright suites, first-load budgets, and architecture checks on every release.
+- measured: ChatGPT developer-mode test (4 October 2026) produced a validated Current and audible narration. Partial validation, not a public listing.
+- tested: RISE Plus voice, optional ElevenLabs narration ($8.99/month): merged and verified in Stripe test mode (8 October 2026); paid launch pending verification.
+- not yet: No external reader study or physical-device user testing conducted.
 
 ### Facts
 
-- Runs in: Any modern browser at rise.syberlabs.io
+- Runs in: Modern browsers at rise.syberlabs.io
 - Technology: JavaScript (ES modules), Vite, Web Audio API, Canvas 2D, IndexedDB, Cloudflare Workers, Vitest, Playwright, GitHub Actions
-- AI integration: Optional and reader-owned: Connect OpenRouter (TypeSafe AI’s hosted Jev), or run RISE locally with a pinned Kev-4B; there is no production Kev deployment, by design.
-- Privacy: Texts you bring and compositions you make stay in your browser. Once you connect your own AI, visual direction sends sections of the reading text to that connection (a text you bring, only with your consent). See the app’s posted Privacy and Terms.
-- License: Apache 2.0 for application code; texts and visual works carry their own terms
-- Composer in Claude: Live as a custom connector: add one named RISE with the URL https://rise.syberlabs.io/api/mcp. Submission to Claude’s connector directory is planned.
+- AI integration: Optional and user-owned: OpenRouter (hosted Jev) or local pinned Kev-4B; no production Kev deployment by design.
+- Privacy: Personal texts and compositions stay in browser storage. Connecting your own AI sends reading excerpts only to your chosen endpoint with your consent.
+- License: Apache 2.0 (application code); texts and visual works carry individual licenses
+- Composer in Claude: Live custom connector: Name RISE, URL https://rise.syberlabs.io/api/mcp (directory submission planned).
 - Earlier evidence: [Jev integration in RISE](https://syberlabs.io/jev/)
 - Your own model: [Reader-owned AI: Jev and Kev](https://syberlabs.io/kev/)
-- RISE Plus: [Optional voice, your own reading read aloud: paid launch pending verification](https://syberlabs.io/plus/)
+- RISE Plus: [Optional narration for your own texts: paid launch pending verification](https://syberlabs.io/plus/)
 - Source: [github.com/SyberLabs/RISE](https://github.com/SyberLabs/RISE)
 
-## FLYSPACE: Data canvas for AI assistants
+## FLYSPACE: AI data canvas
 
 Page: https://syberlabs.io/projects/flyspace/
 Status: Live preview
 Reflects: SyberLabs/Flyspace@e95ae73 · verified 2026-10-05
 Source: https://github.com/SyberLabs/Flyspace
 
-FLYSPACE is a canvas where you connect data sources to AI assistants, and each answer lists the sources it used. AI answers require running FLYSPACE locally with your own model, for example through Ollama. Formerly OmniOS.
+FLYSPACE (formerly OmniOS) is a visual canvas for connecting data sources to AI assistants. Every answer records and cites the exact incoming sources that produced it.
 
-Page title: FLYSPACE: Connect Data Sources to AI Assistants
+Page title: FLYSPACE: Source-Traced Data Canvas for AI Assistants
 
-Headline: Shows which data sources fed each AI answer.
+Headline: Traces every AI answer to the exact data sources wired into it.
 
-A limited public preview is live at omni.syberlabs.io: the canvas, the Shell Store and every keyless public data source run in your browser. AI answers and keyed sources are switched off there.
+Try the browser preview at omni.syberlabs.io with the Shell Store and keyless public feeds. Live AI answers and keyed sources require running FLYSPACE locally with your own model (for example via Ollama).
 
-Primary link: [Open the preview](https://omni.syberlabs.io/)
+Primary link: [Open preview](https://omni.syberlabs.io/)
 
-Secondary link: [Discuss a pilot](mailto:syberlabs.support@gmail.com?subject=AI%20consultation)
+Secondary link: [Discuss a pilot](mailto:contact@syberlabs.io?subject=AI%20consultation)
 
-Also: [Run it locally](https://github.com/SyberLabs/Flyspace#run)
+Also: [Run locally](https://github.com/SyberLabs/Flyspace#run)
 
-Live at [omni.syberlabs.io](https://omni.syberlabs.io/): The preview runs at omni.syberlabs.io. Your canvas stays in your browser.
+Live at [omni.syberlabs.io](https://omni.syberlabs.io/): Browser preview live at omni.syberlabs.io. Your canvas stays local in your browser.
 
-### The morning: one question, cited sources, a crystal, a second persona
+### Workflow capture: question, cited sources, crystal, second persona
 
 Video: https://syberlabs.io/omni-demo/omnios-morning-20261005.mp4
 
-Recorded on 2026-10-05 from a local production build of OmniOS@e95ae73, following the “morning” journey specified by its acceptance test. The blocks and two AI answers use fixed test data, not live markets or a live model. The canvas, connections, source labels and answer history are the real interface. Silent, 30 seconds.
+Silent 30-second capture from OmniOS@e95ae73 (5 October 2026) running the morning acceptance test. Uses fixture data rather than live feeds or models; interface, wiring, citations, and history are production UI.
 
-### Why show the sources?
+### Stop guessing what your assistant saw.
 
-FLYSPACE shows which data an AI assistant receives. A canvas displays the sources, their connections and whether they supplied any data.
+Chat windows hide context boundaries. FLYSPACE makes data flow explicit: every block shows a source, every wire shows an active input, and every connection indicates whether data arrived.
 
-Each answer records the source data used to produce it, including data passed through other AI assistants. Sources that supplied no data are not cited.
+Every answer logs the exact inputs that produced it, including outputs chained through upstream assistants. Silent or failed feeds are never cited.
 
-### What you can do in the preview
+### What runs in the preview vs. locally.
 
-The first three steps work in the public preview. AI questions and voice controls require a local setup with a model connection.
+Steps 01 to 03 run in the public browser preview. Steps 04 and 05 require a local install with a model connection.
 
-- 01 / Shell, Open a saved workspace: The Shell Store opens saved workspaces. The Investor workspace connects Polymarket, CoinGecko, World Bank and Hacker News to an Analyst assistant, then connects that assistant to a Strategist.
-- 02 / Blocks, Add live data blocks: Add blocks for prediction markets, crypto prices, economic series, research and news. Every built-in source is public and needs no key.
-- 03 / Wires, Connect a source to an assistant: Connect a data block to an AI assistant. FLYSPACE checks that their input and output formats match. If they do not, it explains the mismatch and leaves the workspace unchanged.
-- 04 / Ask, Ask with your own model: Ask an assistant a question. Its answer cites only the sources connected to it. A record identifies the model provider, model, response time and source data used.
-- 05 / Talk, Spoken canvas control: Hold Talk and use a supported command such as “wire hacker news to the analyst”, “delete this” or “undo”. The app checks the request, previews deletion and asks for clearer names when a request is ambiguous.
+- 01 / Shell, Load workspaces: Open saved templates from the Shell Store, such as the Investor workspace wiring Polymarket, CoinGecko, World Bank, and Hacker News through Analyst and Strategist personas.
+- 02 / Blocks, Add public feeds: Drop in live blocks for prediction markets, crypto prices, economic series, research, and news with zero API keys.
+- 03 / Wires, Enforce schema fit: Wire blocks into personas. FLYSPACE validates input and output compatibility and refuses mismatches with an explanation.
+- 04 / Ask, Query locally: Ask connected personas questions using your own model. Answers cite only wired inputs and log provider, model, latency, and source snapshots.
+- 05 / Talk, Voice commands: Hold Talk for structured actions (“wire hacker news to the analyst”, “delete this”, “undo”). Destructive steps preview first; ambiguous references prompt for clarification.
 
-### Which sources reach an answer
+### Trace how sources reach an answer.
 
-A step-through of the Investor workspace: one feed fails, one goes stale, and the record shows which sources each answer used. Open a node to see its owner.
+Walk through the Investor workspace: one feed fails, one goes stale, and the provenance log records exactly which sources backed each answer.
 
 Text version of the interactive map: This map needs JavaScript.
 
-### How it is built
+### Explicit wiring, strict boundaries.
 
-- Sources, connections and assistants: A block shows one data source. A wire connects it only after the app checks that connection. An AI assistant, called a persona in the app, answers using its active incoming connections and cannot select its own inputs.
-- Check data formats before connecting: The app checks declared input and output formats when you create a connection. A mismatch is refused unless you choose a text-only conversion. Blocks without declared formats can still connect without that check.
-- Record how each answer was made: An optional PostgreSQL database records each model request and the exact source data used. It also records answers passed between assistants, so you can trace them after source data changes. The canvas stays in browser storage (IndexedDB) and works without a server.
-- Review tools before allowing changes: Tool descriptions become a list of available actions, called a capability manifest. It can be built from OpenAPI documents, MCP tool schemas or a structured description and registered with one function. Actions that write or delete data require approval; the list cannot grant itself permission. Unique request keys prevent duplicates, and uncertain results remain marked uncertain.
-- Keys stay server-side: Model-provider keys are read from the server environment and never sent to the browser. Automated builds substitute detectable test values for secrets and fail if any value appears in browser code.
-- Limits of the public preview: The public preview disables paid model requests, sources requiring keys and access to the model-request history at the server routes. The setup checklist is published with the code.
+- Scoped personas: Each assistant (persona) reads strictly from its active incoming wires and cannot fetch outside inputs on its own.
+- Typed connections: Schema checks run on every wire. Mismatches fail unless you explicitly select text-only conversion; untyped blocks connect freely.
+- Full lineage history: Canvases persist locally in IndexedDB with no server needed. An optional PostgreSQL backend logs full request payloads and multi-persona lineage even after upstream data changes.
+- Approval-gated tool manifests: OpenAPI specs, MCP schemas, or structured definitions compile into capability manifests. Write and delete actions require explicit approval, idempotency keys block duplicates, and uncertain outcomes stay flagged.
+- Server-side secrets: API keys stay strictly in server environment variables. Automated build checks inject canary values and fail CI if any secret leaks into browser bundles.
+- Preview limits: The public preview disables paid models, keyed feeds, and server history routes. Full local setup instructions ship with the repository.
 
 ### Evidence
 
-- deployed: The limited public preview has run at omni.syberlabs.io since 2026-10-03, deployed by hand from a recorded commit on Cloudflare Workers.
-- tested: Unit tests across the stores, services and capability engine, and six Playwright specs including the “morning” golden path: shell → question → cited sources → crystal → second persona.
-- implemented: The capability compiler and the server-side broker are implemented and hardened against fixtures and stubbed transports.
-- not yet: No third-party API or MCP server has been measured in production use. Speech is tested with typed transcripts; there is no live microphone measurement. The hosted identity boundary exists in code with no provisioned issuer.
+- deployed: Limited public preview live at omni.syberlabs.io since 3 October 2026 on Cloudflare Workers.
+- tested: Unit suites across stores, services, and capability engine, plus 6 Playwright specs covering the full morning workflow.
+- implemented: Capability compiler and server-side broker hardened against fixtures and stubbed transports.
+- not yet: No third-party APIs or MCP servers measured in production. Speech tested via typed transcripts only. Identity issuer not yet provisioned.
 
 ### Facts
 
-- Stage: Local-first, single-user app with a limited public preview
-- Formerly: OmniOS, renamed in October 2026; the preview address, omni.syberlabs.io, keeps the old name for now
-- Technology: TypeScript, Next.js, React, Zustand, IndexedDB, PostgreSQL (optional), Tailwind CSS, Vitest, Playwright, Cloudflare Workers
-- AI models: Anthropic Claude, Google Gemini, and local models through Ollama; optional Kev persona suggestions
+- Stage: Local-first single-user app with limited public preview
+- Formerly: OmniOS (renamed October 2026; preview remains at omni.syberlabs.io for now)
+- Technology: TypeScript, Next.js, React, Zustand, IndexedDB, optional PostgreSQL, Tailwind CSS, Vitest, Playwright, Cloudflare Workers
+- AI models: Anthropic Claude, Google Gemini, local models via Ollama, optional Kev suggestions
 - Data sources: Polymarket, CoinGecko, Hacker News, World Bank, OpenAlex, Metaculus, NewsAPI (keyed)
-- License: No license file yet; the repository is public
+- License: Public repository; license file pending
 - Source: [github.com/SyberLabs/Flyspace](https://github.com/SyberLabs/Flyspace)
 
 ## Research
@@ -347,12 +347,12 @@ Text version of the interactive map: This map needs JavaScript.
 
 ## Company
 
-- [Consulting and partnerships](https://syberlabs.io/services/): AI consulting, custom builds and design partnerships from SyberLabs. We build agent systems in which software runs the checks, every step is logged in a signed record and a person approves before anything ships.
+- [Services](https://syberlabs.io/services/): AI consulting, custom builds and design partnerships from SyberLabs. We build agent systems in which software runs the checks, every step is logged in a signed record and a person approves before anything ships.
 - [PSYCHO SYBER](https://syberlabs.io/psycho-syber/): PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.
 
 ## Account
 
-- [Subscriber account](https://rise.syberlabs.io/plus/): Existing RISE subscribers
+- [Subscriber account](https://rise.syberlabs.io/plus/): Manage existing RISE subscriptions
 - [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.
 
 ## Design system
@@ -362,8 +362,8 @@ Text version of the interactive map: This map needs JavaScript.
 
 ## How we build
 
-- [The factory](https://syberlabs.io/factory/): How SyberWork handles one code change: an AI agent proposes it as a Git commit, SyberWork runs every check on that exact commit, rules and a person approve it, and each step is logged in a signed record.
-- [/approach/](https://syberlabs.io/approach/): How SyberLabs builds AI software: establish what a system knows, design what a person can do with it, and verify that they can review and change the result.
+- [The Factory](https://syberlabs.io/factory/): How SyberWork handles one code change: an AI agent proposes it as a Git commit, SyberWork runs every check on that exact commit, rules and a person approve it, and each step is logged in a signed record.
+- [Approach](https://syberlabs.io/approach/): How SyberLabs builds AI software: establish what a system knows, design what a person can do with it, and verify that they can review and change the result.
 - [/stack/](https://syberlabs.io/stack/): How SyberLabs’ coding agents read open-source dependencies at the exact version a project uses, through GitHits, and what that sends off our machines.
 
 ## Full text

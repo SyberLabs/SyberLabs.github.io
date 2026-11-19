@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, transformWithEsbuild } from 'vite';
 
@@ -51,7 +52,7 @@ function homepage() {
       order: 'post',
       async handler(html, ctx) {
         // `pnpm dev` also serves the hand-written pages through here; only the homepage has the marker.
-        if (ctx.filename !== file('./index.html')) return html;
+        if (resolve(ctx.filename) !== file('./index.html')) return html;
         if (!html.includes('<!-- home:body -->')) throw new Error('index.html has no <!-- home:body --> marker');
         const { renderHome } = server ? await server.ssrLoadModule('/src/home/page.js') : await import('./src/home/page.js');
         return html.replace('<!-- home:body -->', renderHome());

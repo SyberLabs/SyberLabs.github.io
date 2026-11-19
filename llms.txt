@@ -1,6 +1,6 @@
 # SyberLabs
 
-> SyberLabs makes software for checking AI’s work. SyberWork tests AI-written code changes before a person approves them. Attest runs every step in your docs. RISE is a reading app. FLYSPACE shows which data fed each AI answer. Also: AI consulting, custom builds and design partnerships. Lacuna Institute is its research institute.
+> SyberLabs builds verification software for AI systems: code checks, executable docs, source-traced workspaces, and custom agent engineering.
 
 > **RISE and AI models:** since RISE #294 the RISE server calls no model. An AI reading request runs on the reader’s own connection: hosted Jev through the reader’s OpenRouter account, or a pinned Kev-4B on the reader’s machine (`/kev/` on the site). local Kev did not meet RISE’s bar in internal checks on RISE’s evaluations (RISE `docs/product/tasks/SCR-004.json`), and there is no production Kev deployment, by design. Once the reader connects, RISE’s visual direction sends sections of the reading text to that connection.
 
@@ -21,41 +21,41 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 ## Products
 
-- [SyberWork](https://syberlabs.io/projects/syberwork/): Software factory. SyberWork is an open-source Python runtime for AI agents that write, test and repair code. It runs the checks on every change itself. Rules define the allowed steps, a named person approves the work, and a hash-chained log records what was proposed, checked, approved and done.
-  - Status: Work in progress
+- [SyberWork](https://syberlabs.io/projects/syberwork/): Software factory. SyberWork is an open-source Python runtime for AI coding agents. It executes contract checks independently on every proposed diff, enforces explicit approval rules, and logs every step in a cryptographically signed chain.
+  - Status: In development
   - Reflects: SyberLabs/SyberWork@208eaf6 · verified 2026-10-05
   - Source: https://github.com/SyberLabs/SyberWork
-  - Evidence, tested: Twenty-three golden conformance traces, a clean-install release gate and CI green on CPython 3.11 to 3.13.
-  - Evidence, measured: On one development machine with the default SQLite sync: explain.allowed median 3.8 µs, complete_case median 37.4 ms, chain verification of 501 events median 10.2 ms.
-  - Evidence, implemented: The included procurement case runs end to end against a separate reference system, with a real order POST under an idempotency key and manager sign-off.
-  - Evidence, not yet: The service binds to loopback and has no deployment beyond one machine. No outside project consumes the SDK. The model-versus-patch benchmark has had one pilot against a real model, on three fixtures that proved too easy; it has no general result yet.
-- [Attest](https://syberlabs.io/projects/attest/): Documentation testing. Give Attest a README, a quickstart, an AI assistant’s how-to answer or a product spec. It runs every step against the running app: commands in a scratch directory, browser steps in Chrome. It returns the document with each step marked proven, stale, broken, unverifiable or skipped, and the evidence for each mark.
+  - Evidence, tested: 23 golden conformance traces, clean-install release gate, and green CI across CPython 3.11 to 3.13.
+  - Evidence, measured: Single-machine SQLite medians: explain.allowed 3.8 µs, complete_case 37.4 ms, 501-event chain verification 10.2 ms.
+  - Evidence, implemented: End-to-end procurement workflow against a reference system with idempotent order POSTs and manager sign-off.
+  - Evidence, not yet: Local loopback only; no external SDK adopters. Benchmark completed one three-fixture pilot that proved too simple for general conclusions.
+- [Attest](https://syberlabs.io/projects/attest/): Documentation testing. Point Attest at a README, quickstart, AI how-to response, or product spec. It executes shell commands in a scratch directory and UI steps in Chrome, returning every claim marked proven, stale, broken, unverifiable, or skipped with full evidence.
   - Status: Public source · early
   - Reflects: SyberLabs/attest@274b8e7 · verified 2026-11-05
   - Source: https://github.com/SyberLabs/attest
-  - Evidence, measured: At Kane CLI Hack Day in San Francisco on 24 October 2026, Attest proved 9 documents across 23 turns, with 31 browser claims proven by Kane, each with a screenshot.
-  - Evidence, measured: Outdated text it found that day: Vite’s starter page now reads “Get started”, not “Vite + React”, and GitHub’s “Security & analysis” is now “Advanced Security”.
-  - Evidence, tested: Unit tests and red-team cases cover forged approvals, attempts to weaken a protected promise and path-escape attacks on the apply step.
-  - Evidence, not yet: There is no hosted service. Attest runs locally as a command-line tool. Shell steps run directly on your machine, with no sandbox. No outside team runs it in production yet.
-- [RISE](https://syberlabs.io/projects/rise/): Reading app. A reading app that runs in your browser. Words appear over time at a pace you set, with sound and moving visuals, or you can switch to a page view.
+  - Evidence, measured: At Kane CLI Hack Day (San Francisco, 24 October 2026), proved 9 documents across 23 turns with 31 screenshot-backed browser claims.
+  - Evidence, measured: Caught live drift: Vite’s starter page changed from “Vite + React” to “Get started”; GitHub renamed “Security & analysis” to “Advanced Security”.
+  - Evidence, tested: Unit and red-team suites covering forged approvals, protected-promise tampering, and path-escape attacks.
+  - Evidence, not yet: Local CLI only, with unsandboxed shell execution and no hosted service. No external production teams yet.
+- [RISE](https://syberlabs.io/projects/rise/): Browser reading app. A browser-based reading instrument. Words unfold at your pace alongside synthesized audio and procedural visuals, with instant switching to a traditional page view.
   - Status: Live · open beta
   - Reflects: SyberLabs/RISE@998d725 · verified 2026-10-05
   - Source: https://github.com/SyberLabs/RISE
-  - Live: https://rise.syberlabs.io/ (No account, no key and no install. Pick a reading and press Begin.)
-  - Evidence, deployed: The reader, Library, Chapel, Make rooms and the interactive sample run at rise.syberlabs.io.
-  - Evidence, tested: Unit, integration and browser suites run in CI; the first-load budget and the design diagram are checked on every release.
-  - Evidence, measured: Composer in ChatGPT: a controlled developer-mode session on 2026-10-04 produced an admitted Current and narration the reader confirmed hearing. That is partial acceptance on one release, not a public listing.
-  - Evidence, tested: RISE Plus voice, an optional ElevenLabs voice ($8.99 a month): implementation merged; paid launch pending verification. It runs in production on Stripe test mode: on 2026-10-08 a test purchase unlocked it and the voice was heard reading the buyer's own file.
-  - Evidence, not yet: No reader study has been run; release evidence still records zero real-device and stranger-testing records.
-- [FLYSPACE](https://syberlabs.io/projects/flyspace/): Data canvas for AI assistants. FLYSPACE is a canvas where you connect data sources to AI assistants, and each answer lists the sources it used. AI answers require running FLYSPACE locally with your own model, for example through Ollama. Formerly OmniOS.
+  - Live: https://rise.syberlabs.io/ (No account, API key, or install required. Pick a reading and press Begin.)
+  - Evidence, deployed: Reader, Library, Chapel, Make rooms, and interactive sample live at rise.syberlabs.io.
+  - Evidence, tested: CI runs unit, integration, and Playwright suites, first-load budgets, and architecture checks on every release.
+  - Evidence, measured: ChatGPT developer-mode test (4 October 2026) produced a validated Current and audible narration. Partial validation, not a public listing.
+  - Evidence, tested: RISE Plus voice, optional ElevenLabs narration ($8.99/month): merged and verified in Stripe test mode (8 October 2026); paid launch pending verification.
+  - Evidence, not yet: No external reader study or physical-device user testing conducted.
+- [FLYSPACE](https://syberlabs.io/projects/flyspace/): AI data canvas. FLYSPACE (formerly OmniOS) is a visual canvas for connecting data sources to AI assistants. Every answer records and cites the exact incoming sources that produced it.
   - Status: Live preview
   - Reflects: SyberLabs/Flyspace@e95ae73 · verified 2026-10-05
   - Source: https://github.com/SyberLabs/Flyspace
-  - Live: https://omni.syberlabs.io/ (The preview runs at omni.syberlabs.io. Your canvas stays in your browser.)
-  - Evidence, deployed: The limited public preview has run at omni.syberlabs.io since 2026-10-03, deployed by hand from a recorded commit on Cloudflare Workers.
-  - Evidence, tested: Unit tests across the stores, services and capability engine, and six Playwright specs including the “morning” golden path: shell → question → cited sources → crystal → second persona.
-  - Evidence, implemented: The capability compiler and the server-side broker are implemented and hardened against fixtures and stubbed transports.
-  - Evidence, not yet: No third-party API or MCP server has been measured in production use. Speech is tested with typed transcripts; there is no live microphone measurement. The hosted identity boundary exists in code with no provisioned issuer.
+  - Live: https://omni.syberlabs.io/ (Browser preview live at omni.syberlabs.io. Your canvas stays local in your browser.)
+  - Evidence, deployed: Limited public preview live at omni.syberlabs.io since 3 October 2026 on Cloudflare Workers.
+  - Evidence, tested: Unit suites across stores, services, and capability engine, plus 6 Playwright specs covering the full morning workflow.
+  - Evidence, implemented: Capability compiler and server-side broker hardened against fixtures and stubbed transports.
+  - Evidence, not yet: No third-party APIs or MCP servers measured in production. Speech tested via typed transcripts only. Identity issuer not yet provisioned.
 
 ## Research
 
@@ -65,12 +65,12 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 ## Company
 
-- [Consulting and partnerships](https://syberlabs.io/services/): AI consulting, custom builds and design partnerships from SyberLabs. We build agent systems in which software runs the checks, every step is logged in a signed record and a person approves before anything ships.
+- [Services](https://syberlabs.io/services/): AI consulting, custom builds and design partnerships from SyberLabs. We build agent systems in which software runs the checks, every step is logged in a signed record and a person approves before anything ships.
 - [PSYCHO SYBER](https://syberlabs.io/psycho-syber/): PSYCHO SYBER is a browser game from SyberLabs. Six stages: one each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a last stage that has no exit. Keyboard and mouse, or touch.
 
 ## Account
 
-- [Subscriber account](https://rise.syberlabs.io/plus/): Existing RISE subscribers
+- [Subscriber account](https://rise.syberlabs.io/plus/): Manage existing RISE subscriptions
 - [Privacy](https://syberlabs.io/privacy/): What syberlabs.io does with visitor data: a static site with no accounts, forms, cookies or analytics for visitors, and an invite-only staff sign-in.
 
 ## Design system
@@ -80,8 +80,8 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 ## How we build
 
-- [The factory](https://syberlabs.io/factory/): How SyberWork handles one code change: an AI agent proposes it as a Git commit, SyberWork runs every check on that exact commit, rules and a person approve it, and each step is logged in a signed record.
-- [/approach/](https://syberlabs.io/approach/): How SyberLabs builds AI software: establish what a system knows, design what a person can do with it, and verify that they can review and change the result.
+- [The Factory](https://syberlabs.io/factory/): How SyberWork handles one code change: an AI agent proposes it as a Git commit, SyberWork runs every check on that exact commit, rules and a person approve it, and each step is logged in a signed record.
+- [Approach](https://syberlabs.io/approach/): How SyberLabs builds AI software: establish what a system knows, design what a person can do with it, and verify that they can review and change the result.
 - [/stack/](https://syberlabs.io/stack/): How SyberLabs’ coding agents read open-source dependencies at the exact version a project uses, through GitHits, and what that sends off our machines.
 
 ## Full text

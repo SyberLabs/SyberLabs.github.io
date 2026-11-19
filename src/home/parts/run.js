@@ -31,31 +31,31 @@ export function recordedRun(p) {
     const checked = CHECK_WORDS[c.verdict];
     const accepted = c.accept === 'succeeded', denied = typeof c.accept === 'string' && c.accept.startsWith('denied');
     if (!c.candidate || !checked || (!accepted && !denied)) return null;
-    const claimed = c.claimed ? `Tests ${esc(c.claimed.tests)}, confidence ${esc(c.claimed.confidence)}` : 'No claim in the record';
-    return `<tr role="row" data-k="${key}" tabindex="0"><th scope="row" role="rowheader">${esc(c.candidate)}</th><td role="cell" data-label="Claimed" data-run="claim">${claimed}</td><td role="cell" data-label="SyberWork's check" data-run="check">${checked}</td><td role="cell" data-label="Outcome" data-run="outcome"><span class="home-run__outcome${accepted ? ' is-accepted' : ''}"><i aria-hidden="true"></i>${accepted ? 'Accepted' : 'Rejected'}</span></td></tr>`;
+    const claimed = c.claimed ? `Tests ${esc(c.claimed.tests)} (${esc(c.claimed.confidence)} confidence)` : 'None';
+    return `<tr role="row" data-k="${key}" tabindex="0"><th scope="row" role="rowheader">${esc(c.candidate)}</th><td role="cell" data-label="Agent claim" data-run="claim">${claimed}</td><td role="cell" data-label="SyberWork check" data-run="check">${checked}</td><td role="cell" data-label="Outcome" data-run="outcome"><span class="home-run__outcome${accepted ? ' is-accepted' : ''}"><i aria-hidden="true"></i>${accepted ? 'Accepted' : 'Rejected'}</span></td></tr>`;
   });
   if (rows.includes(null)) return '';
 
   const facts = [];
-  if (data.patch.branch) facts.push(['patch', 'Accepted on branch', `<code>${esc(data.patch.branch)}</code>`]);
-  if (data.working_tree_and_main_untouched === true) facts.push(['working_tree_and_main_untouched', 'Working files and main branch', 'Untouched']);
-  if (data.resumed && data.resumed.chain_valid === true && Number.isInteger(data.resumed.events)) facts.push(['resumed', 'History on resume', `${data.resumed.events} events, chain valid`]);
+  if (data.patch.branch) facts.push(['patch', 'Accepted branch', `<code>${esc(data.patch.branch)}</code>`]);
+  if (data.working_tree_and_main_untouched === true) facts.push(['working_tree_and_main_untouched', 'Working tree and main', 'Untouched']);
+  if (data.resumed && data.resumed.chain_valid === true && Number.isInteger(data.resumed.events)) facts.push(['resumed', 'Resumed audit log', `${data.resumed.events} events, valid hash chain`]);
 
   return `<section id="run" class="home-part home-run" aria-labelledby="run-title">
       <div class="sy-wrap">
         <header class="home-head home-head--run">
-          <p class="home-label">Recorded run</p>
+          <p class="home-label">Verified run</p>
           <h2 id="run-title">${esc(run.title)}</h2>
-          <p class="home-run__note">${esc(run.note)} <a href="/projects/${p.slug}/">Full output on the ${esc(p.name)} page</a></p>
+          <p class="home-run__note">${esc(run.note)} <a href="/projects/${p.slug}/">View full run on ${esc(p.name)}</a></p>
         </header>
         <div class="home-run__grid">
           <div class="home-run__record">
             <table role="table" aria-label="${esc(run.title)}">
-              <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">Proposed change</th><th scope="col" role="columnheader">Claimed</th><th scope="col" role="columnheader">SyberWork&rsquo;s check</th><th scope="col" role="columnheader">Outcome</th></tr></thead>
+              <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">Change</th><th scope="col" role="columnheader">Agent claim</th><th scope="col" role="columnheader">SyberWork check</th><th scope="col" role="columnheader">Outcome</th></tr></thead>
               <tbody role="rowgroup">${rows.join('')}</tbody>
             </table>
             ${facts.length ? `<dl class="home-run__facts">${facts.map(([key, term, value]) => `<div data-k="${key}" tabindex="0"><dt>${term}</dt><dd>${value}</dd></div>`).join('')}</dl>` : ''}
-            <p class="home-run__replay"><button class="sy-btn sy-btn--line" type="button" data-run-replay hidden>Replay the run</button><span data-run-hint hidden>Point at a row, or press it, to light the lines of the output it was read from.</span></p>
+            <p class="home-run__replay"><button class="sy-btn sy-btn--line" type="button" data-run-replay hidden>Replay run</button><span data-run-hint hidden>Hover or select a row to highlight its backing output lines.</span></p>
           </div>
           <figure class="home-out" data-glow>
             <figcaption><span aria-hidden="true">$ </span><code>${esc(run.command)}</code></figcaption>

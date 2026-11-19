@@ -35,9 +35,9 @@ const badge = (status, cls = '') => `<span class="sy-badge sy-badge--${status.ki
 const atlas = (here = '') => `<div class="sy-atlas" id="sy-atlas" role="dialog" aria-label="Site map">
   <span class="sy-atlas__backdrop" aria-hidden="true"></span>
   <div class="sy-atlas__panel">
-    <div class="sy-atlas__head"><p class="sy-eyebrow">SyberLabs / Site map</p><button class="sy-atlas__close" type="button" aria-label="Close menu">${icon('close', 20)}</button></div>
+    <div class="sy-atlas__head"><p class="sy-eyebrow">SyberLabs / Index</p><button class="sy-atlas__close" type="button" aria-label="Close menu">${icon('close', 20)}</button></div>
     <nav class="sy-atlas__groups" aria-label="Explore">${siteMap.map(group => `<section class="sy-atlas__group" aria-labelledby="atlas-${group.title.toLowerCase()}"><h2 id="atlas-${group.title.toLowerCase()}" class="sy-atlas__title">${esc(group.title)}</h2><ul>${group.items.map(item => `<li><a href="${item.href}"${item.href === here ? ' aria-current="page"' : ''}${item.external ? ' rel="noopener"' : ''}${item.accent ? ` style="--sy-accent:${item.accent}"` : ''}>${item.sigil ? `<canvas class="sy-atlas__sigil" data-sigil="${item.sigil}" data-color="${item.accent}" aria-hidden="true"></canvas>` : '<span class="sy-atlas__dot" aria-hidden="true"></span>'}<span class="sy-atlas__label">${esc(item.label)}${item.external ? ' ' + icon('external', 14) : ''}</span><span class="sy-atlas__note">${esc(item.note)}</span></a></li>`).join('')}</ul></section>`).join('')}</nav>
-    <p class="sy-atlas__foot"><span>Press <kbd>/</kbd> anywhere to open the menu · <kbd>Esc</kbd> closes</span><a href="mailto:${EMAIL}">${EMAIL}</a></p>
+    <p class="sy-atlas__foot"><span>Press <kbd>/</kbd> to open menu · <kbd>Esc</kbd> to close</span><a href="mailto:${EMAIL}">${EMAIL}</a></p>
   </div>
 </div>`;
 
@@ -167,7 +167,7 @@ const evidenceSection = p => p.evidence ? `
     <h2 id="evidence-title" class="sy-eyebrow pj-facts__label">Evidence</h2>
     <div class="pj-split__main">
       <ul class="pj-evidence">${p.evidence.map(([state, text]) => `<li class="pj-evidence__row is-${state.replace(/\s+/g, '-')}"><span class="pj-evidence__state sy-label"><i aria-hidden="true"></i>${esc(STATES[state] || state)}</span><p>${esc(text)}</p></li>`).join('')}</ul>
-      ${p.reflects ? `<p class="sy-small pj-evidence__ref">Reflects ${esc(p.reflects)}. Each state is backed by code, a named test, a measurement under stated conditions, or a deployment.</p>` : ''}
+      ${p.reflects ? `<p class="sy-small pj-evidence__ref">Reflects ${esc(p.reflects)}.</p>` : ''}
     </div>
   </div>
 </section>` : '';
@@ -246,7 +246,7 @@ export function others(p) {
 export function renderProject(p) {
   return {
     title: `${p.pageTitle || p.name} | SyberLabs`,
-    description: `${p.intro} ${p.summary || ''}`.trim(),
+    description: p.metaDescription || `${p.intro} ${p.summary || ''}`.trim(),
     body: `${header('products', { here: `/projects/${p.slug}/` })}
 <main id="main" class="pj-page">
   <section class="pj-hero sy-container" aria-labelledby="project-title">

@@ -43,9 +43,9 @@ const row = p => {
 
 export const products = () => `<section id="products" class="home-part" aria-labelledby="products-title">
       <div class="sy-wrap">
-        ${head('products-title', 'Products', '<a href="/factory/">How SyberWork handles a code change</a>')}
+        ${head('products-title', 'Products', '<a href="/factory/">How SyberWork processes a code change</a>')}
         <ul class="home-rows" role="list">${projects.map(row).join('')}
         </ul>
-        <p id="partners" class="home-note"><span class="home-label">Design partnership</span><span><b>GitHits.</b> A Python client and a Claude Code integration for GitHits code search, both built through SyberWork. They were tested against a local stand-in for the API, so we claim no live usage or savings. <a href="/services/#partnerships">Design partnerships</a></span></p>
+        <p id="partners" class="home-note"><span class="home-label">Design partnership</span><span><b>GitHits.</b> Python client and Claude Code integration, both built and verified through SyberWork. Tested against a local API stand-in; no live usage or savings claimed. <a href="/services/#partnerships">Design partnerships</a></span></p>
       </div>
     </section>`;
