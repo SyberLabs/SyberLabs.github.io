@@ -169,9 +169,9 @@ function clearAnomaly() {
   if (pct > bestRot) { bestRot = pct; try { localStorage.setItem('psycho-syber.anomaly', String(pct)); } catch { /* private window: the best score is not kept */ } }
   $('ps-card-kicker').textContent = 'The machine restored itself from a copy';
   $('ps-card-title').textContent = calm ? ANOMALY.name : glitch(ANOMALY.name, pct / 100, 1);
-  $('ps-card-line').replaceChildren(el('b', `${pct}% of it was corrupt when you logged off`), document.createTextNode(` · Best ${bestRot}%`));
+  $('ps-card-line').replaceChildren(el('b', `${pct}% of the metal was corrupt when you logged off`), document.createTextNode(` · Best ${bestRot}%`));
   const st = $('ps-card-stats'); st.hidden = false;
-  st.replaceChildren(stat('Time', clock(g.time)), stat('Corrupted', `${pct}%`), stat('Bodies turned', `${bodiesTurned(g)} of ${g.L.bodies.length}`), stat('Copies deleted', String(g.cursor.deleted)), stat('Threads', `${g.threads} of ${g.threadsTotal}`), stat('Falls', String(g.deaths)));
+  st.replaceChildren(stat('Time', clock(g.time)), stat('Corrupt', `${pct}%`), stat('Pieces corrupt', `${bodiesTurned(g)} of ${g.L.bodies.length}`), stat('Copies deleted', String(g.cursor.deleted)), stat('Threads', `${g.threads} of ${g.threadsTotal}`), stat('Falls', String(g.deaths)));
   $('ps-card-atlas').hidden = true;
   const more = $('ps-card-link'); more.hidden = false; more.href = ANOMALY.href; more.textContent = `About ${ANOMALY.project}`;
   $('ps-card-go').textContent = 'Back to the title'; cardAt = performance.now(); go(toTitle);
@@ -436,7 +436,7 @@ const TOUCH_WORDS = [['A and D walk. W or Space jumps.', 'The stick on the left 
   ['Hold the mouse button on a ring or on stone to throw the cord. W reels in. Let go to drop.', 'Press and hold on a ring or on stone to throw the cord. It stays tied. Stick up reels in. Tap again to drop.'],
   ['Space lets go with a kick', 'JUMP lets go with a kick'], ['Click throws glass', 'A tap on the picture throws glass'], ['Hold S to hide', 'Hold the stick down to hide'],
   ['Shift (or Q) changes you into the jaguar', 'FORM changes you into the jaguar'], ['hold W to climb. Space leaps off', 'hold the stick up to climb. JUMP leaps off'],
-  ['Click to pounce', 'Tap the picture to pounce'], ['Shift:', 'FORM:'], ['Shift beside metal', 'FORM beside metal']];
+  ['Click to pounce', 'Tap the picture to pounce'], ['Shift:', 'FORM:'], ['Press Shift beside metal', 'Tap FORM beside metal']];
 const forTouch = s => { for (const [a, b] of TOUCH_WORDS) s = s.replace(a, b); return s; };
 view.addEventListener('contextmenu', e => e.preventDefault());
 $('ps-start').onclick = () => begin(0);
@@ -478,9 +478,9 @@ function drain() {
     else if (e.k === 'deny' && e.why === 'evidence') toast(`This door takes the evidence when all ${g.evidenceTotal} gaps are found. You have ${g.evidence}. Not yet read: ${unread(g)}.`);
     else if (e.k === 'sale') toast('The sale closed. You are back at the last standing stone.');
     else if (e.k === 'core') toast(g.L.def.anomaly ? 'The core is broken. The way out is open.' : 'The Approver is down. The door behind it is open.');
-    else if (e.k === 'wake') toast('The system has woken. Its cursor is coming, and its scan has started at the left edge.');
-    else if (e.k === 'turned') toast(`A body has turned. ${bodiesTurned(g)} of ${g.L.bodies.length} are yours.`);
-    else if (e.k === 'restored') toast('The scan restored a body behind you.');
+    else if (e.k === 'wake') toast('The system has woken. Its cursor hunts copies, then you; its scan cleans from the left.');
+    else if (e.k === 'turned') toast(`A whole piece of metal is corrupt: ${bodiesTurned(g)} of ${g.L.bodies.length}.`);
+    else if (e.k === 'restored') toast('The scan cleaned a piece of metal behind you.');
     else if (e.k === 'caught') toast('The scan reached you. You are back at the last standing stone.');
     else if (e.k === 'click' && (said.click = (said.click || 0) + 1) <= 3) toast('The cursor clicked you. Leave it a copy, hide, roar or throw glass at it.');
   }
@@ -537,7 +537,7 @@ function paintHud() {
   set('ps-a2', psy ? (p.roarCd > 0 ? `E · roar ${Math.ceil(p.roarCd)}` : g.slow > 0 ? 'E · roar · slowed' : 'E · roar') : 'E · check');
   set('ps-a3', [p.hidden && 'Hidden', g.alarm > 0 && 'Alarm'].filter(Boolean).join(' · '));   // both when both are so: hiding does not end an alarm
   const share = d.anomaly ? corrupted(g) : 0, gap = d.anomaly && g.scanX >= 0 ? Math.max(0, Math.round((p.x - g.scanX) / T)) : -1;
-  set('ps-sale', d.timer ? `Sale closes in ${clock(Math.ceil(g.sale))} · evidence ${g.evidence}/${g.evidenceTotal}` : d.anomaly ? `${gap < 0 ? '' : `Scan ${gap} tiles behind · `}corrupted ${Math.round(share * 100)}% · copies ${g.copies.length}` : '');
+  set('ps-sale', d.timer ? `Sale closes in ${clock(Math.ceil(g.sale))} · evidence ${g.evidence}/${g.evidenceTotal}` : d.anomaly ? `${gap < 0 ? '' : `Scan ${count(gap, 'tile')} behind · `}corrupt ${Math.round(share * 100)}% · copies ${g.copies.length}` : '');
   if (d.timer || d.anomaly) $('ps-sale').classList.toggle('is-low', d.timer ? g.sale < 30 : gap >= 0 && gap < 12);
   if (d.anomaly) paintRot(share);
   const h0 = (g.hint >= 0 && g.L.hints[g.hint]) || '', h = touch ? forTouch(h0) : h0;

@@ -328,34 +328,34 @@ function anomaly() {
   m.box(0, 20, 191, 23);
   // BOOT
   m.put(3, 19, '@').put(2, 12, 'L', { text: 'BOOT' }).hint(5, 18, 'The log prints one word at a time. Jump to the next while it is lit.');
-  m.put(8, 19, 'P').hint(9, 17, 'E sets the pace of every word: fast or slow.');
+  m.put(8, 19, 'P').hint(9, 17, 'As the weaver, E sets every word slow or fast.');
   ['LOAD', 'EVERY', 'FACE', 'EVERY', 'STEP'].forEach((text, k) => m.put(k % 2 ? 11 : 15, 18 - k * 2, 'WWWW', { i: k, n: 5, beat: 0.9, text }));
-  m.hint(17, 19, 'Shift beside metal. The copy you leave turns it. Turned metal holds the claws and the cord.');
+  m.hint(17, 19, 'Press Shift beside metal. Changing form leaves a copy that corrupts it. Corrupt metal takes claws and cord.');
   m.box(19, 8, 24, 19, 'M').col(22, 0, 7, '|');
-  m.hint(20, 6, 'The gate goes dark when the whole block has turned.');
+  m.hint(20, 6, 'The gate goes dark when the whole block is corrupt.');
   // DESKTOP
-  m.put(27, 19, 'C').put(30, 12, 'L', { text: 'DESKTOP' }).hint(29, 18, 'The system has woken. Its cursor deletes a copy before it comes for you. Keep leaving copies.');
+  m.put(27, 19, 'C').put(30, 12, 'L', { text: 'DESKTOP' }).hint(29, 18, 'The cursor deletes copies, then hunts you; hide, roar or throw glass. The scan cleans and sends you back.');
   win(33, 13, 6, 4); win(42, 12, 8, 5); win(52, 13, 4, 4);
   m.put(45, 17, 'e', { base: 90, sweep: 50, period: 4, range: 150, fov: 20 });
-  m.hint(39, 18, 'An eye set in a window goes dark when the whole window has turned. Jump beside the frame and change form.');
+  m.hint(39, 18, 'An eye set in a window goes dark when the whole window is corrupt. Jump beside the frame and change form.');
   for (const x of [35, 40, 50]) m.put(x, 19, 'v');
   m.put(54, 19, 'w', { mimic: true });
   alert(60, 12);
   // REGISTRY
-  m.put(65, 19, 'C').put(66, 12, 'L', { text: 'REGISTRY' }).hint(67, 18, 'The jaguar fits under the racks. The weaver checks each terminal, which opens the doors above the tunnel.');
+  m.put(65, 19, 'C').put(66, 12, 'L', { text: 'REGISTRY' }).hint(67, 18, 'The jaguar fits under the racks. As the weaver, E at each terminal opens the doors above.');
   m.put(69, 19, 'T', { opens: 'ra' }).box(72, 8, 77, 17, 'M').box(78, 8, 81, 9, 'M').box(82, 8, 87, 17, 'M');
   for (let x = 72; x <= 77; x++) m.put(x, 18, 'D', { id: 'ra' });
   for (let x = 82; x <= 87; x++) m.put(x, 18, 'D', { id: 'rb' });
   m.put(79, 19, 'T', { opens: 'rb' }).put(80, 10, 'e', { base: 90, sweep: 40, period: 3.5, range: 150, fov: 18 });
   alert(92, 12);
   // DEFRAG
-  m.put(97, 19, 'C').put(98, 12, 'L', { text: 'DEFRAG' }).hint(98, 18, 'E runs the check: proven blocks hold, stale blocks fall, broken blocks are not there.');
+  m.put(97, 19, 'C').put(98, 12, 'L', { text: 'DEFRAG' }).hint(98, 18, 'As the weaver, E runs the check: proven blocks hold, stale blocks fall, broken blocks are not there.');
   m.box(101, 20, 120, 21, ' ').box(101, 22, 120, 22, '^');
   m.put(101, 20, '11').put(104, 20, '22').put(107, 20, '11').put(110, 20, '3').put(111, 20, '11').put(114, 20, '22').put(117, 20, '11');
   m.box(100, 13, 118, 14, 'M').col(100, 15, 16, 'M');   // the arm, and the post that brings it within reach
   alert(125, 12);
   // FIREWALL
-  m.put(129, 19, 'C').put(130, 12, 'L', { text: 'FIREWALL' }).hint(131, 18, 'Three rules guard the way: a gate that blinks, a gate fed by a source, a gate the alarm lights. A copy on the metal above each is another way.');
+  m.put(129, 19, 'C').put(130, 12, 'L', { text: 'FIREWALL' }).hint(131, 18, 'Three rules: one gate blinks, one has a source, one lights on alarm. Corrupt the metal above to shut it off.');
   bulk(136); m.col(136, 16, 19, '!', { period: 2.4, duty: 0.5, ph: 0 });
   m.put(140, 19, 'S', { id: 'fw' }).put(142, 19, 'S', { trap: true });
   bulk(144); m.col(144, 16, 19, 'f', { src: 'fw' });
@@ -375,7 +375,7 @@ function anomaly() {
 export const ANOMALY = {
   id: 'anomaly', name: 'THE ANOMALOUS SYSTEM', project: 'SyberWork', href: '/projects/syberwork/',
   line: 'Tests every AI-written code change before a person approves it.',
-  intro: ['The machine closed | your record.', 'It keeps the record | inside itself.', 'Nothing in there | is approved by a person.', 'Change form. | Leave copies of yourself.', 'Turn all of it.'],
+  intro: ['The machine closed | your record.', 'It filed you | inside its own system.', 'Nothing in there | is approved by a person.', 'Change form. | Leave copies behind.', 'Corrupt all of it.'],
   bg: 'system', persona: 'syber', anomaly: true, scan: 240, words: { text: 'LOAD EVERY FACE EVERY STEP', beat: 0.9 }, ...anomaly(),
 };
 
