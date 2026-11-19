@@ -195,6 +195,55 @@ the game's link in the homepage's first screen and one note in its Studio part l
   Music and effects are synthesised in the browser. Progress, the Atlas marks found, the story pace, the command ship's gift and the best share in THE ANOMALOUS SYSTEM are `localStorage` keys that
   begin `psycho-syber.`. `psycho-syber/test/` and `psycho-syber/README.md` are not published.
 
+## PSYCHO SYBER: ARENA
+
+Since November 19, 2026 the site carries a second game at `/psycho-syber/arena/` (`psycho-syber/arena/`): a
+first-person arena in 3D with the same two forms, Psycho and Syber, changed with Q. It has two modes: Waves, for one
+player, and the Duel, for two players in two browsers. The owner chose its name, its place under `/psycho-syber/`
+and its two modes on that day. "The game" on the game's page links to it. The header, the Menu, the homepage and
+that game's title do not: one more button on the title pushes its words off a phone's screen.
+
+- It is a separate game. PSYCHO SYBER's rules about stages, scripted runs, the Atlas marks, music and the narrator do
+  not apply to it. What the two share: invented names only, Wording for the page's copy, plain lines inside the game,
+  the banned word, no form, and no script, stylesheet or font from another origin.
+- The forms are Psycho and Syber and the merged form is Psycho Syber. Use no other spelling of the game's name or of
+  a form's name anywhere in `psycho-syber/arena/`: `node psycho-syber/test/arena.mjs` runs CI's name guard on it.
+- An earlier build, made outside this repository, had a story mode and a codex of research theses. The owner left
+  both off the site: its copy states facts a reader can check. Do not add either without the owner's direction.
+- The files are `index.html`, `arena.css`, `game.js` (one classic script), `link.js` (the duel's invite and reply
+  codes; no DOM) and `vendor/three.min.js`, which is three.js r160 as npm publishes it, with its licence beside it.
+  The test checks the library's hash: replace the file whole or not at all. Write the page's links without a `?v=`
+  token; this is the one page under `psycho-syber/` that `scripts/stamp.mjs` stamps.
+- The Duel is the one place on the site where a visitor's browser connects to anything but syberlabs.io. The two
+  browsers open a direct WebRTC link. No server of ours takes part: the first player sends an invite and the second
+  sends back a reply, as links (`#d=`, `#r=`) or as pasted text. The owner chose this over a third-party broker and
+  over the staff Function. Do not add a signalling server, a relay (TURN) or a library for it without the owner's
+  direction.
+- The scripts name one address, `stun:stun.cloudflare.com:3478`, which tells a browser its public address. The test
+  fails if they name another or call `fetch`.
+- Nothing is contacted until the visitor presses `Make an invite` or `Answer the invite`. Opening an invite link only
+  shows it. Keep it so.
+- An invite and a reply contain the network addresses of the browser that made them. The panel says so beside each,
+  and "What is sent" on the page and "Game duels" on `/privacy/` say what a duel sends and that SyberLabs receives
+  none of it. A change to what is sent changes all three in the same commit.
+- Waves sends nothing. The best score and the aim speed are `localStorage` keys that begin `psycho-syber.arena.`. A
+  reply link opened in a new tab reaches the tab that made the invite through a `BroadcastChannel` named
+  `psycho-syber.arena`, which does not leave the browser.
+- While a game is on, the stage covers the whole screen, the header included (`run` on `#ar-stage`). Pause and the
+  two end panels have `Leave the game`, which brings the page back: keep menu, privacy and account access one tap
+  from Pause.
+- Each browser reports its own hits, and the first player's browser keeps the rounds and the score. The page says a
+  player who alters the game can cheat, that there is no relay, and what has not been tested. Keep those lines true:
+  when a duel has been played across two networks, on a phone or in another browser, change the line that says it
+  has not.
+- `node psycho-syber/test/arena.mjs` runs in CI: the codes pack and read back, the page holds every element the script
+  looks up, and the rules above hold. `psycho-syber/test/arena-browser.mjs` plays a wave at a desktop and a phone
+  width and two duels in headless Chrome; CI has no browser, so run it by hand after a change to `game.js` or
+  `link.js` and put what it printed in the pull request. `psycho-syber/README.md` ("ARENA") has the messages the two
+  browsers exchange.
+- The page's first section names the four products and Lacuna Institute. With reduced motion the picture behind the
+  title holds still.
+
 ## Homepage
 
 The homepage (`src/home/page.js`, parts in `src/home/parts/`) was redesigned on November 18, 2026, when the owner asked

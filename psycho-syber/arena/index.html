@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#02070a">
+  <meta name="description" content="A first-person browser game from SyberLabs in 3D, with two forms, Psycho and Syber. Waves for one player, and a Duel for two browsers that connect directly.">
+  <link rel="canonical" href="https://syberlabs.io/psycho-syber/arena/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PSYCHO SYBER: ARENA | SyberLabs">
+  <meta property="og:description" content="A first-person browser game from SyberLabs in 3D, with two forms, Psycho and Syber. Waves for one player, and a Duel for two browsers that connect directly.">
+  <meta property="og:url" content="https://syberlabs.io/psycho-syber/arena/">
+  <meta property="og:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261118a">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PSYCHO SYBER: ARENA | SyberLabs">
+  <meta name="twitter:description" content="A first-person browser game from SyberLabs in 3D, with two forms, Psycho and Syber. Waves for one player, and a Duel for two browsers that connect directly.">
+  <meta name="twitter:image" content="https://syberlabs.io/og/psycho-syber.png?v=20261118a">
+  <link rel="icon" href="/favicon-32x32.png?v=prism" type="image/png" sizes="32x32">
+  <link rel="preload" href="/fonts/v1/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/syberlabs.css">
+  <link rel="stylesheet" href="/psycho-syber/psycho-syber.css">
+  <link rel="stylesheet" href="/psycho-syber/arena/arena.css">
+  <title>PSYCHO SYBER: ARENA | SyberLabs</title>
+</head>
+<body class="syber-play">
+  <a class="sy-skip" href="#main">Skip to content</a>
+<header class="sy-header sy-header--sticky"><div class="sy-header__in">
+  <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
+  <nav class="sy-nav" aria-label="Primary"><ul><li><a href="/#products">Products</a></li><li><a href="/research/">Research</a></li><li><a href="/factory/">Factory</a></li><li><a href="/services/">Services</a></li><li><a href="/lacuna/">Lacuna</a></li><li><a href="/psycho-syber/" aria-current="page">Game</a></li><li class="sy-nav__cta-item"><a class="sy-nav__cta" href="mailto:syberlabs.support@gmail.com?subject=AI%20consultation">Book a consultation</a></li></ul></nav>
+  <details class="sy-menu"><summary aria-label="Menu" aria-controls="sy-atlas"><svg class="sy-icon " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>Menu</span></summary><div class="sy-atlas" id="sy-atlas" role="dialog" aria-label="Site map">
+  <span class="sy-atlas__backdrop" aria-hidden="true"></span>
+  <div class="sy-atlas__panel">
+    <div class="sy-atlas__head"><p class="sy-eyebrow">SyberLabs / Site map</p><button class="sy-atlas__close" type="button" aria-label="Close menu"><svg class="sy-icon " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <nav class="sy-atlas__groups" aria-label="Explore"><section class="sy-atlas__group" aria-labelledby="atlas-products"><h2 id="atlas-products" class="sy-atlas__title">Products</h2><ul><li><a href="/projects/syberwork/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">SyberWork</span><span class="sy-atlas__note">Tests AI-written code before a person approves it</span></a></li><li><a href="/projects/attest/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Attest</span><span class="sy-atlas__note">Runs every step in your docs</span></a></li><li><a href="/projects/rise/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">RISE</span><span class="sy-atlas__note">Reading app with timed text, sound and visuals</span></a></li><li><a href="/projects/flyspace/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">FLYSPACE</span><span class="sy-atlas__note">Shows which data fed each AI answer</span></a></li></ul></section><section class="sy-atlas__group" aria-labelledby="atlas-research"><h2 id="atlas-research" class="sy-atlas__title">Research</h2><ul><li><a href="/research/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Research index</span><span class="sy-atlas__note">Reports, notes and working papers</span></a></li><li><a href="/lacuna/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Lacuna Institute</span><span class="sy-atlas__note">Atlas of 21 research sites, with sources</span></a></li><li><a href="/lacuna/research/paracas-bundles/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Paracas bundles</span><span class="sy-atlas__note">Dataset: 13 mummy bundles that left Peru</span></a></li></ul></section><section class="sy-atlas__group" aria-labelledby="atlas-company"><h2 id="atlas-company" class="sy-atlas__title">Company</h2><ul><li><a href="/services/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Consulting and partnerships</span><span class="sy-atlas__note">Services, engagement steps and pilots</span></a></li><li><a href="/factory/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">The factory</span><span class="sy-atlas__note">How a code change is written, tested and approved</span></a></li><li><a href="/psycho-syber/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">PSYCHO SYBER</span><span class="sy-atlas__note">Browser game: six stages, and the last has no exit</span></a></li><li><a href="mailto:syberlabs.support@gmail.com"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Email</span><span class="sy-atlas__note">syberlabs.support@gmail.com</span></a></li></ul></section><section class="sy-atlas__group" aria-labelledby="atlas-account"><h2 id="atlas-account" class="sy-atlas__title">Account</h2><ul><li><a href="https://rise.syberlabs.io/plus/" rel="noopener"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Subscriber account <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span><span class="sy-atlas__note">Existing RISE subscribers</span></a></li><li><a href="/privacy/"><span class="sy-atlas__dot" aria-hidden="true"></span><span class="sy-atlas__label">Privacy</span><span class="sy-atlas__note">Data and contact policy</span></a></li></ul></section></nav>
+    <p class="sy-atlas__foot"><span>Press <kbd>/</kbd> anywhere to open the menu · <kbd>Esc</kbd> closes</span><a href="mailto:syberlabs.support@gmail.com">syberlabs.support@gmail.com</a></p>
+  </div>
+</div></details>
+</div></header>
+<script type="module" src="/syberlabs.js"></script>
+  <main class="ps ar" id="main">
+    <section class="ar-stage psycho" id="ar-stage" aria-label="PSYCHO SYBER: ARENA, the game">
+      <canvas class="ar-view" id="ar-c" aria-label="Game view. The game plays with a keyboard and a mouse, or with touch."></canvas>
+      <div class="ar-layer" id="ar-vig"></div>
+      <div class="ar-layer" id="ar-surge"></div>
+      <div class="ar-layer" id="ar-dmg"></div>
+      <div class="ar-layer" id="ar-glitch"></div>
+      <div class="ar-layer" id="ar-grain"></div>
+
+      <div class="ar-layer" id="ar-hud">
+        <div id="ar-labels"></div>
+        <div class="ar-tl">
+          <div id="ar-form">Psycho</div>
+          <div id="ar-hpw"><div id="ar-hpf"></div></div>
+          <div id="ar-syw"><div id="ar-syf"></div></div>
+          <div id="ar-hpn">100 HP</div>
+          <div id="ar-obj"></div>
+        </div>
+        <div class="ar-tr">
+          <div id="ar-score">0</div>
+          <div id="ar-combo"></div>
+          <div id="ar-wave">GET READY</div>
+        </div>
+        <button id="ar-pausebtn" type="button" aria-label="Pause">II</button>
+        <div id="ar-boss"><span id="ar-bossn">The Kernel</span><i><b id="ar-bossf"></b></i></div>
+        <div id="ar-xh"><i></i><i></i><i></i><i></i></div>
+        <div id="ar-banner"><div id="ar-bt"></div><div id="ar-bs"></div></div>
+        <div id="ar-toast" role="status"></div>
+        <div id="ar-hint" aria-live="polite"></div>
+        <div id="ar-cds">
+          <div class="ar-cd"><b id="ar-cdd"></b><span id="ar-cddn">RAM</span><em>SHIFT</em></div>
+          <div class="ar-cd"><b id="ar-cda"></b><span id="ar-cdan">SLAM</span><em>RIGHT CLICK</em></div>
+          <div class="ar-cd"><b id="ar-cds2"></b><span>SWAP</span><em>Q / WHEEL</em></div>
+        </div>
+      </div>
+
+      <div class="ar-layer" id="ar-touch">
+        <div id="ar-stick"><div id="ar-knob"></div></div>
+        <div class="tb" id="ar-b-fire" data-b="fire">ROCKET</div>
+        <div class="tb" id="ar-b-jump" data-b="jump">JUMP</div>
+        <div class="tb" id="ar-b-alt" data-b="alt">SLAM</div>
+        <div class="tb" id="ar-b-dash" data-b="dash">RAM</div>
+        <div class="tb" id="ar-b-swap" data-b="swap">SWAP</div>
+      </div>
+
+      <div id="ar-menu">
+        <div class="ar-card">
+          <p class="ar-eyebrow" id="ar-eyebrow">A SyberLabs browser game · first person, in 3D</p>
+          <h1 class="ar-title" id="ar-h1"><span class="ps-logo__p">PSYCHO</span> <span class="ps-logo__s">SYBER</span><span class="ar-title__a">ARENA</span></h1>
+
+          <div class="ar-sec on" id="ar-s-start">
+            <p class="ar-lede">You fight as two forms, Psycho and Syber, and change between them at any moment. The walls and floors break.</p>
+            <p class="ar-actions"><button class="sy-btn sy-btn--solid" id="ar-gowave" type="button" disabled>Waves</button><button class="sy-btn sy-btn--line" id="ar-goduel" type="button" disabled>Duel</button><a class="sy-btn sy-btn--ghost" href="/psycho-syber/">The first game</a></p>
+            <p class="ar-keys ar-for-keys">W A S D move · mouse aims and fires · right click is the ability · Space jumps · Shift dashes · Q changes form</p>
+            <p class="ar-keys ar-for-touch">Left thumb moves. Right thumb aims. A game takes the whole screen.</p>
+            <p class="ar-keys" id="ar-nogl" hidden>This browser did not start WebGL, so the game cannot run here.</p>
+            <noscript><p class="ar-keys">The game needs JavaScript and WebGL. The rest of this page reads without them.</p></noscript>
+          </div>
+
+          <div class="ar-sec" id="ar-s-pause">
+            <p class="ar-lede">Paused.</p>
+            <p class="ar-row"><label for="ar-sens">Aim speed</label><input id="ar-sens" type="range" min="0.4" max="2.5" step="0.1" value="1"></p>
+            <p class="ar-actions"><button class="sy-btn sy-btn--solid" id="ar-resume" type="button">Resume</button><button class="sy-btn sy-btn--line" id="ar-restart" type="button">Restart</button><button class="sy-btn sy-btn--line" id="ar-quit" type="button">Leave the game</button></p>
+            <p class="ar-actions"><button class="sy-btn sy-btn--ghost" id="ar-snd" type="button">SOUND ON</button><button class="sy-btn sy-btn--ghost" id="ar-glow" type="button">GLOW ON</button></p>
+            <p class="ar-keys">Leave the game returns to this page, with its header and menu.</p>
+          </div>
+
+          <div class="ar-sec" id="ar-s-dead">
+            <p class="ar-lede">Your health ran out.</p>
+            <dl class="ar-stats"><div><dt>Score</dt><dd id="ar-d-score">0</dd></div><div><dt>Wave</dt><dd id="ar-d-wave">I</dd></div><div><dt>Best</dt><dd id="ar-d-best">0</dd></div></dl>
+            <p class="ar-actions"><button class="sy-btn sy-btn--solid" id="ar-retry" type="button">Play again</button><button class="sy-btn sy-btn--line" id="ar-dead-quit" type="button">Leave the game</button></p>
+          </div>
+
+          <div class="ar-sec" id="ar-s-pick">
+            <p class="ar-lede">Choose one operator to carry into the next wave.</p>
+            <div id="ar-picks"></div>
+          </div>
+
+          <div class="ar-sec" id="ar-s-duel">
+            <p class="ar-lede">Two players, two browsers. One is Psycho and the other is Syber. Forms are locked for a round and trade every round. The first to win five rounds wins.</p>
+            <div class="ar-step" id="ar-duel-start">
+              <p class="ar-actions"><button class="sy-btn sy-btn--solid" id="ar-duel-make" type="button">Make an invite</button></p>
+              <p class="ar-row"><label for="ar-duel-in">Or paste an invite you were sent</label><input id="ar-duel-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="sy-btn sy-btn--line" id="ar-duel-answer" type="button">Answer</button></p>
+            </div>
+            <div class="ar-step" id="ar-duel-got" hidden>
+              <p class="ar-note">You opened a duel invite. Answering it asks a Cloudflare server for your network address and puts that address in the reply you send back.</p>
+              <p class="ar-actions"><button class="sy-btn sy-btn--solid" id="ar-duel-accept" type="button">Answer the invite</button></p>
+            </div>
+            <div class="ar-step" id="ar-duel-lead" hidden>
+              <p class="ar-row"><label for="ar-duel-invite">1. Send this invite to your rival</label><input id="ar-duel-invite" type="text" readonly><button class="sy-btn sy-btn--line" id="ar-duel-copy" type="button">Copy</button><button class="sy-btn sy-btn--line" id="ar-duel-share" type="button">Share</button></p>
+              <p class="ar-row"><label for="ar-duel-reply-in">2. Open the reply they send back in this browser, or paste it here</label><input id="ar-duel-reply-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="sy-btn sy-btn--solid" id="ar-duel-connect" type="button">Connect</button></p>
+              <p class="ar-note">The invite contains your network address. Send it only to the person you are playing. Keep this tab open.</p>
+            </div>
+            <div class="ar-step" id="ar-duel-join" hidden>
+              <p class="ar-row"><label for="ar-duel-reply">Send this reply back to your rival</label><input id="ar-duel-reply" type="text" readonly><button class="sy-btn sy-btn--solid" id="ar-duel-reply-copy" type="button">Copy</button><button class="sy-btn sy-btn--line" id="ar-duel-reply-share" type="button">Share</button></p>
+              <p class="ar-note">The reply contains your network address. The duel starts when your rival opens it or pastes it. Keep this tab open.</p>
+            </div>
+            <p class="ar-status" id="ar-duel-status" role="status"></p>
+            <p class="ar-actions"><button class="sy-btn sy-btn--ghost" id="ar-duel-back" type="button">Back</button><a class="sy-btn sy-btn--ghost" href="#sent">What is sent</a></p>
+          </div>
+
+          <div class="ar-sec" id="ar-s-duelend">
+            <p class="ar-lede" id="ar-de-lede"></p>
+            <dl class="ar-stats"><div><dt>You</dt><dd id="ar-de-me">0</dd></div><div><dt>Rival</dt><dd id="ar-de-them">0</dd></div></dl>
+            <p class="ar-actions"><button class="sy-btn sy-btn--solid" id="ar-de-again" type="button">Rematch</button><button class="sy-btn sy-btn--line" id="ar-de-title" type="button">Leave the game</button></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ps-about sy-wrap">
+      <section aria-labelledby="game-title">
+        <p class="sy-eyebrow">SyberLabs / Game</p>
+        <h2 id="game-title">The game</h2>
+        <p>PSYCHO SYBER: ARENA is a first-person game in 3D that runs in this page. It has two modes. Waves is for one player. The Duel is for two players in two browsers. It is a second game beside <a href="/psycho-syber/">PSYCHO SYBER</a>, the side-scrolling stealth game, and it uses the same two forms.</p>
+        <p>The arena, its enemies and the Kernel are invented. SyberLabs makes software for checking AI's work: <a href="/projects/syberwork/">SyberWork</a>, <a href="/projects/attest/">Attest</a>, <a href="/projects/rise/">RISE</a> and <a href="/projects/flyspace/">FLYSPACE</a>. <a href="/lacuna/">Lacuna Institute</a> is its research institute.</p>
+      </section>
+
+      <section aria-labelledby="forms-title">
+        <h2 id="forms-title">Two forms</h2>
+        <p>Q changes your form. Each change sends out a pulse that damages enemies within reach, erases enemy shots near you and makes your dash and ability ready again. For three seconds after a change your hits do half as much damage again.</p>
+        <dl class="ps-forms">
+          <div><dt>SYBER</dt><dd>Fires an arc rifle. A shot that hits an enemy jumps to one more enemy nearby and tags both for six seconds. The ability throws a grapple that pulls you toward the block or enemy it hits. Shift blinks you a short way in the direction you are looking, twice before a wait. Space against a wall, in the air, kicks you off it.</dd></div>
+          <div><dt>PSYCHO</dt><dd>Fires rockets. A rocket breaks the blocks around the place it lands, and one fired at your own feet throws you upward without hurting you. Space jumps a second time in the air. Shift rams forward through blocks and enemies. The ability, on the ground, launches you upward; in the air it slams you down, and the landing is a blast.</dd></div>
+        </dl>
+        <p>The two forms work together in four ways.</p>
+        <ul>
+          <li>Any Psycho blast sets off every tag at once.</li>
+          <li>A Psycho blast throws the lighter enemies into the air, and the arc rifle does double damage to an enemy in the air.</li>
+          <li>Changing form while the grapple is attached drops you on its anchor, and the landing is a blast larger than a slam's.</li>
+          <li>Kills fill a sync meter, drawn as rings on the floor. A kill made in a different form from the kill before it fills the meter faster. When it is full, the next change of form makes you Psycho Syber for nine seconds: both weapons fire and the dash and ability have no wait.</li>
+        </ul>
+        <p>Blocks that lose their support fall, and a falling block damages the enemies it lands on.</p>
+      </section>
+
+      <section id="waves" aria-labelledby="waves-title">
+        <h2 id="waves-title">Waves</h2>
+        <p>Enemies arrive in waves. Each wave has two more enemies than the one before, up to 32. Every fifth wave brings the Kernel, a large enemy with a shield, and half as many others. From the third wave some enemies carry a shield in one of two colours: a rose shield breaks only to Psycho and a teal shield only to Syber. The arena is rebuilt after each wave and you get back 25 health.</p>
+        <p>After each wave you choose one of three operators, drawn from five: Stochastic, Dynamical, Generative, Geometric and Experiential. An operator is an upgrade that lasts until the game ends, and each has three levels. The card for each one says what it changes.</p>
+        <p>Waves sends nothing: the only requests it makes are for its own files on this site. Your best score and your aim speed are kept in this browser's storage.</p>
+      </section>
+
+      <section id="duel" aria-labelledby="duel-title">
+        <h2 id="duel-title">The Duel</h2>
+        <p>Two players meet on a map that is the same from both ends. One is Psycho and the other is Syber. You cannot change form during a round, so a duel has no tags to set off and no sync meter. The forms trade every round. A round ends when one player's health runs out. The first to win five rounds wins, and either player can call a rematch.</p>
+        <h3 class="ps-sub">Starting one</h3>
+        <ol>
+          <li>The first player presses Duel, then Make an invite, and sends the invite link to the second player by any message app.</li>
+          <li>The second player opens the link and presses Answer the invite. The page gives them a reply link, which they send back.</li>
+          <li>The first player opens the reply link in the same browser as the invite, or pastes it into the page and presses Connect. The first round starts in both browsers.</li>
+        </ol>
+        <p>Both players keep their tab open from the invite to the end of the duel. An invite works once.</p>
+        <h3 class="ps-sub" id="sent">What is sent</h3>
+        <p>The Duel is the one part of this site in which your browser connects to another visitor. The connection is WebRTC, a browser feature for direct links between two browsers.</p>
+        <ul>
+          <li>When you make or answer an invite, your browser asks a STUN server run by Cloudflare (stun.cloudflare.com) what your public network address is. Cloudflare also serves this site.</li>
+          <li>The invite and the reply each contain the network addresses of the browser that made them, your public IP address among them. Anyone who has the link can read them, so send it only to the person you are playing.</li>
+          <li>During a duel the two browsers send each other positions, shots, hits, broken blocks and the score. Your rival's browser sees your IP address, as it does in any direct connection.</li>
+          <li>SyberLabs receives none of it. No SyberLabs server carries the invite, the reply or the game, and nothing about a duel is kept after the tab closes.</li>
+        </ul>
+        <h3 class="ps-sub">Limits of the Duel</h3>
+        <ul>
+          <li>There is no relay. If either player's network refuses direct connections, as some mobile, office and school networks do, the link does not open and the page says so.</li>
+          <li>Each browser reports its own hits to the other. A player who alters the game in their browser can cheat.</li>
+          <li>A script has played the Duel between two copies of headless Chrome on one machine: the invite and the reply, a duel to five rounds, a rematch and a dropped connection. No two people have played it yet, and it has not been tried across two networks, on a phone, or in Firefox or Safari.</li>
+          <li>If a phone puts the tab to sleep while you switch to a message app, the invite can stop working. Make a new one.</li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="controls-title">
+        <h2 id="controls-title">Controls</h2>
+        <table class="ps-table">
+          <thead><tr><th scope="col">Key</th><th scope="col">SYBER</th><th scope="col">PSYCHO</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">W, A, S, D</th><td colspan="2">Move</td></tr>
+            <tr><th scope="row">Mouse</th><td colspan="2">Aim. The page asks to hold the pointer while a game is on.</td></tr>
+            <tr><th scope="row">Left click</th><td>Arc rifle</td><td>Rocket</td></tr>
+            <tr><th scope="row">Right click or F</th><td>Grapple. Let go to release.</td><td>Launch from the ground, slam from the air</td></tr>
+            <tr><th scope="row">Space</th><td>Jump, and kick off a wall</td><td>Jump, and once more in the air</td></tr>
+            <tr><th scope="row">Shift</th><td>Blink</td><td>Ram</td></tr>
+            <tr><th scope="row">Q, E, Tab, the wheel or a middle click</th><td colspan="2">Change form</td></tr>
+            <tr><th scope="row">P or Esc</th><td colspan="2">Pause. Enter resumes.</td></tr>
+          </tbody>
+        </table>
+        <h3 class="ps-sub">On a phone or tablet</h3>
+        <p>A game takes the whole screen, upright or sideways. The left thumb moves and the right thumb aims. Five buttons fire, jump, use the ability, dash and change form, and a drag that starts on a held button keeps aiming. Aim is pulled a little toward the nearest enemy. The pause button is at the top right; Leave the game, in the pause panel, brings back this page and its header.</p>
+      </section>
+
+      <section aria-labelledby="limits-title">
+        <h2 id="limits-title">Limits</h2>
+        <ul>
+          <li>The game needs WebGL. It draws with three.js r160, served from this site.</li>
+          <li>Checked in headless Chrome at a desktop width and a phone width. No person has played this version through yet, and Firefox and Safari have not been checked.</li>
+          <li>When frames slow down the game turns off its glow, and then lowers its resolution. Pause has a button for the glow.</li>
+          <li>With reduced motion set on your device, the picture behind the title holds still. A game in play moves as usual.</li>
+          <li>Sound is synthesised in the browser and starts when a game starts. Pause has a button to turn it off.</li>
+          <li>One <a href="https://github.com/SyberLabs/SyberLabs.github.io/tree/main/psycho-syber/test" rel="noopener">scripted check</a> runs on every change to the site: it packs and reads back an invite and a reply, and checks that this page and the game's files agree. The checks that play a wave and a duel in a browser are run by hand.</li>
+        </ul>
+      </section>
+    </div>
+  </main>
+<footer class="sy-footer">
+<div class="sy-footer__in">
+  <div class="sy-footer__bar">
+    <a class="sy-lockup" href="/"><img src="/syber-logo-96.png" alt="" width="18" height="20">SyberLabs</a>
+    <nav aria-label="Footer"><a href="mailto:syberlabs.support@gmail.com">Contact</a><a href="/services/">Services</a><a href="https://github.com/SyberLabs">GitHub <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="/privacy/">Privacy</a><a href="https://rise.syberlabs.io/plus/">Subscriber account <svg class="sy-icon " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a><a href="/admin/">Staff sign in</a></nav>
+    <span class="sy-footer__copy">© 2026 SyberLabs</span>
+  </div>
+</div></footer>
+  <script defer src="/psycho-syber/arena/vendor/three.min.js"></script>
+  <script defer src="/psycho-syber/arena/link.js"></script>
+  <script defer src="/psycho-syber/arena/game.js"></script>
+</body>
+</html>
