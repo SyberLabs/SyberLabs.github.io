@@ -87,8 +87,10 @@ test('health at zero ends the round; forms trade; the first to five wins and no 
 test('positions, blocks, blasts and rockets are passed on only when they are well formed', () => {
   const { a, b, say } = live();
   say(a, POS); assert.deepEqual(b.last('s'), POS); assert.equal(a.count('s'), 0);
+  say(a, POS.map((v, i) => (i === 1 ? 999999 : v))); assert.equal(b.last('s')[1], 2, 'the room numbers positions itself');
+  say(a, POS.map((v, i) => (i === 1 ? -5 : v))); assert.equal(b.last('s')[1], 3); assert.deepEqual(b.last('s').slice(2), POS.slice(2));
   for (const bad of [POS.slice(0, 18), [...POS, 1], POS.map((v, i) => (i === 3 ? 'x' : v)), POS.map((v, i) => (i === 4 ? 1e9 : v)), POS.map((v, i) => (i === 5 ? null : v))]) say(a, bad);
-  assert.equal(b.count('s'), 1);
+  assert.equal(b.count('s'), 3);
   say(a, ['k', 4, 9, 300]); assert.deepEqual(b.last('k'), ['k', 4, 9, 300]);
   say(a, ['k', -1]); say(a, ['k', 1.5]); say(a, ['k', 70000]); say(a, ['k']); say(a, ['k', ...Array(LIMITS.blocks + 1).fill(1)]);
   assert.equal(b.count('k'), 1);
@@ -96,6 +98,17 @@ test('positions, blocks, blasts and rockets are passed on only when they are wel
   say(a, ['r', 1, 2, 3, 0, 0, 1]); assert.deepEqual(b.last('r'), ['r', 1, 2, 3, 0, 0, 1]);
   say(a, ['r', 1, 2, 3]); say(a, ['zz', 1]); say(a, ['p']);
   assert.equal(b.count('r'), 1); assert.equal(b.closed, null); assert.equal(a.closed, null);
+});
+
+test('blocks, blasts and rockets drawn on the other screen are rationed', () => {
+  const { a, b, say, pass } = live();
+  for (let i = 0; i < 5; i++) say(a, ['k', ...Array(LIMITS.blocks).fill(7)]);
+  assert.equal(b.count('k'), LIMITS.blocksBurst / LIMITS.blocks, 'the burst, then no more');
+  for (let i = 0; i < LIMITS.fxBurst + 20; i++) say(a, i % 2 ? ['b', 1, 2, 3, 5, 0] : ['r', 1, 2, 3, 0, 0, 1]);
+  assert.equal(b.count('b') + b.count('r'), LIMITS.fxBurst);
+  pass(1000); say(a, ['k', 1, 2, 3]); say(a, ['b', 1, 2, 3, 5, 0]);
+  assert.deepEqual(b.last('k'), ['k', 1, 2, 3]); assert.equal(b.count('b') + b.count('r'), LIMITS.fxBurst + 1, 'a second later there is room again');
+  assert.equal(a.closed, null, 'going over a ration drops the message and keeps the player');
 });
 
 test('what is not a message closes the connection, and so does a flood', () => {

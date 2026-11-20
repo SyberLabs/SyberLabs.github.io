@@ -36,10 +36,10 @@ Every message is a JSON array. The first item names it.
 
 | From the game | Carries | What the room does |
 |---|---|---|
-| `s` | 18 numbers: a counter, position, velocity, aim, what the body is doing, the grapple's anchor, the last arc shot | Passes it to the other seat during a round, if every item is a finite number |
+| `s` | 18 numbers: a counter, position, velocity, aim, what the body is doing, the grapple's anchor, the last arc shot | Passes it to the other seat during a round, if every item is a finite number, with the counter replaced by the room's own |
 | `h` | Damage, and a push in x, y, z | In a live round only: caps the damage, takes it from the other seat's health, tells both with `H`, and ends the round at zero |
-| `k` | Indexes of broken blocks, 300 at most | Passes it on during a round |
-| `b`, `r` | A blast to draw; a rocket to draw | Passes it on |
+| `k` | Indexes of broken blocks, 300 at most | Passes it on during a round, up to 300 blocks a second |
+| `b`, `r` | A blast to draw; a rocket to draw | Passes it on, up to 15 a second |
 | `x` | Rematch | Starts a new duel when the last is over and both players are there |
 | `q` | I am leaving | Tells the other seat and empties the room |
 | `p` | Nothing | Counts as a sign of life |
@@ -60,7 +60,8 @@ Every message is a JSON array. The first item names it.
 
 ## Limits
 
-All in `LIMITS` in `room.js`: 60 damage for one hit, 90 at once and 70 a second after that, 90 messages a second,
+All in `LIMITS` in `room.js`: 60 damage for one hit, 90 at once and 70 a second after that, 300 blocks and 15
+blasts or rockets a second, 90 messages a second,
 ten minutes of waiting for a second player, 45 minutes for a room, twelve seconds of grace for a dropped connection,
 twenty seconds of silence before a connection counts as dropped.
 

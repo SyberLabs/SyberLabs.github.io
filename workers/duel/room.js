@@ -15,6 +15,8 @@ export const LIMITS = {
   dmgPerSec: 70, dmgBurst: 90,         // most damage one seat may do at once and over time: less than full health
   msgPerSec: 90, msgBurst: 180,        // most messages one connection may send (positions go 30 times a second)
   msgLen: 2600, blocks: 300,           // longest message, and most broken blocks in one message
+  blocksPerSec: 300, blocksBurst: 600, // most blocks one seat may break for the other over time (a slam breaks about 50)
+  fxPerSec: 15, fxBurst: 30,           // most blasts and rockets one seat may have drawn on the other's screen
   waitMs: 10 * 60e3,                   // how long a room waits for its second player
   roomMs: 45 * 60e3,                   // longest life of a room
   graceMs: 12e3,                       // how long a seat is held for a player whose connection dropped
@@ -48,7 +50,7 @@ export class Room {
   seatOf(conn) { return this.seats.findIndex(s => s && s.conn === conn); }
   sit(i, conn) {
     const t = this.io.now();
-    this.seats[i] = { conn, token: this.io.token(), seen: t, msgs: LIMITS.msgBurst, dmg: LIMITS.dmgBurst, at: t, gone: null };
+    this.seats[i] = { conn, token: this.io.token(), seen: t, msgs: LIMITS.msgBurst, dmg: LIMITS.dmgBurst, blocks: LIMITS.blocksBurst, fx: LIMITS.fxBurst, at: t, gone: null, sent: 0 };
     this.send(i, ['w', V, i, this.code, this.seats[i].token, 0]);
   }
   refuse(conn, why, code) { conn.send(JSON.stringify(['e', why])); conn.close(code, why); }
@@ -94,16 +96,21 @@ export class Room {
     const s = this.seats[i], t = this.io.now(), dt = Math.max(0, t - s.at) / 1000; s.at = t; s.seen = t;
     s.msgs = Math.min(LIMITS.msgBurst, s.msgs + dt * LIMITS.msgPerSec) - 1;
     s.dmg = Math.min(LIMITS.dmgBurst, s.dmg + dt * LIMITS.dmgPerSec);
+    s.blocks = Math.min(LIMITS.blocksBurst, s.blocks + dt * LIMITS.blocksPerSec); s.fx = Math.min(LIMITS.fxBurst, s.fx + dt * LIMITS.fxPerSec);
     if (s.msgs < 0) return this.drop(i, 4429, 'too many messages');
     if (typeof text !== 'string' || text.length > LIMITS.msgLen) return this.drop(i, 4400, 'bad message');
     let m; try { m = JSON.parse(text); } catch (e) { return this.drop(i, 4400, 'bad message'); }
     if (!Array.isArray(m) || typeof m[0] !== 'string') return this.drop(i, 4400, 'bad message');
     const k = m[0], inRound = this.phase === 'count' || this.phase === 'live' || this.phase === 'end';
-    if (k === 's') { if (inRound && m.length === 19 && m.slice(1).every(v => num(v) && Math.abs(v) < 1e6)) this.send(1 - i, m); }
+    // positions: the room numbers them itself, in the order they arrive. The game drops a position that is not
+    // newer than the last, so a number chosen by the sender could freeze how that sender is drawn for the rival.
+    if (k === 's') { if (inRound && m.length === 19 && m.slice(1).every(v => num(v) && Math.abs(v) < 1e6)) { m[1] = ++s.sent; this.send(1 - i, m); } }
     else if (k === 'h') this.hit(i, m);
-    else if (k === 'k') { if (inRound && m.length > 1 && m.length <= LIMITS.blocks + 1 && m.slice(1).every(v => Number.isInteger(v) && v >= 0 && v < 65536)) this.send(1 - i, m); }
-    else if (k === 'b') { if (inRound && m.length === 6 && m.slice(1).every(num)) this.send(1 - i, ['b', m[1], m[2], m[3], clamp(m[4], 1, 16), m[5] ? 1 : 0]); }
-    else if (k === 'r') { if (this.phase === 'live' && m.length === 7 && m.slice(1).every(num)) this.send(1 - i, m); }
+    // What one player makes happen on the other's screen is rationed: without it a player who alters the game
+    // could strip the rival's arena bare or bury their view in blasts.
+    else if (k === 'k') { if (inRound && m.length > 1 && m.length <= LIMITS.blocks + 1 && m.length - 1 <= s.blocks && m.slice(1).every(v => Number.isInteger(v) && v >= 0 && v < 65536)) { s.blocks -= m.length - 1; this.send(1 - i, m); } }
+    else if (k === 'b') { if (inRound && s.fx >= 1 && m.length === 6 && m.slice(1).every(num)) { s.fx--; this.send(1 - i, ['b', m[1], m[2], m[3], clamp(m[4], 1, 16), m[5] ? 1 : 0]); } }
+    else if (k === 'r') { if (this.phase === 'live' && s.fx >= 1 && m.length === 7 && m.slice(1).every(num)) { s.fx--; this.send(1 - i, m); } }
     else if (k === 'x') { if (this.phase === 'over' && this.players === 2) this.startMatch(); }
     else if (k === 'q') this.forfeit(i);
     // 'p' and anything unknown: counted, otherwise ignored
