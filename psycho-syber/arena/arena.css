@@ -145,7 +145,11 @@ html.ar-lock, html.ar-lock body { overflow: hidden; }
 .ar-row label { flex: 1 0 100%; font: 500 14px/1.4 var(--sy-sans); color: var(--sy-vellum, #f1f6f9); }
 .ar-row label[for="ar-sens"] { flex: 0 0 auto; }
 .ar-row input[type="text"] { flex: 1 1 220px; min-width: 0; min-height: 46px; padding: 0 12px; border: 1px solid var(--sy-rule-2, rgba(140, 200, 235, .28)); border-radius: var(--sy-r-sm, 4px);
-  background: rgba(2, 7, 10, .66); color: var(--sy-vellum, #f1f6f9); font: 400 14px/1 var(--sy-mono); -webkit-user-select: text; user-select: text; }
+  background: rgba(2, 7, 10, .66); color: var(--sy-vellum, #f1f6f9); font: 400 16px/1 var(--sy-mono); -webkit-user-select: text; user-select: text; }
+.ar-row input.ar-code-in { flex: 0 1 190px; text-transform: uppercase; letter-spacing: .16em; }
+.ar-row input.ar-code-in::placeholder { color: var(--sy-mist, #93a4ae); opacity: .55; }
+.ar-code { font: 500 clamp(38px, 10vw, 60px)/1 var(--sy-mono); letter-spacing: .16em; color: var(--sy-vellum, #f1f6f9); -webkit-user-select: text; user-select: text; }
+.ar-code-inline { font: 500 1em/1 var(--sy-mono); letter-spacing: .1em; color: var(--sy-vellum, #f1f6f9); }
 .ar-row input[type="text"]:focus-visible { outline: 2px solid var(--sy-electric, #0297de); outline-offset: 2px; }
 .ar-row input[type="range"] { width: 180px; accent-color: var(--sy-electric, #0297de); }
 .ar-stats { display: flex; gap: 34px; }
