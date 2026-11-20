@@ -20,8 +20,10 @@ function live() {
 }
 const POS = ['s', 1, 10, 0, 12, 0, 0, 0, 1.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-test('a code is six characters from an alphabet without I, L, O, 0 and 1', () => {
-  for (let i = 0; i < 300; i++) { const c = makeCode(Uint8Array.from({ length: 6 }, (_, k) => (i * 37 + k * 101) % 256)); assert.ok(isCode(c), c); assert.ok(!/[ILO01]/.test(c), c); }
+test('a code is six characters from 32 that leave out I, O, 0 and 1, each as likely as the next', () => {
+  for (let i = 0; i < 300; i++) { const c = makeCode(Uint8Array.from({ length: 6 }, (_, k) => (i * 37 + k * 101) % 256)); assert.ok(isCode(c), c); assert.ok(!/[IO01]/.test(c), c); }
+  const seen = new Map(); for (let b = 0; b < 256; b++) { const ch = makeCode(Uint8Array.from([b, 0, 0, 0, 0, 0]))[0]; seen.set(ch, (seen.get(ch) || 0) + 1); }
+  assert.equal(seen.size, 32); assert.ok([...seen.values()].every(n => n === 8), 'every character comes from eight of the 256 bytes');
   for (const bad of ['', 'ABCDE', 'ABCDEFG', 'abcdef', 'ABCDE1', 'ABCDEO', 'ABC DE', null, 123456]) assert.equal(isCode(bad), false);
 });
 

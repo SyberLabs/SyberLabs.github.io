@@ -21,7 +21,7 @@ function refuse(why, code) {
 
 export default {
   async fetch(request, env) {
-    const url = new URL(request.url), m = /^\/duel\/(?:(new)|join\/([A-HJKMNP-Z2-9]{6}))$/.exec(url.pathname);
+    const url = new URL(request.url), m = /^\/duel\/(?:(new)|join\/([A-HJ-NP-Z2-9]{6}))$/.exec(url.pathname);
     if (!m) return plain('Not found', 404);
     if (request.method !== 'GET' || (request.headers.get('Upgrade') || '').toLowerCase() !== 'websocket') return plain('This address takes WebSocket connections from the game page.', 426);
     const allowed = String(env.ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);

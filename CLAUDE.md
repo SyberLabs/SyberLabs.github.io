@@ -235,7 +235,7 @@ that game's title do not: one more button on the title pushes its words off a ph
   and joins per network address for a minute with Cloudflare's rate limiter. "What is sent" on the page and "Game
   duels" on `/privacy/` say all of this. A change to what is sent, kept or counted changes the relay, the page and
   `/privacy/` in the same commit; `arena.mjs` fails if the three disagree on the points it can read.
-- A duel's code is six characters from an alphabet without I, L, O, 0 and 1. A room waits ten minutes for its
+- A duel's code is six characters from 32 that leave out I, O, 0 and 1. A room waits ten minutes for its
   second player and lives 45 minutes at most. A dropped connection keeps its seat for twelve seconds, and the page
   takes it back with the token its welcome carried.
 - A duel does not pause, because one browser cannot stop the other's game. In a duel the panel says the duel goes on,

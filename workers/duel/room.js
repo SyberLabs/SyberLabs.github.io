@@ -21,9 +21,10 @@ export const LIMITS = {
   silentMs: 20e3,                      // a connection that says nothing for this long is treated as dropped
   readyMs: 700, countMs: 3000, endMs: 3200,
 };
-const ABC = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';   // no I, L, O, 0 or 1: a code is read aloud and typed on a phone
-export const isCode = s => typeof s === 'string' && /^[A-HJKMNP-Z2-9]{6}$/.test(s);
-export function makeCode(bytes) { let s = ''; for (let i = 0; i < 6; i++) s += ABC[bytes[i] % ABC.length]; return s; }
+// 32 characters, so five bits of a random byte pick one with no bias. No I, O, 0 or 1: a code is read aloud and typed.
+const ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+export const isCode = s => typeof s === 'string' && /^[A-HJ-NP-Z2-9]{6}$/.test(s);
+export function makeCode(bytes) { let s = ''; for (let i = 0; i < 6; i++) s += ABC[bytes[i] & 31]; return s; }
 
 const num = v => typeof v === 'number' && Number.isFinite(v);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);

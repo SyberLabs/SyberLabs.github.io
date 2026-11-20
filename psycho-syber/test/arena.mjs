@@ -55,7 +55,7 @@ const relayDir = new URL('../../workers/duel/', import.meta.url), relay = name =
   const room = await import(new URL('room.js', relayDir)), toml = relay('wrangler.toml'), worker = relay('index.js');
   const netV = +(game.match(/const NET_V = (\d+), WIN = (\d+)/) || [])[1], win = +(game.match(/const NET_V = (\d+), WIN = (\d+)/) || [])[2];
   rule('the game and the relay speak the same version and play to the same number of rounds', netV === room.V && win === room.WIN, `${netV} ${room.V} ${win} ${room.WIN}`);
-  const CODE = '[A-HJKMNP-Z2-9]{6}';
+  const CODE = '[A-HJ-NP-Z2-9]{6}';
   rule('a duel code is the same thing to the game, the Worker and the room', game.includes('#J=(' + CODE + ')$') && game.includes('^(' + CODE + ')$') && worker.includes('join\\/(' + CODE + ')') && room.isCode('K7M2QX') && !room.isCode('K7M2Q0'));
   rule('every refusal the relay can send has words in the game', ['none', 'full', 'busy', 'wait', 'long'].every(k => new RegExp('\\b' + k + ": '").test(game)) && [...(worker + relay('room.js')).matchAll(/(?:refuse\(conn, |refuse\(|end\()'([a-z]+)'/g)].every(m => ['none', 'full', 'busy', 'wait', 'long'].includes(m[1])));
   rule('the relay takes requests from the site alone, on one path of it', /^ORIGINS = "https:\/\/syberlabs\.io"$/m.test(toml) && /^routes = \[\{ pattern = "syberlabs\.io\/duel\/\*", zone_name = "syberlabs\.io" \}\]$/m.test(toml) && /^workers_dev = false$/m.test(toml) && worker.includes("if (!allowed.includes(request.headers.get('Origin') || '')) return plain('Forbidden', 403);"));

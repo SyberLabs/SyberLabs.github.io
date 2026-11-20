@@ -105,9 +105,9 @@ async function duel() {
   await a.click('#ar-goduel');
   check(`${tag}: nothing is connected until a button is pressed`, await a.evaluate(() => !__arena.D.ws));
   await a.click('#ar-duel-make');
-  await until(a, () => /^[A-HJKMNP-Z2-9]{6}$/.test(document.getElementById('ar-duel-code').textContent));
+  await until(a, () => /^[A-HJ-NP-Z2-9]{6}$/.test(document.getElementById('ar-duel-code').textContent));
   const code = await a.textContent('#ar-duel-code'), link = await a.inputValue('#ar-duel-invite');
-  check(`${tag}: Start a duel shows a six-character code and a link that carries it`, /^[A-HJKMNP-Z2-9]{6}$/.test(code) && link === URL_ARENA + '#j=' + code, `${code} ${link}`);
+  check(`${tag}: Start a duel shows a six-character code and a link that carries it`, /^[A-HJ-NP-Z2-9]{6}$/.test(code) && link === URL_ARENA + '#j=' + code, `${code} ${link}`);
   await a.screenshot({ path: join(out, 'arena-duel-code.png') });
 
   const c = await player();
@@ -195,7 +195,7 @@ async function duel() {
 
   // the same page starts another duel; this time the second player types the code and then vanishes
   await a.click('#ar-duel-make');
-  await until(a, () => { const t = document.getElementById('ar-duel-code').textContent; return /^[A-HJKMNP-Z2-9]{6}$/.test(t) && !document.getElementById('ar-duel-wait').hidden && __arena.D.code === t; });
+  await until(a, () => { const t = document.getElementById('ar-duel-code').textContent; return /^[A-HJ-NP-Z2-9]{6}$/.test(t) && !document.getElementById('ar-duel-wait').hidden && __arena.D.code === t; });
   const code2 = await a.evaluate(() => __arena.D.code);
   const d = await player({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
   await d.click('#ar-goduel'); await d.screenshot({ path: join(out, 'arena-duel-phone-panel.png') });

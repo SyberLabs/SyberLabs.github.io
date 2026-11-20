@@ -1374,7 +1374,7 @@ function duelStatus(t) { $('duel-status').textContent = t; }
 function duelStep(k) { for (const id of ['duel-start', 'duel-got', 'duel-wait']) $(id).hidden = id !== 'duel-' + k; }
 const linkFor = code => location.origin + location.pathname + '#j=' + code;
 // take a code out of what was typed or pasted: the six characters, or a whole link that ends in them
-function readCode(text) { const t = String(text || '').trim().toUpperCase(), m = /#J=([A-HJKMNP-Z2-9]{6})$/.exec(t) || /^([A-HJKMNP-Z2-9]{6})$/.exec(t.replace(/[\s-]/g, '')); return m ? m[1] : ''; }
+function readCode(text) { const t = String(text || '').trim().toUpperCase(), m = /#J=([A-HJ-NP-Z2-9]{6})$/.exec(t) || /^([A-HJ-NP-Z2-9]{6})$/.exec(t.replace(/[\s-]/g, '')); return m ? m[1] : ''; }
 
 function duelShut() { clearTimeout(D.retryT); const ws = D.ws; D.ws = null; if (ws) { ws.onmessage = ws.onclose = ws.onerror = null; try { ws.close(); } catch (e) { } } }
 // leave for good: tell the relay, so the rival hears at once, and forget the room
