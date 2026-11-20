@@ -43,10 +43,13 @@ jobs:
       - name: Play every PSYCHO SYBER stage to its exit
         # A scripted run per stage (psycho-syber/test/scripts.mjs) and a check that the 21 Atlas marks match src/lacuna/atlas/sites.js.
         run: node psycho-syber/test/run.mjs
-      - name: "Check PSYCHO SYBER: ARENA's invite codes, page and scripts"
-        # The duel's invite and reply pack and read back, the page holds every element the script looks up, and the
-        # page's rules hold (no form, one STUN server and no other address). CLAUDE.md, "PSYCHO SYBER: ARENA".
-        run: node psycho-syber/test/arena.mjs
+      - name: "Check PSYCHO SYBER: ARENA's page and script, and its duel relay"
+        # The page holds every element the script looks up and keeps its rules (no form, no address but the site's
+        # own relay); the game and the relay agree on the protocol; and the relay's rooms keep their rules of play
+        # (rounds, health, caps, dropped connections). CLAUDE.md, "PSYCHO SYBER: ARENA".
+        run: |
+          node psycho-syber/test/arena.mjs
+          node --test workers/duel/room.test.mjs
       - name: Refresh dependency panel targets
         run: |
           node scripts/githits-snapshot.mjs --targets || echo "githits: keeping committed targets.json"
@@ -193,7 +196,6 @@ jobs:
           # to it from the game page and to its "What is sent" from /privacy/. Its links carry the hashes stamp.mjs adds.
           test -s dist/psycho-syber/arena/index.html
           test -s dist/psycho-syber/arena/game.js
-          test -s dist/psycho-syber/arena/link.js
           test -s dist/psycho-syber/arena/vendor/three.min.js
           test -s dist/psycho-syber/arena/vendor/three.LICENSE.txt
           grep -Fq 'href="/psycho-syber/arena/"' dist/psycho-syber/index.html
@@ -248,6 +250,13 @@ jobs:
           if grep -rqE 'fonts\.(googleapis|gstatic)\.com' dist --include='*.html' --include='*.css' --include='*.js'; then echo 'a page asks Google for a font'; exit 1; fi
           test -s dist/fonts/v1/instrument-sans-latin-wght-normal.woff2
           test -s dist/_headers
+      - name: Bundle the duel relay
+        # The relay (workers/duel/) is deployed by its own workflow, duel-relay.yml. Here it is only bundled, by the
+        # wrangler the step above installed, so a pull request that breaks its config or its imports fails. No token.
+        run: |
+          deploy/node_modules/.bin/wrangler deploy --config workers/duel/wrangler.toml --dry-run --outdir "$RUNNER_TEMP/relay-build"
+          test -s "$RUNNER_TEMP/relay-build/index.js"
+          if [ -e dist/duel ] || [ -e dist/workers ]; then echo 'the relay or a /duel/ page is in the published site'; exit 1; fi
       - name: Quality sweep of the built site
         run: node scripts/qa.mjs
       - uses: actions/upload-artifact@v4

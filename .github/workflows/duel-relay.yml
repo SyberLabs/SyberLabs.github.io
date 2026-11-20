@@ -1,0 +1,83 @@
+name: Duel relay
+
+# Deploys workers/duel/, the relay for PSYCHO SYBER: ARENA's duel, as the Worker `syberlabs-duel` on
+# syberlabs.io/duel/* (CLAUDE.md, "PSYCHO SYBER: ARENA"; workers/duel/README.md). It is a workflow of its own so
+# that a relay that cannot deploy never holds back the site: the Pages workflow does not wait for it.
+#
+# The deploy job needs a token that may edit Workers scripts and Workers routes on the syberlabs.io zone. The
+# Pages token may not have those permissions; if the job fails on authorization, see the README.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'workers/duel/**'
+      - 'deploy/package.json'
+      - 'deploy/package-lock.json'
+      - '.github/workflows/duel-relay.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: duel-relay
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Test the room's rules
+        run: node --test workers/duel/room.test.mjs
+      - name: Bundle the relay
+        # No Cloudflare token in this job. The bundle made here is the one the deploy job ships (--no-bundle),
+        # by the same lockfile-pinned wrangler (RFC-0002 D12).
+        run: |
+          npm ci --prefix deploy
+          deploy/node_modules/.bin/wrangler deploy --config workers/duel/wrangler.toml --dry-run --outdir relay-build
+          test -s relay-build/index.js
+      - uses: actions/upload-artifact@v4
+        with:
+          # The deploy job has no checkout: it gets the bundle, the Worker's config and the locked deploy tools from here.
+          name: duel-relay-${{ github.sha }}
+          path: |
+            relay-build/index.js
+            workers/duel/wrangler.toml
+            deploy/package.json
+            deploy/package-lock.json
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v4
+        with:
+          name: duel-relay-${{ github.sha }}
+          path: .
+      - name: Install the pinned wrangler
+        # No Cloudflare token in this step's environment, and no install script runs in a job that will hold it.
+        run: npm ci --prefix deploy --ignore-scripts
+      - name: Publish the relay
+        run: deploy/node_modules/.bin/wrangler deploy relay-build/index.js --config workers/duel/wrangler.toml --no-bundle
+        env:
+          CLOUDFLARE_ACCOUNT_ID: 1080d513988ebb38f832ce7cbea7ab1d
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: What to do if the relay did not publish
+        if: failure()
+        run: |
+          echo '::error::The duel relay was not published. The site itself is not affected; the Duel will say its server did not answer.'
+          echo 'If the error above is about authentication or permissions, the token lacks "Workers Scripts: Edit" (account) or "Workers Routes: Edit" (zone syberlabs.io). See workers/duel/README.md, "Deploying".' >> "$GITHUB_STEP_SUMMARY"

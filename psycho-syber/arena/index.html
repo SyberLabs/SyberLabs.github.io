@@ -118,21 +118,18 @@
           <div class="ar-sec" id="ar-s-duel">
             <p class="ar-lede">Two players, two browsers. One is Psycho and the other is Syber. Forms are locked for a round and trade every round. The first to win five rounds wins.</p>
             <div class="ar-step" id="ar-duel-start">
-              <p class="ar-actions"><button class="sy-btn sy-btn--solid" id="ar-duel-make" type="button">Make an invite</button></p>
-              <p class="ar-row"><label for="ar-duel-in">Or paste an invite you were sent</label><input id="ar-duel-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="sy-btn sy-btn--line" id="ar-duel-answer" type="button">Answer</button></p>
+              <p class="ar-actions"><button class="sy-btn sy-btn--solid" id="ar-duel-make" type="button">Start a duel</button></p>
+              <p class="ar-row"><label for="ar-duel-in">Or join one with its code</label><input class="ar-code-in" id="ar-duel-in" type="text" inputmode="text" maxlength="80" placeholder="K7M2QX" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="sy-btn sy-btn--line" id="ar-duel-answer" type="button">Join</button></p>
             </div>
             <div class="ar-step" id="ar-duel-got" hidden>
-              <p class="ar-note">You opened a duel invite. Answering it asks a Cloudflare server for your network address and puts that address in the reply you send back.</p>
-              <p class="ar-actions"><button class="sy-btn sy-btn--solid" id="ar-duel-accept" type="button">Answer the invite</button></p>
+              <p class="ar-note">You opened a link to a duel. Its code is <b class="ar-code-inline" id="ar-duel-got-code"></b>.</p>
+              <p class="ar-actions"><button class="sy-btn sy-btn--solid" id="ar-duel-accept" type="button">Join the duel</button></p>
             </div>
-            <div class="ar-step" id="ar-duel-lead" hidden>
-              <p class="ar-row"><label for="ar-duel-invite">1. Send this invite to your rival</label><input id="ar-duel-invite" type="text" readonly><button class="sy-btn sy-btn--line" id="ar-duel-copy" type="button">Copy</button><button class="sy-btn sy-btn--line" id="ar-duel-share" type="button">Share</button></p>
-              <p class="ar-row"><label for="ar-duel-reply-in">2. Open the reply they send back in this browser, or paste it here</label><input id="ar-duel-reply-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="sy-btn sy-btn--solid" id="ar-duel-connect" type="button">Connect</button></p>
-              <p class="ar-note">The invite contains your network address. Send it only to the person you are playing. Keep this tab open.</p>
-            </div>
-            <div class="ar-step" id="ar-duel-join" hidden>
-              <p class="ar-row"><label for="ar-duel-reply">Send this reply back to your rival</label><input id="ar-duel-reply" type="text" readonly><button class="sy-btn sy-btn--solid" id="ar-duel-reply-copy" type="button">Copy</button><button class="sy-btn sy-btn--line" id="ar-duel-reply-share" type="button">Share</button></p>
-              <p class="ar-note">The reply contains your network address. The duel starts when your rival opens it or pastes it. Keep this tab open.</p>
+            <div class="ar-step" id="ar-duel-wait" hidden>
+              <p class="ar-note">Your duel's code</p>
+              <p class="ar-code" id="ar-duel-code" aria-live="polite"></p>
+              <p class="ar-row"><label for="ar-duel-invite">Send your rival the code, or this link</label><input id="ar-duel-invite" type="text" readonly><button class="sy-btn sy-btn--solid" id="ar-duel-copy" type="button">Copy</button><button class="sy-btn sy-btn--line" id="ar-duel-share" type="button">Share</button></p>
+              <p class="ar-note">The duel starts when your rival joins. Keep this tab open.</p>
             </div>
             <p class="ar-status" id="ar-duel-status" role="status"></p>
             <p class="ar-actions"><button class="sy-btn sy-btn--ghost" id="ar-duel-back" type="button">Back</button><a class="sy-btn sy-btn--ghost" href="#sent">What is sent</a></p>
@@ -185,25 +182,25 @@
         <p>A duel does not pause. P or Esc opens the panel: while it is open you stand still and your rival can still hit you, and the next round closes it.</p>
         <h3 class="ps-sub">Starting one</h3>
         <ol>
-          <li>The first player presses Duel, then Make an invite, and sends the invite link to the second player by any message app.</li>
-          <li>The second player opens the link and presses Answer the invite. The page gives them a reply link, which they send back.</li>
-          <li>The first player opens the reply link in the same browser as the invite, or pastes it into the page and presses Connect. The first round starts in both browsers.</li>
+          <li>The first player presses Duel, then Start a duel. The page shows a code of six letters and digits, and a link that carries it.</li>
+          <li>They send the code or the link to the second player, by any message app or aloud.</li>
+          <li>The second player opens the link and presses Join the duel, or presses Duel on this page and types the code. The first round starts in both browsers.</li>
         </ol>
-        <p>Both players keep their tab open from the invite to the end of the duel. An invite works once.</p>
+        <p>A code is for one duel. A duel that nobody joins is closed after ten minutes, and any duel is closed 45 minutes after it was started. If your connection drops, the page tries for twelve seconds to take your place back; after that your rival is told that you left.</p>
         <h3 class="ps-sub" id="sent">What is sent</h3>
-        <p>The Duel is the one part of this site in which your browser connects to another visitor. The connection is WebRTC, a browser feature for direct links between two browsers.</p>
+        <p>In a duel your browser keeps one connection open to a relay at syberlabs.io/duel, a program SyberLabs runs on Cloudflare, which also serves this site. The two browsers do not connect to each other, and your rival's browser is not given your network address. Nothing is contacted until you press Start a duel or Join.</p>
         <ul>
-          <li>When you make or answer an invite, your browser asks a STUN server run by Cloudflare (stun.cloudflare.com) what your public network address is. Cloudflare also serves this site.</li>
-          <li>The invite and the reply each contain the network addresses of the browser that made them, your public IP address among them. Anyone who has the link can read them, so send it only to the person you are playing.</li>
-          <li>During a duel the two browsers send each other positions, shots, hits, broken blocks and the score. Your rival's browser sees your IP address, as it does in any direct connection.</li>
-          <li>SyberLabs receives none of it. No SyberLabs server carries the invite, the reply or the game, and nothing about a duel is kept after the tab closes.</li>
+          <li>Your browser sends the relay your position and aim 30 times a second, your shots, the hits you report and the blocks you break. The relay passes them to your rival's browser.</li>
+          <li>The relay keeps the countdown, both players' health, the rounds and the score while the duel lasts.</li>
+          <li>The relay writes no log and stores nothing. When both players have left, the duel is gone.</li>
+          <li>To limit abuse, the relay counts for one minute at a time how many duels are started and joined from one network address, and refuses more than 6 new duels or 30 joins.</li>
+          <li>The code is all that lets someone into your duel. Anyone who has it can take the second place, so send it only to the person you are playing.</li>
         </ul>
         <h3 class="ps-sub">Limits of the Duel</h3>
         <ul>
-          <li>There is no relay. If either player's network refuses direct connections, as some mobile, office and school networks do, the link does not open and the page says so.</li>
-          <li>Each browser reports its own hits to the other. A player who alters the game in their browser can cheat.</li>
-          <li>A script has played the Duel between two copies of headless Chrome on one machine: the invite and the reply, a duel to five rounds, a rematch and a dropped connection. No two people have played it yet, and it has not been tried across two networks, on a phone, or in Firefox or Safari.</li>
-          <li>If a phone puts the tab to sleep while you switch to a message app, the invite can stop working. Make a new one.</li>
+          <li>Each browser reports its own hits. The relay counts hits only while a round is live and caps the damage of one hit and of one second of hits. It does not check aim, so a player who alters the game can still cheat within those caps.</li>
+          <li>What you see of your rival is a tenth of a second old, plus the delay of both players' connections to the relay.</li>
+          <li>A script has played the Duel between two copies of headless Chrome, through a copy of the relay on the same machine: a duel to five rounds, a rematch, a connection that dropped and came back, and a player who left. Two people have not yet played it through the relay on Cloudflare, and it has not been tried on a phone or in Firefox or Safari.</li>
         </ul>
       </section>
 
@@ -234,7 +231,7 @@
           <li>When frames slow down the game turns off its glow, and then lowers its resolution. Pause has a button for the glow.</li>
           <li>With reduced motion set on your device, the picture behind the title holds still. A game in play moves as usual.</li>
           <li>Sound is synthesised in the browser and starts when a game starts. Pause has a button to turn it off.</li>
-          <li>One <a href="https://github.com/SyberLabs/SyberLabs.github.io/tree/main/psycho-syber/test" rel="noopener">scripted check</a> runs on every change to the site: it packs and reads back an invite and a reply, and checks that this page and the game's files agree. The checks that play a wave and a duel in a browser are run by hand.</li>
+          <li>Two <a href="https://github.com/SyberLabs/SyberLabs.github.io/tree/main/workers/duel" rel="noopener">scripted checks</a> run on every change to the site. One plays the relay's rules: rounds, health, the caps and dropped connections. The other checks that this page and the game's script agree. The checks that play a wave and a duel in a browser are run by hand.</li>
         </ul>
       </section>
     </div>
@@ -248,7 +245,6 @@
   </div>
 </div></footer>
   <script defer src="/psycho-syber/arena/vendor/three.min.js"></script>
-  <script defer src="/psycho-syber/arena/link.js"></script>
   <script defer src="/psycho-syber/arena/game.js"></script>
 </body>
 </html>

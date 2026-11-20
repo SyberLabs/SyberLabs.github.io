@@ -1,6 +1,6 @@
 // PSYCHO SYBER: ARENA. A first-person arena in 3D with two forms, Psycho and Syber: Waves for one player and a
-// Duel for two browsers. One classic script; it draws with three.js r160 (vendor/three.min.js) and packs the
-// duel's invite and reply with link.js. psycho-syber/README.md ("ARENA") lists the parts and the rules that hold it.
+// Duel for two browsers. One classic script; it draws with three.js r160 (vendor/three.min.js), and the duel goes
+// through the site's relay at /duel/ (workers/duel/). psycho-syber/README.md ("ARENA") lists the parts and the rules that hold it.
 (() => {
 'use strict';
 const T = window.THREE;
@@ -580,7 +580,7 @@ function applyFormUI() {
   H.bFire.textContent = P.form === PSYCHO ? 'ROCKET' : 'ARC'; H.bAlt.textContent = P.form === PSYCHO ? 'SLAM' : 'GRAPPLE'; H.bDash.textContent = P.form === PSYCHO ? 'RAM' : 'BLINK';
 }
 function updateHUD(dt) {
-  setText(H.score, 'score', G.mode === 'duel' ? (D.role === 'lead' ? D.score[0] + ' : ' + D.score[1] : D.score[1] + ' : ' + D.score[0]) : String(G.score));
+  setText(H.score, 'score', G.mode === 'duel' ? D.score[D.seat] + ' : ' + D.score[1 - D.seat] : String(G.score));
   const hp = Math.max(0, Math.ceil(P.hp));
   if (hudCache.hp !== hp) { hudCache.hp = hp; H.hpf.style.width = hp + '%'; H.hpn.textContent = hp + ' HP'; }
   const mult = 1 + Math.min(7, Math.floor(G.combo / 3));
@@ -779,7 +779,7 @@ function hurtPlayer(d) {
   if (P.inv > 0 || (G.state !== 'play' && G.mode !== 'duel')) return;
   P.hp -= d; H.dmg.style.transition = 'none'; H.dmg.style.opacity = clamp(0.35 + d / 30, 0, 1); void H.dmg.offsetWidth; H.dmg.style.transition = 'opacity .5s'; H.dmg.style.opacity = P.hp < 30 ? 0.35 : 0;
   G.shake = Math.max(G.shake, 0.5); sfx.hurt(); G.ca = Math.max(G.ca, 0.014);
-  if (P.hp <= 0) { if (G.mode === 'duel') duelDeath(); else die(); }
+  if (P.hp <= 0) { if (G.mode === 'duel') P.hp = 0; else die(); }   // in a duel the relay keeps health and ends the round
 }
 function spawnProj(kind, x, y, z, dx, dy, dz, spd, dmg) {
   const m = new T.Mesh(kind === 1 ? orbGeo : rocketGeo, projMats[kind]); m.position.set(x, y, z);
@@ -1316,8 +1316,8 @@ function startRun(mode) {
 }
 function play(fresh) { if (fresh) startRun('wave'); else enterPlay(); }
 // One browser cannot stop the other's game, so a duel does not pause: the panel opens, this player stands still,
-// and the duel goes on under it (frame() keeps calling update(), which sends positions and, for the lead, runs the
-// rounds). The panel says so in place of "Paused.", and has no Restart.
+// and the duel goes on under it (frame() keeps calling update(), which sends positions and draws the rival). The
+// panel says so in place of "Paused.", and has no Restart.
 const PAUSE_TEXT = [$('pause-lede').textContent, $('pause-note').textContent, $('resume').textContent];
 function pause() {
   if (G.state !== 'play') return; const duel = G.mode === 'duel';
@@ -1332,7 +1332,7 @@ function die() {
   $('d-score').textContent = G.score; $('d-wave').textContent = roman(G.wave); $('d-best').textContent = G.best;
 }
 function retry() { if (G.mode === 'duel') return; startRun('wave'); }
-function toTitle() { if (G.mode === 'duel' || D.pc) { duelClose(); G.mode = 'wave'; } setRun(false); setHead(); G.state = 'menu'; showSec('s-start'); }
+function toTitle() { if (G.mode === 'duel' || D.ws || D.code) { duelClose(); G.mode = 'wave'; } setRun(false); setHead(); G.state = 'menu'; showSec('s-start'); }
 $('gowave').addEventListener('click', () => startRun('wave'));
 $('retry').addEventListener('click', retry);
 $('restart').addEventListener('click', retry);
@@ -1344,145 +1344,131 @@ $('snd').addEventListener('click', () => { A.on = !A.on; audioInit(); if (A.mast
 $('sens').value = G.sens;
 $('sens').addEventListener('input', e => { G.sens = +e.target.value; try { localStorage.setItem('psycho-syber.arena.sens', String(G.sens)); } catch (er) { } });
 
-/* ============================== duel: Psycho against Syber, browser to browser ============================== */
-// Transport is a WebRTC data channel between the two browsers. Nothing of ours sits between them: the first
-// player sends an invite (the offer) and the second sends back a reply (the answer), as links or pasted text
-// (link.js packs them). Each browser asks one STUN server for its own public address; there is no relay,
-// so two networks that both refuse direct links cannot duel.
-const ICE = { iceServers: [{ urls: 'stun:stun.cloudflare.com:3478' }] };
-const NET_V = 1, WIN = 5, PVP = { ROCKET: 0.5, SLAM: 0.42, RAM: 0.53, ARC: 0.45, JUGGLE: 0.45, CHAIN: 0.45, 'ZIP KICK': 0.55 };
-const NO_RTC = 'This browser does not allow WebRTC here, so a direct link cannot open.';
-const LINK = window.ArenaLink;
-const D = { pc: null, ctl: null, pos: null, role: '', invite: '', reply: '', pending: '', lastRx: 0, code: '', phase: 'idle', round: 0, score: [0, 0], rival: null, buf: [], seq: 0, rseq: -1, lastSend: 0, out: [], applying: false, endT: 0, countT: 0, lastC: 0, shotN: 0, shot: [0, 0, 0], blinkN: 0, rShotN: 0, rBlinkN: 0, lab: null, over: false, joinT: 0, lockT: 0 };
+/* ============================== duel: Psycho against Syber, through the site's relay ============================== */
+// The two browsers do not connect to each other. Each opens one WebSocket to a relay on this site, at /duel/
+// (workers/duel/ in the repository), which passes positions, shots and broken blocks from one to the other and
+// keeps what decides the duel: the countdown, health, rounds and the score. A duel has a six-character code; the
+// first player gets it from the relay and the second joins with it. Messages are JSON arrays (workers/duel/README.md).
+const NET_V = 2, WIN = 5, PVP = { ROCKET: 0.5, SLAM: 0.42, RAM: 0.53, ARC: 0.45, JUGGLE: 0.45, CHAIN: 0.45, 'ZIP KICK': 0.55 };
+// The relay is a path of this site. A copy of the page served from this machine may name another, for the tests.
+const LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+const relay = () => (LOCAL && typeof window.__arenaRelay === 'string' ? window.__arenaRelay : location.origin.replace(/^http/, 'ws')) + '/duel/';
+const SAID = {
+  down: 'The duel server did not answer. Check your connection and try again.',
+  lost: 'The connection to the duel was lost.',
+  left: 'Your rival left the duel.',
+  none: 'No duel has that code. Check it, or ask your rival to start a new one.',
+  full: 'That duel already has two players.',
+  busy: 'Too many duels were started from this network in the last minute. Wait a minute and try again.',
+  wait: 'Nobody joined in ten minutes, so the duel was closed. Start a new one.',
+  long: 'The duel was open for 45 minutes and was closed. Start a new one.',
+  old: 'This page and the duel server have different versions. Reload the page and try again.',
+};
+const D = { ws: null, seat: 0, code: '', token: '', pending: '', said: '', lastRx: 0, retry: 0, retryT: 0, phase: 'idle', round: 0, score: [0, 0], rival: null, rivalHp: 100, buf: [], seq: 0, rseq: -1, lastSend: 0, out: [], applying: false, endT: 0, countT: 0, lastC: 0, shotN: 0, shot: [0, 0, 0], blinkN: 0, rShotN: 0, rBlinkN: 0, lab: null, over: false, lockT: 0 };
 const r2 = v => Math.round(v * 100) / 100, fin = Number.isFinite;
 const rope2 = new T.Mesh(new T.BoxGeometry(1, 1, 1), new T.MeshBasicMaterial({ color: 0xbff5ee, transparent: true, blending: T.AdditiveBlending, depthWrite: false, fog: false }));
 rope2.visible = false; rope2.frustumCulled = false; scene.add(rope2);
-const isOpen = c => !!c && c.readyState === 'open';
-// positions and keepalives may be lost or arrive late; everything else must arrive, in order
-function netSend(m) { const c = (m[0] === 's' || m[0] === 'p') && isOpen(D.pos) ? D.pos : D.ctl; if (isOpen(c)) { try { c.send(JSON.stringify(m)); } catch (e) { } } }
+const isOpen = () => !!D.ws && D.ws.readyState === 1;
+function netSend(m) { if (isOpen()) { try { D.ws.send(JSON.stringify(m)); } catch (e) { } } }
 function duelStatus(t) { $('duel-status').textContent = t; }
-function duelStep(k) { for (const id of ['duel-start', 'duel-got', 'duel-lead', 'duel-join']) $(id).hidden = id !== 'duel-' + k; }
+function duelStep(k) { for (const id of ['duel-start', 'duel-got', 'duel-wait']) $(id).hidden = id !== 'duel-' + k; }
+const linkFor = code => location.origin + location.pathname + '#j=' + code;
+// take a code out of what was typed or pasted: the six characters, or a whole link that ends in them
+function readCode(text) { const t = String(text || '').trim().toUpperCase(), m = /#J=([A-HJKMNP-Z2-9]{6})$/.exec(t) || /^([A-HJKMNP-Z2-9]{6})$/.exec(t.replace(/[\s-]/g, '')); return m ? m[1] : ''; }
+
+function duelShut() { clearTimeout(D.retryT); const ws = D.ws; D.ws = null; if (ws) { ws.onmessage = ws.onclose = ws.onerror = null; try { ws.close(); } catch (e) { } } }
+// leave for good: tell the relay, so the rival hears at once, and forget the room
 function duelClose() {
-  clearTimeout(D.joinT); const pc = D.pc, a = D.ctl, b = D.pos; D.pc = null; D.ctl = null; D.pos = null; D.invite = ''; D.reply = '';
+  netSend(['q']); duelShut(); D.code = ''; D.token = ''; D.said = ''; D.retry = 0;
   D.phase = 'idle'; D.rival = null; D.over = false; D.out.length = 0; rope2.visible = false; P.frozen = false;
-  for (const c of [a, b]) { try { if (c) { c.onopen = c.onclose = c.onerror = c.onmessage = null; c.close(); } } catch (e) { } }
-  try { if (pc) { pc.onconnectionstatechange = pc.ondatachannel = null; pc.close(); } } catch (e) { }
 }
-function wireChan(pc, c) {
-  if (c.label === 'pos') D.pos = c; else if (c.label === 'ctl') D.ctl = c; else { try { c.close(); } catch (e) { } return; }
-  c.onmessage = ev => { if (D.pc !== pc || typeof ev.data !== 'string' || ev.data.length > 20000) return; let m; try { m = JSON.parse(ev.data); } catch (e) { return; } onNet(m); };
-  if (c.label !== 'ctl') return;
-  c.onopen = () => { if (D.pc !== pc) return; clearTimeout(D.joinT); D.rseq = -1; D.seq = 0; D.lastRx = performance.now(); try { history.replaceState(null, '', location.pathname); } catch (e) { } netSend(['v', NET_V]); duelStatus(D.role === 'lead' ? 'Rival linked.' : 'Linked. The first round is starting.'); };
-  c.onclose = c.onerror = () => { if (D.pc === pc && D.ctl === c) duelDrop(); };
+function duelOpen(path) {
+  duelShut(); let ws; try { ws = new WebSocket(relay() + path); } catch (e) { return duelLost(); }
+  D.ws = ws; D.lastRx = performance.now();
+  ws.onmessage = ev => { if (D.ws !== ws || typeof ev.data !== 'string' || ev.data.length > 20000) return; let m; try { m = JSON.parse(ev.data); } catch (e) { return; } onNet(m); };
+  ws.onclose = () => { if (D.ws === ws) { D.ws = null; duelLost(); } };
 }
-function watchPc(pc) {
-  pc.onconnectionstatechange = () => {
-    if (D.pc !== pc || pc.connectionState !== 'failed') return;
-    if (isOpen(D.ctl)) return duelDrop();
-    clearTimeout(D.joinT); duelStatus('The direct link did not open. Some networks refuse them. Start again with a new invite, or try another network.');
-  };
+// The socket closed and we did not close it. With a seat, try to take it back: the relay holds it for twelve seconds.
+const RETRY = [500, 1500, 2500, 3000, 3000];
+function duelLost() {
+  if (D.token && !D.said && D.retry < RETRY.length) {
+    if (G.state === 'play') toast('CONNECTION LOST'); else duelStatus('Connection lost. Trying again...');
+    D.retryT = setTimeout(() => duelOpen('join/' + D.code + '?t=' + D.token), RETRY[D.retry++]); return;
+  }
+  duelDrop(D.said || (D.token ? SAID.lost : SAID.down));
 }
-// wait until the browser has listed its addresses (or four seconds, whichever comes first)
-function gathered(pc) {
-  return new Promise(done => {
-    if (pc.iceGatheringState === 'complete') return done();
-    const t = setTimeout(done, 4000);
-    pc.addEventListener('icegatheringstatechange', () => { if (pc.iceGatheringState === 'complete') { clearTimeout(t); done(); } });
-  });
+function duelDrop(why) {
+  const was = G.mode === 'duel'; D.said = ''; D.token = ''; duelShut(); duelClose(); duelStep('start');
+  if (was) { G.mode = 'wave'; setRun(false); setHead('Duel', 'Duel over'); leavePlay('duel', 's-duel'); } duelStatus(why);
 }
-const linkFor = (k, code) => location.origin + location.pathname + '#' + k + '=' + code;
-const LAN_ONLY = ' This network gave no public address, so the link can open only for someone on the same network.';
-async function duelInvite() {
-  audioInit(); duelClose(); if (!window.RTCPeerConnection || !LINK) return duelStatus(NO_RTC);
-  D.role = 'lead'; duelStatus('Making an invite...');
-  let pc; try { pc = new RTCPeerConnection(ICE); } catch (e) { return duelStatus(NO_RTC); }
-  D.pc = pc; watchPc(pc);
-  try {
-    wireChan(pc, pc.createDataChannel('ctl')); wireChan(pc, pc.createDataChannel('pos', { ordered: false, maxRetransmits: 0 }));
-    await pc.setLocalDescription(await pc.createOffer()); await gathered(pc); if (D.pc !== pc) return;
-    const sdp = pc.localDescription.sdp, code = await LINK.pack('o', sdp); if (D.pc !== pc) return;
-    D.invite = linkFor('d', code); $('duel-invite').value = D.invite; $('duel-reply-in').value = ''; duelStep('lead');
-    duelStatus('Waiting for the reply.' + (LINK.reachable(sdp) ? '' : LAN_ONLY));
-  } catch (e) { if (D.pc === pc) { duelClose(); duelStep('start'); duelStatus(NO_RTC); } }
+function duelCreate() {
+  audioInit(); duelClose(); if (!window.WebSocket) return duelStatus(SAID.down);
+  duelStatus('Starting a duel...'); duelOpen('new');
 }
-async function duelAnswer(text) {
-  audioInit(); if (!window.RTCPeerConnection || !LINK) return duelStatus(NO_RTC);
-  const got = await LINK.unpack(LINK.find(text));
-  if (!got || got.kind !== 'o') return duelStatus(got ? 'That is a reply. Paste it in the tab that made the invite.' : 'That invite could not be read. Ask your rival for a new one.');
-  duelClose(); D.role = 'join'; D.pending = ''; duelStatus('Reading the invite...');
-  let pc; try { pc = new RTCPeerConnection(ICE); } catch (e) { return duelStatus(NO_RTC); }
-  D.pc = pc; watchPc(pc); pc.ondatachannel = ev => { if (D.pc === pc) wireChan(pc, ev.channel); };
-  try {
-    await pc.setRemoteDescription({ type: 'offer', sdp: got.sdp }); await pc.setLocalDescription(await pc.createAnswer()); await gathered(pc); if (D.pc !== pc) return;
-    const sdp = pc.localDescription.sdp, code = await LINK.pack('a', sdp); if (D.pc !== pc) return;
-    D.reply = linkFor('r', code); $('duel-reply').value = D.reply; duelStep('join');
-    duelStatus('Waiting for your rival to open the reply.' + (LINK.reachable(sdp) ? '' : LAN_ONLY));
-  } catch (e) { if (D.pc === pc) { duelClose(); duelStep('start'); duelStatus('That invite could not be used. Ask your rival for a new one.'); } }
+function duelJoin(text) {
+  audioInit(); const code = readCode(text); if (!code) return duelStatus('A duel code is six letters and digits, like K7M2QX.');
+  duelClose(); if (!window.WebSocket) return duelStatus(SAID.down);
+  D.pending = ''; duelStatus('Joining the duel...'); duelOpen('join/' + code);
 }
-// the first player takes the reply: pasted here, or handed over by a tab that opened the reply link
-async function duelConnect(text) {
-  const pc = D.pc; if (!pc || D.role !== 'lead' || !LINK) return false;
-  const got = await LINK.unpack(LINK.find(text));
-  if (!got || got.kind !== 'a') { duelStatus(got ? 'That is an invite. Paste the reply your rival sent back.' : 'That reply could not be read. Ask your rival to send it again.'); return false; }
-  if (D.pc !== pc || pc.signalingState !== 'have-local-offer') return false;
-  try { await pc.setRemoteDescription({ type: 'answer', sdp: got.sdp }); } catch (e) { duelStatus('That reply does not match this invite. Make a new invite and send it again.'); return false; }
-  duelStatus('Reply accepted. Opening the link...');
-  D.joinT = setTimeout(() => { if (D.pc === pc && !isOpen(D.ctl)) duelStatus('The direct link did not open. Some networks refuse them. Start again with a new invite, or try another network.'); }, 20000);
-  return true;
-}
-function duelDrop() {
-  const was = G.mode === 'duel'; duelClose(); duelStep('start');
-  if (was) { G.mode = 'wave'; setRun(false); setHead('Duel', 'Link lost'); leavePlay('duel', 's-duel'); } duelStatus('Your rival disconnected.');
-}
+
 function onNet(m) {
   if (!Array.isArray(m) || !m.length) return; const t = m[0]; D.lastRx = performance.now();
   if (t === 's') {
     if (!(m[1] > D.rseq) || !fin(m[2]) || !fin(m[3]) || !fin(m[4]) || !fin(m[8])) return; D.rseq = m[1];
-    D.buf.push({ t: performance.now(), x: m[2], y: m[3], z: m[4], vx: +m[5] || 0, vy: +m[6] || 0, vz: +m[7] || 0, yaw: m[8], hp: clamp(+m[10] || 0, 0, 100), fl: m[11] | 0, gx: +m[12] || 0, gy: +m[13] || 0, gz: +m[14] || 0, sn: m[15] | 0, sx: +m[16] || 0, sy: +m[17] || 0, sz: +m[18] || 0, bn: m[19] | 0 });
+    D.buf.push({ t: performance.now(), x: m[2], y: m[3], z: m[4], vx: +m[5] || 0, vy: +m[6] || 0, vz: +m[7] || 0, yaw: m[8], fl: m[10] | 0, gx: +m[11] || 0, gy: +m[12] || 0, gz: +m[13] || 0, sn: m[14] | 0, sx: +m[15] || 0, sy: +m[16] || 0, sz: +m[17] || 0, bn: m[18] | 0 });
     if (D.buf.length > 14) D.buf.shift();
-  } else if (t === 'h') {
-    if (D.phase !== 'live' || P.inv > 0) return;
-    const iy = clamp(+m[3] || 0, -30, 30); P.vel.x += clamp(+m[2] || 0, -30, 30); P.vel.y += iy; P.vel.z += clamp(+m[4] || 0, -30, 30); if (iy > 2) { P.onGround = false; P.coyote = 0; }
-    hurtPlayer(clamp(+m[1] || 0, 0, 80));
+  } else if (t === 'H') {                                   // the relay's word on health: mine, or my rival's
+    const hp = clamp(+m[2] || 0, 0, 100);
+    if ((m[1] | 0) !== D.seat) { D.rivalHp = hp; if (D.rival) D.rival.flash = 0.12; return; }
+    const iy = clamp(+m[5] || 0, -30, 30); P.vel.x += clamp(+m[4] || 0, -30, 30); P.vel.y += iy; P.vel.z += clamp(+m[6] || 0, -30, 30); if (iy > 2) { P.onGround = false; P.coyote = 0; }
+    P.inv = 0; hurtPlayer(clamp(+m[3] || 0, 0, 100)); P.hp = hp;
   } else if (t === 'b') { if (fin(m[1]) && fin(m[2]) && fin(m[3])) boomFx(m[1], m[2], m[3], clamp(+m[4] || 5, 1, 16), FCOL[m[5]] || FCOL[0]); }
   else if (t === 'r') { if (fin(m[1]) && fin(m[2]) && fin(m[3]) && fin(m[4]) && fin(m[5]) && fin(m[6]) && projs.length < 60) spawnProj(3, m[1], m[2], m[3], m[4], m[5], m[6], 58, 0); }
   else if (t === 'k') { D.applying = true; for (let i = 1; i < m.length && i < 400; i++) { const b = blk[m[i]]; if (b) destroyBlock(b.x, b.y, b.z, i < 16); } D.applying = false; }
-  else if (t === 'd') { if (D.role === 'lead') leadEndRound('join'); }
-  else if (t === 'R') { if (D.role === 'join') beginRound(m[1] | 0, m[2] ? 1 : 0, m[3] | 0, m[4] | 0); }
-  else if (t === 'E') { if (D.role === 'join') endRound(m[1], m[2] | 0, m[3] | 0, !!m[4]); }
-  else if (t === 'v') { if (m[1] !== NET_V) return duelStatus('The two browsers have different versions of the game. Both players need to reload.'); if (D.role === 'lead' && D.phase === 'idle') { D.score = [0, 0]; D.round = 0; leadStartRound(); } }
-  else if (t === 'x') { if (D.role === 'lead' && D.over) { D.score = [0, 0]; D.round = 0; leadStartRound(); } }
+  else if (t === 'R') beginRound(m[1] | 0, m[2] ? 1 : 0, m[3] | 0, m[4] | 0, (+m[5] || 3000) / 1000);
+  else if (t === 'G') { if (D.phase === 'count') { D.phase = 'live'; P.frozen = false; toast('FIGHT'); tone('square', 880, 880, 0.22, 0.14); } }
+  else if (t === 'E') endRound(m[1] | 0, m[2] | 0, m[3] | 0, !!m[4]);
+  else if (t === 'w') {                                     // welcome: a seat, the room's code, and the token that takes the seat back
+    if (m[1] !== NET_V) { D.said = SAID.old; D.token = ''; return duelLost(); }
+    D.seat = m[2] ? 1 : 0; D.code = String(m[3]); D.token = String(m[4]); D.retry = 0;
+    if (m[5]) { if (G.state === 'play') toast('RECONNECTED'); else duelStatus(D.phase === 'idle' && D.seat === 0 ? 'Waiting for your rival.' : ''); return; }
+    D.rseq = -1; D.seq = 0; try { history.replaceState(null, '', location.pathname); } catch (e) { }
+    if (D.seat === 0) { $('duel-code').textContent = D.code; $('duel-invite').value = linkFor(D.code); duelStep('wait'); duelStatus('Waiting for your rival.'); }
+    else duelStatus('Joined. The first round is starting.');
+  } else if (t === 'n') duelStatus('Your rival joined. The first round is starting.');
+  else if (t === 'S') {                                     // where the duel stands, after coming back
+    const round = m[1] | 0, phase = String(m[5]);
+    if (round > 0 && (round !== D.round || G.mode !== 'duel')) beginRound(round, m[2] ? 1 : 0, m[3] | 0, m[4] | 0, 0);
+    D.score = [m[3] | 0, m[4] | 0]; P.hp = clamp(+m[6 + D.seat] || 0, 0, 100); D.rivalHp = clamp(+m[7 - D.seat] || 0, 0, 100);
+    if (phase === 'live') { D.phase = 'live'; P.frozen = false; }
+    else if (phase === 'end') { D.phase = 'end'; D.endT = 1e9; }
+    else if (phase === 'over') { D.over = true; if (G.state !== 'duelend') duelEndCard(); }
+  } else if (t === 'a') { if (G.state === 'play') toast(m[1] ? 'RIVAL IS BACK' : 'RIVAL LOST CONNECTION'); }
+  else if (t === 'q') { D.said = SAID.left; D.token = ''; }
+  else if (t === 'e') { D.said = SAID[m[1]] || SAID.lost; D.token = ''; }
 }
 function netHitOut(e, d, ix, iy, iz) {
   if (D.phase !== 'live') return false; d *= PVP[SRC] || 0.5;
   netSend(['h', r2(d), r2(ix), r2(iy), r2(iz)]); e.flash = 0.12; e.stag = 0.14; hitmarker(); return true;
 }
-function leadStartRound() { D.round++; const hf = D.round % 2 === 1 ? PSYCHO : SYBER; netSend(['R', D.round, hf, D.score[0], D.score[1]]); beginRound(D.round, hf, D.score[0], D.score[1]); }
-function beginRound(n, leadForm, sh, sg) {
-  D.round = n; D.score = [sh, sg]; D.over = false; const lead = D.role === 'lead', mine = lead ? leadForm : 1 - leadForm, L = LEVELS.duel;
+// seat 0 is the player who started the duel; the relay says which form seat 0 has this round
+function beginRound(n, form0, s0, s1, count) {
+  D.round = n; D.score = [s0, s1]; D.over = false; const first = D.seat === 0, mine = first ? form0 : 1 - form0, L = LEVELS.duel;
   G.mode = 'duel'; resetGame('duel', true); G.wave = 1; G.waveT = 0; G.score = 0;
-  const me = lead ? L.spawn : L.spawn2, them = lead ? L.spawn2 : L.spawn;
-  P.pos.set(me[0] * BS + 1, 0, me[1] * BS + 1); P.yaw = lead ? 0 : Math.PI; P.form = mine; P.frozen = true; P.inv = 0; applyFormUI(); setMusicForm(mine);
-  const e = spawnEnemy(4 + (1 - mine), them[0] * BS + 1, 0, them[1] * BS + 1, -1); e.fly = false; e.yaw = lead ? Math.PI : 0; e.maxHp = e.hp = 100; D.rival = e;
+  const me = first ? L.spawn : L.spawn2, them = first ? L.spawn2 : L.spawn;
+  P.pos.set(me[0] * BS + 1, 0, me[1] * BS + 1); P.yaw = first ? 0 : Math.PI; P.form = mine; P.frozen = true; P.inv = 0; applyFormUI(); setMusicForm(mine);
+  const e = spawnEnemy(4 + (1 - mine), them[0] * BS + 1, 0, them[1] * BS + 1, -1); e.fly = false; e.yaw = first ? Math.PI : 0; e.maxHp = e.hp = 100; D.rival = e; D.rivalHp = 100;
   D.lab = addLabel(e.pos.x, 2.6, e.pos.z, 'RIVAL', FNAME[1 - mine], '', mine === PSYCHO ? '#5fe3d2' : '#ff5fcf'); D.lab.max = 110;
-  D.buf.length = 0; D.out.length = 0; D.phase = 'count'; D.countT = 3; D.lastC = 0; rope2.visible = false;
+  D.buf.length = 0; D.out.length = 0; D.phase = 'count'; D.countT = count; D.lastC = 0; rope2.visible = false;
   if (G.state !== 'play') enterPlay();
-  banner('Round ' + roman(n), 'You are ' + FNAME[mine] + ' · ' + (lead ? sh + ' : ' + sg : sg + ' : ' + sh));
+  banner('Round ' + roman(n), 'You are ' + FNAME[mine] + ' · ' + D.score[D.seat] + ' : ' + D.score[1 - D.seat]);
 }
-function leadEndRound(loser) {
-  if (D.phase !== 'live') return; const w = loser === 'lead' ? 1 : 0; D.score[w]++; const over = D.score[w] >= WIN, wc = w === 0 ? 'h' : 'g';
-  netSend(['E', wc, D.score[0], D.score[1], over ? 1 : 0]); endRound(wc, D.score[0], D.score[1], over);
-}
-function endRound(wc, sh, sg, over) {
-  D.phase = 'end'; D.score = [sh, sg]; D.over = !!over; D.endT = 3.2; const lead = D.role === 'lead', won = (wc === 'h') === lead;
-  P.frozen = !won; banner(won ? 'Round won' : 'Round lost', lead ? sh + ' : ' + sg : sg + ' : ' + sh); if (won) sfx.pickup();
-}
-function duelDeath() {
-  if (D.phase !== 'live') return; P.hp = 0; sfx.die();
-  if (D.role === 'lead') leadEndRound('lead'); else { D.phase = 'dead'; P.frozen = true; netSend(['d']); }
+function endRound(winner, s0, s1, over) {
+  D.phase = 'end'; D.score = [s0, s1]; D.over = !!over; D.endT = 3.2; const won = winner === D.seat;
+  P.frozen = !won; banner(won ? 'Round won' : 'Round lost', D.score[D.seat] + ' : ' + D.score[1 - D.seat]); if (won) sfx.pickup(); else { P.hp = 0; sfx.die(); }
 }
 function duelEndCard() {
-  const lead = D.role === 'lead', me = lead ? D.score[0] : D.score[1], them = lead ? D.score[1] : D.score[0], won = me > them;
+  const me = D.score[D.seat], them = D.score[1 - D.seat], won = me > them;
   setHead('Duel · First to ' + roman(WIN), won ? 'Victory' : 'Defeat');
   $('de-lede').textContent = won ? 'You won ' + me + ' rounds to ' + them + '.' : 'Your rival won ' + them + ' rounds to ' + me + '. Call a rematch.';
   $('de-me').textContent = me; $('de-them').textContent = them; D.endT = 1e9; leavePlay('duelend', 's-duelend'); H.dmg.style.opacity = 0;
@@ -1494,7 +1480,7 @@ function rivalUpdate(now) {
   if (j < 0) { x = b[0].x; y = b[0].y; z = b[0].z; yaw = b[0].yaw; }
   else if (j === b.length - 1) { const k = Math.min(0.2, (rt - last.t) / 1000); x = last.x + last.vx * k; y = Math.max(0, last.y + last.vy * k); z = last.z + last.vz * k; yaw = last.yaw; }
   else { const a = b[j], c = b[j + 1], k = clamp((rt - a.t) / Math.max(1, c.t - a.t), 0, 1); x = lerp(a.x, c.x, k); y = lerp(a.y, c.y, k); z = lerp(a.z, c.z, k); let dy = c.yaw - a.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); yaw = a.yaw + dy * k; }
-  e.pos.set(x, y, z); e.yaw = yaw + Math.PI; e.hp = last.hp; if (D.lab) D.lab.pos.set(x, y + 2.7, z);
+  e.pos.set(x, y, z); e.yaw = yaw + Math.PI; e.hp = D.rivalHp; if (D.lab) D.lab.pos.set(x, y + 2.7, z);
   const mx = x, my = y + 1.3, mz = z;
   if (last.sn !== D.rShotN) { D.rShotN = last.sn; addBeam(mx, my, mz, last.sx, last.sy, last.sz, 0.07, 0.09, 0.3, 1, 1); burst(last.sx, last.sy, last.sz, 2, 6, 0.25, 6, 0.4, 1, 1, 0); if (Math.random() < 0.5) tone('square', rnd(1300, 1700), 380, 0.07, 0.03); }
   if (last.bn !== D.rBlinkN) { D.rBlinkN = last.bn; burst(x, y + 1, z, 16, 8, 0.4, 9, 0.2, 1, 1, 0); addShell(x, y + 1, z, 0.3, 2.5, 0.3, 0.37, 0.89, 0.82); }
@@ -1503,67 +1489,53 @@ function rivalUpdate(now) {
 }
 function updateDuel(dt) {
   const now = performance.now();
-  if (D.phase === 'count') {
+  if (D.phase === 'count') {                                // the numbers are drawn here; the relay says when the round is live
     D.countT -= dt; P.frozen = true; const c = Math.ceil(D.countT);
     if (c !== D.lastC && c > 0) { D.lastC = c; toast(String(c)); tone('square', 440, 440, 0.08, 0.1); }
-    if (D.countT <= 0) { D.phase = 'live'; P.frozen = false; toast('FIGHT'); tone('square', 880, 880, 0.22, 0.14); }
   } else if (D.phase === 'end') {
-    D.endT -= dt; if (D.endT <= 0) { if (D.over) { duelEndCard(); return; } if (D.role === 'lead') leadStartRound(); else D.endT = 1e9; }
+    D.endT -= dt; if (D.endT <= 0) { if (D.over) { duelEndCard(); return; } D.endT = 1e9; }
   }
   if (D.lockT > 0) D.lockT -= dt;
   rivalUpdate(now);
-  if (now - D.lastSend > 33) {
+  if (now - D.lastSend > 33 && isOpen() && D.ws.bufferedAmount < 30000) {
     D.lastSend = now; const g = P.grapple, fl = (P.ramT > 0 ? 1 : 0) | (g ? 2 : 0) | (P.slamming ? 4 : 0);
-    netSend(['s', ++D.seq, r2(P.pos.x), r2(P.pos.y), r2(P.pos.z), r2(P.vel.x), r2(P.vel.y), r2(P.vel.z), r2(P.yaw), r2(P.pitch), Math.max(0, Math.round(P.hp)), fl, g ? r2(g.x) : 0, g ? r2(g.y) : 0, g ? r2(g.z) : 0, D.shotN, r2(D.shot[0]), r2(D.shot[1]), r2(D.shot[2]), D.blinkN]);
-    if (D.out.length) { netSend(['k'].concat(D.out)); D.out.length = 0; }
+    netSend(['s', ++D.seq, r2(P.pos.x), r2(P.pos.y), r2(P.pos.z), r2(P.vel.x), r2(P.vel.y), r2(P.vel.z), r2(P.yaw), r2(P.pitch), fl, g ? r2(g.x) : 0, g ? r2(g.y) : 0, g ? r2(g.z) : 0, D.shotN, r2(D.shot[0]), r2(D.shot[1]), r2(D.shot[2]), D.blinkN]);
+    while (D.out.length) netSend(['k'].concat(D.out.splice(0, 250)));
   }
   setObj(D.phase === 'idle' ? '' : 'YOU ARE ' + FNAME[P.form].toUpperCase() + ' · FORMS LOCKED · FIRST TO ' + WIN);
   updateLabels();
 }
-function openDuel(invite) {
-  setRun(false); setHead('Duel', 'Psycho against Syber'); G.state = 'duel'; showSec('s-duel'); D.pending = invite || '';
-  duelStep(invite ? 'got' : 'start'); duelStatus(window.RTCPeerConnection && LINK ? '' : NO_RTC);
+function openDuel(code) {
+  setRun(false); setHead('Duel', 'Psycho against Syber'); G.state = 'duel'; showSec('s-duel'); D.pending = code || '';
+  if (code) $('duel-got-code').textContent = code;
+  duelStep(code ? 'got' : 'start'); duelStatus(window.WebSocket ? '' : SAID.down);
 }
-// keepalive on a timer (frames stop in a hidden tab), and a silence timeout so a vanished rival is noticed quickly
-setInterval(() => { if (!isOpen(D.ctl)) return; netSend(['p']); if (performance.now() - D.lastRx > 6000) duelDrop(); }, 1000);
-addEventListener('pagehide', () => { try { if (D.pc) D.pc.close(); } catch (e) { } });
+// Every two seconds: say something when no positions are going out (a panel is open, or the tab is hidden), and
+// treat fourteen seconds without a word from the relay as a closed connection. The relay speaks every five.
+setInterval(() => {
+  if (!isOpen()) return;
+  if (G.mode !== 'duel' || G.state !== 'play' || document.hidden) netSend(['p']);
+  if (performance.now() - D.lastRx > 14000) { const ws = D.ws; D.ws = null; ws.onclose = ws.onmessage = null; try { ws.close(); } catch (e) { } duelLost(); }
+}, 2000);
+addEventListener('pagehide', () => { netSend(['q']); });
 function copyFrom(id, done) {
   const el = $(id), v = el.value; if (!v) return;
   const fall = () => { el.focus(); el.select(); duelStatus('Copy the selected text.'); };
   try { navigator.clipboard.writeText(v).then(() => duelStatus(done), fall); } catch (e) { fall(); }
 }
-function shareFrom(id, title) { const v = $(id).value; if (v && navigator.share) navigator.share({ title, url: v }).catch(() => { }); }
-if (!navigator.share) for (const id of ['duel-share', 'duel-reply-share']) $(id).hidden = true;
-for (const id of ['duel-invite', 'duel-reply']) $(id).addEventListener('focus', e => e.target.select());
-for (const id of ['duel-in', 'duel-reply-in', 'duel-invite', 'duel-reply']) $(id).addEventListener('keydown', e => e.stopPropagation());
+if (!navigator.share) $('duel-share').hidden = true;
+$('duel-invite').addEventListener('focus', e => e.target.select());
+for (const id of ['duel-in', 'duel-invite']) $(id).addEventListener('keydown', e => e.stopPropagation());
 $('goduel').addEventListener('click', () => openDuel(''));
-$('duel-make').addEventListener('click', duelInvite);
-$('duel-answer').addEventListener('click', () => duelAnswer($('duel-in').value));
-$('duel-in').addEventListener('keydown', e => { if (e.key === 'Enter') duelAnswer($('duel-in').value); });
-$('duel-accept').addEventListener('click', () => duelAnswer(D.pending));
-$('duel-copy').addEventListener('click', () => copyFrom('duel-invite', 'Invite copied. Waiting for the reply.'));
-$('duel-share').addEventListener('click', () => shareFrom('duel-invite', 'PSYCHO SYBER: ARENA duel invite'));
-$('duel-connect').addEventListener('click', () => duelConnect($('duel-reply-in').value));
-$('duel-reply-in').addEventListener('keydown', e => { if (e.key === 'Enter') duelConnect($('duel-reply-in').value); });
-$('duel-reply-copy').addEventListener('click', () => copyFrom('duel-reply', 'Reply copied. Waiting for your rival to open it.'));
-$('duel-reply-share').addEventListener('click', () => shareFrom('duel-reply', 'PSYCHO SYBER: ARENA duel reply'));
+$('duel-make').addEventListener('click', duelCreate);
+$('duel-answer').addEventListener('click', () => duelJoin($('duel-in').value));
+$('duel-in').addEventListener('keydown', e => { if (e.key === 'Enter') duelJoin($('duel-in').value); });
+$('duel-accept').addEventListener('click', () => duelJoin(D.pending));
+$('duel-copy').addEventListener('click', () => copyFrom('duel-invite', 'Link copied. Waiting for your rival.'));
+$('duel-share').addEventListener('click', () => { const v = $('duel-invite').value; if (v && navigator.share) navigator.share({ title: 'PSYCHO SYBER: ARENA duel', url: v }).catch(() => { }); });
 $('duel-back').addEventListener('click', () => { duelClose(); toTitle(); });
-$('de-again').addEventListener('click', () => { if (!isOpen(D.ctl)) return duelDrop(); if (D.role === 'lead') { D.score = [0, 0]; D.round = 0; leadStartRound(); } else { netSend(['x']); $('de-lede').textContent = 'Rematch called. Waiting for your rival.'; } });
+$('de-again').addEventListener('click', () => { if (!isOpen()) return duelDrop(SAID.lost); netSend(['x']); $('de-lede').textContent = 'Rematch called. The first round is starting.'; });
 $('de-title').addEventListener('click', () => { duelClose(); G.mode = 'wave'; toTitle(); });
-// A reply link opened in a new tab hands its code to the tab that made the invite, through a channel that
-// stays inside this browser. If no such tab answers, this tab shows the reply so it can be pasted there.
-const chan = window.BroadcastChannel ? new BroadcastChannel('psycho-syber.arena') : null;
-if (chan) chan.onmessage = ev => {
-  const m = ev.data; if (!m || m.t !== 'reply' || typeof m.code !== 'string' || D.role !== 'lead' || !D.pc || D.pc.signalingState !== 'have-local-offer') return;
-  duelConnect(m.code).then(ok => { if (ok) chan.postMessage({ t: 'taken' }); });
-};
-function openReply(code) {
-  openDuel(''); $('duel-in').value = ''; duelStatus('Handing the reply to the tab that made the invite...');
-  const orphan = () => duelStatus('No open invite was found in this browser. Go back to the tab that made the invite and paste this reply there: ' + linkFor('r', code));
-  if (!chan) return orphan();
-  const t = setTimeout(orphan, 1500), on = ev => { if (ev.data && ev.data.t === 'taken') { clearTimeout(t); chan.removeEventListener('message', on); duelStatus('Reply delivered. Go back to the tab that made the invite. You can close this one.'); } };
-  chan.addEventListener('message', on); chan.postMessage({ t: 'reply', code });
-}
 
 /* ============================== input ============================== */
 // While a game covers the screen, the site's own shortcut ("/" opens the Menu) must not fire underneath it.
@@ -1723,11 +1695,11 @@ function frame(now) {
 (() => { const c = document.createElement('canvas'); c.width = c.height = 180; const g = c.getContext('2d'), im = g.createImageData(180, 180); for (let i = 0; i < im.data.length; i += 4) { const v = Math.random() * 255 | 0; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } g.putImageData(im, 0, 0); $('grain').style.backgroundImage = 'url(' + c.toDataURL() + ')'; })();
 buildLevel('arena'); applyFormUI(); P.pos.set(SPX * BS + 1, 0, SPZ * BS + 1);
 for (const id of ['gowave', 'goduel']) $(id).disabled = false;
-{ // an invite (#d=) or a reply (#r=) in the address opens the duel panel; nothing is contacted until a button is pressed
-  const hm = /^#([dr])=([A-Za-z0-9_-]{8,6000})$/.exec(location.hash || '');
-  if (hm && hm[1] === 'd') openDuel(hm[2]); else if (hm) openReply(hm[2]);
+{ // a duel's link (#j=CODE) opens the duel panel with the code in it; the relay is not contacted until Join is pressed
+  const code = readCode(location.href);
+  if (code && /^#j=/i.test(location.hash)) openDuel(code);
 }
 requestAnimationFrame(frame);
 // for the scripted browser runs in psycho-syber/test/
-window.__arena = { G, P, In, D, enemies, projs, blk, vox, LEVELS, startRun, pause, swapForm, spawnEnemy, startWave, update, fireRocket, fireArc, hurtPlayer, destroyBlock, duelInvite, duelAnswer, duelConnect, duelClose };
+window.__arena = { G, P, In, D, enemies, projs, blk, vox, LEVELS, startRun, pause, swapForm, spawnEnemy, startWave, update, fireRocket, fireArc, hurtPlayer, destroyBlock, duelCreate, duelJoin, duelClose };
 })();

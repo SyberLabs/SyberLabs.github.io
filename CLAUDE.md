@@ -207,42 +207,52 @@ that game's title do not: one more button on the title pushes its words off a ph
   not apply to it. What the two share: invented names only, Wording for the page's copy, plain lines inside the game,
   the banned word, no form, and no script, stylesheet or font from another origin.
 - The forms are Psycho and Syber and the merged form is Psycho Syber. Use no other spelling of the game's name or of
-  a form's name anywhere in `psycho-syber/arena/`: `node psycho-syber/test/arena.mjs` runs CI's name guard on it.
+  a form's name anywhere in `psycho-syber/arena/` or `workers/duel/`: `node psycho-syber/test/arena.mjs` runs CI's
+  name guard on both.
 - An earlier build, made outside this repository, had a story mode and a codex of research theses. The owner left
   both off the site: its copy states facts a reader can check. Do not add either without the owner's direction.
-- The files are `index.html`, `arena.css`, `game.js` (one classic script), `link.js` (the duel's invite and reply
-  codes; no DOM) and `vendor/three.min.js`, which is three.js r160 as npm publishes it, with its licence beside it.
-  The test checks the library's hash: replace the file whole or not at all. Write the page's links without a `?v=`
-  token; this is the one page under `psycho-syber/` that `scripts/stamp.mjs` stamps.
-- The Duel is the one place on the site where a visitor's browser connects to anything but syberlabs.io. The two
-  browsers open a direct WebRTC link. No server of ours takes part: the first player sends an invite and the second
-  sends back a reply, as links (`#d=`, `#r=`) or as pasted text. The owner chose this over a third-party broker and
-  over the staff Function. Do not add a signalling server, a relay (TURN) or a library for it without the owner's
-  direction.
-- The scripts name one address, `stun:stun.cloudflare.com:3478`, which tells a browser its public address. The test
-  fails if they name another or call `fetch`.
-- Nothing is contacted until the visitor presses `Make an invite` or `Answer the invite`. Opening an invite link only
-  shows it. Keep it so.
-- An invite and a reply contain the network addresses of the browser that made them. The panel says so beside each,
-  and "What is sent" on the page and "Game duels" on `/privacy/` say what a duel sends and that SyberLabs receives
-  none of it. A change to what is sent changes all three in the same commit.
-- Waves sends nothing. The best score and the aim speed are `localStorage` keys that begin `psycho-syber.arena.`. A
-  reply link opened in a new tab reaches the tab that made the invite through a `BroadcastChannel` named
-  `psycho-syber.arena`, which does not leave the browser.
+- The files are `index.html`, `arena.css`, `game.js` (one classic script) and `vendor/three.min.js`, which is
+  three.js r160 as npm publishes it, with its licence beside it. The test checks the library's hash: replace the
+  file whole or not at all. Write the page's links without a `?v=` token; this is the one page under
+  `psycho-syber/` that `scripts/stamp.mjs` stamps.
+- The Duel goes through a relay of ours, `workers/duel/`: a Cloudflare Worker named `syberlabs-duel` on the route
+  `syberlabs.io/duel/*`, with one Durable Object per duel. Each browser opens one WebSocket to it; the two browsers
+  never connect to each other. This is the second design. The first (November 19) was a direct WebRTC link with no
+  server, opened by an invite link and a reply link; on November 20 the owner found that his network refused it and
+  asked for a design that plays on any network. Do not bring back a direct link, a STUN or TURN server, or a
+  third-party broker without the owner's direction.
+- The page talks to syberlabs.io only. The script builds the relay's address from the page's own origin and names no
+  other; `window.__arenaRelay` is read only on a page served from `localhost` or `127.0.0.1`, for the browser test.
+  The relay is not part of the Pages project: `dist/` holds none of it, and a preview copy of the site has no duel.
+- Nothing is contacted until the visitor presses `Start a duel` or `Join`. Opening a duel's link (`#j=CODE`) only
+  shows its code. Keep it so.
+- The relay keeps what decides a duel: the countdown, both players' health, the rounds and the score. Each browser
+  still reports its own hits; the relay counts them only in a live round and caps one hit and one second of hits
+  (`LIMITS` in `workers/duel/room.js`). It does not check aim, and the page says so. Do not move a decision about
+  health, a round or the score back into the browser.
+- The relay stores nothing and writes no log: no `console`, no storage, no database, no observability in its
+  config. It takes requests only with the site's origin (`ORIGINS` in its `wrangler.toml`), and counts new duels
+  and joins per network address for a minute with Cloudflare's rate limiter. "What is sent" on the page and "Game
+  duels" on `/privacy/` say all of this. A change to what is sent, kept or counted changes the relay, the page and
+  `/privacy/` in the same commit; `arena.mjs` fails if the three disagree on the points it can read.
+- A duel's code is six characters from an alphabet without I, L, O, 0 and 1. A room waits ten minutes for its
+  second player and lives 45 minutes at most. A dropped connection keeps its seat for twelve seconds, and the page
+  takes it back with the token its welcome carried.
+- A duel does not pause, because one browser cannot stop the other's game. In a duel the panel says the duel goes on,
+  that the player stands still and can be hit, and that the next round closes it. Never show "Paused." over a duel.
+- Waves sends nothing. The best score and the aim speed are `localStorage` keys that begin `psycho-syber.arena.`.
 - While a game is on, the stage covers the whole screen, the header included (`run` on `#ar-stage`). Pause and the
   two end panels have `Leave the game`, which brings the page back: keep menu, privacy and account access one tap
   from Pause.
-- A duel does not pause, because one browser cannot stop the other's game. In a duel the panel says the duel goes on,
-  that the player stands still and can be hit, and that the next round closes it. Never show "Paused." over a duel.
-- Each browser reports its own hits, and the first player's browser keeps the rounds and the score. The page says a
-  player who alters the game can cheat, that there is no relay, and what has not been tested. Keep those lines true:
-  when a duel has been played across two networks, on a phone or in another browser, change the line that says it
-  has not.
-- `node psycho-syber/test/arena.mjs` runs in CI: the codes pack and read back, the page holds every element the script
-  looks up, and the rules above hold. `psycho-syber/test/arena-browser.mjs` plays a wave at a desktop and a phone
-  width and two duels in headless Chrome; CI has no browser, so run it by hand after a change to `game.js` or
-  `link.js` and put what it printed in the pull request. `psycho-syber/README.md` ("ARENA") has the messages the two
-  browsers exchange.
+- The page says what has not been tested. Keep those lines true: when two people have played a duel through the
+  relay on Cloudflare, on a phone or in another browser, change the line that says they have not.
+- CI runs `node psycho-syber/test/arena.mjs` (the page holds every element the script looks up; the rules above;
+  the game and the relay agree on version, codes and refusals) and `node --test workers/duel/room.test.mjs` (the
+  room's rules, with a clock the test moves), and bundles the relay. `psycho-syber/test/arena-browser.mjs` plays a
+  wave at a desktop and a phone width and a duel through the real Worker under `wrangler dev`; CI has no browser, so
+  run it by hand after a change to `game.js` or `workers/duel/` and put what it printed in the pull request.
+- The relay is deployed by `.github/workflows/duel-relay.yml`, not by the Pages workflow, so a relay that cannot
+  deploy never holds back the site. `workers/duel/README.md` has the messages, the limits and how to deploy.
 - The page's first section names the four products and Lacuna Institute. With reduced motion the picture behind the
   title holds still.
 
