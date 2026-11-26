@@ -409,10 +409,13 @@ export function mount(canvas, { zone, surface, wide, onLayout, onState } = {}) {
     root.requestAnimationFrame(frame);
     if (!visible || document.hidden || !G || document.documentElement.classList.contains('sy-atlas-open')) { last = 0; return; }
     const raw = last ? (now - last) / 1000 : 0.016, dt = Math.min(raw, 0.05); last = now;
+    const began = performance.now();
     update(dt); render(dt);
-    if (raw > 0.024) slow++; else fast++;
-    if (slow + fast >= 60) {   // a slow device draws fewer pixels
-      if (slow > 36 && dpr > 1) { maxDpr = dpr = Math.max(1, dpr - 0.5); canvas.width = Math.round(G.W * dpr); canvas.height = Math.round(G.H * dpr); back = ground(G, dpr); }
+    // Slow means the drawing takes long or frames come more than 40ms apart. 33ms apart is not slow: a browser
+    // saving power runs at 30 frames a second anyway.
+    if (performance.now() - began > 10 || raw > 0.04) slow++; else fast++;
+    if (slow + fast >= 60) {   // a slow device draws fewer pixels; the canvas is drawn again at once, never left cleared
+      if (slow > 36 && dpr > 1) { maxDpr = dpr = Math.max(1, dpr - 0.5); canvas.width = Math.round(G.W * dpr); canvas.height = Math.round(G.H * dpr); back = ground(G, dpr); render(0); }
       slow = fast = 0;
     }
   }
