@@ -116,6 +116,9 @@ jobs:
           test ! -e dist/.private-githits
           test -s dist/syberlabs.css
           test -s dist/syberlabs.js
+          # The Menu's field is a chunk of its own, fetched when the Menu first opens, and no page loads it up front.
+          ls dist/assets/attractor-*.js > /dev/null
+          if grep -rqE '<script[^>]+assets/attractor-' dist --include='*.html'; then echo 'a page loads the Menu field up front'; exit 1; fi
           test -s dist/system-map.js
           for pair in rise:rise flyspace:omnios; do grep -Fq "data-system-map=\"${pair##*:}\"" "dist/projects/${pair%%:*}/index.html"; done
           grep -Fq 'pj-run__out' dist/projects/syberwork/index.html
