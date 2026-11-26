@@ -6,6 +6,7 @@
    The points live on the graphics card. Every form is one buffer of positions, and a change of form is a blend from
    one buffer to another, a point at a time, so the cloud pours from one shape into the next. A band of light runs
    along the order the points were computed in, which is the direction of the flow. The pointer turns the attractor.
+   Left alone, the cloud stays DWELL seconds in an attractor and then pours into the next one, round and round.
 
    mount(atlas, opts) adds a canvas to the Menu's panel and returns { open, close, show, word, next, layout }, or
    null where there is no WebGL (the Menu is then as it was). It draws only while the Menu is open. With reduced
@@ -27,7 +28,7 @@ export const FORMS = [
     f: (x, y, z, o) => { o[0] = 10 * (y - x); o[1] = x * (28 - z) - y; o[2] = x * y - 8 / 3 * z; } },
 ];
 const WORD = FORMS.length;   // the index of the name, after the attractors
-const STRANDS = 14, BURN = 600, MORPH = 1.5, HOLD = 0.75;
+const STRANDS = 14, BURN = 600, MORPH = 1.5, HOLD = 0.75, DWELL = 7;
 
 // A small repeatable random number, so a form is the same each time it is built.
 function prng(seed) { let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
@@ -165,6 +166,7 @@ export function mount(atlas, { onForm } = {}) {
   let from = 0, to = 0, T = 1, queued = null, shown = -1, attractor = 0;
   let W = 0, H = 0, dpr = 1, cx = 0, cy = 0, radius = 100, band = false;
   let running = false, raf = 0, last = 0, time = 0, yaw = 0.6, pitch = 0.18, aimYaw = 0, aimPitch = 0, turn = 0, hold = 0, fade = 1;
+  let dwell = 0, pinned = false;   // dwell: seconds in the present attractor. pinned: the visitor is holding it there.
 
   let bound = false, warmed = false;
   function bind() {
@@ -179,7 +181,7 @@ export function mount(atlas, { onForm } = {}) {
     if (!buffer(i)) return;
     if (T < 1) { queued = i === to ? null : i; return; }
     if (i === to) return;
-    from = to; to = i; T = still ? 1 : 0; queued = null;
+    from = to; to = i; T = still ? 1 : 0; queued = null; dwell = 0;
     if (still) from = to;
     bind(); say(i);
     if (still) draw();
@@ -190,7 +192,8 @@ export function mount(atlas, { onForm } = {}) {
     const vw = root.innerWidth, vh = root.innerHeight, p = panel.getBoundingClientRect(), head = atlas.querySelector('.sy-atlas__head');
     band = vw < 1100;
     const top = head ? head.getBoundingClientRect().bottom + panel.scrollTop : 64;
-    if (band) { const h = Math.round(Math.min(300, Math.max(200, vh * 0.3))); atlas.style.setProperty('--sy-stage', `${h}px`); cx = vw / 2; cy = top + h * 0.45; radius = Math.min(vw * 0.4, h * 0.38); }
+    // the band holds the form, 16px of air, the caption's two lines, and room under them before the first heading
+    if (band) { const h = Math.round(Math.min(340, Math.max(240, vh * 0.36))); atlas.style.setProperty('--sy-stage', `${h}px`); radius = Math.min(vw * 0.42, (h - 96) / 2); cx = vw / 2; cy = top + 14 + radius; }
     else { atlas.style.removeProperty('--sy-stage'); const zone = p.width * 0.42; cx = p.right - zone / 2 - 8; cy = Math.max(top + 40, vh * 0.5); radius = Math.min(zone * 0.47, (vh - top - 130) * 0.47); }
     // the caption (src/site/nav.js adds it) stands under the form: these say where that is
     atlas.style.setProperty('--sy-fx', `${Math.round(cx)}px`); atlas.style.setProperty('--sy-fy', `${Math.round(cy)}px`); atlas.style.setProperty('--sy-fr', `${Math.round(radius)}px`);
@@ -220,10 +223,14 @@ export function mount(atlas, { onForm } = {}) {
     if (!running) return;
     raf = root.requestAnimationFrame(frame);
     if (document.hidden) { last = 0; return; }
-    const dt = Math.min(last ? (now - last) / 1000 : 0.016, 0.05); last = now;
+    // dt moves the picture and is capped, so a slow frame is not a jump. wall counts the seconds the name is held
+    // and an attractor stays, which are the same on a slow device.
+    const wall = Math.min(last ? (now - last) / 1000 : 0.016, 0.5), dt = Math.min(wall, 0.05); last = now;
     time += dt;
-    if (hold > 0) { hold -= dt; if (hold <= 0) go(attractor); }
+    if (hold > 0) { hold -= wall; if (hold <= 0) go(attractor); }
     if (T < 1) { T = Math.min(1, T + dt / MORPH); if (T >= 1 && queued !== null) go(queued); }
+    // left alone in an attractor, the cloud moves on to the next
+    else if (hold <= 0 && to !== WORD && !pinned) { dwell += wall; if (dwell >= DWELL) { attractor = (to + 1) % FORMS.length; go(attractor); } }
     turn += dt * 0.16;
     yaw += (turn + aimYaw - yaw) * Math.min(1, dt * 3.2); pitch += (0.2 + aimPitch - pitch) * Math.min(1, dt * 3.2);
     draw();
@@ -252,7 +259,9 @@ export function mount(atlas, { onForm } = {}) {
         if (!warmed) { warmed = true; setTimeout(() => { buffer(attractor); warm(0); }, 80); }
       });
     },
-    close() { running = false; hold = 0; root.cancelAnimationFrame(raf); attractor = (attractor + 1) % FORMS.length; },
+    close() { running = false; hold = 0; pinned = false; root.cancelAnimationFrame(raf); attractor = (attractor + 1) % FORMS.length; },
+    // While the visitor holds the cloud in one attractor (the pointer is on a group of links) it does not move on.
+    pin(on) { pinned = !!on; dwell = 0; },
     // Show one attractor (a group of links asks for its own), the name, or the next attractor in turn.
     // While the name is still held at opening, this only chooses what it lets go into.
     show(i) { attractor = ((i % FORMS.length) + FORMS.length) % FORMS.length; if (hold <= 0) go(attractor); },
