@@ -1,5 +1,5 @@
 /* The one script every static page loads, built unhashed to /syberlabs.js (vite.config.js, src/site/boot.js). The
-   homepage's own script (src/home/main.js) calls boot() too. Every page reads and works without it: it adds the
+   homepage's and the overview page's own scripts (src/home/main.js, src/overview/main.js) call boot() too. Every page reads and works without it: it adds the
    Menu's keyboard and focus behaviour (src/site/nav.js) and a back-to-top button. */
 import { menu } from './nav.js';
 

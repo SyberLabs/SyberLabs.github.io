@@ -1,11 +1,11 @@
 // PSYCHO SYBER: the page's game loop. sim.js decides what happens, render.js draws it twice (one look per form),
 // post.js puts it on screen, audio.js plays it. This file wires them to the keyboard, the mouse and the page.
-import { STAGES, ATLAS, SHIP, ANOMALY, TOLD, forTouch } from './levels.js?v=20261119a';
-import { VOICE } from './voice.js?v=20261119a';
-import { newGame, step, T, verdictAt, corrupted, bodiesTurned, hintText } from './sim.js?v=20261119a';
-import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261119a';
-import { makePost } from './post.js?v=20261119a';
-import { makeAudio } from './audio.js?v=20261119a';
+import { STAGES, ATLAS, SHIP, ANOMALY, TOLD, forTouch } from './levels.js?v=20261125a';
+import { VOICE } from './voice.js?v=20261125a';
+import { newGame, step, T, verdictAt, corrupted, bodiesTurned, hintText } from './sim.js?v=20261125a';
+import { VW, VH, buildTiles, drawFrame, makeFx, feed, stepFx } from './render.js?v=20261125a';
+import { makePost } from './post.js?v=20261125a';
+import { makeAudio } from './audio.js?v=20261125a';
 
 const $ = id => document.getElementById(id);
 const stage = $('ps-stage'), view = $('ps-view'), hud = $('ps-hud'), hintEl = $('ps-hint'), rsvpEl = $('ps-rsvp'), toastEl = $('ps-toast'), wakeEl = $('ps-wake'), wakeWord = $('ps-wake-word');

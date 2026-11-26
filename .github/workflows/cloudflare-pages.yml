@@ -35,8 +35,8 @@ jobs:
       - name: Staff sign-in tests
         # Quoted glob: `node --test server/` does not find them. The PR pastes the reported pass count.
         run: node --test 'server/test/**/*.test.js'
-      - name: Rules of the homepage's Line
-        # In the first screen nothing is published without a press on Approve (CLAUDE.md, "Homepage").
+      - name: Rules of the overview page's Line
+        # In the Line's card nothing is published without a press on Approve (CLAUDE.md, "Overview page").
         run: node --test src/visuals/line-sim.test.mjs
       - name: Check shared header and footer
         run: node scripts/site-chrome.mjs --check
@@ -92,9 +92,17 @@ jobs:
         run: |
           pnpm build:site
           test -s dist/index.html
-          # The homepage is complete HTML and loads no framework: React is fetched only by the system maps.
-          grep -Fq 'class="home-hero"' dist/index.html
-          if grep -Eq 'assets/react-[^"]+\.js' dist/index.html; then echo 'the homepage loads React'; exit 1; fi
+          test -s dist/overview/index.html
+          # The homepage is one visual and Menu (CLAUDE.md, "Homepage"): Elan's canvas, the site map, and none of the
+          # parts that moved to the overview page.
+          grep -Fq 'data-visual="elan"' dist/index.html
+          if grep -Eq 'class="(home-hero|sy-header|sy-footer)' dist/index.html; then echo 'the homepage is more than one visual and Menu'; exit 1; fi
+          # The overview page is complete HTML, with the Line's card in Factory and no Elan.
+          grep -Fq 'class="home-hero"' dist/overview/index.html
+          grep -Fq 'data-visual="line"' dist/overview/index.html
+          if grep -Fq 'data-visual="elan"' dist/overview/index.html; then echo 'Elan returned to the overview page'; exit 1; fi
+          # Neither page loads a framework: React is fetched only by the system maps.
+          for page in dist/index.html dist/overview/index.html; do if grep -Eq 'assets/react-[^"]+\.js' "$page"; then echo "$page loads React"; exit 1; fi; done
           grep -Fq '@font-face' dist/syberlabs.css
           test ! -e dist/.private-githits
           test -s dist/syberlabs.css
@@ -103,16 +111,19 @@ jobs:
           for pair in rise:rise flyspace:omnios; do grep -Fq "data-system-map=\"${pair##*:}\"" "dist/projects/${pair%%:*}/index.html"; done
           grep -Fq 'pj-run__out' dist/projects/syberwork/index.html
           grep -Fq 'sy-atlas' dist/index.html
-          grep -Fq 'id="products"' dist/index.html
-          grep -Fq 'id="partners"' dist/index.html
-          grep -Fq 'Book a consultation' dist/index.html
+          grep -Fq 'href="/overview/"' dist/index.html
+          grep -Fq 'id="products"' dist/overview/index.html
+          grep -Fq 'id="partners"' dist/overview/index.html
+          grep -Fq 'Book a consultation' dist/overview/index.html
           # The site speaks for the company: no hiring pitch, résumé or personal contact may return to any public page.
           if grep -rqiE 'mateo|robles|sykosyber|sdcarlson|automateon|mateo-site|hello\.mateorobles|925[-. ]?949[-. ]?3105|Interview Mateo|View résumé|Open to software engineering|job seekers' dist --include='*.html' --include='*.js' --include='*.json' --include='*.txt' --include='*.xml'; then echo 'Personal or hiring copy returned'; exit 1; fi
           test ! -e dist/mateo
           grep -Fxq '/mateo/* / 301' dist/_redirects
-          grep -Fq 'id="contact"' dist/index.html
-          if grep -Fq 'Try a one-minute reading' dist/index.html; then echo 'Retired homepage funnel returned'; exit 1; fi
-          if grep -Fq 'RISE Plus' dist/index.html; then echo 'Unlaunched promotion returned'; exit 1; fi
+          grep -Fq 'id="contact"' dist/overview/index.html
+          for page in dist/index.html dist/overview/index.html; do
+            if grep -Fq 'Try a one-minute reading' "$page"; then echo "Retired homepage funnel returned: $page"; exit 1; fi
+            if grep -Fq 'RISE Plus' "$page"; then echo "Unlaunched promotion returned: $page"; exit 1; fi
+          done
           grep -Fq 'id="dependencies"' dist/stack/index.html
           grep -Fq 'rise.syberlabs.io<wbr>/api/mcp' dist/projects/rise/index.html
           grep -Fq 'syberlabs.js' dist/services/index.html
@@ -173,20 +184,22 @@ jobs:
           grep -Fq '<!--email_off-->' dist/lacuna/index.html
           grep -Fq '<!--email_off-->' dist/lacuna/research/paracas-bundles/index.html
           grep -Fq 'href="/lacuna/"' dist/index.html
-          # The homepage's Lacuna section, and the header link every page carries.
-          grep -Fq 'id="lacuna"' dist/index.html
+          # The overview page's Lacuna section, and the header link every page carries.
+          grep -Fq 'id="lacuna"' dist/overview/index.html
           grep -Fq '<a href="/lacuna/">Lacuna</a>' dist/services/index.html
           # /privacy/ tells visitors the site has no forms: Lacuna's "Get new findings" is an email link.
           if grep -rqi '<form' dist/lacuna --include='*.html'; then echo 'form on a Lacuna page'; exit 1; fi
           # Atlas sources (src/lacuna/) are not published.
           test ! -e dist/src
-          # PSYCHO SYBER (/psycho-syber/): the page, the game, its card, and the homepage's link to it. Its tests are not published.
+          # PSYCHO SYBER (/psycho-syber/): the page, the game, its card, and the links to it from the homepage's Menu and the
+          # overview page's first screen. Its tests are not published.
           test -s dist/psycho-syber/index.html
           test -s dist/psycho-syber/game/main.js
           test -s dist/psycho-syber/game/levels.js
           test -s dist/og/psycho-syber.png
           test ! -e dist/psycho-syber/test
           grep -Fq 'href="/psycho-syber/"' dist/index.html
+          grep -Fq 'href="/psycho-syber/"' dist/overview/index.html
           grep -Fq 'href="/lacuna/#paracas"' dist/psycho-syber/index.html
           if grep -rqi '<form' dist/psycho-syber --include='*.html'; then echo 'form on the game page'; exit 1; fi
           # PSYCHO SYBER: ARENA (/psycho-syber/arena/): the page, its scripts, the three.js it serves itself, and the links

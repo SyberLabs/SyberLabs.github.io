@@ -1,7 +1,7 @@
 /* SyberLabs: the Lacuna visual. The Earth drawn as evenly spaced dots, turning. The research sites of the Lacuna
    Atlas are marked on it: a lit dot for a Lacuna investigation, a ring for an open question. As the globe turns it
    names each site in turn, and onSite reports the one named so the caption and the links can follow. It can be
-   turned by hand: mount returns grab, turn and release, which src/home/globe.js calls as the globe is dragged.
+   turned by hand: mount returns grab, turn and release, which src/overview/globe.js calls as the globe is dragged.
    Mounted in a section. */
 import { LAND, SITES } from './atlas-data.js';
 
@@ -59,8 +59,8 @@ export function mount(canvas, { onSite } = {}) {
   }
 
   function render() {
-    R = Math.min(W, H) * 0.38;
-    const cx = W / 2, cy = H * 0.52;
+    R = Math.min(W * 0.42, H * 0.33);
+    const cx = W / 2, cy = H * 0.46;
     ctx.globalCompositeOperation = 'source-over';
     ctx.clearRect(0, 0, W, H);
 

@@ -3,7 +3,7 @@
  *   Midnight Black #02070A is the material: every page, menu and footer sits on it.
  *   Electric Blue #0297DE is the system's light: links, focus and structure.
  *   Cantaloupe Orange #FC734D is heat, used a little: the action a person takes (solid buttons), live signals,
- *   the Approve step and the "you are here" dot.
+ *   the "you are here" dot, and in the Line what was stopped or returned. Approve is green there (--sy-success).
  * Text on either colour fill is Midnight (white on the blue is 3.2:1; Midnight on it is 6.3:1, and 7.4:1 on orange).
  * /syberlabs.css is fonts/site.css followed by tokens, base, type, chrome and components, in that order
  * (vite.config.js). kit/v2/ is the separate kit that product apps vendor; the site does not load it.

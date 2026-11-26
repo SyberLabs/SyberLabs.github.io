@@ -1,4 +1,7 @@
-/* SyberLabs: Elan, mounted in a section. One rule: every finished duplex forks into two. Dot-matrix material. */
+/* SyberLabs: Elan, the homepage's one visual (src/home/). One rule: every finished duplex forks into two. Dot-matrix
+   material. mount(canvas, opts): `pad` is the room kept free at the foot of the canvas (110px unless given), `fill`
+   scales the finished figure inside the canvas (1 unless given; less leaves room for the drifting dots), and
+   `zoom: false` keeps one scale throughout, where the default starts close and draws back as the figure grows. */
 const root = typeof window !== 'undefined' ? window : globalThis;
 var TAU = 6.283185307, V = 0.3, W0 = 0.062, DOCK = 0.6, START = -1.0, LAG = 0.16;
 // lineage colours: vellum, electric-hi, electric, cantaloupe-hi, steel; 5 = the dim centre row
@@ -116,7 +119,7 @@ function mount(canvas, opts) {
   var still = root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var W = 0, H = 0, dpr, maxDpr = Math.min(root.devicePixelRatio || 1, 2), F, fi = 0;
   var PULSE = 1.4, HOLD = 0.4, RELEASE = 2.2;
-  function load() { F = fit(FORMS[fi], W, H); if (opts.onForm) opts.onForm(F.spec); }
+  function load() { F = fit(FORMS[fi], W, H, opts.pad); if (opts.fill) F.scale *= opts.fill; if (opts.onForm) opts.onForm(F.spec); }
   function size() {
     var r = canvas.getBoundingClientRect();
     var nw = Math.max(2, Math.round(r.width)), nh = Math.max(2, Math.round(r.height));
@@ -126,7 +129,7 @@ function mount(canvas, opts) {
     load(); if (still) paintStill();
   }
   function paintStill() {
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); render(ctx, W, H, F, F.tEnd + 1, 0, -2);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); render(ctx, W, H, F, F.tEnd + 1, 0, -2, opts.zoom);
     if (opts.onState) opts.onState('alive', F.spec.d);
   }
   var tau = START, t = 0, mode = 0, clock = 0, from = 0, last = 0, tick = 0, lastLabel = '', lastGen = -1;
@@ -156,7 +159,7 @@ function mount(canvas, opts) {
       if (k >= 1) { fi = (fi + 1) % FORMS.length; load(); tau = START; mode = 0; }
     }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    render(ctx, W, H, F, tau, t, front);
+    render(ctx, W, H, F, tau, t, front, opts.zoom);
     if (raw > 0.024) slow++; else fast++;
     if (slow + fast >= 50) {
       if (slow > 30 && dpr > 1) { dpr = Math.max(1, dpr - 0.5); maxDpr = dpr; canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); }
@@ -173,14 +176,4 @@ function mount(canvas, opts) {
   if (!still) root.requestAnimationFrame(frame);
 }
 
-// A product sigil: the finished form at low depth, as a still dot-matrix glyph.
-function sigil(canvas, idx) {
-  var base = FORMS[idx % FORMS.length], spec = { n: base.n, th: base.th, r: base.r, d: Math.min(base.d, idx === 1 ? 4 : 3) };
-  var r = canvas.getBoundingClientRect(), S = Math.max(24, Math.round(r.width)), dpr = Math.min(root.devicePixelRatio || 1, 3);
-  canvas.width = canvas.height = Math.round(S * dpr);
-  var ctx = canvas.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  var F = fit(spec, S, S, 0, 0.2);
-  render(ctx, S, S, F, F.tEnd + 5, 0, -2, false);
-}
-
-export { mount, sigil };
+export { mount };
