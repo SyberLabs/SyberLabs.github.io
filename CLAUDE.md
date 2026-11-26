@@ -30,7 +30,8 @@ published at `/kit/v2/` unchanged, and the site does not load it.
 - Every typeface is served from `/fonts/` (`fonts/README.md`). No page may load a font, stylesheet or script from
   another origin; CI fails if one does, and `/privacy/` tells visitors so.
 - Write links to local stylesheets and scripts without a `?v=` token. `scripts/stamp.mjs` adds each file's content
-  hash to its links in `dist/` at the end of the build. Two links are outside its reach: the staff pages' links to
+  hash to its links in `dist/` at the end of the build. It leaves the game's own files (they share a token set by
+  hand, see PSYCHO SYBER) and the Lacuna pages as they are. Two links are outside its reach: the staff pages' links to
   `/syberlabs.css` and `/staff.css` in `server/views/layout.js`. Change their token by hand (and the test that names
   it) when either file changes.
 - One title style: `main h1` in `src/styles/type.css`. A page sets its title's measure and margins, never its font.
@@ -216,8 +217,8 @@ overview page and that game's title do not: one more button on the title pushes 
   both off the site: its copy states facts a reader can check. Do not add either without the owner's direction.
 - The files are `index.html`, `arena.css`, `game.js` (one classic script) and `vendor/three.min.js`, which is
   three.js r160 as npm publishes it, with its licence beside it. The test checks the library's hash: replace the
-  file whole or not at all. Write the page's links without a `?v=` token; this is the one page under
-  `psycho-syber/` that `scripts/stamp.mjs` stamps.
+  file whole or not at all. Write the page's links without a `?v=` token: `scripts/stamp.mjs` stamps
+  all of them, where on the first game's page it stamps only the links to the site's shared files.
 - The Duel goes through a relay of ours, `workers/duel/`: a Cloudflare Worker named `syberlabs-duel` on the route
   `syberlabs.io/duel/*`, with one Durable Object per duel. Each browser opens one WebSocket to it; the two browsers
   never connect to each other. This is the second design. The first (November 19) was a direct WebRTC link with no
