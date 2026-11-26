@@ -291,64 +291,48 @@ It shares nothing with the game above but the two forms' names and this folder.
 | File | What it does |
 |---|---|
 | `arena/index.html`, `arena/arena.css` | The page: the stage, the HUD, the touch controls, the panels, and the copy under it. Its header and footer come from `scripts/site-chrome.mjs` |
-| `arena/game.js` | The whole game, one classic script: the block world, the two forms, enemies, waves, operators, sound, the duel and the loop |
-| `arena/link.js` | Packs a WebRTC session description into an invite or reply code and reads one back. No DOM, no network |
+| `arena/game.js` | The whole game, one classic script: the block world, the two forms, enemies, waves, operators, sound, the duel's client and the loop |
 | `arena/vendor/three.min.js`, `three.LICENSE.txt` | three.js r160, `build/three.min.js` from the npm package `three@0.160.0`, unchanged. It prints one deprecation notice to the console when it loads |
-| `test/arena.mjs` | Runs in CI, in Node: the codes, the page's ids, the page's rules, the library's hash |
-| `test/arena-browser.mjs` | Run by hand: a wave at a desktop and a phone width, and two duels between two browser contexts |
+| `../workers/duel/` | The duel's relay: a Cloudflare Worker and a Durable Object. Its own `README.md` has the messages, the limits and how to deploy |
+| `test/arena.mjs` | Runs in CI, in Node: the page's ids, the page's rules, that the game and the relay agree, the library's hash |
+| `test/arena-browser.mjs` | Run by hand: a wave at a desktop and a phone width, and a duel through the relay under `wrangler dev` |
 
 `game.js` was built outside this repository and ported. The port took out a story mode and its codex, renamed the
-forms, put every element id under `ar-`, scoped the styles to `#ar-stage`, and replaced a third-party broker with
-the invite and reply described here.
+forms, put every element id under `ar-` and scoped the styles to `#ar-stage`.
 
-### How two browsers find each other
+### The duel, twice
 
-1. The first player (`D.role === 'lead'`) makes an `RTCPeerConnection` with two data channels, waits up to four
-   seconds for the browser to list its addresses, and packs the offer: `…/psycho-syber/arena/#d=<code>`.
-2. The second player (`'join'`) opens that link. The page shows the invite and waits for a press. It then sets the
-   offer, packs its answer as `…/psycho-syber/arena/#r=<code>`, and waits.
-3. The first player's tab takes the reply: pasted into the panel, or handed over by a new tab that opened the reply
-   link (a `BroadcastChannel`, same browser only). The channels open and the first round starts.
+The first duel (November 19) was a direct WebRTC link between the two browsers, with no server: an invite link
+carried one browser's session description and a reply link carried the other's. It kept the site's promise that a
+page talks to nobody but syberlabs.io and one STUN server, and it did not work on the owner's network: with no
+relay, two networks that refuse direct links cannot connect, and many do.
 
-A code is `1`, then `o` or `a`, then `z` (deflate-raw) or `p` (plain), then base64url. An invite is about 600
-characters. TCP candidates are dropped before packing. `link.js` refuses a description with an audio or video line.
+The second (November 20) sends everything through `workers/duel/`. It works wherever the site loads, the players
+never learn each other's address, a code is six characters, and the relay keeps health and the score. What it
+costs: every message crosses Cloudflare twice, and the site now runs a program that takes connections.
 
-The one STUN server is Cloudflare's. With no answer from it (a sandbox, or a network that blocks UDP) the code holds
-local addresses only, the panel says so, and the link opens only on the same network. There is no TURN relay.
-
-### What the two browsers send
-
-`ctl` is ordered and reliable. `pos` is unordered and is never resent. Every message is a JSON array.
-
-| First item | Channel | From | What it carries |
-|---|---|---|---|
-| `v` | ctl | both | The protocol version (`NET_V`). The first round starts when the lead has the join's |
-| `R` | ctl | lead | A round starts: its number, the lead's form, the score |
-| `E` | ctl | lead | A round ended: who won it, the score, whether the duel is over |
-| `d` | ctl | join | My health ran out |
-| `x` | ctl | join | Rematch |
-| `h` | ctl | both | I hit you: damage, and the push in x, y, z. The receiver clamps each |
-| `k` | ctl | both | Blocks I broke, by index |
-| `b`, `r` | ctl | both | A blast to draw; a rocket to draw |
-| `s` | pos | both | 30 times a second: position, velocity, aim, health, what the body is doing, the last arc shot |
-| `p` | pos | both | Once a second, so that six seconds of silence means the other side is gone |
-
-Each side draws the other 100 ms in the past, between the two positions on either side of that moment. A hit is
-decided by the browser that fired. The lead decides rounds and the score.
+In `game.js` the duel is the block under "duel: Psycho against Syber, through the site's relay". `D.seat` is 0 for
+the player who started the duel. `beginRound`, `endRound` and the handler for `H` only do what the relay says; the
+browser decides nothing about health, rounds or the score. Each side draws the other 100 ms in the past, between
+the two positions on either side of that moment.
 
 ### Running the browser checks
 
     pnpm build:site
+    npm ci --prefix deploy
     PW_REQUIRE_FROM=/opt/npm-tools/package.json PW_EXECUTABLE=/usr/bin/google-chrome node psycho-syber/test/arena-browser.mjs shots all
 
-`ARENA_REPLY_WAIT=60` holds the reply for a minute before it is pasted, as a message app would. The script advances
-both games by calling `update()` itself: the game caps a frame at 34 ms, and headless Chrome draws a few frames a
-second, so a three-second countdown would take half a minute of real time.
+The script starts the relay itself with `wrangler dev`, allowing its own page's origin, and points the pages at it
+through `window.__arenaRelay`, which the game reads only on `localhost` and `127.0.0.1`. `ARENA_RELAY=ws://…` uses a
+relay that is already running. The game caps a frame at 34 ms and headless Chrome draws a few frames a second, so
+the script also advances both games by calling `update()`; the relay's countdown and its twelve seconds of grace
+run in real time.
 
 ### Not yet done
 
-- No person has played a duel across two networks, on a phone, or in Firefox or Safari.
+- Two people have not played a duel through the relay on Cloudflare, on a phone, or in Firefox or Safari.
 - The page has no social card of its own; it uses the game's.
 - The header, the Menu, the homepage and `llms.txt` do not list the page.
 - The picture's colours (rose for Psycho, teal for Syber) are the earlier build's, not the first game's.
-
+- A player who comes back after a dropped connection has missed the blocks broken while they were away; the two
+  arenas agree again at the next round.

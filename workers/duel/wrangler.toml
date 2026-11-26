@@ -1,0 +1,40 @@
+# The duel relay for PSYCHO SYBER: ARENA (CLAUDE.md, "PSYCHO SYBER: ARENA"; README.md here).
+# A Worker beside the Pages project, on one path of the same site, so the game page talks to syberlabs.io only.
+# It has no secrets, no database and no storage of its own. Deployed with `wrangler deploy` from this folder, by
+# .github/workflows/duel-relay.yml or by hand.
+name = "syberlabs-duel"
+main = "index.js"
+compatibility_date = "2026-10-01"
+workers_dev = false
+preview_urls = false
+routes = [{ pattern = "syberlabs.io/duel/*", zone_name = "syberlabs.io" }]
+
+[vars]
+# The pages that may open a duel. A request from any other origin is refused before a room is touched.
+ORIGINS = "https://syberlabs.io"
+
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "DuelRoom"
+
+# A Durable Object class on the free plan must be declared SQLite-backed. The room uses no storage.
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DuelRoom"]
+
+# Per network address, at each Cloudflare location: new duels and joins in one minute.
+[[ratelimits]]
+name = "NEW_ROOMS"
+namespace_id = "22201"
+
+  [ratelimits.simple]
+  limit = 6
+  period = 60
+
+[[ratelimits]]
+name = "JOINS"
+namespace_id = "22202"
+
+  [ratelimits.simple]
+  limit = 30
+  period = 60
