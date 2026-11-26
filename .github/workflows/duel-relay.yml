@@ -38,10 +38,12 @@ jobs:
         run: node --test workers/duel/room.test.mjs
       - name: Bundle the relay
         # No Cloudflare token in this job. The bundle made here is the one the deploy job ships (--no-bundle),
-        # by the same lockfile-pinned wrangler (RFC-0002 D12).
+        # by the same lockfile-pinned wrangler (RFC-0002 D12). The output path is absolute: wrangler reads a
+        # relative --outdir from the config file's directory, which put the bundle in workers/duel/relay-build/
+        # and failed the first run on main.
         run: |
           npm ci --prefix deploy
-          deploy/node_modules/.bin/wrangler deploy --config workers/duel/wrangler.toml --dry-run --outdir relay-build
+          deploy/node_modules/.bin/wrangler deploy --config workers/duel/wrangler.toml --dry-run --outdir "$GITHUB_WORKSPACE/relay-build"
           test -s relay-build/index.js
       - uses: actions/upload-artifact@v4
         with:
