@@ -1,0 +1,22 @@
+/* Elan, full screen (/elan/). Markup: elan/index.html. Tokens come from /syberlabs.css (src/styles/). */
+
+html, body { height: 100%; overflow: hidden; background: var(--sy-ink); }
+.elan { position: relative; height: 100vh; height: 100svh; background: var(--sy-ink); }
+
+/* The page's name, for a screen reader. */
+.elan-name { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* The visual takes the whole screen. A press lets the figure go. */
+.elan-view { position: absolute; inset: 0; display: block; width: 100%; height: 100%; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+/* The way back: one quiet mark in the corner, clear of a phone's notch, with a 44px target. */
+.elan-close { position: absolute; z-index: 1; top: max(12px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right)); display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--sy-mist); transition: color var(--sy-t-hover), background var(--sy-t-hover); }
+.elan-close:hover { color: var(--sy-vellum); background: rgba(241, 246, 249, .08); }
+.elan-close:focus-visible { outline: 2px solid var(--sy-electric-hi); outline-offset: 2px; color: var(--sy-vellum); }
+
+/* Without JavaScript nothing draws the visual: the name is shown, and the mark still goes back. */
+@media (scripting: none) {
+  .elan { display: grid; place-items: center; }
+  .elan-view { display: none; }
+  .elan-name { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip-path: none; color: var(--sy-vellum); font: 500 clamp(28px, 6vw, 44px)/1 var(--sy-sans); letter-spacing: -.03em; }
+}

@@ -7,6 +7,7 @@ import { defineConfig, transformWithEsbuild } from 'vite';
 //                   at build time and in `pnpm dev`, so the page is complete without JavaScript. Its script is
 //                   src/home/main.js.
 //   /overview/      the overview page, made the same way from src/overview/page.js and src/overview/main.js.
+//   /elan/          Elan, full screen. Its markup is elan/index.html as it is; its script is src/elan/main.js.
 //   /syberlabs.css  the stylesheet every page links: fonts/site.css, then src/styles/ in the order below.
 //   /syberlabs.js   the script every static page loads (src/site/boot.js): the Menu and a back-to-top button.
 //   /system-map.js  a small loader on the RISE and FLYSPACE pages (src/system-map-embed.js). It fetches React and
@@ -76,7 +77,7 @@ export default defineConfig({
   plugins: [shared(), homepage()],
   build: {
     rollupOptions: {
-      input: { main: file('./index.html'), overview: file('./overview/index.html'), syberlabs: file('./src/site/boot.js'), systemmap: file('./src/system-map-embed.js') },
+      input: { main: file('./index.html'), overview: file('./overview/index.html'), elan: file('./elan/index.html'), syberlabs: file('./src/site/boot.js'), systemmap: file('./src/system-map-embed.js') },
       output: {
         entryFileNames: chunk => chunk.name === 'syberlabs' ? 'syberlabs.js' : chunk.name === 'systemmap' ? 'system-map.js' : 'assets/[name]-[hash].js',
         // React in its own chunk: only the system maps use it

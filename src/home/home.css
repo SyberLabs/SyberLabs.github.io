@@ -6,8 +6,10 @@
 /* The page's name. Elan carries no letters, so the name is in the markup for a screen reader, out of sight. */
 .home-name { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* The visual: a square, small on every screen. A press lets the figure go and starts the next form. */
-.home-elan { grid-row: 2; display: block; width: min(72vmin, 460px); aspect-ratio: 1; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+/* The visual: a square, small on every screen. It is a link: a press opens it full screen at /elan/. */
+.home-view { grid-row: 2; display: block; border-radius: 50%; -webkit-tap-highlight-color: transparent; }
+.home-view:focus-visible { outline: 2px solid var(--sy-electric-hi); outline-offset: -6px; }
+.home-elan { display: block; width: min(72vmin, 460px); aspect-ratio: 1; cursor: pointer; touch-action: manipulation; }
 
 /* Menu, as one quiet link under the visual. chrome.css draws it as a bordered button in the header and hides its
    word on phones; here it is the word alone, at every width, with a 44px target. */
@@ -22,6 +24,6 @@ html:not(.sy-js) .home-menu[open] > summary { position: fixed; top: 10px; right:
 
 /* Without JavaScript nothing draws the visual, so the name is shown in its place. */
 @media (scripting: none) {
-  .home-elan { display: none; }
+  .home-view { display: none; }
   .home-name { position: static; grid-row: 2; width: auto; height: auto; margin: 0; overflow: visible; clip-path: none; color: var(--sy-vellum); font: 500 clamp(28px, 6vw, 44px)/1 var(--sy-sans); letter-spacing: -.03em; }
 }
