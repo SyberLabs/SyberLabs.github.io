@@ -1,7 +1,10 @@
 /* SyberLabs: Elan, the homepage's one visual (src/home/). One rule: every finished duplex forks into two. Dot-matrix
    material. mount(canvas, opts): `pad` is the room kept free at the foot of the canvas (110px unless given), `fill`
    scales the finished figure inside the canvas (1 unless given; less leaves room for the drifting dots), and
-   `zoom: false` keeps one scale throughout, where the default starts close and draws back as the figure grows. */
+   `zoom: false` keeps one scale throughout, where the default starts close and draws back as the figure grows.
+   `maxDpr` and `minDpr` bound the pixels drawn for each CSS pixel (2 and 1 unless given): a small canvas can afford
+   a phone's full density, and on a plain screen drawing it at twice its size keeps the smallest dots from twinkling.
+   The canvas is never left cleared: whenever its size or density changes it is drawn again in the same frame. */
 const root = typeof window !== 'undefined' ? window : globalThis;
 var TAU = 6.283185307, V = 0.3, W0 = 0.062, DOCK = 0.6, START = -1.0, LAG = 0.16;
 // lineage colours: vellum, electric-hi, electric, cantaloupe-hi, steel; 5 = the dim centre row
@@ -117,7 +120,8 @@ function mount(canvas, opts) {
   opts = opts || {};
   var ctx = canvas.getContext('2d');
   var still = root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var W = 0, H = 0, dpr, maxDpr = Math.min(root.devicePixelRatio || 1, 2), F, fi = 0;
+  var floor = opts.minDpr || 1, W = 0, H = 0, dpr, maxDpr = Math.max(floor, Math.min(root.devicePixelRatio || 1, opts.maxDpr || 2)), F, fi = 0;
+  var clockNow = root.performance && root.performance.now ? function () { return root.performance.now(); } : function () { return 0; };
   var PULSE = 1.4, HOLD = 0.4, RELEASE = 2.2;
   function load() { F = fit(FORMS[fi], W, H, opts.pad); if (opts.fill) F.scale *= opts.fill; if (opts.onForm) opts.onForm(F.spec); }
   function size() {
@@ -126,14 +130,15 @@ function mount(canvas, opts) {
     if (nw === W && nh === H) return;
     W = nw; H = nh; dpr = maxDpr;
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-    load(); if (still) paintStill();
+    load(); if (still) paintStill(); else if (drew) paint(lastFront);   // resizing clears a canvas: draw it again at once
   }
+  function paint(front) { ctx.setTransform(dpr, 0, 0, dpr, 0, 0); render(ctx, W, H, F, tau, t, front, opts.zoom); lastFront = front; drew = true; }
   function paintStill() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0); render(ctx, W, H, F, F.tEnd + 1, 0, -2, opts.zoom);
     if (opts.onState) opts.onState('alive', F.spec.d);
   }
   var tau = START, t = 0, mode = 0, clock = 0, from = 0, last = 0, tick = 0, lastLabel = '', lastGen = -1;
-  var visible = false, slow = 0, fast = 0;
+  var visible = false, slow = 0, fast = 0, drew = false, lastFront = -2;
   function release() { if (mode !== 3) { mode = 3; from = Math.min(tau, F.tEnd + 0.2); clock = 0; } }
   canvas.addEventListener('click', function () {
     if (still) { fi = (fi + 1) % FORMS.length; load(); paintStill(); } else release();
@@ -158,11 +163,13 @@ function mount(canvas, opts) {
       tau = from * (1 - ek) + START * ek;
       if (k >= 1) { fi = (fi + 1) % FORMS.length; load(); tau = START; mode = 0; }
     }
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    render(ctx, W, H, F, tau, t, front, opts.zoom);
-    if (raw > 0.024) slow++; else fast++;
+    var began = clockNow();
+    paint(front);
+    // A device is slow when the drawing takes long or frames come more than 40ms apart. 33ms apart is not slow:
+    // a browser saving power runs at 30 frames a second however little there is to draw.
+    if (clockNow() - began > 10 || raw > 0.04) slow++; else fast++;
     if (slow + fast >= 50) {
-      if (slow > 30 && dpr > 1) { dpr = Math.max(1, dpr - 0.5); maxDpr = dpr; canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); }
+      if (slow > 30 && dpr > floor) { dpr = Math.max(floor, dpr - 0.5); maxDpr = dpr; canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); paint(front); }
       slow = fast = 0;
     }
     if ((tick++ & 7) === 0 && opts.onState) {
