@@ -96,14 +96,17 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
 .sy-menu--live .sy-atlas__panel { background: none; }
 .sy-menu--live .sy-atlas__head .sy-eyebrow { cursor: default; padding: 12px 0; }
 .sy-atlas__plate { position: absolute; left: var(--sy-fx, 50%); top: calc(var(--sy-fy, 50%) + var(--sy-fr, 0px) + 14px); display: grid; justify-items: center; gap: 3px; margin: 0; transform: translateX(-50%); color: var(--sy-dim); font: 400 12px/1.5 var(--sy-mono); white-space: nowrap; pointer-events: none; opacity: var(--sy-fade, 1); }
-.sy-atlas__plate b { color: var(--sy-mist); font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
+.sy-atlas__plate b { color: var(--sy-mist); font-weight: 500; letter-spacing: .16em; text-transform: uppercase; margin-right: -.16em; }
+.sy-atlas__plate span { letter-spacing: .04em; }
 @media (min-width: 1100px) {
   .sy-menu--live .sy-atlas__groups { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 40px; width: 55%; }
   .sy-menu--live .sy-atlas__label { font-size: 18px; letter-spacing: -.01em; }
 }
+/* In the band the caption is two centred lines, the name and the count, with air above and below: the form, 16px,
+   the caption, then the first heading well clear of it. The parameters are left to wide screens, where there is room. */
 @media (max-width: 1099.98px) {
-  .sy-menu--live .sy-atlas__groups { margin-top: var(--sy-stage, 0px); }
-  .sy-atlas__plate { top: calc(var(--sy-fy, 50%) + var(--sy-fr, 0px) + 6px); grid-auto-flow: column; gap: 10px; }
+  .sy-menu--live .sy-atlas__groups { margin-top: calc(var(--sy-stage, 0px) + 8px); }
+  .sy-atlas__plate { top: calc(var(--sy-fy, 50%) + var(--sy-fr, 0px) + 16px); gap: 4px; }
   .sy-atlas__plate .sy-atlas__params { display: none; }
 }
 @media (prefers-reduced-motion: no-preference) { .sy-menu[open] .sy-atlas__field { animation: sy-fade 700ms var(--sy-ease) both; } }

@@ -59,11 +59,17 @@ attractor SyberLabs"): a cloud of points that is the name SyberLabs and then a s
 It is on every page that has the Menu, the homepage included.
 
 - The Menu opens on the name, made of the points. After three quarters of a second the name lets go and the points
-  pour into an attractor, a different one each time the Menu opens: Thomas, Halvorsen, Aizawa, Lorenz.
+  pour into an attractor, a different one each time the Menu opens: Thomas, Halvorsen, Aizawa, Lorenz. Left alone,
+  the cloud stays seven seconds in an attractor and pours into the next, round and round (`DWELL`). The owner asked
+  for the cycle on November 26. It waits while the pointer is on a group of links, which holds that group's
+  attractor, and while the name is shown.
 - Each attractor is computed in the browser from its equations by fourth-order Runge-Kutta, with the parameters the
   caption under it prints (`FORMS`). Keep the caption true: a change to a parameter changes its `text`. The caption
   also gives the number of points (84,000, or 42,000 on a small screen). Do not replace a computed form with a
   stored picture or an invented curve.
+- In the band on a narrow screen the caption is two centred lines, the name and the count, 16px under the form, with
+  about 40px clear before the first heading. The owner saw it sit on the heading on his phone and asked for the
+  spacing; keep that air when the band changes. The parameters are shown on wide screens only.
 - It answers the visitor. The pointer turns the attractor. Each of the Menu's four groups has its own attractor,
   shown when the pointer or the keyboard reaches the group. Pointing at "SyberLabs / Site map" in the Menu's head
   gathers the name again, and a tap on it does so for two seconds. A press on empty ground shows the next attractor.

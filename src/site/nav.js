@@ -5,9 +5,10 @@
    and the "/" keyboard shortcut.
 
    It also wakes the Menu's field (src/visuals/attractor.js) the first time the Menu opens: a cloud of points that
-   is the name SyberLabs and then a strange attractor. The field answers the visitor: the pointer turns it, each
-   group of links has its own attractor, pointing at "SyberLabs" in the Menu's head gathers the name again, and a
-   press on empty ground shows the next attractor. Where there is no WebGL, or the visitor has asked to save data,
+   is the name SyberLabs and then a strange attractor, moving on to the next attractor every few seconds. The field
+   answers the visitor: the pointer turns it, each group of links has its own attractor and holds it while the
+   pointer is there, pointing at "SyberLabs" in the Menu's head gathers the name again, and a press on empty ground
+   shows the next attractor. Where there is no WebGL, or the visitor has asked to save data,
    the Menu is as it was. */
 export function menu() {
   const el = document.querySelector('details.sy-menu');
@@ -36,7 +37,8 @@ export function menu() {
       atlas.insertBefore(plate, panel);
       el.classList.add('sy-menu--live');
       el.querySelectorAll('.sy-atlas__group').forEach((group, i) => {
-        group.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') field.show(i); });
+        group.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { field.show(i); field.pin(true); } });
+        group.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') field.pin(false); });
         group.addEventListener('focusin', e => { if (e.target.matches(':focus-visible')) field.show(i); });
       });
       const name = el.querySelector('.sy-atlas__head .sy-eyebrow');
