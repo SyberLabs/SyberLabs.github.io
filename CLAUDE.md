@@ -264,21 +264,43 @@ overview page and that game's title do not: one more button on the title pushes 
 
 Since November 25, 2026 the homepage is one small visual and one link, by the owner's direction: "minimize the
 SyberLabs.io page to be a single small visual". Its markup is `src/home/page.js`, its script `src/home/main.js` and its
-styles `src/home/home.css`.
+styles `src/home/home.css`. Since November 26 a press on the visual opens it full screen ("Elan, full screen" below).
 
 - The visual is Elan (`src/visuals/elan.js`): loose dots dock one by one into a branching figure in which each finished
-  strand forks into two; the figure lights, lets go and builds again in the next of four forms. A press lets it go
-  early. It is drawn small, in a square of at most 460px, at one scale (`fill: 0.62`, `zoom: false`), so the drifting
-  dots stay inside the canvas and nothing is cut at an edge. With reduced motion the finished figure is drawn still
-  and a press shows the next form.
+  strand forks into two; the figure lights, lets go and builds again in the next of four forms. It is drawn small,
+  in a square of at most 460px, at one scale (`fill: 0.62`, `zoom: false`), so the drifting dots stay inside the
+  canvas and nothing is cut at an edge. With reduced motion the finished figure is drawn still. The canvas is a
+  link (`.home-view`) to `/elan/`, so a press opens the full view; `press: false` keeps the visual from also
+  answering it.
+- The canvas is drawn at up to three pixels for each CSS pixel and never fewer than two (`maxDpr`, `minDpr`). Elan
+  lowers that only when drawing takes over 10ms or frames come more than 40ms apart, and it draws the canvas again in
+  the same frame whenever it resizes it. Before November 26 a browser running at 30 frames a second was taken for a
+  slow device and each change left one cleared frame, which the owner saw as flicker on a phone. Keep both rules.
 - The link is Menu, under the visual: the same `<details class="sy-menu">` and site map every other page has in its
   header (`menu()` in `projects/project-template.js`), drawn here as the word alone. It opens and closes without
   JavaScript. It is how a visitor reaches the products, the research, the overview page, privacy and the account
   route, so keep it at every width.
 - The page has no header, no footer, no headline, no paragraph and no action. Its only words are the page's name, an
   `<h1>` kept out of sight for screen readers and shown in the visual's place when scripts are off. Do not add copy,
-  a second link or a second visual without the owner's direction.
-- Elan is on the homepage only. The overview page does not draw it, and CI fails if it returns there.
+  another link or a second visual without the owner's direction.
+- Elan is on the homepage and on `/elan/` only. The overview page does not draw it, and CI fails if it returns there.
+
+### Elan, full screen
+
+`/elan/` (`elan/index.html`, `src/elan/main.js`, `src/elan/elan.css`) is Elan over the whole screen. The owner asked
+for it on November 26, 2026: the small canvas suits the homepage, and the full-size view "had a different effect".
+That effect is the view's own motion, which the homepage leaves out: it starts close on the seed and draws back as
+the figure grows (`zoom`, on unless `zoom: false`).
+
+- The page is the canvas and a way back, and nothing else: no header, footer, Menu or copy. Its name, "Elan", is an
+  `<h1>` out of sight, shown when scripts are off.
+- A press on the figure lets it go and starts the next form. The close mark in the corner and Esc go to the
+  homepage. The mark has a 44px target and stays clear of a phone's notch (`env(safe-area-inset-*)`).
+- It is a page, and not the browser's fullscreen mode: a page has an address, and that mode has not been offered
+  for page elements by Safari on an iPhone.
+- It is reached from the homepage's visual. The Menu does not list it: the Menu is the directory of what SyberLabs
+  makes. It is in `sitemap.xml`.
+- CI requires the canvas and the way back on the page and fails if a header, a footer or React appears there.
 
 ## Overview page
 

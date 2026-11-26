@@ -1,9 +1,10 @@
-/* SyberLabs: Elan, the homepage's one visual (src/home/). One rule: every finished duplex forks into two. Dot-matrix
+/* SyberLabs: Elan, the homepage's one visual (src/home/) and, full screen, the page at /elan/ (src/elan/). One rule: every finished duplex forks into two. Dot-matrix
    material. mount(canvas, opts): `pad` is the room kept free at the foot of the canvas (110px unless given), `fill`
    scales the finished figure inside the canvas (1 unless given; less leaves room for the drifting dots), and
    `zoom: false` keeps one scale throughout, where the default starts close and draws back as the figure grows.
    `maxDpr` and `minDpr` bound the pixels drawn for each CSS pixel (2 and 1 unless given): a small canvas can afford
    a phone's full density, and on a plain screen drawing it at twice its size keeps the smallest dots from twinkling.
+   `press: false` leaves a press on the canvas to the page (the homepage's canvas is a link to the full view).
    The canvas is never left cleared: whenever its size or density changes it is drawn again in the same frame. */
 const root = typeof window !== 'undefined' ? window : globalThis;
 var TAU = 6.283185307, V = 0.3, W0 = 0.062, DOCK = 0.6, START = -1.0, LAG = 0.16;
@@ -140,7 +141,7 @@ function mount(canvas, opts) {
   var tau = START, t = 0, mode = 0, clock = 0, from = 0, last = 0, tick = 0, lastLabel = '', lastGen = -1;
   var visible = false, slow = 0, fast = 0, drew = false, lastFront = -2;
   function release() { if (mode !== 3) { mode = 3; from = Math.min(tau, F.tEnd + 0.2); clock = 0; } }
-  canvas.addEventListener('click', function () {
+  if (opts.press !== false) canvas.addEventListener('click', function () {
     if (still) { fi = (fi + 1) % FORMS.length; load(); paintStill(); } else release();
   });
   if ('IntersectionObserver' in root) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; last = 0; }, { threshold: 0.02 }).observe(canvas);

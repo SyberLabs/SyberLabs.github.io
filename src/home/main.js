@@ -9,4 +9,5 @@ import './home.css';
 boot();
 
 const canvas = document.querySelector('canvas[data-visual="elan"]');
-if (canvas) mount(canvas, { pad: 0, fill: 0.62, zoom: false, maxDpr: 3, minDpr: 2 });
+// A press is the link's: it opens the full view (/elan/), where a press lets the figure go.
+if (canvas) mount(canvas, { pad: 0, fill: 0.62, zoom: false, maxDpr: 3, minDpr: 2, press: false });

@@ -99,13 +99,19 @@ jobs:
           # The homepage is one visual and Menu (CLAUDE.md, "Homepage"): Elan's canvas, the site map, and none of the
           # parts that moved to the overview page.
           grep -Fq 'data-visual="elan"' dist/index.html
+          # The visual is a link to Elan full screen (/elan/), which is the canvas and a way back and nothing else.
+          grep -Fq 'href="/elan/"' dist/index.html
+          test -s dist/elan/index.html
+          grep -Fq 'data-visual="elan"' dist/elan/index.html
+          grep -Fq 'class="elan-close" href="/"' dist/elan/index.html
+          if grep -Eq 'class="(home-hero|sy-header|sy-footer)' dist/elan/index.html; then echo 'the Elan page is more than the visual and a way back'; exit 1; fi
           if grep -Eq 'class="(home-hero|sy-header|sy-footer)' dist/index.html; then echo 'the homepage is more than one visual and Menu'; exit 1; fi
           # The overview page is complete HTML, with the Line's card in Factory and no Elan.
           grep -Fq 'class="home-hero"' dist/overview/index.html
           grep -Fq 'data-visual="line"' dist/overview/index.html
           if grep -Fq 'data-visual="elan"' dist/overview/index.html; then echo 'Elan returned to the overview page'; exit 1; fi
           # Neither page loads a framework: React is fetched only by the system maps.
-          for page in dist/index.html dist/overview/index.html; do if grep -Eq 'assets/react-[^"]+\.js' "$page"; then echo "$page loads React"; exit 1; fi; done
+          for page in dist/index.html dist/overview/index.html dist/elan/index.html; do if grep -Eq 'assets/react-[^"]+\.js' "$page"; then echo "$page loads React"; exit 1; fi; done
           grep -Fq '@font-face' dist/syberlabs.css
           test ! -e dist/.private-githits
           test -s dist/syberlabs.css

@@ -11,7 +11,8 @@ Static pages on Cloudflare Pages, built with Vite. `pnpm install` and `pnpm buil
 
 - **Homepage.** One small visual and one link. `src/home/page.js` renders the page to HTML at build time (Vite
   writes it into `index.html`): Elan's canvas and Menu, the site's one directory. `src/home/main.js` mounts Elan
-  (`src/visuals/elan.js`) and `src/home/home.css` styles the page. It has no header and no footer.
+  (`src/visuals/elan.js`) and `src/home/home.css` styles the page. It has no header and no footer. A press on the
+  visual opens `/elan/` (`elan/index.html`, `src/elan/`), the same visual over the whole screen.
 - **Overview page.** `/overview/`, rendered the same way by `src/overview/page.js` into `overview/index.html`: a first
   screen, Factory, Studio, Lacuna and contact. `src/overview/main.js` starts the hero clip and fetches the rest when it
   scrolls near: the Factory machine, the Line in its card (`src/visuals/line.js`; its rules are
