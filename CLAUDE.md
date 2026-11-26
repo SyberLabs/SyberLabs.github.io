@@ -26,7 +26,8 @@ published at `/kit/v2/` unchanged, and the site does not load it.
   clip and fetching each canvas visual in `src/visuals/` when it scrolls near. No page ships a framework except the
   two system maps, which fetch React when their section nears the viewport.
 - `/syberlabs.js` (`src/site/`) is the Menu's keyboard and focus behaviour and a back-to-top button. Every page reads
-  and works without it. There are no scroll-in animations: text is on the page when it loads.
+  and works without it. There are no scroll-in animations: text is on the page when it loads. The first time the
+  Menu opens it fetches the Menu's field ("The Menu's field" below).
 - Every typeface is served from `/fonts/` (`fonts/README.md`). No page may load a font, stylesheet or script from
   another origin; CI fails if one does, and `/privacy/` tells visitors so.
 - Write links to local stylesheets and scripts without a `?v=` token. `scripts/stamp.mjs` adds each file's content
@@ -49,6 +50,33 @@ copy returns). Keep copy as real HTML. Preserve menu, privacy and account access
 on mobile and desktop. Verify the rendered result at laptop and mobile widths. Do
 not invent product proof, customers, prices, response times or availability. Use
 plain punctuation without em dashes in new public copy.
+
+## The Menu's field
+
+Since November 26, 2026 the open Menu carries a visual, by the owner's direction ("make the menu also look sick", "crazy
+attractor SyberLabs"): a cloud of points that is the name SyberLabs and then a strange attractor
+(`src/visuals/attractor.js`, woken by `src/site/nav.js`, styled under "the Menu's field" in `src/styles/chrome.css`).
+It is on every page that has the Menu, the homepage included.
+
+- The Menu opens on the name, made of the points. After three quarters of a second the name lets go and the points
+  pour into an attractor, a different one each time the Menu opens: Thomas, Halvorsen, Aizawa, Lorenz.
+- Each attractor is computed in the browser from its equations by fourth-order Runge-Kutta, with the parameters the
+  caption under it prints (`FORMS`). Keep the caption true: a change to a parameter changes its `text`. The caption
+  also gives the number of points (84,000, or 42,000 on a small screen). Do not replace a computed form with a
+  stored picture or an invented curve.
+- It answers the visitor. The pointer turns the attractor. Each of the Menu's four groups has its own attractor,
+  shown when the pointer or the keyboard reaches the group. Pointing at "SyberLabs / Site map" in the Menu's head
+  gathers the name again, and a tap on it does so for two seconds. A press on empty ground shows the next attractor.
+- The links come first. On a screen 1100px wide or more they take the left 55% of the panel in two columns and the
+  form stands at the right. Narrower, the form has a band above the links and dims as they scroll over it. Nothing in
+  the field takes a press meant for a link (`pointer-events: none`), and the Menu's markup is unchanged: the canvas
+  and the caption are added by the script and hidden from screen readers.
+- It costs nothing until asked for. The script (about 9 kB) is fetched the first time the Menu opens, it draws only
+  while the Menu is open, and the attractors are computed while the name is held and then in idle time. It is not
+  fetched for a visitor who has asked to save data. Without WebGL or without JavaScript the Menu is as it was, in
+  three columns. With reduced motion one attractor is drawn still and a change of form is immediate.
+- Its colours are the theme's: Electric Blue points, lighter where the flow passes, and about one point in fifty in
+  Cantaloupe.
 
 ## Wording
 

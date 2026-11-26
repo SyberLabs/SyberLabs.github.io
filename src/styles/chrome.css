@@ -85,6 +85,29 @@ html:not(.sy-js) .sy-atlas__close, html:not(.sy-js) .sy-atlas__foot > span { dis
 .sy-footer nav a:hover, .sy-footer nav a[aria-current="page"] { color: var(--sy-vellum); text-decoration: none; }
 .sy-footer__copy { font: 500 12px/1 var(--sy-mono); letter-spacing: .12em; color: var(--sy-dim); }
 
+/* ---------- the Menu's field (src/visuals/attractor.js, woken by src/site/nav.js) ----------
+   A canvas behind the Menu's links: a cloud of points that is the name SyberLabs, then a strange attractor. These
+   rules apply only once the field is running (.sy-menu--live); without it the Menu is as it is above. On a wide
+   screen the links take the left of the panel and the form stands at the right. On a narrower one the form has a
+   band above the links (--sy-stage) and dims as they scroll over it. --sy-fx, --sy-fy and --sy-fr are the form's
+   centre and radius, which the script sets, and the caption stands under it. */
+.sy-atlas__field { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+.sy-menu--live .sy-atlas__backdrop { background: rgba(2, 7, 10, .95); }
+.sy-menu--live .sy-atlas__panel { background: none; }
+.sy-menu--live .sy-atlas__head .sy-eyebrow { cursor: default; padding: 12px 0; }
+.sy-atlas__plate { position: absolute; left: var(--sy-fx, 50%); top: calc(var(--sy-fy, 50%) + var(--sy-fr, 0px) + 14px); display: grid; justify-items: center; gap: 3px; margin: 0; transform: translateX(-50%); color: var(--sy-dim); font: 400 12px/1.5 var(--sy-mono); white-space: nowrap; pointer-events: none; opacity: var(--sy-fade, 1); }
+.sy-atlas__plate b { color: var(--sy-mist); font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
+@media (min-width: 1100px) {
+  .sy-menu--live .sy-atlas__groups { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 40px; width: 55%; }
+  .sy-menu--live .sy-atlas__label { font-size: 18px; letter-spacing: -.01em; }
+}
+@media (max-width: 1099.98px) {
+  .sy-menu--live .sy-atlas__groups { margin-top: var(--sy-stage, 0px); }
+  .sy-atlas__plate { top: calc(var(--sy-fy, 50%) + var(--sy-fr, 0px) + 6px); grid-auto-flow: column; gap: 10px; }
+  .sy-atlas__plate .sy-atlas__params { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) { .sy-menu[open] .sy-atlas__field { animation: sy-fade 700ms var(--sy-ease) both; } }
+
 /* ---------- back to top (added by src/site/site.js on pages longer than two screens) ---------- */
 .sy-totop { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 40; display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--sy-rule-2); background: rgba(2, 7, 10, .8); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); color: var(--sy-vellum); opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; transition: opacity var(--sy-t-enter), transform var(--sy-t-enter) var(--sy-ease), border-color var(--sy-t-hover); }
 .sy-totop.is-on { opacity: 1; transform: none; pointer-events: auto; }

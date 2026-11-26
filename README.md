@@ -17,6 +17,9 @@ Static pages on Cloudflare Pages, built with Vite. `pnpm install` and `pnpm buil
   scrolls near: the Factory machine, the Line in its card (`src/visuals/line.js`; its rules are
   `src/visuals/line-sim.js`, tested by `node --test src/visuals/line-sim.test.mjs`), the Lacuna globe, the four
   pieces and the field behind the contact part. `src/overview/overview.css` styles it. Neither page ships a framework.
+- **The Menu's field.** The open Menu shows a cloud of points that is the name SyberLabs and then a strange attractor
+  (`src/visuals/attractor.js`, WebGL). `src/site/nav.js` fetches it the first time the Menu opens; without WebGL the
+  Menu is plain. `CLAUDE.md` ("The Menu's field") has the rules.
 - **Shared stylesheet.** `/syberlabs.css` is `fonts/site.css` followed by `src/styles/` (`tokens`, `base`, `type`,
   `chrome`, `components`). The Midnight theme is defined once, in `tokens.css`. Each static page links it and, where it
   needs one, its own small stylesheet.
