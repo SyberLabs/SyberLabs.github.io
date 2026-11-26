@@ -1,5 +1,5 @@
 // One header and footer for every static page, generated from projects/project-template.js (the same source
-// as the project pages; the homepage renders the same markup in React from projects/site-data.js).
+// as the project pages; the overview page gets the same markup at build time, from src/overview/page.js).
 // `node scripts/site-chrome.mjs` rewrites the chrome in place after a navigation change.
 // `node scripts/site-chrome.mjs --check` changes nothing and fails if any page is out of date (run in CI).
 // The route determines each page's current nav item (aria-current); the skip-link target is preserved. The Menu (the
@@ -22,7 +22,7 @@ export function applyChrome(html, file) {
   if (!head || !FOOTER.test(html)) throw new Error(`site-chrome: ${file} needs a skip link, header and footer`);
   const self = file.endsWith('/index.html') ? `/${file.slice(0, -'index.html'.length)}` : `/${file}`;
   // Generated markup is output, never the source of routing state. Local nav URLs
-  // own their route trees; Projects is anchored on the homepage and needs its own tree.
+  // own their route trees; Products is anchored on the overview page and needs its own tree.
   const current = nav.find(item => item.href.startsWith('/') && !item.href.includes('#')
     && (self === item.href || self.startsWith(item.href)))?.id
     || (self.startsWith('/projects/') ? 'products' : '');

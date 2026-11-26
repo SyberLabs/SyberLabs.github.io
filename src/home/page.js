@@ -1,30 +1,16 @@
-// The homepage, as HTML. A pure function of projects/site-data.js (and, for one check, research/index.html): the
-// build writes its result into index.html (vite.config.js), so the page a browser receives is complete without
-// JavaScript. src/home/main.js then mounts what moves.
+// The homepage, as HTML: one small visual and one link. The build writes this into index.html (vite.config.js), so
+// the page a browser receives is complete without JavaScript. src/home/main.js then mounts the visual.
 //
-// The page reads as an AI lab's: a first screen that says what the company makes and lets the visitor approve a
-// change, then the evidence (SyberWork's recorded run), the products, the research with Lacuna Institute, the
-// studio and contact. Each part is a module in src/home/parts/. No individual is named: the site speaks for the
-// company. Wording follows CLAUDE.md: every line states a fact a reader can check or act on.
-import { projects } from '../../projects/site-data.js';
-import { header, footer } from '../../projects/project-template.js';
-import { hero } from './parts/hero.js';
-import { recordedRun } from './parts/run.js';
-import { products } from './parts/products.js';
-import { researchPart } from './parts/research.js';
-import { studio } from './parts/studio.js';
-import { contact } from './parts/contact.js';
-
-const main = () => `<main id="main">
-    ${hero()}
-    ${recordedRun(projects.find(p => p.slug === 'syberwork'))}
-    ${products()}
-    ${researchPart()}
-    ${studio()}
-    ${contact()}
-  </main>`;
+// Since November 25, 2026 the homepage is Elan (src/visuals/elan.js) alone on the Midnight ground, by the owner's
+// direction, with Menu under it: the site's one directory (projects/project-template.js), which opens and closes
+// without JavaScript and lists every product, the research, the overview page, privacy and the account route.
+// Everything the homepage carried before is on the overview page (/overview/, src/overview/). There is no header and
+// no footer here; the page's name is its only words, kept for screen readers and for a browser without scripts.
+import { menu } from '../../projects/project-template.js';
 
 // Everything inside <body>, between the email_off comments index.html already carries.
-export const renderHome = () => `${header('', { here: '/', sticky: false, script: false })}
-  ${main()}
-  ${footer('/')}`;
+export const renderHome = () => `<main id="main" class="home">
+    <h1 class="home-name">SyberLabs</h1>
+    <canvas class="home-elan" data-visual="elan" role="img" aria-label="Loose dots drift, then dock one by one into a branching figure in which each finished strand forks into two. The figure lights, lets go and builds again in another form."></canvas>
+    ${menu('/', { cls: 'home-menu', icon: false })}
+  </main>`;

@@ -1,5 +1,5 @@
 // Writes static HTML for the product pages and the /stack/ dependency totals into dist/, so their text is present
-// without JavaScript (crawlers and link previews). The homepage is written by the Vite build itself (vite.config.js).
+// without JavaScript (crawlers and link previews). The homepage and the overview page are written by the Vite build itself (vite.config.js).
 // Run after `pnpm build` and scripts/assemble-dist.sh.
 import { readFile, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';

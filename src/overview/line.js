@@ -1,13 +1,13 @@
-// The first screen's Line: joins the picture (src/visuals/line.js) to the words and the button around it. The
-// picture reports where its stations are, and the step names are set beside them; it reports its counts, and the
-// page says them in words. Approve is the visitor's: nothing in the picture is published until it is pressed.
+// The Line in its card: joins the picture (src/visuals/line.js) to the words and the button around it. The picture
+// reports where its stations are, and the step names are set beside them; it reports its counts, and the page says
+// them in words. Approve is the visitor's: nothing in the picture is published until it is pressed.
 import { mount } from '../visuals/line.js';
 
 const STEPS = ['propose', 'check', 'review', 'approve', 'publish'];
 
-export function line(hero) {
-  const figure = hero.querySelector('[data-line]'), canvas = hero.querySelector('canvas[data-visual="line"]');
-  if (!figure || !canvas) return;
+export function line(figure) {
+  const canvas = figure && figure.querySelector('canvas[data-visual="line"]');
+  if (!canvas) return;
   const zone = figure.querySelector('[data-line-zone]'), button = figure.querySelector('[data-line-approve]'), state = figure.querySelector('[data-line-state]');
   const tally = Object.fromEntries(STEPS.map(key => [key, figure.querySelector(`[data-tally="${key}"]`)])), model = figure.querySelector('[data-line-model]');
   let now = null, thanked = '', until = 0, timer = 0;
@@ -23,7 +23,7 @@ export function line(hero) {
   }
 
   const picture = mount(canvas, {
-    zone, surface: hero,
+    zone, surface: zone, wide: width => width >= 720,
     onLayout(at) {
       figure.style.setProperty('--ax', `${at.axis}px`);
       for (const key of ['model', ...STEPS]) figure.style.setProperty(`--y-${key}`, `${at[key]}px`);

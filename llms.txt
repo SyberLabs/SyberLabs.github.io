@@ -65,6 +65,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 
 ## Company
 
+- [Overview](https://syberlabs.io/overview/): SyberLabs makes software for checking AI’s work. SyberWork tests AI-written code changes before a person approves them. Attest runs every step in your docs. RISE is a reading app. FLYSPACE shows which data fed each AI answer. Also: AI consulting, custom builds and design partnerships. Lacuna Institute is its research institute.
 - [Consulting and partnerships](https://syberlabs.io/services/): AI consulting, custom builds and design partnerships from SyberLabs. We build agent systems in which software runs the checks, every step is logged in a signed record and a person approves before anything ships.
 - [PSYCHO SYBER](https://syberlabs.io/psycho-syber/): A SyberLabs browser stealth game: a stage each for Attest, RISE, FLYSPACE, SyberWork and Lacuna Institute, and a sixth with no exit. Keyboard, mouse or touch.
 

@@ -1,6 +1,6 @@
-// Generates src/visuals/atlas-data.js, the data behind the homepage's Lacuna visual: the Earth's land as evenly
+// Generates src/visuals/atlas-data.js, the data behind the overview page's Lacuna visual: the Earth's land as evenly
 // spaced dots, and the research sites of the Lacuna Atlas (name, place on the globe, kind).
-// The sites come from src/lacuna/atlas/sites.js, the same list the Atlas page is built from, so the homepage cannot
+// The sites come from src/lacuna/atlas/sites.js, the same list the Atlas page is built from, so the overview page cannot
 // show a site the Atlas does not have. The land comes from the Atlas's own world-atlas TopoJSON.
 //   node scripts/lacuna-home.mjs           rewrites the file
 //   node scripts/lacuna-home.mjs --check   changes nothing and fails if the file is out of date

@@ -4,12 +4,13 @@
 
 The direction is the Midnight theme: Midnight Black `#02070A` surfaces, off-white
 text, Electric Blue `#0297DE` for light, links and focus, and Cantaloupe Orange
-`#FC734D` used a little (solid action buttons, live signals, the Approve step),
-with Instrument Sans headings, generous whitespace and sparse actions. Since
-November 18, 2026 the homepage reads as an AI lab's: one grid, parts under
-hairlines, rows in place of cards, and pictures that answer the visitor
-("Homepage" below). `kit/v2/README.md` ("Current website direction: an AI lab")
-has the fuller account; read it before changing the look.
+`#FC734D` used a little (solid action buttons, live signals), with Instrument
+Sans headings, generous whitespace and sparse actions. Since November 25, 2026
+the homepage is one small visual, Elan, with Menu under it ("Homepage" below),
+and the overview page at `/overview/` carries the first screen, Factory, Studio,
+Lacuna and contact ("Overview page" below). `kit/v2/README.md` ("Current website
+direction: an AI lab") has an account of the look before that date; read it
+before changing the look.
 The theme is defined once, in `src/styles/tokens.css`; pages do not carry their
 own colour blocks. `kit/v2/` is the kit that product apps vendor. It stays
 published at `/kit/v2/` unchanged, and the site does not load it.
@@ -19,10 +20,11 @@ published at `/kit/v2/` unchanged, and the site does not load it.
 - `/syberlabs.css`, the stylesheet every page links, is `fonts/site.css` then `src/styles/` in this order: `tokens`,
   `base`, `type`, `chrome` (header, Menu, breadcrumbs, footer), `components` (`vite.config.js`). A page's own
   stylesheet holds only what that page alone needs.
-- The homepage is plain HTML written at build time by `src/home/page.js` from the parts in `src/home/parts/`, styled
-  by `src/home/home.css`. Its script, `src/home/main.js`, mounts the Line in the first screen and fetches the rest
-  when it scrolls near: `src/home/run.js`, `globe.js` and `pieces.js`, and the canvas visuals in `src/visuals/`. No
-  page ships a framework except the two system maps, which fetch React when their section nears the viewport.
+- The homepage and the overview page are plain HTML written at build time (`RENDERED` in `vite.config.js`): the
+  homepage by `src/home/page.js`, styled by `src/home/home.css`, with `src/home/main.js` mounting Elan; the overview
+  page by `src/overview/page.js`, styled by `src/overview/overview.css`, with `src/overview/main.js` starting the hero
+  clip and fetching each canvas visual in `src/visuals/` when it scrolls near. No page ships a framework except the
+  two system maps, which fetch React when their section nears the viewport.
 - `/syberlabs.js` (`src/site/`) is the Menu's keyboard and focus behaviour and a back-to-top button. Every page reads
   and works without it. There are no scroll-in animations: text is on the page when it loads.
 - Every typeface is served from `/fonts/` (`fonts/README.md`). No page may load a font, stylesheet or script from
@@ -37,7 +39,8 @@ published at `/kit/v2/` unchanged, and the site does not load it.
 
 The site is a company site: it sells SyberLabs' four products (SyberWork, Attest,
 RISE, FLYSPACE) and its consulting and design partnerships. Keep `Book a
-consultation` as the one conversion action (header, hero, services, contact) and
+consultation` as the one conversion action (header, services, the overview page's
+contact part; the homepage has no header and carries no action) and
 the single company inbox in `projects/site-data.js` (`EMAIL`). The site speaks
 only as SyberLabs: do not name individuals, their employers, résumés, phone
 numbers, personal sites or hiring pitches on any public page (CI fails if hiring
@@ -54,12 +57,12 @@ the answer is nothing, delete it.
 
 - No slogans, taglines or metaphors. Say what the thing does: "Tests every
   AI-written code change before a person approves it", not a three-beat motto.
-  The homepage's headline is the one exception. On November 18, 2026 the owner
-  asked for a headline with more weight than a plain description and chose
-  "Take no machine at its word." (after the Royal Society's motto, "Nullius in
-  verba": take nobody's word for it). The line under it says what the company
-  makes in plain words, and the page's `<title>` stays "Software for checking
-  AI's work". Do not add a second motto anywhere.
+  From November 18 to November 25, 2026 the homepage's headline was the one
+  exception: the owner chose "Take no machine at its word." (after the Royal
+  Society's motto, "Nullius in verba": take nobody's word for it). It left the
+  site when the homepage became one visual. The homepage's `<title>` stays
+  "Software for checking AI's work", which is also the line under the wordmark
+  on the overview page. Do not add a motto anywhere.
 - Name the actor. SyberWork runs the checks, a person approves, the client
   logs the call. Never use the word "host" in public copy (`scripts/qa.mjs`
   fails the build on it): write SyberWork, the application or the machine.
@@ -106,7 +109,7 @@ Since November 16, 2026 the site carries a game at `/psycho-syber/` (`psycho-syb
 with two forms, changed with Shift. Since November 17 it has six stages: one for each product, one for Lacuna
 Institute, and THE REAL BATTLE, which has no exit. Since November 18 it also has THE ANOMALOUS SYSTEM, a scene
 outside the six that is started from its own button on the title. `Game` in the header (`nav` in `projects/site-data.js`), the Menu,
-the game's link in the homepage's first screen and one note in its Studio part link to it.
+the game's link in the overview page's first screen and one note in its Studio part link to it.
 
 - The story is fiction and the page says so under "What is real". It is set in an invented ancient Paracas. State
   nothing about the Paracas culture or about any Atlas site beyond a quotation from the Lacuna pages. No real person,
@@ -200,8 +203,8 @@ the game's link in the homepage's first screen and one note in its Studio part l
 Since November 19, 2026 the site carries a second game at `/psycho-syber/arena/` (`psycho-syber/arena/`): a
 first-person arena in 3D with the same two forms, Psycho and Syber, changed with Q. It has two modes: Waves, for one
 player, and the Duel, for two players in two browsers. The owner chose its name, its place under `/psycho-syber/`
-and its two modes on that day. "The game" on the game's page links to it. The header, the Menu, the homepage and
-that game's title do not: one more button on the title pushes its words off a phone's screen.
+and its two modes on that day. "The game" on the game's page links to it. The header, the Menu, the homepage, the
+overview page and that game's title do not: one more button on the title pushes its words off a phone's screen.
 
 - It is a separate game. PSYCHO SYBER's rules about stages, scripted runs, the Atlas marks, music and the narrator do
   not apply to it. What the two share: invented names only, Wording for the page's copy, plain lines inside the game,
@@ -248,81 +251,99 @@ that game's title do not: one more button on the title pushes its words off a ph
 
 ## Homepage
 
-The homepage (`src/home/page.js`, parts in `src/home/parts/`) was redesigned on November 18, 2026, when the owner asked
-for an aggressive redesign: the page should look like a professional AI lab's, with interface elements that react and
-that are about AI. It has a first screen and five parts:
+Since November 25, 2026 the homepage is one small visual and one link, by the owner's direction: "minimize the
+SyberLabs.io page to be a single small visual". Its markup is `src/home/page.js`, its script `src/home/main.js` and its
+styles `src/home/home.css`.
 
-- First screen (`parts/hero.js`): the link to the game at the top (`PSYCHO SYBER`, `Play the game`), the headline
-  ("Take no machine at its word.", the page's one motto: "Wording" above), a line saying what the company makes
-  ("SyberLabs is an AI lab. It makes software for checking AI's work."), one sentence on how, `Book a consultation`
-  and `Read the research`, and the Line.
-- The Line (`src/visuals/line.js` draws it, `src/visuals/line-sim.js` holds its rules, `src/home/line.js` joins it to
-  the words and the button). A model, drawn as a small network, proposes changes. Each goes down a line of stations:
-  Propose, Check, Review, Approve. A change that reaches Approve waits there until the visitor presses `Approve`; only
-  then does it turn onto the published line. When three changes are waiting the line stops and the model stops
-  proposing. The network is computed: every frame runs a forward pass through fixed weights, two of its inputs are the
-  pointer's position, pointing at a unit shows its activation, and a press on the network sends a signal down from
-  the input unit nearest the press. A published change keeps its id on the published line.
-- Recorded run (`parts/run.js`, `#run`): SyberWork's recorded run as a table, three facts and the output itself, all
-  read from `run` in `projects/site-data.js`, the same output the SyberWork page prints. Pointing at a row lights the
-  lines of the output it was read from (`src/home/run.js`), and `Replay the run` shows the run in order. The part is
-  left out if that output stops parsing.
-- Products (`parts/products.js`, `#products`): the four products, one row each, and the GitHits design partnership
-  (`#partners`). Under each row is `Evidence`, a `<details>` that opens to the product's `evidence` lines from
-  `projects/site-data.js`, each with its state (Deployed, Measured, Tested, Implemented, Not yet). It needs no script,
-  and one is open at a time.
-- Research (`parts/research.js`, `#research`): the reports on the site (`research` in `projects/site-data.js`), then
-  Lacuna Institute (`#lacuna`) with a globe (`src/visuals/atlas.js`) that marks the Atlas's sites, names each in turn
-  and can be turned by dragging it or with the arrow keys (`src/home/globe.js`). The globe, the site named beside it
-  and the heading are links into `/lacuna/`. Its data (`src/visuals/atlas-data.js`) is generated from the Atlas's site
-  list by `node scripts/lacuna-home.mjs`; the build fails when it is stale.
-- Studio (`parts/studio.js`, `#studio`): the four pieces that move to sound, and the game.
-- Contact (`parts/contact.js`, `#contact`): the field in which the letters of SyberLabs appear
-  (`src/visuals/phase.js`; the pointer breaks its step), one sentence and the action.
+- The visual is Elan (`src/visuals/elan.js`): loose dots dock one by one into a branching figure in which each finished
+  strand forks into two; the figure lights, lets go and builds again in the next of four forms. A press lets it go
+  early. It is drawn small, in a square of at most 460px, at one scale (`fill: 0.62`, `zoom: false`), so the drifting
+  dots stay inside the canvas and nothing is cut at an edge. With reduced motion the finished figure is drawn still
+  and a press shows the next form.
+- The link is Menu, under the visual: the same `<details class="sy-menu">` and site map every other page has in its
+  header (`menu()` in `projects/project-template.js`), drawn here as the word alone. It opens and closes without
+  JavaScript. It is how a visitor reaches the products, the research, the overview page, privacy and the account
+  route, so keep it at every width.
+- The page has no header, no footer, no headline, no paragraph and no action. Its only words are the page's name, an
+  `<h1>` kept out of sight for screen readers and shown in the visual's place when scripts are off. Do not add copy,
+  a second link or a second visual without the owner's direction.
+- Elan is on the homepage only. The overview page does not draw it, and CI fails if it returns there.
 
-Rules for the homepage:
+## Overview page
 
-- What moves answers the visitor: the pointer, a press, a drag or a key. Nothing animates on scroll, and every word is
-  on the page when it loads. With reduced motion the Line and the globe are drawn still and their controls still
-  work. Without JavaScript the five steps read as a numbered list (`@media (scripting: none)` in `home.css`).
-- The Line is an illustration, and the page says so beside it. Its changes are invented; the first two follow the
-  recorded run. No timer publishes a change: only the visitor's `Approve` moves one past Approve, and
+`/overview/` (`src/overview/page.js`, `src/overview/main.js`, `src/overview/overview.css`) is the homepage as it was
+at commit `ff2ae68` (November 18, 2026, before the AI-lab redesign), restored on November 25 by the owner's direction
+with two changes: the Line stands in a card in Factory, and Elan's product marks are gone (a product row is marked by
+its number). `Products` in the header, the breadcrumb on product pages and every link that used to point at
+`/#products` or `/#partners` point here. It has a first screen and four parts:
+
+- First screen: the Gyre clip (`src/overview/media.js`; the clips are in `media/demos/`) under the SyberLabs wordmark
+  in chromatic blue, the line "Software for checking AI's work.", three rows naming Factory, Studio and Lacuna, and
+  the link to the game (`PSYCHO SYBER`, `Play the game`). It has no buttons.
+- Factory (`#factory`): a full-height canvas, a machine that copies a strand piece by piece
+  (`src/visuals/factory.js`), then a block (`#products`) with the Line's card, SyberWork and Attest, SyberWork's
+  recorded run as a table read from `run` in `projects/site-data.js`, and the GitHits design partnership
+  (`#partners`).
+- Studio (`#studio`): RISE and FLYSPACE, the four pieces that move to sound, and the game.
+- Lacuna (`#lacuna`): a full-height globe (`src/visuals/atlas.js`) that marks the Atlas's sites, names each in turn
+  and can be turned by dragging it or with the arrow keys (`src/overview/globe.js`), then Lacuna Institute's two
+  works. Its data (`src/visuals/atlas-data.js`) is generated from the Atlas's site list by
+  `node scripts/lacuna-home.mjs`; the build fails when it is stale.
+- Contact (`#contact`): the field in which the letters of SyberLabs appear (`src/visuals/phase.js`), one sentence and
+  `Book a consultation`.
+
+The Line (`src/visuals/line.js` draws it, `src/visuals/line-sim.js` holds its rules, `src/overview/line.js` joins it
+to the words and the button). A model, drawn as a small network, proposes changes. Each goes down a line of stations:
+Propose, Check, Review, Approve. A change that reaches Approve waits there until the visitor presses `Approve`; only
+then does it turn onto the published line. When three changes are waiting the line stops and the model stops
+proposing. The network is computed: every frame runs a forward pass through fixed weights, two of its inputs are the
+pointer's position, pointing at a unit shows its activation, and a press on the network sends a signal down from the
+input unit nearest the press. A published change keeps its id on the published line.
+
+Rules for the overview page:
+
+- The Line's card holds the picture, its station names, `Approve`, one line of state, the key to its colours and the
+  sentence that says it is an illustration. The owner asked for the visual alone: no headline and no action go in
+  the card.
+- Three colours in the Line, and the key under it says them. Blue is the model and its checks. Green
+  (`--sy-success`) is what passed, was approved or is published: the tick on a change, the Approve dock, the
+  `Approve` button and the marks on the published line. Orange is what was stopped or returned. The owner asked for
+  the green button on November 25; before that Approve was orange. The recorded run's Accepted and Rejected marks
+  and the machine's Approve label follow the same coding. `Book a consultation` stays the page's one solid button,
+  in orange.
+- The Line is an illustration, and the card says so. Its changes are invented; the first two follow the recorded
+  run. No timer publishes a change: only the visitor's `Approve` moves one past Approve, and
   `node --test src/visuals/line-sim.test.mjs` checks it. Do not add an automatic approval, and do not present the
   Line's counts as figures about SyberWork.
 - Keep the network computed. Do not replace the forward pass with a drawn animation.
-- Blue is the machine (the model, the checks, links). Orange is the person (Approve, `Book a consultation`). `Approve`
-  is a line button, so `Book a consultation` stays the page's one solid button.
-- Each product is described once, by its `headline` in `projects/site-data.js`. A report listed under Research carries
-  the title, code and date that `research/index.html` gives it; the build fails if one is not on that page.
-- A product's evidence on the homepage is the product page's own, word for word, "Not yet" lines included. Do not
-  write evidence for the homepage alone. The workflow keeps RISE Plus off the homepage, so a line that names it is
-  left to the RISE page (`evidence` in `parts/products.js`).
-- A part opens with its name over a hairline, and what follows is rows. Do not box the content in cards. Mono is for
-  data: change ids, commits, dates, counts and output.
+- With reduced motion the Line and the globe are drawn still and their controls still work, and the hero keeps its
+  poster. Without JavaScript the five steps read as a numbered list (`@media (scripting: none)` in `overview.css`).
+- Each product is described once, by its `headline` in `projects/site-data.js`. The workflow keeps RISE Plus off this
+  page and off the homepage.
 - One piece runs at a time, and only after a press (or a mouse resting on a tile). Nothing on the page plays sound
   or loads a piece by itself. The pieces in `media/home/pieces/` are copies of the audio-reactive pieces with their
   own controls hidden; they are marked `noindex`.
-- The game's link stays in the first screen, above the title, at every width: the owner asked that nobody miss it.
+- The game's link stays in the first screen at every width: the owner asked that nobody miss it.
 
-Earlier directions that changed. They are listed so they can be restored on request; the first three were on the page
-until commit `ff2ae68`, and the last three changed in the rebuild earlier on November 18:
+Earlier directions that changed. They are listed so they can be restored on request:
 
-- The first screen was the Gyre clip under the SyberLabs wordmark in chromatic blue, one line, and three rows naming
-  Factory, Studio and Lacuna. It had no buttons. The clips are still in `media/demos/`.
-- Factory was a part of its own with a full-height canvas, a machine that copies a strand piece by piece
-  (`src/visuals/factory.js`, removed). SyberWork and Attest now sit with RISE and FLYSPACE under Products, and the
-  five steps are the Line's stations.
-- Lacuna was a part of its own with a full-height globe. It is now the second half of Research.
-- The headline was the page's title, "Software for checking AI's work." The owner found it too plain, and an earlier
-  line, "High fidelity systems", good but vague.
-- The hero carried no paragraph (November 15).
+- From November 18 to November 25, 2026 the homepage read as an AI lab's (last at commit `38f5ed2`,
+  `src/home/parts/`): the headline "Take no machine at its word." with the Line beside it in the first screen, the
+  recorded run with its output and `Replay the run`, the four products in one part with `Evidence` under each row,
+  a Research part listing three reports beside a smaller globe, and a light that followed the pointer. Of these the
+  Line is on the overview page; the rest left the site.
+- Each product row carried a mark, one form of Elan's branching rule (`sigil` in `src/visuals/elan.js`, removed).
+- The overview page's hero carried no paragraph (November 15).
 - The page had a part named Liminal, with two full-height visuals (Resonance and Emergence). Resonance is the ground
-  of the contact part. Emergence's rule still draws each product's mark; its full-height canvas is gone.
+  of the contact part. Emergence is Elan, now the homepage's visual.
 - The first piece started by itself when the row scrolled into view. A piece now waits for a press.
+- The headline was once "High fidelity systems", which the owner found good but vague.
 
-CI requires `class="home-hero"`, `id="products"`, `id="partners"`, `id="contact"` and `id="lacuna"` on the homepage, and
-fails the build on personal names, so homepage media must not link to personal sites. CI also fails if the homepage
-loads React, and it runs the Line's rules (`src/visuals/line-sim.test.mjs`).
+CI requires `data-visual="elan"` on the homepage and fails if a header, a footer or `class="home-hero"` appears there.
+On the overview page it requires `class="home-hero"`, `data-visual="line"`, `id="products"`, `id="partners"`,
+`id="contact"` and `id="lacuna"`, and fails if Elan appears. It fails the build on personal names, so neither page's
+media may link to personal sites. It also fails if either page loads React, and it runs the Line's rules
+(`src/visuals/line-sim.test.mjs`).
 
 ## Public dependency lookup (GitHits)
 

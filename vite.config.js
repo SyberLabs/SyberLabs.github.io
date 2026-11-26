@@ -3,8 +3,10 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig, transformWithEsbuild } from 'vite';
 
 // What this build makes:
-//   /index.html     the homepage. Its markup is src/home/page.js, written into index.html here, at build time and in
-//                   `pnpm dev`, so the page is complete without JavaScript. Its script is src/home/main.js.
+//   /index.html     the homepage: one visual and Menu. Its markup is src/home/page.js, written into index.html here,
+//                   at build time and in `pnpm dev`, so the page is complete without JavaScript. Its script is
+//                   src/home/main.js.
+//   /overview/      the overview page, made the same way from src/overview/page.js and src/overview/main.js.
 //   /syberlabs.css  the stylesheet every page links: fonts/site.css, then src/styles/ in the order below.
 //   /syberlabs.js   the script every static page loads (src/site/boot.js): the Menu and a back-to-top button.
 //   /system-map.js  a small loader on the RISE and FLYSPACE pages (src/system-map-embed.js). It fetches React and
@@ -40,6 +42,13 @@ function shared() {
   };
 }
 
+// The two pages whose markup is written at build time: the file, the marker it carries, and the module and export
+// that render what replaces the marker.
+const RENDERED = [
+  { html: file('./index.html'), marker: '<!-- home:body -->', module: '/src/home/page.js', render: 'renderHome' },
+  { html: file('./overview/index.html'), marker: '<!-- overview:body -->', module: '/src/overview/page.js', render: 'renderOverview' },
+];
+
 function homepage() {
   let server;
   return {
@@ -50,11 +59,12 @@ function homepage() {
       // (its images and clips are served from media/, which scripts/assemble-dist.sh copies as it is).
       order: 'post',
       async handler(html, ctx) {
-        // `pnpm dev` also serves the hand-written pages through here; only the homepage has the marker.
-        if (ctx.filename !== file('./index.html')) return html;
-        if (!html.includes('<!-- home:body -->')) throw new Error('index.html has no <!-- home:body --> marker');
-        const { renderHome } = server ? await server.ssrLoadModule('/src/home/page.js') : await import('./src/home/page.js');
-        return html.replace('<!-- home:body -->', renderHome());
+        // `pnpm dev` also serves the hand-written pages through here; only these two have a marker.
+        const page = RENDERED.find(p => p.html === ctx.filename);
+        if (!page) return html;
+        if (!html.includes(page.marker)) throw new Error(`${ctx.path} has no ${page.marker} marker`);
+        const rendered = server ? await server.ssrLoadModule(page.module) : await import(new URL(`.${page.module}`, import.meta.url).href);
+        return html.replace(page.marker, rendered[page.render]());
       },
     },
   };
@@ -66,7 +76,7 @@ export default defineConfig({
   plugins: [shared(), homepage()],
   build: {
     rollupOptions: {
-      input: { main: file('./index.html'), syberlabs: file('./src/site/boot.js'), systemmap: file('./src/system-map-embed.js') },
+      input: { main: file('./index.html'), overview: file('./overview/index.html'), syberlabs: file('./src/site/boot.js'), systemmap: file('./src/system-map-embed.js') },
       output: {
         entryFileNames: chunk => chunk.name === 'syberlabs' ? 'syberlabs.js' : chunk.name === 'systemmap' ? 'system-map.js' : 'assets/[name]-[hash].js',
         // React in its own chunk: only the system maps use it

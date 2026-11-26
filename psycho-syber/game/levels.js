@@ -456,7 +456,7 @@ export const STAGES = [
     bg: 'vault', persona: 'syber', timer: 240, needs: 'evidence', ...record(),
   },
   {
-    id: 'real', name: 'THE REAL BATTLE', project: 'SyberLabs', href: '/#products',
+    id: 'real', name: 'THE REAL BATTLE', project: 'SyberLabs', href: '/overview/#products',
     line: 'Makes software for checking AI\'s work.',
     intro: ['The Patron owns | the Works, | the sale, | the machine.', 'Its name | is the Thousand Eyes.', 'It holds every camera | and every record.', 'It saw you coming.'],   // what it says in the room is in render.js
     bg: 'eyes', persona: 'syber', real: true, ...real(),

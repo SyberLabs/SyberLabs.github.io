@@ -1,6 +1,6 @@
 // Project page template: one template for every product page, and the header and footer every page shares.
-// Pure module: used at build time by scripts/prerender.mjs (the product pages), src/home/page.js (the homepage's
-// header and footer) and scripts/site-chrome.mjs (which writes the same header and footer into the static pages),
+// Pure module: used at build time by scripts/prerender.mjs (the product pages), src/overview/page.js (the overview
+// page's header and footer), src/home/page.js (the homepage's Menu) and scripts/site-chrome.mjs (which writes the same header and footer into the static pages),
 // and by the staff pages (server/views/). projects/experience-v7.js loads it in the browser only when a product
 // page arrives without its prerendered markup, which happens in `pnpm dev`.
 import { projects, nav, footerLinks, siteMap, EMAIL, workWithUs } from './site-data.js';
@@ -41,6 +41,11 @@ const atlas = (here = '') => `<div class="sy-atlas" id="sy-atlas" role="dialog" 
   </div>
 </div>`;
 
+// Menu: the button and its panel. The header carries it on every page; the homepage, which has no header, carries it
+// alone as its one link (`cls` adds a class, and `icon: false` leaves the word by itself).
+export const menu = (here = '', { cls = '', icon: mark = true } = {}) =>
+  `<details class="sy-menu${cls ? ` ${cls}` : ''}"><summary aria-label="Menu" aria-controls="sy-atlas">${mark ? icon('menu', 18) : ''}<span>Menu</span></summary>${atlas(here)}</details>`;
+
 // The three primary links use the header row on wide screens; selected work and contact destinations also live in Menu.
 // The header row marks its section; Menu marks exact destinations.
 const navLinks = (current = '', here = '') => nav.map(item => `<li><a href="${item.href}"${item.id === current || item.href === here ? ' aria-current="page"' : ''}${item.external ? ' rel="noopener"' : ''}>${item.label}${item.external ? ' ' + icon('external', 14) : ''}</a></li>`).join('');
@@ -49,14 +54,14 @@ const navLinks = (current = '', here = '') => nav.map(item => `<li><a href="${it
 // `current` marks the page's section in the header row (a nav id); `here` is the page's path, marked in the Atlas.
 // The footer takes the path too. The summary carries no aria-expanded of its own: <details> reports its state without
 // JS, and src/site/nav.js keeps the attribute in step once it runs.
-// `sticky` (default) keeps the header in flow; the homepage passes false so it floats over the hero.
+// `sticky` (default) keeps the header in flow; the overview page passes false so it floats over the hero.
 // The customer subscription route is separate from staff sign-in in the footer.
 // The header row ends with the one conversion action, Book a consultation, which stays visible on phones too.
 export const header = (current = '', { sticky = true, script = true, here = '' } = {}) => `<a class="sy-skip" href="#main">Skip to content</a>
 <header class="sy-header${sticky ? ' sy-header--sticky' : ''}"><div class="sy-header__in">
   <a class="sy-lockup" href="/" aria-label="SyberLabs home"><img src="/syber-logo-96.png" alt="" width="22" height="24">SYBERLABS</a>
   <nav class="sy-nav" aria-label="Primary"><ul>${navLinks(current)}<li class="sy-nav__cta-item"><a class="sy-nav__cta" href="${workWithUs.href}">${workWithUs.label}</a></li></ul></nav>
-  <details class="sy-menu"><summary aria-label="Menu" aria-controls="sy-atlas">${icon('menu', 18)}<span>Menu</span></summary>${atlas(here)}</details>
+  ${menu(here)}
 </div></header>${script ? '\n<script type="module" src="/syberlabs.js"></script>' : ''}`;
 
 // The footer: one hairline bar of essential contact, account and legal links. Every contact
@@ -251,7 +256,7 @@ export function renderProject(p) {
 <main id="main" class="pj-page">
   <section class="pj-hero sy-container" aria-labelledby="project-title">
     <div class="pj-hero__copy">
-      ${crumbs([{ label: 'Products', href: '/#products' }, { label: p.name }])}
+      ${crumbs([{ label: 'Products', href: '/overview/#products' }, { label: p.name }])}
       <p class="pj-eyebrow sy-eyebrow">${esc(p.category)}</p>
       <div class="pj-identity"><span class="pj-name">${esc(p.name)}</span>${badge(p.status)}</div>
       <h1 id="project-title" class="sy-display pj-title">${keepHyphens(esc(p.headline))}</h1>
