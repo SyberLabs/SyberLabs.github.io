@@ -24,8 +24,9 @@ const ICONS = {
 export const icon = (name, size = 20, cls = '') =>
   `<svg class="sy-icon ${cls}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
 const esc = value => String(value).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-// A hyphenated word in a headline stays on one line ("AI-written" never breaks after "AI-").
-const keepHyphens = html => html.replace(/[^\s<>]+-[^\s<>]+/g, word => `<span class="sy-nowrap">${word}</span>`);
+// A hyphenated word in a headline stays on one line ("AI-written" never breaks after "AI-"). A word joiner after
+// the hyphen forbids the break there. A no-wrap span did too, but with one in the title Chrome stops balancing its lines.
+const keepHyphens = html => html.replace(/(?<=[^\s<>])-(?=[^\s<>])/g, '-&#8288;');
 const badge = (status, cls = '') => `<span class="sy-badge sy-badge--${status.kind}${cls ? ' ' + cls : ''}">${esc(status.label)}</span>`;
 
 // The Menu's panel: the full-screen site map inside the header's <details>, and the site's one directory (the footer
