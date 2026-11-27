@@ -301,6 +301,7 @@ export const siteMap = [
   ] },
   { title: 'Research', items: [
     { label: 'Research index', note: 'Reports, notes and working papers', href: '/research/' },
+    { label: 'VERTICAL', note: 'Interactive 20-slide briefing on the intelligence explosion', href: '/vertical/' },
     { label: 'Lacuna Institute', note: 'Atlas of 21 research sites, with sources', href: LACUNA },
     { label: 'Paracas bundles', note: 'Dataset: 13 mummy bundles that left Peru', href: LACUNA_PARACAS },
   ] },
