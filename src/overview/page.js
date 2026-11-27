@@ -160,6 +160,7 @@ const main = () => `<main id="main">
           </figure></li>`).join('')}
         </ul>
         <p class="home-note"><span class="home-label">Game</span><span><b>PSYCHO SYBER.</b> A side-scrolling game that runs in the browser. It has six stages: one for each of the four products, one for Lacuna Institute and a last one with no exit. It plays with a keyboard and a mouse, or by touch on a phone. <a href="/psycho-syber/">Play PSYCHO SYBER</a></span></p>
+        <p class="home-note"><span class="home-label">Briefing</span><span><b>VERTICAL.</b> An interactive 20-slide briefing on the intelligence explosion, with twelve live browser simulations, generative sound and keyboard navigation. <a href="/vertical/">Open VERTICAL</a></span></p>
       </div>
     </section>
 

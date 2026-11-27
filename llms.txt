@@ -60,6 +60,7 @@ This file is generated from the site’s own data (projects/site-data.js in gith
 ## Research
 
 - [Research index](https://syberlabs.io/research/): Every SyberLabs research artifact on one page: three reports and notes on this site, two RISE status pages, five working papers in SyberLabs/papers and two Lacuna Institute pages. Each card states the claim, the evidence state it has reached, what it does not establish, the date and the source.
+- [VERTICAL](https://syberlabs.io/vertical/): VERTICAL: an interactive 20-slide briefing on the intelligence explosion by SyberLabs, combining November 2026 empirical measurements, twelve live browser simulations, generative audio and cited sources.
 - [Lacuna Institute](https://syberlabs.io/lacuna/): Lacuna Institute, part of SyberLabs: an atlas of places where the historical record goes quiet.
 - [Paracas bundles](https://syberlabs.io/lacuna/research/paracas-bundles/): A census of the Paracas Necropolis (Wari Kayan) mummy bundles that published sources show leaving Peru, with destinations, current holders and graded sources. Version 1.0.
 

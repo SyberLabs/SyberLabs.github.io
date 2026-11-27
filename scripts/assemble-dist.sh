@@ -23,7 +23,7 @@ mkdir -p dist/kit
 cp -r kit/v2 dist/kit/
 # social preview cards, one per page (regenerate with `node scripts/og-cards.mjs`)
 cp -r og dist/
-for dir in rise-demo omni-demo media projects approach factory jev kev research services privacy stack plus psycho-syber; do
+for dir in rise-demo omni-demo media projects approach factory jev kev research services privacy stack plus psycho-syber vertical; do
   cp -r "$dir" dist/
 done
 # Lacuna Institute: lacuna/ is published as it is at /lacuna/. Its first page (the Atlas) is generated from

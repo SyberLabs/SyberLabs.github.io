@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#050608" />
+  <title>VERTICAL — The Intelligence Explosion | SyberLabs</title>
+  <meta name="description" content="VERTICAL: an interactive 20-slide briefing on the intelligence explosion by SyberLabs, combining November 2026 empirical measurements, twelve live browser simulations, generative audio and cited sources." />
+  <link rel="canonical" href="https://syberlabs.io/vertical/" />
+  <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="VERTICAL — The Intelligence Explosion | SyberLabs" />
+  <meta property="og:description" content="An interactive 20-slide briefing on the intelligence explosion combining late-2026 empirical data, twelve live browser simulations, and deep-future physics." />
+  <meta property="og:url" content="https://syberlabs.io/vertical/" />
+  <meta property="og:image" content="https://syberlabs.io/vertical/assets/hero_singularity.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://syberlabs.io/vertical/assets/hero_singularity.jpg" />
+  <link rel="stylesheet" href="/fonts/site.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-act="overture" data-surface="obsidian" data-slide="0">
+  <canvas id="bg-stage" aria-hidden="true"></canvas>
+  <div class="stage-grain" aria-hidden="true"></div>
+  <div class="stage-vignette" aria-hidden="true"></div>
+  <div id="transition-veil" class="transition-veil" aria-hidden="true"></div>
+
+  <!-- Minimal Architectural Top HUD -->
+  <header id="hud-top" class="hud-top">
+    <div class="hud-brand-wrap">
+      <a href="/" class="hud-site-back" title="Return to syberlabs.io">← SYBERLABS</a>
+      <span class="hud-divider">/</span>
+      <div class="hud-brand" id="btn-home" title="Return to Title (Home)">
+        <span class="brand-dot"></span>
+        <span class="brand-title">VERTICAL</span>
+        <span class="hud-divider">/</span>
+        <span id="hud-act-label" class="hud-act-label">OVERTURE</span>
+      </div>
+    </div>
+
+    <div class="hud-epoch" id="hud-epoch">
+      <span class="epoch-label">EPOCH</span>
+      <span id="hud-epoch-value" class="epoch-value">NOV 2026</span>
+    </div>
+
+    <div class="hud-controls">
+      <button id="btn-audio" class="hud-btn" type="button" title="Toggle Generative Soundscape (S)" aria-label="Toggle Ambient Sound">
+        <span class="eq-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="hud-btn-label">SOUND</span>
+      </button>
+      <button id="btn-autoplay" class="hud-btn" type="button" title="Auto-Cinema Mode (A)" aria-label="Auto-Cinema Mode">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 2.2L10 6L3 9.8V2.2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        <span class="hud-btn-label">CINEMA</span>
+      </button>
+      <button id="btn-sources" class="hud-btn" type="button" title="Sources &amp; Citations (B)" aria-label="Sources and Citations">
+        <span class="hud-btn-label">SOURCES</span>
+      </button>
+      <button id="btn-notes" class="hud-btn" type="button" title="Speaker Notes (N)" aria-label="Speaker Notes">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="2" y="2" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 5.2H9.5M4.5 7.5H9.5M4.5 9.8H7.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+        <span class="hud-btn-label">NOTES</span>
+      </button>
+      <button id="btn-overview" class="hud-btn" type="button" title="Slide Overview Grid (G)" aria-label="Slide Overview">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1.8" y="1.8" width="4.2" height="4.2" rx="0.8" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1.8" width="4.2" height="4.2" rx="0.8" stroke="currentColor" stroke-width="1.2"/><rect x="1.8" y="8" width="4.2" height="4.2" rx="0.8" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="4.2" height="4.2" rx="0.8" stroke="currentColor" stroke-width="1.2"/></svg>
+        <span class="hud-btn-label">GRID</span>
+      </button>
+      <button id="btn-fullscreen" class="hud-btn" type="button" title="Fullscreen (F)" aria-label="Toggle Fullscreen">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 5V2H5M9 2H12V5M12 9V12H9M5 12H2V9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button id="btn-help" class="hud-btn hud-btn-icon" type="button" title="Shortcuts (?)" aria-label="Keyboard Shortcuts">?</button>
+    </div>
+  </header>
+
+  <!-- Main Presentation Stage -->
+  <main id="deck-stage" class="deck-stage" role="region" aria-live="polite" aria-label="Presentation slides">
+    <noscript>
+      <div style="max-width:640px;margin:18vh auto;padding:24px;color:#f3efea;font-family:sans-serif;line-height:1.6;">
+        <h1>VERTICAL — The Intelligence Explosion</h1>
+        <p>Enable JavaScript to view the interactive 20-movement briefing and live simulations, or return to <a href="/" style="color:#0297de;">SyberLabs</a>.</p>
+      </div>
+    </noscript>
+  </main>
+
+  <!-- Bottom Telemetry & Navigation -->
+  <footer id="hud-bottom" class="hud-bottom">
+    <div class="hud-progress-track" id="hud-progress-track">
+      <div class="hud-progress-fill" id="hud-progress-fill"></div>
+      <div class="hud-autoplay-bar" id="hud-autoplay-bar"></div>
+    </div>
+
+    <div class="hud-bottom-bar">
+      <div class="hud-slide-meta">
+        <span id="hud-slide-num" class="hud-slide-num">01</span>
+        <span class="hud-slide-sep">/</span>
+        <span id="hud-slide-total" class="hud-slide-total">20</span>
+        <span id="hud-slide-title" class="hud-slide-title">VERTICAL</span>
+      </div>
+
+      <nav id="hud-dots" class="hud-dots" aria-label="Slide index"></nav>
+
+      <div class="hud-nav-arrows">
+        <button id="btn-prev" class="nav-arrow" type="button" title="Previous Slide (←)" aria-label="Previous Slide">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3.5L5.5 8L10 12.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button id="btn-next" class="nav-arrow nav-arrow-primary" type="button" title="Next Slide (→ / Space)" aria-label="Next Slide">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3.5L10.5 8L6 12.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Speaker Notes Drawer (N) -->
+  <aside id="notes-drawer" class="notes-drawer" aria-hidden="true">
+    <div class="notes-header">
+      <div>
+        <span class="notes-kicker">SPEAKER NOTES &amp; DELIVERY CUES</span>
+        <p id="notes-slide-heading" class="notes-heading">01 · VERTICAL</p>
+      </div>
+      <button id="btn-close-notes" class="icon-close" type="button" aria-label="Close speaker notes">&times;</button>
+    </div>
+    <div id="notes-body" class="notes-body"></div>
+    <div class="notes-footer">
+      <span class="notes-hint">Press <kbd>N</kbd> to toggle · <kbd>←</kbd> <kbd>→</kbd> to navigate while reading</span>
+    </div>
+  </aside>
+
+  <!-- Slide Overview Grid Modal (G) -->
+  <section id="overview-modal" class="overview-modal" aria-hidden="true" aria-label="Slide overview">
+    <div class="overview-header">
+      <div>
+        <span class="overview-kicker">COMPLETE ARCHITECTURE · 6 ACTS · 20 MOVEMENTS</span>
+        <p class="overview-title">VERTICAL — The Intelligence Explosion</p>
+      </div>
+      <button id="btn-close-overview" class="icon-close" type="button" aria-label="Close overview">&times;</button>
+    </div>
+    <div id="overview-grid" class="overview-grid"></div>
+  </section>
+
+  <!-- Sources & Citations Modal (B) -->
+  <section id="sources-modal" class="sources-modal" aria-hidden="true" aria-label="Sources and epistemic provenance">
+    <div class="sources-card">
+      <div class="help-header">
+        <div>
+          <span class="overview-kicker">BIBLIOGRAPHY &amp; EPISTEMIC LABELS · NOVEMBER 26, 2026</span>
+          <p class="overview-title" style="font-size:28px;">Sources &amp; Provenance</p>
+        </div>
+        <button id="btn-close-sources" class="icon-close" type="button" aria-label="Close sources">&times;</button>
+      </div>
+      <p style="font-size:12.5px;color:rgba(243,239,234,0.7);line-height:1.5;">
+        Empirical measurements (2024–2026), trend extrapolations, named scenarios, and physical-limit upper bounds are explicitly labelled on each slide. Figures as reported at the time of writing, November 26, 2026.
+      </p>
+      <div class="sources-cols">
+        <p><strong>Task Horizons &amp; Doubling Times</strong>METR, Time Horizon 1.1 (Jan 2026), R&amp;D pace evaluation (Nov 5, 2026), and Q4 2026 capability update (Nov 20, 2026; TH1.1 &amp; TH2 suites).</p>
+        <p><strong>Inside the Labs &amp; Automation Scale</strong>Anthropic Institute, "When AI builds itself" (2026); Anthropic S-1/A as reported; Epoch AI automation ladder; OpenAI GPT-5.3-Codex self-debugging report via CACM (Feb 2026).</p>
+        <p><strong>Hyperscaler Capital &amp; Power</strong>Strago International (Sept 2026); Goldman Sachs, "Tracking Trillions" (2026); BCG, "AI Data Center Supply and Demand Outlook to 2031" (Nov 2026); Bain Technology Report 2026.</p>
+        <p><strong>Lab Demand &amp; Run-Rates</strong>Reported annualized revenue run-rate coverage in CNBC, Bloomberg, Reuters, and TechCrunch (Aug–Nov 2026); run-rate accounting methods differ between labs.</p>
+        <p><strong>2026 Mathematics Milestones</strong>Quanta Magazine (Aug 2026); public proof records and Wikipedia "List of mathematical discoveries made with artificial intelligence" (Jan–Sept 2026); Navier–Stokes Clay evaluation ongoing.</p>
+        <p><strong>Timelines &amp; Scenarios</strong>AI Futures Project, "AI 2027" (Apr 2025) and Q3.5 timelines update (Daniel Kokotajlo et al., Nov 10, 2026; assumes no deliberate slowdown).</p>
+        <p><strong>Foundational Theses</strong>I. J. Good, "Speculations Concerning the First Ultraintelligent Machine" (1965); Dario Amodei, "Machines of Loving Grace" (Oct 2024); Albert Allen Bartlett on exponential growth.</p>
+        <p><strong>Physical &amp; Astrophysical Ceilings</strong>Rolf Landauer (1961), E ≥ k_B T ln(2); Nikolai Kardashev (1964) energy scales; Robert Bradbury (1999) Matrioshka Brain thermal limits; Freeman Dyson (1960); Nick Bostrom &amp; Carl Sagan on cosmic endowment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Keyboard Shortcuts Overlay (?) -->
+  <section id="help-modal" class="help-modal" aria-hidden="true" aria-label="Keyboard shortcuts">
+    <div class="help-card">
+      <div class="help-header">
+        <span class="overview-kicker">STAGE CONTROLS</span>
+        <button id="btn-close-help" class="icon-close" type="button" aria-label="Close shortcuts">&times;</button>
+      </div>
+      <div class="help-grid">
+        <div class="help-row"><kbd>→</kbd> / <kbd>Space</kbd><span>Next slide</span></div>
+        <div class="help-row"><kbd>←</kbd><span>Previous slide</span></div>
+        <div class="help-row"><kbd>G</kbd><span>Slide overview grid</span></div>
+        <div class="help-row"><kbd>N</kbd><span>Speaker notes drawer</span></div>
+        <div class="help-row"><kbd>B</kbd><span>Sources &amp; citations</span></div>
+        <div class="help-row"><kbd>S</kbd><span>Generative soundscape</span></div>
+        <div class="help-row"><kbd>A</kbd><span>Auto-cinema showcase</span></div>
+        <div class="help-row"><kbd>F</kbd><span>Fullscreen stage</span></div>
+        <div class="help-row"><kbd>H</kbd><span>Hide / reveal HUD chrome</span></div>
+        <div class="help-row"><kbd>Esc</kbd><span>Close overlays</span></div>
+      </div>
+    </div>
+  </section>
+
+  <script defer src="engine-audio.js"></script>
+  <script defer src="engine-bg.js"></script>
+  <script defer src="simulations.js"></script>
+  <script defer src="slides.js"></script>
+  <script defer src="app.js"></script>
+</body>
+</html>
